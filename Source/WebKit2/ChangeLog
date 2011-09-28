@@ -1,5 +1,54 @@
 2011-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Loader client implementation for WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=68085
+
+        Reviewed by Martin Robinson.
+
+        Adds a new object, WebKitWebLoaderClient, that emits signals for
+        every page loader callback.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp: Added.
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didCommitLoadForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (webkitWebLoaderClientConstructed):
+        (webkitWebLoaderClientSetProperty):
+        (webkitWebLoaderClientGetProperty):
+        (webkit_web_loader_client_init):
+        (webkit_web_loader_client_class_init):
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Create the loader client for the view.
+        (webkit_web_view_init):
+        (webkit_web_view_get_loader_client): Get the current loader client.
+        (webkit_web_view_set_loader_client): Set a new loader client.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/testloading.c: Added.
+        (serverCallback):
+        (webLoadingFixtureSetup):
+        (webLoadingFixtureTeardown):
+        (getURIForPath):
+        (loadStatusProvisionalLoadStarted):
+        (loadStatusProvisionalLoadReceivedServerRedirect):
+        (loadStatusProvisionalLoadFailed):
+        (loadStatusLoadCommitted):
+        (loadStatusLoadFinished):
+        (loadStatusLoadFailed):
+        (testLoadingStatus):
+        (loadErrorProvisionalLoadStarted):
+        (loadErrorProvisionalLoadFailed):
+        (loadErrorLoadFinished):
+        (testLoadingError):
+        (main):
+        * UIProcess/API/gtk/webkit2marshal.list: Added.
+
+2011-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitError to GTK+ WebKit2 API
         https://bugs.webkit.org/show_bug.cgi?id=68508
 

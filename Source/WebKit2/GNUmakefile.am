@@ -71,6 +71,7 @@ libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
 webkit2gtk_headers = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitWebLoaderClient.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit2.h
@@ -148,8 +149,20 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebProcessMessages.h \
 	DerivedSources/WebKit2/WebProcessProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessProxyMessages.h
+
 BUILT_SOURCES += $(webkit2_built_sources)
-nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES =$(webkit2_built_sources)
+
+webkit2gtk_built_sources = \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.cpp \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.h \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitMarshal.cpp \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitMarshal.h
+
+BUILT_SOURCES += $(webkit2gtk_built_sources)
+
+nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
+	$(webkit2_built_sources) \
+	$(webkit2gtk_built_sources)
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
@@ -460,6 +473,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebLoaderClient.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBase.h \
@@ -862,6 +877,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/webkit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/JavaScriptCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
@@ -1032,14 +1048,28 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(webkit2gtk_heade
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
+WEBKIT2_MARSHAL_LIST = $(WebKit2)/UIProcess/API/gtk/webkit2marshal.list
 
-BUILT_SOURCES += \
-	$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp \
-	$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h
+$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitMarshal.cpp: stamp-webkit2marshal.cpp
+	@true
+$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitMarshal.h: stamp-webkit2marshal.h
+	@true
+
+stamp-webkit2marshal.cpp: $(WEBKIT2_MARSHAL_LIST)
+	$(AM_V_GEN) echo "extern \"C\" {" > $(webkit2gtk_built_headers_dir)/WebKitMarshal.cpp && \
+	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT2_MARSHAL_LIST) --body >> $(webkit2gtk_built_headers_dir)/WebKitMarshal.cpp && \
+	echo '}' >> $(webkit2gtk_built_headers_dir)/WebKitMarshal.cpp && \
+	echo timestamp > $(@F)
+
+stamp-webkit2marshal.h: $(WEBKIT2_MARSHAL_LIST)
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT2_MARSHAL_LIST) --header > $(webkit2gtk_built_headers_dir)/WebKitMarshal.h && \
+	echo timestamp > $(@F)
 
 CLEANFILES += \
 	$(BUILT_SOURCES) \
 	$(top_builddir)/stamp-webkit2enumtypes \
+	$(top_builddir)/stamp-webkit2marshal.cpp \
+	$(top_builddir)/stamp-webkit2marshal.h \
 	$(top_builddir)/Programs/WebKitWebProcess
 
 DISTCLEANFILES += \
@@ -1048,7 +1078,8 @@ DISTCLEANFILES += \
 # Unit tests
 TEST_PROGS += \
 	Programs/unittests/webkit2/testwebcontext \
-	Programs/unittests/webkit2/testwebview
+	Programs/unittests/webkit2/testwebview \
+	Programs/unittests/webkit2/testloading
 
 noinst_PROGRAMS += $(TEST_PROGS)
 webkit2_tests_cflags = \
@@ -1085,6 +1116,11 @@ Programs_unittests_webkit2_testwebview_SOURCES = Source/WebKit2/UIProcess/API/gt
 Programs_unittests_webkit2_testwebview_CFLAGS = $(webkit2_tests_cflags)
 Programs_unittests_webkit2_testwebview_LDADD = $(webkit2_tests_ldadd)
 Programs_unittests_webkit2_testwebview_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_unittests_webkit2_testloading_SOURCES = Source/WebKit2/UIProcess/API/gtk/tests/testloading.c
+Programs_unittests_webkit2_testloading_CFLAGS = $(webkit2_tests_cflags)
+Programs_unittests_webkit2_testloading_LDADD = $(webkit2_tests_ldadd)
+Programs_unittests_webkit2_testloading_LDFLAGS = $(webkit2_tests_ldflags)
 
 # WebKitWebProcess
 libexec_PROGRAMS += \

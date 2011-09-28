@@ -20,13 +20,15 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
-#include "NotImplemented.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebLoaderClient.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKURL.h>
+#include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -39,6 +41,8 @@ enum {
 
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
+
+    GRefPtr<WebKitWebLoaderClient> loaderClient;
 };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -46,9 +50,11 @@ G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
 static void webkitWebViewConstructed(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+    WebKitWebViewPrivate* priv = webView->priv;
 
-    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView),
-                                   webkitWebContextGetWKContext(webView->priv->context), 0);
+    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), webkitWebContextGetWKContext(priv->context), 0);
+
+    priv->loaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, "web-view", webView, NULL)));
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -79,7 +85,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
 static void webkit_web_view_init(WebKitWebView* webView)
 {
-    webView->priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
+    WebKitWebViewPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
+    webView->priv = priv;
+    new (priv) WebKitWebViewPrivate();
 }
 
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
@@ -151,6 +159,51 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
     return webView->priv->context;
 }
 
+/**
+ * webkit_web_view_get_loader_client:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the #WebKitWebLoaderClient of @web_view. You can use it
+ * to monitor the status of load operations happening on @web_view.
+ *
+ * Returns: (trasnfer-none): the #WebKitWebLoaderClient of @web_view.
+ */
+WebKitWebLoaderClient* webkit_web_view_get_loader_client(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->loaderClient.get();
+}
+
+/**
+ * webkit_web_view_set_loader_client:
+ * @web_view: a #WebKitWebView
+ * @loader_client: a #WebKitWebLoaderClient
+ *
+ * Sets the #WebKitWebLoaderClient that the view will use during
+ * load operations.
+ */
+void webkit_web_view_set_loader_client(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_WEB_LOADER_CLIENT(loaderClient));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->loaderClient.get() == loaderClient)
+        return;
+
+    priv->loaderClient = loaderClient;
+}
+
+/**
+ * webkit_web_view_load_uri:
+ * @web_view: a #WebKitWebView
+ * @uri: an URI string
+ *
+ * Requests loading of the specified URI string.
+ * You can monitor the status of the load operation using the
+ * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ */
 void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
@@ -160,6 +213,14 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     WKPageLoadURL(toAPI(page), WKURLCreateWithUTF8CString(uri));
 }
 
+/**
+ * webkit_web_view_go_back:
+ * @web_view: a #WebKitWebView
+ *
+ * Loads the previous history item.
+ * You can monitor the status of the load operation using the
+ * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ */
 void webkit_web_view_go_back(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
@@ -168,6 +229,14 @@ void webkit_web_view_go_back(WebKitWebView* webView)
     WKPageGoBack(toAPI(page));
 }
 
+/**
+ * webkit_web_view_go_forward:
+ * @web_view: a #WebKitWebView
+ *
+ * Loads the next history item.
+ * You can monitor the status of the load operation using the
+ * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ */
 void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
