@@ -1,3 +1,24 @@
+2011-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: optional arguments support for the frontend needs to be extended.
+        https://bugs.webkit.org/show_bug.cgi?id=69005
+
+        Generator supports optional arguments but they are transferred by value.
+        It is not suitable if the used type doesn't have operator bool.
+        I'll transfer such arguments by pointer.
+
+        Reviewed by Pavel Feldman.
+
+        Build is the test.
+
+        * inspector/CodeGeneratorInspector.pm:
+        (generateFrontendFunction):
+        (paramTypeTraits):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFailLoading):
+
 2011-09-28  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         Reflected attribute input.size wraps on negative values (Chrome), or

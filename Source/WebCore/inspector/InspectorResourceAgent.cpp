@@ -299,7 +299,8 @@ void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLo
             m_resourcesData->addResourceSharedBuffer(requestId, frame->loader()->documentLoader()->mainResourceData(), frame->document()->inputEncoding());
     }
 
-    m_frontend->loadingFailed(requestId, currentTime(), error.localizedDescription(), error.isCancellation());
+    bool canceled = error.isCancellation();
+    m_frontend->loadingFailed(requestId, currentTime(), error.localizedDescription(), canceled ? &canceled : 0);
 }
 
 void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, CachedResource* resource)

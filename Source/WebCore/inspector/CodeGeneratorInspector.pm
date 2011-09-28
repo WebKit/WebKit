@@ -134,6 +134,8 @@ $typeTransform{"Value"} = {
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
+    "optional_param" => "const String* const",
+    "optional_valueAccessor" => "*",
     "variable" => "String",
     "return" => "String",
     "defaultValue" => "\"\"",
@@ -144,6 +146,8 @@ $typeTransform{"String"} = {
 };
 $typeTransform{"long"} = {
     "param" => "long",
+    "optional_param" => "const long* const",
+    "optional_valueAccessor" => "*",
     "variable" => "long",
     "defaultValue" => "0",
     "forward" => "",
@@ -153,6 +157,8 @@ $typeTransform{"long"} = {
 };
 $typeTransform{"int"} = {
     "param" => "int",
+    "optional_param" => "const int* const",
+    "optional_valueAccessor" => "*",
     "variable" => "int",
     "defaultValue" => "0",
     "forward" => "",
@@ -162,6 +168,8 @@ $typeTransform{"int"} = {
 };
 $typeTransform{"unsigned long"} = {
     "param" => "unsigned long",
+    "optional_param" => "const unsigned long* const",
+    "optional_valueAccessor" => "*",
     "variable" => "unsigned long",
     "defaultValue" => "0u",
     "forward" => "",
@@ -171,6 +179,8 @@ $typeTransform{"unsigned long"} = {
 };
 $typeTransform{"unsigned int"} = {
     "param" => "unsigned int",
+    "optional_param" => "const unsigned int* const",
+    "optional_valueAccessor" => "*",
     "variable" => "unsigned int",
     "defaultValue" => "0u",
     "forward" => "",
@@ -180,6 +190,8 @@ $typeTransform{"unsigned int"} = {
 };
 $typeTransform{"double"} = {
     "param" => "double",
+    "optional_param" => "const double* const",
+    "optional_valueAccessor" => "*",
     "variable" => "double",
     "defaultValue" => "0.0",
     "forward" => "",
@@ -189,6 +201,8 @@ $typeTransform{"double"} = {
 };
 $typeTransform{"boolean"} = {
     "param" => "bool",
+    "optional_param" => "const bool* const",
+    "optional_valueAccessor" => "*",
     "variable"=> "bool",
     "defaultValue" => "false",
     "forward" => "",
@@ -376,7 +390,7 @@ sub generateFrontendFunction
     my $domain = $interface->name;
     my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
     map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
-    my $arguments = join(", ", map(typeTraits($_->type, "param") . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
+    my $arguments = join(", ", map(paramTypeTraits($_, "param") . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
 
     my $signature = "        void ${functionName}(${arguments});";
     !$agent->{methodSignatures}->{$signature} || die "Duplicate frontend function was detected for signature '$signature'.";
@@ -393,7 +407,7 @@ sub generateFrontendFunction
 
         foreach my $parameter (@argsFiltered) {
             my $optional = $parameter->extendedAttributes->{"optional"} ? "if (" . $parameter->name . ")\n        " : "";
-            push(@function, "    " . $optional . "paramsObject->set" . typeTraits($parameter->type, "JSONType") . "(\"" . $parameter->name . "\", " . $parameter->name . ");");
+            push(@function, "    " . $optional . "paramsObject->set" . paramTypeTraits($parameter, "JSONType") . "(\"" . $parameter->name . "\", " . paramTypeTraits($parameter, "valueAccessor") . $parameter->name . ");");
         }
         push(@function, "    ${functionName}Message->setObject(\"params\", paramsObject);");
     }
@@ -1094,6 +1108,18 @@ sub typeTraits
     my $type = shift;
     my $trait = shift;
     return $typeTransform{$type}->{$trait};
+}
+
+sub paramTypeTraits
+{
+    my $paramDescription = shift;
+    my $trait = shift;
+    if ($paramDescription->extendedAttributes->{"optional"}) {
+        my $optionalResult = typeTraits($paramDescription->type, "optional_" . $trait);
+        return $optionalResult if defined $optionalResult;
+    }
+    my $result = typeTraits($paramDescription->type, $trait);
+    return defined $result ? $result : "";
 }
 
 sub generateBackendAgentFieldsAndConstructor

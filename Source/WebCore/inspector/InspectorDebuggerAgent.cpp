@@ -437,7 +437,7 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script& script)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(scriptId, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, script.isContentScript);
+    m_frontend->scriptParsed(scriptId, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, script.isContentScript ? &script.isContentScript : 0);
 
     m_scripts.set(scriptId, script);
 
