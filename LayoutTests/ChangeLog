@@ -1,5 +1,14 @@
 2011-09-28  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/multicol/float-paginate-empty-lines-expected.png: Added.
+        * platform/gtk/fast/multicol/float-paginate-empty-lines-expected.txt: Added.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-expected.png: Added.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-expected.txt: Added.
+
+2011-09-28  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip 2 64-bits Debug crashers on GTK.
 
         * platform/gtk/Skipped: Skip

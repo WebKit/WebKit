@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x32
+  RenderBlock {HTML} at (0,0) size 800x32
+    RenderBody {BODY} at (8,8) size 784x16
+      RenderRuby (inline) {RUBY} at (0,0) size 64x17
+        RenderRubyRun (anonymous) at (0,0) size 64x16
+          RenderRubyBase (anonymous) at (0,0) size 64x16
+            RenderBlock (anonymous) at (0,0) size 64x16
+              RenderText {#text} at (0,0) size 64x17
+                text run at (0,0) width 64: "PASS"
+              RenderInline {I} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+            RenderBlock (anonymous) at (0,16) size 64x0
+              RenderInline {SPAN} at (0,0) size 0x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+            RenderBlock (anonymous) at (0,16) size 64x0
+              RenderInline {I} at (0,0) size 0x0
