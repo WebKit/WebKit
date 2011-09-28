@@ -1,3 +1,9 @@
+2011-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Unreviewed. Slight adjustment of the test content for better representation of the performance.
+
+        * inspector/performance/resources/show-panel.html:
+
 2011-09-28  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed rebaseline pservers-grad-14-b again.

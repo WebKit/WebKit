@@ -4,11 +4,38 @@
 <script src="performance-test.js"></script>
 <script>
 
+function makeXHRRequests(count)
+{
+    for (var i = 0; i < count; ++i) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", document.URL, true);
+        xhr.send();
+    }
+}
+
 function test()
 {
-    WebInspector.showPanel("audits");
+    WebInspector.showPanel("scripts");
+    var files = WebInspector.panels.scripts._filesSelectElement;
+    for (var i = 0; i < files.options.length; ++i) {
+         if (files.options[i].value.indexOf("inspector-test.js") !== -1) {
+             files.selectedIndex = i;
+             WebInspector.panels.scripts._filesSelectChanged();
+             break;
+         }
+    }
 
-    InspectorTest.runPerformanceTest(perfTest, 10000);
+    WebInspector.showPanel("resources");
+    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.mainResource._documentURL);
+
+    WebInspector.showPanel("network");
+    InspectorTest.evaluateInPage("makeXHRRequests(200)", runTest);
+
+    function runTest()
+    {
+        InspectorTest.runPerformanceTest(perfTest, 10000);
+    }
+
     function perfTest(timer)
     {
         WebInspector.showPanel("audits");
@@ -25,5 +52,15 @@ function test()
 </head>
 
 <body onload="runTest()">
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 </body>
 </html>
