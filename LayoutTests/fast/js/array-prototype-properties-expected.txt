@@ -5,25 +5,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Array.prototype.toString.call(undefined) threw exception TypeError: Type error.
 PASS Array.prototype.toLocaleString.call(undefined) threw exception TypeError: Type error.
-FAIL Array.prototype.concat.call(undefined, []) should throw an exception. Was [object DOMWindow].
-FAIL Array.prototype.join.call(undefined, []) should throw an exception. Was .
-FAIL Array.prototype.pop.call(undefined) should throw an exception. Was undefined.
-FAIL Array.prototype.push.call(undefined, {}) should throw an exception. Was 1.
-FAIL Array.prototype.reverse.call(undefined) should throw an exception. Was [object DOMWindow].
-FAIL Array.prototype.shift.call(undefined) should throw an exception. Was [object Object].
-FAIL Array.prototype.slice.call(undefined, 0, 1) should throw an exception. Was .
-FAIL Array.prototype.sort.call(undefined) should throw an exception. Was [object DOMWindow].
-FAIL Array.prototype.splice.call(undefined, 0, 1) should throw an exception. Was .
-FAIL Array.prototype.unshift.call(undefined, {}) should throw an exception. Was 1.
-FAIL Array.prototype.every.call(undefined, toString) should throw an exception. Was true.
-FAIL Array.prototype.forEach.call(undefined, toString) should throw an exception. Was undefined.
-FAIL Array.prototype.some.call(undefined, toString) should throw an exception. Was true.
-FAIL Array.prototype.indexOf.call(undefined, 0) should throw an exception. Was -1.
+PASS Array.prototype.concat.call(undefined, []) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.concat.call(undefined, [])').
+PASS Array.prototype.join.call(undefined, []) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.join.call(undefined, [])').
+PASS Array.prototype.pop.call(undefined) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.pop.call(undefined)').
+PASS Array.prototype.push.call(undefined, {}) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.push.call(undefined, {})').
+PASS Array.prototype.reverse.call(undefined) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.reverse.call(undefined)').
+PASS Array.prototype.shift.call(undefined) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.shift.call(undefined)').
+PASS Array.prototype.slice.call(undefined, 0, 1) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.slice.call(undefined, 0, 1)').
+PASS Array.prototype.sort.call(undefined) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.sort.call(undefined)').
+PASS Array.prototype.splice.call(undefined, 0, 1) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.splice.call(undefined, 0, 1)').
+PASS Array.prototype.unshift.call(undefined, {}) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.unshift.call(undefined, {})').
+PASS Array.prototype.every.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.every.call(undefined, toString)').
+PASS Array.prototype.forEach.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.forEach.call(undefined, toString)').
+PASS Array.prototype.some.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.some.call(undefined, toString)').
+PASS Array.prototype.indexOf.call(undefined, 0) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.indexOf.call(undefined, 0)').
 PASS Array.prototype.indlastIndexOfexOf.call(undefined, 0) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.indlastIndexOfexOf.call').
-FAIL Array.prototype.filter.call(undefined, toString) should throw an exception. Was [object Object].
-FAIL Array.prototype.reduce.call(undefined, toString) should throw an exception. Was [object Object].
-FAIL Array.prototype.reduceRight.call(undefined, toString) should throw an exception. Was [object Object].
-FAIL Array.prototype.map.call(undefined, toString) should throw an exception. Was [object Undefined].
+PASS Array.prototype.filter.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.filter.call(undefined, toString)').
+PASS Array.prototype.reduce.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.reduce.call(undefined, toString)').
+PASS Array.prototype.reduceRight.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.reduceRight.call(undefined, toString)').
+PASS Array.prototype.map.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.map.call(undefined, toString)').
 PASS successfullyParsed is true
 
 TEST COMPLETE
