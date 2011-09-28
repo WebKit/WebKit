@@ -68678,6 +68678,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\ContentSearchUtils.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ContentSearchUtils.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\DOMNodeHighlighter.cpp"
 				>
 			</File>

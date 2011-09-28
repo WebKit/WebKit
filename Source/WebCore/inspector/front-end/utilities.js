@@ -961,7 +961,7 @@ function revertDomChanges(domChanges)
 
 function createSearchRegex(query, extraFlags)
 {
-    // This should be kept the same as the one in InspectorPageAgent.cpp.
+    // This should be kept the same as the one in ContentSearchUtils.cpp.
     var regexSpecialCharacters = "[](){}+-*.,?\\^$|";
     var regex = "";
     for (var i = 0; i < query.length; ++i) {

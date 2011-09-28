@@ -853,6 +853,7 @@ SET(WebCore_SOURCES
     html/shadow/TextControlInnerElements.cpp
 
     inspector/ConsoleMessage.cpp
+    inspector/ContentSearchUtils.cpp
     inspector/DOMNodeHighlighter.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp

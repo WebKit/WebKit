@@ -1975,6 +1975,8 @@ webcore_sources += \
 	Source/WebCore/icu/unicode/uversion.h \
 	Source/WebCore/inspector/ConsoleMessage.cpp \
 	Source/WebCore/inspector/ConsoleMessage.h \
+	Source/WebCore/inspector/ContentSearchUtils.cpp \
+	Source/WebCore/inspector/ContentSearchUtils.h \
 	Source/WebCore/inspector/DOMNodeHighlighter.cpp \
 	Source/WebCore/inspector/DOMNodeHighlighter.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \

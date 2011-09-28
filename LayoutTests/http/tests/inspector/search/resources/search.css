@@ -1,0 +1,9 @@
+div.searchTestUniqueString {
+    background-color: red;
+}
+
+div.searchTestUniqueString:hover {
+    /* another searchTestUniqueString occurence */
+    background-color: red;
+}
+

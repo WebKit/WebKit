@@ -812,6 +812,7 @@ SOURCES += \
     html/shadow/SliderThumbElement.cpp \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
+    inspector/ContentSearchUtils.cpp \
     inspector/DOMNodeHighlighter.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
@@ -1804,6 +1805,7 @@ HEADERS += \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \
     inspector/ConsoleMessage.h \
+    inspector/ContentSearchUtils.h \
     inspector/DOMNodeHighlighter.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \

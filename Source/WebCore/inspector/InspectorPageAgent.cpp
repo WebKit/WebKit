@@ -39,6 +39,7 @@
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedScript.h"
+#include "ContentSearchUtils.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -67,11 +68,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-namespace {
-// This should be kept the same as the one in front-end/utilities.js
-static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
-}
 
 namespace PageAgentState {
 static const char pageAgentEnabled[] = "resourceAgentEnabled";
@@ -115,6 +111,12 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
     return true;
 }
 
+static bool hasTextContent(CachedResource* cachedResource)
+{
+    InspectorPageAgent::ResourceType type = InspectorPageAgent::cachedResourceType(*cachedResource);
+    return type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource;
+}
+
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
 {
     bool hasZeroSize;
@@ -122,9 +124,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     if (!prepared)
         return false;
 
-    ResourceType type = cachedResourceType(*cachedResource);
-    *base64Encoded = type != StylesheetResource && type != ScriptResource;
-
+    *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
         RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->data();
 
@@ -469,38 +469,20 @@ void InspectorPageAgent::getResourceContent(ErrorString* errorString, const Stri
     resourceContent(errorString, frame, KURL(ParsedURLString, url), content, base64Encoded);
 }
 
-static String createSearchRegexSource(const String& text)
+static bool textContentForCachedResource(CachedResource* cachedResource, String* result)
 {
-    String result;
-    const UChar* characters = text.characters();
-    String specials(regexSpecialCharacters);
-
-    for (unsigned i = 0; i < text.length(); i++) {
-        if (specials.find(characters[i]))
-            result.append("\\");
-        result.append(characters[i]);
+    if (hasTextContent(cachedResource)) {
+        String content;
+        bool base64Encoded;
+        if (InspectorPageAgent::cachedResourceContent(cachedResource, result, &base64Encoded)) {
+            ASSERT(!base64Encoded);
+            return true;
+        }
     }
-
-    return result;
+    return false;
 }
 
-static int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
-{
-    int result = 0;
-    int position;
-    unsigned start = 0;
-    int matchLength;
-    while ((position = regex.match(content, start, &matchLength)) != -1) {
-        if (start >= content.length())
-            break;
-        if (matchLength > 0)
-            ++result;
-        start = position + 1;
-    }
-    return result;
-}
-
-static PassRefPtr<InspectorObject> buildObjectForSearchMatch(const String& frameId, const String& url, int matchesCount)
+static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
 {
     RefPtr<InspectorObject> result = InspectorObject::create();
     result->setString("frameId", frameId);
@@ -515,35 +497,24 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
     RefPtr<InspectorArray> result = InspectorArray::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
-    String regexSource = isRegex ? text : createSearchRegexSource(text);
-
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-    RegularExpression regex(regexSource, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
+    RegularExpression regex = ContentSearchUtils::createSearchRegex(text, caseSensitive, isRegex);
 
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
         String content;
-        bool base64Encoded;
         Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
         for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
             CachedResource* cachedResource = *it;
-            switch (InspectorPageAgent::cachedResourceType(*cachedResource)) {
-            case InspectorPageAgent::StylesheetResource:
-            case InspectorPageAgent::ScriptResource:
-                if (cachedResourceContent(cachedResource, &content, &base64Encoded)) {
-                    ASSERT(!base64Encoded);
-                    int matchesCount = countRegularExpressionMatches(regex, content);
-                    if (matchesCount)
-                        result->pushValue(buildObjectForSearchMatch(frameId(frame), cachedResource->url(), matchesCount));
-                }
-                break;
-            default:
-                break;
+            if (textContentForCachedResource(cachedResource, &content)) {
+                int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
+                if (matchesCount)
+                    result->pushValue(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
             }
         }
         if (mainResourceContent(frame, false, &content)) {
-            int matchesCount = countRegularExpressionMatches(regex, content);
+            int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
             if (matchesCount)
-                result->pushValue(buildObjectForSearchMatch(frameId(frame), frame->document()->url(), matchesCount));
+                result->pushValue(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
         }
     }
 

@@ -2660,6 +2660,8 @@
             'icu/unicode/uversion.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',
+            'inspector/ContentSearchUtils.cpp',
+            'inspector/ContentSearchUtils.h',
             'inspector/DOMNodeHighlighter.cpp',
             'inspector/DOMNodeHighlighter.h',
             'inspector/IdentifiersFactory.cpp',
