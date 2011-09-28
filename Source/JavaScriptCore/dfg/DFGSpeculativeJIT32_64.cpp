@@ -601,8 +601,15 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case GetLocal: {
-        GPRTemporary result(this);
         PredictedType prediction = m_jit.graph().getPrediction(node.local());
+
+        // If we have no prediction for this local, then don't attempt to compile.
+        if (prediction == PredictNone) {
+            terminateSpeculativeExecution();
+            break;
+        }
+        
+        GPRTemporary result(this);
         VirtualRegister virtualRegister = node.virtualRegister();
         m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
         if (isInt32Prediction(prediction)) {

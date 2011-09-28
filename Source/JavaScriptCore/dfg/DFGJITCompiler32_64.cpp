@@ -95,16 +95,16 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x   ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
     exit.dump(stderr);
 #endif
-#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
-    breakpoint();
-#endif
-    
 #if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
     SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
     debugInfo->codeBlock = m_codeBlock;
     debugInfo->debugOffset = debugOffset();
     
     debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+#endif
+    
+#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
+    breakpoint();
 #endif
     
 #if ENABLE(DFG_SUCCESS_STATS)
@@ -522,8 +522,6 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
-
-    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 }
 
 void JITCompiler::compileBody()
@@ -533,6 +531,8 @@ void JITCompiler::compileBody()
     // Handy debug tool!
     breakpoint();
 #endif
+    
+    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 
     Label speculativePathBegin = label();
     SpeculativeJIT speculative(*this);

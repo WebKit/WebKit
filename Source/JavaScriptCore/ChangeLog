@@ -1,5 +1,21 @@
 2011-09-27  Gavin Barraclough  <barraclough@apple.com>
 
+        DFG JIT - merge changes between 95905 - 96175
+        https://bugs.webkit.org/show_bug.cgi?id=68963
+
+        Reviewed by Sam Weinig.
+
+        Merge missing changes from bug#68677, bug#68784, bug#68785.
+
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-09-27  Gavin Barraclough  <barraclough@apple.com>
+
         Get JSVALUE32_64 DFG JIT building on OS X.
         https://bugs.webkit.org/show_bug.cgi?id=68961
 
