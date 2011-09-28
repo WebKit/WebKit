@@ -58,6 +58,7 @@ void JIT::compileOpCallInitializeCallFrame()
 void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
 }
 

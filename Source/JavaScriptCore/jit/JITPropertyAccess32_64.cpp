@@ -144,6 +144,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     compileGetByIdHotPath();
     
     match.link(this);
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_method_check), dst, regT1, regT0);
     
@@ -216,6 +217,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
     
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_by_val), dst, regT1, regT0);
 }
@@ -247,6 +249,8 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     stubCall.addArgument(base);
     stubCall.addArgument(property);
     stubCall.call(dst);
+
+    emitValueProfilingSite(SubsequentProfilingSite);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
@@ -310,6 +314,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     compileGetByIdHotPath();
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_by_id), dst, regT1, regT0);
 }
@@ -353,6 +358,7 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
     int ident = currentInstruction[3].u.operand;
     
     compileGetByIdSlowCase(dst, base, &(m_codeBlock->identifier(ident)), iter);
+    emitValueProfilingSite(SubsequentProfilingSite);
 }
 
 void JIT::compileGetByIdSlowCase(int dst, int base, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck)
@@ -1017,6 +1023,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
     loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
 
     emitLoad(index, regT1, regT0, regT2);
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_scoped_var), dst, regT1, regT0);
 }
@@ -1058,6 +1065,7 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
     loadPtr(&globalObject->m_registers, regT2);
 
     emitLoad(index, regT1, regT0, regT2);
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_global_var), dst, regT1, regT0);
 }

@@ -1,3 +1,34 @@
+2011-09-27  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Value profiling in baseline JIT for JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=68750
+
+        Reviewed by Geoff Garen.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_div):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_get_global_var):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::callWithValueProfiling):
+
 2011-09-28  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Wrong integer checks in JSVALUE32_64 DFG JIT

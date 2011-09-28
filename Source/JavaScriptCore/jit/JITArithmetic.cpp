@@ -1048,7 +1048,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     }
     divDouble(fpRegT1, fpRegT0);
     
-#if ENABLE(DFG_JIT)
+#if ENABLE(VALUE_PROFILER)
     // Is the result actually an integer? The DFG JIT would really like to know. If it's
     // not an integer, we increment a count. If this together with the slow case counter
     // are below threshold then the DFG JIT will compile this division with a specualtion
