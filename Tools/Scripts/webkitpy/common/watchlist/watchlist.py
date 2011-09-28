@@ -54,9 +54,9 @@ class WatchList(object):
                 if definition in matching_definitions:
                     continue
 
-                # See if the definition matches.
+                # See if the definition matches within one file.
                 for pattern in self._definitions[definition]:
-                    if not pattern.match(path, diff_file):
+                    if not pattern.match(path, diff_file.lines):
                         break
                 else:
                     matching_definitions.add(definition)

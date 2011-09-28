@@ -139,3 +139,80 @@ class WatchListTest(unittest.TestCase):
                 'cc_set': set(),
                 'messages': set(),
                 }, cc_set_and_messages)
+
+    def test_added_match(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "in_added_lines": r"RenderStyle::initialBoxOrient",'
+            '        },'
+            '        "WatchList2": {'
+            '            "in_deleted_lines": r"RenderStyle::initialBoxOrient",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": [ "eric@webkit.org", ],'
+            '        "WatchList2": [ "abarth@webkit.org", ],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['eric@webkit.org']),
+                'messages': set(),
+                }, cc_set_and_messages)
+
+    def test_deleted_match(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "in_added_lines": r"unsigned orient: 1;",'
+            '        },'
+            '        "WatchList2": {'
+            '            "in_deleted_lines": r"unsigned orient: 1;",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": [ "eric@webkit.org", ],'
+            '        "WatchList2": [ "abarth@webkit.org", ],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['abarth@webkit.org']),
+                'messages': set(),
+                }, cc_set_and_messages)
+
+    def test_complex_match(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"WebCore/rendering/style/StyleRareInheritedData\.cpp",'
+            '            "in_added_lines": r"\&\& boxOrient == o.boxOrient;",'
+            '            "in_deleted_lines": r"\&\& userSelect == o.userSelect;",'
+            '        },'
+            '        "WatchList2": {'
+            '            "filename": r"WebCore/rendering/style/StyleRareInheritedData\.cpp",'
+            '            "in_added_lines": r"RenderStyle::initialBoxOrient",'
+            '        },'
+            # WatchList3 won't match because these two patterns aren't in the same file.
+            '        "WatchList3": {'
+            '            "in_added_lines": r"RenderStyle::initialBoxOrient",'
+            '            "in_deleted_lines": r"unsigned orient: 1;",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": [ "eric@webkit.org", ],'
+            '        "WatchList3": [ "abarth@webkit.org", ],'
+            '    },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList2": ["This is a test message."],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['eric@webkit.org']),
+                'messages': set(["This is a test message."]),
+                }, cc_set_and_messages)

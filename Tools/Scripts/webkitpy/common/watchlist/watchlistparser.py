@@ -27,8 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-from webkitpy.common.watchlist.watchlist import WatchList
+from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
+from webkitpy.common.watchlist.watchlist import WatchList
 from webkitpy.common.watchlist.watchlistrule import WatchListRule
 
 
@@ -44,7 +45,11 @@ class WatchListParser(object):
             self._CC_RULES: self._parse_cc_rules,
             self._MESSAGE_RULES: self._parse_message_rules,
             }
-        self._definition_pattern_parsers = {'filename': FilenamePattern, }
+        self._definition_pattern_parsers = {
+            'filename': FilenamePattern,
+            'in_added_lines': (lambda regex: ChangedLinePattern(regex, 0)),
+            'in_deleted_lines': (lambda regex: ChangedLinePattern(regex, 1)),
+            }
 
     def parse(self, watch_list_contents):
         watch_list = WatchList()
