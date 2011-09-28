@@ -62,6 +62,8 @@ controllers.ResultsDetails = base.extends(Object, {
         this._resultsByTest = resultsByTest;
         this._view.setResultsByTest(resultsByTest);
 
+        this._view.firstResult();
+
         $(this._view).bind('next', this.onNext.bind(this));
         $(this._view).bind('previous', this.onPrevious.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
