@@ -289,7 +289,7 @@ class BuildBotTest(unittest.TestCase):
             "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
             "Chromium.*(Mac|Linux|Win).*Release$",
-            "Chromium.*(Mac|Linux).*Release.*\(Tests",
+            "Chromium.*(Mac|Linux|Win).*Release.*\(Tests",
         ]
         expected_builders = [
             {'name': u'Leopard Intel Release (Build)', },
@@ -312,6 +312,7 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Qt Windows 32-bit Release', },
             {'name': u'Qt Windows 32-bit Debug', },
             {'name': u'Chromium Win Release', },
+            {'name': u'Chromium Win Release (Tests)', },
             {'name': u'Chromium Mac Release', },
             {'name': u'Chromium Mac Release (Tests)', },
             {'name': u'Chromium Linux Release', },

@@ -305,7 +305,7 @@ class BuildBot(object):
             "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
             "Chromium.*(Mac|Linux|Win).*Release$",
-            "Chromium.*(Mac|Linux).*Release.*\(Tests",
+            "Chromium.*(Mac|Linux|Win).*Release.*\(Tests",
         ]
 
     def _parse_last_build_cell(self, builder, cell):
