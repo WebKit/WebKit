@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/buffer-loader.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that WaveShaperNode applies proper non-linear distortion.");
+
+var sampleRate = 44100;
+var lengthInSeconds = 4;
+var numberOfRenderFrames = sampleRate * lengthInSeconds;
+var numberOfCurveFrames = 65536;
+var inputBuffer;
+var waveShapingCurve;
+
+var context;
+
+function generateInputBuffer() {
+    // Create mono input buffer.
+    var buffer = context.createBuffer(1, numberOfRenderFrames, context.sampleRate);
+    var data = buffer.getChannelData(0);
+    
+    // Generate an input vector with values from -1 -> +1 over a duration of lengthInSeconds.
+    // This exercises the full nominal input range and will touch every point of the shaping curve.
+    for (var i = 0; i < numberOfRenderFrames; ++i) {
+        var x = i / numberOfRenderFrames; // 0 -> 1
+        x = 2 * x - 1; // -1 -> +1
+        data[i] = x;
+    }
+
+    return buffer;
+}
+
+// Generates a symmetric curve: Math.atan(5 * x) / (0.5 * Math.PI)
+// (with x == 0 corresponding to the center of the array)
+// This curve is arbitrary, but would be useful in the real-world.
+// To some extent, the actual curve we choose is not important in this test,
+// since the input vector walks through all possible curve values.
+function generateWaveShapingCurve() {
+    var curve = new Float32Array(numberOfCurveFrames);
+    
+    var n = numberOfCurveFrames;
+    var n2 = n / 2;
+    
+    for (var i = 0; i < n; ++i) {
+        var x = (i - n2) / n2;
+        var y = Math.atan(5 * x) / (0.5 * Math.PI);
+    }
+
+    return curve;
+}
+
+function checkShapedCurve(event) {
+    var buffer = event.renderedBuffer;
+
+    var inputData = inputBuffer.getChannelData(0);
+    var outputData = buffer.getChannelData(0);
+
+    var success = true;
+    
+    // Go through every sample and make sure it has been shaped exactly according to the shaping curve we gave it.
+    for (var i = 0; i < buffer.length; ++i) {
+        var input = inputData[i];
+        
+        // Calculate an index based on input -1 -> +1 with 0 being at the center of the curve data.
+        var index = Math.floor(numberOfCurveFrames * 0.5 * (input + 1));
+
+        // Clip index to the input range of the curve.
+        // This takes care of input outside of nominal range -1 -> +1
+        index = index < 0 ? 0 : index;
+        index = index > numberOfCurveFrames - 1 ? numberOfCurveFrames - 1 : index;
+
+        var expectedOutput = waveShapingCurve[index];
+        
+        var output = outputData[i];
+        
+        if (output != expectedOutput) {
+            success = false;
+            break;
+        }
+    }
+
+    if (success) {
+        testPassed("WaveShaperNode properly applied non-linear distortion.");
+    } else {
+        testFailed("WaveShaperNode did not properly apply non-linear distortion.");
+    }
+
+    finishJSTest();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create offline audio context.
+    context = new webkitAudioContext(1, numberOfRenderFrames, sampleRate);
+    
+    // source -> waveshaper -> destination
+    var source = context.createBufferSource();
+    var waveshaper = context.createWaveShaper();
+    source.connect(waveshaper);
+    waveshaper.connect(context.destination);
+
+    // Create an input test vector.
+    inputBuffer = generateInputBuffer();
+    source.buffer = inputBuffer;
+    
+    // We'll apply non-linear distortion according to this shaping curve.
+    waveShapingCurve = generateWaveShapingCurve();
+    waveshaper.curve = waveShapingCurve;
+    
+    source.noteOn(0);
+    
+    context.oncomplete = checkShapedCurve;
+    context.startRendering();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
