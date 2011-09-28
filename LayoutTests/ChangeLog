@@ -1,3 +1,12 @@
+2011-09-28  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        [WK2] SVG animation pause API missing
+        https://bugs.webkit.org/show_bug.cgi?id=63396
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/wk2/Skipped: Skip svg/animations/animate-from-to-keyTimes.html.
+
 2011-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for new tests.
