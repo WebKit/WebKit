@@ -1,6 +1,8 @@
 <html>
     <head>
         <script>
+            var onPasteEventFired = false;
+
             function test() {
                 if (window.layoutTestController)
                     layoutTestController.dumpAsText();
@@ -8,12 +10,14 @@
                 var result = document.getElementById("result");
                 window.getSelection().setBaseAndExtent(result, 0, result, 7);
                 document.execCommand("Cut");
-                if (window.textInputController)
+                if (window.textInputController) {
                     textInputController.doCommand("pasteAsPlainText:");
+                    if (onPasteEventFired)
+                        result.innerText = "SUCCESS";
+                }
             }
             function onpastehandler(event) {
-                var e = document.getElementById("result");
-                e.innerText = "SUCCESS";
+                onPasteEventFired = true;
             }
         </script>
     </head>

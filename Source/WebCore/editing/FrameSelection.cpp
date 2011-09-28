@@ -352,9 +352,22 @@ void FrameSelection::respondToNodeModification(Node* node, bool baseRemoved, boo
     bool clearDOMTreeSelection = false;
 
     if (startRemoved || endRemoved) {
-        // FIXME: When endpoints are removed, we should just alter the selection, instead of blowing it away.
+        Position start = m_selection.start();
+        Position end = m_selection.end();
+        if (startRemoved)
+            updatePositionForNodeRemoval(start, node);
+        if (endRemoved)
+            updatePositionForNodeRemoval(end, node);
+
+        if (start.isNotNull() && end.isNotNull()) {
+            if (m_selection.isBaseFirst())
+                m_selection.setWithoutValidation(start, end);
+            else
+                m_selection.setWithoutValidation(end, start);
+        } else
+            clearDOMTreeSelection = true;
+
         clearRenderTreeSelection = true;
-        clearDOMTreeSelection = true;
     } else if (baseRemoved || extentRemoved) {
         // The base and/or extent are about to be removed, but the start and end aren't.
         // Change the base and extent to the start and end, but don't re-validate the
@@ -383,25 +396,22 @@ void FrameSelection::respondToNodeModification(Node* node, bool baseRemoved, boo
         setSelection(VisibleSelection(), 0);
 }
 
-enum EndPointType { EndPointIsStart, EndPointIsEnd };
-
-static bool shouldRemovePositionAfterAdoptingTextReplacement(Position& position, EndPointType type, CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+static void updatePositionAfterAdoptingTextReplacement(Position& position, CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
     if (!position.anchorNode() || position.anchorNode() != node || position.anchorType() != Position::PositionIsOffsetInAnchor)
-        return false;
+        return;
 
+    // See: http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Mutation
     ASSERT(position.offsetInContainerNode() >= 0);
     unsigned positionOffset = static_cast<unsigned>(position.offsetInContainerNode());
-    if (positionOffset > offset && positionOffset < offset + oldLength)
-        return true;
+    // Replacing text can be viewed as a deletion followed by insertion.
+    if (positionOffset >= offset && positionOffset <= offset + oldLength)
+        position.moveToOffset(offset);
 
-    // Adjust the offset if the position is after or at the end of the deleted contents (positionOffset >= offset + oldLength)
-    // to avoid having a stale offset except when the position is the end of selection and nothing is deleted, in which case,
-    // adjusting offset results in incorrectly extending the selection until the end of newly inserted contents.
-    if ((positionOffset > offset + oldLength) || (positionOffset == offset + oldLength && (type == EndPointIsStart || oldLength)))
+    // Adjust the offset if the position is after the end of the deleted contents
+    // (positionOffset > offset + oldLength) to avoid having a stale offset.
+    if (positionOffset > offset + oldLength)
         position.moveToOffset(positionOffset - oldLength + newLength);
-
-    return false;
 }
 
 void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
@@ -414,28 +424,17 @@ void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, un
     Position extent = m_selection.extent();
     Position start = m_selection.start();
     Position end = m_selection.end();
-    bool shouldRemoveBase = shouldRemovePositionAfterAdoptingTextReplacement(base, m_selection.isBaseFirst() ? EndPointIsStart : EndPointIsEnd, node, offset, oldLength, newLength);
-    bool shouldRemoveExtent = shouldRemovePositionAfterAdoptingTextReplacement(extent, m_selection.isBaseFirst() ? EndPointIsEnd : EndPointIsStart, node, offset, oldLength, newLength);
-    bool shouldRemoveStart = shouldRemovePositionAfterAdoptingTextReplacement(start, EndPointIsStart, node, offset, oldLength, newLength);
-    bool shouldRemoveEnd = shouldRemovePositionAfterAdoptingTextReplacement(end, EndPointIsEnd, node, offset, oldLength, newLength);
+    updatePositionAfterAdoptingTextReplacement(base, node, offset, oldLength, newLength);
+    updatePositionAfterAdoptingTextReplacement(extent, node, offset, oldLength, newLength);
+    updatePositionAfterAdoptingTextReplacement(start, node, offset, oldLength, newLength);
+    updatePositionAfterAdoptingTextReplacement(end, node, offset, oldLength, newLength);
 
-    if ((base != m_selection.base() || extent != m_selection.extent() || start != m_selection.start() || end != m_selection.end())
-        && !shouldRemoveStart && !shouldRemoveEnd) {
+    if (base != m_selection.base() || extent != m_selection.extent() || start != m_selection.start() || end != m_selection.end()) {
         VisibleSelection newSelection;
-        if (!shouldRemoveBase && !shouldRemoveExtent)
-            newSelection.setWithoutValidation(base, extent);
-        else {
-            if (newSelection.isBaseFirst())
-                newSelection.setWithoutValidation(start, end);
-            else
-                newSelection.setWithoutValidation(end, start);
-        }
+        newSelection.setWithoutValidation(base, extent);
         m_frame->document()->updateLayout();
         setSelection(newSelection, 0);
-        return;
     }
-
-    respondToNodeModification(node, shouldRemoveBase, shouldRemoveExtent, shouldRemoveStart, shouldRemoveEnd);
 }
 
 TextDirection FrameSelection::directionOfEnclosingBlock()

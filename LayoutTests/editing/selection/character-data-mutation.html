@@ -60,32 +60,32 @@ function runTestPairs(actor, expectedStartOffset, expectedEndOffset, skipEnd) {
 }
 
 function runTests() {
-    runTestPairs(function() { test.removeChild(test.firstChild); return 'Removing the parent of startContainer'; }, undefined, undefined, true);
-    runTestPairs(function(node, nodeName) { node.nodeValue = 'a'; return 'Replacing nodeValue of ' + nodeName; }, undefined, undefined);
+    runTestPairs(function() { test.removeChild(test.firstChild); return 'Removing the parent of startContainer'; }, 0, undefined, true);
+    runTestPairs(function(node, nodeName) { node.nodeValue = 'a'; return 'Replacing nodeValue of ' + nodeName; }, 0, 0);
     runTestPairs(function(node, nodeName) { node.appendData(' WebKit'); return 'Appending " WebKit" to ' + nodeName; }, 2, 3);
 
     runTestPairs(function(node, nodeName) { node.insertData(2, 'WebKit ');
-        return 'Inserting " WebKit" to ' + nodeName + ' before the end point'; }, 9, 10);
+        return 'Inserting " WebKit" to ' + nodeName + ' before the end point'; }, 2, 10);
     runTestPairs(function(node, nodeName) { node.insertData(3, 'WebKit ');
         return 'Inserting " WebKit" to ' + nodeName + ' after the end point'; }, 2, 3);
 
     runTestPairs(function(node, nodeName) { node.deleteData(1, 4);
-        return 'Removing text in ' + nodeName + ' containing the end point'; }, undefined, undefined);
+        return 'Removing text in ' + nodeName + ' containing the end point'; }, 1, 1);
     runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
-        return 'Removing text in ' + nodeName + ' containing the start point'; }, undefined, 0);
+        return 'Removing text in ' + nodeName + ' containing the start point'; }, 0, 0);
     runTestPairs(function(node, nodeName) { node.deleteData(0, 2);
         return 'Removing 2 characters in ' + nodeName + ' before the end point'; }, 0, 1);
     runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
-        return 'Removing 3 characters at the beginning of ' + nodeName; }, undefined, 0);
+        return 'Removing 3 characters at the beginning of ' + nodeName; }, 0, 0);
     runTestPairs(function(node, nodeName) { node.deleteData(3, 2);
         return 'Removing text in ' + nodeName + ' after the end point'; }, 2, 3);
 
     runTestPairs(function(node, nodeName) { node.replaceData(1, 4, '1234');
-        return 'Replacing text in ' + nodeName + ' containing the end point'; }, undefined, undefined);
+        return 'Replacing text in ' + nodeName + ' containing the end point'; }, 1, 1);
     runTestPairs(function(node, nodeName) { node.replaceData(0, 2, '12');
-        return 'Replacing 2 characters in ' + nodeName + ' by 2 characters before the end point'; }, 2, 3);
+        return 'Replacing 2 characters in ' + nodeName + ' by 2 characters before the end point'; }, 0, 3);
     runTestPairs(function(node, nodeName) { node.replaceData(0, 2, '1');
-        return 'Replacing 2 characters in ' + nodeName + ' by 1 characters before the end point'; }, 1, 2);
+        return 'Replacing 2 characters in ' + nodeName + ' by 1 characters before the end point'; }, 0, 2);
     runTestPairs(function(node, nodeName) { node.replaceData(3, 2, '12');
         return 'Replacing 2 characters in ' + nodeName + ' by 2 characters after the end point'; }, 2, 3);
 }

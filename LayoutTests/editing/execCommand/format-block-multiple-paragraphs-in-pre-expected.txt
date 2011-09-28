@@ -71,5 +71,6 @@ Formatting all but the first paragraph by h3 yields:
 |     "
 "
 |     "webkit"
+|   <#selection-caret>
 | "
 "

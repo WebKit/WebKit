@@ -7,6 +7,7 @@ After removeFormat:
 |   "food<#selection-focus>"
 
 After extractContents():
-| ""
+| "<#selection-anchor>"
 | <a>
 |   href="http://www.google.com/"
+|   <#selection-focus>

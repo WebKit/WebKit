@@ -3,11 +3,9 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 3 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 4 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 3 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests pasting text into a table cell.  The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.
 

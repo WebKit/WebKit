@@ -1,0 +1,38 @@
+This test ensures WebKit adjusts the selection under document mutation.
+
+Examples are from:
+http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Mutation
+
+Base is first
+
+Insertion tests:
+PASS: selection is (24, 32) "Y blah i"
+PASS: selection is (11, 32) "inserted textY blah i"
+PASS: selection is (11, 32) "Yinserted text blah i"
+PASS: selection is (11, 32) "Y blahinserted text i"
+PASS: selection is (11, 19) "Y blah i"
+
+Deletion tests:
+PASS: selection is (5, 13) "Range i"
+PASS: selection is (5, 5) ""
+PASS: selection is (5, 15) "he Range i"
+PASS: selection is (1, 1) ""
+
+
+Extent is first
+
+Insertion tests:
+PASS: selection is (24, 32) "Y blah i"
+PASS: selection is (11, 32) "inserted textY blah i"
+PASS: selection is (11, 32) "Yinserted text blah i"
+PASS: selection is (11, 32) "Y blahinserted text i"
+PASS: selection is (11, 19) "Y blah i"
+
+Deletion tests:
+PASS: selection is (5, 13) "Range i"
+PASS: selection is (5, 5) ""
+PASS: selection is (5, 15) "he Range i"
+PASS: selection is (1, 1) ""
+
+DONE
+

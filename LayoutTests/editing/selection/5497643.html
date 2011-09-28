@@ -1,4 +1,4 @@
-<p>This tests to make sure that a selection inside a textarea is cleared when the textarea is removed from the document.  Not clearing it led to crashes.</p>
+<p>This tests to make sure that a selection inside a textarea is updated when the textarea is removed from the document.</p>
 <textarea id="textarea"></textarea>
 <script>
 if (window.layoutTestController)
@@ -6,8 +6,10 @@ if (window.layoutTestController)
 textarea = document.getElementById("textarea");
 textarea.setSelectionRange(0, 0);
 textarea.parentNode.removeChild(textarea);
-if (window.getSelection().type != "None")
-    alert("FAILURE: There shouldn't be a selection.")
+if (window.getSelection().type == 'Caret' &&
+    window.getSelection().getRangeAt(0).startContainer == document.body && 
+    window.getSelection().getRangeAt(0).startOffset == 2)
+    alert("SUCCESS: Selection is set to position 2 of BODY.")
 else
-    alert("SUCCESS: The selection was cleared.")
+    alert("FAILURE: The selection is not set correctly after textarea was deleted.")
 </script>

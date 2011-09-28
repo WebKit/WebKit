@@ -42,7 +42,6 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > DIV > BODY > HTML > #document to 2 of P > DIV > BODY > HTML > #document toDOMRange:range from 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document to 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 | "
 "

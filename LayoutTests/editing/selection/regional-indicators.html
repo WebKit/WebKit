@@ -20,6 +20,7 @@ shouldBe("document.getSelection().toString()", "'🇯🇵'");
 
 div.innerText = "🇯🇵🇯🇵";
 afterLastIndicator.setStart(div.firstChild, 8);
+getSelection().removeAllRanges();
 document.getSelection().addRange(afterLastIndicator);
 document.getSelection().modify("extend", "left", "character");
 shouldBe("document.getSelection().toString()", "'🇯🇵'");

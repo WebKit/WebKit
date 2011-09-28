@@ -1,3 +1,25 @@
+2011-09-28  Una Sabovic  <una.sabovic@palm.com>
+
+        Setting innerText to an empty string on editable div loses focus
+        https://bugs.webkit.org/show_bug.cgi?id=62092
+
+        Reviewed by Ryosuke Niwa.
+
+        When selection start or end node is being deleted do not clear the selection.
+        Instead update the start/end position to an equivalent parent-anchored positions.
+        When text is inserted/deleted update selection per range modification spec:
+        http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Mutation
+
+        Tests: editing/selection/document-mutation.html
+               editing/selection/editable-div-clear-on-keydown.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification):
+        (WebCore::updatePositionAfterAdoptingTextReplacement):
+        (WebCore::FrameSelection::textWillBeReplaced):
+        * editing/htmlediting.cpp:
+        (WebCore::updatePositionForNodeRemoval):
+
 2011-09-28  Joseph Pecoraro  <joepeck@webkit.org>
 
         FTPDirectoryDocument Shows Garbled String for Last Modified Date
