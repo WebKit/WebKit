@@ -1,3 +1,15 @@
+2011-09-28  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [Gtk] Implement textInputController.doCommand
+        https://bugs.webkit.org/show_bug.cgi?id=66496
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::doCommand): Function definition for doCommand 
+        callback. Converted Incoming command to match with WebCore::Editor CommandMap.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reorganize header files

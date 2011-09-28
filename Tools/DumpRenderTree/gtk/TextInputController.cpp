@@ -162,6 +162,25 @@ static JSValueRef selectedRangeCallback(JSContextRef context, JSObjectRef functi
     return arrayObject;
 }
 
+static JSValueRef doCommandCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSStringRef string = JSValueToStringCopy(context, arguments[0], exception);
+    ASSERT(!exception || !*exception);
+
+    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
+    GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    JSStringGetUTF8CString(string, stringBuffer.get(), bufferSize);
+    JSStringRelease(string);
+
+    DumpRenderTreeSupportGtk::doCommand(view, stringBuffer.get());
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "setMarkedText", setMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "hasMarkedText", hasMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -170,6 +189,7 @@ static JSStaticFunction staticFunctions[] = {
     { "unmarkText", unmarkTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "firstRectForCharacterRange", firstRectForCharacterRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "selectedRange", selectedRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "doCommand", doCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

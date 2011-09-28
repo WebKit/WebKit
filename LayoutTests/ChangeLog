@@ -1,3 +1,14 @@
+2011-09-28  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [Gtk] Implement textInputController.doCommand
+        https://bugs.webkit.org/show_bug.cgi?id=66496
+
+        Reviewed by Martin Robinson.
+
+        Removed skipped tests under textInputController.doCommand for Gtk Port.
+
+        * platform/gtk/Skipped:
+
 2011-09-28  Tom Sepez  <tsepez@chromium.org>
 
         Revert change which broke displaying end script tags in view-source, instead

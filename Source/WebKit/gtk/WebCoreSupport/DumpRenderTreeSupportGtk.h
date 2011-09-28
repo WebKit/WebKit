@@ -109,7 +109,7 @@ public:
     static void confirmComposition(WebKitWebView*, const char*);
     static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, cairo_rectangle_int_t*);
     static bool selectedRange(WebKitWebView*, int* start, int* length);
-
+    static void doCommand(WebKitWebView*, const char*);
     // GC
     static void gcCollectJavascriptObjects();
     static void gcCollectJavascriptObjectsOnAlternateThread(bool waitUntilDone);
