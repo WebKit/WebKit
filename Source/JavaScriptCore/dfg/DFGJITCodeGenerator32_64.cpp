@@ -173,7 +173,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         JITCompiler::Jump hasUnboxedDouble;
 
         if (info.registerFormat() != DataFormatJSInteger) {
-            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, TrustedImm32(JSValue::Int32Tag));
+            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
             m_jit.jitAssertIsJSDouble(tagGPR);
             unboxDouble(tagGPR, payloadGPR, fpr, virtualRegister);
             hasUnboxedDouble = m_jit.jump();

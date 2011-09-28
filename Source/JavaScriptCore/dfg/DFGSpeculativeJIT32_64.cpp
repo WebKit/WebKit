@@ -270,7 +270,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         JITCompiler::Jump hasUnboxedDouble;
 
         if (info.registerFormat() != DataFormatJSInteger) {
-            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, TrustedImm32(JSValue::Int32Tag));
+            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
             speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
             unboxDouble(tagGPR, payloadGPR, fpr, virtualRegister);
             hasUnboxedDouble = m_jit.jump();
