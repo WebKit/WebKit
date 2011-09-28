@@ -146,10 +146,8 @@ void SVGResourcesCache::clientUpdatedFromElement(RenderObject* renderer, const R
     cache->addResourcesFromRenderObject(renderer, newStyle);
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
-    if (!resources)
-        return;
-
-    resources->removeClientFromCache(renderer);
+    if (resources && resources->filter())
+        resources->removeClientFromCache(renderer);
 }
 
 void SVGResourcesCache::clientDestroyed(RenderObject* renderer)
