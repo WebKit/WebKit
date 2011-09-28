@@ -1,3 +1,9 @@
+2011-09-28  David Levin  <levin@chromium.org>
+
+        Attempt fix for Leopard python unit test run.
+
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+
 2011-09-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         REGRESSION(r95573): Crash when loading SVG documents in a flattened frame or any SVG document in Chromium/Mac.

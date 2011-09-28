@@ -44,7 +44,7 @@ class WatchListParserTest(unittest.TestCase):
         try:
             callable(*args)
             self.assertTrue(False, 'No assert raised.')
-        except Exception as exception:
+        except Exception, exception:
             self.assertTrue(re.match(regex_message, exception.__str__()),
                             'Expected regex "%s"\nGot "%s"' % (regex_message, exception.__str__()))
 
