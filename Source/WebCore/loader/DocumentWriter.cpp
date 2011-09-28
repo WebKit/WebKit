@@ -67,7 +67,7 @@ DocumentWriter::DocumentWriter(Frame* frame)
 void DocumentWriter::replaceDocument(const String& source)
 {
     m_frame->loader()->stopAllLoaders();
-    begin(m_frame->document()->url(), true, m_frame->document()->securityOrigin());
+    begin(m_frame->document()->url(), true, InheritSecurityOrigin);
 
     if (!source.isNull()) {
         if (!m_hasReceivedSomeData) {
@@ -106,11 +106,9 @@ PassRefPtr<Document> DocumentWriter::createDocument(const KURL& url)
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());
 }
 
-void DocumentWriter::begin(const KURL& urlReference, bool dispatch, SecurityOrigin* origin)
+void DocumentWriter::begin(const KURL& urlReference, bool dispatch, SecurityOriginSource originSource)
 {
-    // We need to take a reference to the security origin because |clear|
-    // might destroy the document that owns it.
-    RefPtr<SecurityOrigin> forcedSecurityOrigin = origin;
+    RefPtr<Document> oldDocument = m_frame->document();
 
     // We grab a local copy of the URL because it's easy for callers to supply
     // a URL that will be deallocated during the execution of this function.
@@ -139,8 +137,10 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, SecurityOrig
 
     if (m_decoder)
         document->setDecoder(m_decoder.get());
-    if (forcedSecurityOrigin)
-        document->setSecurityOrigin(forcedSecurityOrigin.get());
+    if (originSource == InheritSecurityOrigin) {
+        document->setCookieURL(oldDocument->cookieURL());
+        document->setSecurityOrigin(oldDocument->securityOrigin());
+    }
 
     m_frame->domWindow()->setURL(document->url());
     m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());

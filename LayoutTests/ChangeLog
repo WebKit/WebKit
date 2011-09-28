@@ -1,3 +1,14 @@
+2011-09-28  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        JavaScript generated documents don't inherit the cookie URL
+        https://bugs.webkit.org/show_bug.cgi?id=69003
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/cookies/cookie-theft-with-javascript-doc-expected.txt: Added.
+        * http/tests/security/cookies/cookie-theft-with-javascript-doc.html: Added.
+        * http/tests/security/cookies/resources/innocent-victim-with-cookies.html: Added.
+
 2011-09-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         REGRESSION(r95573): Crash when loading SVG documents in a flattened frame or any SVG document in Chromium/Mac.

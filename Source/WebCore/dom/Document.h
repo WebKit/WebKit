@@ -823,6 +823,7 @@ public:
     //    inherits its cookieURL but not its URL.
     //
     const KURL& cookieURL() const { return m_cookieURL; }
+    void setCookieURL(const KURL& url) { m_cookieURL = url; }
 
     // The firstPartyForCookies is used to compute whether this document
     // appears in a "third-party" context for the purpose of third-party
