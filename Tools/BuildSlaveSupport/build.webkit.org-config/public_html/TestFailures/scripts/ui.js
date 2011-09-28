@@ -73,7 +73,7 @@ ui.onebar = base.extends('div', {
             'failures',
         ]
         this._tabs = $(this).tabs({
-            disabled: [1, 2],
+            disabled: [1, 2, 3],
         });
     },
     attach: function()

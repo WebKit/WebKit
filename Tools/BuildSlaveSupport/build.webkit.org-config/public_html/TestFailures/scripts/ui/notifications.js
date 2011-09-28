@@ -80,6 +80,10 @@ ui.notifications.Notification = base.extends('li', {
 ui.notifications.Info = base.extends(ui.notifications.Notification, {
     init: function(message)
     {
+        this.update(message);
+    },
+    update: function(message)
+    {
         this._what.textContent = message;
     }
 });

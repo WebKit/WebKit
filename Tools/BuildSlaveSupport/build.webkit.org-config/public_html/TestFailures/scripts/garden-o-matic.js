@@ -38,19 +38,23 @@ var g_failingBuilders = null;
 function update()
 {
     // FIXME: This should be a button with a progress element.
-    var updating = new ui.notifications.Info('Updating ...');
+    var numberOfTestsAnalyzed = 0;
+    var updating = new ui.notifications.Info('Loading commit data ...');
 
     g_info.add(updating);
 
     builders.buildersFailingStepRequredForTestCoverage(g_failingBuilders.update.bind(g_failingBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
-        model.analyzeUnexpectedFailures(g_unexpectedFailuresController.update.bind(g_unexpectedFailuresController), function() {
+        updating.update('Analyzing test failures ...');
+
+        model.analyzeUnexpectedFailures(function(failureAnalysis) {
+            updating.update('Analyzing test failures ... ' + ++numberOfTestsAnalyzed + ' tests analyzed.');
+            g_unexpectedFailuresController.update(failureAnalysis);
+        }, function() {
             g_unexpectedFailuresController.purge();
             updating.dismiss();
         });
-
-        model.analyzeExpectedOrUnexpectedFailures(g_failuresController.update.bind(g_failuresController));
     });
 }
 
