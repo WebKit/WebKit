@@ -1,3 +1,12 @@
+2011-09-28  Kenji Imasaki  <imasaki@chromium.org>
+
+        [Chromium] remove a passing test from the test expectation file.
+        https://bugs.webkit.org/show_bug.cgi?id=69008
+
+        Reviewed by David Levin.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-28  Mihai Parparita  <mihaip@chromium.org>
 
         Rebaseline svg/filters/animate-fill.svg for Chromium.
