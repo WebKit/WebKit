@@ -919,14 +919,17 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     _updateSelectionOnStartEditing: function()
     {
-        // focust() needs to go first for the case when the last selection was inside the editor and
+        // focus() needs to go first for the case when the last selection was inside the editor and
         // the "Edit" button was clicked. In this case we bail at the check below, but the
         // editor does not receive the focus, thus "Esc" does not cancel editing until at least
         // one change has been made to the editor contents.
         this._container.focus();
         var selection = window.getSelection();
-        if (selection.rangeCount && this._container.isAncestor(selection.getRangeAt(0).commonAncestorContainer))
-            return;
+        if (selection.rangeCount) {
+            var commonAncestorContainer = selection.getRangeAt(0).commonAncestorContainer;
+            if (this._container === commonAncestorContainer || this._container.isAncestor(commonAncestorContainer))
+                return;
+        }
 
         selection.removeAllRanges();
         var range = document.createRange();
