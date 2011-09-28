@@ -3790,4 +3790,4 @@ BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/text-rotated-gradient.svg = IMAGE
-BUGWK68970 MAC CPU-CG : svg/text/selection-background-color.xhtml = IMAGE
+BUGWK68970 MAC CPU-CG RELEASE : svg/text/selection-background-color.xhtml = IMAGE
