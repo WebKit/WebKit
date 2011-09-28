@@ -16,7 +16,7 @@ function onload()
 
 function inspectorIsReady()
 {
-    times.push(Date() - startTime);
+    times.push(Date.now() - startTime);
     if (Date.now() - testStartTime > 20000) {
         layoutTestController.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', " + JSON.stringify(times) + ")")
         layoutTestController.evaluateInWebInspector(3, "(InspectorTest.completeTest())")
