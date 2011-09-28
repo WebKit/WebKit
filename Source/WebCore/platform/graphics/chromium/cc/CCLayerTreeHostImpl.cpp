@@ -98,11 +98,6 @@ const LayerRendererCapabilities& CCLayerTreeHostImpl::layerRendererCapabilities(
     return m_layerRenderer->capabilities();
 }
 
-TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
-{
-    return m_layerRenderer->contentsTextureAllocator();
-}
-
 void CCLayerTreeHostImpl::present()
 {
     ASSERT(m_layerRenderer && !isContextLost());
@@ -139,8 +134,12 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
         layerRenderer = LayerRendererChromium::create(this, context);
     }
 
-    if (m_layerRenderer)
+    // If we had a previous layer renderer, then its context must have been lost along with all of its resources.
+    // Let the old layer renderer known its resources are gone.
+    if (m_layerRenderer) {
+        m_layerRenderer->setContentsTextureMemoryUseBytes(0);
         m_layerRenderer->close();
+    }
 
     m_layerRenderer = layerRenderer.release();
     return m_layerRenderer;

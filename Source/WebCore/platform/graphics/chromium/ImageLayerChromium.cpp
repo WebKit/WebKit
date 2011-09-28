@@ -66,9 +66,9 @@ public:
         m_texSubImage.setSubImageSize(tileSize);
     }
 
-    virtual void updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    virtual void updateTextureRect(GraphicsContext3D* context, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
-        texture->bindTexture(context, allocator);
+        texture->bindTexture(context);
 
         // Source rect should never go outside the image pixels, even if this
         // is requested because the texture extends outside the image.

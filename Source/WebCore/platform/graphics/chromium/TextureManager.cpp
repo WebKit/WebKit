@@ -32,6 +32,18 @@
 
 namespace WebCore {
 
+static size_t memoryUseBytes(IntSize size, GC3Denum textureFormat)
+{
+    // FIXME: This assumes all textures are 1 byte/component.
+    const GC3Denum type = GraphicsContext3D::UNSIGNED_BYTE;
+    unsigned int componentsPerPixel = 4;
+    unsigned int bytesPerComponent = 1;
+    if (!GraphicsContext3D::computeFormatAndTypeParameters(textureFormat, type, &componentsPerPixel, &bytesPerComponent))
+        ASSERT_NOT_REACHED();
+
+    return size.width() * size.height() * componentsPerPixel * bytesPerComponent;
+}
+
 size_t TextureManager::highLimitBytes()
 {
     return 128 * 1024 * 1024;
@@ -46,19 +58,6 @@ size_t TextureManager::lowLimitBytes()
 {
     return 3 * 1024 * 1024;
 }
-
-size_t TextureManager::memoryUseBytes(const IntSize& size, GC3Denum textureFormat)
-{
-    // FIXME: This assumes all textures are 1 byte/component.
-    const GC3Denum type = GraphicsContext3D::UNSIGNED_BYTE;
-    unsigned int componentsPerPixel = 4;
-    unsigned int bytesPerComponent = 1;
-    if (!GraphicsContext3D::computeFormatAndTypeParameters(textureFormat, type, &componentsPerPixel, &bytesPerComponent))
-        ASSERT_NOT_REACHED();
-
-    return size.width() * size.height() * componentsPerPixel * bytesPerComponent;
-}
-
 
 TextureManager::TextureManager(size_t memoryLimitBytes, int maxTextureSize)
     : m_memoryLimitBytes(memoryLimitBytes)
@@ -153,26 +152,26 @@ void TextureManager::addTexture(TextureToken token, TextureInfo info)
     m_textureLRUSet.add(token);
 }
 
-void TextureManager::deleteEvictedTextures(TextureAllocator* allocator)
+void TextureManager::deleteEvictedTextures(GraphicsContext3D* context)
 {
-    if (allocator) {
+    if (context) {
         for (size_t i = 0; i < m_evictedTextures.size(); ++i) {
             if (m_evictedTextures[i].textureId) {
 #ifndef NDEBUG
-                ASSERT(m_evictedTextures[i].allocator == allocator);
+                ASSERT(m_evictedTextures[i].allocatingContext == context);
 #endif
-                allocator->deleteTexture(m_evictedTextures[i].textureId, m_evictedTextures[i].size, m_evictedTextures[i].format);
+                GLC(context, context->deleteTexture(m_evictedTextures[i].textureId));
             }
         }
     }
     m_evictedTextures.clear();
 }
 
-void TextureManager::evictAndDeleteAllTextures(TextureAllocator* allocator)
+void TextureManager::evictAndDeleteAllTextures(GraphicsContext3D* context)
 {
     unprotectAllTextures();
     reduceMemoryToLimit(0);
-    deleteEvictedTextures(allocator);
+    deleteEvictedTextures(context);
 }
 
 void TextureManager::removeTexture(TextureToken token, TextureInfo info)
@@ -185,25 +184,32 @@ void TextureManager::removeTexture(TextureToken token, TextureInfo info)
     m_textureLRUSet.remove(token);
     EvictionEntry entry;
     entry.textureId = info.textureId;
-    entry.size = info.size;
-    entry.format = info.format;
 #ifndef NDEBUG
-    entry.allocator = info.allocator;
+    entry.allocatingContext = info.allocatingContext;
 #endif
     m_evictedTextures.append(entry);
 }
 
-unsigned TextureManager::allocateTexture(TextureAllocator* allocator, TextureToken token)
+unsigned TextureManager::allocateTexture(GraphicsContext3D* context, TextureToken token)
 {
     TextureMap::iterator it = m_textures.find(token);
     ASSERT(it != m_textures.end());
     TextureInfo* info = &it.get()->second;
     ASSERT(info->isProtected);
 
-    unsigned textureId = allocator->createTexture(info->size, info->format);
+    unsigned textureId;
+    GLC(context, textureId = context->createTexture());
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    // Do basic linear filtering on resize.
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context, context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, info->format, info->size.width(), info->size.height(), 0, info->format, GraphicsContext3D::UNSIGNED_BYTE));
     info->textureId = textureId;
 #ifndef NDEBUG
-    info->allocator = allocator;
+    info->allocatingContext = context;
 #endif
     return textureId;
 }
@@ -233,7 +239,7 @@ bool TextureManager::requestTexture(TextureToken token, IntSize size, unsigned f
     info.textureId = 0;
     info.isProtected = true;
 #ifndef NDEBUG
-    info.allocator = 0;
+    info.allocatingContext = 0;
 #endif
     addTexture(token, info);
     return true;

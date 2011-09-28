@@ -126,7 +126,7 @@ void CCHeadsUpDisplay::draw()
     {
         PlatformCanvas::AutoLocker locker(&canvas);
 
-        m_hudTexture->bindTexture(context, m_layerRenderer->renderSurfaceTextureAllocator());
+        m_hudTexture->bindTexture(context);
         bool uploadedViaMap = false;
         if (m_useMapSubForUploads) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
@@ -148,7 +148,7 @@ void CCHeadsUpDisplay::draw()
     const Program* program = m_layerRenderer->headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    m_hudTexture->bindTexture(context, m_layerRenderer->renderSurfaceTextureAllocator());
+    m_hudTexture->bindTexture(context);
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 

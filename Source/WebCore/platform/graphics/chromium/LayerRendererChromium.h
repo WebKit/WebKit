@@ -38,7 +38,6 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
-#include "TrackingTextureAllocator.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
@@ -69,7 +68,6 @@ class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
 class NonCompositedContentHost;
-class TrackingTextureAllocator;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium {
@@ -80,7 +78,7 @@ public:
     // Must be called in order to allow the LayerRendererChromium to destruct
     void close();
 
-    ~LayerRendererChromium();
+    virtual ~LayerRendererChromium();
 
     const CCSettings& settings() const { return m_owner->settings(); }
     const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
@@ -107,6 +105,9 @@ public:
 
     void setZoomAnimatorTransform(const TransformationMatrix& t) { m_zoomAnimatorTransform = t; }
 
+    unsigned createLayerTexture();
+    void deleteLayerTexture(unsigned);
+
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
@@ -132,8 +133,6 @@ public:
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
     TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
-    TextureAllocator* renderSurfaceTextureAllocator() const { return m_renderSurfaceTextureAllocator.get(); }
-    TextureAllocator* contentsTextureAllocator() const { return m_contentsTextureAllocator.get(); }
 
     CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
 
@@ -148,6 +147,8 @@ public:
     GC3Denum bestTextureFormat();
 
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
+
+    void setContentsTextureMemoryUseBytes(size_t contentsTextureMemoryUseBytes) { m_contentsTextureMemoryUseBytes = contentsTextureMemoryUseBytes; }
 
     static void toGLMatrix(float*, const TransformationMatrix&);
     void drawTexturedQuad(const TransformationMatrix& layerMatrix,
@@ -212,9 +213,8 @@ private:
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
 
+    size_t m_contentsTextureMemoryUseBytes;
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
-    OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;
-    OwnPtr<TrackingTextureAllocator> m_renderSurfaceTextureAllocator;
 
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 

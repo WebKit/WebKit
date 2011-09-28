@@ -187,7 +187,7 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
 
     GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    m_contentsTexture->bindTexture(context3D, layerRenderer->renderSurfaceTextureAllocator());
+    m_contentsTexture->bindTexture(context3D);
 
     if (shaderMaskSamplerLocation != -1) {
         GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));

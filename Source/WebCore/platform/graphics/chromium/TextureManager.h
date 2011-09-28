@@ -37,15 +37,6 @@ namespace WebCore {
 
 typedef int TextureToken;
 
-class TextureAllocator {
-public:
-    virtual unsigned createTexture(const IntSize&, GC3Denum format) = 0;
-    virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum) = 0;
-
-protected:
-    virtual ~TextureAllocator() { }
-};
-
 class TextureManager {
     WTF_MAKE_NONCOPYABLE(TextureManager);
 public:
@@ -61,8 +52,6 @@ public:
     // The maximum texture memory usage when asked to release textures.
     static size_t lowLimitBytes();
 
-    static size_t memoryUseBytes(const IntSize&, GC3Denum format);
-
     void setMemoryLimitBytes(size_t);
 
     TextureToken getToken();
@@ -76,10 +65,10 @@ public:
     void unprotectAllTextures();
     bool isProtected(TextureToken);
 
-    unsigned allocateTexture(TextureAllocator*, TextureToken);
-    void deleteEvictedTextures(TextureAllocator*);
+    unsigned allocateTexture(GraphicsContext3D*, TextureToken);
+    void deleteEvictedTextures(GraphicsContext3D*);
 
-    void evictAndDeleteAllTextures(TextureAllocator*);
+    void evictAndDeleteAllTextures(GraphicsContext3D*);
 
     void reduceMemoryToLimit(size_t);
     size_t currentMemoryUseBytes() const { return m_memoryUseBytes; }
@@ -93,7 +82,7 @@ private:
         unsigned textureId;
         bool isProtected;
 #ifndef NDEBUG
-        TextureAllocator* allocator;
+        GraphicsContext3D* allocatingContext;
 #endif
     };
 
@@ -111,10 +100,8 @@ private:
 
     struct EvictionEntry {
         unsigned textureId;
-        IntSize size;
-        GC3Denum format;
 #ifndef NDEBUG
-        TextureAllocator* allocator;
+        GraphicsContext3D* allocatingContext;
 #endif
     };
 

@@ -43,7 +43,7 @@ public:
 
     virtual ~TiledLayerChromium();
 
-    virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*);
+    virtual void updateCompositorResources(GraphicsContext3D*);
     virtual void setIsMask(bool);
 
     virtual void pushPropertiesTo(CCLayerImpl*);

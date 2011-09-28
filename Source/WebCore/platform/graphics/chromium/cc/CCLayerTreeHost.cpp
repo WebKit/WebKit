@@ -92,13 +92,15 @@ CCLayerTreeHost::~CCLayerTreeHost()
     m_proxy->stop();
     m_proxy.clear();
     clearPendingUpdate();
+    ASSERT(!m_contentsTextureManager || !m_contentsTextureManager->currentMemoryUseBytes());
+    m_contentsTextureManager.clear();
 }
 
-void CCLayerTreeHost::deleteContentsTexturesOnCCThread(TextureAllocator* allocator)
+void CCLayerTreeHost::deleteContentsTextures(GraphicsContext3D* context)
 {
     ASSERT(CCProxy::isImplThread());
     if (m_contentsTextureManager)
-        m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
+        m_contentsTextureManager->evictAndDeleteAllTextures(context);
 }
 
 void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
@@ -113,20 +115,22 @@ void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
 // code that is logically a main thread operation, e.g. deletion of a LayerChromium,
 // should be delayed until the CCLayerTreeHost::commitComplete, which will run
 // after the commit, but on the main thread.
-void CCLayerTreeHost::commitToOnCCThread(CCLayerTreeHostImpl* hostImpl)
+void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
     hostImpl->setSourceFrameNumber(frameNumber());
 
     contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
-    contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
+    contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
 
-    updateCompositorResources(m_updateList, hostImpl->context(), hostImpl->contentsTextureAllocator());
+    updateCompositorResources(m_updateList, hostImpl->context());
 
     hostImpl->setVisible(m_visible);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
+
+    hostImpl->layerRenderer()->setContentsTextureMemoryUseBytes(m_contentsTextureManager->currentMemoryUseBytes());
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -160,6 +164,8 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl()
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 {
+    m_contentsTextureManager->evictAndDeleteAllTextures(0);
+
     if (rootLayer())
         rootLayer()->cleanupResourcesRecursive();
     m_client->didRecreateGraphicsContext(success);
@@ -371,7 +377,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     }
 }
 
-void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLayerList, GraphicsContext3D* context, TextureAllocator* allocator)
+void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLayerList, GraphicsContext3D* context)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
@@ -388,12 +394,12 @@ void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLa
             if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
 
-            updateCompositorResources(layer, context, allocator);
+            updateCompositorResources(layer, context);
         }
     }
 }
 
-void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context, TextureAllocator* allocator)
+void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context)
 {
     if (layer->bounds().isEmpty())
         return;
@@ -402,12 +408,12 @@ void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsCo
         return;
 
     if (layer->maskLayer())
-        updateCompositorResources(layer->maskLayer(), context, allocator);
+        updateCompositorResources(layer->maskLayer(), context);
     if (layer->replicaLayer())
-        updateCompositorResources(layer->replicaLayer(), context, allocator);
+        updateCompositorResources(layer->replicaLayer(), context);
 
     if (layer->drawsContent())
-        layer->updateCompositorResources(context, allocator);
+        layer->updateCompositorResources(context);
 }
 
 void CCLayerTreeHost::clearPendingUpdate()

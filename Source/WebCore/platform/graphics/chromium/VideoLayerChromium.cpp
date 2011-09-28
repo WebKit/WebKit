@@ -78,7 +78,7 @@ void VideoLayerChromium::cleanupResources()
     releaseCurrentFrame();
 }
 
-void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, TextureAllocator* allocator)
+void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
     if (!m_delegate)
         return;
@@ -130,7 +130,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, T
         Texture& texture = m_textures[plane];
         ASSERT(texture.m_texture);
         ASSERT(frame->requiredTextureSize(plane) == texture.m_texture->size());
-        updateTexture(context, allocator, texture, frame->data(plane));
+        updateTexture(context, texture, frame->data(plane));
     }
 
     m_planes = frame->planes();
@@ -247,12 +247,12 @@ IntSize VideoLayerChromium::computeVisibleSize(const VideoFrameChromium* frame, 
     return IntSize(visibleWidth, visibleHeight);
 }
 
-void VideoLayerChromium::updateTexture(GraphicsContext3D* context, TextureAllocator* allocator, Texture& texture, const void* data) const
+void VideoLayerChromium::updateTexture(GraphicsContext3D* context, Texture& texture, const void* data) const
 {
     ASSERT(context);
     ASSERT(texture.m_texture);
 
-    texture.m_texture->bindTexture(context, allocator);
+    texture.m_texture->bindTexture(context);
 
     GC3Denum format = texture.m_texture->format();
     IntSize dimensions = texture.m_texture->size();

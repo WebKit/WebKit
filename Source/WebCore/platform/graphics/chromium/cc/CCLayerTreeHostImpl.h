@@ -37,7 +37,6 @@ namespace WebCore {
 class CCCompletionEvent;
 class CCLayerImpl;
 class LayerRendererChromium;
-class TextureAllocator;
 struct LayerRendererCapabilities;
 class TransformationMatrix;
 
@@ -62,7 +61,6 @@ public:
     bool isContextLost();
     LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
-    TextureAllocator* contentsTextureAllocator() const;
 
     void present();
 
