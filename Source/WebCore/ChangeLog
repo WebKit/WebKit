@@ -1,3 +1,15 @@
+2011-09-28  Joseph Pecoraro  <joepeck@webkit.org>
+
+        FTPDirectoryDocument Shows Garbled String for Last Modified Date
+        https://bugs.webkit.org/show_bug.cgi?id=69011
+
+        Reviewed by Dan Bernstein.
+
+        Force WTF::String concatenation instead of an accidental char* pointer addition.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+
 2011-09-28  Nate Chapin  <japhet@chromium.org>
 
         Fix a regression in r96060. ResourceLoader shouldn't get
