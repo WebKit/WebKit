@@ -1496,7 +1496,7 @@ sub autogenArgumentsHaveChanged($@)
 
 sub buildAutotoolsProject($@)
 {
-    my ($project, $clean, @buildParams) = @_;
+    my ($project, $clean, $enableWebKit2, @buildParams) = @_;
 
     my $make = 'make';
     my $dir = productDir();
@@ -1529,7 +1529,7 @@ sub buildAutotoolsProject($@)
 
     # This is a temporary work-around to enable building WebKit2 on the bots,
     # but ensuring that it does not ship until the API is stable.
-    if ($project eq "WebKit" and isGtk()) {
+    if ($project eq "WebKit" and isGtk() and $enableWebKit2) {
         push @buildArgs, "--enable-webkit2";
     }
 
@@ -1867,13 +1867,13 @@ sub buildQMakeQtProject($$@)
 
 sub buildGtkProject
 {
-    my ($project, $clean, @buildArgs) = @_;
+    my ($project, $clean, $enableWebKit2, @buildArgs) = @_;
 
     if ($project ne "WebKit" and $project ne "JavaScriptCore") {
         die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore\n";
     }
 
-    return buildAutotoolsProject($project, $clean, @buildArgs);
+    return buildAutotoolsProject($project, $clean, $enableWebKit2, @buildArgs);
 }
 
 sub buildChromiumMakefile($$@)
