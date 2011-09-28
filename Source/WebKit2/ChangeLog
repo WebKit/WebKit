@@ -1,5 +1,12 @@
 2011-09-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
+        One more shot at fixing GTK+, this seems to make the dependencies
+        work.
+
+        * GNUmakefile.am:
+
+2011-09-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
         GTK+ build fix 3 - the return of the marshal.
 
         * GNUmakefile.am:
