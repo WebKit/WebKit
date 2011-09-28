@@ -333,11 +333,9 @@ enum NodeType {
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a NodeIndex.
 struct OpInfo {
-    explicit OpInfo(int value) : m_value(value) { }
-#if USE(JSVALUE64)
-    explicit OpInfo(unsigned value) : m_value(value) { }
-#endif
-    explicit OpInfo(uintptr_t value) : m_value(value) { }
+    explicit OpInfo(int32_t value) : m_value(static_cast<uintptr_t>(value)) { }
+    explicit OpInfo(uint32_t value) : m_value(static_cast<uintptr_t>(value)) { }
+    explicit OpInfo(size_t value) : m_value(static_cast<uintptr_t>(value)) { }
     explicit OpInfo(void* value) : m_value(reinterpret_cast<uintptr_t>(value)) { }
     uintptr_t m_value;
 };

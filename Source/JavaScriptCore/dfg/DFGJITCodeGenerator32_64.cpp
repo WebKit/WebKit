@@ -219,6 +219,8 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& payloadGPR, FPRReg& fpr)
 {
     // FIXME: For double we could fill with a FPR.
+    UNUSED_PARAM(fpr);
+
     Node& node = m_jit.graph()[nodeIndex];
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1893,10 +1895,11 @@ void JITCodeGenerator::nonSpeculativeLogicalNot(Node& node)
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
 }
 
-void JITCodeGenerator::emitCall(Node& node)
+void NO_RETURN JITCodeGenerator::emitCall(Node& node)
 {
     // FIXME: It's not supported yet!
     ASSERT_NOT_REACHED();
+    UNUSED_PARAM(node);
 }
 
 void JITCodeGenerator::speculationCheck(MacroAssembler::Jump jumpToFail)

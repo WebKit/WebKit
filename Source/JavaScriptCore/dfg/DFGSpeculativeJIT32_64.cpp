@@ -126,6 +126,9 @@ void ValueRecovery::dump(FILE* out) const
     case AlreadyInRegisterFile:
         fprintf(out, "-");
         break;
+    case AlreadyInRegisterFileAsUnboxedInt32:
+        fprintf(out, "(int32)");
+        break;
     case InGPR:
         fprintf(out, "%%%s", GPRInfo::debugName(gpr()));
         break;
@@ -167,9 +170,9 @@ OSRExit::OSRExit(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recov
 {
     ASSERT(m_bytecodeIndex != std::numeric_limits<uint32_t>::max());
     for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
-        m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
+        m_arguments[argument] = jit->computeValueRecoveryFor(operandForArgument(argument), jit->m_arguments[argument]);
     for (unsigned variable = 0; variable < m_variables.size(); ++variable)
-        m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
+        m_variables[variable] = jit->computeValueRecoveryFor(variable, jit->m_variables[variable]);
 }
 
 #ifndef NDEBUG
@@ -386,6 +389,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 
 GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 {
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(nodeIndex);
+
 #if ENABLE(DFG_DEBUG_VERBOSE)
      fprintf(stderr, "SpecBool@%d   ", nodeIndex);
 #endif
@@ -2010,6 +2016,11 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case ForceOSRExit: {
+        terminateSpeculativeExecution();
+        break;
+    }
+
     case Phantom:
         // This is a no-op.
         noResult(m_compileIndex);
@@ -2132,23 +2143,9 @@ void SpeculativeJIT::checkArgumentTypes()
     }
 }
 
-// For any vars that we will be treating as numeric, write 0 to
-// the var on entry. Throughout the block we will only read/write
-// to the payload, by writing the tag now we prevent the GC from
-// misinterpreting values as pointers.
-void SpeculativeJIT::initializeVariableTypes()
-{
-    ASSERT(!m_compileIndex);
-    for (int var = 0; var < (int)m_jit.graph().predictions().numberOfVariables(); ++var) {
-        if (isInt32Prediction(m_jit.graph().getPrediction(var)))
-            m_jit.store32(TrustedImm32(JSValue::Int32Tag), JITCompiler::tagFor((VirtualRegister)var));
-    }
-}
-
 bool SpeculativeJIT::compile()
 {
     checkArgumentTypes();
-    initializeVariableTypes();
 
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
@@ -2157,10 +2154,13 @@ bool SpeculativeJIT::compile()
     return true;
 }
 
-ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
+ValueRecovery SpeculativeJIT::computeValueRecoveryFor(int operand, const ValueSource& valueSource)
 {
-    if (!valueSource.isSet())
+    if (!valueSource.isSet()) {
+        if (m_bytecodeIndexForOSR && isInt32Prediction(m_jit.graph().getPrediction(operand)))
+            return ValueRecovery::alreadyInRegisterFileAsUnboxedInt32();
         return ValueRecovery::alreadyInRegisterFile();
+    }
 
     if (m_jit.isConstant(valueSource.nodeIndex()))
         return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));

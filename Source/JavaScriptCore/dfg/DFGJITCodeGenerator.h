@@ -388,6 +388,7 @@ protected:
 
         m_jit.loadDouble(JITCompiler::addressFor(spillMe), info.fpr());
 #elif USE(JSVALUE32_64)
+        UNUSED_PARAM(canTrample);
         ASSERT(info.registerFormat() == DataFormatDouble || info.registerFormat() == DataFormatJSDouble);
         m_jit.emitLoadDouble(nodeIndex, info.fpr());
 #endif
@@ -1283,12 +1284,15 @@ protected:
 
         appendCallWithExceptionCheck(operation);
     }
-    void callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
+
+    void NO_RETURN callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         ASSERT(isFlushed());
 
         // FIXME: Need to to pass doubles.
         ASSERT_NOT_REACHED();
+        UNUSED_PARAM(arg1);
+        UNUSED_PARAM(arg2);
 
         m_jit.appendCall(operation);
         m_jit.moveDouble(FPRInfo::returnValueFPR, result);

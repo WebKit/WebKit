@@ -35,21 +35,28 @@
 #include "JSGlobalData.h"
 #include "Operations.h"
 
+
+#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
+#define SYMBOL_STRING(name) "_" #name
+#else
+#define SYMBOL_STRING(name) #name
+#endif
+
 #if CPU(X86_64)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
     asm( \
-    ".globl _" STRINGIZE(function) "\n" \
-    "_" STRINGIZE(function) ":" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
         "mov (%rsp), %" STRINGIZE(register) "\n" \
-        "jmp _" STRINGIZE(function) "WithReturnAddress" "\n" \
+        "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
     );
 #elif CPU(X86)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
     asm( \
-    ".globl " STRINGIZE(function) "\n" \
-    STRINGIZE(function) ":" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
         "push (%esp)\n" \
-        "jmp " STRINGIZE(function) "WithReturnAddress" "\n" \
+        "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
     );
 #endif
 #define FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
@@ -265,6 +272,7 @@ EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState*, EncodedJS
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
 EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
 EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -287,6 +295,7 @@ EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState*, EncodedJSV
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
 EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+EncodedJSValue operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
 EncodedJSValue operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -306,6 +315,7 @@ EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState*, Encod
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
 EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
 EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -325,6 +335,7 @@ EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSVa
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
 EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
 EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -388,6 +399,7 @@ void operationPutByIdStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue,
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
 void operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
 void operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -410,6 +422,7 @@ void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSVal
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
 void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
 void operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -432,6 +445,7 @@ void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState*, EncodedJS
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
 void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
 void operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -454,6 +468,7 @@ void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState*, Encode
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
 void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
 void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
@@ -517,19 +532,19 @@ EncodedJSValue getHostCallReturnValueWithExecState(ExecState*);
 
 #if CPU(X86_64)
 asm (
-".globl _" STRINGIZE(getHostCallReturnValue) "\n"
-"_" STRINGIZE(getHostCallReturnValue) ":" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%r13), %r13\n"
     "mov %r13, %rdi\n"
-    "jmp _" STRINGIZE(getHostCallReturnValueWithExecState) "\n"
+    "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
 );
 #elif CPU(X86)
 asm (
-".globl " STRINGIZE(getHostCallReturnValue) "\n"
-STRINGIZE(getHostCallReturnValue) ":" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
     "push %edi\n"
-    "jmp " STRINGIZE(getHostCallReturnValueWithExecState) "\n"
+    "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
 
@@ -637,6 +652,7 @@ void* operationLinkCallWithReturnAddress(ExecState*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
 void* operationLinkCallWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void* operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
 void* operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
 #endif
@@ -649,6 +665,7 @@ void* operationLinkConstructWithReturnAddress(ExecState*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
 void* operationLinkConstructWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
+void* operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
 void* operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
 #endif

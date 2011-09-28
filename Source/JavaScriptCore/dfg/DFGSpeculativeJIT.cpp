@@ -2096,7 +2096,7 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
-        
+
     case ForceOSRExit: {
         terminateSpeculativeExecution();
         break;

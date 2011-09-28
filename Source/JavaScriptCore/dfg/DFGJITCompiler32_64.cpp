@@ -79,9 +79,11 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
 }
 
 // This method used to fill a JSValue to a GPR when linking speculative -> non-speculative.
-void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
+void NO_RETURN JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
 {
     ASSERT_NOT_REACHED();
+    UNUSED_PARAM(nodeIndex);
+    UNUSED_PARAM(gpr);
 }
 
 void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecovery* recovery, Vector<BytecodeAndMachineOffset>& decodedCodeMap)
