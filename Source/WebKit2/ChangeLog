@@ -1,5 +1,11 @@
 2011-09-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
+        Second try at fixing the GTK+ build.
+
+        * GNUmakefile.am:
+
+2011-09-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
         Try to fix GTK+ build.
 
         * GNUmakefile.am:

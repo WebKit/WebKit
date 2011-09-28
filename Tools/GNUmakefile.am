@@ -5,6 +5,10 @@ noinst_PROGRAMS += \
 if ENABLE_WEBKIT2
 noinst_PROGRAMS += \
 	Programs/GtkLauncher2
+
+# FIXME: should this dependency be automatically identified by
+# automake somehow?
+Tools/GtkLauncher/main.c: $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp
 endif
 
 # GtkLauncher

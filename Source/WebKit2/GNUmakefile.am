@@ -67,6 +67,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
+libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
 webkit2gtk_headers = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
@@ -74,10 +75,6 @@ webkit2gtk_headers = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit2.h
-
-libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
-libwebkit2gtkinclude_HEADERS = \
-	$(webkit2gtk_headers)
 
 webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \

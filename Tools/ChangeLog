@@ -1,3 +1,9 @@
+2011-09-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Second try at fixing the GTK+ build.
+
+        * GNUmakefile.am:
+
 2011-09-28  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Let TestWebKitAPI and webkit_unit_tests work for chromium-win
