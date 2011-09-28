@@ -397,7 +397,7 @@ void CCThreadProxy::updateSchedulerStateOnCCThread(bool commitRequested, bool re
     // FIXME: use CCScheduler to decide when to manage the conversion of this
     // commit request into an actual createBeginFrameAndCommitTaskOnCCThread call.
     m_redrawRequestedOnCCThread |= redrawRequested;
-    if (!m_beginFrameAndCommitPendingOnCCThread) {
+    if (commitRequested && !m_beginFrameAndCommitPendingOnCCThread) {
         CCMainThread::postTask(createBeginFrameAndCommitTaskOnCCThread());
         return;
     }
