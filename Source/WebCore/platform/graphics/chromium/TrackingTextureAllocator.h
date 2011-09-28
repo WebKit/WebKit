@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,56 +22,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ManagedTexture_h
-#define ManagedTexture_h
+#ifndef TrackingTextureAllocator_h
+#define TrackingTextureAllocator_h
 
-#include "IntSize.h"
+#include "GraphicsContext3D.h"
 #include "TextureManager.h"
-
-#include <wtf/FastAllocBase.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class GraphicsContext3D;
-
-class ManagedTexture {
-    WTF_MAKE_NONCOPYABLE(ManagedTexture);
+class TrackingTextureAllocator : public TextureAllocator {
+    WTF_MAKE_NONCOPYABLE(TrackingTextureAllocator);
 public:
-    static PassOwnPtr<ManagedTexture> create(TextureManager* manager)
+    static PassOwnPtr<TrackingTextureAllocator> create(PassRefPtr<GraphicsContext3D> context)
     {
-        return adoptPtr(new ManagedTexture(manager));
+        return adoptPtr(new TrackingTextureAllocator(context));
     }
-    ~ManagedTexture();
+    virtual ~TrackingTextureAllocator();
 
-    bool isValid(const IntSize&, unsigned format);
-    bool reserve(const IntSize&, unsigned format);
-    void unreserve();
-    bool isReserved()
-    {
-        ASSERT(m_textureManager);
-        return m_textureManager->isProtected(m_token);
-    }
+    virtual unsigned createTexture(const IntSize&, GC3Denum format);
+    virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum format);
 
-    void bindTexture(GraphicsContext3D*, TextureAllocator*);
-    void framebufferTexture2D(GraphicsContext3D*, TextureAllocator*);
+    size_t currentMemoryUseBytes() const { return m_currentMemoryUseBytes; }
 
-    IntSize size() const { return m_size; }
-    unsigned format() const { return m_format; }
-    unsigned textureId() const { return m_textureId; }
+protected:
+    explicit TrackingTextureAllocator(PassRefPtr<GraphicsContext3D>);
 
-private:
-    explicit ManagedTexture(TextureManager*);
-
-    TextureManager* m_textureManager;
-    TextureToken m_token;
-    IntSize m_size;
-    unsigned m_format;
-    unsigned m_textureId;
+    RefPtr<GraphicsContext3D> m_context;
+    size_t m_currentMemoryUseBytes;
 };
 
 }
 
-#endif // ManagedTexture_h
+#endif

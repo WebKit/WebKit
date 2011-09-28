@@ -345,7 +345,7 @@ void CCThreadProxy::commitOnCCThread(CCCompletionEvent* completion)
         return;
     }
     m_layerTreeHostImpl->beginCommit();
-    m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
+    m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
     m_layerTreeHostImpl->commitComplete();
 
     completion->signal();
@@ -430,7 +430,7 @@ void CCThreadProxy::layerTreeHostClosedOnCCThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCThreadProxy::layerTreeHostClosedOnCCThread", this, 0);
     ASSERT(isImplThread());
-    m_layerTreeHost->deleteContentsTextures(m_layerTreeHostImpl->context());
+    m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
     m_layerTreeHostImpl.clear();
     completion->signal();
 }

@@ -1,5 +1,94 @@
 2011-09-27  James Robinson  <jamesr@chromium.org>
 
+        [chromium] LayerRenderChromium asserts about leaking textures.
+        https://bugs.webkit.org/show_bug.cgi?id=68190
+
+        Reviewed by Kenneth Russell.
+
+        This introduces an interface TextureAllocator that the TextureManager uses to allocate/deallocate textures.
+        This means that TextureManager does not need to depend directly on GraphicsContext3D, other than for the format
+        enum type, making it more testable.  It also allows us to track the allocations by subclassing TextureAllocator
+        to make sure we aren't leaking any textures.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::releaseRenderSurfaceTextures):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::renderSurfaceTextureAllocator):
+        (WebCore::LayerRendererChromium::contentsTextureAllocator):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/ManagedTexture.h:
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::memoryUseBytes):
+        (WebCore::TextureManager::deleteEvictedTextures):
+        (WebCore::TextureManager::evictAndDeleteAllTextures):
+        (WebCore::TextureManager::removeTexture):
+        (WebCore::TextureManager::allocateTexture):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore::TextureAllocator::~TextureAllocator):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp: Added.
+        (WebCore::TrackingTextureAllocator::TrackingTextureAllocator):
+        (WebCore::TrackingTextureAllocator::~TrackingTextureAllocator):
+        (WebCore::TrackingTextureAllocator::createTexture):
+        (WebCore::TrackingTextureAllocator::deleteTexture):
+        * platform/graphics/chromium/TrackingTextureAllocator.h: Copied from Source/WebCore/platform/graphics/chromium/ManagedTexture.h.
+        (WebCore::TrackingTextureAllocator::create):
+        (WebCore::TrackingTextureAllocator::currentMemoryUseBytes):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::updateTexture):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::deleteContentsTexturesOnCCThread):
+        (WebCore::CCLayerTreeHost::commitToOnCCThread):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::contentsTextureAllocator):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::drawSurface):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::recreateContextIfNeeded):
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::commitOnCCThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnCCThread):
+2011-09-27  James Robinson  <jamesr@chromium.org>
+
         [chromium] Only initiate the beginFrameAndCommit sequence if a commit has been requested
         https://bugs.webkit.org/show_bug.cgi?id=68967
 

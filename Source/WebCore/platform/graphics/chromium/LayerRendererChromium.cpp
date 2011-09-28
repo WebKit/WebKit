@@ -51,6 +51,7 @@
 #include "TextureManager.h"
 #include "TreeSynchronizer.h"
 #include "TraceEvent.h"
+#include "TrackingTextureAllocator.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -147,7 +148,6 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
     : m_owner(owner)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
-    , m_contentsTextureMemoryUseBytes(0)
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
@@ -214,7 +214,7 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
 
 void LayerRendererChromium::releaseRenderSurfaceTextures()
 {
-    m_renderSurfaceTextureManager->evictAndDeleteAllTextures(m_context.get());
+    m_renderSurfaceTextureManager->evictAndDeleteAllTextures(m_renderSurfaceTextureAllocator.get());
 }
 
 void LayerRendererChromium::viewportChanged()
@@ -237,14 +237,15 @@ void LayerRendererChromium::drawLayers()
     if (!rootLayer())
         return;
 
-    m_renderSurfaceTextureManager->setMemoryLimitBytes(TextureManager::highLimitBytes() - m_contentsTextureMemoryUseBytes);
+    size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
+    m_renderSurfaceTextureManager->setMemoryLimitBytes(TextureManager::highLimitBytes() - contentsMemoryUseBytes);
     drawLayersInternal();
 
-    if (TextureManager::reclaimLimitBytes() > m_contentsTextureMemoryUseBytes)
-        m_renderSurfaceTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes() - m_contentsTextureMemoryUseBytes);
+    if (TextureManager::reclaimLimitBytes() > contentsMemoryUseBytes)
+        m_renderSurfaceTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes() - contentsMemoryUseBytes);
     else
         m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
-    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
+    m_renderSurfaceTextureManager->deleteEvictedTextures(m_renderSurfaceTextureAllocator.get());
 
     if (settings().compositeOffscreen)
         copyOffscreenTextureToDisplay();
@@ -436,29 +437,6 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
                                          GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
 }
 
-// FIXME: This method should eventually be replaced by a proper texture manager.
-unsigned LayerRendererChromium::createLayerTexture()
-{
-    unsigned textureId = 0;
-    GLC(m_context.get(), textureId = m_context->createTexture());
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
-    // Do basic linear filtering on resize.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-    // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-    return textureId;
-}
-
-void LayerRendererChromium::deleteLayerTexture(unsigned textureId)
-{
-    if (!textureId)
-        return;
-
-    GLC(m_context.get(), m_context->deleteTexture(textureId));
-}
-
 // Returns true if any part of the layer falls within the visibleRect
 bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const TransformationMatrix& matrix, const IntRect& visibleRect)
 {
@@ -516,7 +494,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
     if (!renderSurface->prepareContentsTexture(this))
         return false;
 
-    renderSurface->contentsTexture()->framebufferTexture2D(m_context.get());
+    renderSurface->contentsTexture()->framebufferTexture2D(m_context.get(), m_renderSurfaceTextureAllocator.get());
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -635,6 +613,8 @@ bool LayerRendererChromium::initializeSharedObjects()
     GLC(m_context.get(), m_context->flush());
 
     m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_capabilities.maxTextureSize);
+    m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
+    m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     return true;
 }
 
@@ -843,7 +823,6 @@ void LayerRendererChromium::cleanupSharedObjects()
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 
-    ASSERT(!m_contentsTextureMemoryUseBytes);
     releaseRenderSurfaceTextures();
 }
 

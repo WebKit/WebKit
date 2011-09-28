@@ -160,7 +160,7 @@ void CCSingleThreadProxy::setNeedsCommit()
     {
         ScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
+        m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
     m_layerTreeHost->commitComplete();
@@ -190,7 +190,7 @@ void CCSingleThreadProxy::stop()
     ASSERT(CCProxy::isMainThread());
     {
         ScopedSetImplThread impl;
-        m_layerTreeHost->deleteContentsTextures(m_layerTreeHostImpl->context());
+        m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;
@@ -227,6 +227,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
         bool ok;
         {
             ScopedSetImplThread impl;
+            m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
             ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
             if (ok)
                 m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -263,7 +264,7 @@ void CCSingleThreadProxy::commitIfNeeded()
     {
         ScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
+        m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
     m_layerTreeHost->commitComplete();

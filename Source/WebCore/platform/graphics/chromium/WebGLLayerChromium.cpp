@@ -65,7 +65,7 @@ bool WebGLLayerChromium::drawsContent() const
     return (m_context && m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
 }
 
-void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext)
+void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext, TextureAllocator*)
 {
     if (!drawsContent())
         return;

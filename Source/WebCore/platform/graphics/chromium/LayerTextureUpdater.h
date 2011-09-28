@@ -38,6 +38,7 @@ class GraphicsContext3D;
 class IntRect;
 class IntSize;
 class ManagedTexture;
+class TextureAllocator;
 
 class LayerTextureUpdater : public RefCounted<LayerTextureUpdater> {
 public:
@@ -61,7 +62,7 @@ public:
     // If the format is TexelFormatBGRA, vec4.x is blue and vec4.z is red.
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels) = 0;
-    virtual void updateTextureRect(GraphicsContext3D*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
+    virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
 };
 
 } // namespace WebCore

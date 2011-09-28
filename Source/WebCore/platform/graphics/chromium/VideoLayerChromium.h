@@ -50,7 +50,7 @@ public:
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
-    virtual void updateCompositorResources(GraphicsContext3D*);
+    virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*);
     virtual bool drawsContent() const { return true; }
 
     // This function is called by VideoFrameProvider. When this method is called
@@ -76,7 +76,7 @@ private:
     static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);
     bool texturesValid();
     bool reserveTextures(const VideoFrameChromium*, GC3Denum textureFormat);
-    void updateTexture(GraphicsContext3D*, Texture&, const void*) const;
+    void updateTexture(GraphicsContext3D*, TextureAllocator*, Texture&, const void*) const;
 
     void resetFrameParameters();
 

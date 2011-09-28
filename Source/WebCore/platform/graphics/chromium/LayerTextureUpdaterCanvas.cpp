@@ -93,11 +93,11 @@ void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, cons
     paintContents(*canvasPainter.context(), contentRect);
 }
 
-void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     PlatformCanvas::AutoLocker locker(&m_canvas);
 
-    texture->bindTexture(context);
+    texture->bindTexture(context, allocator);
     m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
 }
 
@@ -144,7 +144,7 @@ void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, c
     m_picture.endRecording();
 }
 
-void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* compositorContext, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* compositorContext, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     ASSERT(!m_context || m_context == compositorContext);
     m_context = compositorContext;
@@ -159,7 +159,7 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* composit
 
     // Bind texture.
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    texture->framebufferTexture2D(context());
+    texture->framebufferTexture2D(context(), allocator);
     ASSERT(context()->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
 
     // Make sure SKIA uses the correct GL context.

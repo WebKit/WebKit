@@ -3466,6 +3466,8 @@
             'platform/graphics/chromium/ShaderChromium.h',
             'platform/graphics/chromium/SimpleFontDataChromiumWin.cpp',
             'platform/graphics/chromium/SimpleFontDataLinux.cpp',
+            'platform/graphics/chromium/TrackingTextureAllocator.cpp',
+            'platform/graphics/chromium/TrackingTextureAllocator.h',
             'platform/graphics/chromium/TextureManager.cpp',
             'platform/graphics/chromium/TextureManager.h',
             'platform/graphics/chromium/TiledLayerChromium.cpp',
