@@ -1,3 +1,19 @@
+2011-09-28  Adam Barth  <abarth@webkit.org>
+
+        CSP doesn't work for a wide variety of cases
+        https://bugs.webkit.org/show_bug.cgi?id=68921
+
+        Reviewed by Darin Adler.
+
+        Patch suggested by Sam Weinig.  It's unclear to me how to test this
+        change because all our tests run on non-default ports, which is why we
+        have this bug in the first place.  Mozilla uses a proxy while testing
+        so they can test with URLs like http://example.com, but we don't have
+        such a facility.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSource::portMatches):
+
 2011-09-28  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Seperate GTK specific Gyp rules from X11 Gyp rules

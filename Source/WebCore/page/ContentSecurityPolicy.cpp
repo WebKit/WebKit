@@ -147,8 +147,19 @@ private:
     {
         if (m_portHasWildcard)
             return true;
+
         int port = url.port();
-        return port ? port == m_port : isDefaultPortForProtocol(m_port, url.protocol());
+
+        if (port == m_port)
+            return true;
+
+        if (!port)
+            return isDefaultPortForProtocol(m_port, m_scheme);
+
+        if (!m_port)
+            return isDefaultPortForProtocol(port, m_scheme);
+
+        return false;
     }
 
     bool isSchemeOnly() const { return m_host.isEmpty(); }
