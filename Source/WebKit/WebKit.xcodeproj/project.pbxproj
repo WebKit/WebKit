@@ -332,7 +332,6 @@
 		A864B3F6123ED9FA00C2A612 /* MailQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */; };
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
-		B5974457137C7342002A18FF /* SolarWalkQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = B5DB1F17137C62F500A28E7E /* SolarWalkQuirksUserScript.js */; };
 		B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */; };
 		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
@@ -642,7 +641,6 @@
 		A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MailQuirksUserScript.js; sourceTree = "<group>"; };
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		B5DB1F17137C62F500A28E7E /* SolarWalkQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SolarWalkQuirksUserScript.js; sourceTree = "<group>"; };
 		B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCache.h; sourceTree = "<group>"; };
 		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
 		B804176D1217A83100466BAE /* WebInspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontend.h; sourceTree = "<group>"; };
@@ -926,7 +924,6 @@
 			isa = PBXGroup;
 			children = (
 				29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */,
-				B5DB1F17137C62F500A28E7E /* SolarWalkQuirksUserScript.js */,
 				A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */,
 				1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */,
 				5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */,
@@ -1685,7 +1682,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5974457137C7342002A18FF /* SolarWalkQuirksUserScript.js in Resources */,
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
 				A864B3F6123ED9FA00C2A612 /* MailQuirksUserScript.js in Resources */,
 				939810BA0824BF01008DF038 /* IDNScriptWhiteList.txt in Resources */,

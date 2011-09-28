@@ -102,10 +102,4 @@ bool applicationIsAperture()
     return isAperture;
 }
 
-bool applicationIsSolarWalkMac()
-{
-    static bool isSolarWalk = mainBundleIsEqualTo("com.vitotechnology.SolarWalkMac");
-    return isSolarWalk;
-}
-
 } // namespace WebCore

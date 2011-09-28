@@ -665,27 +665,6 @@ static NSString *leakOutlookQuirksUserScriptContents()
         outlookQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
-static bool needsSolarWalkQuirksScript()
-{
-    static bool isSolarWalkNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-    && applicationIsSolarWalkMac();
-    return isSolarWalkNeedingQuirksScript;
-}
-
-static NSString *leakSolarWalkQuirksUserScriptContents()
-{
-    NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"SolarWalkQuirksUserScript" ofType:@"js"];
-    NSStringEncoding encoding;
-    return [[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0];
-}
-
--(void)_injectSolarWalkQuirksScript
-{
-    static NSString *solarWalkQuirksScriptContents = leakSolarWalkQuirksUserScriptContents();
-    core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        solarWalkQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
-}
-
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -752,11 +731,6 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
     if (needsOutlookQuirksScript()) {
         _private->page->settings()->setShouldInjectUserScriptsInInitialEmptyDocument(true);
         [self _injectOutlookQuirksScript];
-    }
-
-    if (needsSolarWalkQuirksScript()) {
-        _private->page->settings()->setShouldInjectUserScriptsInInitialEmptyDocument(true);
-        [self _injectSolarWalkQuirksScript];
     }
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];

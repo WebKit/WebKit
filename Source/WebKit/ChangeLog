@@ -1,3 +1,18 @@
+2011-09-27  Andy Estes  <aestes@apple.com>
+
+        WebKitLinkedOnOrAfter() check is ineffective for Solar Walk app-specific hack.
+        https://bugs.webkit.org/show_bug.cgi?id=68863
+
+        Reviewed by Darin Adler.
+
+        The SolarWalk binary does not link against WebKit.framework directly,
+        so calling NSVersionOfLinkTimeLibrary() will not return the version of
+        WebKit against which SolarWalk was linked. Since Solar Walk has
+        released an update that addresses the issue for which this app-specific
+        hack was originally added, we should just remove the hack.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove SolarWalkQuirksUserScript.js.
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Remove PLATFORM(HAIKU) and associated code
