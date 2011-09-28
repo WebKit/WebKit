@@ -287,6 +287,12 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
+    /* Allocations. */\
+    macro(NewObject, NodeResultJS) \
+    macro(NewArray, NodeResultJS | NodeHasVarArgs) \
+    macro(NewArrayBuffer, NodeResultJS) \
+    macro(NewRegexp, NodeResultJS) \
+    \
     /* Resolve nodes. */\
     macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
@@ -558,6 +564,34 @@ struct Node {
             return false;
         m_opInfo = newFlags;
         return true;
+    }
+    
+    bool hasConstantBuffer()
+    {
+        return op == NewArrayBuffer;
+    }
+    
+    unsigned startConstant()
+    {
+        ASSERT(hasConstantBuffer());
+        return m_opInfo;
+    }
+    
+    unsigned numConstants()
+    {
+        ASSERT(hasConstantBuffer());
+        return m_opInfo2;
+    }
+    
+    bool hasRegexpIndex()
+    {
+        return op == NewRegexp;
+    }
+    
+    unsigned regexpIndex()
+    {
+        ASSERT(hasRegexpIndex());
+        return m_opInfo;
     }
     
     bool hasVarNumber()

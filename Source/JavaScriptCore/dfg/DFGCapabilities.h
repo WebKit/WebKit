@@ -31,6 +31,8 @@
 
 namespace JSC { namespace DFG {
 
+#define ENABLE_DFG_RESTRICTIONS 1
+
 #if ENABLE(DFG_JIT)
 // Fast check functions; if they return true it is still necessary to
 // check opcodes.
@@ -119,11 +121,28 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_resolve:
     case op_resolve_base:
     case op_resolve_global:
+    case op_new_object:
+    case op_new_array:
+    case op_new_array_buffer:
     case op_strcat:
     case op_to_primitive:
     case op_throw:
     case op_throw_reference_error:
         return true;
+        
+    // Opcodes we support conditionally. Enabling these opcodes currently results in
+    // performance regressions. Each node that we disable under restrictions has a
+    // comment describing what we know about the regression so far.
+        
+    // Regresses string-validate-input, probably because it uses comparisons (< and >)
+    // on strings, which currently will cause speculation failures in some cases.
+    case op_new_regexp: 
+#if ENABLE(DFG_RESTRICTIONS)
+        return false;
+#else
+        return true;
+#endif
+        
     default:
         return false;
     }

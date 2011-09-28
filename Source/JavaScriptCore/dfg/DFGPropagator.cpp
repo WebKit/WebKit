@@ -509,8 +509,20 @@ private:
             break;
         }
             
-        case CreateThis: {
+        case CreateThis:
+        case NewObject: {
             changed |= setPrediction(PredictFinalObject);
+            break;
+        }
+            
+        case NewArray:
+        case NewArrayBuffer: {
+            changed |= setPrediction(PredictArray);
+            break;
+        }
+            
+        case NewRegexp: {
+            changed |= setPrediction(PredictObjectOther);
             break;
         }
             
@@ -538,7 +550,7 @@ private:
             }
             break;
         }
-
+            
         case ValueToDouble:
         case GetArrayLength: {
             // This node should never be visible at this stage of compilation. It is

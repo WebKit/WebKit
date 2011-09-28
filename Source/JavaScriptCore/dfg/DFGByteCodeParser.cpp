@@ -724,6 +724,32 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_this);
         }
             
+        case op_new_object: {
+            set(currentInstruction[1].u.operand, addToGraph(NewObject));
+            NEXT_OPCODE(op_new_object);
+        }
+            
+        case op_new_array: {
+            int startOperand = currentInstruction[2].u.operand;
+            int numOperands = currentInstruction[3].u.operand;
+            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx)
+                addVarArgChild(get(operandIdx));
+            set(currentInstruction[1].u.operand, addToGraph(Node::VarArg, NewArray, OpInfo(0), OpInfo(0)));
+            NEXT_OPCODE(op_new_array);
+        }
+            
+        case op_new_array_buffer: {
+            int startConstant = currentInstruction[2].u.operand;
+            int numConstants = currentInstruction[3].u.operand;
+            set(currentInstruction[1].u.operand, addToGraph(NewArrayBuffer, OpInfo(startConstant), OpInfo(numConstants)));
+            NEXT_OPCODE(op_new_array_buffer);
+        }
+            
+        case op_new_regexp: {
+            set(currentInstruction[1].u.operand, addToGraph(NewRegexp, OpInfo(currentInstruction[2].u.operand)));
+            NEXT_OPCODE(op_new_regexp);
+        }
+            
         case op_get_callee: {
             set(currentInstruction[1].u.operand, addToGraph(GetCallee));
             NEXT_OPCODE(op_get_callee);
@@ -1401,8 +1427,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         default:
-            // Parse failed!
-            ASSERT(!canCompileOpcode(opcodeID));
+            // Parse failed! This should not happen because the capabilities checker
+            // should have caught it.
+            ASSERT_NOT_REACHED();
             return false;
         }
         

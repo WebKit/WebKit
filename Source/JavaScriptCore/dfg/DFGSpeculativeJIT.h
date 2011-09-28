@@ -512,11 +512,32 @@ private:
             || (shouldSpeculateObject(op1) && shouldSpeculateArray(op2));
     }
     
+    bool isKnownArray(NodeIndex op1)
+    {
+        Node& node = m_jit.graph()[op1];
+        switch (node.op) {
+        case GetLocal:
+            return isArrayPrediction(m_jit.graph().getPrediction(node.local()));
+            
+        case NewArray:
+        case NewArrayBuffer:
+            return true;
+            
+        default:
+            return false;
+        }
+    }
+    
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
     void compileObjectEquality(Node&, void* vptr);
+    
+    // It is acceptable to have structure be equal to scratch, so long as you're fine
+    // with the structure GPR being clobbered.
+    template<typename T>
+    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath);
    
 #if USE(JSVALUE64) 
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);

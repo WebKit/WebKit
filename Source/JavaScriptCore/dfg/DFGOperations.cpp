@@ -157,6 +157,11 @@ EncodedJSValue operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
     return JSValue::encode(constructEmptyObject(exec, structure));
 }
 
+EncodedJSValue operationNewObject(ExecState* exec)
+{
+    return JSValue::encode(constructEmptyObject(exec));
+}
+
 EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
@@ -788,6 +793,29 @@ EncodedJSValue operationToPrimitive(ExecState* exec, EncodedJSValue value)
 EncodedJSValue operationStrCat(ExecState* exec, void* start, size_t size)
 {
     return JSValue::encode(jsString(exec, static_cast<Register*>(start), size));
+}
+
+EncodedJSValue operationNewArray(ExecState* exec, void* start, size_t size)
+{
+    ArgList argList(static_cast<Register*>(start), size);
+    return JSValue::encode(constructArray(exec, argList));
+}
+
+EncodedJSValue operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
+{
+    ArgList argList(exec->codeBlock()->constantBuffer(start), size);
+    return JSValue::encode(constructArray(exec, argList));
+}
+
+EncodedJSValue operationNewRegexp(ExecState* exec, void* regexpPtr)
+{
+    RegExp* regexp = static_cast<RegExp*>(regexpPtr);
+    if (!regexp->isValid()) {
+        throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+        return JSValue::encode(jsUndefined());
+    }
+    
+    return RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp);
 }
 
 void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
