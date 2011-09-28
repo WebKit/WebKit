@@ -1,3 +1,16 @@
+2011-09-28  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] URL of resources are not decoded.
+        https://bugs.webkit.org/show_bug.cgi?id=66540
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix ewk_frame_resources_location_get which was returning the encoded URL of resources.
+        As a result characters for instance, %20 occurred. For now returned strings are decoded.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_resources_location_get):
+
 2011-09-27  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Make ewk_view emit the "load,document,finished" signal.

@@ -794,7 +794,7 @@ EAPI ssize_t ewk_frame_source_get(const Evas_Object *o, char **frame_source);
  *
  * It's part of HTML saving feature. Currently only locations of images are supported.
  * An application might find these values in frame source and
- * replace them to the local paths. Values are not duplicated.
+ * replace them to the local paths. Values are not duplicated and they are decoded.
  *
  * @param o frame smart object to get the resources list
  * @return @c Eina_List with location of resources on success, or @c 0 on failure,

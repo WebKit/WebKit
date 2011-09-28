@@ -1558,7 +1558,7 @@ Eina_List* ewk_frame_resources_location_get(const Evas_Object* o)
         if (!imageElement || imageElement->src().isNull() || imageElement->src().isEmpty())
             continue;
 
-        WTF::String imageLocation = imageElement->src().string();
+        WTF::String imageLocation = WebCore::decodeURLEscapeSequences(imageElement->src().string());
         // Look for duplicated location.
         Eina_List* listIterator = 0;
         void* data = 0;
