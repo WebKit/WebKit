@@ -3598,6 +3598,10 @@ BUG_REED : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED : fast/canvas/canvas-lineWidth.html = TEXT
 
+// Failing temporarily, rebase-line after skia rolls to WK
+BUG_BSALOMON WIN MAC LINUX GPU: fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUG_BSALOMON WIN MAC LINUX GPU: fast/canvas/canvas-composite.html = IMAGE
+
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
@@ -3665,7 +3669,6 @@ BUGWK68437 LEOPARD GPU : fast/canvas/set-colors.html = TEXT
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
 BUGWK68437 LEOPARD GPU : fast/canvas/arc360.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-before-css.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-resize-reset.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-size-change-after-layout.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-text-alignment.html = IMAGE
