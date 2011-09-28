@@ -27,7 +27,8 @@ module events {
 
     interface [
         CanBeConstructed,
-        CustomConstructFunction
+        CustomConstructFunction,
+        V8CustomConstructor
     ] PageTransitionEvent : Event {
 
         readonly attribute boolean persisted;
