@@ -26,6 +26,7 @@
 #ifndef JSDictionary_h
 #define JSDictionary_h
 
+#include "MessagePort.h"
 #include <interpreter/CallFrame.h>
 #include <wtf/Forward.h>
 
@@ -71,6 +72,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
 
     JSC::ExecState* m_exec;
     JSC::JSObject* m_initializerObject;

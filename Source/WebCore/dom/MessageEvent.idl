@@ -28,7 +28,9 @@
 module events {
 
     interface [
-        NoStaticTables
+        NoStaticTables,
+        CanBeConstructed,
+        CustomConstructFunction
     ] MessageEvent : Event {
         readonly attribute DOMString origin;
         readonly attribute DOMString lastEventId;

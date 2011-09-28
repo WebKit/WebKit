@@ -1,3 +1,17 @@
+2011-09-27  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a MessageEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=68883
+
+        Reviewed by Adam Barth.
+
+        message-event-constructor.html checks the behavior of the MessageEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Now window has MessageEvent.
+        * fast/events/constructors/message-event-constructor-expected.txt: Added.
+        * fast/events/constructors/message-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped message-event-constructor.html, since V8 does not yet have the MessageEvent constructor.
+
 2011-09-27  Eric Uhrhane  <ericu@chromium.org>
 
         [Chromium/FileWriter] race condition in FileWriter completion can lead to assert

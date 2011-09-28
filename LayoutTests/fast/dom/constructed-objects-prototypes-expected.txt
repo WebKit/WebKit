@@ -23,6 +23,8 @@ PASS (new inner.Image()).isInner is true
 PASS (new inner.Image()).constructor.isInner is true
 PASS (new inner.MessageChannel()).isInner is true
 PASS (new inner.MessageChannel()).constructor.isInner is true
+PASS (new inner.MessageEvent()).isInner is true
+PASS (new inner.MessageEvent()).constructor.isInner is true
 PASS (new inner.Option()).isInner is true
 PASS (new inner.Option()).constructor.isInner is true
 PASS (new inner.PageTransitionEvent()).isInner is true

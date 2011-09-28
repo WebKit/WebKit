@@ -33,9 +33,25 @@
 
 namespace WebCore {
 
+MessageEventInit::MessageEventInit()
+    : data(SerializedScriptValue::create())
+{
+}
+
 MessageEvent::MessageEvent()
     : m_dataType(DataTypeSerializedScriptValue)
     , m_dataAsSerializedScriptValue(SerializedScriptValue::create())
+{
+}
+
+MessageEvent::MessageEvent(const AtomicString& type, const MessageEventInit& initializer)
+    : Event(type, initializer)
+    , m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(initializer.data)
+    , m_origin(initializer.origin)
+    , m_lastEventId(initializer.lastEventId)
+    , m_source(initializer.source)
+    , m_ports(adoptPtr(new MessagePortArray(initializer.ports)))
 {
 }
 
@@ -85,7 +101,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
 {
     if (dispatched())
         return;
-        
+
     initEvent(type, canBubble, cancelable);
 
     m_dataType = DataTypeSerializedScriptValue;

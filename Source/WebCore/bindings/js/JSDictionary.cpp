@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
@@ -29,6 +28,7 @@
 
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
+#include "JSMessagePortCustom.h"
 #include "JSNode.h"
 #include "SerializedScriptValue.h"
 #include "ScriptValue.h"
@@ -117,6 +117,11 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
 {
     result = toNode(value);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
+{
+    fillMessagePortArray(exec, value, result);
 }
 
 } // namespace WebCore
