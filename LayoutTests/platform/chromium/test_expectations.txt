@@ -3791,3 +3791,6 @@ BUGWK68970 MAC CPU-CG : svg/custom/js-late-gradient-and-object-creation.svg = IM
 BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/text-rotated-gradient.svg = IMAGE
 BUGWK68970 MAC CPU-CG RELEASE : svg/text/selection-background-color.xhtml = IMAGE
+
+BUGWK68982 : svg/custom/oversized-pattern-scale.svg = IMAGE PASS
+BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
