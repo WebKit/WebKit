@@ -2348,26 +2348,20 @@ bool CSSStyleSelector::useSVGZoomRules()
 
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
-    CSSPrimitiveValue* primitiveValue = 0;
-    if (value->isPrimitiveValue())
-        primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-
-    float zoomFactor = m_style->effectiveZoom();
-
     Length l;
 
     unsigned short valueType = value->cssValueType();
 
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
-    
+
     id = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
 
     if (m_checker.isMatchingVisitedPseudoClass() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
-    
+
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 
     // check lookup table for implementations and use when available
@@ -2381,6 +2375,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
+    CSSPrimitiveValue* primitiveValue = value->isPrimitiveValue() ? static_cast<CSSPrimitiveValue*>(value) : 0;
+
+    float zoomFactor = m_style->effectiveZoom();
+    
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
