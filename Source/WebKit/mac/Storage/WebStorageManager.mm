@@ -38,8 +38,6 @@ using namespace WebCore;
 NSString * const WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOriginNotification";
 
-static NSString *storageDirectoryPath();
-
 @implementation WebStorageManager
 
 + (WebStorageManager *)sharedWebStorageManager
@@ -90,14 +88,23 @@ static NSString *storageDirectoryPath();
     StorageTracker::tracker().syncFileSystemAndTrackerDatabase();
 }
 
-static NSString *storageDirectoryPath()
++ (NSString *)_storageDirectoryPath
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *storageDirectory = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
-    if (!storageDirectory || ![storageDirectory isKindOfClass:[NSString class]])
-        storageDirectory = @"~/Library/WebKit/LocalStorage";
+    static NSString *sLocalStoragePath;
     
-    return [storageDirectory stringByStandardizingPath];
+    if (sLocalStoragePath)
+        return sLocalStoragePath;
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    sLocalStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
+    if (!sLocalStoragePath || ![sLocalStoragePath isKindOfClass:[NSString class]]) {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString *libraryDirectory = [paths objectAtIndex:0];
+        sLocalStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
+        [sLocalStoragePath retain];
+    }
+
+    return sLocalStoragePath;
 }
 
 void WebKitInitializeStorageIfNecessary()
@@ -106,7 +113,7 @@ void WebKitInitializeStorageIfNecessary()
     if (initialized)
         return;
     
-    StorageTracker::initializeTracker(storageDirectoryPath(), WebStorageTrackerClient::sharedWebStorageTrackerClient());
+    StorageTracker::initializeTracker([WebStorageManager _storageDirectoryPath], WebStorageTrackerClient::sharedWebStorageTrackerClient());
         
     initialized = YES;
 }

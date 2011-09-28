@@ -42,5 +42,7 @@ extern NSString * const WebStorageDidModifyOriginNotification;
 - (void)syncLocalStorage;
 - (void)syncFileSystemAndTrackerDatabase;
 
++ (NSString *)_storageDirectoryPath;
+
 @end
 
