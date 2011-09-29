@@ -1674,8 +1674,9 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.move(protoGPR, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        m_jit.push(TrustedImm32(JSValue::CellTag));
+        m_jit.push(protoGPR);
+        m_jit.push(GPRInfo::callFrameRegister);
         appendCallWithExceptionCheck(operationCreateThis);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
@@ -1702,7 +1703,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        m_jit.push(GPRInfo::callFrameRegister);
         appendCallWithExceptionCheck(operationNewObject);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
@@ -1834,7 +1835,6 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         
-        storage.use();
         StorageAccessData& storageAccessData = m_jit.graph().m_storageAccessData[node.storageAccessDataIndex()];
         
         m_jit.load32(JITCompiler::Address(storageGPR, storageAccessData.offset * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
