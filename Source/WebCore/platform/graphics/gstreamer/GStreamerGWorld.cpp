@@ -89,9 +89,6 @@ bool GStreamerGWorld::enterFullscreen()
     GOwnPtr<GstElement> videoSink;
     g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
-    GstElement* valve = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoValve");
-
-    g_object_set(valve, "drop-probability", 1.0, NULL);
 
     // Add and link a queue, ffmpegcolorspace, videoscale and sink in the bin.
     gst_bin_add_many(GST_BIN(videoSink.get()), platformVideoSink, videoScale, colorspace, queue, NULL);
@@ -109,12 +106,17 @@ bool GStreamerGWorld::enterFullscreen()
 
     m_dynamicPadName = gst_pad_get_name(srcPad);
 
-    // Roll new elements to pipeline state.
-    gst_element_sync_state_with_parent(queue);
-    gst_element_sync_state_with_parent(colorspace);
-    gst_element_sync_state_with_parent(videoScale);
-    gst_element_sync_state_with_parent(platformVideoSink);
+    // Synchronize the new elements with pipeline state. If it's
+    // paused limit the state change to pre-rolling.
+    GstState state;
+    gst_element_get_state(m_pipeline, &state, 0, 0);
+    if (state < GST_STATE_PLAYING)
+        state = GST_STATE_READY;
 
+    gst_element_set_state(platformVideoSink, state);
+    gst_element_set_state(videoScale, state);
+    gst_element_set_state(colorspace, state);
+    gst_element_set_state(queue, state);
     gst_object_unref(tee);
 
     // Query the current media segment informations and send them towards
@@ -160,30 +162,32 @@ void GStreamerGWorld::exitFullscreen()
     GstElement* colorspace = gst_bin_get_by_name(GST_BIN(videoSink.get()), "colorspace");
     GstElement* videoScale = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoScale");
 
-    GstElement* valve = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoValve");
-
-    g_object_set(valve, "drop-probability", 0.0, NULL);
-
     // Get pads to unlink and remove.
     GstPad* srcPad = gst_element_get_static_pad(tee, m_dynamicPadName);
     GstPad* sinkPad = gst_element_get_static_pad(queue, "sink");
 
-    // Block data flow towards the pipeline branch to remove.
-    gst_pad_set_blocked(srcPad, true);
+    // Block data flow towards the pipeline branch to remove. No need
+    // for pad blocking if the pipeline is paused.
+    GstState state;
+    gst_element_get_state(m_pipeline, &state, 0, 0);
+    if (state < GST_STATE_PLAYING || gst_pad_set_blocked(srcPad, true)) {
 
-    // Unlink and release request pad.
-    gst_pad_unlink(srcPad, sinkPad);
-    gst_element_release_request_pad(tee, srcPad);
+        // Unlink and release request pad.
+        gst_pad_unlink(srcPad, sinkPad);
+        gst_element_release_request_pad(tee, srcPad);
+
+        // Unlink, remove and cleanup queue, ffmpegcolorspace, videoScale and sink.
+        gst_element_unlink_many(queue, colorspace, videoScale, platformVideoSink, NULL);
+        gst_bin_remove_many(GST_BIN(videoSink.get()), queue, colorspace, videoScale, platformVideoSink, NULL);
+        gst_element_set_state(platformVideoSink, GST_STATE_NULL);
+        gst_element_set_state(videoScale, GST_STATE_NULL);
+        gst_element_set_state(colorspace, GST_STATE_NULL);
+        gst_element_set_state(queue, GST_STATE_NULL);
+    }
+
     gst_object_unref(GST_OBJECT(srcPad));
     gst_object_unref(GST_OBJECT(sinkPad));
 
-    // Unlink, remove and cleanup queue, ffmpegcolorspace, videoScale and sink.
-    gst_element_unlink_many(queue, colorspace, videoScale, platformVideoSink, NULL);
-    gst_bin_remove_many(GST_BIN(videoSink.get()), queue, colorspace, videoScale, platformVideoSink, NULL);
-    gst_element_set_state(queue, GST_STATE_NULL);
-    gst_element_set_state(colorspace, GST_STATE_NULL);
-    gst_element_set_state(videoScale, GST_STATE_NULL);
-    gst_element_set_state(platformVideoSink, GST_STATE_NULL);
     gst_object_unref(queue);
     gst_object_unref(colorspace);
     gst_object_unref(videoScale);

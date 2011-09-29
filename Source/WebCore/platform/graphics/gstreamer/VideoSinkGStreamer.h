@@ -22,6 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "GStreamerGWorld.h"
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>
 
@@ -72,8 +73,9 @@ struct _WebKitVideoSinkClass {
     void (* _webkit_reserved6)(void);
 };
 
+
 GType       webkit_video_sink_get_type(void) G_GNUC_CONST;
-GstElement *webkit_video_sink_new(void);
+GstElement *webkit_video_sink_new(WebCore::GStreamerGWorld*);
 
 G_END_DECLS
 

@@ -1669,14 +1669,13 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(m_playBin, "video-changed", G_CALLBACK(mediaPlayerPrivateVideoChangedCallback), this);
     g_signal_connect(m_playBin, "audio-changed", G_CALLBACK(mediaPlayerPrivateAudioChangedCallback), this);
 
-    m_webkitVideoSink = webkit_video_sink_new();
+    m_webkitVideoSink = webkit_video_sink_new(m_gstGWorld.get());
 
     g_signal_connect(m_webkitVideoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 
     m_videoSinkBin = gst_bin_new("sink");
     GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
     GstElement* queue = gst_element_factory_make("queue", 0);
-    GstElement* identity = gst_element_factory_make("identity", "videoValve");
 
     // Take ownership.
     gst_object_ref_sink(m_videoSinkBin);
@@ -1686,7 +1685,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     // internal video sink. For fullscreen we create an autovideosink
     // and initially block the data flow towards it and configure it
 
-    gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, identity, NULL);
+    gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, NULL);
 
     // Link a new src pad from tee to queue1.
     GstPad* srcPad = gst_element_get_request_pad(videoTee, "src%d");
@@ -1728,8 +1727,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     ASSERT(actualVideoSink);
 
     // Faster elements linking.
-    gst_element_link_pads_full(queue, "src", identity, "sink", GST_PAD_LINK_CHECK_NOTHING);
-    gst_element_link_pads_full(identity, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(queue, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 
     // Add a ghostpad to the bin so it can proxy to tee.
     GstPad* pad = gst_element_get_static_pad(videoTee, "sink");

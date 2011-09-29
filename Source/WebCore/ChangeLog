@@ -1,3 +1,29 @@
+2011-09-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fullscreen video pause/play fails
+        https://bugs.webkit.org/show_bug.cgi?id=66936
+
+        Reviewed by Martin Robinson.
+
+        Don't use the identity element to avoid painting of the in-window
+        video. Instead simply make the sink aware of the fullscreen state
+        and ignore buffers if fullscreen and autovideosink are
+        active. Also fixed two deadlocks happening when a paused pipeline
+        is switched to fullscreen and when fullscreen is disabled for a
+        paused pipeline.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        (WebCore::GStreamerGWorld::exitFullscreen):
+        * platform/graphics/gstreamer/GStreamerGWorld.h:
+        (WebCore::GStreamerGWorld::isFullscreen):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_render):
+        (webkit_video_sink_new):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h:
+
 2011-09-29  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(87010): elements in ECMA-cloud neither filled nor blurred

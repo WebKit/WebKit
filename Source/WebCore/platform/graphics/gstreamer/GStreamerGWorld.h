@@ -51,6 +51,8 @@ public:
     bool enterFullscreen();
     void exitFullscreen();
 
+    bool isFullscreen() const { return m_dynamicPadName; }
+
     void setWindowOverlay(GstMessage* message);
     PlatformVideoWindow* platformVideoWindow() const { return m_videoWindow.get(); }
 

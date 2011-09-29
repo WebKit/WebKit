@@ -63,6 +63,7 @@ struct _WebKitVideoSinkPrivate {
     guint timeout_id;
     GMutex* buffer_mutex;
     GCond* data_cond;
+    WebCore::GStreamerGWorld* gstGWorld;
 
     // If this is TRUE all processing should finish ASAP
     // This is necessary because there could be a race between
@@ -143,6 +144,13 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     g_mutex_lock(priv->buffer_mutex);
 
     if (priv->unlocked) {
+        g_mutex_unlock(priv->buffer_mutex);
+        return GST_FLOW_OK;
+    }
+
+    // Ignore buffers if the video is already in fullscreen using
+    // another sink.
+    if (priv->gstGWorld->isFullscreen()) {
         g_mutex_unlock(priv->buffer_mutex);
         return GST_FLOW_OK;
     }
@@ -365,10 +373,11 @@ webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
  *
  * Return value: a #GstElement for the newly created video sink
  */
-GstElement*
-webkit_video_sink_new(void)
+GstElement* webkit_video_sink_new(WebCore::GStreamerGWorld* gstGWorld)
 {
-    return (GstElement*)g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0);
+    GstElement* element = GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0));
+    WEBKIT_VIDEO_SINK(element)->priv->gstGWorld = gstGWorld;
+    return element;
 }
 
 #endif // USE(GSTREAMER)
