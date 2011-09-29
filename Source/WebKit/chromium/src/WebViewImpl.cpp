@@ -2704,11 +2704,6 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
     return context;
 }
 
-PassOwnPtr<LayerPainterChromium> WebViewImpl::createRootLayerPainter()
-{
-    return WebViewImplContentPainter::create(this);
-}
-
 void WebViewImpl::animateAndLayout(double frameBeginTime)
 {
     animate(frameBeginTime);

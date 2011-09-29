@@ -31,7 +31,6 @@
 #include "CCThreadImpl.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
-#include "LayerPainterChromium.h"
 #include "MockWebGraphicsContext3D.h"
 #include "TextureManager.h"
 #include "cc/CCLayerTreeHostImpl.h"
@@ -159,11 +158,6 @@ public:
         GraphicsContext3D::Attributes attrs;
         RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(mock.release(), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnAnotherThread);
         return context;
-    }
-
-    virtual PassOwnPtr<LayerPainterChromium> createRootLayerPainter()
-    {
-        return nullptr;
     }
 
     virtual void didRecreateGraphicsContext(bool)

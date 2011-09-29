@@ -53,7 +53,6 @@ public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
     virtual PassOwnPtr<CCThread> createCompositorThread() = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
-    virtual PassOwnPtr<LayerPainterChromium> createRootLayerPainter() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
 #if !USE(THREADED_COMPOSITING)
     virtual void scheduleComposite() = 0;
