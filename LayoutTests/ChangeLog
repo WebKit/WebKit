@@ -1,5 +1,115 @@
 2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaselines for r96257 part 2.
+
+        * editing/deleting/delete-line-011-expected.txt: Added.
+        * editing/deleting/delete-tab-001-expected.txt: Added.
+        * editing/deleting/delete-tab-002-expected.txt: Added.
+        * editing/deleting/delete-tab-003-expected.txt: Added.
+        * editing/deleting/delete-tab-004-expected.txt: Added.
+        * editing/deleting/smart-delete-002-expected.txt: Added.
+        * editing/inserting/insert-text-with-newlines-expected.txt: Added.
+        * editing/style/smoosh-styles-003-expected.txt: Added.
+        * editing/style/style-3681552-fix-001-expected.txt: Added.
+        * editing/style/style-boundary-002-expected.txt: Added.
+        * editing/style/style-boundary-003-expected.txt: Added.
+        * editing/style/typing-style-001-expected.txt: Added.
+        * editing/style/typing-style-002-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-cg-mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium-linux-x86/editing: Added.
+        * platform/chromium-linux-x86/editing/pasteboard: Added.
+        * platform/chromium-linux-x86/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-linux-x86/editing/style: Added.
+        * platform/chromium-linux-x86/editing/style/style-3681552-fix-002-expected.txt: Added.
+        * platform/chromium-linux/editing/deleting/smart-delete-002-expected.txt:
+        * platform/chromium-linux/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-linux/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/chromium-linux/editing/pasteboard/subframe-dragndrop-1-expected.png:
+        * platform/chromium-linux/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/chromium-linux/editing/style/style-3681552-fix-002-expected.txt: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium-win-vista/editing/deleting: Removed.
+        * platform/chromium-win-vista/editing/deleting/table-cells-expected.png: Removed.
+        * platform/chromium-win-vista/editing/execCommand: Removed.
+        * platform/chromium-win-vista/editing/execCommand/create-list-with-hr-expected.png: Removed.
+        * platform/chromium-win-vista/editing/execCommand/find-after-replace-expected.png: Removed.
+        * platform/chromium-win-vista/editing/execCommand/paste-1-expected.png: Removed.
+        * platform/chromium-win-vista/editing/execCommand/paste-2-expected.png: Removed.
+        * platform/chromium-win-vista/editing/inserting: Removed.
+        * platform/chromium-win-vista/editing/inserting/4278698-expected.png: Removed.
+        * platform/chromium-win-vista/editing/inserting/paragraph-separator-in-table-2-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/3976872-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/4076267-2-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/4076267-3-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/4076267-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-win-vista/editing/pasteboard/undoable-fragment-removes-expected.png: Removed.
+        * platform/chromium-win-vista/editing/selection: Removed.
+        * platform/chromium-win-vista/editing/selection/select-all-iframe-expected.png: Removed.
+        * platform/chromium-win-vista/editing/style: Added.
+        * platform/chromium-win-vista/editing/style/style-3681552-fix-002-expected.txt: Added.
+        * platform/chromium-win-vista/editing/undo: Removed.
+        * platform/chromium-win-vista/editing/undo/4063751-expected.png: Removed.
+        * platform/chromium-win-vista/editing/unsupported-content: Removed.
+        * platform/chromium-win-vista/editing/unsupported-content/table-type-after-expected.png: Removed.
+        * platform/chromium-win-vista/editing/unsupported-content/table-type-before-expected.png: Removed.
+        * platform/chromium-win-xp/editing/pasteboard: Added.
+        * platform/chromium-win-xp/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-win-xp/editing/style: Added.
+        * platform/chromium-win-xp/editing/style/style-3681552-fix-002-expected.txt: Added.
+        * platform/chromium-win-xp/fast/events: Removed.
+        * platform/chromium-win/editing/deleting/delete-br-011-expected.txt: Added.
+        * platform/chromium-win/editing/deleting/delete-line-011-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-tab-001-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-tab-002-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-tab-003-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-tab-004-expected.txt:
+        * platform/chromium-win/editing/inserting/insert-text-with-newlines-expected.txt:
+        * platform/chromium-win/editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium-win/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/chromium-win/editing/spelling/spelling-expected.txt:
+        * platform/chromium-win/editing/style/smoosh-styles-003-expected.png:
+        * platform/chromium-win/editing/style/style-3681552-fix-001-expected.txt:
+        * platform/chromium-win/editing/style/style-3681552-fix-002-expected.txt:
+        * platform/chromium-win/editing/style/style-boundary-002-expected.txt:
+        * platform/chromium-win/editing/style/style-boundary-003-expected.txt:
+        * platform/chromium-win/editing/style/style-boundary-005-expected.txt:
+        * platform/chromium-win/editing/style/typing-style-001-expected.txt:
+        * platform/chromium-win/editing/style/typing-style-002-expected.txt:
+        * platform/chromium-win/fast/events/updateLayoutForHitTest-expected.png:
+        * platform/chromium-win/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-011-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-002-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-003-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-004-expected.txt: Removed.
+        * platform/gtk/editing/deleting/smart-delete-002-expected.txt: Removed.
+        * platform/gtk/editing/inserting/insert-text-with-newlines-expected.txt: Removed.
+        * platform/gtk/editing/style/smoosh-styles-003-expected.txt: Removed.
+        * platform/gtk/editing/style/style-3681552-fix-001-expected.txt: Removed.
+        * platform/gtk/editing/style/style-boundary-002-expected.txt: Removed.
+        * platform/gtk/editing/style/style-boundary-003-expected.txt: Removed.
+        * platform/gtk/editing/style/typing-style-001-expected.txt: Removed.
+        * platform/gtk/editing/style/typing-style-002-expected.txt: Removed.
+        * platform/gtk/fast/repaint/selection-clear-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-line-011-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-tab-001-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-tab-002-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-tab-003-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-tab-004-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-002-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-text-with-newlines-expected.txt: Removed.
+        * platform/mac/editing/style/smoosh-styles-003-expected.txt: Removed.
+        * platform/mac/editing/style/style-3681552-fix-001-expected.txt: Removed.
+        * platform/mac/editing/style/style-boundary-002-expected.txt: Removed.
+        * platform/mac/editing/style/style-boundary-003-expected.txt: Removed.
+        * platform/mac/editing/style/typing-style-001-expected.txt: Removed.
+        * platform/mac/editing/style/typing-style-002-expected.txt: Removed.
+
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove some of Chromium test expectations temporarily added for r96257.
 
         * platform/chromium/test_expectations.txt:
