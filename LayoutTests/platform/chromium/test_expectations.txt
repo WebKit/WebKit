@@ -3827,3 +3827,5 @@ BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
 BUGWK69060 WIN LINUX : editing/pasteboard/paste-text-006.html = IMAGE IMAGE+TEXT
 
 BUGWK69062 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
+
+BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
