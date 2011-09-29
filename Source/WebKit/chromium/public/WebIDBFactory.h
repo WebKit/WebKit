@@ -66,7 +66,6 @@ public:
 
     // Used for DumpRenderTree tests.
     WEBKIT_EXPORT static void setOverrideBackingStoreType(BackingStoreType);
-    WEBKIT_EXPORT static void setTemporaryDatabaseFolder(const WebString& path);
 };
 
 } // namespace WebKit

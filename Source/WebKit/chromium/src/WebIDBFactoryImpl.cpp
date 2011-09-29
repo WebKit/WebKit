@@ -45,7 +45,6 @@ using namespace WebCore;
 namespace WebKit {
 
 static WebIDBFactory::BackingStoreType overriddenBackingStoreType = WebIDBFactory::DefaultBackingStore;
-static WebString tempDatabaseFolder;
 
 WebIDBFactory* WebIDBFactory::create()
 {
@@ -55,11 +54,6 @@ WebIDBFactory* WebIDBFactory::create()
 void WebIDBFactory::setOverrideBackingStoreType(BackingStoreType type)
 {
     overriddenBackingStoreType = type;
-}
-
-void WebIDBFactory::setTemporaryDatabaseFolder(const WebString& path)
-{
-    tempDatabaseFolder = path;
 }
 
 WebIDBFactoryImpl::WebIDBFactoryImpl()
@@ -83,16 +77,6 @@ void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSe
     if (backingStoreType == DefaultBackingStore)
         backingStoreType = LevelDBBackingStore;
 
-    if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
-        if (!tempDatabaseFolder.isEmpty()) {
-            // Layout tests provide a temporary folder.
-            path = tempDatabaseFolder;
-        } else {
-            // For incognito mode, fall back to SQLite.
-            backingStoreType = SQLiteBackingStore;
-        }
-    }
-
     m_idbFactoryBackend->getDatabaseNames(IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
 }
 
@@ -108,16 +92,6 @@ void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, 
 
     if (backingStoreType == DefaultBackingStore)
         backingStoreType = LevelDBBackingStore;
-
-    if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
-        if (!tempDatabaseFolder.isEmpty()) {
-            // Layout tests provide a temporary folder.
-            path = tempDatabaseFolder;
-        } else {
-            // For incognito mode, fall back to SQLite.
-            backingStoreType = SQLiteBackingStore;
-        }
-    }
 
     m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
 }

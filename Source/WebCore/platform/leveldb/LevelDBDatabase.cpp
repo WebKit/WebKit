@@ -33,8 +33,10 @@
 #include "LevelDBSlice.h"
 #include "LevelDBWriteBatch.h"
 #include "Logging.h"
+#include <helpers/memenv/memenv.h>
 #include <leveldb/comparator.h>
 #include <leveldb/db.h>
+#include <leveldb/env.h>
 #include <leveldb/slice.h>
 #include <string>
 #include <wtf/PassOwnPtr.h>
@@ -96,18 +98,26 @@ LevelDBDatabase::~LevelDBDatabase()
     // m_db's destructor uses m_comparatorAdapter; order of deletion is important.
     m_db.clear();
     m_comparatorAdapter.clear();
+    m_env.clear();
+}
+
+static leveldb::Status openDB(leveldb::Comparator* comparator, leveldb::Env* env, const String& path, leveldb::DB** db)
+{
+    leveldb::Options options;
+    options.comparator = comparator;
+    options.create_if_missing = true;
+    options.paranoid_checks = true;
+    options.env = env;
+
+    return leveldb::DB::Open(options, path.utf8().data(), db);
 }
 
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
 
-    leveldb::Options options;
-    options.comparator = comparatorAdapter.get();
-    options.create_if_missing = true;
-    options.paranoid_checks = true;
     leveldb::DB* db;
-    const leveldb::Status s = leveldb::DB::Open(options, fileName.utf8().data(), &db);
+    const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::Env::Default(), fileName, &db);
 
     if (!s.ok()) {
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
@@ -115,6 +125,28 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
     }
 
     OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
+    result->m_db = adoptPtr(db);
+    result->m_comparatorAdapter = comparatorAdapter.release();
+    result->m_comparator = comparator;
+
+    return result.release();
+}
+
+PassOwnPtr<LevelDBDatabase> LevelDBDatabase::openInMemory(const LevelDBComparator* comparator)
+{
+    OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
+    OwnPtr<leveldb::Env> inMemoryEnv = adoptPtr(leveldb::NewMemEnv(leveldb::Env::Default()));
+
+    leveldb::DB* db;
+    const leveldb::Status s = openDB(comparatorAdapter.get(), inMemoryEnv.get(), String(), &db);
+
+    if (!s.ok()) {
+        LOG_ERROR("Failed to open in-memory LevelDB database: %s", s.ToString().c_str());
+        return nullptr;
+    }
+
+    OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
+    result->m_env = inMemoryEnv.release();
     result->m_db = adoptPtr(db);
     result->m_comparatorAdapter = comparatorAdapter.release();
     result->m_comparator = comparator;

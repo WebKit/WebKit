@@ -36,6 +36,7 @@
 namespace leveldb {
 class Comparator;
 class DB;
+class Env;
 }
 
 namespace WebCore {
@@ -48,6 +49,7 @@ class LevelDBWriteBatch;
 class LevelDBDatabase {
 public:
     static PassOwnPtr<LevelDBDatabase> open(const String& fileName, const LevelDBComparator*);
+    static PassOwnPtr<LevelDBDatabase> openInMemory(const LevelDBComparator*);
     ~LevelDBDatabase();
 
     bool put(const LevelDBSlice& key, const Vector<char>& value);
@@ -60,9 +62,10 @@ public:
 private:
     LevelDBDatabase();
 
+    OwnPtr<leveldb::Env> m_env;
+    OwnPtr<leveldb::Comparator> m_comparatorAdapter;
     OwnPtr<leveldb::DB> m_db;
     const LevelDBComparator* m_comparator;
-    OwnPtr<leveldb::Comparator> m_comparatorAdapter;
 };
 
 }

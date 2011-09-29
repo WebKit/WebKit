@@ -136,20 +136,22 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
 {
     String pathBase = pathBaseArg;
 
-    if (pathBase.isEmpty()) {
-        ASSERT_NOT_REACHED(); // FIXME: We need to handle this case for incognito and DumpRenderTree.
-        return PassRefPtr<IDBBackingStore>();
-    }
-
-    if (!makeAllDirectories(pathBase)) {
-        LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
-        return PassRefPtr<IDBBackingStore>();
-    }
-    // FIXME: We should eventually use the same LevelDB database for all origins.
-    String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
-
     OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
-    OwnPtr<LevelDBDatabase> db = LevelDBDatabase::open(path, comparator.get());
+    OwnPtr<LevelDBDatabase> db;
+
+    if (pathBase.isEmpty())
+        db = LevelDBDatabase::openInMemory(comparator.get());
+    else {
+        if (!makeAllDirectories(pathBase)) {
+            LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
+            return PassRefPtr<IDBBackingStore>();
+        }
+        // FIXME: We should eventually use the same LevelDB database for all origins.
+        String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
+
+        db = LevelDBDatabase::open(path, comparator.get());
+    }
+
     if (!db)
         return PassRefPtr<IDBBackingStore>();
 

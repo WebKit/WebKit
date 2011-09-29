@@ -169,7 +169,7 @@ PassRefPtr<IDBBackingStore> IDBSQLiteBackingStore::open(SecurityOrigin* security
 {
     RefPtr<IDBSQLiteBackingStore> backingStore(adoptRef(new IDBSQLiteBackingStore(fileIdentifier, factory)));
 
-    String path = ":memory:";
+    String path = ":memory:"; // in-memory SQLite database.
     if (!pathBase.isEmpty()) {
         if (!makeAllDirectories(pathBase)) {
             // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
@@ -1012,7 +1012,9 @@ PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexCursor(int64
 
 bool IDBSQLiteBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, const String& name, const String& pathBase)
 {
-    String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
+    String path = ":memory:"; // in-memory SQLite database.
+    if (!pathBase.isEmpty())
+        path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
     SQLiteDatabase db;
     if (!db.open(path))
         return false;

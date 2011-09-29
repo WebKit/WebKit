@@ -136,12 +136,6 @@ TestShell::TestShell(bool testShellMode)
     // timed-out DRT process was crashed.
     m_timeout = 30 * 1000;
 
-#if ENABLE(INDEXED_DATABASE)
-    m_tempIndexedDBDirectory = adoptPtr(webkit_support::CreateScopedTempDirectory());
-    m_tempIndexedDBDirectory->CreateUniqueTempDir();
-    WebIDBFactory::setTemporaryDatabaseFolder(WebString::fromUTF8(m_tempIndexedDBDirectory->path().c_str()));
-#endif
-
     createMainWindow();
 }
 

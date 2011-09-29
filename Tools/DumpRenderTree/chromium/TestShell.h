@@ -235,9 +235,6 @@ private:
     // Used by the watchdog to know when it's finished.
     HANDLE m_finishedEvent;
 #endif
-
-    // Temporary directory for IndexedDB (LevelDB doesn't support in-memory databases.)
-    OwnPtr<webkit_support::ScopedTempDirectory> m_tempIndexedDBDirectory;
 };
 
 void platformInit(int*, char***);
