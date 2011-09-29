@@ -3812,8 +3812,6 @@ BUGWK62092 WIN LINUX : editing/style/style-boundary-005.html = TEXT
 BUGWK62092 WIN LINUX : editing/style/typing-style-001.html = TEXT
 BUGWK62092 WIN LINUX : editing/style/typing-style-002.html = TEXT
 BUGWK62092 WIN LINUX : editing/undo/4063751.html = TEXT
-BUGWK62092 WIN LINUX : editing/pasteboard/paste-text-006.html = IMAGE+TEXT
-BUGWK62092 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
 BUGWK62092 LINUX : editing/deleting/smart-delete-002.html = TEXT
 BUGWK62092 LINUX : editing/pasteboard/subframe-dragndrop-1.html = TEXT
 BUGWK62092 WIN : fast/events/updateLayoutForHitTest.html = IMAGE+TEXT
@@ -3823,3 +3821,6 @@ BUGWK62092 WIN LINUX : editing/unsupported-content/table-type-before.html = TEXT
 BUGWK62092 MAC : editing/pasteboard/paste-text-006.html = IMAGE
 // Used to be just PASS IMAGE before r96257
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS FAIL
+
+BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
+BUGWK69060 WIN LINUX : editing/pasteboard/paste-text-006.html = IMAGE+TEXT

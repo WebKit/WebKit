@@ -1,5 +1,13 @@
 2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update Chromium test expectation and also add back the expected result erroneously removed in r96284.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/editing/pasteboard/paste-text-006-expected.txt: Added.
+        * platform/mac/editing/pasteboard/paste-text-006-expected.txt: Added.
+
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaselines for r96257 part 2.
 
         * editing/deleting/delete-line-011-expected.txt: Added.
