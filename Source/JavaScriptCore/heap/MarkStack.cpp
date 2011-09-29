@@ -51,7 +51,7 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
         internalAppend(roots[i]);
 }
 
-inline void SlotVisitor::visitChildren(JSCell* cell)
+void SlotVisitor::visitChildren(JSCell* cell)
 {
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_visitedTypeCounts.count(cell);

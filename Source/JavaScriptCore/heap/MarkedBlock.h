@@ -29,6 +29,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 // Set to log state transitions of blocks.
 #define HEAP_LOG_BLOCK_STATE_TRANSITIONS 0
@@ -72,8 +73,10 @@ namespace JSC {
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
-        static const size_t bytesPerCard = 512; // 1.6% overhead
-        static const int log2CardSize = 9;
+        static const int cardShift = 10; // This is log2 of bytes per card.
+        static const size_t bytesPerCard = 1 << cardShift;
+        static const int cardCount = blockSize / bytesPerCard;
+        static const int cardMask = cardCount - 1;
 
         struct FreeCell {
             FreeCell* next;
@@ -123,11 +126,13 @@ namespace JSC {
 #if ENABLE(GGC)
         void setDirtyObject(const void* atom)
         {
+            ASSERT(MarkedBlock::blockFor(atom) == this);
             m_cards.markCardForAtom(atom);
         }
 
         uint8_t* addressOfCardFor(const void* atom)
         {
+            ASSERT(MarkedBlock::blockFor(atom) == this);
             return &m_cards.cardForAtom(atom);
         }
 
@@ -135,6 +140,9 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(MarkedBlock, m_cards);
         }
+
+        typedef Vector<JSCell*, 32> DirtyCellVector;
+        inline void gatherDirtyCells(DirtyCellVector&);
 #endif
 
         template <typename Functor> void forEachCell(Functor&);
@@ -299,6 +307,45 @@ namespace JSC {
             functor(cell);
         }
     }
+
+#if ENABLE(GGC)
+void MarkedBlock::gatherDirtyCells(DirtyCellVector& dirtyCells)
+{
+    COMPILE_ASSERT(m_cards.cardCount == cardCount, MarkedBlockCardCountsMatch);
+
+    ASSERT(m_state != New && m_state != FreeListed);
+    
+    // This is an optimisation to avoid having to walk the set of marked
+    // blocks twice during GC.
+    m_state = Marked;
+    
+    if (markCountIsZero())
+        return;
+    
+    size_t cellSize = this->cellSize();
+    const size_t firstCellOffset = firstAtom() * atomSize % cellSize;
+    
+    for (size_t i = 0; i < m_cards.cardCount; i++) {
+        if (!m_cards.isCardMarked(i))
+            continue;
+        char* ptr = reinterpret_cast<char*>(this);
+        if (i)
+            ptr += firstCellOffset + cellSize * ((i * bytesPerCard + cellSize - 1 - firstCellOffset) / cellSize);
+        else
+            ptr += firstAtom() * atomSize;
+        char* end = reinterpret_cast<char*>(this) + std::min((i + 1) * bytesPerCard, m_endAtom * atomSize);
+        
+        while (ptr < end) {
+            JSCell* cell = reinterpret_cast<JSCell*>(ptr);
+            ASSERT(*addressOfCardFor(cell));
+            if (isMarked(cell))
+                dirtyCells.append(cell);
+            ptr += cellSize;
+        }
+        m_cards.clearCard(i);
+    }
+}
+#endif
 
 } // namespace JSC
 

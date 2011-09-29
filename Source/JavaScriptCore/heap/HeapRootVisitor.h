@@ -43,7 +43,8 @@ namespace JSC {
         void visit(JSValue*, size_t);
         void visit(JSString**);
         void visit(JSCell**);
-        
+        void visitChildren(JSCell*);
+
         SlotVisitor& visitor();
 
     private:
@@ -73,6 +74,11 @@ namespace JSC {
     inline void HeapRootVisitor::visit(JSCell** slot)
     {
         m_visitor.append(slot);
+    }
+
+    inline void HeapRootVisitor::visitChildren(JSCell* cell)
+    {
+        m_visitor.visitChildren(cell);
     }
 
     inline SlotVisitor& HeapRootVisitor::visitor()

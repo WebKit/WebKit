@@ -1255,8 +1255,8 @@ void JITCodeGenerator::markCellCard(MacroAssembler& jit, GPRReg owner, GPRReg sc
     jit.move(owner, scratch1);
     jit.andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch1);
     jit.move(owner, scratch2);
-    jit.andPtr(TrustedImm32(static_cast<int32_t>(~MarkedBlock::blockMask)), scratch2);
-    jit.rshift32(TrustedImm32(MarkedBlock::log2CardSize), scratch2);
+    jit.rshift32(TrustedImm32(MarkedBlock::cardShift), scratch2);
+    jit.andPtr(TrustedImm32(MarkedBlock::cardMask), scratch2);
     jit.store8(TrustedImm32(1), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfCards()));
 #endif
 }

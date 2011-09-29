@@ -1044,8 +1044,8 @@ void JIT::emitWriteBarrier(RegisterID owner, RegisterID value, RegisterID scratc
     move(owner, scratch);
     andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch);
     move(owner, scratch2);
-    andPtr(TrustedImm32(static_cast<int32_t>(~MarkedBlock::blockMask)), scratch2);
-    rshift32(TrustedImm32(MarkedBlock::log2CardSize), scratch2);
+    rshift32(TrustedImm32(MarkedBlock::cardShift), scratch2);
+    andPtr(TrustedImm32(MarkedBlock::cardMask), scratch2);
     store8(TrustedImm32(1), BaseIndex(scratch, scratch2, TimesOne, MarkedBlock::offsetOfCards()));
     if (mode == ShouldFilterImmediates)
         filterCells.link(this);

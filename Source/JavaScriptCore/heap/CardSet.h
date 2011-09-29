@@ -34,9 +34,10 @@ namespace JSC {
 
 template <size_t cardSize, size_t blockSize> class CardSet {
     WTF_MAKE_NONCOPYABLE(CardSet);
-    static const size_t cardCount = (blockSize + cardSize - 1) / cardSize;
 
 public:
+    static const size_t cardCount = (blockSize + cardSize - 1) / cardSize;
+
     CardSet()
     {
         memset(m_cards, 0, cardCount);
@@ -45,6 +46,8 @@ public:
     bool isCardMarkedForAtom(const void*);
     void markCardForAtom(const void*);
     uint8_t& cardForAtom(const void*);
+    bool isCardMarked(size_t);
+    void clearCard(size_t);
 
 private:
     uint8_t m_cards[cardCount];
@@ -67,6 +70,18 @@ template <size_t cardSize, size_t blockSize> bool CardSet<cardSize, blockSize>::
 template <size_t cardSize, size_t blockSize> void CardSet<cardSize, blockSize>::markCardForAtom(const void* ptr)
 {
     cardForAtom(ptr) = 1;
+}
+
+template <size_t cardSize, size_t blockSize> bool CardSet<cardSize, blockSize>::isCardMarked(size_t i)
+{
+    ASSERT(i < cardCount);
+    return m_cards[i];
+}
+
+template <size_t cardSize, size_t blockSize> void CardSet<cardSize, blockSize>::clearCard(size_t i)
+{
+    ASSERT(i < cardCount);
+    m_cards[i] = 0;
 }
 
 }

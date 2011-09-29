@@ -50,7 +50,9 @@ public:
     MarkedSpace::SizeClass& sizeClassFor(size_t bytes) { return m_markedSpace.sizeClassFor(bytes); }
     void setHighWaterMark(size_t bytes) { m_markedSpace.setHighWaterMark(bytes); }
     size_t highWaterMark() { return m_markedSpace.highWaterMark(); }
-    
+
+    void gatherDirtyCells(MarkedBlock::DirtyCellVector&);
+
     template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachCell();
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);

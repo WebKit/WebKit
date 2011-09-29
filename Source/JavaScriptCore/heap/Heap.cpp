@@ -471,12 +471,27 @@ void Heap::markRoots()
     m_jettisonedCodeBlocks.clearMarks();
     registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
     m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
+#if ENABLE(GGC)
+    MarkedBlock::DirtyCellVector dirtyCells;
+    // Until we have a sensible policy we just random choose to perform
+    // young generation collections 90% of the time.
+    if (WTF::randomNumber() > 0.1)
+        m_objectSpace.gatherDirtyCells(dirtyCells);
+    else
+#endif
+        clearMarks();
 
-    clearMarks();
 
     SlotVisitor& visitor = m_slotVisitor;
     HeapRootVisitor heapRootVisitor(visitor);
-    
+
+#if ENABLE(GGC)
+    for (size_t i = 0; i < dirtyObjectCount; i++) {
+        heapRootVisitor.visitChildren(dirtyCells[i]);
+        visitor.drain();
+    }
+#endif
+
     visitor.append(machineThreadRoots);
     visitor.drain();
 

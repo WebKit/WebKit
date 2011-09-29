@@ -240,7 +240,9 @@ namespace JSC {
     inline void Heap::writeBarrier(const JSCell* owner, JSCell*)
     {
         WriteBarrierCounters::countWriteBarrier();
-        MarkedBlock::blockFor(owner)->setDirtyObject(owner);
+        MarkedBlock* block = MarkedBlock::blockFor(owner);
+        if (block->isMarked(owner))
+            block->setDirtyObject(owner);
     }
 
     inline void Heap::writeBarrier(const JSCell* owner, JSValue value)
