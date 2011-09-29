@@ -2221,7 +2221,7 @@ void SpeculativeJIT::checkArgumentTypes()
             speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, temp.gpr(), TrustedImm32(JSValue::CellTag)));
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), temp.gpr());
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-        }
+        } // FIXME: need boolean predictions, but we currently don't have that support.
     }
 }
 
