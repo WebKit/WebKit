@@ -51,7 +51,9 @@ public:
     void setHighWaterMark(size_t bytes) { m_markedSpace.setHighWaterMark(bytes); }
     size_t highWaterMark() { return m_markedSpace.highWaterMark(); }
 
+#if ENABLE(GGC)
     void gatherDirtyCells(MarkedBlock::DirtyCellVector&);
+#endif
 
     template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachCell();
