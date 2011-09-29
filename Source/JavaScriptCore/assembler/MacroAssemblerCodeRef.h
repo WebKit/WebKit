@@ -71,6 +71,8 @@ public:
     {
     }
 
+#if !CALLING_CONVENTION_IS_CDECL
+
     template<typename returnType>
     FunctionPtr(returnType(*value)())
         : m_value((void*)value)
@@ -106,7 +108,7 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-#ifdef CALLING_CONVENTION_IS_CDECL
+#else
 #define STDCALL __attribute__ ((stdcall))
     template<typename returnType>
     FunctionPtr(returnType STDCALL(*value)())

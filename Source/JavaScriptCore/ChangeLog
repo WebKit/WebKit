@@ -1,3 +1,9 @@
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt for r96286.
+
+        * assembler/MacroAssemblerCodeRef.h:
+
 2011-09-28  Gavin Barraclough  <barraclough@apple.com>
 
         DFG JIT Operations on 32_64 should use stdcall calling convention.
