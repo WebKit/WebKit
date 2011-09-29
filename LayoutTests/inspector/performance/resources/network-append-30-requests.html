@@ -17,18 +17,22 @@ function test()
 {
     WebInspector.showPanel("network");
 
+    var originalRefresh = InspectorTest.override(WebInspector.panels.network._networkLogView, "refresh", timeTrackingRefresh, true);
+    WebInspector.panels.network._networkLogView._defaultRefreshDelay = 30;
+    function timeTrackingRefresh()
+    {
+        var cookie = InspectorTest.timer.start("network-append-30-requests");
+        originalRefresh.call(this);
+        InspectorTest.timer.finish(cookie);
+        InspectorTest.timer.done();
+    }
+
     function test(timer)
     {
         WebInspector.panels.network._networkLogView._reset();
-        var cookie = timer.start("network-append-30-requests");
         InspectorTest.evaluateInPage("makeXHRRequests(30)");
-        function finish()
-        {
-            timer.finish(cookie);
-            timer.done();
-        }
-        InspectorTest.addSniffer(WebInspector.panels.network._networkLogView, "refresh", finish);
     }
+
     InspectorTest.runPerformanceTest(test, 15000);
 }
 

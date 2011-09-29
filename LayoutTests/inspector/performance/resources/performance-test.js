@@ -43,6 +43,10 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
             if (time - this._testStartTime < executeTime)
                 this._runTest();
             else {
+                if (this._complete)
+                    return;
+                this._complete = true;
+
                 this._dump();
                 if (this._callback)
                     this._callback();
@@ -77,8 +81,20 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
 
     }
 
-    var timer = new Timer(perfTest, callback);
-    timer._runTest();
+    InspectorTest.timer = new Timer(perfTest, callback);
+    InspectorTest.timer._runTest();
+}
+
+InspectorTest.mark = function(markerName)
+{
+    var timer = InspectorTest.timer;
+    if (!timer)
+        return;
+
+    if (InspectorTest.lastMarkCookie)
+        timer.finish(InspectorTest.lastMarkCookie);
+
+    InspectorTest.lastMarkCookie = markerName ? timer.start(markerName) : null;
 }
 
 InspectorTest.dumpTestStats = function(testName, samples, divider)

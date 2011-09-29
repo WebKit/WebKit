@@ -496,6 +496,8 @@ WebInspector.NetworkLogView.prototype = {
         this._updateOffscreenRows();
     },
 
+    _defaultRefreshDelay: 500,
+
     _scheduleRefresh: function()
     {
         if (this._needsRefresh)
@@ -504,7 +506,7 @@ WebInspector.NetworkLogView.prototype = {
         this._needsRefresh = true;
 
         if (this.visible && !("_refreshTimeout" in this))
-            this._refreshTimeout = setTimeout(this.refresh.bind(this), 500);
+            this._refreshTimeout = setTimeout(this.refresh.bind(this), this._defaultRefreshDelay);
     },
 
     _updateDividersIfNeeded: function(force)
