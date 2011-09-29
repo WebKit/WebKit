@@ -338,6 +338,28 @@
       'target_name': 'inspector_idl',
       'type': 'none',
       'actions': [
+         {
+          'action_name': 'validateInspectorProtocol',
+          'inputs': [
+            '../inspector/validate-protocol-compatibility',
+            '../inspector/Inspector.json',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.json.validated',
+          ],
+          'variables': {
+            'generator_include_dirs': [
+            ],
+          },
+          'action': [
+            'python',
+            '../inspector/validate-protocol-compatibility',
+            '-o',
+            '<@(_outputs)',
+            '<@(_inputs)'
+          ],
+          'message': 'Validate inspector protocol for backwards compatibility',
+        },
         {
           'action_name': 'generateInspectorProtocolIDL',
           'inputs': [

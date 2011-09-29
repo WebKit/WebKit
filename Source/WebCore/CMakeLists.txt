@@ -2204,6 +2204,13 @@ ADD_CUSTOM_COMMAND(
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
 ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Inspector.json.validated
+    MAIN_DEPENDENCY inspector/Inspector.json
+    DEPENDS ${WEBCORE_DIR}/inspector/validate-protocol-compatibility ${WEBCORE_DIR}/inspector/Inspector.json
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/validate-protocol-compatibility -o ${DERIVED_SOURCES_WEBCORE_DIR}/Inspector.json.validated ${WEBCORE_DIR}/inspector/Inspector.json
+    VERBATIM)
+
+ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Inspector.idl
     MAIN_DEPENDENCY inspector/Inspector.json
     DEPENDS ${WEBCORE_DIR}/inspector/generate-inspector-idl ${WEBCORE_DIR}/inspector/Inspector.json

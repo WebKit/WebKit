@@ -296,24 +296,41 @@ def self_test():
         "Network.requestWillBeSent: required parameter is missing: documentURL" ]
     for i in range(len(errors)):
         if errors[i] != golden_errors[i]:
-            print "Self-test failed"
             return False
     return True
 
 def main():
     if not self_test():
-        return
+        sys.stderr.write("Self-test failed")
+        return 1
 
-    if len(sys.argv) < 3:
-        print "Usage: %s Inspector.draft-01.json Inspector.json" % sys.argv[0]
-        return
+    if len(sys.argv) < 4 or sys.argv[1] != "-o":
+        sys.stderr.write("Usage: %s -o OUTPUT_FILE INPUT_FILE\n" % sys.argv[0])
+        return 1
 
-    schema_1 = load_json(sys.argv[1])
-    schema_2 = load_json(sys.argv[2])
+    output_path = sys.argv[2]
+    output_file = open(output_path, "w")
 
-    errors = compare_schemas(schema_1, schema_2)
-    for error in errors:
-        print error
+    input_path = sys.argv[3]
+    dir_name = os.path.dirname(input_path)
+    schema = load_json(input_path)
+    sys.stdout.write("Validating schema: %s\n" % schema["version"])
+    compatible = schema["compatible"]
+    errors_found = False
+    for version in compatible:
+        schema = load_json(input_path) # reload since modified while comparing
+        version_file_name = os.path.normpath(dir_name + "/Inspector." + version + ".json")
+        version_schema = load_json(version_file_name)
+        errors = compare_schemas(version_schema["domains"], schema["domains"])
+        if len(errors) > 0:
+            errors_found = True
+            sys.stderr.write("  compatibility with %s: FAILED\n" % version)
+            for error in errors:
+                sys.stderr.write( "    %s\n" % error)
+        else:
+            sys.stderr.write("  compatibility with %s: SUCCESS\n" % version)
+    if errors_found:
+        return 1
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -1,6 +1,9 @@
-[
-    {
+{
+    "version": "tip-of-tree",
+    "compatible": ["draft-01"],
+    "domains": [{
         "domain": "Inspector",
+        "hidden": true,
         "types": [],
         "commands": [
         ],
@@ -1211,7 +1214,7 @@
                 "name": "attributeRemoved",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
-                    { "name": "name", "type": "string", "description": "Local attribute name." }
+                    { "name": "name", "type": "string", "description": "A ttribute name." }
                 ],
                 "description": "Fired when <code>Element</code>'s attribute is removed."
             },
@@ -1268,6 +1271,7 @@
     },
     {
         "domain": "CSS",
+        "hidden": true,
         "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
         "types": [
             {
@@ -1984,6 +1988,7 @@
     },
     {
         "domain": "Worker",
+        "hidden": true,
         "types": [],
         "commands": [
             {
@@ -2042,5 +2047,5 @@
                 ]
             }
         ]
-    }
-]
+    }]
+}

@@ -888,6 +888,9 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
 
 # Inspector interfaces generator
 
+Inspector.json.validated : Inspector.json inspector/validate-protocol-compatibility
+	python $(WebCore)/inspector/validate-protocol-compatibility -o Inspector.json.validated $(WebCore)/inspector/Inspector.json
+
 Inspector.idl : Inspector.json inspector/generate-inspector-idl
 	python $(WebCore)/inspector/generate-inspector-idl -o Inspector.idl $(WebCore)/inspector/Inspector.json
 

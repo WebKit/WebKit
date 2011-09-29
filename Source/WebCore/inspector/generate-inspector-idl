@@ -42,7 +42,7 @@ input_file = open(input_path, "r")
 json_string = input_file.read()
 json_string = json_string.replace(": true", ": True")
 json_string = json_string.replace(": false", ": false")
-json_api = eval(json_string)
+json_api = eval(json_string)["domains"]
 
 output_file = open(output_path, "w")
 output_file.write("""/*
