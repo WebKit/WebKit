@@ -36,6 +36,10 @@ static void webkitWebContextFinalize(GObject* object)
 
     WKRelease(context->priv->context);
     context->priv->context = 0;
+
+    context->priv->~WebKitWebContextPrivate();
+
+    G_OBJECT_CLASS(webkit_web_context_parent_class)->finalize(object);
 }
 
 static void webkit_web_context_init(WebKitWebContext* webContext)

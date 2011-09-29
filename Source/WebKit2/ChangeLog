@@ -1,3 +1,19 @@
+2011-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Explicitly call destructors for objects initialized with placement new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=69079
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextFinalize): Call ~WebKitWebContextPrivate().
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (webkitWebLoaderClientFinalize): Call ~WebKitWebLoaderClient().
+        (webkit_web_loader_client_class_init):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewFinalize): Call ~WebKitWebViewPrivate().
+        (webkit_web_view_class_init):
+
 2011-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the WebGL build on WebKit2 GTK+.

@@ -182,6 +182,12 @@ static void webkitWebLoaderClientGetProperty(GObject* object, guint propId, GVal
     }
 }
 
+static void webkitWebLoaderClientFinalize(GObject* object)
+{
+    WEBKIT_WEB_LOADER_CLIENT(object)->priv->~WebKitWebLoaderClientPrivate();
+    G_OBJECT_CLASS(webkit_web_loader_client_parent_class)->finalize(object);
+}
+
 static void webkit_web_loader_client_init(WebKitWebLoaderClient* client)
 {
     WebKitWebLoaderClientPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(client, WEBKIT_TYPE_WEB_LOADER_CLIENT, WebKitWebLoaderClientPrivate);
@@ -196,6 +202,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
     objectClass->set_property = webkitWebLoaderClientSetProperty;
     objectClass->get_property = webkitWebLoaderClientGetProperty;
     objectClass->constructed = webkitWebLoaderClientConstructed;
+    objectClass->finalize = webkitWebLoaderClientFinalize;
 
     /**
      * WebKitWebView:web-view:

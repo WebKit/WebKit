@@ -83,6 +83,12 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     }
 }
 
+static void webkitWebViewFinalize(GObject* object)
+{
+    WEBKIT_WEB_VIEW(object)->priv->~WebKitWebViewPrivate();
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
+}
+
 static void webkit_web_view_init(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
@@ -97,6 +103,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gObjectClass->constructed = webkitWebViewConstructed;
     gObjectClass->set_property = webkitWebViewSetProperty;
     gObjectClass->get_property = webkitWebViewGetProperty;
+    gObjectClass->finalize = webkitWebViewFinalize;
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
