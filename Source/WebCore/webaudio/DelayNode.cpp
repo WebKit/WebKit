@@ -34,6 +34,7 @@ DelayNode::DelayNode(AudioContext* context, double sampleRate)
     : AudioBasicProcessorNode(context, sampleRate)
 {
     m_processor = adoptPtr(new DelayProcessor(sampleRate, 1));    
+    delayTime()->setContext(context);
     setType(NodeTypeDelay);
 }
 
