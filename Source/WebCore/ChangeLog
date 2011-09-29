@@ -1,3 +1,21 @@
+2011-09-29  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] canvas.toDataURL("image/jpeg"): use libjpeg-turbo data swizzle
+        https://bugs.webkit.org/show_bug.cgi?id=67402
+
+        Reviewed by Kenneth Russell.
+
+        libjpeg-turbo can read directly from the input data for the premultiplied BRGX
+        (SkBitmap) encoding case.
+
+        No change in behavior, covered by existing canvas 2d/3d tests
+        canvas/philip/tests/toDataURL.jpeg.alpha.html
+        fast/canvas/webgl/premultiplyalpha-test.html
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::encodePixels): If JCS_EXTENSIONS is defined (libjpeg-turbo), swizzle
+        the input BRGX pixels directly within libjpeg-turbo.
+
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
         Fixenate the build.

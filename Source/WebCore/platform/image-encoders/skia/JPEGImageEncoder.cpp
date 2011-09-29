@@ -133,6 +133,29 @@ static bool encodePixels(IntSize imageSize, unsigned char* inputPixels, bool pre
     imageSize.clampNegativeToZero();
     cinfo.image_height = imageSize.height();
     cinfo.image_width = imageSize.width();
+
+#if defined(JCS_EXTENSIONS)
+    if (premultiplied) {
+        cinfo.in_color_space = JCS_EXT_BGRX;
+        cinfo.input_components = 4;
+
+        jpeg_set_defaults(&cinfo);
+        jpeg_set_quality(&cinfo, quality, TRUE);
+        jpeg_start_compress(&cinfo, TRUE);
+
+        unsigned char* pixels = inputPixels;
+        const size_t pixelRowStride = cinfo.image_width * 4;
+        while (cinfo.next_scanline < cinfo.image_height) {
+            jpeg_write_scanlines(&cinfo, &pixels, 1);
+            pixels += pixelRowStride;
+        }
+
+        jpeg_finish_compress(&cinfo);
+        jpeg_destroy_compress(&cinfo);
+        return true;
+    }
+#endif
+
     cinfo.in_color_space = JCS_RGB;
     cinfo.input_components = 3;
 
