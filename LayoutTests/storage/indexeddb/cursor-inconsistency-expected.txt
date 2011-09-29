@@ -1,0 +1,62 @@
+Test consistency of IndexedDB's cursor objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('cursor-inconsistency')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+objectStore = db.createObjectStore('basicStore')
+objectStore.add('someValue1', 'someKey1').onerror = unexpectedErrorCallback
+objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback
+objectStore.add('someValue3', 'someKey3').onerror = unexpectedErrorCallback
+objectStore.add('someValue4', 'someKey4').onerror = unexpectedErrorCallback
+openBasicCursor()
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.objectStore('basicStore')
+objectStore.openCursor(keyRange)
+
+checkCursor()
+storedCursor = event.target.result
+PASS storedCursor === event.target.result is true
+PASS storedCursor.key is "someKey1"
+PASS event.target.result.key is "someKey1"
+PASS storedCursor.value is "someValue1"
+PASS event.target.result.value is "someValue1"
+event.target.result.continue()
+
+checkCursor()
+FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor.key is "someKey2"
+PASS event.target.result.key is "someKey2"
+FAIL storedCursor.value should be someValue2. Was someValue1.
+PASS event.target.result.value is "someValue2"
+event.target.result.continue()
+
+checkCursor()
+FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor.key is "someKey3"
+PASS event.target.result.key is "someKey3"
+FAIL storedCursor.value should be someValue3. Was someValue1.
+PASS event.target.result.value is "someValue3"
+event.target.result.continue()
+
+checkCursor()
+FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor.key is "someKey4"
+PASS event.target.result.key is "someKey4"
+FAIL storedCursor.value should be someValue4. Was someValue1.
+PASS event.target.result.value is "someValue4"
+event.target.result.continue()
+
+checkCursor()
+PASS counter is 5
+transactionComplete()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

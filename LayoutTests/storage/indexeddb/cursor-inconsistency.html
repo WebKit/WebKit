@@ -1,0 +1,99 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test consistency of IndexedDB's cursor objects.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+test();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('cursor-inconsistency')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    var db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = openBasicCursor;
+
+    deleteAllObjectStores(db);
+
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('basicStore')");
+    evalAndLog("objectStore.add('someValue1', 'someKey1').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('someValue3', 'someKey3').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('someValue4', 'someKey4').onerror = unexpectedErrorCallback");
+
+}
+
+function openBasicCursor()
+{
+    debug("openBasicCursor()");
+    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = transactionComplete;
+
+    keyRange = webkitIDBKeyRange.lowerBound("someKey1");
+    window.objectStore = evalAndLog("trans.objectStore('basicStore')");
+    request = evalAndLog("objectStore.openCursor(keyRange)");
+    request.onsuccess = checkCursor;
+    request.onerror = unexpectedErrorCallback;
+    counter = 1;
+}
+
+storedCursor = null;
+function checkCursor()
+{
+    debug("")
+    debug("checkCursor()");
+    if (event.target.result == null) {
+        shouldBe("counter", "5");
+        return;
+    }
+    if (storedCursor == null)
+      storedCursor = evalAndLog("storedCursor = event.target.result");
+
+    shouldBeTrue("storedCursor === event.target.result");
+    shouldBeEqualToString("storedCursor.key", "someKey" + counter);
+    shouldBeEqualToString("event.target.result.key", "someKey" + counter);
+    shouldBeEqualToString("storedCursor.value", "someValue" + counter);
+    shouldBeEqualToString("event.target.result.value", "someValue" + counter);
+    counter++;
+    evalAndLog("event.target.result.continue()");
+}
+
+function transactionComplete()
+{
+    debug("transactionComplete()");
+    done();
+}
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>
