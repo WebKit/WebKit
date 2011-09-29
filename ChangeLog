@@ -1,3 +1,12 @@
+2011-09-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Bump minimum requirement for eina.
+        https://bugs.webkit.org/show_bug.cgi?id=68994
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/FindEFL.cmake:
+
 2011-09-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix a build error in WebKit EFL.
