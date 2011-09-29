@@ -1,5 +1,11 @@
 2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        One last GTK rebaseline for r96257.
+
+        * platform/gtk/editing/inserting/insert-at-end-02-expected.txt:
+
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaseline for r96257 part 2.
 
         * platform/chromium-cg-mac-leopard/editing/deleting/table-cells-expected.png:
