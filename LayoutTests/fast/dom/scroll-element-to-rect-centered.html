@@ -9,10 +9,10 @@
     </body>
     <script src="../js/resources/js-test-pre.js"></script>
     <script>
-      if (window.internals) {
-        var box = document.getElementById('textbox');
+      var box = document.getElementById('textbox');
+      if (window.internals)
         window.internals.scrollElementToRect(box, 50, 30, 200, 250);
-      }
+
       var rect = box.getBoundingClientRect();
       var computedLeft = 50 + Math.floor((200 - rect.width) / 2);
       var computedTop = 30 + Math.floor((250 - rect.height) / 2);

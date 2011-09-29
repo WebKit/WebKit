@@ -1638,7 +1638,7 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
 {
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    LayoutRect bounds = element->boundsInWindowSpace();
+    LayoutRect bounds = element->getRect();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
     scrollBy(IntSize(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
