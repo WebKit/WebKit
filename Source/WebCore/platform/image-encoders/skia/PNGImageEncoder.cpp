@@ -68,10 +68,8 @@ static void preMultipliedBGRAtoRGBA(const void* pixels, int pixelCount, unsigned
     }
 }
 
-static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
-                         bool premultiplied, Vector<unsigned char>* output)
+static bool encodePixels(IntSize imageSize, unsigned char* inputPixels, bool premultiplied, Vector<unsigned char>* output)
 {
-    IntSize imageSize(inputSize);
     imageSize.clampNegativeToZero();
     Vector<unsigned char> row;
 
@@ -101,13 +99,14 @@ static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
 
     unsigned char* pixels = inputPixels;
     row.resize(imageSize.width() * sizeof(SkPMColor));
+    const size_t pixelRowStride = imageSize.width() * 4;
     for (int y = 0; y < imageSize.height(); ++y) {
         if (premultiplied) {
             preMultipliedBGRAtoRGBA(pixels, imageSize.width(), row.data());
             png_write_row(png, row.data());
         } else
             png_write_row(png, pixels);
-        pixels += imageSize.width() * 4;
+        pixels += pixelRowStride;
     }
 
     png_write_end(png, info);
@@ -117,17 +116,17 @@ static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
 
 bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* output)
 {
-    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support ARGB 32 bpp skia bitmaps.
-
     SkAutoLockPixels bitmapLock(bitmap);
-    IntSize imageSize(bitmap.width(), bitmap.height());
-    return encodePixels(imageSize, static_cast<unsigned char*>(bitmap.getPixels()), true, output);
+
+    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
+        return false; // Only support 32 bit/pixel skia bitmaps.
+
+    return encodePixels(IntSize(bitmap.width(), bitmap.height()), static_cast<unsigned char*>(bitmap.getPixels()), true, output);
 }
 
-bool PNGImageEncoder::encode(const ImageData& bitmap, Vector<unsigned char>* output)
+bool PNGImageEncoder::encode(const ImageData& imageData, Vector<unsigned char>* output)
 {
-    return encodePixels(bitmap.size(), bitmap.data()->data()->data(), false, output);
+    return encodePixels(imageData.size(), imageData.data()->data()->data(), false, output);
 }
 
 } // namespace WebCore
