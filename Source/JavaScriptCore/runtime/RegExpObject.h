@@ -81,7 +81,6 @@ namespace JSC {
         void finishCreation(JSGlobalObject*);
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:

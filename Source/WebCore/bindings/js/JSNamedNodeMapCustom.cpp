@@ -35,11 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNamedNodeMap::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, const Identifier& propertyName)
 {
     return impl->getNamedItem(identifierToString(propertyName));

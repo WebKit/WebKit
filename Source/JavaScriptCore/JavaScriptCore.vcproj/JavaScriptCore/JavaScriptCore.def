@@ -33,6 +33,7 @@ EXPORTS
     ??1JSGlobalObject@JSC@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
+    ??1ScopeChainNode@JSC@@EAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -372,9 +373,6 @@ EXPORTS
     ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
-    ?visitChildrenVirtual@JSGlobalObject@JSC@@UAEXAAVSlotVisitor@2@@Z
-    ?visitChildrenVirtual@JSObject@JSC@@UAEXAAVSlotVisitor@2@@Z
-    ?visitChildrenVirtual@ScopeChainNode@JSC@@UAEXAAVSlotVisitor@2@@Z
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ

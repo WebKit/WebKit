@@ -35,11 +35,6 @@
 
 namespace WebCore {
 
-void JSSVGElementInstance::visitChildrenVirtual(JSC::SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
 {
     JSSVGElementInstance* thisObject = static_cast<JSSVGElementInstance*>(cell);

@@ -32,11 +32,6 @@
 namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
-void JSStaticScopeObject::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);

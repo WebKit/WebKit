@@ -41,7 +41,6 @@ namespace JSC{
             return scopeObject;
         }
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
         bool isDynamicScope(bool& requiresDynamicChecks) const;
         virtual JSObject* toThisObject(ExecState*) const;

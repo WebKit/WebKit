@@ -54,11 +54,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequest::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSXMLHttpRequest* thisObject = static_cast<JSXMLHttpRequest*>(cell);

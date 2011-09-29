@@ -83,11 +83,6 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-void JSDOMWindowShell::visitChildrenVirtual(JSC::SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSDOMWindowShell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(cell);

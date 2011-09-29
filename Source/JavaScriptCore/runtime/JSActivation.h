@@ -55,7 +55,6 @@ namespace JSC {
 
         virtual ~JSActivation();
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;

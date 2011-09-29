@@ -1439,11 +1439,6 @@ void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const Identifier& iden
     d->m_allowPrivate = allowPrivate;
 }
 
-void QtRuntimeMetaMethod::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void QtRuntimeMetaMethod::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);

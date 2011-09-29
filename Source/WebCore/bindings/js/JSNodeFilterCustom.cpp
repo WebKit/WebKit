@@ -36,11 +36,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeFilter::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSNodeFilter* thisObject = static_cast<JSNodeFilter*>(cell);

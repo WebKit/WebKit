@@ -43,11 +43,6 @@ Arguments::~Arguments()
         delete [] d->extraArguments;
 }
 
-void Arguments::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);

@@ -63,11 +63,6 @@ JSActivation::~JSActivation()
     static_cast<SharedSymbolTable*>(m_symbolTable)->deref();
 }
 
-void JSActivation::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSActivation* thisObject = static_cast<JSActivation*>(cell);

@@ -54,6 +54,7 @@ namespace JSC {
 
     struct ClassInfo;
     struct Instruction;
+    struct MethodTable;
 
     template <class T> class WriteBarrierBase;
 

@@ -410,11 +410,6 @@ UString UserObjectImp::toString(ExecState *exec) const
     return result;
 }
 
-void UserObjectImp::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void UserObjectImp::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);

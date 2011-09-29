@@ -151,11 +151,6 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
     return name(exec);
 }
 
-void JSFunction::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);

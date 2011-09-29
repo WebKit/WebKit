@@ -47,6 +47,7 @@ namespace WebCore {
         struct JSDOMGlobalObjectData;
 
         JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>);
+        virtual ~JSDOMGlobalObject();
         void finishCreation(JSC::JSGlobalData&, JSC::JSObject* thisValue);
 
     public:
@@ -64,7 +65,6 @@ namespace WebCore {
         void setInjectedScript(JSObject*);
         JSObject* injectedScript() const;
 
-        virtual void visitChildrenVirtual(JSC::SlotVisitor&);
         static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
         DOMWrapperWorld* world() { return m_world.get(); }

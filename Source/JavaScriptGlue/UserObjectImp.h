@@ -63,7 +63,6 @@ public:
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
 
-    virtual void visitChildrenVirtual(SlotVisitor&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     JSUserObject *GetJSUserObject() const;

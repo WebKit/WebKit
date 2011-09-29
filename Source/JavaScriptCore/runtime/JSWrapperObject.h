@@ -44,8 +44,9 @@ namespace JSC {
         explicit JSWrapperObject(JSGlobalData&, Structure*);
         static const unsigned StructureFlags = OverridesVisitChildren | JSNonFinalObject::StructureFlags;
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
+
+        virtual ~JSWrapperObject();
         
     private:
         WriteBarrier<Unknown> m_internalValue;

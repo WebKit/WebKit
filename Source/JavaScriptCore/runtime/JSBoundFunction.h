@@ -54,10 +54,11 @@ public:
         return Structure::create(globalData, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), &s_info); 
     }
 
-protected:
-    const static unsigned StructureFlags = OverridesHasInstance | Base::StructureFlags;
+    static JS_EXPORTDATA const ClassInfo s_info;
 
-    virtual void visitChildrenVirtual(SlotVisitor&);
+protected:
+    const static unsigned StructureFlags = OverridesHasInstance | OverridesVisitChildren | Base::StructureFlags;
+
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

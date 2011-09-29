@@ -79,9 +79,10 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
+
+        virtual UString className() const;
 
         // The inline virtual destructor cannot be the first virtual function declared
         // in the class as it results in the vtable being generated as a weak symbol
@@ -92,8 +93,6 @@ namespace JSC {
         bool setPrototypeWithCycleCheck(JSGlobalData&, JSValue prototype);
         
         Structure* inheritorID(JSGlobalData&);
-
-        virtual UString className() const;
 
         JSValue get(ExecState*, const Identifier& propertyName) const;
         JSValue get(ExecState*, unsigned propertyName) const;
@@ -483,6 +482,11 @@ inline bool Structure::isUsingInlineStorage() const
 inline bool JSCell::inherits(const ClassInfo* info) const
 {
     return classInfo()->isSubClassOf(info);
+}
+
+inline const MethodTable* JSCell::methodTable() const
+{
+    return &classInfo()->methodTable;
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

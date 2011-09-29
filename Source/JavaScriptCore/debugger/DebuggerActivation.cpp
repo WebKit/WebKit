@@ -43,11 +43,6 @@ void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* acti
     m_activation.set(globalData, this, static_cast<JSActivation*>(activation));
 }
 
-void DebuggerActivation::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);

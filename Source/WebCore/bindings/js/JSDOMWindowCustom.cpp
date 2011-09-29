@@ -77,11 +77,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMWindow::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);

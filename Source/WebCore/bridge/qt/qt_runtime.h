@@ -168,7 +168,6 @@ public:
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-    virtual void visitChildrenVirtual(SlotVisitor&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:

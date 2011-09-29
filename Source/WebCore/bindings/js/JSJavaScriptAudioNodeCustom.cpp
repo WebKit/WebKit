@@ -34,11 +34,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSJavaScriptAudioNode::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSJavaScriptAudioNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSJavaScriptAudioNode* thisObject = static_cast<JSJavaScriptAudioNode*>(cell);

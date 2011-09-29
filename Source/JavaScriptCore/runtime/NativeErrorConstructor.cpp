@@ -37,11 +37,6 @@ NativeErrorConstructor::NativeErrorConstructor(JSGlobalObject* globalObject, Str
 {
 }
 
-void NativeErrorConstructor::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     NativeErrorConstructor* thisObject = static_cast<NativeErrorConstructor*>(cell);

@@ -48,11 +48,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSRule::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSCSSRule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSCSSRule* thisObject = static_cast<JSCSSRule*>(cell);

@@ -39,11 +39,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSAttr::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSAttr::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSAttr* thisObject = static_cast<JSAttr*>(cell);

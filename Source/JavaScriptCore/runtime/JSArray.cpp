@@ -871,11 +871,6 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         vector[i].clear();
 }
 
-void JSArray::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSArray* thisObject = static_cast<JSArray*>(cell);

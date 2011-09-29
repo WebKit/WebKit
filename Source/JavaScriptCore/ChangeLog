@@ -1,3 +1,82 @@
+2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSCell::visitChildrenVirtual and remove all other visitChildrenVirtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=68839
+
+        Reviewed by Geoffrey Garen.
+
+        Removed the remaining visitChildrenVirtual methods.  This patch completes the process of 
+        de-virtualizing visitChildren.
+
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        * runtime/GetterSetter.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSValue.h:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/Structure.cpp:
+        * runtime/Structure.h:
+        * runtime/StructureChain.cpp:
+        * runtime/StructureChain.h:
+
+        Inlined the method table access and call to the visitChildren function (the only call sites 
+        to visitChildren are here).
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::visitChildren):
+
+        Changed the field name for the visitChildren function pointer to visitChildren (from 
+        visitChildrenFunctionPtr) to make call sites less verbose.
+        * runtime/ClassInfo.h:
+
+        Discovered JSBoundFunction doesn't have its own ClassInfo (it used JSFunction's ClassInfo) but 
+        overrides visitChildren, so it needs to have its own ClassInfo.
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSBoundFunction.h:
+
+        Had to move className up to make sure that the virtual destructor in JSObject wasn't 
+        the first non-inline virtual method in JSObject (as per the comment in the file).
+        Also moved JSCell::visitChildrenVirtual into JSObject.h in order for it be inline-able
+        to mitigate the cost of an extra method call.
+
+        Also added a convenience accessor function methodTable() to JSCell to return the MethodTable to make 
+        call sites more concise.  Implementation is inline in JSObject.h.
+        * runtime/JSObject.h:
+        (JSC::JSCell::methodTable):
+        * runtime/JSCell.h:
+
+        Added an out of line virtual destructor to JSWrapperObject and ScopeChainNode to 
+        appease the vtable gods.  It refused to compile if there were no virtual methods in 
+        both of these classes due to the presence of a weak vtable pointer.
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::~JSWrapperObject):
+        * runtime/JSWrapperObject.h:
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::~ScopeChainNode):
+        * runtime/ScopeChain.h:
+
 2011-09-29  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Bug fixes for CreateThis, NewObject and GetByOffset in JSVALUE32_64 DFG JIT

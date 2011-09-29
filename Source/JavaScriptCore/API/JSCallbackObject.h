@@ -197,11 +197,6 @@ private:
     virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
 
-    virtual void visitChildrenVirtual(SlotVisitor& visitor)
-    {
-        visitChildren(this, visitor);
-    }
-
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
         JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);

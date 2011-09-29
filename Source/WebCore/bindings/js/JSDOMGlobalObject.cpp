@@ -49,15 +49,14 @@ JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* struct
 {
 }
 
+JSDOMGlobalObject::~JSDOMGlobalObject()
+{
+}
+
 void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSObject* thisValue)
 {
     Base::finishCreation(globalData, thisValue);
     ASSERT(inherits(&s_info));
-}
-
-void JSDOMGlobalObject::visitChildrenVirtual(JSC::SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
 }
 
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

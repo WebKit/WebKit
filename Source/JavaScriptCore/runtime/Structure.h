@@ -130,7 +130,6 @@ namespace JSC {
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
-        void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         Structure* previousID() const { ASSERT(structure()->classInfo() == &s_info); return m_previous.get(); }

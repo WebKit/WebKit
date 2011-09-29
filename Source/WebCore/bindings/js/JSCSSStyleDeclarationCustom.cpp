@@ -43,11 +43,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-void JSCSSStyleDeclaration::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSCSSStyleDeclaration* thisObject = static_cast<JSCSSStyleDeclaration*>(cell);

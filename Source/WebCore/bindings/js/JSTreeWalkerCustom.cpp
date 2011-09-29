@@ -29,11 +29,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSTreeWalker::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSTreeWalker::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTreeWalker* thisObject = static_cast<JSTreeWalker*>(cell);

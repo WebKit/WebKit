@@ -39,11 +39,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCanvasRenderingContext::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSCanvasRenderingContext* thisObject = static_cast<JSCanvasRenderingContext*>(cell);

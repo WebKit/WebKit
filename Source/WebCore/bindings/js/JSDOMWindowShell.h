@@ -77,7 +77,6 @@ namespace WebCore {
         void* operator new(size_t);
         static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 
-        virtual void visitChildrenVirtual(JSC::SlotVisitor&);
         static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
         virtual JSC::UString className() const;
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);

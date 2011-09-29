@@ -37,11 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXPathResult::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSXPathResult::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSXPathResult* thisObject = static_cast<JSXPathResult*>(cell);

@@ -26,9 +26,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
 
-void JSWrapperObject::visitChildrenVirtual(SlotVisitor& visitor) 
+JSWrapperObject::~JSWrapperObject()
 {
-    visitChildren(this, visitor);
 }
 
 void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

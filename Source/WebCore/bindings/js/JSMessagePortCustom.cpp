@@ -42,11 +42,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSMessagePort::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSMessagePort::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMessagePort* thisObject = static_cast<JSMessagePort*>(cell);

@@ -878,7 +878,6 @@ sub GenerateHeader
 
     # visit function
     if ($needsMarkChildren) {
-        push(@headerContent, "    virtual void visitChildrenVirtual(JSC::SlotVisitor&);\n");
         push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n\n");
         $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
@@ -2202,11 +2201,6 @@ sub GenerateImplementation
         }
         
         if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-            push(@implContent, "void ${className}::visitChildrenVirtual(SlotVisitor& visitor)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    visitChildren(this, visitor);\n");
-            push(@implContent, "}\n\n");
-
             push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");

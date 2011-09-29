@@ -29,11 +29,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeIterator::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSNodeIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSNodeIterator* thisObject = static_cast<JSNodeIterator*>(cell);

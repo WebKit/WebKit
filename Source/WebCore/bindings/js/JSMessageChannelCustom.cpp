@@ -33,11 +33,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSMessageChannel::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSMessageChannel::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMessageChannel* thisObject = static_cast<JSMessageChannel*>(cell);

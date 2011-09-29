@@ -58,7 +58,6 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
         }
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         bool getOffset(size_t i, int& offset)

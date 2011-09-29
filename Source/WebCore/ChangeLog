@@ -1,3 +1,50 @@
+2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSCell::visitChildrenVirtual and remove all other visitChildrenVirtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=68839
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Removed the remaining visitChildrenVirtual methods.  This patch completes the process of 
+        de-virtualizing visitChildren.
+
+        * WebCore.exp.in:
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/js/JSAudioContextCustom.cpp:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSJavaScriptAudioNodeCustom.cpp:
+        * bindings/js/JSMessageChannelCustom.cpp:
+        * bindings/js/JSMessagePortCustom.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        * bindings/js/JSNodeCustom.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        * bindings/js/JSStyleSheetCustom.cpp:
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/js/JSXPathResultCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/qt/qt_runtime.h:
+
 2011-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build against Qt5 after refactor of widgets out of QtGUi

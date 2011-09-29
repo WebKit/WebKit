@@ -192,11 +192,6 @@ ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) 
     return node;
 }
 
-void JSNode::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSNode* thisObject = static_cast<JSNode*>(cell);

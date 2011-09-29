@@ -35,11 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSStyleSheet::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSStyleSheet::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSStyleSheet* thisObject = static_cast<JSStyleSheet*>(cell);

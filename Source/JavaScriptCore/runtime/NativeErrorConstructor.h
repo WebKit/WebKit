@@ -71,7 +71,6 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         WriteBarrier<Structure> m_errorStructure;

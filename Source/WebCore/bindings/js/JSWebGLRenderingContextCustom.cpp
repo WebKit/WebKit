@@ -192,11 +192,6 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     return jsNull();
 }
 
-void JSWebGLRenderingContext::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSWebGLRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWebGLRenderingContext* thisObject = static_cast<JSWebGLRenderingContext*>(cell);

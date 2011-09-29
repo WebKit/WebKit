@@ -32,6 +32,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSBoundFunction);
 
+const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSBoundFunction) };
+
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 {
     JSBoundFunction* boundFunction = static_cast<JSBoundFunction*>(exec->callee());
@@ -138,11 +140,6 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
 {
     Base::finishCreation(exec, executable, length, name);
     ASSERT(inherits(&s_info));
-}
-
-void JSBoundFunction::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

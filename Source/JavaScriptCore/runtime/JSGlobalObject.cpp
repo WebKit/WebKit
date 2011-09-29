@@ -308,11 +308,6 @@ void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
         oldLastInPrototypeChain->setPrototype(globalData, objectPrototype);
 }
 
-void JSGlobalObject::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 { 
     JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);

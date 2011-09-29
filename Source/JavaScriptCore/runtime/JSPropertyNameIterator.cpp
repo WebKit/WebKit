@@ -92,11 +92,6 @@ JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
     return identifier;
 }
 
-void JSPropertyNameIterator::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSPropertyNameIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSPropertyNameIterator* thisObject = static_cast<JSPropertyNameIterator*>(cell);

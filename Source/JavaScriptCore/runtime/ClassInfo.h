@@ -32,7 +32,7 @@ namespace JSC {
 
     struct MethodTable {
         typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
-        VisitChildrenFunctionPtr visitChildrenFunctionPtr;
+        VisitChildrenFunctionPtr visitChildren;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \

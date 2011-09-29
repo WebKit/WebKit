@@ -78,11 +78,6 @@ RegExpObject::~RegExpObject()
 {
 }
 
-void RegExpObject::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     RegExpObject* thisObject = static_cast<RegExpObject*>(cell);

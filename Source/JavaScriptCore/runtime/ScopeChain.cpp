@@ -29,6 +29,10 @@
 
 namespace JSC {
 
+ScopeChainNode::~ScopeChainNode()
+{
+}
+
 #ifndef NDEBUG
 
 void ScopeChainNode::print()
@@ -65,11 +69,6 @@ int ScopeChainNode::localDepth()
         ++scopeDepth;
     }
     return scopeDepth;
-}
-
-void ScopeChainNode::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
 }
 
 void ScopeChainNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

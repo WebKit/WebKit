@@ -43,11 +43,6 @@ StructureChain::~StructureChain()
 {
 }
 
-void StructureChain::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     StructureChain* thisObject = static_cast<StructureChain*>(cell);

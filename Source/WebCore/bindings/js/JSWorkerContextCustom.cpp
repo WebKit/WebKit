@@ -53,11 +53,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorkerContext::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSWorkerContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWorkerContext* thisObject = static_cast<JSWorkerContext*>(cell);

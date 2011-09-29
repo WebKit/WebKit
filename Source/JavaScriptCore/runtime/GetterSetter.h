@@ -53,7 +53,6 @@ namespace JSC {
             return getterSetter;
         }
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }

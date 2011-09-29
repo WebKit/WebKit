@@ -39,11 +39,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAudioContext::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void JSAudioContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSAudioContext* thisObject = static_cast<JSAudioContext*>(cell);

@@ -85,11 +85,11 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
-        virtual void visitChildrenVirtual(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
+        const MethodTable* methodTable() const;
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual void put(ExecState*, unsigned propertyName, JSValue);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
@@ -179,11 +179,6 @@ namespace JSC {
     inline Structure* JSCell::structure() const
     {
         return m_structure.get();
-    }
-
-    inline void JSCell::visitChildrenVirtual(SlotVisitor& visitor)
-    {
-        visitChildren(this, visitor);
     }
 
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)

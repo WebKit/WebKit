@@ -70,7 +70,7 @@ inline void SlotVisitor::visitChildren(JSCell* cell)
 #else
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = true;
-        cell->visitChildrenVirtual(*this);
+        cell->methodTable()->visitChildren(cell, *this);
         ASSERT(m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -80,7 +80,7 @@ inline void SlotVisitor::visitChildren(JSCell* cell)
         asArray(cell)->visitChildrenDirect(*this);
         return;
     }
-    cell->visitChildrenVirtual(*this);
+    cell->methodTable()->visitChildren(cell, *this);
 }
 
 void SlotVisitor::drain()

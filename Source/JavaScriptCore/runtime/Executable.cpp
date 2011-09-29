@@ -234,11 +234,6 @@ void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 }
 #endif
 
-void EvalExecutable::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
-
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     EvalExecutable* thisObject = static_cast<EvalExecutable*>(cell);
@@ -376,11 +371,6 @@ void ProgramExecutable::unlinkCalls()
     ASSERT(m_programCodeBlock);
     m_programCodeBlock->unlinkCalls();
 #endif
-}
-
-void ProgramExecutable::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
 }
 
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -595,11 +585,6 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalD
     m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->getJITCodeWithArityCheck();
 }
 #endif
-
-void FunctionExecutable::visitChildrenVirtual(SlotVisitor& visitor)
-{
-    visitChildren(this, visitor);
-}
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
