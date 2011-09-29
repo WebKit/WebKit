@@ -1500,8 +1500,6 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
 
     Evas_Coord new_x = cx + (priv->view.offset.cur.x - cx) * scale;
     Evas_Coord new_y = cy + (priv->view.offset.cur.y - cy) * scale;
-    Evas_Coord bx = cx + (priv->view.offset.base.x - cx) * scale;
-    Evas_Coord by = cy + (priv->view.offset.base.y - cy) * scale;
 
     Evas_Coord model_width = priv->model.width * scale;
     Evas_Coord model_height = priv->model.height * scale;
@@ -1516,10 +1514,10 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     else if (-new_y + priv->view.h >= model_height)
         new_y = -model_height + priv->view.h;
 
-    bx = new_x % tw;
-    priv->model.base.col = - new_x / tw;
-    by = new_y % th;
-    priv->model.base.row = - new_y / th;
+    Evas_Coord bx = new_x % tw;
+    Evas_Coord by = new_y % th;
+    priv->model.base.col = -new_x / tw;
+    priv->model.base.row = -new_y / th;
 
     priv->changed.size = EINA_TRUE;
     priv->changed.model = EINA_TRUE;
