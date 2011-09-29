@@ -1,3 +1,14 @@
+2011-09-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r96257.
+
+        * platform/qt-4.8/editing/inserting/4278698-expected.png:
+        * platform/qt-4.8/editing/inserting/4278698-expected.txt:
+        * platform/qt-4.8/editing/inserting/paragraph-separator-03-expected.png:
+        * platform/qt-4.8/editing/inserting/paragraph-separator-03-expected.txt:
+        * platform/qt-4.8/editing/pasteboard/paste-text-019-expected.png:
+        * platform/qt-4.8/editing/pasteboard/paste-text-019-expected.txt:
+
 2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Chromium test expectation and also add back the expected result erroneously removed in r96284.
