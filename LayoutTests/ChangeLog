@@ -1,3 +1,10 @@
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt rebsaeline after r96257. It seems like the difference is coming from the font used in select element.
+
+        * platform/qt/editing/pasteboard/select-element-1-expected.txt: Copied from
+        LayoutTests/editing/pasteboard/select-element-1-expected.txt.
+
 2011-09-28  Peter Beverloo  <peter@chromium.org>
 
         Don't clamp cubic-bezier timing functions between 0 and 1
