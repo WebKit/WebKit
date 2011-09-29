@@ -1,3 +1,16 @@
+2011-09-28  Hayato Ito  <hayato@chromium.org>
+
+        Add a test for accesskey in regard to iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=67642
+
+        Reviewed by Hajime Morita.
+
+        To catch any improvement of accesskey behavior in regard to
+        iframes, it'd be nice to add a test to verify the current behavior.
+
+        * fast/dom/access-key-iframe-expected.txt: Added.
+        * fast/dom/access-key-iframe.html: Added.
+
 2011-09-28  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r93858): Can't type anything into input elements when maxlength is greater than 2^31
