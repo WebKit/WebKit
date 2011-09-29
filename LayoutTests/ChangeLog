@@ -1,5 +1,11 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        Add some expected failures on Leopard.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Update baselines.  (Font rendering.)
 
         * platform/chromium-cg-mac/http/tests/misc/acid3-expected.png: Added.
