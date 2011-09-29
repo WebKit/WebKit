@@ -1,5 +1,11 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        This test can also time out.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Update expected results on Leopard.  As far as I can tell, these are
         progressions.
 

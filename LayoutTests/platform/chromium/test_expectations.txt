@@ -918,7 +918,7 @@ BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
 BUGCR3244 LEOPARD LINUX WIN : svg/as-background-image/svg-as-background-6.html = FAIL
-BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = IMAGE
+BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIMEOUT IMAGE
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
