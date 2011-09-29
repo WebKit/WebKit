@@ -1311,12 +1311,20 @@ protected:
     {
         ASSERT(isFlushed());
 
+        m_jit.subPtr(TrustedImm32(2 * sizeof(double)), JITCompiler::stackPointerRegister);
         m_jit.storeDouble(arg2, JITCompiler::Address(JITCompiler::stackPointerRegister, sizeof(double)));
         m_jit.storeDouble(arg1, JITCompiler::stackPointerRegister);
 
         m_jit.appendCall(operation);
+#if !CALLING_CONVENTION_IS_CDECL
+        // For D_DFGOperation_DD calls we're currently using the system's default calling convention.
+        // On Mac OS the arguments are still on the stack at this point, on Windows they are not.
+        // Make other platforms match the Mac here, since we'll need some scratch space for the fstpl, below.
+        m_jit.subPtr(TrustedImm32(2 * sizeof(double)), JITCompiler::stackPointerRegister);
+#endif
         m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
         m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
+        m_jit.addPtr(TrustedImm32(2 * sizeof(double)), JITCompiler::stackPointerRegister);
     }
 #endif
 

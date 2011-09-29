@@ -1,3 +1,26 @@
+2011-09-28  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT Operations on 32_64 should use stdcall calling convention.
+        https://bugs.webkit.org/show_bug.cgi?id=69046
+
+        Reviewed by Sam Weinig.
+
+        All calls out are expecting stdcall conventions, but the default on OS X are cdecl.
+        Leave D_DFGOperation_DD calls as the one exception, since we want to be able to link
+        directly to std library functions like fmod - leave these calls obeying the default
+        platform calling convention.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+            - Add implicit constructors for std calls.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+            - Make this work non-Mac platforms.
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGOperations.h:
+            - Mark all operations as stdcalls.
+
 2011-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT falls back on numerical comparisons when it does not

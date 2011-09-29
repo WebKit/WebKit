@@ -109,7 +109,6 @@
 #define WTF_COMPILER_SUNCC 1
 #endif
 
-
 /* ==== Compiler features ==== */
 
 

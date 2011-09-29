@@ -99,7 +99,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
 }
 
 template<bool strict>
-ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue property = JSValue::decode(encodedProperty);
@@ -131,12 +131,12 @@ ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSVa
 
 extern "C" {
 
-EncodedJSValue operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
+EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
 {
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
-EncodedJSValue operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
+EncodedJSValue DFG_OPERATION operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
 {
     JSFunction* constructor = asFunction(exec->callee());
     
@@ -157,12 +157,12 @@ EncodedJSValue operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
     return JSValue::encode(constructEmptyObject(exec, structure));
 }
 
-EncodedJSValue operationNewObject(ExecState* exec)
+EncodedJSValue DFG_OPERATION operationNewObject(ExecState* exec)
 {
     return JSValue::encode(constructEmptyObject(exec));
 }
 
-EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
@@ -170,7 +170,7 @@ EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, Enc
     return JSValue::encode(jsAdd(exec, op1, op2));
 }
 
-EncodedJSValue operationValueAddNotNumber(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
@@ -186,35 +186,35 @@ EncodedJSValue operationValueAddNotNumber(ExecState* exec, EncodedJSValue encode
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
-EncodedJSValue operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
     double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
     return JSValue::encode(jsNumber(num1 + num2));
 }
 
-EncodedJSValue operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
     double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
     return JSValue::encode(jsNumber(num1 - num2));
 }
 
-EncodedJSValue operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
     double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
     return JSValue::encode(jsNumber(num1 * num2));
 }
 
-EncodedJSValue operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
     double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
     return JSValue::encode(jsNumber(num1 / num2));
 }
 
-EncodedJSValue operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue DFG_OPERATION operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
     double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
@@ -240,7 +240,7 @@ static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t in
     return JSValue::encode(JSValue(base).get(exec, index));
 }
 
-EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
+EncodedJSValue DFG_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue property = JSValue::decode(encodedProperty);
@@ -265,7 +265,7 @@ EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, En
     return JSValue::encode(baseValue.get(exec, ident));
 }
 
-EncodedJSValue operationGetById(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     PropertySlot slot(baseValue);
@@ -273,13 +273,13 @@ EncodedJSValue operationGetById(ExecState* exec, EncodedJSValue encodedBase, Ide
 }
 
 #if CPU(X86_64)
-EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
-EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
+EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
-EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -296,13 +296,13 @@ EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr retu
 }
 
 #if CPU(X86_64)
-EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
-EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-EncodedJSValue operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
+EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
-EncodedJSValue operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -316,13 +316,13 @@ EncodedJSValue operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr retur
 }
 
 #if CPU(X86_64)
-EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
-EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
-EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -336,13 +336,13 @@ EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr 
 }
 
 #if CPU(X86_64)
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
+EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -358,55 +358,55 @@ EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr return
     return JSValue::encode(result);
 }
 
-void operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     operationPutByValInternal<true>(exec, encodedBase, encodedProperty, encodedValue);
 }
 
-void operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     operationPutByValInternal<false>(exec, encodedBase, encodedProperty, encodedValue);
 }
 
-void operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
 {
     // We should only get here if index is outside the existing vector.
     ASSERT(!array->canSetIndex(index));
     array->JSArray::put(exec, index, JSValue::decode(encodedValue));
 }
 
-void operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
     JSValue::decode(encodedBase).put(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
     JSValue::decode(encodedBase).put(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
     JSValue::decode(encodedBase).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
     JSValue::decode(encodedBase).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 #if CPU(X86_64)
-void operationPutByIdStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
+void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
-void operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
+void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
-void operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -423,13 +423,13 @@ void operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddr
 }
 
 #if CPU(X86_64)
-void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
+void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
-void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
+void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
-void operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -446,13 +446,13 @@ void operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnA
 }
 
 #if CPU(X86_64)
-void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
+void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
-void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
+void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
-void operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -469,13 +469,13 @@ void operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr retu
 }
 
 #if CPU(X86_64)
-void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
-void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName);
 FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
-void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 #endif
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -491,32 +491,32 @@ void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr r
         stubInfo.seen = true;
 }
 
-RegisterSizedBoolean operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-RegisterSizedBoolean operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-RegisterSizedBoolean operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
@@ -527,7 +527,7 @@ RegisterSizedBoolean operationCompareStrictEqCell(ExecState* exec, EncodedJSValu
     return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
 }
 
-RegisterSizedBoolean operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
@@ -653,26 +653,26 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
 }
 
 #if CPU(X86_64)
-void* operationLinkCallWithReturnAddress(ExecState*, ReturnAddressPtr);
+void* DFG_OPERATION operationLinkCallWithReturnAddress(ExecState*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
-void* operationLinkCallWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
+void* DFG_OPERATION operationLinkCallWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void* operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
+void* DFG_OPERATION operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
-void* operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
+void* DFG_OPERATION operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
 #endif
 {
     return linkFor(execCallee, returnAddress, CodeForCall);
 }
 
 #if CPU(X86_64)
-void* operationLinkConstructWithReturnAddress(ExecState*, ReturnAddressPtr);
+void* DFG_OPERATION operationLinkConstructWithReturnAddress(ExecState*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
-void* operationLinkConstructWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
+void* DFG_OPERATION operationLinkConstructWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
 #elif CPU(X86)
-void* operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
+void* DFG_OPERATION operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
 FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
-void* operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
+void* DFG_OPERATION operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
 #endif
 {
     return linkFor(execCallee, returnAddress, CodeForConstruct);
@@ -700,17 +700,17 @@ inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
     return executable->generatedJITCodeWithArityCheckFor(kind).executableAddress();
 }
 
-void* operationVirtualCall(ExecState* execCallee)
+void* DFG_OPERATION operationVirtualCall(ExecState* execCallee)
 {
     return virtualFor(execCallee, CodeForCall);
 }
 
-void* operationVirtualConstruct(ExecState* execCallee)
+void* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
 {
     return virtualFor(execCallee, CodeForConstruct);
 }
 
-EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, EncodedJSValue encodedPrototype)
+EncodedJSValue DFG_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, EncodedJSValue encodedPrototype)
 {
     JSValue value = JSValue::decode(encodedValue);
     JSValue base = JSValue::decode(encodedBase);
@@ -736,7 +736,7 @@ EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue,
     return JSValue::encode(jsBoolean(asObject(base)->hasInstance(exec, value, prototype)));
 }
 
-EncodedJSValue operationResolve(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName)
 {
     ScopeChainNode* scopeChain = exec->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
@@ -753,12 +753,12 @@ EncodedJSValue operationResolve(ExecState* exec, Identifier* propertyName)
     return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
 }
 
-EncodedJSValue operationResolveBase(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* propertyName)
 {
     return JSValue::encode(resolveBase(exec, *propertyName, exec->scopeChain(), false));
 }
 
-EncodedJSValue operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName)
 {
     JSValue base = resolveBase(exec, *propertyName, exec->scopeChain(), true);
     if (!base)
@@ -766,7 +766,7 @@ EncodedJSValue operationResolveBaseStrictPut(ExecState* exec, Identifier* proper
     return JSValue::encode(base);
 }
 
-EncodedJSValue operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, Identifier* propertyName)
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
@@ -785,29 +785,29 @@ EncodedJSValue operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolv
     return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
 }
 
-EncodedJSValue operationToPrimitive(ExecState* exec, EncodedJSValue value)
+EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
 }
 
-EncodedJSValue operationStrCat(ExecState* exec, void* start, size_t size)
+EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* start, size_t size)
 {
     return JSValue::encode(jsString(exec, static_cast<Register*>(start), size));
 }
 
-EncodedJSValue operationNewArray(ExecState* exec, void* start, size_t size)
+EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, void* start, size_t size)
 {
     ArgList argList(static_cast<Register*>(start), size);
     return JSValue::encode(constructArray(exec, argList));
 }
 
-EncodedJSValue operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
+EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
 {
     ArgList argList(exec->codeBlock()->constantBuffer(start), size);
     return JSValue::encode(constructArray(exec, argList));
 }
 
-EncodedJSValue operationNewRegexp(ExecState* exec, void* regexpPtr)
+EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
 {
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     if (!regexp->isValid()) {
@@ -818,7 +818,7 @@ EncodedJSValue operationNewRegexp(ExecState* exec, void* regexpPtr)
     return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
-void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
+void DFG_OPERATION operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
 {
     JSValue base = JSValue::decode(encodedBase);
 
@@ -828,7 +828,7 @@ void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
     throwError(exec, createInvalidParamError(exec, "instanceof", base));
 }
 
-DFGHandler lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
+DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
 {
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
@@ -841,23 +841,23 @@ DFGHandler lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocatio
     return DFGHandler(exec, catchRoutine);
 }
 
-double dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
+double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::decode(value).toNumber(exec);
 }
 
-int32_t dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
+int32_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::decode(value).toInt32(exec);
 }
 
-RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
+RegisterSizedBoolean DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
 {
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
 #if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
-void debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
+void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
 {
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
