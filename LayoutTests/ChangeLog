@@ -1,3 +1,12 @@
+2011-09-28  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        [Chromium] Layout Test compositing/shadows/shadow-drawing.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=69062
+
+        Chromium test_expectations update
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r96294.
