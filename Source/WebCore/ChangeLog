@@ -1,3 +1,24 @@
+2011-09-29  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/text/line-initial-and-final-swashes.html
+
+        Hoefler Text Italic enables line-initial and -final swashes by default, so disable them. This
+        change targets only this known-bad font rather than all fonts, because at least one font (Khmer MN)
+        incorrectly claims to have the line-initial feature enabled, but disabling it actually does
+        something different and bad (breaking some combining marks).
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::createFeatureSettingDictionary): Added this helper function.
+        (WebCore::cascadeToLastResortFontDescriptor): Deployed WTF_ARRAY_LENGTH().
+        (WebCore::cascadeToLastResortAndDisableSwashesFontDescriptor): Added. Returns a font descriptor
+        that, in addition to having a cascade list consisting of the last resort font, also has feature
+        settings to disable line-initial and line-final swashes.
+        (WebCore::FontPlatformData::ctFont): For Hoefler Text Italic, use cascadeToLastResortAndDisableSwashesFontDescriptor().
+
 2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unreviewed: resetting baseline for code generator bindings

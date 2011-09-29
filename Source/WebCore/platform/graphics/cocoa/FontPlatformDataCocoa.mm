@@ -176,6 +176,17 @@ inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
     return TextSpacingProportional;
 }
 
+static CFDictionaryRef createFeatureSettingDictionary(int featureTypeIdentifier, int featureSelectorIdentifier)
+{
+    RetainPtr<CFNumberRef> featureTypeIdentifierNumber(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeIdentifier));
+    RetainPtr<CFNumberRef> featureSelectorIdentifierNumber(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorIdentifier));
+
+    const void* settingKeys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
+    const void* settingValues[] = { featureTypeIdentifierNumber.get(), featureSelectorIdentifierNumber.get() };
+
+    return CFDictionaryCreate(kCFAllocatorDefault, settingKeys, settingValues, WTF_ARRAY_LENGTH(settingKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+}
+
 static CTFontDescriptorRef cascadeToLastResortFontDescriptor()
 {
     static CTFontDescriptorRef descriptor;
@@ -184,10 +195,31 @@ static CTFontDescriptorRef cascadeToLastResortFontDescriptor()
 
     const void* keys[] = { kCTFontCascadeListAttribute };
     const void* descriptors[] = { CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0) };
-    const void* values[] = { CFArrayCreate(kCFAllocatorDefault, descriptors, sizeof(descriptors) / sizeof(*descriptors), &kCFTypeArrayCallBacks) };
-    RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, keys, values, sizeof(keys) / sizeof(*keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    const void* values[] = { CFArrayCreate(kCFAllocatorDefault, descriptors, WTF_ARRAY_LENGTH(descriptors), &kCFTypeArrayCallBacks) };
+    RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     descriptor = CTFontDescriptorCreateWithAttributes(attributes.get());
+
+    return descriptor;
+}
+
+static CTFontDescriptorRef cascadeToLastResortAndDisableSwashesFontDescriptor()
+{
+    static CTFontDescriptorRef descriptor;
+    if (descriptor)
+        return descriptor;
+
+    RetainPtr<CFDictionaryRef> lineInitialSwashesOffSetting(AdoptCF, createFeatureSettingDictionary(kSmartSwashType, kLineInitialSwashesOffSelector));
+    RetainPtr<CFDictionaryRef> lineFinalSwashesOffSetting(AdoptCF, createFeatureSettingDictionary(kSmartSwashType, kLineFinalSwashesOffSelector));
+
+    const void* settingDictionaries[] = { lineInitialSwashesOffSetting.get(), lineFinalSwashesOffSetting.get() };
+    RetainPtr<CFArrayRef> featureSettings(AdoptCF, CFArrayCreate(kCFAllocatorDefault, settingDictionaries, WTF_ARRAY_LENGTH(settingDictionaries), &kCFTypeArrayCallBacks));
+
+    const void* keys[] = { kCTFontFeatureSettingsAttribute };
+    const void* values[] = { featureSettings.get() };
+    RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    descriptor = CTFontDescriptorCreateCopyWithAttributes(cascadeToLastResortFontDescriptor(), attributes.get());
 
     return descriptor;
 }
@@ -216,9 +248,16 @@ CTFontRef FontPlatformData::ctFont() const
         return m_CTFont.get();
 
     m_CTFont = toCTFontRef(m_font);
-    if (m_CTFont)
-        m_CTFont.adoptCF(CTFontCreateCopyWithAttributes(m_CTFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
-    else
+    if (m_CTFont) {
+        CTFontDescriptorRef fontDescriptor;
+        RetainPtr<CFStringRef> postScriptName(AdoptCF, CTFontCopyPostScriptName(m_CTFont.get()));
+        // Hoefler Text Italic has line-initial and -final swashes enabled by default, so disable them.
+        if (CFEqual(postScriptName.get(), CFSTR("HoeflerText-Italic")))
+            fontDescriptor = cascadeToLastResortAndDisableSwashesFontDescriptor();
+        else
+            fontDescriptor = cascadeToLastResortFontDescriptor();
+        m_CTFont.adoptCF(CTFontCreateCopyWithAttributes(m_CTFont.get(), m_size, 0, fontDescriptor));
+    } else
         m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, canSetCascadeListForCustomFont() ? cascadeToLastResortFontDescriptor() : 0));
 
     if (m_widthVariant != RegularWidth) {

@@ -1,3 +1,13 @@
+2011-09-29  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/line-initial-and-final-swashes.html: Added.
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.txt: Added.
+
 2011-09-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96340.
