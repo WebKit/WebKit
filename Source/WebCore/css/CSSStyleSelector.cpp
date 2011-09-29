@@ -2355,8 +2355,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
 
-    id = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
-
     if (m_checker.isMatchingVisitedPseudoClass() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
@@ -3632,9 +3630,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMinLogicalHeight:
     case CSSPropertyWebkitMaxLogicalWidth:
     case CSSPropertyWebkitMaxLogicalHeight:
-        ASSERT_NOT_REACHED();
-        break;
-
+    {
+        int newId = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
+        ASSERT(newId != id);
+        return applyProperty(newId, value);
+    }
     case CSSPropertyFontStretch:
     case CSSPropertyPage:
     case CSSPropertyTextLineThrough:

@@ -1,3 +1,17 @@
+2011-09-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Only resolve direction aware properties when properties are direction aware.
+        https://bugs.webkit.org/show_bug.cgi?id=68968
+
+        Reviewed by Eric Seidel.
+
+        No new tests / no functionality changed.
+
+        Profiling showed a ~8% improvement in applyProperty by not calling resolveDirectionAwareProperty for every property.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-09-28  Simon Fraser  <simon.fraser@apple.com>
 
         fast/dom/scroll-element-to-rect.html fails on WK1 Mac port
