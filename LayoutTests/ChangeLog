@@ -1,3 +1,17 @@
+2011-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More GTK rebaselines after r96257.
+
+        * platform/gtk/editing/deleting/delete-block-contents-001-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-005-expected.txt:
+        * platform/gtk/editing/deleting/merge-endOfParagraph-expected.txt:
+        * platform/gtk/editing/deleting/regional-indicators-expected.txt:
+        * platform/gtk/editing/deleting/table-cells-expected.txt:
+        * platform/gtk/editing/execCommand/insertHorizontalRule-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-002-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-005-expected.txt:
+
 2011-09-28  Mihai Parparita  <mihaip@chromium.org>
 
         Remove Chromium failing expectations for tests that now pass.

@@ -1,5 +1,5 @@
 This test checks how backspacing works with regional indicator characters.
 
-a🇯
+a
 1. Delete a flag: FAIL
-2. Delete a lone regional indicator character: FAIL
+2. Delete a lone regional indicator character: PASS
