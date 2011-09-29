@@ -1,3 +1,29 @@
+2011-09-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: split SourceFile.js into RawSourceCode.js and UISourceCodeContentProviders.js.
+        https://bugs.webkit.org/show_bug.cgi?id=69068
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/RawSourceCode.js: Renamed from Source/WebCore/inspector/front-end/SourceFile.js.
+        (WebInspector.RawSourceCode): Moved from SourceFile.js.
+        (WebInspector.UILocation): Moved from SourceFile.js.
+        * inspector/front-end/UISourceCodeContentProviders.js: Added. Moved ContentProvider implementations from SourceFile.js
+        (WebInspector.ScriptContentProvider):
+        (WebInspector.ScriptContentProvider.prototype.requestContent):
+        (WebInspector.ConcatenatedScriptsContentProvider):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.requestContent):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype._concatenateScriptsContent.appendChunk):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype._concatenateScriptsContent):
+        (WebInspector.ResourceContentProvider):
+        (WebInspector.ResourceContentProvider.prototype.requestContent):
+        (WebInspector.StaticContentProvider):
+        (WebInspector.StaticContentProvider.prototype.requestContent):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-09-29  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 2 flaky media tests

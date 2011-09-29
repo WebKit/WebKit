@@ -20,6 +20,7 @@
     <file>ConsoleModel.js</file>
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
+    <file>ContentProviders.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
     <file>CookieParser.js</file>
@@ -35,7 +36,6 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerPresentationModel.js</file>
-    <file>SourceFile.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
     <file>DOMStorage.js</file>
@@ -86,6 +86,7 @@
     <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
+    <file>RawSourceCode.js</file>
     <file>RemoteObject.js</file>
     <file>Resource.js</file>
     <file>ResourceCategory.js</file>

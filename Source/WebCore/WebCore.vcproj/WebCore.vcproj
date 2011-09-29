@@ -69117,6 +69117,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ContentProviders.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ContextMenu.js"
 					>
 				</File>
@@ -69429,6 +69433,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\RawSourceCode.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\RemoteObject.js"
 					>
 				</File>
@@ -69538,10 +69546,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\SourceCSSTokenizer.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\SourceFile.js"
 					>
 				</File>
 				<File
