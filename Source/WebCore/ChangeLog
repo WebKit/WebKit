@@ -1,3 +1,12 @@
+2011-09-29  Dan Bernstein  <mitz@apple.com>
+
+        Follow-up fix for <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont): Check for Hoefler Text Black Italic as well.
+
 2011-09-29  Cary Clark  <caryclark@google.com>
 
         Enable LCD text in Skia on Mac

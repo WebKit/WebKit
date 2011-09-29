@@ -252,7 +252,7 @@ CTFontRef FontPlatformData::ctFont() const
         CTFontDescriptorRef fontDescriptor;
         RetainPtr<CFStringRef> postScriptName(AdoptCF, CTFontCopyPostScriptName(m_CTFont.get()));
         // Hoefler Text Italic has line-initial and -final swashes enabled by default, so disable them.
-        if (CFEqual(postScriptName.get(), CFSTR("HoeflerText-Italic")))
+        if (CFEqual(postScriptName.get(), CFSTR("HoeflerText-Italic")) || CFEqual(postScriptName.get(), CFSTR("HoeflerText-BlackItalic")))
             fontDescriptor = cascadeToLastResortAndDisableSwashesFontDescriptor();
         else
             fontDescriptor = cascadeToLastResortFontDescriptor();

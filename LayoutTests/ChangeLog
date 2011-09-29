@@ -1,3 +1,15 @@
+2011-09-29  Dan Bernstein  <mitz@apple.com>
+
+        Follow-up fix for <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not
+
+        Reviewed by Simon Fraser.
+
+        Added Hoefler Text Black Italic to the test case.
+
+        * fast/text/line-initial-and-final-swashes.html:
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.png:
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.txt:
+
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
         This test can also time out.
