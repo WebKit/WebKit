@@ -1587,6 +1587,22 @@ out_of_memory_handler:
     return 0;
 }
 
+char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
+
+    if (!sd->frame->document())
+        return 0;
+
+    WebCore::Element* documentElement = sd->frame->document()->documentElement();
+
+    if (!documentElement)
+        return 0;
+
+    return strdup(documentElement->innerText().utf8().data());
+}
+
 /**
  * @internal
  * Reports uri changed and swap internal string reference.

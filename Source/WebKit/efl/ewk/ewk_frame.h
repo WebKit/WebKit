@@ -804,6 +804,19 @@ EAPI ssize_t ewk_frame_source_get(const Evas_Object *o, char **frame_source);
  */
 EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
 
+/**
+ * Retrieve the frame's contents in plain text.
+ *
+ * This function returns the contents of the given frame converted to plain text,
+ * removing all the HTML formatting.
+ *
+ * @param ewkFrame Frame object whose contents to retrieve.
+ *
+ * @return A newly allocated string (which must be freed by the caller with @c free())
+ *         or @c 0 in case of failure.
+ */
+EAPI char* ewk_frame_plain_text_get(const Evas_Object* o);
+
 #ifdef __cplusplus
 }
 #endif
