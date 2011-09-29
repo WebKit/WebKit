@@ -1,5 +1,14 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        Update baselines.  (Font rendering.)
+
+        * platform/chromium-cg-mac/http/tests/misc/acid3-expected.png: Added.
+        * platform/chromium-cg-mac/http/tests/misc/acid3-expected.txt: Added.
+        * platform/chromium-mac/http/tests/misc/acid3-expected.png: Added.
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Added.
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Update baselines.
 
         * platform/chromium-cg-mac-leopard/svg/text/selection-background-color-expected.png: Added.
