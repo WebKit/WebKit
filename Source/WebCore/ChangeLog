@@ -1,3 +1,12 @@
+2011-09-29  Andreas Kling  <kling@webkit.org>
+
+        Shrink HTMLAnchorElement on 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=69094
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLAnchorElement.h: Pack members into a bitfield.
+
 2011-09-29  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not

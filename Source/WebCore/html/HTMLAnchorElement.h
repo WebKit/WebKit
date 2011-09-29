@@ -126,8 +126,8 @@ private:
     bool treatLinkAsLiveForEventType(EventType) const;
 
     RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
-    bool m_wasShiftKeyDownOnMouseDown;
-    uint32_t m_linkRelations;
+    bool m_wasShiftKeyDownOnMouseDown : 1;
+    uint32_t m_linkRelations : 31;
 };
 
 // Functions shared with the other anchor elements (i.e., SVG).
