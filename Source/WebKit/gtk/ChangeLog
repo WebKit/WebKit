@@ -1,3 +1,20 @@
+2011-09-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move drag-and-drop code which can be shared with WebKit2 to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=66890
+
+        Use the new GtkWidgetDragAndDropGlue class to hold the logic that will be
+        common between WebKit1 and WebKit2. Modify WebKitWebView to use this class.
+
+        Reviewed by Philippe Normand.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): Inform the drag-and-drop glue about the drag.
+        * webkit/webkitwebview.cpp: Use GtkWidgetDragAndDropGlue wherever this class was
+        maintaining drag-and-drop state itself.
+        * webkit/webkitwebviewprivate.h: Swap out the drag-and-drop state for an instance
+        of the glue class.
+
 2011-09-28  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [Gtk] Implement textInputController.doCommand

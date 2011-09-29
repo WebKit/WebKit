@@ -23,29 +23,17 @@
 #ifndef webkitwebviewprivate_h
 #define webkitwebviewprivate_h
 
-#include "DataObjectGtk.h"
 #include "FullscreenVideoController.h"
 #include "GtkClickCounter.h"
+#include "GtkDragAndDropHelper.h"
 #include "GOwnPtr.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include <webkit/webkitwebview.h>
 
 namespace WebKit {
-
 WebCore::Page* core(WebKitWebView*);
 WebKitWebView* kit(WebCore::Page*);
-
-
-typedef struct DroppingContext_ {
-    WebKitWebView* webView;
-    GdkDragContext* gdkContext;
-    RefPtr<WebCore::DataObjectGtk> dataObject;
-    WebCore::IntPoint lastMotionPosition;
-    int pendingDataRequests;
-    bool dropHappened;
-} DroppingContext;
-
 }
 
 extern "C" {
@@ -100,9 +88,7 @@ struct _WebKitWebViewPrivate {
     WebCore::IntRect tooltipArea;
 
     WebCore::GtkClickCounter clickCounter;
-    HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
-    HashMap<GdkDragContext*, WebKit::DroppingContext*> droppingContexts;
-
+    WebCore::GtkDragAndDropHelper dragAndDropHelper;
     bool selfScrolling;
 };
 

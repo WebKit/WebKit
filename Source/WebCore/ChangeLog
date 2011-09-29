@@ -1,3 +1,20 @@
+2011-09-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move drag-and-drop code which can be shared with WebKit2 to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=66890
+
+        Added a GtkDragAndDropHelper class to hold all the logic that is common
+        between WebKit1 and WebKit2. This will allow greater code sharing between
+        the two ports.
+
+        Reviewed by Philippe Normand.
+
+        No new tests. This patch should not change behavior.
+
+        * GNUmakefile.list.am: Added the GtkDragAndDropHelper to the sources list.
+        * platform/gtk/GtkDragAndDropHelper.cpp: Added.
+        * platform/gtk/GtkDragAndDropHelper.h: Added.
+
 2011-09-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10196497> first-letter after list marker not updated correctly

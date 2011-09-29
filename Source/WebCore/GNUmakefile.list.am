@@ -3998,6 +3998,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/FileSystemGtk.cpp \
 	Source/WebCore/platform/gtk/GtkClickCounter.cpp \
 	Source/WebCore/platform/gtk/GtkClickCounter.h \
+	Source/WebCore/platform/gtk/GtkDragAndDropHelper.cpp \
+	Source/WebCore/platform/gtk/GtkDragAndDropHelper.h \
 	Source/WebCore/platform/gtk/GtkUtilities.cpp \
 	Source/WebCore/platform/gtk/GtkUtilities.h \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.cpp \
