@@ -1,3 +1,25 @@
+2011-09-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [Freetype] Some text in Planet GNOME renders in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=69099
+
+        Reviewed by Dirk Schulze.
+
+        Test: platform/gtk/fonts/synthetic-oblique-positioning.html
+
+        Fold the oblique transform into the font matrix itself rather than transforming
+        the CTM of the context at render time. Not only does this fix the issue, it
+        prevents unnecessary work on every paint.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        No longer set the synthetic oblique transformation matrix on the context
+        when rendering the text. Instead it is now folded into the TM of the font
+        itself.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::initializeWithFontFace): Fold the oblique transform into the scaled font.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+
 2011-09-29  Dan Bernstein  <mitz@apple.com>
 
         Follow-up fix for <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not

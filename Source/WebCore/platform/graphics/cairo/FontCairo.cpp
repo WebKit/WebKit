@@ -43,26 +43,14 @@
 
 namespace WebCore {
 
-static const float gSyntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
-
-static void prepareContextForGlyphDrawing(cairo_t* context, const SimpleFontData* font)
-{
-    cairo_set_scaled_font(context, font->platformData().scaledFont());
-
-    if (font->platformData().syntheticOblique()) {
-        cairo_matrix_t mat = {1, 0, gSyntheticObliqueSkew, 1, 0, 0};
-        cairo_transform(context, &mat);
-    }
-}
-
 static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
     cairo_matrix_t originalTransform;
     float syntheticBoldOffset = font->syntheticBoldOffset();
-    if (font->platformData().syntheticOblique() || syntheticBoldOffset)
+    if (syntheticBoldOffset)
         cairo_get_matrix(context, &originalTransform);
 
-    prepareContextForGlyphDrawing(context, font);
+    cairo_set_scaled_font(context, font->platformData().scaledFont());
     cairo_show_glyphs(context, glyphs, numGlyphs);
 
     if (syntheticBoldOffset) {
@@ -70,7 +58,7 @@ static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, Gl
         cairo_show_glyphs(context, glyphs, numGlyphs);
     }
 
-    if (font->platformData().syntheticOblique() || syntheticBoldOffset)
+    if (syntheticBoldOffset)
         cairo_set_matrix(context, &originalTransform);
 }
 
@@ -139,7 +127,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         cairo_set_line_width(cr, context->strokeThickness());
 
         // This may disturb the CTM, but we are going to call cairo_restore soon after.
-        prepareContextForGlyphDrawing(cr, font);
+        cairo_set_scaled_font(cr, font->platformData().scaledFont());
         cairo_glyph_path(cr, glyphs, numGlyphs);
         cairo_stroke(cr);
     }
