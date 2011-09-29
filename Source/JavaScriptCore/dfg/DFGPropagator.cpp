@@ -319,14 +319,14 @@ private:
         }
             
         case GetLocal: {
-            PredictedType prediction = m_graph.getPrediction(node.local());
+            PredictedType prediction = node.variableAccessData()->prediction();
             if (prediction)
                 changed |= mergePrediction(prediction);
             break;
         }
             
         case SetLocal: {
-            changed |= m_graph.predict(node.local(), m_predictions[node.child1()]);
+            changed |= node.variableAccessData()->predict(m_predictions[node.child1()]);
             break;
         }
             
@@ -472,7 +472,14 @@ private:
         }
             
         case ConvertThis: {
-            changed |= setPrediction(PredictObjectUnknown);
+            PredictedType prediction = m_predictions[node.child1()];
+            if (prediction) {
+                if (prediction & ~PredictObjectMask) {
+                    prediction &= ~PredictObjectMask;
+                    prediction |= PredictObjectUnknown;
+                }
+                changed |= mergePrediction(prediction);
+            }
             break;
         }
             
@@ -571,14 +578,15 @@ private:
         case Throw:
         case ThrowReferenceError:
         case ForceOSRExit:
-            break;
-            
-        // This gets ignored because it doesn't do anything.
-        case Phantom:
+        case SetArgument:
         case PutByVal:
         case PutByValAlias:
         case PutById:
         case PutByIdDirect:
+            break;
+            
+        // This gets ignored because it doesn't do anything.
+        case Phantom:
             break;
 #else
         default:

@@ -83,7 +83,15 @@ private:
     void processPhiStack();
     // Add spill locations to nodes.
     void allocateVirtualRegisters();
-
+    
+    VariableAccessData* newVariableAccessData(int operand)
+    {
+        ASSERT(operand < FirstConstantRegisterIndex);
+        
+        m_graph.m_variableAccessData.append(VariableAccessData(static_cast<VirtualRegister>(operand)));
+        return &m_graph.m_variableAccessData.last();
+    }
+    
     // Get/Set the operands/result of a bytecode instruction.
     NodeIndex get(int operand)
     {
@@ -116,7 +124,7 @@ private:
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getLocal(unsigned operand)
     {
-        NodeIndex nodeIndex = m_currentBlock->m_locals[operand].value;
+        NodeIndex nodeIndex = m_currentBlock->m_localsAtTail[operand].value;
 
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
@@ -129,16 +137,21 @@ private:
         // Check for reads of temporaries from prior blocks,
         // expand m_preservedVars to cover these.
         m_preservedVars = std::max(m_preservedVars, operand + 1);
-
-        NodeIndex phi = addToGraph(Phi);
+        
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        
+        NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
-        nodeIndex = addToGraph(GetLocal, OpInfo(operand), phi);
-        m_currentBlock->m_locals[operand].value = nodeIndex;
+        nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
+        m_currentBlock->m_localsAtTail[operand].value = nodeIndex;
+        
+        m_currentBlock->m_localsAtHead[operand].setFirstTime(nodeIndex);
+        
         return nodeIndex;
     }
     void setLocal(unsigned operand, NodeIndex value)
     {
-        m_currentBlock->m_locals[operand].value = addToGraph(SetLocal, OpInfo(operand), value);
+        m_currentBlock->m_localsAtTail[operand].value = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -147,20 +160,35 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        NodeIndex nodeIndex = m_currentBlock->m_arguments[argument].value;
+        NodeIndex nodeIndex = m_currentBlock->m_argumentsAtTail[argument].value;
 
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
+            if (node.op == SetArgument) {
+                // We're getting an argument in the first basic block; link
+                // the GetLocal to the SetArgument.
+                ASSERT(node.local() == static_cast<VirtualRegister>(operand));
+                nodeIndex = addToGraph(GetLocal, OpInfo(node.variableAccessData()), nodeIndex);
+                m_currentBlock->m_argumentsAtTail[argument].value = nodeIndex;
+                return nodeIndex;
+            }
+            
             if (node.op == GetLocal)
                 return nodeIndex;
+            
             ASSERT(node.op == SetLocal);
             return node.child1();
         }
+        
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
 
-        NodeIndex phi = addToGraph(Phi);
+        NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
-        nodeIndex = addToGraph(GetLocal, OpInfo(operand), phi);
-        m_currentBlock->m_arguments[argument].value = nodeIndex;
+        nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
+        m_currentBlock->m_argumentsAtTail[argument].value = nodeIndex;
+        
+        m_currentBlock->m_argumentsAtHead[argument].setFirstTime(nodeIndex);
+        
         return nodeIndex;
     }
     void setArgument(int operand, NodeIndex value)
@@ -168,7 +196,7 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        m_currentBlock->m_arguments[argument].value = addToGraph(SetLocal, OpInfo(operand), value);
+        m_currentBlock->m_argumentsAtTail[argument].value = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -687,6 +715,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentIndex) {
         for (unsigned i = 0; i < m_constants.size(); ++i)
             m_constants[i] = ConstantRecord();
+    }
+    
+    // If we are the first basic block, introduce markers for arguments. This allows
+    // us to track if a use of an argument may use the actual argument passed, as
+    // opposed to using a value we set explicitly.
+    if (!m_currentIndex) {
+        m_graph.m_arguments.resize(m_numArguments);
+        for (unsigned argument = 0; argument < m_numArguments; ++argument) {
+            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argument - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize)));
+            m_graph.m_arguments[argument] = setArgument;
+            m_currentBlock->m_argumentsAtHead[argument].setFirstTime(setArgument);
+            m_currentBlock->m_argumentsAtTail[argument].setFirstTime(setArgument);
+        }
     }
 
     Interpreter* interpreter = m_globalData->interpreter;
@@ -1448,20 +1489,36 @@ void ByteCodeParser::processPhiStack()
         
         PredecessorList& predecessors = entry.m_block->m_predecessors;
         unsigned varNo = entry.m_varNo;
+        VariableAccessData* dataForPhi = m_graph[entry.m_phi].variableAccessData();
 
         for (size_t i = 0; i < predecessors.size(); ++i) {
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
 
-            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_arguments[varNo] : predecessorBlock->m_locals[varNo];
+            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_argumentsAtTail[varNo] : predecessorBlock->m_localsAtTail[varNo];
 
             NodeIndex valueInPredecessor = var.value;
             if (valueInPredecessor == NoNode) {
-                valueInPredecessor = addToGraph(Phi);
-                var.value = valueInPredecessor;
+                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? varNo - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize : varNo)));
+                var.setFirstTime(valueInPredecessor);
+                if (stackType == ArgumentPhiStack)
+                    predecessorBlock->m_argumentsAtHead[varNo].setFirstTime(valueInPredecessor);
+                else
+                    predecessorBlock->m_localsAtHead[varNo].setFirstTime(valueInPredecessor);
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
-            } else if (m_graph[valueInPredecessor].op == GetLocal)
+            } else if (m_graph[valueInPredecessor].op == GetLocal) {
+                // We want to ensure that the VariableAccessDatas are identical between the
+                // GetLocal and its block-local Phi. Strictly speaking we only need the two
+                // to be unified. But for efficiency, we want the code that creates GetLocals
+                // and Phis to try to reuse VariableAccessDatas as much as possible.
+                ASSERT(m_graph[valueInPredecessor].variableAccessData() == m_graph[m_graph[valueInPredecessor].child1()].variableAccessData());
+                
                 valueInPredecessor = m_graph[valueInPredecessor].child1();
-            ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
+            }
+            ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi || (m_graph[valueInPredecessor].op == SetArgument && stackType == ArgumentPhiStack));
+            
+            VariableAccessData* dataForPredecessor = m_graph[valueInPredecessor].variableAccessData();
+            
+            dataForPredecessor->unify(dataForPhi);
 
             Node* phiNode = &m_graph[entry.m_phi];
             if (phiNode->refCount())
@@ -1479,8 +1536,8 @@ void ByteCodeParser::processPhiStack()
                 phiNode->children.fixed.child3 = valueInPredecessor;
                 continue;
             }
-
-            NodeIndex newPhi = addToGraph(Phi);
+            
+            NodeIndex newPhi = addToGraph(Phi, OpInfo(dataForPhi));
             
             phiNode = &m_graph[entry.m_phi]; // reload after vector resize
             Node& newPhiNode = m_graph[newPhi];
@@ -1548,6 +1605,7 @@ bool ByteCodeParser::parse()
     processPhiStack<ArgumentPhiStack>();
     
     m_graph.m_preservedVars = m_preservedVars;
+    m_graph.m_localVars = m_numLocals;
     m_graph.m_parameterSlots = m_parameterSlots;
 
     return true;

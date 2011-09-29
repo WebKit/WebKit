@@ -155,7 +155,20 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 #ifndef NDEBUG
 void ValueSource::dump(FILE* out) const
 {
-    fprintf(out, "Node(%d)", m_nodeIndex);
+    switch (kind()) {
+    case SourceNotSet:
+        fprintf(out, "NotSet");
+        break;
+    case ValueInRegisterFile:
+        fprintf(out, "InRegFile");
+        break;
+    case Int32InRegisterFile:
+        fprintf(out, "Int32");
+        break;
+    case HaveNode:
+        fprintf(out, "Node(%d)", m_nodeIndex);
+        break;
+    }
 }
 
 void ValueRecovery::dump(FILE* out) const
@@ -203,9 +216,9 @@ OSRExit::OSRExit(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recov
 {
     ASSERT(m_bytecodeIndex != std::numeric_limits<uint32_t>::max());
     for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
-        m_arguments[argument] = jit->computeValueRecoveryFor(operandForArgument(argument), jit->m_arguments[argument]);
+        m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
     for (unsigned variable = 0; variable < m_variables.size(); ++variable)
-        m_variables[variable] = jit->computeValueRecoveryFor(variable, jit->m_variables[variable]);
+        m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
 }
 
 #ifndef NDEBUG
@@ -722,7 +735,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case GetLocal: {
-        PredictedType prediction = m_jit.graph().getPrediction(node.local());
+        PredictedType prediction = node.variableAccessData()->prediction();
 
         // If we have no prediction for this local, then don't attempt to compile.
         if (prediction == PredictNone) {
@@ -797,7 +810,7 @@ void SpeculativeJIT::compile(Node& node)
                || (!m_bytecodeIndexForOSR && !nextNode.codeOrigin.bytecodeIndex()));
         m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex();
         
-        PredictedType predictedType = m_jit.graph().getPrediction(node.local());
+        PredictedType predictedType = node.variableAccessData()->prediction();
         if (isInt32Prediction(predictedType)) {
             SpeculateIntegerOperand value(this, node.child1());
             m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
@@ -820,9 +833,16 @@ void SpeculativeJIT::compile(Node& node)
         
         // Indicate that it's no longer necessary to retrieve the value of
         // this bytecode variable from registers or other locations in the register file.
-        valueSourceReferenceForOperand(node.local()) = ValueSource();
+        valueSourceReferenceForOperand(node.local()) = ValueSource::forPrediction(predictedType);
         break;
     }
+        
+    case SetArgument:
+        // This is a no-op; it just marks the fact that the argument is being used.
+        // But it may be profitable to use this as a hook to run speculation checks
+        // on arguments, thereby allowing us to trivially eliminate such checks if
+        // the argument is not used.
+        break;
 
     case BitAnd:
     case BitOr:
@@ -2201,10 +2221,24 @@ void SpeculativeJIT::compile(BasicBlock& block)
     m_jit.breakpoint();
 #endif
     
-    for (size_t i = 0; i < m_arguments.size(); ++i)
-        m_arguments[i] = ValueSource();
-    for (size_t i = 0; i < m_variables.size(); ++i)
-        m_variables[i] = ValueSource();
+    ASSERT(m_arguments.size() == block.m_argumentsAtHead.size());
+    for (size_t i = 0; i < m_arguments.size(); ++i) {
+        NodeIndex nodeIndex = block.m_argumentsAtHead[i].value;
+        if (nodeIndex == NoNode)
+            m_arguments[i] = ValueSource(ValueInRegisterFile);
+        else
+            m_arguments[i] = ValueSource::forPrediction(m_jit.graph()[nodeIndex].variableAccessData()->prediction());
+    }
+    
+    ASSERT(m_variables.size() == block.m_localsAtHead.size());
+    for (size_t i = 0; i < m_variables.size(); ++i) {
+        NodeIndex nodeIndex = block.m_localsAtHead[i].value;
+        if (nodeIndex == NoNode)
+            m_variables[i] = ValueSource(ValueInRegisterFile);
+        else
+            m_variables[i] = ValueSource::forPrediction(m_jit.graph()[nodeIndex].variableAccessData()->prediction());
+    }
+    
     m_lastSetOperand = std::numeric_limits<int>::max();
     m_bytecodeIndexForOSR = std::numeric_limits<uint32_t>::max();
 
@@ -2275,9 +2309,15 @@ void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_compileIndex);
     m_bytecodeIndexForOSR = 0;
+
+    for (size_t i = 0; i < m_arguments.size(); ++i)
+        m_arguments[i] = ValueSource(ValueInRegisterFile);
+    for (size_t i = 0; i < m_variables.size(); ++i)
+        m_variables[i] = ValueSource(ValueInRegisterFile);
+    
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
-        PredictedType predictedType = m_jit.graph().getPrediction(virtualRegister);
+        PredictedType predictedType = m_jit.graph()[m_jit.graph().m_arguments[i]].variableAccessData()->prediction();
         if (isInt32Prediction(predictedType))
             speculationCheck(m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
         else if (isArrayPrediction(predictedType)) {
@@ -2305,121 +2345,129 @@ bool SpeculativeJIT::compile()
     return true;
 }
 
-ValueRecovery SpeculativeJIT::computeValueRecoveryFor(int operand, const ValueSource& valueSource)
+ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
 {
-    if (!valueSource.isSet()) {
-        if (m_bytecodeIndexForOSR && isInt32Prediction(m_jit.graph().getPrediction(operand)))
-            return ValueRecovery::alreadyInRegisterFileAsUnboxedInt32();
+    switch (valueSource.kind()) {
+    case ValueInRegisterFile:
         return ValueRecovery::alreadyInRegisterFile();
-    }
-
-    if (m_jit.isConstant(valueSource.nodeIndex()))
-        return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));
-    
-    Node* nodePtr = &m_jit.graph()[valueSource.nodeIndex()];
-    if (!nodePtr->shouldGenerate()) {
-        // It's legitimately dead. As in, nobody will ever use this node, or operand,
-        // ever. Set it to Undefined to make the GC happy after the OSR.
-        return ValueRecovery::constant(jsUndefined());
-    }
-    
-    GenerationInfo* infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-    if (!infoPtr->alive() || infoPtr->nodeIndex() != valueSource.nodeIndex()) {
-        // Try to see if there is an alternate node that would contain the value we want.
-        // There are four possibilities:
-        //
-        // ValueToNumber: If the only live version of the value is a ValueToNumber node
-        //    then it means that all remaining uses of the value would have performed a
-        //    ValueToNumber conversion anyway. Thus, we can substitute ValueToNumber.
-        //
-        // ValueToInt32: Likewise, if the only remaining live version of the value is
-        //    ValueToInt32, then we can use it. But if there is both a ValueToInt32
-        //    and a ValueToNumber, then we better go with ValueToNumber because it
-        //    means that some remaining uses would have converted to number while
-        //    others would have converted to Int32.
-        //
-        // UInt32ToNumber: If the only live version of the value is a UInt32ToNumber
-        //    then the only remaining uses are ones that want a properly formed number
-        //    rather than a UInt32 intermediate.
-        //
-        // The reverse of the above: This node could be a UInt32ToNumber, but its
-        //    alternative is still alive. This means that the only remaining uses of
-        //    the number would be fine with a UInt32 intermediate.
         
-        bool found = false;
+    case Int32InRegisterFile:
+        return ValueRecovery::alreadyInRegisterFileAsUnboxedInt32();
         
-        if (nodePtr->op == UInt32ToNumber) {
-            NodeIndex nodeIndex = nodePtr->child1();
-            nodePtr = &m_jit.graph()[nodeIndex];
-            infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-            if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
-                found = true;
+    case HaveNode: {
+        if (m_jit.isConstant(valueSource.nodeIndex()))
+            return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));
+    
+        Node* nodePtr = &m_jit.graph()[valueSource.nodeIndex()];
+        if (!nodePtr->shouldGenerate()) {
+            // It's legitimately dead. As in, nobody will ever use this node, or operand,
+            // ever. Set it to Undefined to make the GC happy after the OSR.
+            return ValueRecovery::constant(jsUndefined());
         }
+    
+        GenerationInfo* infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+        if (!infoPtr->alive() || infoPtr->nodeIndex() != valueSource.nodeIndex()) {
+            // Try to see if there is an alternate node that would contain the value we want.
+            // There are four possibilities:
+            //
+            // ValueToNumber: If the only live version of the value is a ValueToNumber node
+            //    then it means that all remaining uses of the value would have performed a
+            //    ValueToNumber conversion anyway. Thus, we can substitute ValueToNumber.
+            //
+            // ValueToInt32: Likewise, if the only remaining live version of the value is
+            //    ValueToInt32, then we can use it. But if there is both a ValueToInt32
+            //    and a ValueToNumber, then we better go with ValueToNumber because it
+            //    means that some remaining uses would have converted to number while
+            //    others would have converted to Int32.
+            //
+            // UInt32ToNumber: If the only live version of the value is a UInt32ToNumber
+            //    then the only remaining uses are ones that want a properly formed number
+            //    rather than a UInt32 intermediate.
+            //
+            // The reverse of the above: This node could be a UInt32ToNumber, but its
+            //    alternative is still alive. This means that the only remaining uses of
+            //    the number would be fine with a UInt32 intermediate.
         
-        if (!found) {
-            NodeIndex valueToNumberIndex = NoNode;
-            NodeIndex valueToInt32Index = NoNode;
-            NodeIndex uint32ToNumberIndex = NoNode;
+            bool found = false;
+        
+            if (nodePtr->op == UInt32ToNumber) {
+                NodeIndex nodeIndex = nodePtr->child1();
+                nodePtr = &m_jit.graph()[nodeIndex];
+                infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+                if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
+                    found = true;
+            }
+        
+            if (!found) {
+                NodeIndex valueToNumberIndex = NoNode;
+                NodeIndex valueToInt32Index = NoNode;
+                NodeIndex uint32ToNumberIndex = NoNode;
             
-            for (unsigned virtualRegister = 0; virtualRegister < m_generationInfo.size(); ++virtualRegister) {
-                GenerationInfo& info = m_generationInfo[virtualRegister];
-                if (!info.alive())
-                    continue;
-                if (info.nodeIndex() == NoNode)
-                    continue;
-                Node& node = m_jit.graph()[info.nodeIndex()];
-                if (node.child1Unchecked() != valueSource.nodeIndex())
-                    continue;
-                switch (node.op) {
-                case ValueToNumber:
-                case ValueToDouble:
-                    valueToNumberIndex = info.nodeIndex();
-                    break;
-                case ValueToInt32:
-                    valueToInt32Index = info.nodeIndex();
-                    break;
-                case UInt32ToNumber:
-                    uint32ToNumberIndex = info.nodeIndex();
-                    break;
-                default:
-                    break;
+                for (unsigned virtualRegister = 0; virtualRegister < m_generationInfo.size(); ++virtualRegister) {
+                    GenerationInfo& info = m_generationInfo[virtualRegister];
+                    if (!info.alive())
+                        continue;
+                    if (info.nodeIndex() == NoNode)
+                        continue;
+                    Node& node = m_jit.graph()[info.nodeIndex()];
+                    if (node.child1Unchecked() != valueSource.nodeIndex())
+                        continue;
+                    switch (node.op) {
+                    case ValueToNumber:
+                    case ValueToDouble:
+                        valueToNumberIndex = info.nodeIndex();
+                        break;
+                    case ValueToInt32:
+                        valueToInt32Index = info.nodeIndex();
+                        break;
+                    case UInt32ToNumber:
+                        uint32ToNumberIndex = info.nodeIndex();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            
+                NodeIndex nodeIndexToUse;
+                if (valueToNumberIndex != NoNode)
+                    nodeIndexToUse = valueToNumberIndex;
+                else if (valueToInt32Index != NoNode)
+                    nodeIndexToUse = valueToInt32Index;
+                else if (uint32ToNumberIndex != NoNode)
+                    nodeIndexToUse = uint32ToNumberIndex;
+                else
+                    nodeIndexToUse = NoNode;
+            
+                if (nodeIndexToUse != NoNode) {
+                    nodePtr = &m_jit.graph()[nodeIndexToUse];
+                    infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+                    ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
+                    found = true;
                 }
             }
-            
-            NodeIndex nodeIndexToUse;
-            if (valueToNumberIndex != NoNode)
-                nodeIndexToUse = valueToNumberIndex;
-            else if (valueToInt32Index != NoNode)
-                nodeIndexToUse = valueToInt32Index;
-            else if (uint32ToNumberIndex != NoNode)
-                nodeIndexToUse = uint32ToNumberIndex;
-            else
-                nodeIndexToUse = NoNode;
-            
-            if (nodeIndexToUse != NoNode) {
-                nodePtr = &m_jit.graph()[nodeIndexToUse];
-                infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-                ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
-                found = true;
-            }
-        }
         
-        if (!found)
-            return ValueRecovery::constant(jsUndefined());
-    }
+            if (!found)
+                return ValueRecovery::constant(jsUndefined());
+        }
     
-    ASSERT(infoPtr->alive());
+        ASSERT(infoPtr->alive());
 
-    if (infoPtr->registerFormat() != DataFormatNone) {
-        if (infoPtr->registerFormat() == DataFormatDouble)
-            return ValueRecovery::inFPR(infoPtr->fpr());
-        return ValueRecovery::inGPR(infoPtr->gpr(), infoPtr->registerFormat());
-    }
-    if (infoPtr->spillFormat() != DataFormatNone)
-        return ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(nodePtr->virtualRegister()));
+        if (infoPtr->registerFormat() != DataFormatNone) {
+            if (infoPtr->registerFormat() == DataFormatDouble)
+                return ValueRecovery::inFPR(infoPtr->fpr());
+            return ValueRecovery::inGPR(infoPtr->gpr(), infoPtr->registerFormat());
+        }
+        if (infoPtr->spillFormat() != DataFormatNone)
+            return ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(nodePtr->virtualRegister()));
     
-    ASSERT_NOT_REACHED();
-    return ValueRecovery();
+        ASSERT_NOT_REACHED();
+        return ValueRecovery();
+    }
+        
+    default:
+        ASSERT_NOT_REACHED();
+        return ValueRecovery();
+    }
 }
 
 } } // namespace JSC::DFG

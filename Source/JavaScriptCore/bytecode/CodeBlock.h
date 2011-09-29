@@ -240,9 +240,6 @@ namespace JSC {
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         
-        void setPredictions(PassOwnPtr<PredictionTracker> predictions) { m_predictions = predictions; }
-        PredictionTracker* predictions() const { return m_predictions.get(); }
-
         void visitAggregate(SlotVisitor&);
         void visitWeakReferences(SlotVisitor&);
 
@@ -975,8 +972,6 @@ namespace JSC {
 
         OwnPtr<CodeBlock> m_alternative;
         
-        OwnPtr<PredictionTracker> m_predictions;
-
         int32_t m_executeCounter;
         uint32_t m_speculativeSuccessCounter;
         uint32_t m_speculativeFailCounter;

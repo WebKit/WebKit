@@ -393,40 +393,23 @@ public:
 #if ENABLE(DFG_OSR_ENTRY)
         OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
         
-        unsigned lastLiveArgument = 0;
-        unsigned lastLiveLocal = 0;
-        
-        for (unsigned i = 0; i < basicBlock.m_arguments.size(); ++i) {
-            if (basicBlock.m_arguments[i].value != NoNode)
-                lastLiveArgument = i;
+        ActionablePredictions actionablePredictions(basicBlock.m_argumentsAtHead.size(), basicBlock.m_localsAtHead.size());
+
+        for (unsigned i = 0; i < basicBlock.m_argumentsAtHead.size(); ++i) {
+            NodeIndex nodeIndex = basicBlock.m_argumentsAtHead[i].value;
+            if (nodeIndex != NoNode)
+                actionablePredictions.setArgument(i, actionablePredictionFromPredictedType(m_graph[nodeIndex].variableAccessData()->prediction()));
         }
         
-        for (unsigned i = 0; i < basicBlock.m_locals.size(); ++i) {
-            if (basicBlock.m_locals[i].value != NoNode)
-                lastLiveLocal = i;
+        for (unsigned i = 0; i < basicBlock.m_localsAtHead.size(); ++i) {
+            NodeIndex nodeIndex = basicBlock.m_localsAtHead[i].value;
+            if (nodeIndex != NoNode)
+                actionablePredictions.setVariable(i, actionablePredictionFromPredictedType(m_graph[nodeIndex].variableAccessData()->prediction()));
         }
         
-        if (lastLiveArgument) {
-            entry->m_liveArguments.resize(lastLiveArgument + 1);
-            entry->m_liveArguments.clearAll();
-            
-            for (unsigned i = 0; i <= lastLiveArgument; ++i) {
-                if (basicBlock.m_arguments[i].value != NoNode)
-                    entry->m_liveArguments.set(i);
-            }
-        } else
-            entry->m_liveArguments.clearAll();
+        actionablePredictions.pack();
         
-        if (lastLiveLocal) {
-            entry->m_liveVariables.resize(lastLiveLocal + 1);
-            entry->m_liveVariables.clearAll();
-            
-            for (unsigned i = 0; i <= lastLiveLocal; ++i) {
-                if (basicBlock.m_locals[i].value != NoNode)
-                    entry->m_liveVariables.set(i);
-            }
-        } else
-            entry->m_liveVariables.clearAll();
+        entry->m_predictions = actionablePredictions;
 #else
         UNUSED_PARAM(basicBlock);
 #endif

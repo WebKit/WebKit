@@ -66,26 +66,53 @@ private:
     GPRReg m_src;
 };
 
+enum ValueSourceKind {
+    SourceNotSet,
+    ValueInRegisterFile,
+    Int32InRegisterFile,
+    HaveNode
+};
+
 class ValueSource {
 public:
     ValueSource()
-        : m_nodeIndex(NoNode)
+        : m_nodeIndex(nodeIndexFromKind(SourceNotSet))
     {
+    }
+    
+    explicit ValueSource(ValueSourceKind valueSourceKind)
+        : m_nodeIndex(nodeIndexFromKind(valueSourceKind))
+    {
+        ASSERT(kind() != SourceNotSet);
+        ASSERT(kind() != HaveNode);
     }
     
     explicit ValueSource(NodeIndex nodeIndex)
         : m_nodeIndex(nodeIndex)
     {
+        ASSERT(kind() == HaveNode);
+    }
+    
+    static ValueSource forPrediction(PredictedType prediction)
+    {
+        if (isInt32Prediction(prediction))
+            return ValueSource(Int32InRegisterFile);
+        return ValueSource(ValueInRegisterFile);
     }
     
     bool isSet() const
     {
-        return m_nodeIndex != NoNode;
+        return kindFromNodeIndex(m_nodeIndex) != SourceNotSet;
+    }
+    
+    ValueSourceKind kind() const
+    {
+        return kindFromNodeIndex(m_nodeIndex);
     }
     
     NodeIndex nodeIndex() const
     {
-        ASSERT(isSet());
+        ASSERT(kind() == HaveNode);
         return m_nodeIndex;
     }
     
@@ -94,6 +121,20 @@ public:
 #endif
     
 private:
+    static NodeIndex nodeIndexFromKind(ValueSourceKind kind)
+    {
+        ASSERT(kind >= SourceNotSet && kind < HaveNode);
+        return NoNode - kind;
+    }
+    
+    static ValueSourceKind kindFromNodeIndex(NodeIndex nodeIndex)
+    {
+        unsigned kind = static_cast<unsigned>(NoNode - nodeIndex);
+        if (kind >= static_cast<unsigned>(HaveNode))
+            return HaveNode;
+        return static_cast<ValueSourceKind>(kind);
+    }
+    
     NodeIndex m_nodeIndex;
 };
     
@@ -517,7 +558,7 @@ private:
         Node& node = m_jit.graph()[op1];
         switch (node.op) {
         case GetLocal:
-            return isArrayPrediction(m_jit.graph().getPrediction(node.local()));
+            return isArrayPrediction(node.variableAccessData()->prediction());
             
         case NewArray:
         case NewArrayBuffer:
@@ -590,7 +631,7 @@ private:
     
     // Tracking for which nodes are currently holding the values of arguments and bytecode
     // operand-indexed variables.
-
+    
     ValueSource valueSourceForOperand(int operand)
     {
         return valueSourceReferenceForOperand(operand);
@@ -623,11 +664,11 @@ private:
     int m_lastSetOperand;
     uint32_t m_bytecodeIndexForOSR;
     
-    ValueRecovery computeValueRecoveryFor(int operand, const ValueSource&);
+    ValueRecovery computeValueRecoveryFor(const ValueSource&);
 
     ValueRecovery computeValueRecoveryFor(int operand)
     {
-        return computeValueRecoveryFor(operand, valueSourceForOperand(operand));
+        return computeValueRecoveryFor(valueSourceForOperand(operand));
     }
 };
 
@@ -852,7 +893,7 @@ inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : JITCodeGenerator(jit, true)
     , m_compileOkay(true)
     , m_arguments(jit.codeBlock()->m_numParameters)
-    , m_variables(jit.codeBlock()->m_numVars)
+    , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_bytecodeIndexForOSR(std::numeric_limits<uint32_t>::max())
 {

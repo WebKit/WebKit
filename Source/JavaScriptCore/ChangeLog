@@ -1,3 +1,120 @@
+2011-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT should infer which uses of a variable are not aliased
+        https://bugs.webkit.org/show_bug.cgi?id=68593
+
+        Reviewed by Oliver Hunt.
+        
+        This separates how a variable is stored (i.e. its virtual register)
+        from how it's predicted. Each variable now takes a
+        VariableAccessData as its operand, instead of the virtual register.
+        The VariableAccessData stores the operand and the prediction. If
+        multiple uses of a variable are aliased, their VariableAccessDatas
+        are unified.
+        
+        This also adds tracking of which argument values are used. It
+        correctly observes that an argument value is not used, if the
+        argument is assigned to inside the function before being used.
+        
+        This also adds tracking of which variables are live at the head of
+        a basic block, and separates that from a variable being live at the
+        tail.
+        
+        Finally, this communicates to both OSR entry and OSR exit code how
+        a variable is predicted at a particular point in the code, rather
+        than just communicating how it was predicted in the entire code
+        block (since with this patch there is no longer the notion of a
+        variable having just one prediction for a code block).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ActionablePrediction.h: Added.
+        (JSC::actionablePredictionFromPredictedType):
+        (JSC::valueObeysPrediction):
+        (JSC::actionablePredictionToString):
+        (JSC::ActionablePredictions::ActionablePredictions):
+        (JSC::ActionablePredictions::setArgument):
+        (JSC::ActionablePredictions::argument):
+        (JSC::ActionablePredictions::setVariable):
+        (JSC::ActionablePredictions::variable):
+        (JSC::ActionablePredictions::argumentUpperBound):
+        (JSC::ActionablePredictions::variableUpperBound):
+        (JSC::ActionablePredictions::pack):
+        (JSC::ActionablePredictions::packVector):
+        * bytecode/CodeBlock.h:
+        * bytecode/PredictionTracker.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::newVariableAccessData):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::nameOfVariableAccessData):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::operandIsArgument):
+        (JSC::DFG::VariableRecord::setFirstTime):
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVariableAccessData):
+        (JSC::DFG::Node::hasLocal):
+        (JSC::DFG::Node::variableAccessData):
+        (JSC::DFG::Node::local):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::forPrediction):
+        (JSC::DFG::ValueSource::isSet):
+        (JSC::DFG::ValueSource::kind):
+        (JSC::DFG::ValueSource::nodeIndex):
+        (JSC::DFG::ValueSource::nodeIndexFromKind):
+        (JSC::DFG::ValueSource::kindFromNodeIndex):
+        (JSC::DFG::SpeculativeJIT::isKnownArray):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * wtf/PackedIntVector.h: Added.
+        (WTF::PackedIntVector::PackedIntVector):
+        (WTF::PackedIntVector::operator=):
+        (WTF::PackedIntVector::size):
+        (WTF::PackedIntVector::ensureSize):
+        (WTF::PackedIntVector::resize):
+        (WTF::PackedIntVector::clearAll):
+        (WTF::PackedIntVector::get):
+        (WTF::PackedIntVector::set):
+        (WTF::PackedIntVector::mask):
+        * wtf/Platform.h:
+        * wtf/UnionFind.h: Added.
+        (WTF::UnionFind::UnionFind):
+        (WTF::UnionFind::find):
+        (WTF::UnionFind::unify):
+
 2011-09-29  Oliver Hunt  <oliver@apple.com>
 
         Build fix.

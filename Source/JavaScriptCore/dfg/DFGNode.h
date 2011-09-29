@@ -28,6 +28,7 @@
 
 #include <wtf/BoundsCheckedPointer.h>
 #include <wtf/Platform.h>
+#include <wtf/UnionFind.h>
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define ENABLE_DFG_DEBUG_VERBOSE 0
@@ -106,6 +107,51 @@ public:
     
 private:
     uint32_t m_bytecodeIndex;
+};
+
+class VariableAccessData: public UnionFind<VariableAccessData> {
+public:
+    VariableAccessData()
+        : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
+        , m_prediction(PredictNone)
+    {
+    }
+    
+    VariableAccessData(VirtualRegister local)
+        : m_local(local)
+        , m_prediction(PredictNone)
+    {
+    }
+    
+    VirtualRegister local()
+    {
+        ASSERT(m_local == find()->m_local);
+        return m_local;
+    }
+    
+    int operand()
+    {
+        return static_cast<int>(local());
+    }
+    
+    bool predict(PredictedType prediction)
+    {
+        return mergePrediction(find()->m_prediction, prediction);
+    }
+    
+    PredictedType prediction()
+    {
+        return find()->m_prediction;
+    }
+    
+private:
+    // This is slightly space-inefficient, since anything we're unified with
+    // will have the same operand and should have the same prediction. But
+    // putting them here simplifies the code, and we don't expect DFG space
+    // usage for variable access nodes do be significant.
+
+    VirtualRegister m_local;
+    PredictedType m_prediction;
 };
 
 typedef unsigned ArithNodeFlags;
@@ -222,6 +268,9 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(SetLocal, 0) \
     macro(Phantom, NodeMustGenerate) \
     macro(Phi, 0) \
+    \
+    /* Marker for arguments being set. */\
+    macro(SetArgument, 0) \
     \
     /* Nodes for bitwise operations. */\
     macro(BitAnd, NodeResultInt32) \
@@ -464,15 +513,32 @@ struct Node {
         return isConstant() && valueOfJSConstantNode(codeBlock).isBoolean();
     }
     
+    bool hasVariableAccessData()
+    {
+        switch (op) {
+        case GetLocal:
+        case SetLocal:
+        case Phi:
+        case SetArgument:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     bool hasLocal()
     {
-        return op == GetLocal || op == SetLocal;
+        return hasVariableAccessData();
     }
-
+    
+    VariableAccessData* variableAccessData()
+    {
+        return reinterpret_cast<VariableAccessData*>(m_opInfo)->find();
+    }
+    
     VirtualRegister local()
     {
-        ASSERT(hasLocal());
-        return (VirtualRegister)m_opInfo;
+        return variableAccessData()->local();
     }
 
 #if !ASSERT_DISABLED

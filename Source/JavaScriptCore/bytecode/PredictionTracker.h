@@ -28,12 +28,8 @@
 
 #include "PredictedType.h"
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
-
-// helper function to distinguish vars & temporaries from arguments.
-inline bool operandIsArgument(int operand) { return operand < 0; }
 
 struct PredictionSlot {
 public:
@@ -50,46 +46,6 @@ public:
     {
     }
     
-    PredictionTracker(unsigned numArguments, unsigned numVariables)
-        : m_arguments(numArguments)
-        , m_variables(numVariables)
-    {
-    }
-    
-    void initializeSimilarTo(const PredictionTracker& other)
-    {
-        m_arguments.resize(other.numberOfArguments());
-        m_variables.resize(other.numberOfVariables());
-    }
-    
-    void copyLocalsFrom(const PredictionTracker& other)
-    {
-        m_arguments = other.m_arguments;
-        m_variables = other.m_variables;
-    }
-    
-    size_t numberOfArguments() const { return m_arguments.size(); }
-    size_t numberOfVariables() const { return m_variables.size(); }
-    
-    unsigned argumentIndexForOperand(int operand) const { return operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize; }
-
-    bool predictArgument(unsigned argument, PredictedType prediction)
-    {
-        return mergePrediction(m_arguments[argument].m_value, prediction);
-    }
-    
-    bool predict(int operand, PredictedType prediction)
-    {
-        if (operandIsArgument(operand))
-            return predictArgument(argumentIndexForOperand(operand), prediction);
-        if ((unsigned)operand >= m_variables.size()) {
-            ASSERT(operand >= 0);
-            m_variables.resize(operand + 1);
-        }
-        
-        return mergePrediction(m_variables[operand].m_value, prediction);
-    }
-    
     bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
         HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVars.find(varNumber + 1);
@@ -102,20 +58,6 @@ public:
         return mergePrediction(iter->second.m_value, prediction);
     }
     
-    PredictedType getArgumentPrediction(unsigned argument)
-    {
-        return m_arguments[argument].m_value;
-    }
-
-    PredictedType getPrediction(int operand)
-    {
-        if (operandIsArgument(operand))
-            return getArgumentPrediction(argumentIndexForOperand(operand));
-        if ((unsigned)operand < m_variables.size())
-            return m_variables[operand].m_value;
-        return PredictNone;
-    }
-    
     PredictedType getGlobalVarPrediction(unsigned varNumber)
     {
         HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVars.find(varNumber + 1);
@@ -125,8 +67,6 @@ public:
     }
     
 private:
-    Vector<PredictionSlot, 16> m_arguments;
-    Vector<PredictionSlot, 16> m_variables;
     HashMap<unsigned, PredictionSlot> m_globalVars;
 };
 

@@ -941,6 +941,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\PackedIntVector.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\PageAllocation.h"
 			>
 		</File>

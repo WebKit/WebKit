@@ -46,6 +46,39 @@ const char *Graph::opName(NodeType op)
     return dfgOpNames[op & NodeIdMask];
 }
 
+const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessData)
+{
+    // Variables are already numbered. For readability of IR dumps, this returns
+    // an alphabetic name for the variable access data, so that you don't have to
+    // reason about two numbers (variable number and live range number), but instead
+    // a number and a letter.
+    
+    unsigned index = std::numeric_limits<unsigned>::max();
+    for (unsigned i = 0; i < m_variableAccessData.size(); ++i) {
+        if (&m_variableAccessData[i] == variableAccessData) {
+            index = i;
+            break;
+        }
+    }
+    
+    ASSERT(index != std::numeric_limits<unsigned>::max());
+    
+    if (!index)
+        return "A";
+
+    static char buf[10];
+    BoundsCheckedPointer<char> ptr(buf, sizeof(buf));
+    
+    while (index) {
+        *ptr++ = 'A' + (index % 26);
+        index /= 26;
+    }
+    
+    *ptr++ = 0;
+    
+    return buf;
+}
+
 void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
 {
     Node& node = at(nodeIndex);
@@ -116,12 +149,14 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
         hasPrinted = true;
     }
-    if (node.hasLocal()) {
-        int local = node.local();
-        if (operandIsArgument(local))
-            printf("%sarg%u", hasPrinted ? ", " : "", local - codeBlock->thisRegister());
+    ASSERT(node.hasVariableAccessData() == node.hasLocal());
+    if (node.hasVariableAccessData()) {
+        VariableAccessData* variableAccessData = node.variableAccessData();
+        int operand = variableAccessData->operand();
+        if (operandIsArgument(operand))
+            printf("%sarg%u(%s)", hasPrinted ? ", " : "", operand - codeBlock->thisRegister(), nameOfVariableAccessData(variableAccessData));
         else
-            printf("%sr%u", hasPrinted ? ", " : "", local);
+            printf("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
         hasPrinted = true;
     }
     if (op == JSConstant) {
@@ -145,8 +180,8 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     printf(")");
 
     if (!skipped) {
-        if (node.hasLocal())
-            printf("  predicting %s", predictionToString(getPrediction(node.local())));
+        if (node.hasVariableAccessData())
+            printf("  predicting %s", predictionToString(node.variableAccessData()->prediction()));
         else if (node.hasVarNumber())
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
         else if (node.hasPrediction())
@@ -204,10 +239,10 @@ void Graph::refChildren(NodeIndex op)
 void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
 {
     if (exec) {
-        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_predictions.numberOfArguments());
+        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_arguments.size());
         
         for (size_t arg = 1; arg < numberOfArguments; ++arg)
-            m_predictions.predictArgument(arg, predictionFromValue(exec->argument(arg - 1)));
+            at(m_arguments[arg]).variableAccessData()->predict(predictionFromValue(exec->argument(arg - 1)));
     }
     
     ASSERT(codeBlock);
@@ -220,10 +255,10 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         if (!profile)
             continue;
         
-        m_predictions.predictArgument(arg, profile->computeUpdatedPrediction());
+        at(m_arguments[arg]).variableAccessData()->predict(profile->computeUpdatedPrediction());
         
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Argument [%lu] prediction: %s\n", arg, predictionToString(m_predictions.getArgumentPrediction(arg)));
+        printf("Argument [%lu] prediction: %s\n", arg, predictionToString(at(m_arguments[arg]).variableAccessData()->prediction()));
 #endif
     }
 }

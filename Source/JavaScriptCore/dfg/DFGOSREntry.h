@@ -26,7 +26,7 @@
 #ifndef DFGOSREntry_h
 #define DFGOSREntry_h
 
-#include <wtf/BitVector.h>
+#include "ActionablePrediction.h"
 
 namespace JSC {
 
@@ -39,8 +39,7 @@ namespace DFG {
 struct OSREntryData {
     unsigned m_bytecodeIndex;
     unsigned m_machineCodeOffset;
-    BitVector m_liveArguments;
-    BitVector m_liveVariables;
+    ActionablePredictions m_predictions;
 };
 
 inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)

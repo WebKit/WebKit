@@ -43,6 +43,9 @@ class ExecState;
 
 namespace DFG {
 
+// helper function to distinguish vars & temporaries from arguments.
+inline bool operandIsArgument(int operand) { return operand < 0; }
+
 typedef uint32_t BlockIndex;
 
 // For every local variable we track any existing get or set of the value.
@@ -52,6 +55,12 @@ struct VariableRecord {
     VariableRecord()
         : value(NoNode)
     {
+    }
+    
+    void setFirstTime(NodeIndex nodeIndex)
+    {
+        ASSERT(value == NoNode);
+        value = nodeIndex;
     }
 
     NodeIndex value;
@@ -110,8 +119,10 @@ struct BasicBlock {
         , begin(begin)
         , end(NoNode)
         , isOSRTarget(false)
-        , m_arguments(numArguments)
-        , m_locals(numLocals)
+        , m_argumentsAtHead(numArguments)
+        , m_localsAtHead(numLocals)
+        , m_argumentsAtTail(numArguments)
+        , m_localsAtTail(numLocals)
     {
     }
 
@@ -126,8 +137,12 @@ struct BasicBlock {
     bool isOSRTarget;
 
     PredecessorList m_predecessors;
-    Vector <VariableRecord, 8> m_arguments;
-    Vector <VariableRecord, 16> m_locals;
+    
+    Vector<VariableRecord, 8> m_argumentsAtHead;
+    Vector<VariableRecord, 16> m_localsAtHead;
+    
+    Vector<VariableRecord, 8> m_argumentsAtTail;
+    Vector<VariableRecord, 16> m_localsAtTail;
 };
 
 // 
@@ -138,11 +153,6 @@ struct BasicBlock {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
-    Graph(unsigned numArguments, unsigned numVariables)
-        : m_predictions(numArguments, numVariables)
-    {
-    }
-
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
     {
@@ -171,16 +181,6 @@ public:
         return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
     
-    PredictionTracker& predictions()
-    {
-        return m_predictions;
-    }
-    
-    bool predict(int operand, PredictedType prediction)
-    {
-        return m_predictions.predict(operand, prediction);
-    }
-    
     bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
         return m_predictions.predictGlobalVar(varNumber, prediction);
@@ -190,11 +190,12 @@ public:
     {
         switch (node.op) {
         case GetLocal:
-            return predict(node.local(), prediction);
-            break;
+        case SetLocal:
+        case Phi:
+        case SetArgument:
+            return node.variableAccessData()->predict(prediction);
         case GetGlobalVar:
             return predictGlobalVar(node.varNumber(), prediction);
-            break;
         case GetById:
         case GetMethod:
         case GetByVal:
@@ -212,11 +213,6 @@ public:
         }
     }
 
-    PredictedType getPrediction(int operand)
-    {
-        return m_predictions.getPrediction(operand);
-    }
-    
     PredictedType getGlobalVarPrediction(unsigned varNumber)
     {
         return m_predictions.getGlobalVarPrediction(varNumber);
@@ -244,7 +240,10 @@ public:
         
         switch (nodePtr->op) {
         case GetLocal:
-            return getPrediction(nodePtr->local());
+        case SetLocal:
+        case SetArgument:
+        case Phi:
+            return nodePtr->variableAccessData()->prediction();
         case GetGlobalVar:
             return getGlobalVarPrediction(nodePtr->varNumber());
         case GetById:
@@ -324,6 +323,9 @@ public:
 
 #ifndef NDEBUG
     static const char *opName(NodeType);
+    
+    // This is O(n), and should only be used for verbose dumps.
+    const char* nameOfVariableAccessData(VariableAccessData*);
 #endif
 
     void predictArgumentTypes(ExecState*, CodeBlock*);
@@ -333,7 +335,10 @@ public:
     Vector<MethodCheckData> m_methodCheckData;
     Vector<StorageAccessData> m_storageAccessData;
     Vector<ResolveGlobalData> m_resolveGlobalData;
+    Vector<NodeIndex, 8> m_arguments;
+    SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     unsigned m_preservedVars;
+    unsigned m_localVars;
     unsigned m_parameterSlots;
 private:
     

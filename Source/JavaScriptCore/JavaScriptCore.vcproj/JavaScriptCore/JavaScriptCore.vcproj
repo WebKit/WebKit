@@ -1430,6 +1430,10 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\ActionablePrediction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\CodeBlock.cpp"
 				>
 			</File>
