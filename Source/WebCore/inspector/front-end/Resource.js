@@ -869,7 +869,12 @@ WebInspector.Resource.prototype = {
 
     searchInContent: function(query, callback)
     {
-        PageAgent.searchInResource(query, callback);
+        function callbackWrapper(error, searchMatches)
+        {
+            callback(searchMatches || []);
+        }
+
+        PageAgent.searchInResource(this.frameId, this.url, query, callbackWrapper);
     },
 
     populateImageSource: function(image)

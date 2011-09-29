@@ -484,19 +484,17 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, RefPtr<InspectorArray>* object)
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, RefPtr<InspectorArray>* results)
 {
-    RefPtr<InspectorArray> result = InspectorArray::create();
+    *results = InspectorArray::create();
 
     Frame* frame = frameForId(frameId);
     KURL kurl(ParsedURLString, url);
 
     FrameLoader* frameLoader = frame ? frame->loader() : 0;
     DocumentLoader* loader = frameLoader ? frameLoader->documentLoader() : 0;
-    if (!loader) {
-        *object = result;
+    if (!loader)
         return;
-    }
 
     String content;
     bool success = false;
@@ -508,13 +506,10 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
         success = textContentForCachedResource(resource, &content);
     }
 
-    if (!success) {
-        *object = result;
+    if (!success)
         return;
-    }
 
-    result = ContentSearchUtils::searchInTextByLines(query, content);
-    *object = result;
+    *results = ContentSearchUtils::searchInTextByLines(query, content);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
@@ -527,9 +522,9 @@ static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& fram
     return result;
 }
 
-void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* object)
+void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* results)
 {
-    RefPtr<InspectorArray> result = InspectorArray::create();
+    RefPtr<InspectorArray> searchResults = InspectorArray::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -543,17 +538,17 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
             if (textContentForCachedResource(cachedResource, &content)) {
                 int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
                 if (matchesCount)
-                    result->pushValue(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
+                    searchResults->pushValue(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
             }
         }
         if (mainResourceContent(frame, false, &content)) {
             int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
             if (matchesCount)
-                result->pushValue(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
+                searchResults->pushValue(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
         }
     }
 
-    *object = result;
+    *results = searchResults;
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)

@@ -1,3 +1,19 @@
+2011-09-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Make search-in-resource test simpler.
+        https://bugs.webkit.org/show_bug.cgi?id=69025
+
+        Changed search-in-resource test.
+        Removed error parameter from content provider's searchInContent callback.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::searchInResources):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.searchInContent):
+
 2011-09-29  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Use LevelDB also for in-memory databases

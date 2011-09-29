@@ -1,3 +1,22 @@
+2011-09-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Make search-in-resource test simpler.
+        https://bugs.webkit.org/show_bug.cgi?id=69025
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/search/search-in-resource-expected.txt:
+        * http/tests/inspector/search/search-in-resource.html:
+        * http/tests/inspector/search/search-in-resources.html:
+        * http/tests/inspector/search/search-test.js:
+        (initialize_SearchTest.InspectorTest.runAfterResourcesAreCreated):
+        (initialize_SearchTest.InspectorTest._runAfterResourcesAreCreated):
+        (initialize_SearchTest.InspectorTest._runAfterResourcesAreCreated.maybeCallback):
+        (initialize_SearchTest.InspectorTest._runAfterResourcesAreCreated.addSniffer):
+        (initialize_SearchTest.InspectorTest._runAfterResourcesAreCreated.onResourceBind):
+        (initialize_SearchTest.InspectorTest._runAfterResourcesAreCreated.visit):
+        (initialize_SearchTest):
+
 2011-09-27  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Scripts panel without folders causes errors when creating content scripts section.

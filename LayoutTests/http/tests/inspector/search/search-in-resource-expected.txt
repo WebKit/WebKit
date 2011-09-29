@@ -8,16 +8,4 @@ lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same l
 lineNumber: 9, line: '    searchTestUniqueString();'
 lineNumber: 10, line: '    // SEARCHTestUniqueString();'
 
-http://127.0.0.1:8000/inspector/search/resources/search.css
-Search matches: 
-lineNumber: 0, line: 'div.searchTestUniqueString {'
-lineNumber: 4, line: 'div.searchTestUniqueString:hover {'
-lineNumber: 5, line: '    /* another searchTestUniqueString occurence */'
-
-http://127.0.0.1:8000/inspector/search/resources/search.html
-Search matches: 
-lineNumber: 5, line: '<div>searchTestUniqueString</div>'
-lineNumber: 7, line: '<!-- searchTestUniqueString -->'
-lineNumber: 9, line: '<div id="searchTestUniqueString">div text</div>'
-
 

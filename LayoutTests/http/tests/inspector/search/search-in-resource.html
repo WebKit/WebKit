@@ -1,39 +1,22 @@
 <html>
 <head>
 <script src="../inspector-test.js"></script>
-<script src="../resource-tree/resource-tree-test.js"></script>
 <script src="search-test.js"></script>
 <script>
 function test()
 {
     // This file should not match search query.
     var text = "searchTest" + "UniqueString";
-    InspectorTest.runAfterResourcesAreFinished(["search.js", "search.css", "search.html"], step2);
+    InspectorTest.runAfterResourcesAreCreated(["search.js"], step2);
 
     function step2()
     {
         var resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
         InspectorTest.addResult(resource.url);
-        PageAgent.searchInResource(resource.frameId, resource.url, text, step3);
+        resource.searchInContent(text, step3);
     }
 
-    function step3(error, searchMatches)
-    {
-        InspectorTest.dumpSearchMatches(searchMatches);
-        var resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.css");
-        InspectorTest.addResult(resource.url);
-        PageAgent.searchInResource(resource.frameId, resource.url, text, step4);
-    }
-
-    function step4(error, searchMatches)
-    {
-        InspectorTest.dumpSearchMatches(searchMatches);
-        var resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.html");
-        InspectorTest.addResult(resource.url);
-        PageAgent.searchInResource(resource.frameId, resource.url, text, step5);
-    }
-
-    function step5(error, searchMatches)
+    function step3(searchMatches)
     {
         InspectorTest.dumpSearchMatches(searchMatches);
         InspectorTest.completeTest();
