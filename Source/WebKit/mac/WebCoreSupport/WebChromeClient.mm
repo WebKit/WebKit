@@ -740,8 +740,10 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:)])
         CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:), listener, allowMultipleFiles);
-    else
+    else if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:)])
         CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
+    else
+        [listener cancel];
     [listener release];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
