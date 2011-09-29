@@ -463,9 +463,9 @@ void FontCache::removeClient(FontSelector* client)
     gClients->remove(client);
 }
 
-static unsigned gGeneration = 0;
+static unsigned short gGeneration = 0;
 
-unsigned FontCache::generation()
+unsigned short FontCache::generation()
 {
     return gGeneration;
 }

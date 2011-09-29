@@ -85,9 +85,9 @@ private:
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
     mutable int m_familyIndex;
-    mutable Pitch m_pitch;
-    mutable bool m_loadingCustomFonts;
-    unsigned m_generation;
+    unsigned short m_generation;
+    mutable Pitch m_pitch : 3;
+    mutable bool m_loadingCustomFonts : 1;
 
     friend class Font;
 };

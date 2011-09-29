@@ -40,9 +40,9 @@ FontFallbackList::FontFallbackList()
     , m_cachedPrimarySimpleFontData(0)
     , m_fontSelector(0)
     , m_familyIndex(0)
+    , m_generation(fontCache()->generation())
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
-    , m_generation(fontCache()->generation())
 {
 }
 

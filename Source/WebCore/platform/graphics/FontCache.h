@@ -91,7 +91,7 @@ public:
     void addClient(FontSelector*);
     void removeClient(FontSelector*);
 
-    unsigned generation();
+    unsigned short generation();
     void invalidate();
 
     size_t fontDataCount();
