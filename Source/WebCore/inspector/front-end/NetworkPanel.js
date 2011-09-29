@@ -42,7 +42,7 @@ WebInspector.NetworkLogView = function(parentElement)
     this._resources = [];
     this._resourcesById = {};
     this._resourcesByURL = {};
-    this._staleResources = [];
+    this._staleResources = {};
     this._resourceGridNodes = {};
     this._lastResourceGridNodeId = 0;
     this._mainResourceLoadTime = -1;
@@ -578,7 +578,10 @@ WebInspector.NetworkLogView.prototype = {
 
     _invalidateAllItems: function()
     {
-        this._staleResources = this._resources.slice();
+        for (var i = 0; i < this._resources.length; ++i) {
+            var resource = this._resources[i];
+            this._staleResources[resource.requestId] = resource;
+        }
     },
 
     get calculator()
@@ -660,15 +663,14 @@ WebInspector.NetworkLogView.prototype = {
 
         this._removeAllNodeHighlights();
         var wasScrolledToLastRow = this._dataGrid.isScrolledToLastRow();
-        var staleItemsLength = this._staleResources.length;
         var boundariesChanged = false;
         if (this.calculator.updateBoundariesForEventTime) {
             boundariesChanged = this.calculator.updateBoundariesForEventTime(this._mainResourceLoadTime) || boundariesChanged;
             boundariesChanged = this.calculator.updateBoundariesForEventTime(this._mainResourceDOMContentTime) || boundariesChanged;
         }
 
-        for (var i = 0; i < staleItemsLength; ++i) {
-            var resource = this._staleResources[i];
+        for (var resourceId in this._staleResources) {
+            var resource = this._staleResources[resourceId];
             var node = this._resourceGridNode(resource);
             if (!node) {
                 // Create the timeline tree element and graph.
@@ -687,13 +689,12 @@ WebInspector.NetworkLogView.prototype = {
         if (boundariesChanged) {
             // The boundaries changed, so all item graphs are stale.
             this._invalidateAllItems();
-            staleItemsLength = this._staleResources.length;
         }
 
-        for (var i = 0; i < staleItemsLength; ++i)
-            this._resourceGridNode(this._staleResources[i]).refreshGraph(this.calculator);
+        for (var resourceId in this._staleResources)
+            this._resourceGridNode(this._staleResources[resourceId]).refreshGraph(this.calculator);
 
-        this._staleResources = [];
+        this._staleResources = {};
         this._sortItems();
         this._updateSummaryBar();
         this._dataGrid.updateWidths();
@@ -721,7 +722,7 @@ WebInspector.NetworkLogView.prototype = {
         this._resources = [];
         this._resourcesById = {};
         this._resourcesByURL = {};
-        this._staleResources = [];
+        this._staleResources = {};
         this._resourceGridNodes = {};
 
         if (this._dataGrid) {
@@ -782,7 +783,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _refreshResource: function(resource)
     {
-        this._staleResources.push(resource);
+        this._staleResources[resource.requestId] = resource;
         this._scheduleRefresh();
     },
 

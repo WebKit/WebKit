@@ -1,3 +1,24 @@
+2011-09-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: speed-up Network panel. Change _staleResources type from array to object.
+        https://bugs.webkit.org/show_bug.cgi?id=69081
+
+        There is a test with 30 requests.
+        For the each stage of loading a resource we have an entry in _staleResources array. There are at least 4 stages per request.
+        NetworkLogView._refresh function is creating/updating the resource row for the each such entry.
+        This array can be replaced with a hash map just because the resource associated with the entry is the same for all the entries with the same request id.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/performance/resources/network-append-30-requests.html
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype._invalidateAllItems):
+        (WebInspector.NetworkLogView.prototype.refresh):
+        (WebInspector.NetworkLogView.prototype._reset):
+        (WebInspector.NetworkLogView.prototype._refreshResource):
+
 2011-09-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make inspector protocol validation a part of the build process.
