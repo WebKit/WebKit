@@ -28,6 +28,7 @@ LayoutTests/inspector/debugger/foo/bar
 LayoutTests/inspector/debugger/foo/baz
     script.js(<root>/foo/baz/script.js)
 — Content scripts —
+LayoutTests/inspector/debugger/foo/bar
     contentScript.js?a=1(<root>/foo/bar/contentScript.js?a=1)
     contentScript.js?a=2(<root>/foo/bar/contentScript.js?a=2)
     contentScript2.js?a=1(<root>/foo/bar/contentScript2.js?a=1)

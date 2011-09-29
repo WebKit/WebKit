@@ -284,19 +284,33 @@ WebInspector.ScriptsPanel.prototype = {
         option._uiSourceCode = uiSourceCode;
         var parsedURL = uiSourceCode.url.asParsedURL();
 
+        const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
+
         var names = this._folderAndDisplayNameForScriptURL(uiSourceCode.url);
-        const indent = (!showScriptFolders || WebInspector.isMac()) ? "" : "\u00a0\u00a0\u00a0\u00a0";
-        option.text = indent + (names.displayName ? names.displayName : WebInspector.UIString("(program)"));
         option.displayName = names.displayName;
 
-        var folderNameForSorting;
-        if (uiSourceCode.isContentScript)
-            folderNameForSorting = "2:" + names.folderName;
-        else
-            folderNameForSorting = "0:" + (names.domain ? names.domain + "\t\t" : "") + names.folderName;
+        var contentScriptPrefix = uiSourceCode.isContentScript ? "2:" : "0:";
 
-        option.nameForSorting = folderNameForSorting + "\t/\t" + names.displayName; // Use '\t' to make files stick to their folder.
+        if (uiSourceCode.isContentScript && names.domain) {
+            // Render extension domain as a path in structured view
+            names.folderName = names.domain + (names.folderName ? names.folderName : "");
+            delete names.domain;
+        }
+
+        var folderNameForSorting = contentScriptPrefix + (names.domain ? names.domain + "\t\t" : "") + names.folderName;
+
+        if (showScriptFolders) {
+            option.text = indent + (names.displayName ? names.displayName : WebInspector.UIString("(program)"));
+            option.nameForSorting = folderNameForSorting + "\t/\t" + names.displayName; // Use '\t' to make files stick to their folder.
+        } else {
+            option.text = names.displayName ? names.displayName : WebInspector.UIString("(program)");
+            // Content script should contain its domain name as a prefix
+            if (uiSourceCode.isContentScript && names.folderName)
+                option.text = names.folderName + "/" + option.text;
+            option.nameForSorting = contentScriptPrefix + option.text;
+        }
         option.title = uiSourceCode.url;
+
         if (uiSourceCode.isContentScript)
             option.addStyleClass("extension-script");
 
@@ -304,10 +318,7 @@ WebInspector.ScriptsPanel.prototype = {
         {
             function optionCompare(a, b)
             {
-                if (showScriptFolders)
-                    return a.nameForSorting.localeCompare(b.nameForSorting);
-                else
-                    return a.displayName.localeCompare(b.displayName);
+                return a.nameForSorting.localeCompare(b.nameForSorting);
             }
             var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
             select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
@@ -333,12 +344,12 @@ WebInspector.ScriptsPanel.prototype = {
             insertOrdered(domainOption);
         }
 
-        if (showScriptFolders && names.folderName && !select.folderOptions[names.folderName]) {
+        if (showScriptFolders && names.folderName && !select.folderOptions[folderNameForSorting]) {
             var folderOption = document.createElement("option");
             folderOption.text = names.folderName;
             folderOption.nameForSorting = folderNameForSorting;
             folderOption.disabled = true;
-            select.folderOptions[names.folderName] = folderOption;
+            select.folderOptions[folderNameForSorting] = folderOption;
             insertOrdered(folderOption);
         }
 

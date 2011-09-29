@@ -1,3 +1,15 @@
+2011-09-27  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Scripts panel without folders causes errors when creating content scripts section.
+        https://bugs.webkit.org/show_bug.cgi?id=68827
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+
 2011-09-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: network log view refresh optimizations
