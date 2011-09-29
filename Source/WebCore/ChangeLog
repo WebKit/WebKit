@@ -1,3 +1,37 @@
+2011-09-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Dragging a selection does not produce a drag image
+        https://bugs.webkit.org/show_bug.cgi?id=69064
+
+        Reviewed by Andreas Kling.
+
+        Moved Chromium's generic implementation of Frame::nodeImage and
+        Frame::dragImageForSeletion to Frame.cpp and simply excluded via
+        #ifdefs platforms that do not have their own implementation. Removed
+        all empty implementations of these functions and Qt's which was
+        functionally identical.
+
+        No new tests. Drag-and-drop drag image functionality changes
+        are incredibly difficult to test in a non-manual way.
+
+        * CMakeListsEfl.txt: Delist FrameEfl.cpp.
+        * GNUmakefile.list.am: Delist FrameGtk.cpp.
+        * WebCore.gypi: Delist removed Frame*.cpp.
+        * WebCore.pro: Delist FrameQt.cpp.
+        * page/Frame.cpp: Moved FrameChromium implementation here.
+        (WebCore::ScopedFramePaintingState::ScopedFramePaintingState):
+        (WebCore::ScopedFramePaintingState::~ScopedFramePaintingState):
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/chromium/FrameChromium.cpp: Removed.
+        * page/efl/FrameEfl.cpp: Removed.
+        * page/gtk/FrameGtk.cpp: Removed.
+        * page/qt/FrameQt.cpp: Removed.
+        * page/wx/FrameWx.cpp: Removed.
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::createDragImage): Call nodeImage to get
+        the drag image for a node.
+
 2011-09-29  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium skia] PNGImageEncoder: hoist constants out of the encoding loop

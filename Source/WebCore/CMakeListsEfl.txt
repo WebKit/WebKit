@@ -20,7 +20,6 @@ LIST(APPEND WebCore_SOURCES
   bindings/js/ScriptControllerEfl.cpp
   page/efl/DragControllerEfl.cpp
   page/efl/EventHandlerEfl.cpp
-  page/efl/FrameEfl.cpp
   platform/Cursor.cpp
   platform/efl/ClipboardEfl.cpp
   platform/efl/ContextMenuEfl.cpp

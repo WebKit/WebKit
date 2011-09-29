@@ -259,10 +259,13 @@ void ClipboardGtk::setDragImage(CachedImage* image, Node* element, const IntPoin
 DragImageRef ClipboardGtk::createDragImage(IntPoint& location) const
 {
     location = m_dragLoc;
-    if (!m_dragImage)
-        return 0;
 
-    return createDragImageFromImage(m_dragImage->image());
+    if (m_dragImage)
+        return createDragImageFromImage(m_dragImage->image());
+    if (m_dragImageElement && m_frame)
+        return m_frame->nodeImage(m_dragImageElement.get());
+
+    return 0; // We do not have enough information to create a drag image, use the default icon.
 }
 
 static CachedImage* getCachedImage(Element* element)

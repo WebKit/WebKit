@@ -3954,7 +3954,6 @@ webcoregtk_sources += \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
-	Source/WebCore/page/gtk/FrameGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \

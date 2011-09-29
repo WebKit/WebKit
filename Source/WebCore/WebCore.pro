@@ -2582,7 +2582,6 @@ SOURCES += \
     accessibility/qt/AccessibilityObjectQt.cpp \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
-    page/qt/FrameQt.cpp \
     platform/graphics/qt/TransformationMatrixQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
     platform/graphics/qt/FontQt.cpp \
