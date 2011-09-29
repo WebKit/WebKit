@@ -1,3 +1,19 @@
+2011-09-29  Varun Jain  <varunjain@google.com>
+ 
+         Implement flick gesture in Chromium Gesture Recognizer
+         https://bugs.webkit.org/show_bug.cgi?id=67930
+ 
+         Reviewed by Dimitri Glazkov.
+ 
+         Test: Source/WebKit/chromium/tests/InnerGestureRecognizerTest.cpp 
+ 
+         * platform/chromium/GestureRecognizerChromium.cpp:
+         (WebCore::GestureRecognizerChromium::isOverMinFlickSpeed):
+         (WebCore::GestureRecognizerChromium::appendScrollGestureEnd):
+         (WebCore::GestureRecognizerChromium::updateValues):
+         (WebCore::GestureRecognizerChromium::scrollEnd):
+         * platform/chromium/GestureRecognizerChromium.h:
+
 2011-09-29  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] canvas.toDataURL("image/jpeg"): use libjpeg-turbo data swizzle

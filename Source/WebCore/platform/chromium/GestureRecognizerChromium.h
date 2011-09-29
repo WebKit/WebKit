@@ -70,11 +70,12 @@ private:
     void appendClickGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendDoubleClickGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureBegin(const PlatformTouchPoint&, Gestures);
-    void appendScrollGestureEnd(const PlatformTouchPoint&, Gestures);
+    void appendScrollGestureEnd(const PlatformTouchPoint&, Gestures, float, float);
     void appendScrollGestureUpdate(const PlatformTouchPoint&, Gestures);
     bool isInClickTimeWindow();
     bool isInSecondClickTimeWindow();
     bool isInsideManhattanSquare(const PlatformTouchPoint&);
+    bool isOverMinFlickSpeed();
     void setState(State value) { m_state = value; }
     void updateValues(double touchTime, const PlatformTouchPoint&);
 
@@ -92,6 +93,10 @@ private:
     State m_state;
     double m_lastTouchTime;
     double m_lastClickTime;
+    IntPoint m_lastTouchPosition;
+    IntPoint m_lastTouchScreenPosition;
+    float m_xVelocity;
+    float m_yVelocity;
 
     bool m_ctrlKey;
     bool m_altKey;

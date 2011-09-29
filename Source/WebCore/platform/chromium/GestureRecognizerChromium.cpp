@@ -38,11 +38,17 @@ static const double maximumTouchDownDurationInSecondsForClick = 0.8;
 static const double minimumTouchDownDurationInSecondsForClick = 0.01;
 static const double maximumSecondsBetweenDoubleClick = 0.7;
 static const int maximumTouchMoveInPixelsForClick = 20;
+static const float minFlickSpeedSquared = 550.f * 550.f;
 
 GestureRecognizerChromium::GestureRecognizerChromium()
     : m_firstTouchTime(0.0)
     , m_state(GestureRecognizerChromium::NoGesture)
     , m_lastTouchTime(0.0)
+    , m_lastClickTime(0.0)
+    , m_lastTouchPosition()
+    , m_lastTouchScreenPosition()
+    , m_xVelocity(0.0)
+    , m_yVelocity(0.0)
     , m_ctrlKey(false)
     , m_altKey(false)
     , m_shiftKey(false)
@@ -70,6 +76,12 @@ void GestureRecognizerChromium::reset()
     m_firstTouchTime = 0.0;
     m_state = GestureRecognizerChromium::NoGesture;
     m_lastTouchTime = 0.0;
+    m_lastTouchPosition.setX(0);
+    m_lastTouchPosition.setY(0);
+    m_lastTouchScreenPosition.setX(0);
+    m_lastTouchScreenPosition.setY(0);
+    m_xVelocity = 0.0;
+    m_yVelocity = 0.0;
 }
 
 GestureRecognizerChromium::~GestureRecognizerChromium()
@@ -97,6 +109,11 @@ bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint
 {
     int manhattanDistance = abs(point.pos().x() - m_firstTouchPosition.x()) + abs(point.pos().y() - m_firstTouchPosition.y());
     return manhattanDistance < maximumTouchMoveInPixelsForClick;
+}
+
+bool GestureRecognizerChromium::isOverMinFlickSpeed()
+{
+    return (m_xVelocity * m_xVelocity + m_yVelocity * m_yVelocity) > minFlickSpeedSquared;
 }
 
 void GestureRecognizerChromium::appendTapDownGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
@@ -138,9 +155,9 @@ void GestureRecognizerChromium::appendScrollGestureBegin(const PlatformTouchPoin
     gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollBeginType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
-void GestureRecognizerChromium::appendScrollGestureEnd(const PlatformTouchPoint& touchPoint, Gestures gestures)
+void GestureRecognizerChromium::appendScrollGestureEnd(const PlatformTouchPoint& touchPoint, Gestures gestures, float xVelocity, float yVelocity)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, xVelocity, yVelocity, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoint& touchPoint, Gestures gestures)
@@ -154,11 +171,20 @@ void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoi
 
 void GestureRecognizerChromium::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
 {
+    if (m_state != NoGesture && touchPoint.state() == PlatformTouchPoint::TouchMoved) {
+        double interval(touchTime - m_lastTouchTime);
+        m_xVelocity = (touchPoint.pos().x() - m_lastTouchPosition.x()) / interval;
+        m_yVelocity = (touchPoint.pos().y() - m_lastTouchPosition.y()) / interval;
+        m_lastTouchPosition = touchPoint.pos();
+        m_lastTouchScreenPosition = touchPoint.screenPos();
+    }
     m_lastTouchTime = touchTime;
     if (state() == NoGesture) {
         m_firstTouchTime = touchTime;
         m_firstTouchPosition = touchPoint.pos();
         m_firstTouchScreenPosition = touchPoint.screenPos();
+        m_xVelocity = 0.0;
+        m_yVelocity = 0.0;
     }
 }
 
@@ -183,7 +209,10 @@ bool GestureRecognizerChromium::touchDown(const PlatformTouchPoint& touchPoint, 
 
 bool GestureRecognizerChromium::scrollEnd(const PlatformTouchPoint& point, Gestures gestures)
 {
-    appendScrollGestureEnd(point, gestures);
+    if (isOverMinFlickSpeed() && point.state() != PlatformTouchPoint::TouchCancelled)
+        appendScrollGestureEnd(point, gestures, m_xVelocity, m_yVelocity);
+    else
+        appendScrollGestureEnd(point, gestures, 0.f, 0.f);
     setState(NoGesture);
     reset();
     return false;
