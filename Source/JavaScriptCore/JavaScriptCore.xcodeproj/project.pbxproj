@@ -1062,6 +1062,7 @@
 		86880F1914328BB900B08D42 /* DFGJITCompiler32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCompiler32_64.cpp; path = dfg/DFGJITCompiler32_64.cpp; sourceTree = "<group>"; };
 		86880F1A14328BB900B08D42 /* DFGJITCompilerInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCompilerInlineMethods.h; path = dfg/DFGJITCompilerInlineMethods.h; sourceTree = "<group>"; };
 		86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT32_64.cpp; path = dfg/DFGSpeculativeJIT32_64.cpp; sourceTree = "<group>"; };
+		86880F311434FFAF00B08D42 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		868BFA00117CEFD100B908B1 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = text/AtomicString.cpp; sourceTree = "<group>"; };
 		868BFA01117CEFD100B908B1 /* AtomicString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicString.h; path = text/AtomicString.h; sourceTree = "<group>"; };
 		868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringImpl.h; path = text/AtomicStringImpl.h; sourceTree = "<group>"; };
@@ -1531,6 +1532,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				86880F311434FFAF00B08D42 /* ChangeLog */,
 				651122E5140469BA002B101D /* testRegExp.cpp */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,

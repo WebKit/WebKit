@@ -1,3 +1,15 @@
+2011-09-29  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG operation calls should be stdcall in Linux JSVALUE32_64 DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69058
+
+        Reviewed by Gavin Barraclough.
+
+        Also Fixed the stdcall FunctionPtr constructors to make them compiled correctly on Linux
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+
 2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::visitChildrenVirtual and remove all other visitChildrenVirtual methods
