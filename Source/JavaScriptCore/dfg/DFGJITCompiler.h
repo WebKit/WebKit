@@ -165,6 +165,15 @@ public:
     }
 #endif
 
+    Jump branchIfNotCell(GPRReg reg)
+    {
+#if USE(JSVALUE64)
+        return branchTestPtr(MacroAssembler::NonZero, reg, GPRInfo::tagMaskRegister);
+#else
+        return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
+#endif
+    }
+    
     static Address addressForGlobalVar(GPRReg global, int32_t varNumber)
     {
         return Address(global, varNumber * sizeof(Register));

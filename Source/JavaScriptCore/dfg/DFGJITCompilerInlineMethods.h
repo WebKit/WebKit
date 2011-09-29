@@ -4,9 +4,10 @@
 
 
 #if ENABLE(DFG_JIT)
-#if USE(JSVALUE32_64)
 
 namespace JSC { namespace DFG {
+
+#if USE(JSVALUE32_64)
 
 inline void JITCompiler::emitLoadTag(NodeIndex index, GPRReg tag)
 {
@@ -134,9 +135,10 @@ inline void JITCompiler::emitStore(NodeIndex index, const JSValue constant)
     store32(Imm32(constant.tag()), tagFor(virtualRegister));
 }
 
+#endif // USE(JSVALUE32_64)
+
 } } // namespace JSC::DFG
 
-#endif // USE(JSVALUE32_64)
 #endif // ENABLE_DFG_JIT
 
 #endif

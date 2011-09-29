@@ -1,3 +1,33 @@
+2011-09-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor out trivially duplicated code in DFGJITCodeGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=69109
+
+        Reviewed by Oliver Hunt.
+
+        Some code is trivially redundant between DFGJITCodeGenerator.cpp & DFGJITCodeGenerator32_64.cpp
+
+        Basically move a JSVALUE64 specific code into a new DFGJITCodeGenerator64.cpp, leave common code
+        in DFGJITCodeGenerator.cpp, and remove copies from DFGJITCodeGenerator32_64.cpp.
+
+        For some function differences are trivial & make more sense to ifdef individually, and some
+        Operand methods make more sense left in DFGJITCodeGenerator.cpp alongside similar constructors.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownNotNumber):
+        (JSC::DFG::JITCodeGenerator::isKnownBoolean):
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        (JSC::DFG::JITCodeGenerator::dump):
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        * dfg/DFGJITCodeGenerator64.cpp: Copied from Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchIfNotCell):
+        * dfg/DFGJITCompilerInlineMethods.h:
+
 2011-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT should infer which uses of a variable are not aliased
