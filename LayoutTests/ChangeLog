@@ -1,3 +1,13 @@
+2011-09-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10196497> first-letter after list marker not updated correctly
+
+        Reviewed by Simon Fraser.
+
+        * fast/dynamic/first-letter-after-list-marker-expected.png: Added.
+        * fast/dynamic/first-letter-after-list-marker-expected.txt: Added.
+        * fast/dynamic/first-letter-after-list-marker.html: Added.
+
 2011-09-28  Hayato Ito  <hayato@chromium.org>
 
         Add a test for accesskey in regard to iframes.

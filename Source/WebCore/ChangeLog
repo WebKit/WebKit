@@ -1,3 +1,15 @@
+2011-09-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10196497> first-letter after list marker not updated correctly
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/dynamic/first-letter-after-list-marker.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Improved the logic for continuing past list markers
+        when trying to locate a first letter to update.
+
 2011-09-28  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r93858): Can't type anything into input elements when maxlength is greater than 2^31

@@ -5480,20 +5480,22 @@ void RenderBlock::updateFirstLetter()
 
     // Drill into inlines looking for our first text child.
     RenderObject* currChild = firstLetterBlock->firstChild();
-    while (currChild && ((!currChild->isReplaced() && !currChild->isRenderButton() && !currChild->isMenuList()) || currChild->isFloatingOrPositioned()) && !currChild->isText()) {
-        if (currChild->isFloatingOrPositioned()) {
+    while (currChild) {
+        if (currChild->isText())
+            break;
+        if (currChild->isListMarker())
+            currChild = currChild->nextSibling();
+        else if (currChild->isFloatingOrPositioned()) {
             if (currChild->style()->styleType() == FIRST_LETTER) {
                 currChild = currChild->firstChild();
                 break;
-            } 
+            }
             currChild = currChild->nextSibling();
-        } else
+        } else if (currChild->isReplaced() || currChild->isRenderButton() || currChild->isMenuList())
+            break;
+        else
             currChild = currChild->firstChild();
     }
-
-    // Get list markers out of the way.
-    while (currChild && currChild->isListMarker())
-        currChild = currChild->nextSibling();
 
     if (!currChild)
         return;
