@@ -31,39 +31,46 @@ var kExampleResultsByBuilder = {
 
 module("controllers");
 
-test("UnexpectedFailures", 2, function() {
-    var mockView = {};
-    var mockState = {
-        resultsByBuilder: kExampleResultsByBuilder
+test("UnexpectedFailures", 3, function() {
+    var simulator = new NetworkSimulator();
+
+    simulator.probe = function() {
     };
-    var expectedResultsByTest = null;
-    var mockDelegate = {
-        showResults: function(resultsView)
-        {
-            deepEqual(resultsView._resultsByTest, expectedResultsByTest);
+
+    simulator.runTest(function() {
+        var mockView = {};
+        var mockState = {
+            resultsByBuilder: kExampleResultsByBuilder
+        };
+        var expectedResultsByTest = null;
+        var mockDelegate = {
+            showResults: function(resultsView)
+            {
+                deepEqual(resultsView._resultsByTest, expectedResultsByTest);
+            }
         }
-    }
-    var controller = controllers.UnexpectedFailures(mockState, mockView, mockDelegate);
+        var controller = controllers.UnexpectedFailures(mockState, mockView, mockDelegate);
 
-    var testNameList = null;
-    var mockFailures = {
-        testNameList: function() { return testNameList; }
-    };
+        var testNameList = null;
+        var mockFailures = {
+            testNameList: function() { return testNameList; }
+        };
 
-    testNameList = ["scrollbars/custom-scrollbar-with-incomplete-style.html"];
-    expectedResultsByTest = {};
-    controller.onExamine(mockFailures);
+        testNameList = ["scrollbars/custom-scrollbar-with-incomplete-style.html"];
+        expectedResultsByTest = {};
+        controller.onExamine(mockFailures);
 
-    testNameList = ["userscripts/another-test.html"];
-    expectedResultsByTest = {
-      "userscripts/another-test.html": {
-        "Mock Builder": {
-          "expected": "PASS",
-          "actual": "TEXT"
-        }
-      }
-    };
-    controller.onExamine(mockFailures);
+        testNameList = ["userscripts/another-test.html"];
+        expectedResultsByTest = {
+          "userscripts/another-test.html": {
+            "Mock Builder": {
+              "expected": "PASS",
+              "actual": "TEXT"
+            }
+          }
+        };
+        controller.onExamine(mockFailures);
+    });
 });
 
 })();

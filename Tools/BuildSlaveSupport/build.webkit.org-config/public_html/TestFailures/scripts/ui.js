@@ -162,7 +162,7 @@ ui.MessageBox = base.extends('div',  {
     {
         this.addMessage(message);
         this.appendChild(new ui.actions.List([new ui.actions.Close()]));
-        $(statusView).bind('close', statusView.close.bind(statusView));
+        $(this).bind('close', statusView.close.bind(statusView));
     }
 });
 

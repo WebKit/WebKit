@@ -81,11 +81,8 @@ controllers.ResultsDetails = base.extends(Object, {
     {
         var testName = this._view.currentTestName();
         return Object.keys(this._resultsByTest[testName]).map(function(builderName) {
-            return {
-                'testName': testName,
-                'builderName': builderName
-            };
-        });
+            return results.failureInfoForTestAndBuilder(this._resultsByTest, testName, builderName);
+        }.bind(this));
     },
     onRebaseline: function()
     {

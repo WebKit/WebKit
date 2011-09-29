@@ -1,3 +1,17 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        Unbreak the "update expectatations" button by using the existing
+        machinery to create the failureInfo objects.
+
+        Unbreak the "close" button on the progress dialog by using |this|
+        instead of the old name of the object.
+
+        Teach the controllers unit test not to talk to the actual network.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+
 2011-09-29  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Use LevelDB also for in-memory databases
