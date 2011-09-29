@@ -1,5 +1,17 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        Attempt to update these image results again.
+
+        * platform/chromium-cg-mac-leopard/http/tests/misc: Added.
+        * platform/chromium-cg-mac-leopard/http/tests/misc/acid3-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/http/tests/misc/acid3-expected.txt: Added.
+        * platform/chromium-cg-mac/http/tests/misc/acid3-expected.png:
+        * platform/chromium-cg-mac/http/tests/misc/acid3-expected.txt:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.png:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Removed.
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Mark test as expected to fail.
 
         * platform/chromium/test_expectations.txt:
