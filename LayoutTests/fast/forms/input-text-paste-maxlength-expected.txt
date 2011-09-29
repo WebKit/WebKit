@@ -34,7 +34,9 @@ PASS visibleValueOf('m') is '12' + fancyX + '45'
 invalid maxlength should be ignored.
 PASS domValueOf('n') is '12' + fancyX + '45'
 PASS visibleValueOf('n') is '12' + fancyX + '45'
+PASS domValueOf('huge') is '12' + fancyX + '45'
+PASS visibleValueOf('huge') is '12' + fancyX + '45'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-           
+

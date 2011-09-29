@@ -215,8 +215,9 @@ bool parseHTMLInteger(const String& input, int& value)
     }
 
     // Step 9
-    value = sign * charactersToIntStrict(digits.characters(), digits.length());
-    return true;
+    bool ok;
+    value = sign * charactersToIntStrict(digits.characters(), digits.length(), &ok);
+    return ok;
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
@@ -261,8 +262,9 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
     }
 
     // Step 9
-    value = charactersToUIntStrict(digits.characters(), digits.length());
-    return true;
+    bool ok;
+    value = charactersToUIntStrict(digits.characters(), digits.length(), &ok);
+    return ok;
 }
 
 }

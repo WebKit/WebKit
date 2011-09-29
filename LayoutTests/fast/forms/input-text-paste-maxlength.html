@@ -8,6 +8,7 @@
 <p id="description"></p>
 <div id="console"></div>
 
+<div id=container>
 <input type="text" id="f" size="5" maxlength="4">
 <input type="text" id="e" size="5" maxlength="4">
 <input type="text" id="d" size="5">
@@ -20,6 +21,8 @@
 <input type="text" id="l" size="5" maxlength="0">
 <input type="text" id="m" size="5" maxlength="">
 <input type="text" id="n" size="5" maxlength="invalid">
+<input type="text" id="huge" size="5" maxlength="9999999999">
+</div>
 
 <script>
 function domValueOf(id) {
@@ -113,7 +116,12 @@ document.getElementById("n").focus();
 document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
 shouldBe("domValueOf('n')", "'12' + fancyX + '45'");
 shouldBe("visibleValueOf('n')", "'12' + fancyX + '45'");
+document.getElementById("huge").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+shouldBe("domValueOf('huge')", "'12' + fancyX + '45'");
+shouldBe("visibleValueOf('huge')", "'12' + fancyX + '45'");
 
+document.getElementById('container').innerHTML = '';
 var successfullyParsed = true;
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
