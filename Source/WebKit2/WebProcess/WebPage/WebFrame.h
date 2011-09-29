@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
     class Frame;
