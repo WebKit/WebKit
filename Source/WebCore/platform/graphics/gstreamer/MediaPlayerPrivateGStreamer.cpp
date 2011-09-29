@@ -354,6 +354,8 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 
 void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
+    m_isEndReached = false;
+
     if (m_delayingLoad) {
         m_delayingLoad = false;
         commitLoad();
@@ -411,6 +413,14 @@ float MediaPlayerPrivateGStreamer::currentTime() const
 
     if (m_seeking)
         return m_seekTime;
+
+    // Workaround for
+    // https://bugzilla.gnome.org/show_bug.cgi?id=639941 In GStreamer
+    // 0.10.35 basesink reports wrong duration in case of EOS and
+    // negative playback rate. There's no upstream accepted patch for
+    // this bug yet, hence this temporary workaround.
+    if (m_isEndReached && m_playbackRate < 0)
+        return 0.0f;
 
     return playbackPosition();
 
@@ -1324,6 +1334,8 @@ void MediaPlayerPrivateGStreamer::didEnd()
         m_mediaDurationKnown = true;
         m_player->durationChanged();
     }
+
+    m_isEndReached = true;
 
     gst_element_set_state(m_playBin, GST_STATE_PAUSED);
 
