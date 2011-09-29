@@ -1,5 +1,11 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        Delete bogus expectation.
+
+        * platform/chromium-cg-mac/svg/text/selection-background-color-expected.txt: Removed.
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Attempt to update these image results again.
 
         * platform/chromium-cg-mac-leopard/http/tests/misc: Added.
