@@ -228,7 +228,8 @@ ui.results.TestSelector = base.extends('div', {
     firstResult: function()
     {
         $(this).accordion('option', 'active', 0);
-        $('.builder-selector', this)[0].firstResult();
+        var builderSelector = $('.builder-selector', this)[0];
+        builderSelector && builderSelector.firstResult();
     },
     currentTestName: function()
     {
