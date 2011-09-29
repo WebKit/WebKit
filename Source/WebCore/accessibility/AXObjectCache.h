@@ -167,7 +167,11 @@ private:
     Timer<AXObjectCache> m_notificationPostTimer;
     Vector<pair<RefPtr<AccessibilityObject>, AXNotification> > m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>*);
-    
+
+    Timer<AXObjectCache> m_childrenUpdateTimer;
+    HashSet<RenderObject*> m_childrenToUpdate;
+    void childrenUpdateTimerFired(Timer<AXObjectCache>*);
+
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     
     AXID getAXID(AccessibilityObject*);

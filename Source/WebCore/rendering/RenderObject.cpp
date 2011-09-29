@@ -2176,10 +2176,6 @@ void RenderObject::willBeDestroyed()
     if (frame() && frame()->eventHandler()->autoscrollRenderer() == this)
         frame()->eventHandler()->stopAutoscrollTimer(true);
 
-    if (AXObjectCache::accessibilityEnabled()) {
-        document()->axObjectCache()->childrenChanged(this->parent());
-        document()->axObjectCache()->remove(this);
-    }
     animation()->cancelAnimations(this);
 
     remove();
@@ -2197,6 +2193,13 @@ void RenderObject::willBeDestroyed()
     if (hasLayer()) {
         setHasLayer(false);
         toRenderBoxModelObject(this)->destroyLayer();
+    }
+    
+    // Update accessibility at the end, so that all children nodes have been disassociated first.
+    // This ordering allows us to call childrenChanged() on the parent without worrying that the parent has been destroyed.
+    if (AXObjectCache::accessibilityEnabled()) {
+        document()->axObjectCache()->childrenChanged(this->parent());
+        document()->axObjectCache()->remove(this);
     }
 }
 

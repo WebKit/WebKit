@@ -1,3 +1,43 @@
+2011-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        ARIA live regions don't trigger notifications for elements that aren't in the AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=62289
+
+        If an ARIA Live region udpates an element that is not in the AX object cache, then the Live region
+        notification is not sent. To fix this, the childrenChanged() method needs to actually create
+        the appropriate objects, but since that method gets called during a render tree update, we've learned 
+        that it's generally not safe to create objects.
+
+        Instead a one shot timer can be fired that will update and create the necessary objects so that the
+        correct notification can be sent.
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/aria-liveregion-without-element-access.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::childrenUpdateTimerFired):
+        (WebCore::AXObjectCache::childrenChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::childrenChanged):
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::childrenChanged):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::startOfContinuations):
+        (WebCore::AccessibilityRenderObject::updateAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        * accessibility/AccessibilityRenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+
 2011-09-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Dragging a selection does not produce a drag image

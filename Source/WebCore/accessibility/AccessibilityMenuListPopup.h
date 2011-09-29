@@ -59,7 +59,7 @@ private:
     virtual AccessibilityObject* parentObject() const;
     virtual bool press() const;
     virtual void addChildren();
-    virtual void childrenChanged();
+    virtual void childrenChanged(ChildrenChangeOptions);
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 

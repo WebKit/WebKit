@@ -103,7 +103,7 @@ void AccessibilityMenuListPopup::addChildren()
     }
 }
 
-void AccessibilityMenuListPopup::childrenChanged()
+void AccessibilityMenuListPopup::childrenChanged(ChildrenChangeOptions)
 {
     for (size_t i = m_children.size(); i > 0 ; --i) {
         AccessibilityObject* child = m_children[i - 1].get();

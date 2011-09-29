@@ -550,7 +550,8 @@ public:
     virtual void increment() { }
     virtual void decrement() { }
 
-    virtual void childrenChanged() { }
+    enum ChildrenChangeOptions { DoNotCreateParentObjects, CreateParentObjects };
+    virtual void childrenChanged(ChildrenChangeOptions) { }
     virtual void contentChanged() { }
     virtual const AccessibilityChildrenVector& children() { return m_children; }
     virtual void addChildren() { }
