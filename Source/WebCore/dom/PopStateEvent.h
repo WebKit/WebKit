@@ -43,10 +43,10 @@ class PopStateEvent : public Event {
 public:
     virtual ~PopStateEvent();
     static PassRefPtr<PopStateEvent> create();
-    static PassRefPtr<PopStateEvent> create(ScriptValue);
+    static PassRefPtr<PopStateEvent> create(const ScriptValue&);
     static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>);
     static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
-    void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, ScriptValue);
+    void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue&);
     bool isPopStateEvent() const { return true; }
 
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
@@ -55,7 +55,7 @@ public:
 private:
     PopStateEvent();
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
-    explicit PopStateEvent(ScriptValue);
+    explicit PopStateEvent(const ScriptValue&);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>);
 
     ScriptValue m_state;

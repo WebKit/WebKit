@@ -1,3 +1,22 @@
+2011-09-28  Kentaro Hara  <haraken@chromium.org>
+
+        "ScriptValue" arguments of PopStateEvent methods should be "const ScriptValue&"
+        https://bugs.webkit.org/show_bug.cgi?id=68984
+
+        Reviewed by Darin Adler.
+
+        Just a follow-up fix for the bug 68345. For performance,
+        "ScriptValue" arguments of PopStateEvent methods should be "const ScriptValue&".
+
+        Tests: fast/events/constructors/pop-state-event-constructor.html
+               fast/events/fire-popstate-event.html
+
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent):
+        (WebCore::PopStateEvent::create):
+        (WebCore::PopStateEvent::initPopStateEvent):
+        * dom/PopStateEvent.h:
+
 2011-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move drag-and-drop code which can be shared with WebKit2 to WebCore

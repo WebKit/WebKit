@@ -48,7 +48,7 @@ PopStateEvent::PopStateEvent(const AtomicString& type, const PopStateEventInit& 
 {
 }
 
-PopStateEvent::PopStateEvent(ScriptValue state)
+PopStateEvent::PopStateEvent(const ScriptValue& state)
     : Event(eventNames().popstateEvent, false, true)
     , m_state(state)
     , m_serializedState(0)
@@ -70,7 +70,7 @@ PassRefPtr<PopStateEvent> PopStateEvent::create()
     return adoptRef(new PopStateEvent);
 }
 
-PassRefPtr<PopStateEvent> PopStateEvent::create(ScriptValue state)
+PassRefPtr<PopStateEvent> PopStateEvent::create(const ScriptValue& state)
 {
     return adoptRef(new PopStateEvent(state));
 }
@@ -85,7 +85,7 @@ PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const 
     return adoptRef(new PopStateEvent(type, initializer));
 }
 
-void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, ScriptValue state)
+void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& state)
 {
     if (dispatched())
         return;
