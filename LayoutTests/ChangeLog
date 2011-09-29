@@ -1,5 +1,13 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        Update expected results on Leopard.  As far as I can tell, these are
+        progressions.
+
+        * platform/chromium-cg-mac-leopard/editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/node-removal-1-expected.png: Added.
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Add some expected failures on Leopard.
 
         * platform/chromium/test_expectations.txt:
