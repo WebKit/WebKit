@@ -1,3 +1,15 @@
+2011-09-29  Arun Patole  <bmf834@motorola.com>
+
+        LayoutTests: media/video-does-not-loop.html failing on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=69067
+
+        Reviewed by Philippe Normand.
+
+        Update expected test result for video-does-not-loop.html
+        as the 'pause' event should be fired at the end of playback.
+
+        * media/video-does-not-loop-expected.txt:
+
 2011-09-29  Shinichiro Hamaji  <hamaji@chromium.org>
 
         [Chromium] some Layout Tests in editing/ is failing

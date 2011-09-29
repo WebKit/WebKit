@@ -13,6 +13,7 @@ EXPECTED (video.paused == 'true') OK
 EXPECTED (video.ended == 'false') OK
 RUN(video.play())
 
+EVENT(pause)
 EVENT(ended)
 
 ++ played to end and stopped.
