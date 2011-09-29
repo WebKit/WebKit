@@ -45,10 +45,10 @@ static WTFLogChannel LogCCLayerSorter = { 0x00000000, "", WTFLogChannelOff };
 
 namespace WebCore {
 
-static bool pointInTriangle(const FloatPoint& point,
-                            const FloatPoint& a,
-                            const FloatPoint& b,
-                            const FloatPoint& c)
+bool CCLayerSorter::pointInTriangle(const FloatPoint& point,
+                                    const FloatPoint& a,
+                                    const FloatPoint& b,
+                                    const FloatPoint& c)
 {
     // Algorithm from http://www.blackpawn.com/texts/pointinpoly/default.html
     float x0 = c.x() - a.x();
@@ -143,9 +143,16 @@ static bool edgeEdgeTest(const FloatPoint& a, const FloatPoint& b, const FloatPo
     return true;
 }
 
-CCLayerSorter::LayerIntersector::LayerIntersector(GraphNode* nodeA, GraphNode* nodeB, float earlyExitThreshold)
-    : nodeA(nodeA)
-    , nodeB(nodeB)
+float CCLayerSorter::calculateZDiff(const LayerShape& layerA, const LayerShape& layerB, float earlyExitThreshold)
+{
+    LayerIntersector intersector(layerA, layerB, earlyExitThreshold);
+    intersector.go();
+    return intersector.zDiff;
+}
+
+CCLayerSorter::LayerIntersector::LayerIntersector(const LayerShape& layerA, const LayerShape& layerB, float earlyExitThreshold)
+    : layerA(layerA)
+    , layerB(layerB)
     , zDiff(0)
     , earlyExitThreshold(earlyExitThreshold)
 {
@@ -153,12 +160,11 @@ CCLayerSorter::LayerIntersector::LayerIntersector(GraphNode* nodeA, GraphNode* n
 
 void CCLayerSorter::LayerIntersector::go()
 {
-    (triangleTriangleTest(nodeA->c1, nodeA->c2, nodeA->c3, nodeB->c1, nodeB->c2, nodeB->c3)
-     || triangleTriangleTest(nodeA->c3, nodeA->c4, nodeA->c1, nodeB->c1, nodeB->c2, nodeB->c3)
-     || triangleTriangleTest(nodeA->c1, nodeA->c2, nodeA->c3, nodeB->c3, nodeB->c4, nodeB->c1)
-     || triangleTriangleTest(nodeA->c3, nodeA->c4, nodeA->c1, nodeB->c3, nodeB->c4, nodeB->c1));
+    (triangleTriangleTest(layerA.c1, layerA.c2, layerA.c3, layerB.c1, layerB.c2, layerB.c3)
+     || triangleTriangleTest(layerA.c3, layerA.c4, layerA.c1, layerB.c1, layerB.c2, layerB.c3)
+     || triangleTriangleTest(layerA.c1, layerA.c2, layerA.c3, layerB.c3, layerB.c4, layerB.c1)
+     || triangleTriangleTest(layerA.c3, layerA.c4, layerA.c1, layerB.c3, layerB.c4, layerB.c1));
 }
-
 
 // Checks if segment pq intersects any of the sides of triangle abc.
 bool CCLayerSorter::LayerIntersector::edgeTriangleTest(const FloatPoint& p, const FloatPoint& q, const FloatPoint& a, const FloatPoint& b, const FloatPoint& c)
@@ -204,8 +210,8 @@ bool CCLayerSorter::LayerIntersector::triangleTriangleTest(const FloatPoint& a1,
 // other intersection points.
 bool CCLayerSorter::LayerIntersector::checkZDiff(const FloatPoint& p)
 {
-    float za = layerZFromProjectedPoint(nodeA, p);
-    float zb = layerZFromProjectedPoint(nodeB, p);
+    float za = layerZFromProjectedPoint(layerA, p);
+    float zb = layerZFromProjectedPoint(layerB, p);
 
     float diff = za - zb;
     float absDiff = fabsf(diff);
@@ -225,24 +231,23 @@ bool CCLayerSorter::LayerIntersector::checkZDiff(const FloatPoint& p)
 // to point p which lies on the z = 0 plane. It does it by computing the
 // intersection of a line starting from p along the Z axis and the plane
 // of the layer.
-float CCLayerSorter::LayerIntersector::layerZFromProjectedPoint(GraphNode* layer, const FloatPoint& p)
+float CCLayerSorter::LayerIntersector::layerZFromProjectedPoint(const LayerShape& layer, const FloatPoint& p)
 {
     const FloatPoint3D zAxis(0, 0, 1);
-    FloatPoint3D w = FloatPoint3D(p.x(), p.y(), 0) - layer->origin;
+    FloatPoint3D w = FloatPoint3D(p.x(), p.y(), 0) - layer.origin;
 
-    float d = layer->normal.dot(zAxis);
-    float n = -layer->normal.dot(w);
+    float d = layer.normal.dot(zAxis);
+    float n = -layer.normal.dot(w);
 
     // Check if layer is parallel to the z = 0 axis
     if (!d)
-        return layer->origin.z();
+        return layer.origin.z();
 
     // The intersection point would be given by:
     // p + (n / d) * u  but since we are only interested in the 
     // z coordinate and p's z coord is zero, all we need is the value of n/d.
     return n / d;
 }
-
 
 CCLayerSorter::CCLayerSorter()
     : m_zRange(0)
@@ -251,21 +256,30 @@ CCLayerSorter::CCLayerSorter()
 
 CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(GraphNode* a, GraphNode* b)
 {
-    if (!a->boundingBox.intersects(b->boundingBox))
+    if (!a->shape.boundingBox.intersects(b->shape.boundingBox))
         return None;
 
     // Make the early exit threshold proportional to the total Z range.
     float exitThreshold = m_zRange * 0.01;
+    float zDiff = calculateZDiff(a->shape, b->shape, exitThreshold);
 
-    LayerIntersector intersector(a, b, exitThreshold);
-    intersector.go();
-
-    if (intersector.zDiff > 0)
+    if (zDiff > 0)
         return BBeforeA;
-    if (intersector.zDiff < 0)
+    if (zDiff < 0)
         return ABeforeB;
 
     return None;
+}
+
+CCLayerSorter::LayerShape::LayerShape(const FloatPoint3D& p1, const FloatPoint3D& p2, const FloatPoint3D& p3, const FloatPoint3D& p4)
+    : normal((p2 - p1).cross(p3 - p1))
+    , c1(FloatPoint(p1.x(), p1.y()))
+    , c2(FloatPoint(p2.x(), p2.y()))
+    , c3(FloatPoint(p3.x(), p3.y()))
+    , c4(FloatPoint(p4.x(), p4.y()))
+    , origin(p1)
+{
+    boundingBox.fitToPoints(c1, c2, c3, c4);
 }
 
 void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::iterator last)
@@ -302,13 +316,7 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
         FloatPoint3D c2 = drawTransform.mapPoint(FloatPoint3D(layerWidth, layerHeight, 0));
         FloatPoint3D c3 = drawTransform.mapPoint(FloatPoint3D(layerWidth, -layerHeight, 0));
         FloatPoint3D c4 = drawTransform.mapPoint(FloatPoint3D(-layerWidth, -layerHeight, 0));
-        node.normal = (c2 - c1).cross(c3 - c1);
-        node.c1 = FloatPoint(c1.x(), c1.y());
-        node.c2 = FloatPoint(c2.x(), c2.y());
-        node.c3 = FloatPoint(c3.x(), c3.y());
-        node.c4 = FloatPoint(c4.x(), c4.y());
-        node.origin = c1;
-        node.boundingBox.fitToPoints(node.c1, node.c2, node.c3, node.c4);
+        node.shape = LayerShape(c1, c2, c3, c4);
     
         maxZ = max(c4.z(), max(c3.z(), max(c2.z(), max(maxZ, c1.z()))));
         minZ = min(c4.z(), min(c3.z(), min(c2.z(), min(minZ, c1.z()))));

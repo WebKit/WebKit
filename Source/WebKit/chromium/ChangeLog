@@ -1,3 +1,14 @@
+2011-09-29  Iain Merrick  <husky@google.com>
+
+        Add unit test for CCLayerSorter
+        https://bugs.webkit.org/show_bug.cgi?id=68622
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerSorterTest.cpp: Added.
+        (WebCore::TEST):
+
 2011-09-29  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Use LevelDB also for in-memory databases

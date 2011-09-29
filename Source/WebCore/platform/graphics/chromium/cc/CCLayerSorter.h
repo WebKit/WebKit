@@ -42,16 +42,31 @@ public:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
 
     void sort(LayerList::iterator first, LayerList::iterator last);
+
+    // Helper methods, public for unit testing.
+    static bool pointInTriangle(const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&);
+
+    // Holds various useful properties derived from a layer's 3D outline.
+    struct LayerShape {
+        LayerShape() { }
+        LayerShape(const FloatPoint3D&, const FloatPoint3D&, const FloatPoint3D&, const FloatPoint3D&);
+
+        FloatPoint3D normal;
+        FloatPoint c1, c2, c3, c4;
+        FloatPoint3D origin;
+        FloatRect boundingBox;
+    };
+
+    static float calculateZDiff(const LayerShape&, const LayerShape&, float earlyExitThreshold);
+
 private:
     struct GraphEdge;
 
     struct GraphNode {
-        GraphNode(CCLayerImpl* cclayer) : layer(cclayer) { };
+        explicit GraphNode(CCLayerImpl* cclayer) : layer(cclayer) { }
+
         CCLayerImpl* layer;
-        FloatPoint c1, c2, c3, c4;
-        FloatPoint3D normal;
-        FloatPoint3D origin;
-        FloatRect boundingBox;
+        LayerShape shape;
         Vector<GraphEdge*> incoming;
         Vector<GraphEdge*> outgoing;
     };
@@ -64,18 +79,18 @@ private:
     };
 
     struct LayerIntersector {
-        LayerIntersector(GraphNode*, GraphNode*, float);
+        LayerIntersector(const LayerShape&, const LayerShape&, float);
 
         void go();
 
-        float layerZFromProjectedPoint(GraphNode*, const FloatPoint&);
+        float layerZFromProjectedPoint(const LayerShape&, const FloatPoint&);
         bool triangleTriangleTest(const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&);
         bool edgeTriangleTest(const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&, const FloatPoint&);
         bool checkZDiff(const FloatPoint&);
 
         FloatPoint intersectionPoint;
-        GraphNode* nodeA;
-        GraphNode* nodeB;
+        const LayerShape& layerA;
+        const LayerShape& layerB;
         float zDiff;
         float earlyExitThreshold;
     };
