@@ -545,8 +545,8 @@ function tableRow(testObject)
                 row += resultLink(test_prefix, '-actual.png', 'actual');
             }
 
-            // FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
-            row += resultLink(test_prefix, '-diff.png', 'diff');
+            var diff = testObject.image_diff_percent;
+            row += resultLink(test_prefix, '-diff.png', 'diff (' + diff + '%)');
         }
     }
 

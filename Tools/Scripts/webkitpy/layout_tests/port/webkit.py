@@ -151,11 +151,11 @@ class WebKitPort(Port):
         # Handle the case where the test didn't actually generate an image.
         # FIXME: need unit tests for this.
         if not actual_contents and not expected_contents:
-            return None
+            return (None, 0)
         if not actual_contents or not expected_contents:
             # FIXME: It's not clear what we should return in this case.
             # Maybe we should throw an exception?
-            return True
+            return (True, 0)
 
         process = self._start_image_diff_process(expected_contents, actual_contents)
         return self._read_image_diff(process)
@@ -180,12 +180,15 @@ class WebKitPort(Port):
         timeout = 2.0
         deadline = time.time() + timeout
         output = sp.read_line(timeout)
+        output_image = ""
+        diff_percent = 0
         while not sp.timed_out and not sp.crashed and output:
             if output.startswith('Content-Length'):
                 m = re.match('Content-Length: (\d+)', output)
                 content_length = int(m.group(1))
                 timeout = deadline - time.time()
-                output = sp.read(timeout, content_length)
+                output_image = sp.read(timeout, content_length)
+                output = sp.read_line(timeout)
                 break
             elif output.startswith('diff'):
                 break
@@ -201,8 +204,9 @@ class WebKitPort(Port):
         if output.startswith('diff'):
             m = re.match('diff: (.+)% (passed|failed)', output)
             if m.group(2) == 'passed':
-                return None
-        return output
+                return [None, 0]
+            diff_percent = float(m.group(1))
+        return (output_image, diff_percent)
 
     def default_results_directory(self):
         # Results are store relative to the built products to make it easy

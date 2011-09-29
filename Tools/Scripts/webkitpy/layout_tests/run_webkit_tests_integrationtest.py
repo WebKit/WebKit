@@ -49,6 +49,12 @@ try:
 except ImportError:
     multiprocessing = None
 
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
+
 # FIXME: remove this when we fix test-webkitpy to work properly on cygwin
 # (bug 63846).
 SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win32')
@@ -580,7 +586,7 @@ class MainTest(unittest.TestCase):
         class ImageDiffTestPort(TestPort):
             def diff_image(self, expected_contents, actual_contents):
                 self.tolerance_used_for_diff_image = self._options.tolerance
-                return True
+                return (True, 1)
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
@@ -674,6 +680,26 @@ class MainTest(unittest.TestCase):
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
+
+class EndToEndTest(unittest.TestCase):
+    def parse_full_results(self, full_results_text):
+        json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
+        compressed_results = json.loads(json_to_eval)
+        return compressed_results
+
+    def test_end_to_end(self):
+        fs = unit_test_filesystem()
+        res, out, err, user = logging_run(record_results=True, tests_included=True, filesystem=fs)
+
+        # Six tests should fail, so the return code should be 6.
+        self.assertEquals(res, 6)
+        results = self.parse_full_results(fs.files['/tmp/layout-test-results/full_results.json'])
+
+        # Check to ensure we're passing back image diff %age correctly.
+        self.assertEquals(results['tests']['failures']['expected']['image.html']['image_diff_percent'], 1)
+
+        # Check that we attempted to display the results page in a browser.
+        self.assertTrue(user.opened_urls)
 
 class RebaselineTest(unittest.TestCase):
     def assertBaselines(self, file_list, file, extensions, err):

@@ -1,3 +1,30 @@
+2011-09-28  Dirk Pranke  <dpranke@chromium.org>
+
+        Modify new-run-webkit-tests to return the percentage difference in image diffs where possible.
+
+        https://bugs.webkit.org/show_bug.cgi?id=67253
+
+        Reviewed by Eric Seidel.
+
+        Nearly all of the work in this was done by Simon Fraser; I'm
+        just repackaging it and cleaning it up a bit. This change
+        modifies port.diff_image() to return a tuple of (pass/fail,
+        %age), adds the value to the FailureImageHashMismatch, and
+        writes the value into the full_results.json files to be
+        displayed in the results page.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-09-25  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Adding myself to committers.py.

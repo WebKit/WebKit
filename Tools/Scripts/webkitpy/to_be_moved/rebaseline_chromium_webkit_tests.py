@@ -514,7 +514,7 @@ class Rebaseliner(object):
         """
 
         if is_image:
-            return self._port.diff_image(output1, output2)
+            return self._port.diff_image(output1, output2)[0]
 
         return self._port.compare_text(output1, output2)
 
@@ -599,7 +599,7 @@ class Rebaseliner(object):
             _log.debug(' Html: diffing "%s" and "%s"', old_file, new_file)
             old_output = self._filesystem.read_binary_file(old_file)
             new_output = self._filesystem.read_binary_file(new_file)
-            image_diff = self._port.diff_image(old_output, new_output)
+            image_diff = self._port.diff_image(old_output, new_output)[0]
             self._filesystem.write_binary_file(diff_file, image_diff)
 
         if has_diff:

@@ -262,11 +262,11 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
 
         # Images are different.
         port._executive = executive_mock.MockExecutive2(run_command_fn=mock_run_command)
-        self.assertEquals(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL"))
+        self.assertEquals(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # Images are the same.
         port._executive = executive_mock.MockExecutive2(exit_code=0)
-        self.assertEquals(None, port.diff_image("EXPECTED", "ACTUAL"))
+        self.assertEquals(None, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # There was some error running image_diff.
         port._executive = executive_mock.MockExecutive2(exit_code=2)

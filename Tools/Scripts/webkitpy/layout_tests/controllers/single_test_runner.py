@@ -276,9 +276,10 @@ class SingleTestRunner:
         elif not expected_driver_output.image_hash:
             failures.append(test_failures.FailureMissingImageHash())
         elif driver_output.image_hash != expected_driver_output.image_hash:
-            driver_output.image_diff = self._port.diff_image(driver_output.image, expected_driver_output.image)
+            diff_result = self._port.diff_image(driver_output.image, expected_driver_output.image)
+            driver_output.image_diff = diff_result[0]
             if driver_output.image_diff:
-                failures.append(test_failures.FailureImageHashMismatch())
+                failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
         return failures
 
     def _run_reftest(self):

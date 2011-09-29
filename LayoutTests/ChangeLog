@@ -1,3 +1,17 @@
+2011-09-28  Dirk Pranke  <dpranke@chromium.org>
+
+        Modify new-run-webkit-tests to return the percentage difference in image diffs where possible.
+
+        https://bugs.webkit.org/show_bug.cgi?id=67253
+
+        Reviewed by Eric Seidel.
+
+        * fast/harness/resources/results-test.js:
+        (mockExpectation):
+        (runDefaultSingleRowTest):
+        ():
+        * fast/harness/results.html:
+
 2011-09-28  Chris Rogers  <crogers@google.com>
 
         DelayNode must set the context on delayTime AudioParam to support automation

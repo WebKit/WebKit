@@ -167,6 +167,8 @@ class FailureMissingImage(TestFailure):
 
 class FailureImageHashMismatch(TestFailure):
     """Image hashes didn't match."""
+    def __init__(self, diff_percent=0):
+        self.diff_percent = diff_percent
 
     @staticmethod
     def message():

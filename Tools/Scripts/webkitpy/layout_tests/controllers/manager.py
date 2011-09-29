@@ -170,6 +170,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         for f in result.failures:
             if 'is_reftest' in result.failures:
                 test_dict['is_reftest'] = True
+            if type(f) is test_failures.FailureImageHashMismatch:
+                test_dict['image_diff_percent'] = f.diff_percent
 
         if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
             test_dict['is_mismatch_reftest'] = True

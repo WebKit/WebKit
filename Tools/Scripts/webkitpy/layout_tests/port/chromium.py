@@ -168,11 +168,11 @@ class ChromiumPort(Port):
 
         # If only one of them exists, return that one.
         if not actual_contents and not expected_contents:
-            return None
+            return (None, 0)
         if not actual_contents:
-            return expected_contents
+            return (expected_contents, 0)
         if not expected_contents:
-            return actual_contents
+            return (actual_contents, 0)
 
         tempdir = self._filesystem.mkdtemp()
 
@@ -213,7 +213,7 @@ class ChromiumPort(Port):
             if exit_code == 1:
                 result = self._filesystem.read_binary_file(native_diff_filename)
             self._filesystem.rmtree(str(tempdir))
-        return result
+        return (result, 0)  # FIXME: how to get % diff?
 
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the

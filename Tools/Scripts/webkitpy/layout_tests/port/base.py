@@ -257,7 +257,7 @@ class Port(object):
         return expected_audio != actual_audio
 
     def diff_image(self, expected_contents, actual_contents, tolerance=0):
-        """Compare two images and return an image diff.
+        """Compare two images and return a tuple of an image diff, and a percentage difference (0-100).
 
         |tolerance| should be a percentage value (0.0 - 100.0).
         If it is omitted, the port default tolerance value is used.

@@ -226,10 +226,10 @@ class PortTestCase(unittest.TestCase):
         tmpfd, tmpfile = port._filesystem.open_binary_tempfile('')
         tmpfd.close()
 
-        self.assertFalse(port.diff_image(contents1, contents1))
-        self.assertTrue(port.diff_image(contents1, contents2))
+        self.assertFalse(port.diff_image(contents1, contents1)[0])
+        self.assertTrue(port.diff_image(contents1, contents2)[0])
 
-        self.assertTrue(port.diff_image(contents1, contents2, tmpfile))
+        self.assertTrue(port.diff_image(contents1, contents2, tmpfile)[0])
 
         port._filesystem.remove(tmpfile)
 
@@ -237,24 +237,24 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         if not port:
             return
-        self.assertFalse(port.diff_image(None, None))
-        self.assertFalse(port.diff_image(None, ''))
-        self.assertFalse(port.diff_image('', None))
-        self.assertFalse(port.diff_image('', ''))
+        self.assertFalse(port.diff_image(None, None)[0])
+        self.assertFalse(port.diff_image(None, '')[0])
+        self.assertFalse(port.diff_image('', None)[0])
+        self.assertFalse(port.diff_image('', '')[0])
 
     def test_diff_image__missing_actual(self):
         port = self.make_port()
         if not port:
             return
-        self.assertTrue(port.diff_image(None, 'foo'))
-        self.assertTrue(port.diff_image('', 'foo'))
+        self.assertTrue(port.diff_image(None, 'foo')[0])
+        self.assertTrue(port.diff_image('', 'foo')[0])
 
     def test_diff_image__missing_expected(self):
         port = self.make_port()
         if not port:
             return
-        self.assertTrue(port.diff_image('foo', None))
-        self.assertTrue(port.diff_image('foo', ''))
+        self.assertTrue(port.diff_image('foo', None)[0])
+        self.assertTrue(port.diff_image('foo', '')[0])
 
     def test_check_build(self):
         port = self.make_port()
