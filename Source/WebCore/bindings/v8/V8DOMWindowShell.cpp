@@ -593,9 +593,9 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& nam
         if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
             PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 2, 3);
 
-         if (s_contextFailureReason >= 0 && s_contextFailureReason <= 7);
+        if (s_contextFailureReason >= 0 && s_contextFailureReason <= 7)
             PlatformSupport::histogramEnumeration("V8Bindings.nullContextReason", s_contextFailureReason, 8);
-         s_contextFailureReason = -1;
+        s_contextFailureReason = -1;
 #endif
         return;
     }

@@ -1,3 +1,10 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        Fixenate the build.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::namedItemAdded):
+
 2011-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove direct reads to m_firstNodeInserted and m_lastLeafInserted in ReplaceSelectionCommand
