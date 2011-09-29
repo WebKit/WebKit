@@ -36,8 +36,6 @@ public:
     virtual ~ScrollbarThemeWx();
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect&);
-
-    virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
     
 protected:
     virtual bool hasButtons(Scrollbar*) { return true; }

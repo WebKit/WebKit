@@ -1,3 +1,32 @@
+2011-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69040
+        ScrollbarThemeComposite requires a ScrollView to draw scroll corner
+
+        Reviewed by Simon Fraser.
+
+        No new tests. This will be needed later.
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::pageForScrollView):
+        (WebCore::ScrollbarThemeComposite::paintScrollCorner):
+        Use pageForScrollView() function which already existed in this file, used in another similar
+        location.
+
+        * platform/chromium/FramelessScrollView.cpp:
+        * platform/chromium/FramelessScrollView.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/wx/ScrollbarThemeWx.cpp:
+        * platform/wx/ScrollbarThemeWx.h:
+        All these overrides are no longer needed, ScrollbarThemeComposite will do the right thing.
+
+        * platform/qt/ScrollbarThemeQt.cpp: (WebCore::ScrollbarThemeQt::paintScrollCorner):
+        Removed a special case for updatingControlTints phase. The same case is present in cross-platform
+        code now, and Qt doesn't have any custom subclasses of ScrollableArea or ScrollView to need
+        special handling.
+        This was added in r37377 without a bug or much ChangeLog explanation.
+
 2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::visitChildrenVirtual and remove all other visitChildrenVirtual methods

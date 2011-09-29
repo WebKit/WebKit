@@ -251,15 +251,6 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
     return true;
 }
 
-void ScrollbarThemeGtk::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)
-{
-    // ScrollbarThemeComposite::paintScrollCorner incorrectly assumes that the
-    // ScrollView is a FrameView (see FramelessScrollView), so we cannot let
-    // that code run.  For FrameView's this is correct since we don't do custom
-    // scrollbar corner rendering, which ScrollbarThemeComposite supports.
-    ScrollbarTheme::paintScrollCorner(view, context, cornerRect);
-}
-
 bool ScrollbarThemeGtk::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& event)
 {
     return (event.shiftKey() && event.button() == LeftButton) || (event.button() == MiddleButton);
