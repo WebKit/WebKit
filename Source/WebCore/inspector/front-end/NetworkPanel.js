@@ -696,9 +696,8 @@ WebInspector.NetworkLogView.prototype = {
         this._staleResources = [];
         this._sortItems();
         this._updateSummaryBar();
-        this._updateOffscreenRows();
         this._dataGrid.updateWidths();
-
+        // FIXME: evaluate performance impact of moving this before a call to sortItems()
         if (wasScrolledToLastRow)
             this._dataGrid.scrollToLastRow();
     },
@@ -1814,6 +1813,8 @@ WebInspector.NetworkDataGridNode = function(parentView, resource)
 WebInspector.NetworkDataGridNode.prototype = {
     createCells: function()
     {
+        // Out of sight, out of mind: create nodes offscreen to save on render tree update times when running updateOffscreenRows()
+        this._element.addStyleClass("offscreen");
         this._nameCell = this._createDivInTD("name");
         this._methodCell = this._createDivInTD("method");
         this._statusCell = this._createDivInTD("status");
