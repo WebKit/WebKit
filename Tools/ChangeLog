@@ -1,3 +1,9 @@
+2011-09-25  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-09-28  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic shouldn't depend on test-results.appspot.com
