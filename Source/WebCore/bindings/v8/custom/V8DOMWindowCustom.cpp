@@ -510,9 +510,8 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
         return toV8(child->domWindow());
 
     // Search IDL functions defined in the prototype
-    v8::Handle<v8::Value> result = info.Holder()->GetRealNamedProperty(name);
-    if (!result.IsEmpty())
-        return result;
+    if (!info.Holder()->GetRealNamedProperty(name).IsEmpty())
+        return notHandledByInterceptor();
 
     // Search named items in the document.
     Document* doc = frame->document();

@@ -1,3 +1,19 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        We should ignore the return value of GetRealNamedProperty
+        https://bugs.webkit.org/show_bug.cgi?id=68840
+
+        Reviewed by Nate Chapin.
+
+        Instead of skipping the lookup process by using the result of real
+        named property, we should just indiciate that it wasn't handled by the
+        interceptor.
+
+        Test: http/tests/security/window-named-valueOf.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+
 2011-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         ARIA live regions don't trigger notifications for elements that aren't in the AX tree
