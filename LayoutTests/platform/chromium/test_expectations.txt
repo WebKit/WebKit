@@ -3829,3 +3829,5 @@ BUGWK69060 WIN LINUX : editing/pasteboard/paste-text-006.html = IMAGE IMAGE+TEXT
 BUGWK69062 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
 
 BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
+
+BUGWK69077 DEBUG : http/tests/security/cookies/cookie-theft-with-javascript-doc.html = CRASH
