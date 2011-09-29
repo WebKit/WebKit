@@ -1,6 +1,13 @@
 TARGET = DumpRenderTree
 CONFIG  -= app_bundle
-!isEqual(QT_ARCH,sh4): CONFIG += uitools
+!isEqual(QT_ARCH,sh4) {
+    greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
+        message("QtUiTools library not found. QWidget plugin loading will be disabled")
+        DEFINES += QT_NO_UITOOLS
+    } else {
+        CONFIG += uitools
+    }
+}
 
 BASEDIR = $$PWD/../
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
@@ -20,6 +27,7 @@ unix:!mac:!symbian:!embedded {
 
 QT = core gui network testlib
 macx: QT += xml
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 HEADERS = $$BASEDIR/WorkQueue.h \
     DumpRenderTreeQt.h \

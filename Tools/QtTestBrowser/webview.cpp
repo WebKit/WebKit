@@ -32,8 +32,22 @@
 
 #include "webview.h"
 
-#include <QtGui>
+#include <QAction>
 #include <QGraphicsScene>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
+#include <QScrollBar>
+#include <QTimer>
+
+#ifndef QT_NO_ANIMATION
+#include <QAbstractAnimation>
+#include <QAbstractTransition>
+#include <QFinalState>
+#include <QPropertyAnimation>
+#include <QState>
+#include <QStateMachine>
+#endif
 
 WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     : QGraphicsView(parent)

@@ -21,6 +21,7 @@ INCLUDEPATH += \
 
 include(../../../WebKit.pri)
 QT += testlib network
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 lessThan(QT_MAJOR_VERSION, 5) {
     contains(QT_CONFIG, declarative): QT += declarative

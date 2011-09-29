@@ -22,9 +22,13 @@
 
 #include <QtCore/qurl.h>
 #include <QtCore/qstring.h>
-#include <QtGui/qicon.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qshareddata.h>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets/qicon.h>
+#else
+#include <QtGui/qicon.h>
+#endif
 
 #include "qwebkitglobal.h"
 

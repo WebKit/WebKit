@@ -30,7 +30,7 @@
 #include "WebPopupItem.h"
 #include <QtDeclarative/QSGCanvas>
 #include <QtDeclarative/QSGItem>
-#include <QtGui/QStandardItemModel>
+#include <QStandardItemModel>
 
 using namespace WebCore;
 
@@ -44,7 +44,11 @@ WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client
     , m_selectedIndex(-1)
 {
     QtWebComboBox* comboBox = m_comboBox.data();
-    comboBox->setParent(m_webViewItem->canvas());
+
+    comboBox->window()->winId(); // Ensure that the combobox has a window
+    Q_ASSERT(comboBox->window()->windowHandle());
+    comboBox->window()->windowHandle()->setTransientParent(m_webViewItem->canvas());
+
     connect(comboBox, SIGNAL(activated(int)), SLOT(setSelectedIndex(int)));
     connect(comboBox, SIGNAL(didHide()), SLOT(onPopupMenuHidden()), Qt::QueuedConnection);
 }

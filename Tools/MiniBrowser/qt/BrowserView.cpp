@@ -36,7 +36,7 @@
 #include <qtouchwebpage.h>
 #include <qwebnavigationcontroller.h>
 
-BrowserView::BrowserView(bool useTouchWebView, QWidget* parent)
+BrowserView::BrowserView(bool useTouchWebView, QWindow* parent)
     : QSGCanvas(parent)
     , m_item(0)
 {

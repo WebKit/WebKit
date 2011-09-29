@@ -17,6 +17,13 @@ webkit2 {
     exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
 }
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    isEmpty(QT.widgets.name)|isEmpty(QT.printsupport.name) {
+        message("Building WebKit against Qt 5.0 requires the QtWidgets and QtPrintSupport modules.")
+        error("Aborting build.")
+    }
+}
+
 SUBDIRS += WebCore
 SUBDIRS += WebKit/qt/QtWebKit.pro
 

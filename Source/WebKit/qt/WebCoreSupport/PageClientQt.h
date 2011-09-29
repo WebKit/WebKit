@@ -31,13 +31,13 @@
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include <qgraphicsscene.h>
+#include <qgraphicsview.h>
+#include <qgraphicswidget.h>
+#include <qscrollbar.h>
+#include <qstyleoption.h>
+#include <qwidget.h>
 #include <QtCore/qmetaobject.h>
-#include <QtGui/qgraphicsscene.h>
-#include <QtGui/qgraphicsview.h>
-#include <QtGui/qgraphicswidget.h>
-#include <QtGui/qscrollbar.h>
-#include <QtGui/qstyleoption.h>
-#include <QtGui/qwidget.h>
 
 #include <Settings.h>
 

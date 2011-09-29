@@ -34,9 +34,18 @@
 
 #include "launcherwindow.h"
 
+#include <QAction>
+#include <QApplication>
 #include <QAuthenticator>
+#ifndef QT_NO_DESKTOPSERVICES
 #include <QDesktopServices>
-#include <QtGui>
+#endif
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QLayout>
+#ifndef QT_NO_LINEEDIT
+#include <QLineEdit>
+#endif
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkProxy>

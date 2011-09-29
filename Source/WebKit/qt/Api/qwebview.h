@@ -23,8 +23,13 @@
 
 #include "qwebkitglobal.h"
 #include "qwebpage.h"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets/qwidget.h>
+#include <QtWidgets/qicon.h>
+#else
 #include <QtGui/qwidget.h>
 #include <QtGui/qicon.h>
+#endif
 #include <QtGui/qpainter.h>
 #include <QtCore/qurl.h>
 #include <QtNetwork/qnetworkaccessmanager.h>

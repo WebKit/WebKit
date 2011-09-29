@@ -24,7 +24,14 @@ HEADERS += \
     fpstimer.h \
     cookiejar.h
 
-!isEqual(QT_ARCH,sh4): CONFIG += uitools
+!isEqual(QT_ARCH,sh4) {
+    greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
+        message("QtUiTools library not found. QWidget plugin loading will be disabled")
+        DEFINES += QT_NO_UITOOLS
+    } else {
+        CONFIG += uitools
+    }
+}
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include(../../Source/WebKit.pri)
@@ -35,6 +42,7 @@ DESTDIR = $$OUTPUT_DIR/bin
 
 QT += network
 macx:QT+=xml
+greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
 unix:!mac:!symbian:!embedded {
     CONFIG += link_pkgconfig

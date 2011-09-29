@@ -31,7 +31,7 @@ unix:!mac:!symbian:!embedded {
     PKGCONFIG += fontconfig
 }
 
-QT = core gui network declarative testlib
+QT = core gui widgets network declarative testlib
 
 HEADERS = \
     $$BASEDIR/EventSenderProxy.h \
