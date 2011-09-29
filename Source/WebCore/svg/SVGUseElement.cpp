@@ -126,7 +126,7 @@ bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::widthAttr);
         supportedAttributes.add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGUseElement::parseMappedAttribute(Attribute* attr)

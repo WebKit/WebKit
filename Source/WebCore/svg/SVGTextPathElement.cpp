@@ -69,7 +69,7 @@ bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::methodAttr);
         supportedAttributes.add(SVGNames::spacingAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)

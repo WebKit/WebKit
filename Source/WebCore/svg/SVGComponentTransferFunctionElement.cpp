@@ -71,7 +71,7 @@ bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedNa
         supportedAttributes.add(SVGNames::exponentAttr);
         supportedAttributes.add(SVGNames::offsetAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)

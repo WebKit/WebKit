@@ -155,7 +155,7 @@ bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         SVGURIReference::addSupportedAttributes(supportedAttributes);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTRefElement::parseMappedAttribute(Attribute* attr)

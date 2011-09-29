@@ -74,7 +74,7 @@ bool SVGPolyElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::pointsAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGPolyElement::parseMappedAttribute(Attribute* attr)

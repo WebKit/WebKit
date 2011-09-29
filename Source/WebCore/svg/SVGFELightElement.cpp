@@ -103,7 +103,7 @@ bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::specularExponentAttr);
         supportedAttributes.add(SVGNames::limitingConeAngleAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFELightElement::parseMappedAttribute(Attribute* attr)

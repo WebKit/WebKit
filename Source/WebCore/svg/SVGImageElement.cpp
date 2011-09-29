@@ -88,7 +88,7 @@ bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::heightAttr);
         supportedAttributes.add(SVGNames::preserveAspectRatioAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGImageElement::parseMappedAttribute(Attribute* attr)

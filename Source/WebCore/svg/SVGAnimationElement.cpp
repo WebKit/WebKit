@@ -154,7 +154,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::keyPointsAttr);
         supportedAttributes.add(SVGNames::keySplinesAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
      
 void SVGAnimationElement::parseMappedAttribute(Attribute* attr)

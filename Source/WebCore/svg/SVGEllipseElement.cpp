@@ -78,7 +78,7 @@ bool SVGEllipseElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::rxAttr);
         supportedAttributes.add(SVGNames::ryAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGEllipseElement::parseMappedAttribute(Attribute* attr)

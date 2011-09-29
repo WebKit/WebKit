@@ -212,7 +212,7 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::dAttr);
         supportedAttributes.add(SVGNames::pathLengthAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGPathElement::parseMappedAttribute(Attribute* attr)

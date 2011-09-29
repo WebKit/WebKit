@@ -67,7 +67,7 @@ bool SVGClipPathElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::clipPathUnitsAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGClipPathElement::parseMappedAttribute(Attribute* attr)

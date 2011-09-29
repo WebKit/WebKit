@@ -91,7 +91,7 @@ bool SVGFESpecularLightingElement::isSupportedAttribute(const QualifiedName& att
         supportedAttributes.add(SVGNames::surfaceScaleAttr);
         supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)

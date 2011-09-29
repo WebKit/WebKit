@@ -75,7 +75,7 @@ bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::xAttr);
         supportedAttributes.add(SVGNames::yAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGCursorElement::parseMappedAttribute(Attribute* attr)

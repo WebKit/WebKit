@@ -130,6 +130,15 @@ private:
     virtual bool haveLoadedRequiredResources();
 };
 
+struct SVGAttributeHashTranslator {
+    static unsigned hash(QualifiedName key)
+    {
+        key.setPrefix(nullAtom);
+        return DefaultHash<QualifiedName>::Hash::hash(key);
+    }
+    static bool equal(QualifiedName a, QualifiedName b) { return a.matches(b); }
+};
+
 }
 
 #endif

@@ -92,7 +92,7 @@ bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::titleAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStyleElement::parseMappedAttribute(Attribute* attr)

@@ -84,7 +84,7 @@ bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrNam
         supportedAttributes.add(SVGNames::fyAttr);
         supportedAttributes.add(SVGNames::rAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGRadialGradientElement::parseMappedAttribute(Attribute* attr)

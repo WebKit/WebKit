@@ -56,7 +56,7 @@ bool SVGFEMergeNodeElement::isSupportedAttribute(const QualifiedName& attrName)
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::inAttr);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEMergeNodeElement::parseMappedAttribute(Attribute* attr)

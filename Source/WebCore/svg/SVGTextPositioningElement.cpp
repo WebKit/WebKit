@@ -65,7 +65,7 @@ bool SVGTextPositioningElement::isSupportedAttribute(const QualifiedName& attrNa
         supportedAttributes.add(SVGNames::dyAttr);
         supportedAttributes.add(SVGNames::rotateAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)

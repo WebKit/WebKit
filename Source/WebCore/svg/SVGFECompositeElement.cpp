@@ -76,7 +76,7 @@ bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::k3Attr);
         supportedAttributes.add(SVGNames::k4Attr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)

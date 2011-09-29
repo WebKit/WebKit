@@ -73,10 +73,6 @@ Element* SVGURIReference::targetElementFromIRIString(const String& iri, Document
 
 void SVGURIReference::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, xlinkPrefix, ("xlink"));
-    QualifiedName hrefWithPrefix = XLinkNames::hrefAttr;
-    hrefWithPrefix.setPrefix(xlinkPrefix);
-    supportedAttributes.add(hrefWithPrefix);
     supportedAttributes.add(XLinkNames::hrefAttr);
 }
 

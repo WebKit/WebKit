@@ -74,7 +74,7 @@ bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedN
         supportedAttributes.add(SVGNames::heightAttr);
         supportedAttributes.add(SVGNames::resultAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(Attribute* attr)

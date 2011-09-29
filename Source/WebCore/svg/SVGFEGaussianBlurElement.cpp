@@ -82,7 +82,7 @@ bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrNam
         supportedAttributes.add(SVGNames::inAttr);
         supportedAttributes.add(SVGNames::stdDeviationAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEGaussianBlurElement::parseMappedAttribute(Attribute* attr)

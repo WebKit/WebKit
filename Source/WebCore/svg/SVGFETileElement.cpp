@@ -57,7 +57,7 @@ bool SVGFETileElement::isSupportedAttribute(const QualifiedName& attrName)
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::inAttr);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFETileElement::parseMappedAttribute(Attribute* attr)

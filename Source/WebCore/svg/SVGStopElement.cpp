@@ -59,7 +59,7 @@ bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::offsetAttr);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStopElement::parseMappedAttribute(Attribute* attr)

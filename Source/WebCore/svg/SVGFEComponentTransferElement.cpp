@@ -59,7 +59,7 @@ bool SVGFEComponentTransferElement::isSupportedAttribute(const QualifiedName& at
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::inAttr);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEComponentTransferElement::parseMappedAttribute(Attribute* attr)

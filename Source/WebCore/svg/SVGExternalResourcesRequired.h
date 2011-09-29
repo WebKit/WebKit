@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "QualifiedName.h"
+#include "SVGElement.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

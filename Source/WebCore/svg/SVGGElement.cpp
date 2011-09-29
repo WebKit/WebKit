@@ -60,7 +60,7 @@ bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGGElement::parseMappedAttribute(Attribute* attr)

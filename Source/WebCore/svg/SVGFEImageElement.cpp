@@ -96,7 +96,7 @@ bool SVGFEImageElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::preserveAspectRatioAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEImageElement::parseMappedAttribute(Attribute* attr)

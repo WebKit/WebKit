@@ -92,7 +92,7 @@ bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::pathAttr);
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGAnimateMotionElement::parseMappedAttribute(Attribute* attr)

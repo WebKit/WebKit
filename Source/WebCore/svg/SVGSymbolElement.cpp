@@ -61,7 +61,7 @@ bool SVGSymbolElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGSymbolElement::parseMappedAttribute(Attribute* attr)

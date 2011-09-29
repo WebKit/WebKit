@@ -225,7 +225,7 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::lengthAdjustAttr);
         supportedAttributes.add(SVGNames::textLengthAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTextContentElement::parseMappedAttribute(Attribute* attr)

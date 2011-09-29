@@ -92,7 +92,7 @@ bool SVGFEDropShadowElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::dyAttr);
         supportedAttributes.add(SVGNames::stdDeviationAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDropShadowElement::parseMappedAttribute(Attribute* attr)

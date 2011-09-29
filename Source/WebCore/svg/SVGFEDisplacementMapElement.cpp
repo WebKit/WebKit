@@ -70,7 +70,7 @@ bool SVGFEDisplacementMapElement::isSupportedAttribute(const QualifiedName& attr
         supportedAttributes.add(SVGNames::yChannelSelectorAttr);
         supportedAttributes.add(SVGNames::scaleAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDisplacementMapElement::parseMappedAttribute(Attribute* attr)

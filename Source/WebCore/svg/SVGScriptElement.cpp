@@ -66,7 +66,7 @@ bool SVGScriptElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::typeAttr);
         supportedAttributes.add(HTMLNames::onerrorAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGScriptElement::parseMappedAttribute(Attribute* attr)

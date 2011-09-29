@@ -76,7 +76,7 @@ bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::cyAttr);
         supportedAttributes.add(SVGNames::rAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGCircleElement::parseMappedAttribute(Attribute* attr)

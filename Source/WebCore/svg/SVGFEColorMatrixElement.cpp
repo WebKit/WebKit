@@ -64,7 +64,7 @@ bool SVGFEColorMatrixElement::isSupportedAttribute(const QualifiedName& attrName
         supportedAttributes.add(SVGNames::valuesAttr);
         supportedAttributes.add(SVGNames::inAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)

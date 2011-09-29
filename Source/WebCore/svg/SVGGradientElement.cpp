@@ -72,7 +72,7 @@ bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::gradientTransformAttr);
         supportedAttributes.add(SVGNames::spreadMethodAttr);
     }
-    return supportedAttributes.contains(attrName);
+    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGGradientElement::parseMappedAttribute(Attribute* attr)
