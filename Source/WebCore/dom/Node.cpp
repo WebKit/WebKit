@@ -1193,6 +1193,20 @@ Node* Node::traversePreviousNode(const Node* stayWithin) const
     return parentNode();
 }
 
+Node* Node::traversePreviousSibling(const Node* stayWithin) const
+{
+    if (this == stayWithin)
+        return 0;
+    if (previousSibling())
+        return previousSibling();
+    const Node *n = this;
+    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
+        n = n->parentNode();
+    if (n)
+        return n->previousSibling();
+    return 0;
+}
+
 Node* Node::traversePreviousNodePostOrder(const Node* stayWithin) const
 {
     if (lastChild())

@@ -1,3 +1,41 @@
+2011-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove direct reads to m_firstNodeInserted and m_lastLeafInserted in ReplaceSelectionCommand
+        https://bugs.webkit.org/show_bug.cgi?id=69023
+
+        Reviewed by Enrica Casucci.
+
+        Converted to removeUnrenderedTextNodesAtEnds to use InsertedNodes instead of m_firstNodeInserted
+        and m_lastLeafInserted. Extracted the logic to update nodes as InsertedNodes::willRemoveNode
+        (old one was renamed to InsertedNodes::willRemoveNodePreservingChildren).
+
+        Also extracted shouldPerformSmartReplace and addSpacesForSmartReplace out of doApply,
+        and rewrote the logic to obtain endNode and startNode using startOfInsertedContent and
+        endOfInsertedContent instead of m_firstNodeInserted and m_lastLeafInserted.
+
+        Finally, replaced the nullity checks of m_firstNodeInserted and m_lastLeafInserted in
+        completeHTMLReplacement by nullity checks of start and end positions.
+
+        * dom/Node.cpp:
+        (WebCore::Node::traversePreviousSibling): Added.
+        * dom/Node.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren): Renamed from
+        willRemoveNode.
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNode): Extracted from
+        removeUnrenderedTextNodesAtEnds.
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent): Made const.
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent): Made const.
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): Takes firstNodeInserted instead of directly
+        accessing m_firstNodeInserted.
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartReplace):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        * editing/ReplaceSelectionCommand.h:
+
 2011-09-29  Andreas Kling  <kling@webkit.org>
 
         Shrink HTMLAnchorElement on 32-bit.

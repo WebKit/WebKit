@@ -399,6 +399,9 @@ public:
     // Does a reverse pre-order traversal to find the node that comes before the current one in document order
     Node* traversePreviousNode(const Node* stayWithin = 0) const;
 
+    // Like traversePreviousNode, but skips children and starts with the next sibling.
+    Node* traversePreviousSibling(const Node* stayWithin = 0) const;
+
     // Like traverseNextNode, but visits parents after their children.
     Node* traverseNextNodePostOrder() const;
 

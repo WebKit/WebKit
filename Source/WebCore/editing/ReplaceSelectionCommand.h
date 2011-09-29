@@ -58,13 +58,13 @@ private:
 
     virtual void doApply();
     virtual EditAction editingAction() const;
-
-    void completeHTMLReplacement(const Position& lastPositionToSelect);
     
     class InsertedNodes {
     public:
-        void respondToNodeInsertion(Node* node);
-        void willRemoveNode(Node* node);
+        void respondToNodeInsertion(Node*);
+        void willRemoveNodePreservingChildren(Node*);
+        void willRemoveNode(Node*);
+
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
         Node* lastLeafInserted() const { return m_lastNodeInserted->lastDescendant(); }
         Node* pastLastLeaf() const { return m_firstNodeInserted ? lastLeafInserted()->traverseNextNode() : 0; }
@@ -85,19 +85,23 @@ private:
     
     void mergeEndIfNeeded();
     
-    void removeUnrenderedTextNodesAtEnds();
+    void removeUnrenderedTextNodesAtEnds(InsertedNodes&);
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
-    void handleStyleSpans();
+    void handleStyleSpans(Node* firstNodeInserted);
     void copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle);
     void handlePasteAsQuotationNode();
     
     virtual void removeNodePreservingChildren(Node*);
     virtual void removeNodeAndPruneAncestors(Node*);
     
-    VisiblePosition positionAtStartOfInsertedContent();
-    VisiblePosition positionAtEndOfInsertedContent();
-    
+    VisiblePosition positionAtStartOfInsertedContent() const;
+    VisiblePosition positionAtEndOfInsertedContent() const;
+
+    bool shouldPerformSmartReplace() const;
+    void addSpacesForSmartReplace();
+    void completeHTMLReplacement(const Position& lastPositionToSelect);
+
     bool performTrivialReplace(const ReplacementFragment&);
 
     RefPtr<Node> m_firstNodeInserted;
