@@ -650,15 +650,18 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         m_compileIndex = branchNodeIndex;
         return true;
     }
-    
-    if (shouldSpeculateFinalObject(node.child1(), node.child2()))
-        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr);
-    else if (shouldSpeculateArray(node.child1(), node.child2()))
-        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr);
-    else if (!shouldSpeculateNumber(node.child1()) && !shouldSpeculateNumber(node.child2()))
-        nonSpeculativeNonPeepholeCompare(node, condition, operation);
-    else if ((shouldSpeculateNumber(node.child1()) || shouldSpeculateNumber(node.child2())) && !shouldSpeculateInteger(node.child1(), node.child2())) {
-        // Normal case, not fused to branch.
+
+    if (shouldSpeculateInteger(node.child1(), node.child2())) {
+        SpeculateIntegerOperand op1(this, node.child1());
+        SpeculateIntegerOperand op2(this, node.child2());
+        GPRTemporary result(this, op1, op2);
+        
+        m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+        
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+    } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         GPRTemporary result(this);
@@ -669,18 +672,12 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         trueCase.link(&m_jit);
 
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    } else {
-        // Normal case, not fused to branch.
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary result(this, op1, op2);
-        
-        m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
-        
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    }
+    } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2()))
+        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr);
+    else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2()))
+        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr);
+    else
+        nonSpeculativeNonPeepholeCompare(node, condition, operation);
     
     return false;
 }
