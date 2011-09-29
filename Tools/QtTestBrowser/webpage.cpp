@@ -40,6 +40,7 @@
 #ifndef QT_NO_DESKTOPSERVICES
 #include <QDesktopServices>
 #endif
+#include <QDialog>
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLayout>

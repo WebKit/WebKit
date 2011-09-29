@@ -800,7 +800,9 @@ void LauncherWindow::screenshot()
 void LauncherWindow::setEditable(bool on)
 {
     page()->setContentEditable(on);
+#ifndef QT_NO_SHORTCUT
     m_formatMenuAction->setVisible(on);
+#endif
 }
 
 /*
@@ -861,7 +863,9 @@ void LauncherWindow::toggleWebView(bool graphicsBased)
 {
     m_windowOptions.useGraphicsView = graphicsBased;
     initializeView();
+#ifndef QT_NO_SHORTCUT
     menuBar()->clear();
+#endif
     createChrome();
 }
 
