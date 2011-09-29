@@ -1,3 +1,17 @@
+2011-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure transitions involving many (> 64) properties sometimes cause structure corruption
+        https://bugs.webkit.org/show_bug.cgi?id=69102
+
+        Reviewed by Darin Adler.
+        
+        Made m_offset an int instead of a signed char. Changed the code to ensure that transitions
+        don't lead to the dictionary kind being forgotten.
+        
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+
 2011-09-29  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG operation calls should be stdcall in Linux JSVALUE32_64 DFG JIT

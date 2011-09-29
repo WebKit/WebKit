@@ -237,9 +237,9 @@ namespace JSC {
 
         bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
 
-        static const signed char s_maxTransitionLength = 64;
+        static const int s_maxTransitionLength = 64;
 
-        static const signed char noOffset = -1;
+        static const int noOffset = -1;
 
         static const unsigned maxSpecificFunctionThrashCount = 3;
 
@@ -264,7 +264,7 @@ namespace JSC {
         uint32_t m_propertyStorageCapacity;
 
         // m_offset does not account for anonymous slots
-        signed char m_offset;
+        int m_offset;
 
         unsigned m_dictionaryKind : 2;
         bool m_isPinnedPropertyTable : 1;
