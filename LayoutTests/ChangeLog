@@ -1,3 +1,13 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        Update image baselines after http://trac.webkit.org/changeset/96366.  These are progressions.
+
+        * platform/chromium-mac/fast/css/font-smoothing-expected.png:
+        * platform/chromium-mac/fast/repaint/text-emphasis-v-expected.png:
+        * platform/chromium-mac/fast/text/emphasis-avoid-ruby-expected.png:
+        * platform/chromium-mac/fast/text/emphasis-overlap-expected.png:
+        * platform/chromium-mac/fast/text/soft-hyphen-4-expected.png:
+
 2011-09-29  Dan Bernstein  <mitz@apple.com>
 
         Follow-up fix for <rdar://problem/10191243> Glyph variants (line final swashes) appear where they should not
