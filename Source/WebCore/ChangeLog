@@ -1,3 +1,14 @@
+2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unreviewed: resetting baseline for code generator bindings
+
+        Unreviewed build fix
+
+        No new tests.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+
 2011-09-29  Nate Chapin  <japhet@chromium.org>
 
         [V8, chromium] More logging to determine cause of a null
