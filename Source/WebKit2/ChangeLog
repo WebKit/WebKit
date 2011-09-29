@@ -1,5 +1,22 @@
 2011-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Force single header include in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69084
+
+        Reviewed by Martin Robinson.
+
+        Only <webkit2/webkit2.h> will be allowed for API users.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        * UIProcess/API/gtk/webkit2.h:
+
+2011-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Explicitly call destructors for objects initialized with placement new syntax
         https://bugs.webkit.org/show_bug.cgi?id=69079
 

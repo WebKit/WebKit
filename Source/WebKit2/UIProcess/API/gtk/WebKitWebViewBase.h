@@ -25,6 +25,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error "Only <webkit2/webkit2.h> can be included directly."
+#endif
+
 #ifndef WebKitWebViewBase_h
 #define WebKitWebViewBase_h
 

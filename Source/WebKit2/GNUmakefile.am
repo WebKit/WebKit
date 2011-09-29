@@ -879,6 +879,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
+	-DWEBKIT2_COMPILATION \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -1005,6 +1006,9 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h: stamp-webkit2enumtyp
 stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
 	&& glib-mkenums \
+			--fhead "#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)\n" \
+			--fhead "#error \"Only <webkit2/webkit2.h> can be included directly.\"\n" \
+			--fhead "#endif\n\n" \
 			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
 			--fhead "#define WEBKIT_ENUM_TYPES_H\n\n" \
 			--fhead "#include <glib-object.h>\n\n" \

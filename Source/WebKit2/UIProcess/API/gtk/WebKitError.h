@@ -18,6 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error "Only <webkit2/webkit2.h> can be included directly."
+#endif
+
 #ifndef WebKitError_h
 #define WebKitError_h
 
