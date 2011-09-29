@@ -3269,8 +3269,6 @@ bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, d
     if (!validUnit(v, FNumber, m_strict))
         return false;
     result = v->fValue;
-    if (result < 0 || result > 1.0)
-        return false;
     v = args->next();
     if (!v)
         // The last number in the function has no comma after it, so we're done.

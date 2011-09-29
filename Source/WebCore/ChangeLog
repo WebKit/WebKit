@@ -1,3 +1,23 @@
+2011-09-28  Peter Beverloo  <peter@chromium.org>
+
+        Don't clamp cubic-bezier timing functions between 0 and 1
+        https://bugs.webkit.org/show_bug.cgi?id=45761
+
+        Remove the limitation of clamping the cubic-bezier timing function
+        values between 0 and 1, following the specification change made on
+        April 5 of this year.
+
+        Reviewed by Dean Jackson.
+
+        Tests: transitions/cubic-bezier-overflow-color.html
+               transitions/cubic-bezier-overflow-length.html
+               transitions/cubic-bezier-overflow-shadow.html
+               transitions/cubic-bezier-overflow-svg-length.html
+               transitions/cubic-bezier-overflow-transform.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue):
+
 2011-09-28  Chris Rogers  <crogers@google.com>
 
         DelayNode must set the context on delayTime AudioParam to support automation
