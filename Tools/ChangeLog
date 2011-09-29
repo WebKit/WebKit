@@ -1,3 +1,10 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        Attempt to make this tool work on Windows.
+
+        * Scripts/run-api-tests:
+        (buildTestTool):
+
 2011-09-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Try to fix the minial build
