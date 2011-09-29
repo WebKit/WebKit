@@ -3293,11 +3293,6 @@ BUGWK57311 SKIP : fast/exclusions = PASS
 // CSS Filters support not yet enabled
 BUGWK68469 SKIP : css3/filters = PASS
 
-BUGWK68087 WIN MAC GPU GPU-CG : compositing/flat-with-transformed-child.html = IMAGE
-BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/3d-corners.html = IMAGE
-BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
-BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
-
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62430 LINUX WIN : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
