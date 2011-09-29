@@ -1,5 +1,11 @@
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
+        This test can also time out.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
         Delete bogus expectation.
 
         * platform/chromium-cg-mac/svg/text/selection-background-color-expected.txt: Removed.
