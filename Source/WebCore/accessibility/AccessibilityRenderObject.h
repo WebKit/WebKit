@@ -215,7 +215,7 @@ public:
     virtual void decrement();
     
     virtual void detach();
-    virtual void childrenChanged(ChildrenChangeOptions);
+    virtual void childrenChanged();
     virtual void contentChanged();
     virtual void addChildren();
     virtual bool canHaveChildren() const;

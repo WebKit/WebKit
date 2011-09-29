@@ -223,7 +223,7 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
 static inline RenderInline* startOfContinuations(RenderObject* r)
 {
-    if (r->isInlineElementContinuation() && r->node()->renderer() && r->isRenderInline())
+    if (r->isInlineElementContinuation())
         return toRenderInline(r->node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
@@ -3087,7 +3087,7 @@ void AccessibilityRenderObject::updateAccessibilityRole()
     
     // The AX hierarchy only needs to be updated if the ignored status of an element has changed.
     if (ignoredStatus != accessibilityIsIgnored())
-        childrenChanged(DoNotCreateParentObjects);
+        childrenChanged();
 }
     
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
@@ -3370,7 +3370,7 @@ void AccessibilityRenderObject::contentChanged()
     }
 }
     
-void AccessibilityRenderObject::childrenChanged(ChildrenChangeOptions options)
+void AccessibilityRenderObject::childrenChanged()
 {
     // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
     if (!m_renderer)
@@ -3382,7 +3382,7 @@ void AccessibilityRenderObject::childrenChanged(ChildrenChangeOptions options)
     // called during render layouts, minimal work should be done. 
     // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
     // At the same time, process ARIA live region changes.
-    for (AccessibilityObject* parent = this; parent; parent = (options == CreateParentObjects) ? parent->parentObject() : parent->parentObjectIfExists()) {
+    for (AccessibilityObject* parent = this; parent; parent = parent->parentObjectIfExists()) {
         if (!parent->isAccessibilityRenderObject())
             continue;
         
