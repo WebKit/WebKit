@@ -1450,9 +1450,6 @@ BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
 BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
 BUGCR11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 
-BUGCR14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
-BUGCR32231 MAC WIN : tables/mozilla/bugs/bug28341.html = PASS IMAGE
-
 // Newly added test http://trac.webkit.org/changeset/44816
 BUGCR18733 SLOW WIN : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
 
@@ -1511,7 +1508,6 @@ BUGCR22554 SKIP : mathml = FAIL
 // WebKit update 48796:48820
 // Test #9 throws an exception.
 BUGCR23956 : fast/dom/Range/getClientRects.html = FAIL
-BUGCR24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Started failing for no apparent reason at r28124, and IMAGE+TEXT diffs started at r51875
 
@@ -2761,7 +2757,6 @@ BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
-BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = PASS CRASH
@@ -2983,10 +2978,6 @@ BUGCR79917 LINUX WIN : fast/table/table-and-parts-outline.html = IMAGE
 BUGCR79917 LINUX WIN : fast/transforms/transformed-caret.html = IMAGE
 BUGCR79917 LINUX WIN : svg/custom/no-inherited-dashed-stroke.xhtml = IMAGE
 BUGCR79917 LINUX WIN : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug22019.html = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug2886.html = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug2947.html = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug6674.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/collapsing_borders/bug41262-3.html = IMAGE
 
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
