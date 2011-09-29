@@ -185,6 +185,10 @@ static void browserWindowConstructed(GObject* gObject)
     browserWindowLoaderClientInit(window);
     browserWindowUIClientInit(window);
     browserWindowPolicyClientInit(window);
+
+    WKPageGroupRef groupRef = WKPageGetPageGroup(WKViewGetPage(window->webView));
+    WKPreferencesRef preferencesRef = WKPageGroupGetPreferences(groupRef);
+    WKPreferencesSetDeveloperExtrasEnabled(preferencesRef, true);
 }
 
 static void browser_window_class_init(BrowserWindowClass* klass)
