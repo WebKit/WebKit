@@ -2089,7 +2089,8 @@ BUGWK43912 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = CRASH IMAGE
 BUGWK43912 LINUX WIN : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 
 // Times out frequently since the test was added
-BUGCR52017 LINUX MAC : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
+BUGCR52017 LINUX MAC RELEASE : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
+BUGCR52017 LINUX MAC DEBUG : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT CRASH
 
 // Flaky. Not sure when it started to fail.
 BUGCR52572 LINUX WIN DEBUG : http/tests/misc/image-blocked-src-change.html = PASS TEXT
