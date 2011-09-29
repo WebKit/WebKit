@@ -1,3 +1,21 @@
+2011-09-29  Cary Clark  <caryclark@google.com>
+
+        Enable LCD text in Skia on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=68734
+
+        Reviewed by Stephen White.
+
+        No new tests. Existing layout tests are generated
+        with LCD text disabled for pixel comparisons.
+
+        Duplicate the logic in FontMac.mm to pass settings
+        for antialiasing and smoothing. Also disable smoothing
+        for DumpRenderTree.
+ 
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::setupPaint):
+        (WebCore::Font::drawGlyphs):
+
 2011-09-29  Varun Jain  <varunjain@google.com>
  
          Implement flick gesture in Chromium Gesture Recognizer
