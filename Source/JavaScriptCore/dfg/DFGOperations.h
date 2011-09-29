@@ -42,11 +42,9 @@ typedef intptr_t RegisterSizedBoolean;
 
 extern "C" {
 
-#if CPU(X86) && COMPILER(GCC)
+#if CALLING_CONVENTION_IS_CDECL
 #define DFG_OPERATION __attribute__ ((stdcall))
-#endif
-
-#ifndef DFG_OPERATION
+#else
 #define DFG_OPERATION
 #endif
 

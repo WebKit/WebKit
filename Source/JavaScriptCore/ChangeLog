@@ -1,3 +1,10 @@
+2011-09-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed windows build fix.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        * dfg/DFGOperations.h:
+
 2011-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Structure transitions involving many (> 64) properties sometimes cause structure corruption
