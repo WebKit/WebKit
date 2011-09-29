@@ -386,7 +386,7 @@ AC_MSG_RESULT([$enable_webgl])
 if test "$enable_webgl" = "yes"; then
     AC_CHECK_HEADERS([GL/gl.h], [], AC_MSG_ERROR([OpenGL header not found]))
     AC_CHECK_HEADERS([GL/glx.h], [], AC_MSG_ERROR([GLX header not found]))
-    OPENGL_LIBS=-lGL
+    OPENGL_LIBS="-lGL -ldl"
 fi
 AC_SUBST([OPENGL_LIBS])
 
