@@ -1,3 +1,9 @@
+2011-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hopefully the last Chromium test expectation update for r96294.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-29  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(87010): elements in ECMA-cloud neither filled nor blurred
