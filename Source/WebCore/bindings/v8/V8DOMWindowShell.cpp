@@ -78,6 +78,10 @@
 
 namespace WebCore {
 
+// FIXME: Temporary diagnostics as to why V8 sometimes crashes with a null context in namedItemAdded().
+// See https://bugs.webkit.org/show_bug.cgi?id=68099.
+static int s_contextFailureReason = -1;
+
 static void handleFatalErrorInV8()
 {
     // FIXME: We temporarily deal with V8 internal error situations
@@ -318,6 +322,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
         // Bail out if allocation of the first global objects fails.
         if (m_global.IsEmpty()) {
             disposeContextHandles();
+            s_contextFailureReason = 3;
             return false;
         }
 #ifndef NDEBUG
@@ -353,14 +358,18 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     v8::Persistent<v8::Context> result;
 
     // The activeDocumentLoader pointer could be 0 during frame shutdown.
-    if (!m_frame->loader()->activeDocumentLoader())
+    if (!m_frame->loader()->activeDocumentLoader()) {
+        s_contextFailureReason = 0;
         return result;
+    }
 
     // Create a new environment using an empty template for the shadow
     // object. Reuse the global object if one has been created earlier.
     v8::Persistent<v8::ObjectTemplate> globalTemplate = V8DOMWindow::GetShadowObjectTemplate();
-    if (globalTemplate.IsEmpty())
+    if (globalTemplate.IsEmpty()) {
+        s_contextFailureReason = 1;
         return result;
+    }
 
     // Used to avoid sleep calls in unload handlers.
     if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))
@@ -387,6 +396,8 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     v8::ExtensionConfiguration extensionConfiguration(index, extensionNames.get());
     result = v8::Context::New(&extensionConfiguration, globalTemplate, global);
 
+    if (result.IsEmpty())
+        s_contextFailureReason = 2;
     return result;
 }
 
@@ -406,8 +417,10 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
     v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::getConstructor(&V8DOMWindow::info, getHiddenObjectPrototype(context));
     v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
     // Bail out if allocation failed.
-    if (jsWindow.IsEmpty())
+    if (jsWindow.IsEmpty()) {
+        s_contextFailureReason = 7;
         return false;
+    }
 
     // Wrap the window.
     V8DOMWrapper::setDOMWrapper(jsWindow, &V8DOMWindow::info, window);
@@ -573,15 +586,16 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& nam
 #if PLATFORM(CHROMIUM)
         // FIXME: Temporary diagnostics as to why V8 sometimes crashes with a null context below.
         // See https://bugs.webkit.org/show_bug.cgi?id=68099.
-        PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.initContextFailed");
+        PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 0, 3);
         if (m_frame->settings() && !m_frame->settings()->isJavaScriptEnabled())
-            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.scriptBlockedByWebCoreSettings");
+            PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 1, 3);
 
         if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
-            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.scriptBlockedByScriptController");
+            PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 2, 3);
 
-        if (V8Proxy::handleOutOfMemory())
-            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.outOfMemory");
+         if (s_contextFailureReason >= 0 && s_contextFailureReason <= 7);
+            PlatformSupport::histogramEnumeration("V8Bindings.nullContextReason", s_contextFailureReason, 8);
+         s_contextFailureReason = -1;
 #endif
         return;
     }
@@ -615,17 +629,23 @@ bool V8DOMWindowShell::installHiddenObjectPrototype(v8::Handle<v8::Context> cont
     v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
     v8::Handle<v8::String> hiddenObjectPrototypeString = V8HiddenPropertyName::objectPrototype();
     // Bail out if allocation failed.
-    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty())
+    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty()) {
+        s_contextFailureReason = 4;
         return false;
+    }
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(objectString));
     // Bail out if fetching failed.
-    if (object.IsEmpty())
+    if (object.IsEmpty()) {
+        s_contextFailureReason = 5;
         return false;
+    }
     v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
     // Bail out if fetching failed.
-    if (objectPrototype.IsEmpty())
+    if (objectPrototype.IsEmpty()) {
+        s_contextFailureReason = 6;
         return false;
+    }
 
     context->Global()->SetHiddenValue(hiddenObjectPrototypeString, objectPrototype);
 
