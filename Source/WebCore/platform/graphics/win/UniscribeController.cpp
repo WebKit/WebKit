@@ -266,8 +266,8 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     spaceCharacters.fill(-1);
 
     const float cLogicalScale = fontData->platformData().useGDI() ? 1.0f : 32.0f;
-    unsigned logicalSpaceWidth = fontData->spaceWidth() * cLogicalScale;
-    float spaceWidth = fontData->spaceWidth();
+    float spaceWidth = fontData->spaceWidth() - fontData->syntheticBoldOffset();
+    unsigned logicalSpaceWidth = spaceWidth * cLogicalScale;
 
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);

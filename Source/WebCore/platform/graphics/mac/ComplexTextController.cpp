@@ -477,7 +477,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
         bool lastRun = r + 1 == runCount;
         bool roundsAdvances = !m_font.isPrinterFont() && fontData->platformData().roundsGlyphAdvances();
-        CGFloat roundedSpaceWidth = roundCGFloat(fontData->spaceWidth());
+        float spaceWidth = fontData->spaceWidth() - fontData->syntheticBoldOffset();
+        CGFloat roundedSpaceWidth = roundCGFloat(spaceWidth);
         const UChar* cp = complexTextRun.characters();
         CGPoint glyphOrigin = CGPointZero;
         CFIndex lastCharacterIndex = m_run.ltr() ? numeric_limits<CFIndex>::min() : numeric_limits<CFIndex>::max();
@@ -504,7 +505,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             bool treatAsSpace = Font::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
-            CGSize advance = treatAsSpace ? CGSizeMake(fontData->spaceWidth(), advances[i].height) : advances[i];
+            CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 
             if (ch == '\t' && m_run.allowTabs()) {
                 float tabWidth = m_font.tabWidth(*fontData);

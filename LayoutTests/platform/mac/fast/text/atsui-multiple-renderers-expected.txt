@@ -35,11 +35,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,30) size 262x30
             RenderTableCell {TD} at (0,30) size 131x30 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 76x25
-                text run at (2,3) width 76: "Lore\x{300}m "
+              RenderText {#text} at (2,3) size 75x25
+                text run at (2,3) width 75: "Lore\x{300}m "
               RenderInline {SPAN} at (0,0) size 53x23
-                RenderText {#text} at (78,5) size 53x23
-                  text run at (78,5) width 53: "ipsu\x{308}m"
+                RenderText {#text} at (77,5) size 53x23
+                  text run at (77,5) width 53: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (131,30) size 131x30 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 75x25
@@ -65,11 +65,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,90) size 262x30
             RenderTableCell {TD} at (0,90) size 131x30 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 76x25
-                text run at (2,3) width 76: "Lore\x{300}m "
+              RenderText {#text} at (2,3) size 75x25
+                text run at (2,3) width 75: "Lore\x{300}m "
               RenderInline {SPAN} at (0,0) size 51x23
-                RenderText {#text} at (78,5) size 51x23
-                  text run at (78,5) width 51: "ipsu\x{308}m"
+                RenderText {#text} at (77,5) size 51x23
+                  text run at (77,5) width 51: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (131,90) size 131x30 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 75x25
