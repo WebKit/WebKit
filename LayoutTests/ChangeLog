@@ -1,5 +1,14 @@
 2011-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        [Chromium] Layout test failures under Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=54322
+
+        Unreviewed test_expectations.txt update. acid3 seems to be IMAGE+TEXT, not IMAGE
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
         [Chromium] Layout Test fast/frames/frame-set-rotation-hit.html and fast/frames/frame-set-scaling-hit.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=69136
 
