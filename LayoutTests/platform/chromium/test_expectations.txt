@@ -3846,4 +3846,5 @@ BUGWK69078 MAC CPU-CG : editing/unsupported-content/table-type-before.html = IMA
 
 BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
-BUGWK69103 : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
+BUGWK69103 WIN LINUX : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
+BUGWK69103 MAC : fast/text/line-initial-and-final-swashes.html = IMAGE
