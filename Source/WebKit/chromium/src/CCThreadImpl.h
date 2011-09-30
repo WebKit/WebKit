@@ -37,15 +37,15 @@ class WebThread;
 // Implements CCThread in terms of WebThread.
 class CCThreadImpl : public WebCore::CCThread {
 public:
-    static PassOwnPtr<WebCore::CCThread> create();
+    static PassOwnPtr<WebCore::CCThread> create(WebThread*);
     virtual ~CCThreadImpl();
     void postTask(PassOwnPtr<WebCore::CCThread::Task>);
     WTF::ThreadIdentifier threadID() const;
 
 private:
-    CCThreadImpl();
+    explicit CCThreadImpl(WebThread*);
 
-    OwnPtr<WebThread> m_thread;
+    WebThread* m_thread;
     WTF::ThreadIdentifier m_threadID;
 };
 

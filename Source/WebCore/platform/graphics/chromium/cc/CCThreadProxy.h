@@ -34,9 +34,12 @@
 namespace WebCore {
 
 class CCLayerTreeHost;
+class CCThread;
 
 class CCThreadProxy : public CCProxy {
 public:
+    static void setThread(CCThread*);
+
     static PassOwnPtr<CCProxy> create(CCLayerTreeHost*);
 
     virtual ~CCThreadProxy();
@@ -89,6 +92,8 @@ private:
     bool m_beginFrameAndCommitPendingOnCCThread;
     bool m_drawTaskPostedOnCCThread;
     bool m_redrawRequestedOnCCThread;
+
+    static CCThread* s_ccThread;
 };
 
 }

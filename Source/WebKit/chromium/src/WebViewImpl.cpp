@@ -34,7 +34,6 @@
 #include "AutofillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "BackForwardListChromium.h"
-#include "CCThreadImpl.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
@@ -2685,11 +2684,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 }
 
 #endif
-
-PassOwnPtr<CCThread> WebViewImpl::createCompositorThread()
-{
-    return CCThreadImpl::create();
-}
 
 PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
 {

@@ -28,15 +28,19 @@
 
 #include "cc/CCLayerTreeHost.h"
 
-#include "CCThreadImpl.h"
-#include "GraphicsContext3DPrivate.h"
-#include "LayerChromium.h"
-#include "MockWebGraphicsContext3D.h"
-#include "TextureManager.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
+#include "CCThreadImpl.h"
+#include "GraphicsContext3DPrivate.h"
 #include <gtest/gtest.h>
+#include "LayerChromium.h"
+#include "MockWebGraphicsContext3D.h"
+#include "TextureManager.h"
+#include "WebCompositor.h"
+#include "WebKit.h"
+#include "WebKitPlatformSupport.h"
+#include "WebThread.h"
 #include <webkit/support/webkit_support.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -147,11 +151,6 @@ public:
     {
     }
 
-    virtual PassOwnPtr<CCThread> createCompositorThread()
-    {
-        return CCThreadImpl::create();
-    }
-
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
     {
         OwnPtr<WebGraphicsContext3D> mock = CompositorMockWebGraphicsContext3D::create();
@@ -208,6 +207,8 @@ protected:
         , m_running(false)
         , m_timedOut(false)
     {
+        m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
+        WebCompositor::setThread(m_webThread.get());
 #if USE(THREADED_COMPOSITING)
         m_settings.enableCompositorThread = true;
 #else
@@ -284,6 +285,8 @@ private:
     bool m_endWhenBeginReturns;
     bool m_running;
     bool m_timedOut;
+
+    OwnPtr<WebThread> m_webThread;
 };
 
 void CCLayerTreeHostTest::doBeginTest()

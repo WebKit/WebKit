@@ -143,11 +143,6 @@ void CCLayerTreeHost::commitComplete()
     m_contentsTextureManager->unprotectAllTextures();
 }
 
-PassOwnPtr<CCThread> CCLayerTreeHost::createCompositorThread()
-{
-    return m_client->createCompositorThread();
-}
-
 PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createLayerTreeHostContext3D()
 {
     return m_client->createLayerTreeHostContext3D();

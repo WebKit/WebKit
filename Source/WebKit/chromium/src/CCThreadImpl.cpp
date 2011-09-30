@@ -76,9 +76,9 @@ private:
     OwnPtr<CCThread::Task> m_task;
 };
 
-PassOwnPtr<CCThread> CCThreadImpl::create()
+PassOwnPtr<CCThread> CCThreadImpl::create(WebThread* thread)
 {
-    return adoptPtr(new CCThreadImpl());
+    return adoptPtr(new CCThreadImpl(thread));
 }
 
 CCThreadImpl::~CCThreadImpl()
@@ -95,8 +95,8 @@ ThreadIdentifier CCThreadImpl::threadID() const
     return m_threadID;
 }
 
-CCThreadImpl::CCThreadImpl()
-    : m_thread(adoptPtr(webKitPlatformSupport()->createThread("CCThread")))
+CCThreadImpl::CCThreadImpl(WebThread* thread)
+    : m_thread(thread)
 {
     // Get the threadId for the newly-created thread by running a task
     // on that thread, blocking on the result.

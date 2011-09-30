@@ -36,6 +36,7 @@
 #include "TestShell.h"
 #include "TestWebWorker.h"
 #include "WebCString.h"
+#include "WebCompositor.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDataSource.h"
@@ -45,6 +46,8 @@
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
+#include "WebKit.h"
+#include "WebKitPlatformSupport.h"
 #include "WebNode.h"
 #include "WebPopupMenu.h"
 #include "WebPopupType.h"
@@ -56,6 +59,7 @@
 #include "WebStorageNamespace.h"
 #include "WebTextCheckingCompletion.h"
 #include "WebTextCheckingResult.h"
+#include "WebThread.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
@@ -1167,6 +1171,10 @@ WebViewHost::WebViewHost(TestShell* shell)
     , m_lastRequestedTextCheckingCompletion(0)
 {
     WTF::initializeThreading();
+
+    m_compositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
+    WebCompositor::setThread(m_compositorThread.get());
+
     reset();
 }
 

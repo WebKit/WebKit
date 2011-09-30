@@ -1,3 +1,35 @@
+2011-09-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebKit API for sending input events to the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=69117
+
+        Reviewed by Darin Fisher.
+
+        Convert to using an externally-provided thread instead of one managed by CCThreadProxy internally. Most changes
+        in these files are mechanically changing references from ccThread to s_ccThread to reflect the class-static
+        nature of this pointer, the rest are removing the old thread creation codepath.
+
+        These changes are covered by the CC* unit tests and by the gpu layout tests when run with the
+        use_threaded_compositing=1 gyp define.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setThread):
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::~CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::finishAllRendering):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedraw):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::start):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::scheduleDrawTaskOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-09-29  Fady Samuel  <fsamuel@chromium.org>
 
         Fixed Hit testing on Framesets when Frameset is transformed

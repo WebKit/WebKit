@@ -41,7 +41,6 @@ class GrContext;
 namespace WebCore {
 
 class CCLayerTreeHostImpl;
-class CCThread;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
@@ -51,7 +50,6 @@ class TextureManager;
 class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
-    virtual PassOwnPtr<CCThread> createCompositorThread() = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
 #if !USE(THREADED_COMPOSITING)
@@ -99,7 +97,6 @@ public:
     void animateAndLayout(double frameBeginTime);
     void commitComplete();
     void commitToOnCCThread(CCLayerTreeHostImpl*);
-    PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
     void didRecreateGraphicsContext(bool success);

@@ -219,7 +219,6 @@ public:
 
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
-    virtual PassOwnPtr<WebCore::CCThread> createCompositorThread();
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
     virtual void didRecreateGraphicsContext(bool success);
 #if !USE(THREADED_COMPOSITING)

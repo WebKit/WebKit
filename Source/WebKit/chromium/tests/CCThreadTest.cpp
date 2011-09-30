@@ -27,15 +27,19 @@
 #include "cc/CCThread.h"
 
 #include "CCThreadImpl.h"
+#include "WebKit.h"
+#include "WebKitPlatformSupport.h"
+#include "WebThread.h"
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
-#include <gtest/gtest.h>
 
+#include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace {
 
@@ -53,7 +57,9 @@ public:
 
 TEST(CCThreadTest, pingPongUsingCondition)
 {
-    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create();
+    OwnPtr<WebThread> webThread = adoptPtr(webKitPlatformSupport()->createThread("test"));
+
+    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create(webThread.get());
     PingPongUsingCondition target;
     CCCompletionEvent completion;
     thread->postTask(createCCThreadTask(&target, &PingPongUsingCondition::ping,
@@ -80,9 +86,11 @@ public:
     bool hit;
 };
 
-TEST(CCThreadTest, DISABLED_startPostAndWaitOnCondition)
+TEST(CCThreadTest, startPostAndWaitOnCondition)
 {
-    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create();
+    OwnPtr<WebThread> webThread = adoptPtr(webKitPlatformSupport()->createThread("test"));
+
+    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create(webThread.get());
 
     PingPongTestUsingTasks target;
     thread->postTask(createCCThreadTask(&target, &PingPongTestUsingTasks::ping));

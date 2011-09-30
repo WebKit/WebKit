@@ -1,3 +1,16 @@
+2011-09-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebKit API for sending input events to the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=69117
+
+        Reviewed by Darin Fisher.
+
+        Adds support for creating and setting a compositor thread in DRT.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-09-29  David Levin  <levin@chromium.org>
 
         watchlist: Add cross-checks for WatchList once it is filled.

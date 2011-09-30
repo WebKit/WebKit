@@ -1,3 +1,46 @@
+2011-09-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebKit API for sending input events to the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=69117
+
+        Reviewed by Darin Fisher.
+
+        Adds a new WebKit interface to allow the embedder to pass input events directly to the compositor thread.
+        Exposes the new WebCompositor interface and associated client. These interfaces are slightly different in that
+        they can only be interacted with from the compositor thread.
+
+        Changes the initialization path for the compositor thread to using an externally allocated and managed thread
+        instead of one internal to WebCore so that the embedder can interact with the thread more easily. This also
+        simplifies the startup and shutdown paths.  The contract is that WebCompositor::setThread() must be called
+        before any compositor can be initialized and the passed-in thread must outlive all compositor instances.
+
+        Each WebCompositor instance is associated with a WebWidget.  There isn't any way to get a WebCompositor for a
+        given WebWidget in this patch, that will be done in a follow-up.
+
+        * WebKit.gyp:
+        * public/WebCompositor.h:
+        (WebKit::WebCompositor::~WebCompositor):
+        * public/WebCompositorClient.h:
+        (WebKit::WebCompositorClient::~WebCompositorClient):
+        * src/CCThreadImpl.cpp:
+        (WebKit::CCThreadImpl::create):
+        (WebKit::CCThreadImpl::CCThreadImpl):
+        * src/CCThreadImpl.h:
+        * src/WebCompositorImpl.cpp: Added.
+        (WebKit::WebCompositor::setThread):
+        (WebKit::WebCompositorImpl::WebCompositorImpl):
+        (WebKit::WebCompositorImpl::~WebCompositorImpl):
+        (WebKit::WebCompositorImpl::setClient):
+        (WebKit::WebCompositorImpl::handleInputEvent):
+        * src/WebCompositorImpl.h:
+        (WebKit::WebCompositorImpl::create):
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        * tests/CCThreadTest.cpp:
+        (WebKit::TEST):
+
 2011-09-29  Iain Merrick  <husky@google.com>
 
         Add unit test for CCLayerSorter
