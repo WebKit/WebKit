@@ -687,8 +687,8 @@ DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
-DerivedSources/WebCore/Inspector.json.validated : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/validate-protocol-compatibility
-	$(PYTHON) $(WebCore)/inspector/validate-protocol-compatibility -o $(GENSOURCES_WEBCORE)/Inspector.json.validated $(WebCore)/inspector/Inspector.json
+DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
+	$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
 
 DerivedSources/WebCore/Inspector.idl : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-idl
 	$(PYTHON) $(WebCore)/inspector/generate-inspector-idl -o $(GENSOURCES_WEBCORE)/Inspector.idl $(WebCore)/inspector/Inspector.json

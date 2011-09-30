@@ -49,6 +49,12 @@ class WebDevToolsAgent {
 public:
     virtual ~WebDevToolsAgent() {}
 
+    // Returns WebKit WebInspector protocol version.
+    WEBKIT_EXPORT static WebString inspectorProtocolVersion();
+
+    // Returns true if and only if the given protocol version is supported by the WebKit Web Inspector.
+    WEBKIT_EXPORT static bool supportsInspectorProtocolVersion(const WebString& version);
+
     virtual void attach() = 0;
     virtual void detach() = 0;
     virtual void frontendLoaded() = 0;

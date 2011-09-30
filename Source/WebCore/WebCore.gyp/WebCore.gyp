@@ -335,17 +335,17 @@
   },
   'targets': [
     {
-      'target_name': 'inspector_idl',
+      'target_name': 'generate_inspector_protocol_version',
       'type': 'none',
       'actions': [
          {
-          'action_name': 'validateInspectorProtocol',
+          'action_name': 'generateInspectorProtocolVersion',
           'inputs': [
-            '../inspector/validate-protocol-compatibility',
+            '../inspector/generate-inspector-protocol-version',
             '../inspector/Inspector.json',
           ],
           'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.json.validated',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorProtocolVersion.h',
           ],
           'variables': {
             'generator_include_dirs': [
@@ -353,13 +353,20 @@
           },
           'action': [
             'python',
-            '../inspector/validate-protocol-compatibility',
+            '../inspector/generate-inspector-protocol-version',
             '-o',
             '<@(_outputs)',
             '<@(_inputs)'
           ],
-          'message': 'Validate inspector protocol for backwards compatibility',
-        },
+          'message': 'Validate inspector protocol for backwards compatibility and generate version file',
+        }
+      ]
+    },
+    {
+      'target_name': 'inspector_idl',
+      'type': 'none',
+      'actions': [
+
         {
           'action_name': 'generateInspectorProtocolIDL',
           'inputs': [
@@ -381,14 +388,15 @@
             '<@(_inputs)'
           ],
           'message': 'Generating Inspector protocol sources from Inspector.idl',
-        },
+        }
       ]
     },
     {
       'target_name': 'inspector_protocol_sources',
       'type': 'none',
       'dependencies': [
-        'inspector_idl'
+        'inspector_idl',
+        'generate_inspector_protocol_version'
       ],
       'actions': [
         {

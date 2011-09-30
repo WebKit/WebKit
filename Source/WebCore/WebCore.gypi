@@ -7019,6 +7019,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendStub.js',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorProtocolVersion.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSAbstractView.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSAbstractView.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSAbstractWorker.cpp',

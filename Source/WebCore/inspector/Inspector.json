@@ -1,6 +1,5 @@
 {
-    "version": "tip-of-tree",
-    "compatible": ["draft-01"],
+    "version": { "major": "0", "minor": "1" },
     "domains": [{
         "domain": "Inspector",
         "hidden": true,

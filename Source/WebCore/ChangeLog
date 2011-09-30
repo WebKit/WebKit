@@ -1,3 +1,23 @@
+2011-09-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [chromium] expose inspector protocol version to the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=69092
+
+        This change also introduces major/minor inspector version components.
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * inspector/Inspector-0.1.json: Renamed from Source/WebCore/inspector/Inspector.draft-01.json.
+        * inspector/Inspector.json:
+        * inspector/generate-inspector-protocol-version: Renamed from Source/WebCore/inspector/validate-protocol-compatibility.
+
 2011-09-29  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69106

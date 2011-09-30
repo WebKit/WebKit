@@ -314,23 +314,59 @@ def main():
     input_path = sys.argv[3]
     dir_name = os.path.dirname(input_path)
     schema = load_json(input_path)
-    sys.stdout.write("Validating schema: %s\n" % schema["version"])
-    compatible = schema["compatible"]
-    errors_found = False
-    for version in compatible:
-        schema = load_json(input_path) # reload since modified while comparing
-        version_file_name = os.path.normpath(dir_name + "/Inspector." + version + ".json")
-        version_schema = load_json(version_file_name)
-        errors = compare_schemas(version_schema["domains"], schema["domains"])
-        if len(errors) > 0:
-            errors_found = True
-            sys.stderr.write("  compatibility with %s: FAILED\n" % version)
-            for error in errors:
-                sys.stderr.write( "    %s\n" % error)
-        else:
-            sys.stderr.write("  compatibility with %s: SUCCESS\n" % version)
-    if errors_found:
+
+    major = schema["version"]["major"]
+    minor = schema["version"]["minor"]
+    version = "%s.%s" % (major, minor)
+    version_file_name = os.path.normpath(dir_name + "/Inspector-" + version + ".json")
+    version_schema = load_json(version_file_name)
+
+    errors = compare_schemas(version_schema["domains"], schema["domains"])
+    if len(errors) > 0:
+        sys.stderr.write("  compatibility with %s: FAILED\n" % version)
+        for error in errors:
+            sys.stderr.write( "    %s\n" % error)
         return 1
+
+    output_file.write("""
+#ifndef InspectorProtocolVersion_h
+#define InspectorProtocolVersion_h
+#include "PlatformString.h"
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+String inspectorProtocolVersion() { return "%s"; }
+
+int inspectorProtocolVersionMajor() { return %s; }
+
+int inspectorProtocolVersionMinor() { return %s; }
+
+bool supportsInspectorProtocolVersion(const String& version)
+{
+    Vector<String> tokens;
+    version.split(".", tokens);
+    if (tokens.size() != 2)
+        return false;
+
+    bool ok = true;
+    int major = tokens[0].toInt(&ok);
+    if (!ok || major != %s)
+        return false;
+
+    int minor = tokens[1].toInt(&ok);
+    if (!ok || minor < %s)
+        return false;
+
+    return true;
+}
+
+}
+
+#endif // !defined(InspectorProtocolVersion_h)
+""" % (version, major, minor, major, minor))
+
+    output_file.close()
 
 if __name__ == '__main__':
     sys.exit(main())

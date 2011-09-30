@@ -668,11 +668,11 @@ v8 {
 addExtraCompiler(idl)
 
 # GENERATOR 2: inspector idl compiler
-inspectorValidate.output = $${WC_GENERATED_SOURCES_DIR}/Inspector.json.validated
+inspectorValidate.output = $${WC_GENERATED_SOURCES_DIR}/InspectorProtocolVersion.h
 inspectorValidate.input = INSPECTOR_JSON
-inspectorValidate.wkScript = $$PWD/inspector/validate-protocol-compatibility
-inspectorValidate.commands = python $$inspectorValidate.wkScript -o $${WC_GENERATED_SOURCES_DIR}/Inspector.json.validated $$PWD/inspector/Inspector.json
-inspectorValidate.depends = $$PWD/inspector/validate-protocol-compatibility
+inspectorValidate.wkScript = $$PWD/inspector/generate-inspector-protocol-version
+inspectorValidate.commands = python $$inspectorValidate.wkScript -o $${WC_GENERATED_SOURCES_DIR}/InspectorProtocolVersion.h $$PWD/inspector/Inspector.json
+inspectorValidate.depends = $$PWD/inspector/generate-inspector-protocol-version
 inspectorValidate.wkAddOutputToSources = false
 addExtraCompiler(inspectorValidate)
 

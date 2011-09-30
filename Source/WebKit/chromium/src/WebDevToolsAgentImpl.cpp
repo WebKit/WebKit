@@ -39,6 +39,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorProtocolVersion.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -335,6 +336,16 @@ void WebDevToolsAgentImpl::setJavaScriptProfilingEnabled(bool enabled)
         ic->enableProfiler();
     else
         ic->disableProfiler();
+}
+
+WebString WebDevToolsAgent::inspectorProtocolVersion()
+{
+    return WebCore::inspectorProtocolVersion();
+}
+
+bool WebDevToolsAgent::supportsInspectorProtocolVersion(const WebString& version)
+{
+    return WebCore::supportsInspectorProtocolVersion(version);
 }
 
 void WebDevToolsAgent::executeDebuggerCommand(const WebString& command, int callerId)
