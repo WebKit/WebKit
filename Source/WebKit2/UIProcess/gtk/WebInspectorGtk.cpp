@@ -29,25 +29,80 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebKitWebViewBasePrivate.h"
+#include "WebProcessProxy.h"
+
+#include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
+#include <glib/gi18n-lib.h>
+#include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+static const char* inspectorFilesBasePath()
+{
+    const gchar* environmentPath = g_getenv("WEBKIT_INSPECTOR_PATH");
+    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
+        return environmentPath;
+
+    static const char* inspectorFilesPath = DATA_DIR""G_DIR_SEPARATOR_S
+                                            "webkitgtk-"WEBKITGTK_API_VERSION_STRING""G_DIR_SEPARATOR_S
+                                            "webinspector"G_DIR_SEPARATOR_S;
+    return inspectorFilesPath;
+}
+
+static gboolean inspectorWindowDestroyed(GtkWidget* window, GdkEvent*, gpointer userData)
+{
+    WebInspectorProxy* inspectorProxy = static_cast<WebInspectorProxy*>(userData);
+
+    // Inform WebProcess about webinspector closure. Not doing so,
+    // results in failure of subsequent invocation of webinspector.
+    inspectorProxy->close();
+    inspectorProxy->windowDestroyed();
+
+    return FALSE;
+}
+
+void WebInspectorProxy::windowDestroyed()
+{
+    ASSERT(m_inspectorView);
+    ASSERT(m_inspectorWindow);
+    m_inspectorView = 0;
+    m_inspectorWindow = 0;
+}
+
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
-    notImplemented();
-    return 0;
+    ASSERT(m_page);
+    ASSERT(!m_inspectorView);
+    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(page()->process()->context(), inspectorPageGroup()));
+    return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
 
 void WebInspectorProxy::platformOpen()
 {
-    notImplemented();
+    ASSERT(!m_inspectorWindow);
+    m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
+    gtk_window_set_default_size(GTK_WINDOW(m_inspectorWindow), initialWindowWidth, initialWindowHeight);
+    g_signal_connect(m_inspectorWindow, "delete-event", G_CALLBACK(inspectorWindowDestroyed), this);
+
+    gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
+    gtk_widget_show(m_inspectorView);
+    gtk_widget_show(m_inspectorWindow);
 }
 
 void WebInspectorProxy::platformDidClose()
 {
-    notImplemented();
+    if (m_inspectorWindow) {
+        gtk_widget_destroy(m_inspectorWindow);
+        m_inspectorWindow = 0;
+        m_inspectorView = 0;
+    }
 }
 
 void WebInspectorProxy::platformBringToFront()
@@ -55,21 +110,23 @@ void WebInspectorProxy::platformBringToFront()
     notImplemented();
 }
 
-void WebInspectorProxy::platformInspectedURLChanged(const String&)
+void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
-    notImplemented();
+    GOwnPtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), url.utf8().data()));
+    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
 }
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    notImplemented();
-    return String();
+    GOwnPtr<gchar> filePath(g_build_filename(inspectorFilesBasePath(), "inspector.html", NULL));
+    GOwnPtr<gchar> fileURI(g_filename_to_uri(filePath.get(), 0, 0));
+    return WebCore::filenameToString(fileURI.get());
 }
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    notImplemented();
-    return String();
+    GOwnPtr<gchar> fileURI(g_filename_to_uri(inspectorFilesBasePath(), 0, 0));
+    return WebCore::filenameToString(fileURI.get());
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

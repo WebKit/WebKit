@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,17 +30,15 @@
 #if ENABLE(INSPECTOR)
 
 #include "WebInspectorMessages.h"
-#include "WebPageProxy.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageGroup.h"
+#include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
-#include "WebPageGroup.h"
 
 #if PLATFORM(WIN)
 #include "WebView.h"
 #endif
-
-#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -71,6 +70,9 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_isProfilingJavaScript(false)
     , m_isProfilingPage(false)
 #if PLATFORM(WIN)
+    , m_inspectorWindow(0)
+#elif PLATFORM(GTK)
+    , m_inspectorView(0)
     , m_inspectorWindow(0)
 #endif
 {

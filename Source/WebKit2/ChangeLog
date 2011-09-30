@@ -1,3 +1,25 @@
+2011-09-29  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Initial implementation of WebInspector for WebKit2 GTK port.
+        https://bugs.webkit.org/show_bug.cgi?id=68235
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy): Initialize the native window handles of GTK.
+        * UIProcess/WebInspectorProxy.h: Add native window handle for inspector window.
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::inspectorFilesBasePath): Base folder for inspector resources.
+        (WebKit::inspectorWindowDestroyed): Invoked when inspector window is closed by user.
+        (WebKit::WebInspectorProxy::windowDestroyed): Resets the native handles to 0 when user closes the window.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Create the WebView for inspector.
+        (WebKit::WebInspectorProxy::platformOpen): Create the window for inspector.
+        (WebKit::WebInspectorProxy::platformDidClose): Close both WebView & window of inspector.
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Update the title of inspector window.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Return the absolute URL of inspector.html.
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Return the location where inspector resources are present.
+        WebProcess is given read access to this folder only for loading file URLs by sandboxed extension.
+
 2011-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build against Qt5 after refactor of widgets out of QtGUi
