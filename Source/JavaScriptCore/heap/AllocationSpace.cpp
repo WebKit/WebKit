@@ -55,7 +55,13 @@ void* AllocationSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
     
     AllocationEffort allocationEffort;
     
-    if (m_markedSpace.waterMark() < m_markedSpace.highWaterMark() || !m_heap->m_isSafeToCollect)
+    if ((
+#if ENABLE(GGC)
+         m_markedSpace.nurseryWaterMark() < m_heap->m_minBytesPerCycle
+#else
+         m_markedSpace.waterMark() < m_markedSpace.highWaterMark()
+#endif
+         ) || !m_heap->m_isSafeToCollect)
         allocationEffort = AllocationMustSucceed;
     else
         allocationEffort = AllocationCanFail;

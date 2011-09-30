@@ -32,6 +32,7 @@ class Structure;
 
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_waterMark(0)
+    , m_nurseryWaterMark(0)
     , m_highWaterMark(0)
     , m_heap(heap)
 {
@@ -63,6 +64,7 @@ void MarkedSpace::removeBlock(MarkedBlock* block)
 void MarkedSpace::resetAllocator()
 {
     m_waterMark = 0;
+    m_nurseryWaterMark = 0;
 
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).resetAllocator();

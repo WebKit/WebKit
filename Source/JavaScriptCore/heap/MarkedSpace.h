@@ -72,6 +72,7 @@ public:
 
     size_t waterMark();
     size_t highWaterMark();
+    size_t nurseryWaterMark();
     void setHighWaterMark(size_t);
 
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&); // Safe to remove the current item while iterating.
@@ -91,6 +92,7 @@ private:
     FixedArray<SizeClass, preciseCount> m_preciseSizeClasses;
     FixedArray<SizeClass, impreciseCount> m_impreciseSizeClasses;
     size_t m_waterMark;
+    size_t m_nurseryWaterMark;
     size_t m_highWaterMark;
     Heap* m_heap;
 };
@@ -103,6 +105,11 @@ inline size_t MarkedSpace::waterMark()
 inline size_t MarkedSpace::highWaterMark()
 {
     return m_highWaterMark;
+}
+
+inline size_t MarkedSpace::nurseryWaterMark()
+{
+    return m_nurseryWaterMark;
 }
 
 inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
@@ -126,7 +133,7 @@ inline void* MarkedSpace::allocate(SizeClass& sizeClass)
             firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
             if (firstFreeCell)
                 break;
-
+            m_nurseryWaterMark += block->capacity() - block->size();
             m_waterMark += block->capacity();
             block->didConsumeFreeList();
         }

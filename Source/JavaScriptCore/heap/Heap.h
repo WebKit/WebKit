@@ -144,7 +144,7 @@ namespace JSC {
         void freeBlocks(MarkedBlock*);
 
         void clearMarks();
-        void markRoots();
+        void markRoots(bool fullGC);
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
@@ -164,6 +164,7 @@ namespace JSC {
 
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
+        size_t m_lastFullGCSize;
         
         OperationInProgress m_operationInProgress;
         AllocationSpace m_objectSpace;

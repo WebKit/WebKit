@@ -214,6 +214,7 @@ inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
 Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
+    , m_lastFullGCSize(0)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_extraCost(0)
@@ -453,8 +454,9 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     m_operationInProgress = NoOperation;
 }
 
-void Heap::markRoots()
+void Heap::markRoots(bool fullGC)
 {
+    UNUSED_PARAM(fullGC);
     ASSERT(isValidThreadState(m_globalData));
     if (m_operationInProgress != NoOperation)
         CRASH();
@@ -473,9 +475,7 @@ void Heap::markRoots()
     m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;
-    // Until we have a sensible policy we just random choose to perform
-    // young generation collections 90% of the time.
-    if (WTF::randomNumber() > 0.1)
+    if (!fullGC)
         m_objectSpace.gatherDirtyCells(dirtyCells);
     else
 #endif
@@ -486,7 +486,8 @@ void Heap::markRoots()
     HeapRootVisitor heapRootVisitor(visitor);
 
 #if ENABLE(GGC)
-    for (size_t i = 0; i < dirtyObjectCount; i++) {
+    size_t dirtyCellCount = dirtyCells.size();
+    for (size_t i = 0; i < dirtyCellCount; i++) {
         heapRootVisitor.visitChildren(dirtyCells[i]);
         visitor.drain();
     }
@@ -599,9 +600,12 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
-    
+    bool fullGC = sweepToggle == DoSweep;
+    if (!fullGC)
+        fullGC = (capacity() > 4 * m_lastFullGCSize);  
     canonicalizeCellLivenessData();
-    markRoots();
+
+    markRoots(fullGC);
 
     harvestWeakReferences();
     m_handleHeap.finalizeWeakHandles();
@@ -621,6 +625,9 @@ void Heap::collect(SweepToggle sweepToggle)
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t proportionalBytes = 2 * size();
+    if (fullGC)
+        m_lastFullGCSize = proportionalBytes / 2;
+    
     m_objectSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
     JAVASCRIPTCORE_GC_END();
 
