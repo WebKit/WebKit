@@ -46,6 +46,7 @@
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QJSEngine>
+#include <QMimeData>
 #include <QStyle>
 #include <QTouchEvent>
 #include <QUndoStack>

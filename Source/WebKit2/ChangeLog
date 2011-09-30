@@ -1,3 +1,16 @@
+2011-09-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Add missing include for QMimeData
+        https://bugs.webkit.org/show_bug.cgi?id=69178
+
+        Reviewed by Tor Arne Vestbø.
+
+        This was implicitly included by other headers, but due to changes in
+        Qt5 we need to include explicitly.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2011-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Prevent qDebug() output from DRT and WTR unless --verbose

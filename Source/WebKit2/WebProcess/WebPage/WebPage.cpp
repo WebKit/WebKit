@@ -121,6 +121,7 @@
 
 #if PLATFORM(QT)
 #include "HitTestResult.h"
+#include <QMimeData>
 #endif
 
 #ifndef NDEBUG
