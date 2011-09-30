@@ -34,19 +34,6 @@
 using namespace std;
 
 namespace WebCore {
-
-class SameSizeAsInlineBox {
-    virtual ~SameSizeAsInlineBox() { }
-    void* a[4];
-    FloatPoint b;
-    float c;
-    uint32_t d;
-#ifndef NDEBUG
-    bool e;
-#endif
-};
-
-COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
     
 #ifndef NDEBUG
 static bool inInlineBoxDetach;
@@ -269,6 +256,21 @@ bool InlineBox::nextOnLineExists() const
             m_nextOnLineExists = parent()->nextOnLineExists();
     }
     return m_nextOnLineExists;
+}
+
+bool InlineBox::prevOnLineExists() const
+{
+    if (!m_determinedIfPrevOnLineExists) {
+        m_determinedIfPrevOnLineExists = true;
+        
+        if (!parent())
+            m_prevOnLineExists = false;
+        else if (prevOnLine())
+            m_prevOnLineExists = true;
+        else
+            m_prevOnLineExists = parent()->prevOnLineExists();
+    }
+    return m_prevOnLineExists;
 }
 
 InlineBox* InlineBox::nextLeafChild() const

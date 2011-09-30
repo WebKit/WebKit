@@ -1,3 +1,17 @@
+2011-09-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96422.
+        http://trac.webkit.org/changeset/96422
+        https://bugs.webkit.org/show_bug.cgi?id=69170
+
+        Broke Windows build and kling wanted to roll it out as well
+        (Requested by rniwa on #webkit).
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::prevOnLineExists):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2011-09-30  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69167
