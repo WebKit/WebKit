@@ -282,7 +282,7 @@ sub buildTestTool()
 
     my @args = argumentsForConfiguration();
     my $pathToBuildTestTool = File::Spec->catfile("Tools", "Scripts", $buildTestTool);
-    my $buildProcess = open3($childIn, $childOut, $childErr, $pathToBuildTestTool, @args) or die "Failed to run " . $buildTestTool;
+    my $buildProcess = open3($childIn, $childOut, $childErr, "perl", $pathToBuildTestTool, @args) or die "Failed to run " . $buildTestTool;
 
     close($childIn);
     close($childOut);

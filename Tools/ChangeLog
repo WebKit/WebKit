@@ -1,3 +1,15 @@
+2011-09-29  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        run-api-tests fails on chromium-win bot
+        https://bugs.webkit.org/show_bug.cgi?id=69121
+
+        On Windows running a perl script needs the interpreter.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/run-api-tests:
+        (buildTestTool):
+
 2011-09-29  Adam Barth  <abarth@webkit.org>
 
         Attempt to make this tool work on Windows.
