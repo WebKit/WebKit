@@ -79,8 +79,8 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     JSObject* thisObj = exec->hostThisValue().toThisObject(exec);
 
     StringRecursionChecker checker(exec, thisObj);
-    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
-        return earlyReturnValue;
+    if (JSValue earlyReturnValue = checker.earlyReturnValue())
+        return JSValue::encode(earlyReturnValue);
 
     JSValue name = thisObj->get(exec, exec->propertyNames().name);
     JSValue message = thisObj->get(exec, exec->propertyNames().message);

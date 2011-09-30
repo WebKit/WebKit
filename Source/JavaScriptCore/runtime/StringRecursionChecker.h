@@ -31,19 +31,19 @@ public:
     StringRecursionChecker(ExecState*, JSObject* thisObject);
     ~StringRecursionChecker();
 
-    EncodedJSValue earlyReturnValue() const; // 0 if everything is OK, value to return for failure cases
+    JSValue earlyReturnValue() const; // 0 if everything is OK, value to return for failure cases
 
 private:
-    EncodedJSValue throwStackOverflowError();
-    EncodedJSValue emptyString();
-    EncodedJSValue performCheck();
+    JSValue throwStackOverflowError();
+    JSValue emptyString();
+    JSValue performCheck();
 
     ExecState* m_exec;
     JSObject* m_thisObject;
-    EncodedJSValue m_earlyReturnValue;
+    JSValue m_earlyReturnValue;
 };
 
-inline EncodedJSValue StringRecursionChecker::performCheck()
+inline JSValue StringRecursionChecker::performCheck()
 {
     int size = m_exec->globalData().stringRecursionCheckVisitedObjects.size();
     if (size >= MaxSmallThreadReentryDepth && size >= m_exec->globalData().maxReentryDepth)
@@ -51,7 +51,7 @@ inline EncodedJSValue StringRecursionChecker::performCheck()
     bool alreadyVisited = !m_exec->globalData().stringRecursionCheckVisitedObjects.add(m_thisObject).second;
     if (alreadyVisited)
         return emptyString(); // Return empty string to avoid infinite recursion.
-    return 0; // Indicate success.
+    return JSValue(); // Indicate success.
 }
 
 inline StringRecursionChecker::StringRecursionChecker(ExecState* exec, JSObject* thisObject)
@@ -61,7 +61,7 @@ inline StringRecursionChecker::StringRecursionChecker(ExecState* exec, JSObject*
 {
 }
 
-inline EncodedJSValue StringRecursionChecker::earlyReturnValue() const
+inline JSValue StringRecursionChecker::earlyReturnValue() const
 {
     return m_earlyReturnValue;
 }

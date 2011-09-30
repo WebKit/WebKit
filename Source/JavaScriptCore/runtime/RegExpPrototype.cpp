@@ -142,8 +142,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     RegExpObject* thisObject = asRegExpObject(thisValue);
 
     StringRecursionChecker checker(exec, thisObject);
-    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
-        return earlyReturnValue;
+    if (JSValue earlyReturnValue = checker.earlyReturnValue())
+        return JSValue::encode(earlyReturnValue);
 
     char postfix[5] = { '/', 0, 0, 0, 0 };
     int index = 1;
