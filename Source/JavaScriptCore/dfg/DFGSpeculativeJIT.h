@@ -570,10 +570,13 @@ private:
     }
     
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
+    bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
     void compileObjectEquality(Node&, void* vptr);
+    void compileValueAdd(Node&);
+    void compileLogicalNot(Node&);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.

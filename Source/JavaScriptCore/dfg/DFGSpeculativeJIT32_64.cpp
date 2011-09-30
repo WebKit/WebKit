@@ -101,7 +101,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
     case DataFormatCell:
     case DataFormatBoolean:
     case DataFormatJSDouble:
-    case DataFormatJSCell: 
+    case DataFormatJSCell:
     case DataFormatJSBoolean: {
         terminateSpeculativeExecution();
         returnFormat = DataFormatInteger;
@@ -373,35 +373,8 @@ void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr)
 // Returns true if the compare is fused with a subsequent branch.
 bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, Z_DFGOperation_EJJ operation)
 {
-    // Fused compare & branch.
-    NodeIndex branchNodeIndex = detectPeepHoleBranch();
-    if (branchNodeIndex != NoNode) {
-        // detectPeepHoleBranch currently only permits the branch to be the very next node,
-        // so can be no intervening nodes to also reference the compare. 
-        ASSERT(node.adjustedRefCount() == 1);
-
-        if (shouldSpeculateInteger(node.child1(), node.child2())) {
-            compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
-            use(node.child1());
-            use(node.child2());
-        } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
-            compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
-            use(node.child1());
-            use(node.child2());
-        } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2())) {
-            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr);
-            use(node.child1());
-            use(node.child2());
-        } else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2())) {
-            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr);
-            use(node.child1());
-            use(node.child2());
-        } else
-            nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
-
-        m_compileIndex = branchNodeIndex;
+    if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
         return true;
-    }
 
     if (shouldSpeculateFinalObject(node.child1(), node.child2()))
         compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr);
@@ -440,6 +413,75 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
     return false;
 }
 
+void SpeculativeJIT::compileValueAdd(Node& node)
+{
+    JSValueOperand op1(this, node.child1());
+    JSValueOperand op2(this, node.child2());
+
+    GPRReg op1TagGPR = op1.tagGPR();
+    GPRReg op1PayloadGPR = op1.payloadGPR();
+    GPRReg op2TagGPR = op2.tagGPR();
+    GPRReg op2PayloadGPR = op2.payloadGPR();
+
+    flushRegisters();
+    
+    GPRResult2 resultTag(this);
+    GPRResult resultPayload(this);
+    if (isKnownNotNumber(node.child1()) || isKnownNotNumber(node.child2()))
+        callOperation(operationValueAddNotNumber, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
+    else
+        callOperation(operationValueAdd, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
+    
+    jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
+}
+
+void SpeculativeJIT::compileLogicalNot(Node& node)
+{
+    // FIXME: Need to add fast paths for known booleans.
+    JSValueOperand value(this, node.child1());
+    GPRTemporary resultTag(this, value);
+    GPRTemporary resultPayload(this, value, false);
+    speculationCheck(m_jit.branch32(JITCompiler::NotEqual, value.tagGPR(), TrustedImm32(JSValue::BooleanTag)));
+    m_jit.move(value.payloadGPR(), resultPayload.gpr());
+    m_jit.xor32(TrustedImm32(1), resultPayload.gpr());
+    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTag.gpr());
+
+    // If we add a DataFormatBool, we should use it here.
+    jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex, DataFormatJSBoolean);
+
+    // This code is moved from nonSpeculativeLogicalNot, currently unused!
+#if 0
+    JSValueOperand arg1(this, node.child1());
+    GPRTemporary resultTag(this, arg1);
+    GPRTemporary resultPayload(this, arg1, false);
+    GPRReg arg1TagGPR = arg1.tagGPR();
+    GPRReg arg1PayloadGPR = arg1.payloadGPR();
+    GPRReg resultTagGPR = resultTag.gpr();
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+        
+    arg1.use();
+
+    JITCompiler::Jump fastCase = m_jit.branch32(JITCompiler::Equal, arg1TagGPR, TrustedImm32(JSValue::BooleanTag));
+        
+    silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
+    m_jit.push(arg1TagGPR);
+    m_jit.push(arg1PayloadGPR);
+    m_jit.push(GPRInfo::callFrameRegister);
+    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
+    m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+    silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
+    JITCompiler::Jump doNot = m_jit.jump();
+        
+    fastCase.link(&m_jit);
+    m_jit.move(arg1PayloadGPR, resultPayloadGPR);
+
+    doNot.link(&m_jit);
+    m_jit.xor32(TrustedImm32(1), resultPayloadGPR);
+    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
+    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+#endif
+}
+
 void SpeculativeJIT::compile(Node& node)
 {
     NodeType op = node.op;
@@ -459,31 +501,36 @@ void SpeculativeJIT::compile(Node& node)
         }
         
         GPRTemporary result(this);
-        VirtualRegister virtualRegister = node.virtualRegister();
-        m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
         if (isInt32Prediction(prediction)) {
+            m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
+
             // Like integerResult, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node.virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
             m_generationInfo[virtualRegister].initInteger(m_compileIndex, node.refCount(), result.gpr());
-        } else {
-            // Like jsValueResult, but don't useChildren - our children are phi nodes,
-            // and don't represent values within this dataflow with virtual registers.
-            GPRTemporary tag(this);
-            m_jit.load32(JITCompiler::tagFor(node.local()), tag.gpr());
-            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-            m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
-
-            DataFormat format;
-            if (isArrayPrediction(prediction))
-                format = DataFormatJSCell;
-            else if (isBooleanPrediction(prediction))
-                format = DataFormatJSBoolean;
-            else
-                format = DataFormatJS;
-
-            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), tag.gpr(), result.gpr(), format);
+            break;
         }
+
+        GPRTemporary tag(this);
+        m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
+        m_jit.load32(JITCompiler::tagFor(node.local()), tag.gpr());
+
+        // Like jsValueResult, but don't useChildren - our children are phi nodes,
+        // and don't represent values within this dataflow with virtual registers.
+        VirtualRegister virtualRegister = node.virtualRegister();
+        m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
+        m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
+
+        DataFormat format;
+        if (isArrayPrediction(prediction))
+            format = DataFormatJSCell;
+        else if (isBooleanPrediction(prediction))
+            format = DataFormatJSBoolean;
+        else
+            format = DataFormatJS;
+
+        m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), tag.gpr(), result.gpr(), format);
         break;
     }
 
@@ -616,17 +663,14 @@ void SpeculativeJIT::compile(Node& node)
             
             IntegerOperand op1(this, node.child1());
             FPRTemporary result(this);
-            GPRTemporary address(this, op1);
             
             GPRReg inputGPR = op1.gpr();
             FPRReg outputFPR = result.fpr();
-            GPRReg addressGPR = address.gpr();
             
             m_jit.convertInt32ToDouble(inputGPR, outputFPR);
             
             JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, inputGPR, TrustedImm32(0));
-            m_jit.move(JITCompiler::TrustedImmPtr(&twoToThe32), addressGPR);
-            m_jit.addDouble(JITCompiler::Address(addressGPR, 0), outputFPR);
+            m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), outputFPR);
             positive.link(&m_jit);
             
             doubleResult(outputFPR, m_compileIndex);
@@ -764,25 +808,7 @@ void SpeculativeJIT::compile(Node& node)
         }
 
         ASSERT(op == ValueAdd);
-
-        JSValueOperand op1(this, node.child1());
-        JSValueOperand op2(this, node.child2());
-
-        GPRReg op1TagGPR = op1.tagGPR();
-        GPRReg op1PayloadGPR = op1.payloadGPR();
-        GPRReg op2TagGPR = op2.tagGPR();
-        GPRReg op2PayloadGPR = op2.payloadGPR();
-
-        flushRegisters();
-        
-        GPRResult2 resultTag(this);
-        GPRResult resultPayload(this);
-        if (isKnownNotNumber(node.child1()) || isKnownNotNumber(node.child2()))
-            callOperation(operationValueAddNotNumber, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
-        else
-            callOperation(operationValueAdd, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
-        
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
+        compileValueAdd(node);
         break;
     }
 
@@ -1062,20 +1088,9 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case LogicalNot: {
-        // FIXME: Need to add fast paths for known booleans.
-        JSValueOperand value(this, node.child1());
-        GPRTemporary resultTag(this, value);
-        GPRTemporary resultPayload(this, value, false);
-        speculationCheck(m_jit.branch32(JITCompiler::NotEqual, value.tagGPR(), TrustedImm32(JSValue::BooleanTag)));
-        m_jit.move(value.payloadGPR(), resultPayload.gpr());
-        m_jit.xor32(TrustedImm32(1), resultPayload.gpr());
-        m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTag.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex, DataFormatJSBoolean);
+    case LogicalNot:
+        compileLogicalNot(node);
         break;
-    }
 
     case CompareLess:
         if (compare(node, JITCompiler::LessThan, JITCompiler::DoubleLessThan, operationCompareLess))
@@ -1156,7 +1171,7 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         JSValueOperand value(this, node.child3());
-        GPRTemporary scratch(this, base);
+        GPRTemporary scratch(this);
 
         // Map base, property & value into registers, allocate a scratch register.
         GPRReg baseReg = base.gpr();

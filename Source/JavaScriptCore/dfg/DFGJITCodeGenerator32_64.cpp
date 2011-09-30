@@ -1554,38 +1554,6 @@ void JITCodeGenerator::emitBranch(Node& node)
     noResult(m_compileIndex, UseChildrenCalledExplicitly);
 }
 
-void JITCodeGenerator::nonSpeculativeLogicalNot(Node& node)
-{
-    JSValueOperand arg1(this, node.child1());
-    GPRTemporary resultTag(this, arg1);
-    GPRTemporary resultPayload(this, arg1, false);
-    GPRReg arg1TagGPR = arg1.tagGPR();
-    GPRReg arg1PayloadGPR = arg1.payloadGPR();
-    GPRReg resultTagGPR = resultTag.gpr();
-    GPRReg resultPayloadGPR = resultPayload.gpr();
-        
-    arg1.use();
-
-    JITCompiler::Jump fastCase = m_jit.branch32(JITCompiler::Equal, arg1TagGPR, TrustedImm32(JSValue::BooleanTag));
-        
-    silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-    m_jit.push(arg1TagGPR);
-    m_jit.push(arg1PayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
-    silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
-    JITCompiler::Jump doNot = m_jit.jump();
-        
-    fastCase.link(&m_jit);
-    m_jit.move(arg1PayloadGPR, resultPayloadGPR);
-
-    doNot.link(&m_jit);
-    m_jit.xor32(TrustedImm32(1), resultPayloadGPR);
-    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
-}
-
 void JITCodeGenerator::emitCall(Node& node)
 {
     P_DFGOperation_E slowCallFunction;

@@ -194,6 +194,41 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
         addBranch(m_jit.jump(), notTaken);
 }
 
+// Returns true if the compare is fused with a subsequent branch.
+bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, Z_DFGOperation_EJJ operation)
+{
+    // Fused compare & branch.
+    NodeIndex branchNodeIndex = detectPeepHoleBranch();
+    if (branchNodeIndex != NoNode) {
+        // detectPeepHoleBranch currently only permits the branch to be the very next node,
+        // so can be no intervening nodes to also reference the compare. 
+        ASSERT(node.adjustedRefCount() == 1);
+
+        if (shouldSpeculateInteger(node.child1(), node.child2())) {
+            compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
+            use(node.child1());
+            use(node.child2());
+        } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
+            compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
+            use(node.child1());
+            use(node.child2());
+        } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2())) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr);
+            use(node.child1());
+            use(node.child2());
+        } else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2())) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr);
+            use(node.child1());
+            use(node.child2());
+        } else
+            nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
+
+        m_compileIndex = branchNodeIndex;
+        return true;
+    }
+    return false;
+}
+
 void SpeculativeJIT::compileMovHint(Node& node)
 {
     ASSERT(node.op == SetLocal);
