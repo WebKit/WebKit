@@ -578,8 +578,35 @@ private:
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.
     template<typename T>
-    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath);
-   
+    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+    {
+        MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
+        
+        m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
+        
+        // The object is half-allocated: we have what we know is a fresh object, but
+        // it's still on the GC's free list.
+        
+        // Ditch the structure by placing it into the structure slot, so that we can reuse
+        // scratchGPR.
+        m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
+        
+        // Now that we have scratchGPR back, remove the object from the free list
+        m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
+        m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
+        
+        // Initialize the object's vtable
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
+        
+        // Initialize the object's inheritorID.
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
+        
+        // Initialize the object's property storage pointer.
+        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+    }
+
 #if USE(JSVALUE64) 
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
 #elif USE(JSVALUE32_64)
