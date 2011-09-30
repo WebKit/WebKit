@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Frame Scale Hit Test</title>
+
+    <script>
+        function init() {
+            if (!window.eventSender)
+                return;
+            // Scale the page and resize the frames to verify hit testing on the frameset
+            var leftPanelWidth = window.innerWidth / 8;
+            eventSender.scalePageBy(0.5, 0, 0);
+            eventSender.mouseMoveTo(leftPanelWidth, window.innerHeight / 4);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(2 * leftPanelWidth, window.innerHeight / 4);
+            eventSender.mouseUp();
+        }
+        window.onload = init;
+    </script>
+  </head>
+  <frameset style="background-color: red; -webkit-transform-origin: 0% 0%;" cols="25%,75%">
+    <frame src="data:text/html,<body bgcolor='green'></body>">
+    <frame src="data:text/html,<body bgcolor='green'></body>">
+  </frameset>
+</html>

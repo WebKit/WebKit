@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>FrameSet Rotation Hit Test</title>
+
+    <script>
+        function init() {
+            if (!window.eventSender)
+                return;
+            // Scale the page and resize the frames to verify hit testing on the frameset
+            eventSender.scalePageBy(0.5, 0, 0);
+            var leftPanelWidth = window.innerWidth / 8;
+            eventSender.mouseMoveTo(window.innerWidth / 4, leftPanelWidth);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(window.innerWidth / 4, 2 * leftPanelWidth);
+            eventSender.mouseUp();
+        }
+        window.onload = init;
+    </script>
+  </head>
+  <!--rotate the frameset and translate it to make sure the entire frameset is visible after scaling-->
+  <frameset style="background-color: red; -webkit-transform: rotate(90deg) translate(100px, 0px);" cols="25%,75%">
+    <frame src="data:text/html,<body bgcolor='green'></body>">
+    <frame src="data:text/html,<body bgcolor='green'></body>">
+  </frameset>
+</html>
