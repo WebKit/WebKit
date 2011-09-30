@@ -1,3 +1,39 @@
+2011-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/forms/text-control-intrinsic-widths.html fails on Mac if Word/Office fonts are installed
+        https://bugs.webkit.org/show_bug.cgi?id=35273
+
+        Reviewed by Dan Bernstein.
+        
+        There are two types of font issue that can cause layout test failure.
+        First, the user may have non-standard fonts installed that affect the layout
+        of some tests. For example, some tests use the MS Gothic font if installed.
+        
+        Secondly, the user may have duplicate fonts installed in ~/Library/Fonts,
+        which override the system fonts (e.g. a copy of Arial from MS Office). For
+        some tests, this can affect font metrics or fallback behavior.
+        
+        This change addresses the first problem only. It limits the set of fonts
+        available through NSFontManager, by swizzling some methods to return
+        a list of fonts or font families which only include fonts from a hardcoded
+        whitelist.
+        
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        (drt_NSFontManager_availableFontFamilies):
+        (drt_NSFontManager_availableFonts):
+        (swizzleNSFontManagerMethods):
+        (activateTestingFonts):
+        (adjustFonts):
+        (createWebViewAndOffscreenWindow):
+        (prepareConsistentTestingEnvironment):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::allowedFontFamilySet):
+        (WTR::drt_NSFontManager_availableFontFamilies):
+        (WTR::drt_NSFontManager_availableFonts):
+        (WTR::swizzleNSFontManagerMethods):
+        (WTR::InjectedBundle::platformInitialize):
+
 2011-09-30  David Levin  <levin@chromium.org>
 
         Need to skip webkitpy.common.checkout.baselineoptimizer_unittest.BaselineOptimizerTest on Windows..
