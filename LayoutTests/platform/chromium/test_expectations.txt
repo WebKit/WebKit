@@ -3848,3 +3848,6 @@ BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
 BUGWK69103 WIN LINUX : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
 BUGWK69103 MAC : fast/text/line-initial-and-final-swashes.html = IMAGE
+
+BUGWK69124 WIN LINUX GPU : platform/chromium/compositing/3d-corners.html = TEXT
+
