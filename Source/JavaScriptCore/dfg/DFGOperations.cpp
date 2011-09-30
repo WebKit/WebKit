@@ -532,8 +532,8 @@ RegisterSizedBoolean DFG_OPERATION operationCompareStrictEq(ExecState* exec, Enc
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-EncodedJSValue getHostCallReturnValue();
-EncodedJSValue getHostCallReturnValueWithExecState(ExecState*);
+EncodedJSValue DFG_OPERATION getHostCallReturnValue();
+EncodedJSValue DFG_OPERATION getHostCallReturnValueWithExecState(ExecState*);
 
 #if CPU(X86_64)
 asm (
@@ -548,12 +548,15 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
-    "push %edi\n"
+    "mov (%esp), %ecx\n"
+    "mov %edi, (%esp)\n"
+    "lea -4(%esp), %esp\n"
+    "mov %ecx, (%esp)\n"
     "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
 
-EncodedJSValue getHostCallReturnValueWithExecState(ExecState* exec)
+EncodedJSValue DFG_OPERATION getHostCallReturnValueWithExecState(ExecState* exec)
 {
     return JSValue::encode(exec->globalData().hostCallReturnValue);
 }
