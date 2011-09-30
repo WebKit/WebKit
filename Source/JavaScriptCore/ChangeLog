@@ -1,3 +1,21 @@
+2011-09-30  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT, Branch on integer can always be a 32-bit compare.
+        https://bugs.webkit.org/show_bug.cgi?id=69174
+
+        Reviewed by Sam Weinig.
+
+        if (shouldSpeculateInteger(node.child1()) && !isStrictInt32(node.child1())),
+        the JSVALUE64 JIT will currently compare all 64bits in the register, but in
+        these cases the DataFormat is always a JS boxed integer. In these cases we
+        can just compare the low 32bits anyway - no need to check the tag.
+        This allows the code to be unified with the JSVALUE32_64 JIT.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-30  Oliver Hunt  <oliver@apple.com>
 
         Need a sensible GGC policy

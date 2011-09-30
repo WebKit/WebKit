@@ -1363,8 +1363,8 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case Branch:
-        if (isStrictInt32(node.child1())) {
-            SpeculateStrictInt32Operand op(this, node.child1());
+        if (isStrictInt32(node.child1()) || shouldSpeculateInteger(node.child1())) {
+            SpeculateIntegerOperand op(this, node.child1());
             
             BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
             BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
@@ -1379,29 +1379,6 @@ void SpeculativeJIT::compile(Node& node)
             }
             
             addBranch(m_jit.branchTest32(condition, op.gpr()), taken);
-            if (notTaken != (m_block + 1))
-                addBranch(m_jit.jump(), notTaken);
-            
-            noResult(m_compileIndex);
-            break;
-        }
-        if (shouldSpeculateInteger(node.child1())) {
-            SpeculateIntegerOperand op(this, node.child1());
-
-            BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-            BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-            
-            MacroAssembler::RelationalCondition condition = MacroAssembler::NotEqual;
-
-            if (taken == (m_block + 1)) {
-                condition = MacroAssembler::Equal;
-                BlockIndex tmp = taken;
-                taken = notTaken;
-                notTaken = tmp;
-            }
-            
-            addBranch(m_jit.branchPtr(condition, op.gpr(), GPRInfo::tagTypeNumberRegister), taken);
-
             if (notTaken != (m_block + 1))
                 addBranch(m_jit.jump(), notTaken);
             

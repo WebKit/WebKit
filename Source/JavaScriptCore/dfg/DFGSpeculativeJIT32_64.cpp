@@ -1270,7 +1270,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case Branch:
         if (isStrictInt32(node.child1()) || shouldSpeculateInteger(node.child1())) {
-            SpeculateStrictInt32Operand op(this, node.child1());
+            SpeculateIntegerOperand op(this, node.child1());
             
             BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
             BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
