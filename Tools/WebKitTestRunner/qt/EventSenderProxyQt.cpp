@@ -255,19 +255,6 @@ void EventSenderProxy::updateClickCountForButton(int button)
     m_clickButton = button;
 }
 
-QGraphicsSceneMouseEvent* EventSenderProxy::createGraphicsSceneMouseEvent(QEvent::Type type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
-{
-    QGraphicsSceneMouseEvent* event;
-    event = new QGraphicsSceneMouseEvent(type);
-    event->setPos(pos);
-    event->setScreenPos(screenPos);
-    event->setButton(button);
-    event->setButtons(buttons);
-    event->setModifiers(modifiers);
-
-    return event;
-}
-
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 {
     Qt::KeyboardModifiers modifiers = getModifiers(wkModifiers);
@@ -278,7 +265,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     m_mouseButtons |= mouseButton;
 
     QPoint mousePos(m_position.x, m_position.y);
-    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent((m_clickCount == 2) ? QEvent::GraphicsSceneMouseDoubleClick : QEvent::GraphicsSceneMousePress,
+    QMouseEvent* event = new QMouseEvent((m_clickCount == 2) ? QEvent::MouseButtonDblClick : QEvent::MouseButtonPress,
         mousePos, mousePos, mouseButton, m_mouseButtons, modifiers);
 
     sendOrQueueEvent(event);
@@ -290,7 +277,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers)
     m_mouseButtons &= ~mouseButton;
 
     QPoint mousePos(m_position.x, m_position.y);
-    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseRelease,
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonRelease,
         mousePos, mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
 
     sendOrQueueEvent(event);
@@ -302,7 +289,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     m_position.y = y;
 
     QPoint mousePos(m_position.x, m_position.y);
-    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseMove,
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseMove,
         mousePos, mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
 
     sendOrQueueEvent(event);

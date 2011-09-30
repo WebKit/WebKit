@@ -51,7 +51,6 @@ private:
 #if PLATFORM(QT)
     void sendOrQueueEvent(QEvent*);
     void replaySavedEvents();
-    QGraphicsSceneMouseEvent* createGraphicsSceneMouseEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
 #endif
 
     double m_time;

@@ -1,3 +1,23 @@
+2011-09-30  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Change WebKitTestRunner to use QMouseEvents instead of QGraphicsSceneMouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=69145
+
+        This is a follow up to https://bugs.webkit.org/show_bug.cgi?id=69105
+        Due to refactorings in Qt5, QMouseEvent now supports floating point coordinates
+        and is perfectly suitable for SceneGraph as well. GraphicsScene events
+        will not be available in QtGui anymore in future. Therefore we also have to change
+        QtWebKit to use QMouseEvents instead of QGraphicsSceneMouseEvents.
+
+        Reviewed by Chang Shu.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::createMouseEvent):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+
 2011-09-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebKit API for sending input events to the compositor thread
