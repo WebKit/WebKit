@@ -400,7 +400,6 @@ LayoutRect RenderLayer::repaintRectIncludingDescendants() const
 
 void RenderLayer::computeRepaintRects(IntPoint* offsetFromRoot)
 {
-    ASSERT(m_hasVisibleContent);
     ASSERT(!m_visibleContentStatusDirty);
 
     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();

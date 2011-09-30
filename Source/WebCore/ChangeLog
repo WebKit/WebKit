@@ -1,3 +1,15 @@
+2011-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Loading page on potterybankids causes reproducible assertion failure in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=69185
+        <rdar://problem/10218241>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeRepaintRects): Remove assert condition that isn't guaranteed
+        to be true.
+
 2011-09-30  Johnny Ding  <jnd@chromium.org>
 
         Support -webkit-tap-highlight-color when enabling touch events support.
