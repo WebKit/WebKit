@@ -125,6 +125,10 @@ public:
     void setDatabaseQuota(uint64_t);
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
 
+    // Application Cache
+    void clearAllApplicationCaches();
+    void setAppCacheMaximumSize(uint64_t);
+
     // Printing
     int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);
     int pageNumberForElementById(JSStringRef, double pageWidthInPixels, double pageHeightInPixels);

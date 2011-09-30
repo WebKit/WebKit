@@ -123,6 +123,10 @@ public:
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
 
+    // Application Cache API
+    void clearApplicationCache();
+    void setAppCacheMaximumSize(uint64_t);
+
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
     void garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone);

@@ -190,6 +190,7 @@ void InjectedBundle::beginTesting()
     page()->reset();
 
     WKBundleClearAllDatabases(m_bundle);
+    WKBundleClearApplicationCache(m_bundle);
     WKBundleResetOriginAccessWhitelists(m_bundle);
 }
 

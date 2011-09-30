@@ -99,4 +99,11 @@ void WebApplicationCacheManager::deleteAllEntries()
     cacheStorage().deleteAllEntries();
 }
 
+void WebApplicationCacheManager::setAppCacheMaximumSize(uint64_t size)
+{
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
+    cacheStorage().setMaximumSize(size);
+}
+
 } // namespace WebKit

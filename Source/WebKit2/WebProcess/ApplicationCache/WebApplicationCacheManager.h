@@ -47,12 +47,13 @@ public:
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+    void deleteAllEntries();
+    void setAppCacheMaximumSize(uint64_t);
 private:
     WebApplicationCacheManager();
     
     void getApplicationCacheOrigins(uint64_t callbackID);
     void deleteEntriesForOrigin(const SecurityOriginData&);
-    void deleteAllEntries();
 
     void didReceiveWebApplicationCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 };

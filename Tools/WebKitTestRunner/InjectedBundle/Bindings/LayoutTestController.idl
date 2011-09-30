@@ -96,6 +96,10 @@ module WTR {
         void setDatabaseQuota(in unsigned long long quota);
         DOMString pathToLocalResource(in DOMString url);
 
+        // Application Cache API
+        void clearAllApplicationCaches();
+        void setAppCacheMaximumSize(in unsigned long long size);
+
         // Compositing testing.
         DOMString layerTreeAsText();
 

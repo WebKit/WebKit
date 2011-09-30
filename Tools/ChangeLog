@@ -1,3 +1,21 @@
+2011-09-30  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize
+        https://bugs.webkit.org/show_bug.cgi?id=42698
+
+        Reviewed by Andreas Kling.
+
+        Implemented layoutTestController.setAppCacheMaximumSize and layoutTestController.clearApplicationCache,
+        and call clearApplicationCache when layoutTest start up.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::clearAllApplicationCaches):
+        (WTR::LayoutTestController::setAppCacheMaximumSize):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-09-30  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] Change WebKitTestRunner to use QMouseEvents instead of QGraphicsSceneMouseEvents

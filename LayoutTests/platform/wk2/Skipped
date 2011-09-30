@@ -709,10 +709,6 @@ printing/simultaneous-position-float-change.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42696>
 security/set-form-autocomplete-attribute.html
 
-# WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize
-# <https://bugs.webkit.org/show_bug.cgi?id=42698>
-http/tests/appcache/max-size.html
-
 # WebKitTestRunner needs layoutTestController.setWillSendRequestClearHeader
 # <https://bugs.webkit.org/show_bug.cgi?id=42699>
 http/tests/security/no-referrer.html

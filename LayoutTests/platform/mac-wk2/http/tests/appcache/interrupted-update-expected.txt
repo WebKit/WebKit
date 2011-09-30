@@ -1,7 +1,0 @@
-Test that an application cache update works again after interruption.
-
-CHECKING
-NOUPDATE
-
-FAIL - the cache was already present, so we couldn't test initial loading
-

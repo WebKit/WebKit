@@ -33,6 +33,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebApplicationCacheManager.h"
 #include "WebContextMessageKinds.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
@@ -191,6 +192,16 @@ void InjectedBundle::clearAllDatabases()
 void InjectedBundle::setDatabaseQuota(uint64_t quota)
 {
     WebDatabaseManager::shared().setQuotaForOrigin("file:///", quota);
+}
+
+void InjectedBundle::clearApplicationCache()
+{
+    WebApplicationCacheManager::shared().deleteAllEntries();
+}
+
+void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
+{
+    WebApplicationCacheManager::shared().setAppCacheMaximumSize(size);
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
