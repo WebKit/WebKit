@@ -110,8 +110,6 @@ public:
     bool canRunModal() const;
     void runModal(WebPageProxy*);
 
-    void didCompleteRubberBandForMainFrame(WebPageProxy*, const WebCore::IntSize&);
-
     void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
     bool shouldInterruptJavaScript(WebPageProxy*);

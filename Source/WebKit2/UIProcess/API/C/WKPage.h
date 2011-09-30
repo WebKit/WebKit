@@ -191,7 +191,6 @@ typedef float (*WKPageFooterHeightCallback)(WKPageRef page, WKFrameRef frame, co
 typedef void (*WKPageDrawHeaderCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPageDrawFooterCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPagePrintFrameCallback)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
-typedef void (*WKPageDidCompleteRubberBandForMainFrameCallback)(WKPageRef page, WKSize initialOverhang, const void* clientInfo);
 typedef void (*WKPageSaveDataToFileInDownloadsFolderCallback)(WKPageRef page, WKStringRef suggestedFilename, WKStringRef mimeType, WKURLRef originatingURL, WKDataRef data, const void* clientInfo);
 typedef bool (*WKPageShouldInterruptJavaScriptCallback)(WKPageRef page, const void *clientInfo);
 
@@ -240,7 +239,7 @@ struct WKPageUIClient {
     WKPageDrawFooterCallback                                            drawFooter;
     WKPagePrintFrameCallback                                            printFrame;
     WKPageCallback                                                      runModal;
-    WKPageDidCompleteRubberBandForMainFrameCallback                     didCompleteRubberBandForMainFrame;
+    void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
     WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
 

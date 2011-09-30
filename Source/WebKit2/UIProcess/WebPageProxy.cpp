@@ -3140,11 +3140,6 @@ void WebPageProxy::runModal()
     m_uiClient.runModal(this);
 }
 
-void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang)
-{
-    m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
-}
-
 void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {
     m_visibleScrollerThumbRect = scrollerThumb;

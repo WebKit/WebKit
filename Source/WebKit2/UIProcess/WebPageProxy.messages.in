@@ -60,7 +60,6 @@ messages -> WebPageProxy {
     RunOpenPanel(uint64_t frameID, WebKit::WebOpenPanelParameters::Data parameters)
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
-    DidCompleteRubberBandForMainFrame(WebCore::IntSize initialOverhang)
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)

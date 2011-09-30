@@ -385,14 +385,6 @@ void WebUIClient::runModal(WebPageProxy* page)
     m_client.runModal(toAPI(page), m_client.clientInfo);
 }
 
-void WebUIClient::didCompleteRubberBandForMainFrame(WebPageProxy* page, const IntSize& initialOverhang)
-{
-    if (!m_client.didCompleteRubberBandForMainFrame)
-        return;
-
-    m_client.didCompleteRubberBandForMainFrame(toAPI(page), toAPI(initialOverhang), m_client.clientInfo);
-}
-
 void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
 {
     if (!m_client.saveDataToFileInDownloadsFolder)

@@ -777,10 +777,6 @@ void WebChromeClient::didStartRubberBandForFrame(Frame*, const IntSize&) const
 void WebChromeClient::didCompleteRubberBandForFrame(Frame* frame, const IntSize& initialOverhang) const
 {
     m_page->drawingArea()->enableDisplayThrottling();
-
-    if (frame != frame->page()->mainFrame())
-        return;
-    m_page->send(Messages::WebPageProxy::DidCompleteRubberBandForMainFrame(initialOverhang));
 }
 
 void WebChromeClient::didStartAnimatedScroll() const
