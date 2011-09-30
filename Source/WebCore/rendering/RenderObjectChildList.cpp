@@ -434,6 +434,7 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                     RefPtr<RenderStyle> newStyle = RenderStyle::create();
                     newStyle->inheritFrom(pseudoElementStyle);
                     newStyle->setDisplay(curr->style()->display());
+                    newStyle->setStyleType(curr->style()->styleType());
                     curr->setStyle(newStyle);
                     curr = curr->parent();
                 }
