@@ -26,7 +26,11 @@
 #include "config.h"
 #include "DumpRenderTreeView.h"
 
+#include "DumpRenderTree.h"
+#include "DumpRenderTreeChrome.h"
+#include "LayoutTestController.h"
 #include <EWebKit.h>
+#include <Ecore.h>
 #include <Eina.h>
 #include <Evas.h>
 #include <cstdio>
@@ -58,6 +62,24 @@ static Eina_Bool onJavaScriptPrompt(Ewk_View_Smart_Data*, Evas_Object*, const ch
     return EINA_TRUE;
 }
 
+static Evas_Object* onWindowCreate(Ewk_View_Smart_Data*, Eina_Bool, const Ewk_Window_Features*)
+{
+    return gLayoutTestController->canOpenWindows() ? browser->createNewWindow() : 0;
+}
+
+static Eina_Bool onWindowCloseDelayed(void* data)
+{
+    Evas_Object* view = static_cast<Evas_Object*>(data);
+    browser->removeWindow(view);
+    return EINA_FALSE;
+}
+
+static void onWindowClose(Ewk_View_Smart_Data* smartData)
+{
+    Evas_Object* view = smartData->self;
+    ecore_idler_add(onWindowCloseDelayed, view);
+}
+
 Evas_Object* drtViewTiledAdd(Evas* evas)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View_Tiled");
@@ -72,6 +94,8 @@ Evas_Object* drtViewTiledAdd(Evas* evas)
     api.run_javascript_alert = onJavaScriptAlert;
     api.run_javascript_confirm = onJavaScriptConfirm;
     api.run_javascript_prompt = onJavaScriptPrompt;
+    api.window_create = onWindowCreate;
+    api.window_close = onWindowClose;
 
     return evas_object_smart_add(evas, evas_smart_class_new(&api.sc));
 }

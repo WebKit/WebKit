@@ -1,3 +1,27 @@
+2011-09-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Support and keep track of extra windows (views).
+        https://bugs.webkit.org/show_bug.cgi?id=68454
+
+        Reviewed by Antonio Gomes.
+
+        So far, window.open and related JavaScript code would not work, as
+        DRTView did not implementation
+        Ewk_View_Smart_Class::window_{open,close}. The default implementation
+        in ewk just returns the current window/view, which broke any
+        layouttest which relied on window.open.
+
+        We now properly create and remove these new views. Unfortunately, the
+        current way ewk works (and due to the fact that we cannot pass class
+        methods as function pointers to the EFL functions), DRTView needs to
+        know that DRTChrome exists and call `browser' directly in some points.
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onWindowCreate):
+        (onWindowCloseDelayed):
+        (onWindowClose):
+        (drtViewTiledAdd):
+
 2011-09-30  Qi Zhang  <qi.2.zhang@nokia.com>
 
         WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize
