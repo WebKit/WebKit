@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -130,6 +131,9 @@ class BaselineOptimizerTest(unittest.TestCase):
         })
 
     def test_complex_shadowing(self):
+        # This test relies on OS specific functionality, so it doesn't work on Windows.
+        if sys.platform == 'win32':
+            return
         self._assertOptimization({
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac': '5daa78e55f05d9f0d1bb1f32b0cd1bc3a01e9364',
