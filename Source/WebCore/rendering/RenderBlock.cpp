@@ -3574,7 +3574,7 @@ LayoutUnit RenderBlock::logicalRightOffsetForContent(LayoutUnit position) const
     if (!inRenderFlowThread())
         return logicalRightOffset;
     LayoutRect boxRect = borderBoxRectInRegionAtPosition(position);
-    return logicalLeftOffsetForContent(position) + availableLogicalWidth() - (logicalWidth() - (isHorizontalWritingMode() ? boxRect.width() : boxRect.height()));
+    return logicalRightOffset - (logicalWidth() - (isHorizontalWritingMode() ? boxRect.maxX() : boxRect.maxY()));
 }
 
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const

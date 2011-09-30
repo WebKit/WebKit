@@ -31,21 +31,21 @@ namespace WebCore {
 
 class RenderBoxRegionInfo {
 public:
-    RenderBoxRegionInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool containingBlockChainIsShifted)
+    RenderBoxRegionInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
         : m_logicalLeft(logicalLeft)
         , m_logicalWidth(logicalWidth)
-        , m_containingBlockChainIsShifted(containingBlockChainIsShifted)
+        , m_isShifted(isShifted)
     { }
 
     LayoutUnit logicalLeft() const { return m_logicalLeft; }
     LayoutUnit logicalWidth() const { return m_logicalWidth; }
     
-    bool containingBlockChainIsShifted() const { return m_containingBlockChainIsShifted; }
+    bool isShifted() const { return m_isShifted; }
 
 private:
     LayoutUnit m_logicalLeft;
     LayoutUnit m_logicalWidth;
-    bool m_containingBlockChainIsShifted;
+    bool m_isShifted;
 };
 
 } // namespace WebCore

@@ -1,0 +1,61 @@
+<!doctype html>
+
+ <style>
+    #content {
+        -webkit-flow: "flow1";
+        text-align: justify;
+        padding: 5px;
+    }
+    
+    #first-box {
+        border: 1px solid blue;
+    }
+    
+    #second-box {
+        margin:40px;
+        border: 1px solid green;
+        overflow:hidden
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+        content: -webkit-from-flow("flow1");
+    }
+
+    #region1 {
+        width: 200px;
+        height: 100px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The first and last lines of text in the regions below should be clipped to the green box. The overflow
+section sizes itself based off the first region. Since it is a scrollable box, it has to maintain the same
+width and placement across all of the regions.</p>
+
+<div id="content">
+    <div id="first-box">
+        <div id="second-box">
+            <div style="width:500px">Clipped line of text that should not be visible.</div>
+            <p>These lines will not spill out of the regions. These lines will not spill out of the regions.
+            These lines will not spill out of the regions. </p>
+            <div style="width:500px">Clipped line of text that should not be visible.</div>
+        </div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>

@@ -211,14 +211,26 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region) const
     LayoutUnit logicalWidth = boxInfo->logicalWidth();
     LayoutUnit logicalLeft = boxInfo->logicalLeft();
         
-    // Now apply the parent left inset since it is cumulative whenever anything in the containing block chain shifts.
-    const RenderBox* currentBox = this;
-    while (boxInfo->containingBlockChainIsShifted()) {
-        currentBox = currentBox->containingBlock();
+    // Now apply the parent inset since it is cumulative whenever anything in the containing block chain shifts.
+    const RenderBox* currentBox = containingBlock();
+    boxInfo = currentBox->renderBoxRegionInfo(region);
+    while (boxInfo && boxInfo->isShifted()) {
+        RenderBox* containerBox = currentBox->containingBlock();
+        LayoutUnit widthDelta = currentBox->logicalWidth() - boxInfo->logicalWidth();
+        if (containerBox->style()->direction() == LTR) {
+            if (currentBox->style()->direction() == RTL)
+                logicalLeft -= widthDelta;
+            else
+                logicalLeft += boxInfo->logicalLeft();
+            
+        } else {
+            if (currentBox->style()->direction() == LTR)
+                logicalLeft += widthDelta;
+            else
+                logicalLeft -= widthDelta - boxInfo->logicalLeft();
+        }
+        currentBox = containerBox;
         boxInfo = currentBox->renderBoxRegionInfo(region);
-        if (!boxInfo)
-            break;
-        logicalLeft += boxInfo->logicalLeft();
     }
     
     if (isHorizontalWritingMode())
@@ -1260,6 +1272,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion* region) const
 {
     LayoutUnit result = containingBlockLogicalWidthForContent();
+    if (shrinkToAvoidFloats()) // We already sized to the available line width, so no need to adjust.
+        return result;
     RenderBlock* cb = containingBlock();
     RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region);
     if (!boxInfo)
@@ -1871,7 +1885,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region) const
     if (cb->style()->isLeftToRightDirection())
         logicalLeftOffset += startMarginDelta;
     else
-        logicalLeftOffset += widthDelta - startMarginDelta;
+        logicalLeftOffset -= (widthDelta + startMarginDelta);
     
     // Set our values back.
     mutableBox->setLogicalWidth(oldLogicalWidth);
@@ -1879,11 +1893,12 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region) const
     mutableBox->setMarginEnd(oldMarginEnd);
 
     RenderBoxRegionInfo* containingBlockInfo = cb->renderBoxRegionInfo(region);
-    bool containingBlockChainIsShifted = containingBlockInfo && (containingBlockInfo->containingBlockChainIsShifted()
-        || containingBlockInfo->logicalLeft());
-        
+    bool isShifted = containingBlockInfo && (containingBlockInfo->isShifted()
+        || (style()->direction() == LTR && logicalLeftOffset)
+        || (style()->direction() == RTL && (logicalWidth() - (logicalLeftOffset + logicalWidthInRegion))));
+
     // FIXME: Although it's unlikely, these boxes can go outside our bounds, and so we will need to incorporate them into overflow.
-    return region->setRenderBoxRegionInfo(this, logicalLeftOffset, logicalWidthInRegion, containingBlockChainIsShifted);
+    return region->setRenderBoxRegionInfo(this, logicalLeftOffset, logicalWidthInRegion, isShifted);
 }
 
 void RenderBox::computeLogicalHeight()

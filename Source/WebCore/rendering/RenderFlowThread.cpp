@@ -311,13 +311,10 @@ void RenderFlowThread::layout()
         LayoutUnit previousRegionLogicalWidth = 0;
         LayoutUnit previousRegionLogicalHeight = 0;
         if (hasRegions()) {
-            int logicalHeight = 0;
             for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
                 RenderRegion* region = *iter;
-
                 if (!region->isValid())
                     continue;
-
                 ASSERT(!region->needsLayout());
                 
                 region->deleteAllRenderBoxRegionInfo();
@@ -325,15 +322,10 @@ void RenderFlowThread::layout()
                 LayoutUnit regionLogicalWidth;
                 LayoutUnit regionLogicalHeight;
 
-                IntRect regionRect;
                 if (isHorizontalWritingMode()) {
-                    regionRect = IntRect(0, logicalHeight, region->contentWidth(), region->contentHeight());
-                    logicalHeight += regionRect.height();
                     regionLogicalWidth = region->contentWidth();
                     regionLogicalHeight = region->contentHeight();
                 } else {
-                    regionRect = IntRect(logicalHeight, 0, region->contentWidth(), region->contentHeight());
-                    logicalHeight += regionRect.width();
                     regionLogicalWidth = region->contentHeight();
                     regionLogicalHeight = region->contentWidth();
                 }
@@ -348,7 +340,23 @@ void RenderFlowThread::layout()
                 }
 
                 previousRegionLogicalWidth = regionLogicalWidth;
-
+            }
+            
+            computeLogicalWidth(); // Called to get the maximum logical width for the region.
+            
+            LayoutUnit logicalHeight = 0;
+            for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+                RenderRegion* region = *iter;
+                if (!region->isValid())
+                    continue;
+                LayoutRect regionRect;
+                if (isHorizontalWritingMode()) {
+                    regionRect = IntRect(style()->direction() == LTR ? 0 : logicalWidth() - region->contentWidth(), logicalHeight, region->contentWidth(), region->contentHeight());
+                    logicalHeight += regionRect.height();
+                } else {
+                    regionRect = IntRect(logicalHeight, style()->direction() == LTR ? 0 : logicalWidth() - region->contentHeight(), region->contentWidth(), region->contentHeight());
+                    logicalHeight += regionRect.width();
+                }
                 region->setRegionRect(regionRect);
             }
         }

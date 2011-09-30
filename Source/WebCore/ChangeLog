@@ -1,3 +1,43 @@
+2011-09-30  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69167
+        
+        [CSS3 Regions] Fix some bugs in the computation of the logical left and width offsets
+        for blocks in variable width regions. Specifically, this patch addresses a minor bug
+        with overflow:hidden/scroll/auto block placement and with RTL directionality.
+
+        Reviewed by Sam Weinig.
+
+        Added five new tests in fast/regions.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Avoid a double fetch of the border box in a given region by not calling
+        logicalLeftOffsetForContent. No correctness change here. It's just cleaner.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        Change the shifted optimization to be cached for "self" rather than for "containing block".
+        Rework the adjustment loop to handle changes in directionality and to fix correctness
+        issues with RTL.
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        Don't double adjust if an object uses line width as the containing block width. In that
+        case we already computed the line width in the region, so we don't need to apply any
+        additional fixup.
+
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        * rendering/RenderBoxRegionInfo.h:
+        (WebCore::RenderBoxRegionInfo::RenderBoxRegionInfo):
+        (WebCore::RenderBoxRegionInfo::isShifted):
+        Changed the shifted code to be on self rather than on containing block.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        Refactor the layout code for RenderFlowThread to properly set up region rects assuming
+        right alignment in RTL code. This change forces us to compute our maximum logical width
+        first before looping through the regions again to set their content rects.
+
 2011-09-30  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r82611) InlineBox has 33 bits of bitset, causing alignment issues and extra memory use.
