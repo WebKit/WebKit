@@ -1,3 +1,16 @@
+2011-09-30  Chang Shu  <cshu@webkit.org>
+
+        Replace textInputController.doCommand with eventSender.keyDown in password-echo tests
+        https://bugs.webkit.org/show_bug.cgi?id=69143
+
+        textInputController.doCommand is not supported very well across the platforms. Replace it
+        with eventSender.keyDown would make the tests pass on more platforms and potentially WK2.
+
+        Reviewed by Antonio Gomes.
+
+        * editing/input/resources/password-echo.js:
+        (init):
+
 2011-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         [Chromium] Layout test failures under Snow Leopard

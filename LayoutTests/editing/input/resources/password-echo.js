@@ -42,7 +42,7 @@ function run(tests, testIdx)
 {
     var expectedSecureTextLen;
     if (testIdx >= 0) {
-        textInputController.doCommand("moveForward:");
+        eventSender.keyDown("rightArrow");
         if(tests[testIdx][3])
             assert(tests[testIdx][2], window.find(secureText(testnode.value.length), false, true), "secured after delay.");
     }
@@ -53,15 +53,16 @@ function run(tests, testIdx)
     }
 
     testnode.focus();
-    textInputController.doCommand("moveForward:");
+    eventSender.keyDown("rightArrow");
 
     var charSequence = tests[testIdx][0];
     for (var i = 0; i < charSequence.length - 1; i++) {
         textInputController.setMarkedText(charSequence[i], testnode.value.length, testnode.value.length);
     }
-    if (charSequence[charSequence.length - 1] == "backspace")
-        textInputController.doCommand("deleteBackward:");
-    else
+    if (charSequence[charSequence.length - 1] == "backspace") {
+        eventSender.keyDown("leftArrow");
+        eventSender.keyDown("delete");
+    } else
         textInputController.insertText(charSequence[charSequence.length - 1]);
 
     if(tests[testIdx][3])
@@ -75,7 +76,7 @@ function run(tests, testIdx)
 
 function init(tests)
 {
-    if (window.layoutTestController && window.textInputController) {
+    if (window.layoutTestController && window.textInputController && window.eventSender) {
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
         if (window.internals) {
