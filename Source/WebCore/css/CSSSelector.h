@@ -242,6 +242,7 @@ namespace WebCore {
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
         bool isSiblingSelector() const;
+        bool isAttributeSelector() const;
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
@@ -326,7 +327,20 @@ inline bool CSSSelector::isSiblingSelector() const
         || type == PseudoNthLastChild
         || type == PseudoNthLastOfType;
 }
-    
+
+inline bool CSSSelector::isAttributeSelector() const
+{
+    if (!hasAttribute())
+        return false;
+    return m_match == CSSSelector::Exact
+        || m_match ==  CSSSelector::Set
+        || m_match == CSSSelector::List
+        || m_match == CSSSelector::Hyphen
+        || m_match == CSSSelector::Contain
+        || m_match == CSSSelector::Begin
+        || m_match == CSSSelector::End;
+}
+
 inline void CSSSelector::setValue(const AtomicString& value)
 {
     // Need to do ref counting manually for the union.

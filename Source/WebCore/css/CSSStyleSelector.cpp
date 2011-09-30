@@ -189,6 +189,7 @@ public:
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
     bool hasMultipartSelector() const { return m_hasMultipartSelector; }
     bool hasRightmostSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash; }
+    bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
     
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
@@ -199,10 +200,11 @@ private:
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
     unsigned m_specificity;
-    unsigned m_position : 29;
+    unsigned m_position : 28;
     bool m_hasFastCheckableSelector : 1;
     bool m_hasMultipartSelector : 1;
     bool m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
+    bool m_containsUncommonAttributeSelector : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -258,6 +260,7 @@ static RuleSet* defaultViewSourceStyle;
 static CSSStyleSheet* simpleDefaultStyleSheet;
     
 static RuleSet* siblingRulesInDefaultStyle;
+static RuleSet* uncommonAttributeRulesInDefaultStyle;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
@@ -271,13 +274,15 @@ static inline bool elementCanUseSimpleDefaultStyle(Element* e)
     return e->hasTagName(htmlTag) || e->hasTagName(headTag) || e->hasTagName(bodyTag) || e->hasTagName(divTag) || e->hasTagName(spanTag) || e->hasTagName(brTag) || e->hasTagName(aTag);
 }
 
-static inline void collectSiblingRulesInDefaultStyle()
+static inline void collectSpecialRulesInDefaultStyle()
 {
     CSSStyleSelector::Features features;
     defaultStyle->collectFeatures(features);
     ASSERT(features.idsInRules.isEmpty());
     delete siblingRulesInDefaultStyle;
+    delete uncommonAttributeRulesInDefaultStyle;
     siblingRulesInDefaultStyle = features.siblingRules.leakPtr();
+    uncommonAttributeRulesInDefaultStyle = features.uncommonAttributeRules.leakPtr();
 }
 
 static inline void assertNoSiblingRulesInDefaultStyle()
@@ -285,7 +290,7 @@ static inline void assertNoSiblingRulesInDefaultStyle()
 #ifndef NDEBUG
     if (siblingRulesInDefaultStyle)
         return;
-    collectSiblingRulesInDefaultStyle();
+    collectSpecialRulesInDefaultStyle();
     ASSERT(!siblingRulesInDefaultStyle);
 #endif
 }
@@ -411,6 +416,8 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     // Usually there are no sibling rules in the default style but the MathML sheet has some.
     if (siblingRulesInDefaultStyle)
         siblingRulesInDefaultStyle->collectFeatures(m_features);
+    if (uncommonAttributeRulesInDefaultStyle)
+        uncommonAttributeRulesInDefaultStyle->collectFeatures(m_features);
     m_authorStyle->collectFeatures(m_features);
     if (m_userStyle)
         m_userStyle->collectFeatures(m_features);
@@ -418,6 +425,8 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     m_authorStyle->shrinkToFit();
     if (m_features.siblingRules)
         m_features.siblingRules->shrinkToFit();
+    if (m_features.uncommonAttributeRules)
+        m_features.uncommonAttributeRules->shrinkToFit();
 
     if (document->renderer() && document->renderer()->style())
         document->renderer()->style()->font().update(fontSelector());
@@ -559,8 +568,11 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
     
     // Now transfer the set of matched rules over to our list of decls.
     if (!m_checker.isCollectingRulesOnly()) {
-        for (unsigned i = 0; i < m_matchedRules.size(); i++)
+        for (unsigned i = 0; i < m_matchedRules.size(); i++) {
+            if (m_style && m_matchedRules[i]->containsUncommonAttributeSelector())
+                m_style->setAffectedByUncommonAttributeSelectors();
             addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
+        }
     } else {
         for (unsigned i = 0; i < m_matchedRules.size(); i++) {
             if (!m_ruleList)
@@ -740,10 +752,10 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
     return 0;
 }
 
-bool CSSStyleSelector::matchesSiblingRules()
+bool CSSStyleSelector::matchesRuleSet(RuleSet* ruleSet)
 {
     int firstSiblingRule = -1, lastSiblingRule = -1;
-    matchRules(m_features.siblingRules.get(), firstSiblingRule, lastSiblingRule, false);
+    matchRules(ruleSet, firstSiblingRule, lastSiblingRule, false);
     if (m_matchedDecls.isEmpty())
         return false;
     m_matchedDecls.clear();
@@ -827,7 +839,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
         return false;
     if (element->isLink() != m_element->isLink())
         return false;
-    if (style->affectedByAttributeSelectors())
+    if (style->affectedByUncommonAttributeSelectors())
         return false;
     if (element->hovered() != m_element->hovered())
         return false;
@@ -911,7 +923,7 @@ static inline bool parentStylePreventsSharing(const RenderStyle* parentStyle)
         || parentStyle->childrenAffectedByLastChildRules();
 }
 
-ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
+RenderStyle* CSSStyleSelector::locateSharedStyle()
 {
     if (!m_styledElement || !m_parentStyle)
         return 0;
@@ -941,7 +953,10 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
         return 0;
 
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
-    if (matchesSiblingRules())
+    if (matchesRuleSet(m_features.siblingRules.get()))
+        return 0;
+    // Can't share if attribute rules apply.
+    if (matchesRuleSet(m_features.uncommonAttributeRules.get()))
         return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentStylePreventsSharing(m_parentStyle))
@@ -1112,6 +1127,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e)) {
         loadFullDefaultStyle();
         assertNoSiblingRulesInDefaultStyle();
+        collectSpecialRulesInDefaultStyle();
     }
 
 #if ENABLE(SVG)
@@ -1123,6 +1139,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         defaultStyle->addRulesFromSheet(svgSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
         assertNoSiblingRulesInDefaultStyle();
+        collectSpecialRulesInDefaultStyle();
     }
 #endif
 
@@ -1134,8 +1151,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
-        // There are some sibling rules here.
-        collectSiblingRulesInDefaultStyle();
+        // There are some sibling and uncommon attribute rules here.
+        collectSpecialRulesInDefaultStyle();
     }
 #endif
 
@@ -1147,7 +1164,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
         defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
-        assertNoSiblingRulesInDefaultStyle();
+        collectSpecialRulesInDefaultStyle();
     }
 #endif
 
@@ -1159,6 +1176,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
         defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
         defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+        collectSpecialRulesInDefaultStyle();
     }
 #endif
 
@@ -1838,6 +1856,46 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* sele
     return selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
 }
 
+static inline bool selectorListContainsUncommonAttributeSelector(const CSSSelector* selector)
+{
+    CSSSelectorList* selectorList = selector->selectorList();
+    if (!selectorList)
+        return false;
+    for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (subSelector->isAttributeSelector())
+            return true;
+    }
+    return false;
+}
+
+static inline bool isCommonAttributeSelectorAttribute(const QualifiedName& attribute)
+{
+    // These are explicitly tested for equality in canShareStyleWithElement.
+    return attribute == typeAttr || attribute == readonlyAttr;
+}
+
+static inline bool containsUncommonAttributeSelector(const CSSSelector* selector)
+{
+    while (selector) {
+        // Allow certain common attributes (used in the default style) in the selectors that match the current element.
+        if (selector->isAttributeSelector() && !isCommonAttributeSelectorAttribute(selector->attribute()))
+            return true;
+        if (selectorListContainsUncommonAttributeSelector(selector))
+            return true;
+        if (selector->relation() != CSSSelector::SubSelector)
+            break;
+        selector = selector->tagHistory();
+    };
+
+    for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {            
+        if (selector->isAttributeSelector())
+            return true;
+        if (selectorListContainsUncommonAttributeSelector(selector))
+            return true;
+    }
+    return false;
+}
+
 RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     : m_rule(rule)
     , m_selector(selector)
@@ -1846,6 +1904,7 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     , m_hasFastCheckableSelector(SelectorChecker::isFastCheckableSelector(selector))
     , m_hasMultipartSelector(selector->tagHistory())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
+    , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
@@ -1995,21 +2054,8 @@ static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& featu
 {
     if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
         features.idsInRules.add(selector->value().impl());
-    if (selector->hasAttribute()) {
-        switch (selector->m_match) {
-        case CSSSelector::Exact:
-        case CSSSelector::Set:
-        case CSSSelector::List:
-        case CSSSelector::Hyphen:
-        case CSSSelector::Contain:
-        case CSSSelector::Begin:
-        case CSSSelector::End:
-            features.attrsInRules.add(selector->attribute().localName().impl());
-            break;
-        default:
-            break;
-        }
-    }
+    if (selector->isAttributeSelector())
+        features.attrsInRules.add(selector->attribute().localName().impl());
     switch (selector->pseudoType()) {
     case CSSSelector::PseudoFirstLine:
         features.usesFirstLineRules = true;
@@ -2049,6 +2095,11 @@ static void collectFeaturesFromList(CSSStyleSelector::Features& features, const 
             if (!features.siblingRules)
                 features.siblingRules = adoptPtr(new RuleSet);
             features.siblingRules->addRule(ruleData.rule(), ruleData.selector());   
+        }
+        if (ruleData.containsUncommonAttributeSelector()) {
+            if (!features.uncommonAttributeRules)
+                features.uncommonAttributeRules = adoptPtr(new RuleSet);
+            features.uncommonAttributeRules->addRule(ruleData.rule(), ruleData.selector()); 
         }
     }
 }

@@ -122,7 +122,7 @@ private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
     RenderStyle* locateSharedStyle();
-    bool matchesSiblingRules();
+    bool matchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(Node*) const;
@@ -202,6 +202,7 @@ public:
         HashSet<AtomicStringImpl*> idsInRules;
         HashSet<AtomicStringImpl*> attrsInRules;
         OwnPtr<RuleSet> siblingRules;
+        OwnPtr<RuleSet> uncommonAttributeRules;
         bool usesFirstLineRules;
         bool usesBeforeAfterRules;
         bool usesLinkRules;

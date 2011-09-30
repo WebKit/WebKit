@@ -71,7 +71,7 @@ PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle()
-    : m_affectedByAttributeSelectors(false)
+    : m_affectedByUncommonAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
     , m_emptyState(false)
@@ -98,7 +98,7 @@ ALWAYS_INLINE RenderStyle::RenderStyle()
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(bool)
-    : m_affectedByAttributeSelectors(false)
+    : m_affectedByUncommonAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
     , m_emptyState(false)
@@ -138,7 +138,7 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
 
 ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
     : RefCounted<RenderStyle>()
-    , m_affectedByAttributeSelectors(false)
+    , m_affectedByUncommonAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
     , m_emptyState(false)

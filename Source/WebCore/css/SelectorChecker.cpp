@@ -686,10 +686,6 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
         
         const QualifiedName& attr = sel->attribute();
         
-        // FIXME: Handle the case were elementStyle is 0.
-        if (elementStyle && (!e->isStyledElement() || (!static_cast<StyledElement*>(e)->isMappedAttribute(attr) && attr != typeAttr && attr != readonlyAttr)))
-            elementStyle->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
-        
         NamedNodeMap* attributes = e->attributes(true);
         if (!attributes)
             return false;

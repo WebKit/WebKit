@@ -1,3 +1,47 @@
+2011-09-29  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69106
+        Universal attribute selectors disable style sharing
+
+        Reviewed by Dave Hyatt.
+
+        Selectors of type [foo="bar"] ended up marking every element style with the affectedByAttributeSelectors bit
+        rendering style sharing inoperative. This happens on http://www.whatwg.org/specs/web-apps/current-work/ for example.
+
+        Instead we now mark style with affectedByUncommonAttributeSelectors bit only if an attribute selector actually 
+        matches the element. Before sharing, we also check the current element against collected attribute rules.
+        We can share the style if neither element was affected.
+        
+        This speeds up style matching and applying ~15% on full HTML5 spec (=~0.7s). Sharing percentage goes from 0% to ~30%.
+        Increased sharing should also save a substantial amount of memory.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::isAttributeSelector):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::containsUncommonAttributeSelector):
+        (WebCore::collectSpecialRulesInDefaultStyle):
+        (WebCore::assertNoSiblingRulesInDefaultStyle):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchesRuleSet):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::selectorListContainsUncommonAttributeSelector):
+        (WebCore::isCommonAttributeSelectorAttribute):
+        (WebCore::containsUncommonAttributeSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::collectFeaturesFromList):
+        * css/CSSStyleSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::affectedByUncommonAttributeSelectors):
+        (WebCore::InheritedFlags::setAffectedByUncommonAttributeSelectors):
+
 2011-09-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebKit API for sending input events to the compositor thread

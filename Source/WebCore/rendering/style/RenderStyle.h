@@ -127,7 +127,7 @@ protected:
 
     // The following bitfield is 32-bits long, which optimizes padding with the
     // int refCount in the base class. Beware when adding more bits.
-    bool m_affectedByAttributeSelectors : 1;
+    bool m_affectedByUncommonAttributeSelectors : 1;
     bool m_unique : 1;
 
     // Bits for dynamic child matching.
@@ -1306,8 +1306,8 @@ public:
     void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
 
     // To tell if this style matched attribute selectors. This makes it impossible to share.
-    bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
-    void setAffectedByAttributeSelectors() { m_affectedByAttributeSelectors = true; }
+    bool affectedByUncommonAttributeSelectors() const { return m_affectedByUncommonAttributeSelectors; }
+    void setAffectedByUncommonAttributeSelectors() { m_affectedByUncommonAttributeSelectors = true; }
 
     bool affectedByDirectAdjacentRules() const { return m_affectedByDirectAdjacentRules; }
     void setAffectedByDirectAdjacentRules() { m_affectedByDirectAdjacentRules = true; }
