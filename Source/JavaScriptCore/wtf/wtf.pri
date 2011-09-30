@@ -84,6 +84,7 @@ HEADERS += \
     wtf/PassTraits.h \
     wtf/Platform.h \
     wtf/PossiblyNull.h \
+    wtf/qt/UtilsQt.h \
     wtf/RandomNumber.h \
     wtf/RandomNumberSeed.h \
     wtf/RedBlackTree.h \

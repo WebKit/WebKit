@@ -1,3 +1,19 @@
+2011-09-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Build fix: Qt::escape is deprecated in Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=69162
+
+        Use QString::toHtmlEscaped in the Qt5 case.
+
+        Reviewed by Andreas Kling.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+
 2011-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build against Qt5 after refactor of widgets out of QtGUi
