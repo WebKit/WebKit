@@ -1,3 +1,26 @@
+2011-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Prevent qDebug() output from DRT and WTR unless --verbose
+
+        For DRT we didn't install the message handler early enough to
+        catch output while constructing the QApplication. For WTR we
+        didn't even install a message handler.
+
+        Since the UI process will forward any output from the web process
+        we set an environment variable QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT
+        in WTR before the web process is started. This is picked up by the
+        web process which installs its own message handler.
+
+        The environment variable can be overriden on the command line if you
+        want to see output from the web process, or you can pass --verbose to
+        WTR to see output from both processes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=69132
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+
 2011-09-30  Anders Carlsson  <andersca@apple.com>
 
         Remove didCompleteRubberBandForMainFrame UIClient callback

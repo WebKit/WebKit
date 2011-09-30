@@ -130,8 +130,24 @@ static void initializeProxy()
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 }
 
+void messageHandler(QtMsgType type, const char* message)
+{
+    if (type == QtCriticalMsg) {
+        fprintf(stderr, "%s\n", message);
+        return;
+    }
+
+    // Do nothing
+}
+
 Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
 {
+    // Has to be done before QApplication is constructed in case
+    // QApplication itself produces debug output.
+    QByteArray suppressOutput = qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT");
+    if (!suppressOutput.isEmpty() && suppressOutput != "0")
+        qInstallMsgHandler(messageHandler);
+
     QApplication::setGraphicsSystem(QLatin1String("raster"));
     QApplication* app = new QApplication(argc, argv);
 #ifndef NDEBUG

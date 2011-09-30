@@ -60,8 +60,35 @@ private:
     char** m_argv;
 };
 
+void messageHandler(QtMsgType type, const char* message)
+{
+    if (type == QtCriticalMsg) {
+        fprintf(stderr, "%s\n", message);
+        return;
+    }
+
+    // Do nothing
+}
+
 int main(int argc, char** argv)
 {
+    // Suppress debug output from Qt if not started with --verbose
+    bool suppressQtDebugOutput = true;
+    for (int i = 1; i < argc; ++i) {
+        if (!qstrcmp(argv[i], "--verbose")) {
+            suppressQtDebugOutput = false;
+            break;
+        }
+    }
+
+    // Has to be done before QApplication is constructed in case
+    // QApplication itself produces debug output.
+    if (suppressQtDebugOutput) {
+        qInstallMsgHandler(messageHandler);
+        if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty())
+            qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
+    }
+
     QApplication app(argc, argv);
     Launcher launcher(argc, argv);
     QTimer::singleShot(0, &launcher, SLOT(launch()));
