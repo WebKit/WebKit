@@ -1,5 +1,22 @@
 2011-09-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Only save the current viewport in PixelDumpSupportEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=68450
+
+        Reviewed by Antonio Gomes.
+
+        The previous implementation saved the whole page contents in the final
+        PNG, however the baselines and expectations in the tree only want the
+        current viewport (with a scrollbar, if needed), so we now only save the
+        currently visible contents.
+
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView): Use
+        ewk_frame_visible_content_geometry_get instead of
+        ewk_frame_contents_size_get.
+
+2011-09-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Support and keep track of extra windows (views).
         https://bugs.webkit.org/show_bug.cgi?id=68454
 

@@ -41,15 +41,15 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(browser));
     Ewk_View_Private_Data* privateData = static_cast<Ewk_View_Private_Data*>(smartData->_priv);
 
-    int width, height;
-    if (!ewk_frame_contents_size_get(mainFrame, &width, &height))
+    int x, y, width, height;
+    if (!ewk_frame_visible_content_geometry_get(mainFrame, EINA_TRUE, &x, &y, &width, &height))
         return 0;
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
     RefPtr<cairo_t> context = adoptRef(cairo_create(surface.get()));
 
-    const Eina_Rectangle rect = { 0, 0, width, height };
-    if (!ewk_view_paint_contents(privateData, context.get(), &rect))
+    const Eina_Rectangle rect = { x, y, width, height };
+    if (!ewk_view_paint(privateData, context.get(), &rect))
         return 0;
 
     if (drawSelectionRect) {
