@@ -1,3 +1,47 @@
+2011-09-30  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Event delivery in QDesktopWebView is broken after merge of Qt5 refactor
+        https://bugs.webkit.org/show_bug.cgi?id=69105
+
+        This changes QDesktopWebView and QDesktopWebPageProxy to use QMouseEvent instead
+        of QGraphicsSceneMouseEvent.
+        Further it removes an endless loop introduced by the QSGItem::event() function
+        delivering inputMethodEvents but no other events.
+
+        Reviewed by Andreas Kling.
+
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent):
+        * Shared/qt/NativeWebMouseEventQt.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/qt/NativeWebWheelEventQt.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::mouseButtonForEvent):
+        (WebKit::webEventTypeForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebView::mousePressEvent):
+        (QDesktopWebView::mouseMoveEvent):
+        (QDesktopWebView::mouseReleaseEvent):
+        (QDesktopWebView::mouseDoubleClickEvent):
+        (QDesktopWebView::wheelEvent):
+        (QDesktopWebView::event):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::handleEvent):
+        (QDesktopWebPageProxy::handleMouseMoveEvent):
+        (QDesktopWebPageProxy::handleMousePressEvent):
+        (QDesktopWebPageProxy::handleMouseReleaseEvent):
+        (QDesktopWebPageProxy::handleMouseDoubleClickEvent):
+        (QDesktopWebPageProxy::handleWheelEvent):
+        (QDesktopWebPageProxy::handleHoverMoveEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+
 2011-09-29  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Initial implementation of WebInspector for WebKit2 GTK port.

@@ -32,7 +32,7 @@ class QWebNavigationController;
 
 QT_BEGIN_NAMESPACE
 class QFocusEvent;
-class QGraphicsSceneMouseEvent;
+class QMouseEvent;
 class QHoverEvent;
 class QInputMethodEvent;
 class QKeyEvent;
@@ -96,10 +96,10 @@ protected:
     virtual void inputMethodEvent(QInputMethodEvent*);
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent*);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent*);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent *);
     virtual void wheelEvent(QWheelEvent*);
     virtual void touchEvent(QTouchEvent*);
     virtual void hoverEnterEvent(QHoverEvent*);

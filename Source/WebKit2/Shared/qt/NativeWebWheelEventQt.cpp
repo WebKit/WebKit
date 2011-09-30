@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(QGraphicsSceneWheelEvent* event)
+NativeWebWheelEvent::NativeWebWheelEvent(QWheelEvent* event)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
     , m_nativeEvent(event)
 {

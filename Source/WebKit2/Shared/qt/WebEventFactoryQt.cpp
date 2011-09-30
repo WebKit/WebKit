@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static WebMouseEvent::Button mouseButtonForEvent(QGraphicsSceneMouseEvent *event)
+static WebMouseEvent::Button mouseButtonForEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton || (event->buttons() & Qt::LeftButton))
         return WebMouseEvent::LeftButton;
@@ -53,30 +53,30 @@ static WebMouseEvent::Button mouseButtonForEvent(QGraphicsSceneMouseEvent *event
 static WebEvent::Type webEventTypeForEvent(const QEvent* event)
 {
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseDoubleClick:
-        case QEvent::GraphicsSceneMousePress:
-            return WebEvent::MouseDown;
-        case QEvent::GraphicsSceneMouseRelease:
-            return WebEvent::MouseUp;
-        case QEvent::GraphicsSceneMouseMove:
-            return WebEvent::MouseMove;
-        case QEvent::Wheel:
-            return WebEvent::Wheel;
-        case QEvent::KeyPress:
-            return WebEvent::KeyDown;
-        case QEvent::KeyRelease:
-            return WebEvent::KeyUp;
+    case QEvent::MouseButtonDblClick:
+    case QEvent::MouseButtonPress:
+        return WebEvent::MouseDown;
+    case QEvent::MouseButtonRelease:
+        return WebEvent::MouseUp;
+    case QEvent::MouseMove:
+        return WebEvent::MouseMove;
+    case QEvent::Wheel:
+        return WebEvent::Wheel;
+    case QEvent::KeyPress:
+        return WebEvent::KeyDown;
+    case QEvent::KeyRelease:
+        return WebEvent::KeyUp;
 #if ENABLE(TOUCH_EVENTS)
-        case QEvent::TouchBegin:
-            return WebEvent::TouchStart;
-        case QEvent::TouchUpdate:
-            return WebEvent::TouchMove;
-        case QEvent::TouchEnd:
-            return WebEvent::TouchEnd;
+    case QEvent::TouchBegin:
+        return WebEvent::TouchStart;
+    case QEvent::TouchUpdate:
+        return WebEvent::TouchMove;
+    case QEvent::TouchEnd:
+        return WebEvent::TouchEnd;
 #endif
-        default:
-            // assert
-            return WebEvent::MouseMove;
+    default:
+        // assert
+        return WebEvent::MouseMove;
     }
 }
 
@@ -94,22 +94,23 @@ static inline WebEvent::Modifiers modifiersForEvent(Qt::KeyboardModifiers modifi
     return (WebEvent::Modifiers)result;
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(QGraphicsSceneMouseEvent* event, int eventClickCount)
+WebMouseEvent WebEventFactory::createWebMouseEvent(QMouseEvent* event, int eventClickCount)
 {
-    FloatPoint delta(event->pos().x() - event->lastPos().x(), event->pos().y() - event->lastPos().y());
+    static FloatPoint lastPos = FloatPoint(0, 0);
 
     WebEvent::Type type             = webEventTypeForEvent(event);
     WebMouseEvent::Button button    = mouseButtonForEvent(event);
-    float deltaX                    = delta.x();
-    float deltaY                    = delta.y();
+    float deltaX                    = event->pos().x() - lastPos.x();
+    float deltaY                    = event->pos().y() - lastPos.y();
     int clickCount                  = eventClickCount;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
     double timestamp                = WTF::currentTime();
+    lastPos.set(event->localPos().x(), event->localPos().y());
 
-    return WebMouseEvent(type, button, event->pos().toPoint(), event->screenPos(), deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, event->localPos().toPoint(), event->screenPos().toPoint(), deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(QGraphicsSceneWheelEvent* e)
+WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e)
 {
     float deltaX                            = 0;
     float deltaY                            = 0;
@@ -138,7 +139,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QGraphicsSceneWheelEvent* e)
     deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
     deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
 
-    return WebWheelEvent(WebEvent::Wheel, e->pos().toPoint(), e->screenPos(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
+    return WebWheelEvent(WebEvent::Wheel, e->posF().toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)

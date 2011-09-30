@@ -269,40 +269,29 @@ void QDesktopWebView::focusOutEvent(QFocusEvent* event)
     this->event(event);
 }
 
-void QDesktopWebView::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void QDesktopWebView::mousePressEvent(QMouseEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void QDesktopWebView::mouseMoveEvent(QMouseEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void QDesktopWebView::mouseReleaseEvent(QMouseEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+void QDesktopWebView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     this->event(event);
 }
 
 void QDesktopWebView::wheelEvent(QWheelEvent* event)
 {
-    // FIXME: for some reason, the scene graph delivers QWheelEvent instead of QGraphicsSceneWheelEvent.
-    // We transform them in QGraphicsSceneWheelEvent for consistency. Otherwise the position would be complete magic.
-    // We shoud modify the scenegraph to get the correct type of events.
-    QGraphicsSceneWheelEvent graphicsEvent(QEvent::GraphicsSceneWheel);
-    graphicsEvent.setPos(event->pos());
-    graphicsEvent.setButtons(event->buttons());
-    graphicsEvent.setDelta(event->delta());
-    graphicsEvent.setModifiers(event->modifiers());
-    graphicsEvent.setOrientation(event->orientation());
-    graphicsEvent.setScenePos(mapToScene(event->pos()));
-    graphicsEvent.setScreenPos(event->globalPos());
-    this->event(&graphicsEvent);
+    this->event(event);
 }
 
 void QDesktopWebView::touchEvent(QTouchEvent* event)
@@ -367,6 +356,8 @@ bool QDesktopWebView::event(QEvent* ev)
 {
     if (d->page.handleEvent(ev))
         return true;
+    if (ev->type() == QEvent::InputMethod)
+        return false; // This is necessary to avoid an endless loop in connection with QSGItem::event().
     return QSGItem::event(ev);
 }
 

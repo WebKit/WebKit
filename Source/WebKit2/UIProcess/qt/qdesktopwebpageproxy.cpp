@@ -90,16 +90,16 @@ PassRefPtr<WebPopupMenuProxy> QDesktopWebPageProxy::createPopupMenuProxy(WebPage
 bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
-    case QEvent::GraphicsSceneMouseMove:
-        return handleMouseMoveEvent(reinterpret_cast<QGraphicsSceneMouseEvent*>(ev));
-    case QEvent::GraphicsSceneMousePress:
-        return handleMousePressEvent(reinterpret_cast<QGraphicsSceneMouseEvent*>(ev));
-    case QEvent::GraphicsSceneMouseRelease:
-        return handleMouseReleaseEvent(reinterpret_cast<QGraphicsSceneMouseEvent*>(ev));
-    case QEvent::GraphicsSceneMouseDoubleClick:
-        return handleMouseDoubleClickEvent(reinterpret_cast<QGraphicsSceneMouseEvent*>(ev));
-    case QEvent::GraphicsSceneWheel:
-        return handleWheelEvent(reinterpret_cast<QGraphicsSceneWheelEvent*>(ev));
+    case QEvent::MouseMove:
+        return handleMouseMoveEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonPress:
+        return handleMousePressEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonRelease:
+        return handleMouseReleaseEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonDblClick:
+        return handleMouseDoubleClickEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::Wheel:
+        return handleWheelEvent(reinterpret_cast<QWheelEvent*>(ev));
     case QEvent::HoverMove:
         return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
     case QEvent::GraphicsSceneDragEnter:
@@ -114,7 +114,7 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
-bool QDesktopWebPageProxy::handleMouseMoveEvent(QGraphicsSceneMouseEvent* ev)
+bool QDesktopWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
 {
     // For some reason mouse press results in mouse hover (which is
     // converted to mouse move for WebKit). We ignore these hover
@@ -131,7 +131,7 @@ bool QDesktopWebPageProxy::handleMouseMoveEvent(QGraphicsSceneMouseEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMousePressEvent(QGraphicsSceneMouseEvent* ev)
+bool QDesktopWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
 {
     if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < QApplication::startDragDistance()) {
         m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/3));
@@ -142,22 +142,22 @@ bool QDesktopWebPageProxy::handleMousePressEvent(QGraphicsSceneMouseEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
+bool QDesktopWebPageProxy::handleMouseReleaseEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/0));
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
+bool QDesktopWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/2));
 
     m_tripleClickTimer.start(QApplication::doubleClickInterval(), this);
-    m_tripleClick = ev->pos().toPoint();
+    m_tripleClick = ev->localPos().toPoint();
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleWheelEvent(QGraphicsSceneWheelEvent* ev)
+bool QDesktopWebPageProxy::handleWheelEvent(QWheelEvent* ev)
 {
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
     return ev->isAccepted();
@@ -165,8 +165,7 @@ bool QDesktopWebPageProxy::handleWheelEvent(QGraphicsSceneWheelEvent* ev)
 
 bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
 {
-    QGraphicsSceneMouseEvent me(QEvent::GraphicsSceneMouseMove);
-    me.setPos(ev->pos());
+    QMouseEvent me(QEvent::MouseMove, ev->pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
     me.setAccepted(ev->isAccepted());
 
     return handleMouseMoveEvent(&me);

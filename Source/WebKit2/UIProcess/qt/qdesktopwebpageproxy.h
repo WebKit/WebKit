@@ -51,11 +51,11 @@ private:
 
     virtual void timerEvent(QTimerEvent*);
 
-    bool handleMouseMoveEvent(QGraphicsSceneMouseEvent*);
-    bool handleMousePressEvent(QGraphicsSceneMouseEvent*);
-    bool handleMouseReleaseEvent(QGraphicsSceneMouseEvent*);
-    bool handleMouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
-    bool handleWheelEvent(QGraphicsSceneWheelEvent*);
+    bool handleMouseMoveEvent(QMouseEvent*);
+    bool handleMousePressEvent(QMouseEvent*);
+    bool handleMouseReleaseEvent(QMouseEvent*);
+    bool handleMouseDoubleClickEvent(QMouseEvent*);
+    bool handleWheelEvent(QWheelEvent*);
     bool handleHoverMoveEvent(QHoverEvent*);
     bool handleDragEnterEvent(QGraphicsSceneDragDropEvent*);
     bool handleDragLeaveEvent(QGraphicsSceneDragDropEvent*);

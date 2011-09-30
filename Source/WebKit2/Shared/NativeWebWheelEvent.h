@@ -32,7 +32,7 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
 #elif PLATFORM(QT)
-#include <qgraphicssceneevent.h>
+#include <qevent.h>
 #elif PLATFORM(GTK)
 #include <GOwnPtrGtk.h>
 typedef union _GdkEvent GdkEvent;
@@ -49,7 +49,7 @@ public:
 #elif PLATFORM(WIN)
     NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
 #elif PLATFORM(QT)
-    explicit NativeWebWheelEvent(QGraphicsSceneWheelEvent*);
+    explicit NativeWebWheelEvent(QWheelEvent*);
 #elif PLATFORM(GTK)
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*);
@@ -62,7 +62,7 @@ public:
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const { return &m_nativeEvent; }
 #elif PLATFORM(QT)
-    const QGraphicsSceneWheelEvent* nativeEvent() const { return m_nativeEvent; }
+    const QWheelEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(EFL)
@@ -75,7 +75,7 @@ private:
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;
 #elif PLATFORM(QT)
-    QGraphicsSceneWheelEvent* m_nativeEvent;
+    QWheelEvent* m_nativeEvent;
 #elif PLATFORM(GTK)
     GOwnPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(EFL)
