@@ -61,32 +61,27 @@ bool FEBlend::setBlendMode(BlendModeType mode)
     return true;
 }
 
-static unsigned char unknown(unsigned char, unsigned char, unsigned char, unsigned char)
-{
-    return 0;
-}
-
-static unsigned char normal(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char)
+static inline unsigned char normal(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char)
 {
     return (((255 - alphaA) * colorB + colorA * 255) / 255);
 }
 
-static unsigned char multiply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+static inline unsigned char multiply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
 {
     return (((255 - alphaA) * colorB + (255 - alphaB + colorB) * colorA) / 255);
 }
 
-static unsigned char screen(unsigned char colorA, unsigned char colorB, unsigned char, unsigned char)
+static inline unsigned char screen(unsigned char colorA, unsigned char colorB, unsigned char, unsigned char)
 {
     return (((colorB + colorA) * 255 - colorA * colorB) / 255);
 }
 
-static unsigned char darken(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+static inline unsigned char darken(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
 {
     return ((std::min((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255)) / 255);
 }
 
-static unsigned char lighten(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+static inline unsigned char lighten(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
 {
     return ((std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255)) / 255);
 }
@@ -115,9 +110,6 @@ void FEBlend::apply()
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
     RefPtr<ByteArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
 
-    // Keep synchronized with BlendModeType
-    static const BlendType callEffect[] = {unknown, normal, multiply, screen, darken, lighten};
-
     unsigned pixelArrayLength = srcPixelArrayA->length();
     ASSERT(pixelArrayLength == srcPixelArrayB->length());
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
@@ -126,8 +118,30 @@ void FEBlend::apply()
         for (unsigned channel = 0; channel < 3; ++channel) {
             unsigned char colorA = srcPixelArrayA->get(pixelOffset + channel);
             unsigned char colorB = srcPixelArrayB->get(pixelOffset + channel);
+            unsigned char result;
 
-            unsigned char result = (*callEffect[m_mode])(colorA, colorB, alphaA, alphaB);
+            switch (m_mode) {
+            case FEBLEND_MODE_NORMAL:
+                result = normal(colorA, colorB, alphaA, alphaB);
+                break;
+            case FEBLEND_MODE_MULTIPLY:
+                result = multiply(colorA, colorB, alphaA, alphaB);
+                break;
+            case FEBLEND_MODE_SCREEN:
+                result = screen(colorA, colorB, alphaA, alphaB);
+                break;
+            case FEBLEND_MODE_DARKEN:
+                result = darken(colorA, colorB, alphaA, alphaB);
+                break;
+            case FEBLEND_MODE_LIGHTEN:
+                result = lighten(colorA, colorB, alphaA, alphaB);
+                break;
+            case FEBLEND_MODE_UNKNOWN:
+            default:
+                result = 0;
+                break;
+            }
+
             dstPixelArray->set(pixelOffset + channel, result);
         }
         unsigned char alphaR = 255 - ((255 - alphaA) * (255 - alphaB)) / 255;

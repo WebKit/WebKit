@@ -1,3 +1,25 @@
+2011-09-30  Tim Horton  <timothy_horton@apple.com>
+
+        feBlend uses a table of function pointers which reduces inlineability inside the main loop
+        https://bugs.webkit.org/show_bug.cgi?id=69154
+        <rdar://problem/10215221>
+
+        Reviewed by Darin Adler.
+
+        Don't use a table of function pointers inside the feBlend inner loop, instead
+        use switch and inline functions, bringing a 20% performance gain across the
+        board to feBlend.
+
+        No new tests, minor performance improvement.
+
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::normal):
+        (WebCore::multiply):
+        (WebCore::screen):
+        (WebCore::darken):
+        (WebCore::lighten):
+        (WebCore::FEBlend::apply):
+
 2011-09-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add getCallData to MethodTable in ClassInfo
