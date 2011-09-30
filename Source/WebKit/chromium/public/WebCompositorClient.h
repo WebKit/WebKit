@@ -32,7 +32,7 @@ class WebCompositorClient {
 public:
     // Callbacks invoked from the compositor thread.
     virtual void willShutdown() = 0;
-    virtual void didHandleInputEvent() = 0;
+    virtual void didHandleInputEvent(bool processed) = 0;
 
 protected:
     virtual ~WebCompositorClient() { }

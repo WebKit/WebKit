@@ -1,3 +1,18 @@
+2011-09-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Pass a processed bool in WebCompositorClient::didHandleInputEvent to indicate if the event was processed
+        https://bugs.webkit.org/show_bug.cgi?id=69169
+
+        Reviewed by Darin Fisher.
+
+        If the compositor does not process the input event the embedder might want to do something with it - for
+        example, if the input event type is part of a CTRL+T keyboard accelerator sequence the browser might want to
+        open a new tab. This passes that state through the didHandleInputEvent callback.
+
+        * public/WebCompositorClient.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::handleInputEvent):
+
 2011-09-30  Elliot Poger  <epoger@google.com>
 
         webkit->chromium DEPS roll 102910->103471

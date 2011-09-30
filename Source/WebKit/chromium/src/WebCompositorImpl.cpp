@@ -60,7 +60,7 @@ void WebCompositorImpl::setClient(WebCompositorClient* client)
 void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
 {
     // FIXME: Do something interesting with the event here.
-    m_client->didHandleInputEvent();
+    m_client->didHandleInputEvent(false);
 }
 
 }
