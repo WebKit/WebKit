@@ -29,8 +29,8 @@
 #if defined(BUILDING_QT__)
 class QDesktopWebView;
 typedef QDesktopWebView* PlatformWKView;
-class QSGCanvas;
-typedef QSGCanvas* PlatformWindow;
+class QSGView;
+typedef QSGView* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;

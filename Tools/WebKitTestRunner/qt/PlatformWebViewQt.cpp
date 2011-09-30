@@ -30,20 +30,46 @@
 #include "qdesktopwebview.h"
 
 #include <QApplication>
-#include <QtDeclarative/qsgcanvas.h>
+#include <QDeclarativeProperty>
+#include <QSGView>
 
 namespace WTR {
 
+class WrapperWindow : public QSGView {
+    Q_OBJECT
+public:
+    WrapperWindow(QSGItem* view)
+        : QSGView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
+        , m_view(view)
+    {
+        connect(this, SIGNAL(statusChanged(QSGView::Status)), SLOT(handleStatusChanged(QSGView::Status)));
+    }
+
+private slots:
+    void handleStatusChanged(QSGView::Status status)
+    {
+        if (status != QSGView::Ready)
+            return;
+
+        setGeometry(0, 0, 800, 600);
+        setResizeMode(QSGView::SizeRootObjectToView);
+
+        m_view->setParentItem(rootObject());
+        QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
+
+        QFocusEvent ev(QEvent::WindowActivate);
+        QApplication::sendEvent(m_view, &ev);
+        m_view->setFocus(Qt::OtherFocusReason);
+    }
+
+private:
+    QSGItem* m_view;
+};
+
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_view(new QDesktopWebView(contextRef, pageGroupRef))
-    , m_window(new QSGCanvas)
+    , m_window(new WrapperWindow(m_view))
 {
-    m_view->setParent(m_window->rootItem());
-    m_window->setGeometry(0, 0, 800, 600);
-
-    QFocusEvent ev(QEvent::WindowActivate);
-    QApplication::sendEvent(m_view, &ev);
-    m_view->setFocus(Qt::OtherFocusReason);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -93,3 +119,5 @@ void PlatformWebView::postEvent(QEvent* event)
 }
 
 } // namespace WTR
+
+#include "PlatformWebViewQt.moc"

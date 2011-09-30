@@ -1,3 +1,25 @@
+2011-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure WTR sizes the window and item correctly
+
+        Revision 96345 changed the logic for how the view and
+        window was created, but missed a vital part, setting
+        the size.
+
+        We now use a QSGView for the window, that has a simple
+        item as its root object that is always resized to fit
+        within the window. The webview is then parented to the
+        root object and set to anchors.fill: parent. That way
+        any window geometry changes will propagate to the web
+        view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=69134
+
+        Reviewed by Andreas Kling.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+
 2011-09-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Only save the current viewport in PixelDumpSupportEfl.
