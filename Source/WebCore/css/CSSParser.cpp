@@ -1934,6 +1934,18 @@ bool CSSParser::parseValue(int propId, bool important)
 #endif
     // End Apple-specific properties
 
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyWebkitTapHighlightColor:
+        if ((id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu
+            || (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && !m_strict)) {
+             validPrimitive = true;
+        } else {
+            parsedValue = parseColor();
+            if (parsedValue)
+                m_valueList->next();
+        }
+        break;
+#endif
         /* shorthand properties */
     case CSSPropertyBackground: {
         // Position must come before color in this array because a plain old "0" is a legal color

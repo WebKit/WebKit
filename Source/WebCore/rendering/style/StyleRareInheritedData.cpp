@@ -56,6 +56,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
+#if ENABLE(TOUCH_EVENTS)
+    , tapHighlightColor(RenderStyle::initialTapHighlightColor())
+#endif    
 {
 }
 
@@ -95,6 +98,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , hyphenationLimitLines(o.hyphenationLimitLines)
     , locale(o.locale)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
+#if ENABLE(TOUCH_EVENTS)
+    , tapHighlightColor(o.tapHighlightColor)
+#endif
 {
 }
 
@@ -117,6 +123,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textStrokeWidth == o.textStrokeWidth
         && textFillColor == o.textFillColor
         && textEmphasisColor == o.textEmphasisColor
+#if ENABLE(TOUCH_EVENTS)
+        && tapHighlightColor == o.tapHighlightColor
+#endif
         && shadowDataEquivalent(o)
         && highlight == o.highlight
         && cursorDataEquivalent(cursorData.get(), o.cursorData.get())

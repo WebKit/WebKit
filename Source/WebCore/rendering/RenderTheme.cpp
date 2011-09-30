@@ -1084,6 +1084,13 @@ Color RenderTheme::platformInactiveTextSearchHighlightColor() const
     return Color(255, 255, 0); // Yellow.
 }
 
+#if ENABLE(TOUCH_EVENTS)
+Color RenderTheme::tapHighlightColor()
+{
+    return defaultTheme()->platformTapHighlightColor();
+}
+#endif
+
 void RenderTheme::setCustomFocusRingColor(const Color& c)
 {
     customFocusRingColor() = c;

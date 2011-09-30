@@ -34,6 +34,9 @@
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
+#if ENABLE(TOUCH_EVENTS)
+#include "RenderTheme.h"
+#endif
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
@@ -1511,6 +1514,13 @@ TextEmphasisMark RenderStyle::textEmphasisMark() const
     return TextEmphasisMarkSesame;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+Color RenderStyle::initialTapHighlightColor()
+{
+    return RenderTheme::tapHighlightColor();
+}
+#endif
+
 void RenderStyle::getImageOutsets(const NinePieceImage& image, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
 {
     top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
@@ -1530,5 +1540,5 @@ void RenderStyle::getImageVerticalOutsets(const NinePieceImage& image, LayoutUni
     top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
     bottom = NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth());
 }
-    
+
 } // namespace WebCore

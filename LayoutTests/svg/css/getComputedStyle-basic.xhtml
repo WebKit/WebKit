@@ -24,8 +24,11 @@
           var name = style.item(x);
           var value = style.getPropertyValue(name);
           var cssValue = style.getPropertyCSSValue(name);
-  
-          if (name != "-webkit-dashboard-region") {
+          // "-webkit-tap-highlight-color" is only available on the ports
+          // which have enabled TOUCH_EVENTS flag. We test it in layout test
+          // fast/events/touch/tap-highlight-color.html.
+          if (name != "-webkit-dashboard-region" &&
+              name != "-webkit-tap-highlight-color") {
             debugLog(elementId + ": style.getPropertyValue(" + name + ") : " + value);
             debugLog(elementId + ": style.getPropertyCSSValue(" + name + ") : " + cssValue);
           }

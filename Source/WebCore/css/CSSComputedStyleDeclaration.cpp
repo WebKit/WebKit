@@ -247,6 +247,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitPerspective,
     CSSPropertyWebkitPerspectiveOrigin,
     CSSPropertyWebkitRtlOrdering,
+#if ENABLE(TOUCH_EVENTS)
+    CSSPropertyWebkitTapHighlightColor,
+#endif
     CSSPropertyWebkitTextCombine,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextEmphasisColor,
@@ -1797,6 +1800,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         case CSSPropertyWebkitRtlOrdering:
             return primitiveValueCache->createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
+#if ENABLE(TOUCH_EVENTS)
+        case CSSPropertyWebkitTapHighlightColor:
+            return currentColorOrValidColor(style.get(), style->tapHighlightColor());
+#endif            
         case CSSPropertyWebkitUserDrag:
             return primitiveValueCache->createValue(style->userDrag());
         case CSSPropertyWebkitUserSelect:

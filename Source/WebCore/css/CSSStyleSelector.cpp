@@ -3634,6 +3634,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(pointerEvents, PointerEvents)
         return;
     }
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyWebkitTapHighlightColor: {
+        HANDLE_INHERIT_AND_INITIAL(tapHighlightColor, TapHighlightColor);
+        if (!primitiveValue)
+            break;
+
+        Color col = getColorFromPrimitiveValue(primitiveValue);
+        m_style->setTapHighlightColor(col);
+        return;
+    }
+#endif
     case CSSPropertyWebkitColorCorrection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(colorSpace, ColorSpace);
         return;

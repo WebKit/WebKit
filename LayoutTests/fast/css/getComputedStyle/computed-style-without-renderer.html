@@ -28,7 +28,11 @@
             if (!properties) {
                 for (var i = 0; i != style.length; ++i) {
                     var name = style.item(i);
-                    if (name != "-webkit-dashboard-region")
+                    // "-webkit-tap-highlight-color" is only available on the
+                    // ports which have enabled TOUCH_EVENTS flag. We test it in
+                    // layout test fast/events/touch/tap-highlight-color.html.
+                    if (name != "-webkit-dashboard-region" &&
+                        name != "-webkit-tap-highlight-color")
                         log("    " + name + ": " + style.getPropertyValue(name));
                 }
                 properties = others;

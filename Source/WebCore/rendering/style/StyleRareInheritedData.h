@@ -98,6 +98,9 @@ public:
 
     AtomicString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;
+#if ENABLE(TOUCH_EVENTS)
+    Color tapHighlightColor;
+#endif
 
 private:
     StyleRareInheritedData();
