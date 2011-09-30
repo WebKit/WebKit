@@ -136,7 +136,6 @@ namespace JSC {
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSValue toStrictThisObject(ExecState*) const;
@@ -271,7 +270,6 @@ namespace JSC {
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
         using JSCell::isAPIValueWrapper;
         using JSCell::isGetterSetter;
-        using JSCell::toObject;
         void getObject();
         void getString(ExecState* exec);
         void isObject();

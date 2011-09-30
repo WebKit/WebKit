@@ -151,10 +151,12 @@ UString JSCell::toString(ExecState*) const
     return UString();
 }
 
-JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
+JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
-    ASSERT_NOT_REACHED();
-    return 0;
+    if (isString())
+        return static_cast<const JSString*>(this)->toObject(exec, globalObject);
+    ASSERT(isObject());
+    return static_cast<JSObject*>(const_cast<JSCell*>(this));
 }
 
 void slowValidateCell(JSCell* cell)

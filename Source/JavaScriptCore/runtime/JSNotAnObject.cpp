@@ -55,12 +55,6 @@ UString JSNotAnObject::toString(ExecState* exec) const
     return "";
 }
 
-JSObject* JSNotAnObject::toObject(ExecState* exec, JSGlobalObject*) const
-{
-    ASSERT_UNUSED(exec, exec->hadException());
-    return const_cast<JSNotAnObject*>(this);
-}
-
 // JSObject methods
 bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier&, PropertySlot&)
 {
