@@ -1,3 +1,15 @@
+2011-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused ReplaceSelectionCommand::copyStyleToChildren
+        https://bugs.webkit.org/show_bug.cgi?id=69153
+
+        Reviewed by Antonio Gomes.
+
+        Removed the function because it's no called anywhere.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/ReplaceSelectionCommand.h:
+
 2011-09-30  Aaron Colwell  <acolwell@chromium.org>
 
         Fix EnabledAtRuntime support for constants.

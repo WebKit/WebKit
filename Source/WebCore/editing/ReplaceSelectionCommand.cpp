@@ -703,41 +703,6 @@ void ReplaceSelectionCommand::handleStyleSpans(Node* firstNodeInserted)
         setNodeAttribute(wrappingStyleSpan, styleAttr, style->style()->cssText());
 }
 
-// Take the style attribute of a span and apply it to it's children instead.  This allows us to
-// convert invalid HTML where a span contains block elements into valid HTML while preserving
-// styles.
-void ReplaceSelectionCommand::copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle)
-{
-    ASSERT(parentNode->hasTagName(spanTag));
-    NodeVector childNodes;
-    for (RefPtr<Node> childNode = parentNode->firstChild(); childNode; childNode = childNode->nextSibling())
-        childNodes.append(childNode);
-        
-    for (NodeVector::const_iterator it = childNodes.begin(); it != childNodes.end(); it++) {
-        Node* childNode = it->get();
-        if (childNode->isTextNode() || !isBlock(childNode) || childNode->hasTagName(preTag)) {
-            // In this case, put a span tag around the child node.
-            RefPtr<Node> newNode = parentNode->cloneNode(false);
-            ASSERT(newNode->hasTagName(spanTag));
-            HTMLElement* newSpan = toHTMLElement(newNode.get());
-            setNodeAttribute(newSpan, styleAttr, parentStyle->cssText());
-            insertNodeAfter(newSpan, childNode);
-            ExceptionCode ec = 0;
-            newSpan->appendChild(childNode, ec);
-            ASSERT(!ec);
-            childNode = newSpan;
-        } else if (childNode->isHTMLElement()) {
-            // Copy the style attribute and merge them into the child node.  We don't want to override
-            // existing styles, so don't clobber on merge.
-            RefPtr<CSSMutableStyleDeclaration> newStyle = parentStyle->copy();
-            HTMLElement* childElement = toHTMLElement(childNode);
-            RefPtr<CSSMutableStyleDeclaration> existingStyles = childElement->getInlineStyleDecl()->copy();
-            existingStyles->merge(newStyle.get(), false);
-            setNodeAttribute(childElement, styleAttr, existingStyles->cssText());
-        }
-    }
-}
-
 void ReplaceSelectionCommand::mergeEndIfNeeded()
 {
     if (!m_shouldMergeEnd)

@@ -89,7 +89,6 @@ private:
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
     void handleStyleSpans(Node* firstNodeInserted);
-    void copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle);
     void handlePasteAsQuotationNode();
     
     virtual void removeNodePreservingChildren(Node*);
