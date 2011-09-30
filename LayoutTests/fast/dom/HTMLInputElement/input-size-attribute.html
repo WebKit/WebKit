@@ -16,32 +16,15 @@ var input = document.createElement("input");
 
 shouldBe("input.size", "20");
 
-input.setAttribute("size", "-1");
-shouldBe("input.size", "20");
-
-input.removeAttribute("size");
-shouldBe("input.size", "20");
-
-input.setAttribute("size", "1");
-shouldBe("input.size", "1");
-
-input.setAttribute("size", "2");
-shouldBe("input.size", "2");
-
-input.removeAttribute("size");
-shouldBe("input.size", "20");
-
-input.setAttribute("size", "a");
-shouldBe("input.size", "20");
-
-input.removeAttribute("size");
-shouldBe("input.size", "20");
-
-input.setAttribute("size", "0");
-shouldBe("input.size", "20");
-
-input.setAttribute("size", "10");
-shouldBe("input.size", "10");
+shouldBe("input.setAttribute('size', '-1'); input.size", "20");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', '1'); input.size", "1");
+shouldBe("input.setAttribute('size', '2'); input.size", "2");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', 'a'); input.size", "20");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', '0'); input.size", "20");
+shouldBe("input.setAttribute('size', '10'); input.size", "10");
 
 var successfullyParsed = true;
 </script>
