@@ -118,6 +118,39 @@ void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, Plu
     }
 }
 
+bool NetscapePluginModule::pluginInfo(PluginModuleInfo& plugin)
+{
+    ASSERT(m_isInitialized);
+
+    plugin.path = m_pluginPath;
+    plugin.info.file = pathGetFileName(m_pluginPath);
+
+    Module* module = m_module.get();
+    NPP_GetValueProcPtr NPP_GetValue = module->functionPointer<NPP_GetValueProcPtr>("NP_GetValue");
+    if (!NPP_GetValue)
+        return false;
+
+    NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription = module->functionPointer<NP_GetMIMEDescriptionFuncPtr>("NP_GetMIMEDescription");
+    if (!NP_GetMIMEDescription)
+        return false;
+
+    char* buffer;
+    NPError error = NPP_GetValue(0, NPPVpluginNameString, &buffer);
+    if (error == NPERR_NO_ERROR)
+        plugin.info.name = buffer;
+
+    error = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
+    if (error == NPERR_NO_ERROR)
+        plugin.info.desc = buffer;
+
+    const char* mimeDescription = NP_GetMIMEDescription();
+    if (!mimeDescription)
+        return false;
+
+    setMIMEDescription(mimeDescription, plugin);
+
+    return true;
+}
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     // Tempararily suppress stdout in this function as plugins will be loaded and shutdown and debug info
@@ -131,43 +164,10 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         return false;
 
     pluginModule->incrementLoadCount();
-
-    plugin.path = pluginPath;
-    plugin.info.file = pathGetFileName(pluginPath);
-
-    Module* module = pluginModule->module();
-    NPP_GetValueProcPtr NPP_GetValue = module->functionPointer<NPP_GetValueProcPtr>("NP_GetValue");
-    if (!NPP_GetValue) {
-        pluginModule->decrementLoadCount();
-        return false;
-    }
-
-    NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription = module->functionPointer<NP_GetMIMEDescriptionFuncPtr>("NP_GetMIMEDescription");
-    if (!NP_GetMIMEDescription) {
-        pluginModule->decrementLoadCount();
-        return false;
-    }
-
-    char* buffer;
-    NPError error = NPP_GetValue(0, NPPVpluginNameString, &buffer);
-    if (error == NPERR_NO_ERROR)
-        plugin.info.name = buffer;
-
-    error = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
-    if (error == NPERR_NO_ERROR)
-        plugin.info.desc = buffer;
-
-    const char* mimeDescription = NP_GetMIMEDescription();
-    if (!mimeDescription) {
-        pluginModule->decrementLoadCount();
-        return false;
-    }
-
-    setMIMEDescription(mimeDescription, plugin);
-
+    bool returnValue = pluginModule->pluginInfo(plugin);
     pluginModule->decrementLoadCount();
 
-    return true;
+    return returnValue;
 }
 
 void NetscapePluginModule::determineQuirks()

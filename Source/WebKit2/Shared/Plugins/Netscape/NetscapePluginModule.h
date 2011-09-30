@@ -69,6 +69,7 @@ private:
 #if PLUGIN_ARCHITECTURE(X11)
     void applyX11QuirksBeforeLoad();
     static void setMIMEDescription(const String& mimeDescription, PluginModuleInfo&);
+    bool pluginInfo(PluginModuleInfo&);
 #endif
 
     bool tryGetSitesWithData(Vector<String>&);

@@ -1,3 +1,18 @@
+2011-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Add a method to get information for an already loaded plugin module
+        https://bugs.webkit.org/show_bug.cgi?id=69139
+
+        Reviewed by Martin Robinson.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.h: Add pluginInfo().
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::pluginInfo): Private method to get
+        the plugin information from the module, it must be called when the
+        module has been already initialized.
+        (WebKit::NetscapePluginModule::getPluginInfo): Use pluginInfo() to
+        get information of the plugin module for the given path.
+
 2011-09-30  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] Event delivery in QDesktopWebView is broken after merge of Qt5 refactor
