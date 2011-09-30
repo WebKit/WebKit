@@ -1,3 +1,16 @@
+2011-09-30  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69173
+        
+        RTL/LTR mixtures still not correct in regions. Simplify the loop once I realized it's only
+        your directionality that matters and not your containing block's.
+
+        Reviewed by Dan Bernstein.
+
+        * fast/regions/multiple-directionality-changes-in-variable-width-regions.html: Added.
+        * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Added.
+
 2011-09-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10208291> first-letter in generated before content with display: table is not updated

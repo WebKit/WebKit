@@ -215,21 +215,11 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region) const
     const RenderBox* currentBox = containingBlock();
     boxInfo = currentBox->renderBoxRegionInfo(region);
     while (boxInfo && boxInfo->isShifted()) {
-        RenderBox* containerBox = currentBox->containingBlock();
-        LayoutUnit widthDelta = currentBox->logicalWidth() - boxInfo->logicalWidth();
-        if (containerBox->style()->direction() == LTR) {
-            if (currentBox->style()->direction() == RTL)
-                logicalLeft -= widthDelta;
-            else
-                logicalLeft += boxInfo->logicalLeft();
-            
-        } else {
-            if (currentBox->style()->direction() == LTR)
-                logicalLeft += widthDelta;
-            else
-                logicalLeft -= widthDelta - boxInfo->logicalLeft();
-        }
-        currentBox = containerBox;
+        if (currentBox->style()->direction() == LTR)
+            logicalLeft += boxInfo->logicalLeft();
+        else
+            logicalLeft -= (currentBox->logicalWidth() - boxInfo->logicalWidth()) - boxInfo->logicalLeft();
+        currentBox = currentBox->containingBlock();
         boxInfo = currentBox->renderBoxRegionInfo(region);
     }
     
