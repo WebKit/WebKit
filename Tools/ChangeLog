@@ -1,3 +1,20 @@
+2011-09-29  David Levin  <levin@chromium.org>
+
+        watchlist: Add cross-checks for WatchList once it is filled.
+        https://bugs.webkit.org/show_bug.cgi?id=68975
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/watchlist/watchlist.py: Made the data members public
+        instead of having trivial getter and setters.
+        * Scripts/webkitpy/common/watchlist/watchlist_unittest.py: Fix the unit tests to
+        pass the validation checks.
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py: Add validation checks
+        and fix a few style nits.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py: Add tests for the
+        validation checks.
+        * Scripts/webkitpy/common/watchlist/watchlistrule.py: Make definitions_to_match public.
+
 2011-09-29  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         run-api-tests fails on chromium-win bot

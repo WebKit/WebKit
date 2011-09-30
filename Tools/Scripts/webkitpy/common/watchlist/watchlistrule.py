@@ -30,11 +30,11 @@
 class WatchListRule:
     '''A rule with instructions to do when the rule is satisified.'''
     def __init__(self, complex_definition, instructions):
-        self._definitions_to_match = complex_definition.split('|')
+        self.definitions_to_match = complex_definition.split('|')
         self._instructions = instructions
 
     def match(self, matching_definitions):
-        for test_definition in self._definitions_to_match:
+        for test_definition in self.definitions_to_match:
             if test_definition in matching_definitions:
                 return True
         return False

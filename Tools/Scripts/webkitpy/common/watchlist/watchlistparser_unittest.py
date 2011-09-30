@@ -87,3 +87,103 @@ class WatchListParserTest(webkitunittest.TestCase):
         self.assertRaisesRegexp(r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
                                 + r'Perhaps it should be filename\.',
                                 self._watch_list_parser.parse, watch_list_with_bad_match_type)
+
+    def test_empty_definition(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '        },'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'The definition "WatchList1" has no patterns, so it should be deleted.',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_empty_cc_rule(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": [],'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'A rule for definition "WatchList1" is empty, so it should be deleted.',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_empty_message_rule(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList1": ['
+            '        ],'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'A rule for definition "WatchList1" is empty, so it should be deleted.',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_unused_defintion(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'The following definitions are not used and should be removed: WatchList1',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_cc_rule_with_undefined_defintion(self):
+        watch_list = (
+            '{'
+            '    "CC_RULES": {'
+            '        "WatchList1": ["levin@chromium.org"]'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList1',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_message_rule_with_undefined_defintion(self):
+        watch_list = (
+            '{'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList1": ["The message."]'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchList1',
+                                self._watch_list_parser.parse, watch_list)
+
+    def test_cc_rule_with_undefined_defintion_with_suggestion(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList": ["levin@chromium.org"]'
+            '     },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList1": ["levin@chromium.org"]'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList\s*'
+                                r'Perhaps it should be WatchList1\.',
+                                self._watch_list_parser.parse, watch_list)

@@ -31,31 +31,22 @@ from webkitpy.common.checkout.diff_parser import DiffParser
 
 class WatchList(object):
     def __init__(self):
-        self._definitions = {}
-        self._cc_rules = set()
-        self._message_rules = set()
-
-    def set_definitions(self, definitions):
-        self._definitions = definitions
-
-    def set_cc_rules(self, cc_rules):
-        self._cc_rules = cc_rules
-
-    def set_message_rules(self, message_rules):
-        self._message_rules = message_rules
+        self.definitions = {}
+        self.cc_rules = set()
+        self.message_rules = set()
 
     def find_matching_definitions(self, diff):
         matching_definitions = set()
         patch_files = DiffParser(diff.splitlines()).files
 
         for path, diff_file in patch_files.iteritems():
-            for definition in self._definitions:
+            for definition in self.definitions:
                 # If a definition has already matched, there is no need to process it.
                 if definition in matching_definitions:
                     continue
 
                 # See if the definition matches within one file.
-                for pattern in self._definitions[definition]:
+                for pattern in self.definitions[definition]:
                     if not pattern.match(path, diff_file.lines):
                         break
                 else:
@@ -70,10 +61,10 @@ class WatchList(object):
         return instructions
 
     def determine_cc_set(self, matching_definitions):
-        return self._determine_instructions(matching_definitions, self._cc_rules)
+        return self._determine_instructions(matching_definitions, self.cc_rules)
 
     def determine_messages(self, matching_definitions):
-        return self._determine_instructions(matching_definitions, self._message_rules)
+        return self._determine_instructions(matching_definitions, self.message_rules)
 
     def determine_cc_set_and_messages(self, diff):
         definitions = self.find_matching_definitions(diff)

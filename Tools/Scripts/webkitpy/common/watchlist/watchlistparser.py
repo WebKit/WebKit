@@ -28,6 +28,7 @@
 
 import difflib
 import re
+
 from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 from webkitpy.common.watchlist.watchlist import WatchList
@@ -45,12 +46,12 @@ class WatchListParser(object):
             self._DEFINITIONS: self._parse_definition_section,
             self._CC_RULES: self._parse_cc_rules,
             self._MESSAGE_RULES: self._parse_message_rules,
-            }
+        }
         self._definition_pattern_parsers = {
             'filename': FilenamePattern,
             'in_added_lines': (lambda regex: ChangedLinePattern(regex, 0)),
             'in_deleted_lines': (lambda regex: ChangedLinePattern(regex, 1)),
-            }
+        }
 
     def parse(self, watch_list_contents):
         watch_list = WatchList()
@@ -67,6 +68,7 @@ class WatchListParser(object):
                                 % section)
             parser(dictionary[section], watch_list)
 
+        self._validate(watch_list)
         return watch_list
 
     def _eval_watch_list(self, watch_list_contents):
@@ -96,16 +98,52 @@ class WatchListParser(object):
 
                 pattern = pattern_parser(definition[pattern_type])
                 definitions[name].append(pattern)
-        watch_list.set_definitions(definitions)
+            if not definitions[name]:
+                raise Exception('The definition "%s" has no patterns, so it should be deleted.' % name)
+        watch_list.definitions = definitions
 
     def _parse_rules(self, rules_section):
         rules = []
         for complex_definition in rules_section:
-            rules.append(WatchListRule(complex_definition, rules_section[complex_definition]))
+            instructions = rules_section[complex_definition]
+            if not instructions:
+                raise Exception('A rule for definition "%s" is empty, so it should be deleted.' % complex_definition)
+            rules.append(WatchListRule(complex_definition, instructions))
         return rules
 
     def _parse_cc_rules(self, cc_section, watch_list):
-        watch_list.set_cc_rules(self._parse_rules(cc_section))
+        watch_list.cc_rules = self._parse_rules(cc_section)
 
     def _parse_message_rules(self, message_section, watch_list):
-        watch_list.set_message_rules(self._parse_rules(message_section))
+        watch_list.message_rules = self._parse_rules(message_section)
+
+    def _validate(self, watch_list):
+        cc_definitions_set = self._rule_definitions_as_set(watch_list.cc_rules)
+        messages_definitions_set = self._rule_definitions_as_set(watch_list.message_rules)
+        self._verify_all_definitions_are_used(watch_list, cc_definitions_set.union(messages_definitions_set))
+
+        self._validate_definitions(cc_definitions_set, self._CC_RULES, watch_list)
+        self._validate_definitions(messages_definitions_set, self._MESSAGE_RULES, watch_list)
+
+    def _verify_all_definitions_are_used(self, watch_list, used_definitions):
+        definitions_not_used = set(watch_list.definitions.keys())
+        definitions_not_used.difference_update(used_definitions)
+        if definitions_not_used:
+            raise Exception('The following definitions are not used and should be removed: %s' % (', '.join(definitions_not_used)))
+
+    def _validate_definitions(self, definitions, rules_section_name, watch_list):
+        declared_definitions = watch_list.definitions.keys()
+        definition_set = set(definitions)
+        definition_set.difference_update(declared_definitions)
+
+        if definition_set:
+            suggestions = ''
+            if len(definition_set) == 1:
+                suggestions = self._suggest_words(set().union(definition_set).pop(), declared_definitions)
+            raise Exception('In section "%s", the following definitions are not used and should be removed: %s%s' % (rules_section_name, ', '.join(definition_set), suggestions))
+
+    def _rule_definitions_as_set(self, rules):
+        definition_set = set()
+        for rule in rules:
+            definition_set = definition_set.union(rule.definitions_to_match)
+        return definition_set
