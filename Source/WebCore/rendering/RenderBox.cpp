@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderBoxRegionInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -194,6 +195,35 @@ void RenderBox::setMarginAfter(LayoutUnit margin)
         m_marginLeft = margin;
         break;
     }
+}
+
+LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region) const
+{
+    if (!region || region->matchesRenderFlowThreadLogicalWidth())
+        return borderBoxRect();
+    
+    // Compute the logical width and placement in this region.
+    RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(region);
+    if (!boxInfo)
+        return borderBoxRect();
+
+    // We have cached insets.
+    LayoutUnit logicalWidth = boxInfo->logicalWidth();
+    LayoutUnit logicalLeft = boxInfo->logicalLeft();
+        
+    // Now apply the parent left inset since it is cumulative whenever anything in the containing block chain shifts.
+    const RenderBox* currentBox = this;
+    while (boxInfo->containingBlockChainIsShifted()) {
+        currentBox = currentBox->containingBlock();
+        boxInfo = currentBox->renderBoxRegionInfo(region);
+        if (!boxInfo)
+            break;
+        logicalLeft += boxInfo->logicalLeft();
+    }
+    
+    if (isHorizontalWritingMode())
+        return LayoutRect(logicalLeft, 0, logicalWidth, height());
+    return LayoutRect(0, logicalLeft, width(), logicalWidth);
 }
 
 void RenderBox::willBeDestroyed()
@@ -780,7 +810,8 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    LayoutRect boundsRect(adjustedLocation, size());
+    LayoutRect boundsRect = borderBoxRectInRegion(result.region());
+    boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
@@ -852,7 +883,9 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
-    LayoutRect paintRect(paintOffset, size());
+
+    LayoutRect paintRect = borderBoxRectInRegion(paintInfo.renderRegion);
+    paintRect.moveBy(paintOffset);
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
@@ -1220,8 +1253,18 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
     RenderBlock* cb = containingBlock();
     if (shrinkToAvoidFloats())
-        return cb->availableLogicalWidthForLine(y(), false);
+        return cb->availableLogicalWidthForLine(logicalTop(), false);
     return cb->availableLogicalWidth();
+}
+
+LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion* region) const
+{
+    LayoutUnit result = containingBlockLogicalWidthForContent();
+    RenderBlock* cb = containingBlock();
+    RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region);
+    if (!boxInfo)
+        return result;
+    return max(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
 }
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
@@ -1604,6 +1647,11 @@ void RenderBox::computeLogicalWidth()
         return;
     }
 
+    computeLogicalWidthInRegion(0);
+}
+
+void RenderBox::computeLogicalWidthInRegion(RenderRegion* region)
+{
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     bool inVerticalBox = parent()->isDeprecatedFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
@@ -1613,7 +1661,7 @@ void RenderBox::computeLogicalWidth()
     Length logicalWidthLength = (treatAsReplaced) ? Length(computeReplacedLogicalWidth(), Fixed) : style()->logicalWidth();
 
     RenderBlock* cb = containingBlock();
-    LayoutUnit containerLogicalWidth = max<LayoutUnit>(0, containingBlockLogicalWidthForContent());
+    LayoutUnit containerLogicalWidth = max<LayoutUnit>(0, containingBlockLogicalWidthForContentInRegion(region));
     bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
     LayoutUnit containerWidthInInlineDirection = containerLogicalWidth;
     if (hasPerpendicularContainingBlock)
@@ -1781,6 +1829,61 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int 
     // auto margins will just turn into 0.
     containingBlock->setMarginStartForChild(this, marginStartLength.calcMinValue(containerWidth));
     containingBlock->setMarginEndForChild(this, marginEndLength.calcMinValue(containerWidth));
+}
+
+RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region) const
+{
+    // Make sure nobody is trying to call this with a null region.
+    if (!region)
+        return 0;
+
+    // If we have computed our width in this region already, it will be cached, and we can
+    // just return it.
+    RenderBoxRegionInfo* boxInfo = region->renderBoxRegionInfo(this);
+    if (boxInfo)
+        return boxInfo;
+
+    // No cached value was found, so we have to compute our insets in this region.
+    // FIXME: For now we limit this computation to normal RenderBlocks. Future patches will expand
+    // support to cover all boxes.
+    if (!inRenderFlowThread() || (isPositioned() && !isRenderFlowThread()) || isReplaced() || isInline() || hasColumns()
+        || isTableCell() || !isBlockFlow())
+        return 0;
+
+    // FIXME: It's gross to cast away the const, but it would be a huge refactoring to
+    // change all width computation to avoid updating any member variables, and it would be pretty lame to
+    // make all the variables mutable as well.
+    // FIXME: Perpendicular writing modes aren't going to work right here.
+    LayoutUnit oldLogicalWidth = logicalWidth();
+    LayoutUnit oldMarginStart = marginStart();
+    LayoutUnit oldMarginEnd = marginEnd();
+
+    RenderBox* mutableBox = const_cast<RenderBox*>(this);
+    mutableBox->computeLogicalWidthInRegion(region);
+
+    // Now determine the insets based off where this object is supposed to be positioned.
+    LayoutUnit startMarginDelta = marginStart() - oldMarginStart;
+    LayoutUnit widthDelta = logicalWidth() - oldLogicalWidth;
+    LayoutUnit logicalWidthInRegion = logicalWidth();
+
+    LayoutUnit logicalLeftOffset = 0;
+    RenderBlock* cb = containingBlock();
+    if (cb->style()->isLeftToRightDirection())
+        logicalLeftOffset += startMarginDelta;
+    else
+        logicalLeftOffset += widthDelta - startMarginDelta;
+    
+    // Set our values back.
+    mutableBox->setLogicalWidth(oldLogicalWidth);
+    mutableBox->setMarginStart(oldMarginStart);
+    mutableBox->setMarginEnd(oldMarginEnd);
+
+    RenderBoxRegionInfo* containingBlockInfo = cb->renderBoxRegionInfo(region);
+    bool containingBlockChainIsShifted = containingBlockInfo && (containingBlockInfo->containingBlockChainIsShifted()
+        || containingBlockInfo->logicalLeft());
+        
+    // FIXME: Although it's unlikely, these boxes can go outside our bounds, and so we will need to incorporate them into overflow.
+    return region->setRenderBoxRegionInfo(this, logicalLeftOffset, logicalWidthInRegion, containingBlockChainIsShifted);
 }
 
 void RenderBox::computeLogicalHeight()

@@ -53,6 +53,7 @@ HitTestResult::HitTestResult()
     , m_rightPadding(0)
     , m_bottomPadding(0)
     , m_leftPadding(0)
+    , m_region(0)
 {
 }
 
@@ -64,6 +65,7 @@ HitTestResult::HitTestResult(const LayoutPoint& point)
     , m_rightPadding(0)
     , m_bottomPadding(0)
     , m_leftPadding(0)
+    , m_region(0)
 {
 }
 
@@ -74,6 +76,7 @@ HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding
     , m_rightPadding(rightPadding)
     , m_bottomPadding(bottomPadding)
     , m_leftPadding(leftPadding)
+    , m_region(0)
 {
     // If all padding values passed in are zero then it is not a rect based hit test.
     m_isRectBased = topPadding || rightPadding || bottomPadding || leftPadding;
@@ -91,6 +94,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
+    , m_region(other.region())
 {
     // Only copy the padding and NodeSet in case of rect hit test.
     // Copying the later is rather expensive.
@@ -129,6 +133,9 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
         m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
 
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
+    
+    m_region = other.m_region;
+
     return *this;
 }
 

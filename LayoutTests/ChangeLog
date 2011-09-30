@@ -1,3 +1,31 @@
+2011-09-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69043
+        
+        [CSS3 Regions] Blocks split across regions with variable width need to size
+        differently in each region.
+        
+        This patch adds the capability for blocks to have variable width and positioning
+        when split across regions. It is very rudimentary and so far only operates on basic
+        normal flow RenderBlocks. Future patches will expand the support to cover other layout
+        constructs like flexible boxes and tables.
+
+        Reviewed by Sam Weinig.
+
+        Added new tests in fast/regions and updated existing results.
+
+        * fast/regions/percentage-margins-variable-width-regions.html: Added.
+        * platform/mac/fast/regions/percentage-margins-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/percentage-margins-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-double-pagination-float-push-expected.png:
+        * platform/mac/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png:
+        * platform/mac/fast/regions/webkit-flow-float-unable-to-push-expected.png:
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-dynamic-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png:
+
 2011-09-30  Qi Zhang  <qi.2.zhang@nokia.com>
 
         WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize

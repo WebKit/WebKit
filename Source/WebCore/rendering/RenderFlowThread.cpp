@@ -49,9 +49,9 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
-    , m_regionFittingDisableCount(0)
 {
     setIsAnonymous(false);
+    setInRenderFlowThread();
 }
 
 PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
@@ -320,6 +320,8 @@ void RenderFlowThread::layout()
 
                 ASSERT(!region->needsLayout());
                 
+                region->deleteAllRenderBoxRegionInfo();
+
                 LayoutUnit regionLogicalWidth;
                 LayoutUnit regionLogicalHeight;
 
@@ -360,8 +362,9 @@ void RenderFlowThread::layout()
 
 void RenderFlowThread::computeLogicalWidth()
 {
-    int logicalWidth = 0;
+    LayoutUnit oldLogicalWidth = logicalWidth();
 
+    LayoutUnit logicalWidth = 0;
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())
@@ -369,8 +372,23 @@ void RenderFlowThread::computeLogicalWidth()
         ASSERT(!region->needsLayout());
         logicalWidth = max(isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight(), logicalWidth);
     }
-
     setLogicalWidth(logicalWidth);
+    
+    if (regionsHaveUniformLogicalWidth() || oldLogicalWidth == logicalWidth)
+        return;
+    
+    // If the regions have non-uniform logical widths, then insert inset information for the RenderFlowThread.
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        
+        LayoutUnit regionLogicalWidth = isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight();
+        if (regionLogicalWidth != logicalWidth) {
+            LayoutUnit logicalLeft = style()->direction() == LTR ? 0 : logicalWidth - regionLogicalWidth;
+            region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
+        }
+    }
 }
 
 void RenderFlowThread::computeLogicalHeight()
@@ -388,7 +406,7 @@ void RenderFlowThread::computeLogicalHeight()
     setLogicalHeight(logicalHeight);
 }
 
-void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& regionRect, const LayoutPoint& paintOffset)
+void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* region, const LayoutPoint& paintOffset)
 {
     GraphicsContext* context = paintInfo.context;
     if (!context)
@@ -397,6 +415,7 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& r
     // Adjust the clipping rect for the region.
     // paintOffset contains the offset where the painting should occur
     // adjusted with the region padding and border.
+    LayoutRect regionRect(region->regionRect());
     LayoutRect regionClippingRect(paintOffset, regionRect.size());
 
     PaintInfo info(paintInfo);
@@ -421,14 +440,15 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& r
         context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
         info.rect.moveBy(-renderFlowThreadOffset);
         
-        layer()->paint(context, info.rect);
+        layer()->paint(context, info.rect, 0, 0, region);
 
         context->restore();
     }
 }
 
-bool RenderFlowThread::hitTestRegion(const LayoutRect& regionRect, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
+    LayoutRect regionRect = region->regionRect();
     LayoutRect regionClippingRect(accumulatedOffset, regionRect.size());
     if (!regionClippingRect.contains(pointInContainer))
         return false;
@@ -446,11 +466,14 @@ bool RenderFlowThread::hitTestRegion(const LayoutRect& regionRect, const HitTest
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
     HitTestRequest newRequest(request.type() & HitTestRequest::IgnoreClipping);
 
+    RenderRegion* oldRegion = result.region();
+    result.setRegion(region);
     LayoutPoint oldPoint = result.point();
     result.setPoint(transformedPoint);
     bool isPointInsideFlowThread = layer()->hitTest(newRequest, result);
     result.setPoint(oldPoint);
-    
+    result.setRegion(oldRegion);
+
     // FIXME: Should we set result.m_localPoint back to the RenderRegion's coordinate space or leave it in the RenderFlowThread's coordinate
     // space? Right now it's staying in the RenderFlowThread's coordinate space, which may end up being ok. We will know more when we get around to
     // patching positionForPoint.
@@ -584,6 +607,25 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
     transformState.move(renderRegion->contentBoxRect().location() - flippedRegionRect.location());
 
     return renderRegion;
+}
+
+void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
+{
+    // FIXME: Would be nice if we also cached the box's start and end regions so that we didn't have to
+    // walk every single region.
+    if (!hasRegions() || regionsHaveUniformLogicalWidth())
+        return;
+
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        
+        if (!region->isValid() || region->matchesRenderFlowThreadLogicalWidth())
+            continue;
+
+        ASSERT(!region->needsLayout());
+
+        region->removeRenderBoxRegionInfo(box);
+    }
 }
 
 } // namespace WebCore

@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class RenderBox;
+class RenderBoxRegionInfo;
 class RenderFlowThread;
 
 class RenderRegion : public RenderReplaced {
@@ -60,6 +62,14 @@ public:
 
     virtual void layout();
 
+    RenderBoxRegionInfo* renderBoxRegionInfo(const RenderBox*) const;
+    RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
+        bool containingBlockChainIsInset);
+    void removeRenderBoxRegionInfo(const RenderBox*);
+    void deleteAllRenderBoxRegionInfo();
+
+    bool matchesRenderFlowThreadLogicalWidth() const;
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
@@ -70,6 +80,12 @@ private:
     // regions is always done before the regions themselves.
     RenderFlowThread* m_parentFlowThread;
     IntRect m_regionRect;
+
+    // This map holds unique information about a block that is split across regions.
+    // A RenderBoxRegionInfo* tells us about any layout information for a RenderBox that
+    // is unique to the region. For now it just holds logical width information for RenderBlocks, but eventually
+    // it will also hold a custom style for any box (for region styling).
+    HashMap<const RenderBox*, RenderBoxRegionInfo*> m_renderBoxRegionInfo;
 
     bool m_isValid;
 };

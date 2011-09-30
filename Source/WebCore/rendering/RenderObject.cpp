@@ -217,6 +217,7 @@ RenderObject::RenderObject(Node* node)
     , m_hasMarkupTruncation(false)
     , m_selectionState(SelectionNone)
     , m_hasColumns(false)
+    , m_inRenderFlowThread(false)
 {
 #ifndef NDEBUG
     renderObjectCounter.increment();
@@ -578,7 +579,9 @@ RenderBoxModelObject* RenderObject::enclosingBoxModelObject() const
 }
 
 RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
-{
+{   
+    if (!inRenderFlowThread())
+        return 0;
     RenderObject* curr = const_cast<RenderObject*>(this);
     while (curr) {
         if (curr->isRenderFlowThread())
@@ -1244,7 +1247,7 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
     // repainting to do individual region repaints.
     // FIXME: Composited layers inside a flow thread will bypass this mechanism and will malfunction. It's not
     // clear how to address this problem for composited descendants of a RenderFlowThread.
-    if (!repaintContainer && v->hasRenderFlowThreads())
+    if (!repaintContainer && inRenderFlowThread())
         repaintContainer = enclosingRenderFlowThread();
     return repaintContainer;
 }

@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "PaintInfo.h"
+#include "RenderBoxRegionInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderView.h"
 
@@ -49,6 +50,7 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
 
 RenderRegion::~RenderRegion()
 {
+    deleteAllRenderBoxRegionInfo();
 }
 
 void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -56,7 +58,7 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
     // Delegate painting of content in region to RenderFlowThread.
     if (!m_flowThread || !isValid())
         return;
-    m_flowThread->paintIntoRegion(paintInfo, regionRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
+    m_flowThread->paintIntoRegion(paintInfo, this, LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
 }
 
 // Hit Testing
@@ -72,7 +74,7 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     LayoutRect boundsRect(adjustedLocation, size());
     if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         // Check the contents of the RenderFlowThread.
-        if (m_flowThread && m_flowThread->hitTestRegion(regionRect(), request, result, pointInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
+        if (m_flowThread && m_flowThread->hitTestRegion(this, request, result, pointInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
             return true;
         updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
@@ -121,6 +123,55 @@ void RenderRegion::detachRegion()
 {
     if (m_flowThread)
         m_flowThread->removeRegionFromThread(this);
+}
+
+RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) const
+{
+    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
+        return 0;
+    return m_renderBoxRegionInfo.get(box);
+}
+
+RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
+    bool containingBlockChainIsInset)
+{
+    ASSERT(m_isValid && m_flowThread && !matchesRenderFlowThreadLogicalWidth());
+    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
+        return 0;
+
+    RenderBoxRegionInfo* existingBoxInfo = m_renderBoxRegionInfo.get(box);
+    if (existingBoxInfo) {
+        *existingBoxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
+        return existingBoxInfo;
+    }
+    
+    RenderBoxRegionInfo* newBoxInfo = new RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
+    m_renderBoxRegionInfo.set(box, newBoxInfo);
+    return newBoxInfo;
+}
+
+void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
+{
+    ASSERT(m_isValid && m_flowThread && !matchesRenderFlowThreadLogicalWidth());
+    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
+        return;
+    RenderBoxRegionInfo* info = m_renderBoxRegionInfo.take(box);
+    delete info;
+}
+
+void RenderRegion::deleteAllRenderBoxRegionInfo()
+{
+    deleteAllValues(m_renderBoxRegionInfo);
+    m_renderBoxRegionInfo.clear();
+}
+
+bool RenderRegion::matchesRenderFlowThreadLogicalWidth() const
+{
+    if (!m_isValid || !m_flowThread)
+        return true;
+    if (m_flowThread->isHorizontalWritingMode())
+        return m_flowThread->logicalWidth() == regionRect().width();
+    return m_flowThread->logicalWidth() == regionRect().height();
 }
 
 } // namespace WebCore

@@ -222,7 +222,14 @@ protected:
     // Helper functions. Dangerous to use!
     void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
     void setNextSibling(RenderObject* next) { m_next = next; }
-    void setParent(RenderObject* parent) { m_parent = parent; }
+    void setParent(RenderObject* parent)
+    {
+        m_parent = parent;
+        if (parent && parent->inRenderFlowThread())
+            setInRenderFlowThread(true);
+        else if (!parent && inRenderFlowThread())
+            setInRenderFlowThread(false);
+    }
     //////////////////////////////////////////
 private:
     void addAbsoluteRectForLayer(IntRect& result);
@@ -363,6 +370,9 @@ public:
     void setChildrenInline(bool b = true) { m_childrenInline = b; }
     bool hasColumns() const { return m_hasColumns; }
     void setHasColumns(bool b = true) { m_hasColumns = b; }
+
+    bool inRenderFlowThread() const { return m_inRenderFlowThread; }
+    void setInRenderFlowThread(bool b = true) { m_inRenderFlowThread = b; }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
 
@@ -905,6 +915,7 @@ private:
     bool m_hasMarkupTruncation : 1;
     unsigned m_selectionState : 3; // SelectionState
     bool m_hasColumns : 1;
+    bool m_inRenderFlowThread : 1;
 
 private:
     // Store state between styleWillChange and styleDidChange

@@ -417,7 +417,7 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0);
+    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0, RenderRegion* = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* paintingRoot);
 
@@ -548,19 +548,19 @@ private:
     typedef unsigned PaintLayerFlags;
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
-                    PaintBehavior, RenderObject* paintingRoot, OverlapTestRequestMap* = 0,
+                    PaintBehavior, RenderObject* paintingRoot, RenderRegion* = 0, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
     void paintList(Vector<RenderLayer*>*, RenderLayer* rootLayer, GraphicsContext* p,
                    const LayoutRect& paintDirtyRect, PaintBehavior,
-                   RenderObject* paintingRoot, OverlapTestRequestMap*,
+                   RenderObject* paintingRoot, RenderRegion*, OverlapTestRequestMap*,
                    PaintLayerFlags);
     void paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
                                   const LayoutRect& paintDirtyRect, PaintBehavior,
-                                  RenderObject* paintingRoot, OverlapTestRequestMap*,
+                                  RenderObject* paintingRoot, RenderRegion*, OverlapTestRequestMap*,
                                   PaintLayerFlags);
     void paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
                                     const LayoutRect& paintDirtyRect, PaintBehavior,
-                                    RenderObject* paintingRoot, OverlapTestRequestMap*,
+                                    RenderObject* paintingRoot, RenderRegion*, OverlapTestRequestMap*,
                                     PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,

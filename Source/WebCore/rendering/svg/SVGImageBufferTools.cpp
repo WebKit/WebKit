@@ -81,7 +81,7 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
     ASSERT(image);
     ASSERT(image->context());
 
-    PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0);
+    PaintInfo info(image->context(), PaintInfo::infiniteRect(), PaintPhaseForeground, 0, 0, 0, 0);
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;

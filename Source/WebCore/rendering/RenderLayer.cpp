@@ -2536,10 +2536,10 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
-void RenderLayer::paint(GraphicsContext* p, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject *paintingRoot)
+void RenderLayer::paint(GraphicsContext* p, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject *paintingRoot, RenderRegion* region)
 {
     OverlapTestRequestMap overlapTestRequests;
-    paintLayer(this, p, damageRect, paintBehavior, paintingRoot, &overlapTestRequests);
+    paintLayer(this, p, damageRect, paintBehavior, paintingRoot, region, &overlapTestRequests);
     OverlapTestRequestMap::iterator end = overlapTestRequests.end();
     for (OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it)
         it->first->setOverlapTestResult(false);
@@ -2549,7 +2549,7 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext* p, const LayoutRect& d
 {
     if (!m_containsDirtyOverlayScrollbars)
         return;
-    paintLayer(this, p, damageRect, paintBehavior, paintingRoot, 0, PaintLayerHaveTransparency | PaintLayerTemporaryClipRects 
+    paintLayer(this, p, damageRect, paintBehavior, paintingRoot, 0, 0, PaintLayerHaveTransparency | PaintLayerTemporaryClipRects 
                | PaintLayerPaintingOverlayScrollbars);
     m_containsDirtyOverlayScrollbars = false;
 }
@@ -2626,7 +2626,7 @@ static bool shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflect
 
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
-                        RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
+                        RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -2694,7 +2694,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
             p->concatCTM(transform.toAffineTransform());
 
             // Now do a paint with the root layer shifted to be us.
-            paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
+            paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
         }        
 
         // Restore the clip.
@@ -2711,7 +2711,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (m_reflection && !m_paintingInsideReflection) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
         m_paintingInsideReflection = false;
     }
 
@@ -2752,7 +2752,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         clipToRect(rootLayer, p, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
 
         // Paint the background.
-        PaintInfo paintInfo(p, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        PaintInfo paintInfo(p, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, region, 0);
         renderer()->paint(paintInfo, paintOffset);
 
         // Restore the clip.
@@ -2760,7 +2760,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
 
     // Now walk the sorted list of children with negative z-indices.
-    paintList(m_negZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+    paintList(m_negZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
 
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty() && !paintingOverlayScrollbars) {
@@ -2772,7 +2772,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         clipToRect(rootLayer, p, paintDirtyRect, clipRectToApply);
         PaintInfo paintInfo(p, clipRectToApply.rect(), 
                             selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                            forceBlackText, paintingRootForRenderer, 0);
+                            forceBlackText, paintingRootForRenderer, region, 0);
         renderer()->paint(paintInfo, paintOffset);
         if (!selectionOnly) {
             paintInfo.phase = PaintPhaseFloat;
@@ -2790,23 +2790,23 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     
     if (!outlineRect.isEmpty() && isSelfPaintingLayer() && !paintingOverlayScrollbars) {
         // Paint our own outline
-        PaintInfo paintInfo(p, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
+        PaintInfo paintInfo(p, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, region, 0);
         clipToRect(rootLayer, p, paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
         renderer()->paint(paintInfo, paintOffset);
         restoreClip(p, paintDirtyRect, outlineRect);
     }
     
     // Paint any child layers that have overflow.
-    paintList(m_normalFlowList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+    paintList(m_normalFlowList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
     
     // Now walk the sorted list of children with positive z-indices.
-    paintList(m_posZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
+    paintList(m_posZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
         
     if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty() && !paintingOverlayScrollbars) {
         clipToRect(rootLayer, p, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
 
         // Paint the mask.
-        PaintInfo paintInfo(p, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, 0);
+        PaintInfo paintInfo(p, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
         renderer()->paint(paintInfo, paintOffset);
         
         // Restore the clip.
@@ -2829,7 +2829,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
 void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, GraphicsContext* p,
                             const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
-                            RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
+                            RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                             PaintLayerFlags paintFlags)
 {
     if (!list)
@@ -2838,15 +2838,15 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, 
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
         if (!childLayer->isPaginated())
-            childLayer->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+            childLayer->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
         else
-            paintPaginatedChildLayer(childLayer, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+            paintPaginatedChildLayer(childLayer, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
     }
 }
 
 void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext* context,
                                            const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
-                                           RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
+                                           RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                                            PaintLayerFlags paintFlags)
 {
     // We need to do multiple passes, breaking up our child layer into strips.
@@ -2865,12 +2865,12 @@ void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer*
     if (!columnLayers.size())
         return;
 
-    paintChildLayerIntoColumns(childLayer, rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags, columnLayers, columnLayers.size() - 1);
+    paintChildLayerIntoColumns(childLayer, rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags, columnLayers, columnLayers.size() - 1);
 }
 
 void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext* context,
                                              const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
-                                             RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
+                                             RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                                              PaintLayerFlags paintFlags, const Vector<RenderLayer*>& columnLayers, size_t colIndex)
 {
     RenderBlock* columnBlock = toRenderBlock(columnLayers[colIndex]->renderer());
@@ -2918,7 +2918,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 newTransform.translateRight(offset.width(), offset.height());
                 
                 childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
-                childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
+                childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
                 if (oldHasTransform)
                     childLayer->m_transform = adoptPtr(new TransformationMatrix(oldTransform));
                 else
@@ -2936,7 +2936,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
 
                 // Now do a paint with the root layer shifted to be the next multicol block.
                 paintChildLayerIntoColumns(childLayer, columnLayers[colIndex - 1], context, transform.inverse().mapRect(localDirtyRect), paintBehavior, 
-                                           paintingRoot, overlapTestRequests, paintFlags, 
+                                           paintingRoot, region, overlapTestRequests, paintFlags, 
                                            columnLayers, colIndex - 1);
             }
         }

@@ -257,7 +257,7 @@ public:
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
-    LayoutUnit logicalRightOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
+    LayoutUnit logicalRightOffsetForContent() const { return logicalLeftOffsetForContent() + availableLogicalWidth(); }
     LayoutUnit logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
 
     LayoutUnit logicalLeftOffsetForContent(LayoutUnit position) const;
@@ -319,8 +319,9 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
-    void adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const;
-
+    LayoutRect borderBoxRectInRegionAtPosition(LayoutUnit logicalTop) const;
+    void clearRenderBoxRegionInfo();
+    
     LayoutUnit logicalRightOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, LayoutUnit* logicalHeightRemaining = 0) const;
     LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, LayoutUnit* logicalHeightRemaining = 0) const;
 

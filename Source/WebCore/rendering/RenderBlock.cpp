@@ -40,6 +40,7 @@
 #include "LayoutRepainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderBoxRegionInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlowThread.h"
@@ -47,6 +48,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
+#include "RenderRegion.h"
 #include "RenderReplica.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
@@ -1179,8 +1181,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     m_overflow.clear();
 
-    if (oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth())
+    if (oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth()) {
         relayoutChildren = true;
+        clearRenderBoxRegionInfo(); // Clear out any cached values we have in all regions.
+    }
 
     // If nothing changed about our floating positioned objects, let's go ahead and try to place them as
     // floats to avoid doing two passes.
@@ -1217,10 +1221,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     RenderView* renderView = view();
     LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
-
-    bool disableRegionFitting = renderView->hasRenderFlowThread() && (renderView->currentRenderFlowThread()->regionsHaveUniformLogicalWidth()
-        || hasColumns() || (isPositioned() && !isRenderFlowThread()) || isFloating());
-    RegionFittingDisabler regionFittingDisabler(renderView->currentRenderFlowThread(), disableRegionFitting);
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -3528,32 +3528,53 @@ LayoutUnit RenderBlock::textIndentOffset() const
     return style()->textIndent().calcMinValue(cw);
 }
 
-void RenderBlock::adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const
+void RenderBlock::clearRenderBoxRegionInfo()
 {
     RenderView* renderView = view();
-    if (!renderView->hasRenderFlowThread())
-        return;
-    
-    RenderFlowThread* flowThread = renderView->currentRenderFlowThread();
-    if (!flowThread->isRegionFittingEnabled() || !flowThread->hasValidRegions())
+    if (!renderView->hasRenderFlowThread() || isRenderFlowThread())
         return;
 
-    LayoutUnit regionWidth = flowThread->regionLogicalWidthForLine(logicalPageOffset() + logicalTop);
-    rightOffset -= flowThread->logicalWidth() - regionWidth;
+    RenderFlowThread* flowThread = renderView->currentRenderFlowThread();
+    if (!flowThread->hasValidRegions() || flowThread->regionsHaveUniformLogicalWidth())
+        return;
+
+    flowThread->removeRenderBoxRegionInfo(this);
 }
 
-LayoutUnit RenderBlock::logicalLeftOffsetForContent(LayoutUnit) const
+LayoutRect RenderBlock::borderBoxRectInRegionAtPosition(LayoutUnit logicalTop) const
 {
-    // FIXME: For now we don't adjust this at all. Eventually when we have RTL blocks or centered blocks, where the left offset
-    // can shift, then we will have to make an adjustment.
-    return logicalLeftOffsetForContent();
+    ASSERT(inRenderFlowThread());
+
+    // FIXME: It's a limitation that we're dependent on layout state in order to give back
+    // the right answer. For example, selection operates outside of layout and is not doing
+    // the right thing here.
+    RenderFlowThread* flowThread = view()->currentRenderFlowThread();
+    if (!flowThread || !flowThread->hasValidRegions() || flowThread->regionsHaveUniformLogicalWidth())
+        return borderBoxRect();
+
+    RenderRegion* region = flowThread->renderRegionForLine(logicalPageOffset() + logicalTop, true);
+    if (!region || region->matchesRenderFlowThreadLogicalWidth())
+        return borderBoxRect();
+    
+    return borderBoxRectInRegion(region);
+}
+
+LayoutUnit RenderBlock::logicalLeftOffsetForContent(LayoutUnit position) const
+{
+    LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent();
+    if (!inRenderFlowThread())
+        return logicalLeftOffset;
+    LayoutRect boxRect = borderBoxRectInRegionAtPosition(position);
+    return logicalLeftOffset + (isHorizontalWritingMode() ? boxRect.x() : boxRect.y());
 }
 
 LayoutUnit RenderBlock::logicalRightOffsetForContent(LayoutUnit position) const
 {
     LayoutUnit logicalRightOffset = logicalRightOffsetForContent();
-    adjustForRegionFittingIfNeeded(position, logicalRightOffset);
-    return logicalRightOffset;
+    if (!inRenderFlowThread())
+        return logicalRightOffset;
+    LayoutRect boxRect = borderBoxRectInRegionAtPosition(position);
+    return logicalLeftOffsetForContent(position) + availableLogicalWidth() - (logicalWidth() - (isHorizontalWritingMode() ? boxRect.width() : boxRect.height()));
 }
 
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const

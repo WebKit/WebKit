@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class RenderBoxRegionInfo;
+class RenderRegion;
 struct PaintInfo;
 
 enum LogicalWidthType { LogicalWidth, MinLogicalWidth, MaxLogicalWidth };
@@ -271,6 +273,8 @@ public:
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(RenderBlock* containingBlock);
 
+    LayoutRect borderBoxRectInRegion(RenderRegion*) const;
+
     void positionLineBox(InlineBox*);
 
     virtual InlineBox* createInlineBox();
@@ -289,10 +293,14 @@ public:
     virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
+    LayoutUnit containingBlockLogicalWidthForContentInRegion(RenderRegion*) const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
     
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
+
+    RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*) const;
+    void computeLogicalWidthInRegion(RenderRegion*);
 
     bool stretchesToViewport() const
     {

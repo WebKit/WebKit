@@ -1,3 +1,176 @@
+2011-09-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69043
+        
+        [CSS3 Regions] Blocks split across regions with variable width need to size
+        differently in each region.
+        
+        This patch adds the capability for blocks to have variable width and positioning
+        when split across regions. It is very rudimentary and so far only operates on basic
+        normal flow RenderBlocks. Future patches will expand the support to cover other layout
+        constructs like flexible boxes and tables.
+
+        Reviewed by Sam Weinig.
+
+        Added new tests in fast/regions and updated existing results.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::region):
+        (WebCore::HitTestResult::setRegion):
+        The hit test result now holds the active RenderRegion so that hit testing can adjust
+        block widths and positions when hit testing their border boxes.
+
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        The paint info struct now holds the active RenderRegion so that painting can adjust
+        block widths and positions when painting borders and backgrounds and shadows.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        If our width ever changes, we invalidate all of our cached RenderBoxRegionInfo in all
+        regions that we span.
+
+        (WebCore::RenderBlock::clearRenderBoxRegionInfo):
+        Called to clear out our cached region-specific information in all regions that we span.
+
+        (WebCore::RenderBlock::borderBoxRectInRegionAtPosition):
+        Returns the borderBoxRect for the region at the specified vertical offset. This rect
+        can be both shifted horizontally and have a different width from our original border rect.
+
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Modified to call borderBoxRectInRegionAtPosition so that lines will fit inside
+        the content rect of the border box rect for the specific region.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Modified to call logicalLeftOffsetForContent since it's cleaner.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        Called to compute the border box rect in a specific region. The result is cached in a HashMap
+        in the region itself so that subsequent lookups are fast.
+
+        (WebCore::RenderBox::nodeAtPoint):
+        Modified to use the border box rect in the active region when hit testing the backgrounds of boxes.
+
+        (WebCore::RenderBox::paintBoxDecorations):
+        Modified to use the border box rect in the active region when painting the backgrounds of boxes.
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        Helpers for computing logical widths and margins in a specific region. The result is then cached
+        in a HashMap in the region.
+
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        The function for obtaining the region-specific information for a given box.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        New function for returning the border box rect in a given region.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Make sure mask painting honors the active region.
+
+        * rendering/RenderBoxRegionInfo.h: Added.
+        (WebCore::RenderBoxRegionInfo::RenderBoxRegionInfo):
+        (WebCore::RenderBoxRegionInfo::logicalLeft):
+        (WebCore::RenderBoxRegionInfo::logicalWidth):
+        (WebCore::RenderBoxRegionInfo::containingBlockChainIsShifted):
+        New class held by RenderRegions that caches box-specific info for a given region. This will eventually
+        expand to include custom styles as well, but for now it is limited to a new logical left and a new
+        logical width, along with a bit for optimizing accumulated shifting when painting/hit testing to avoid
+        too much groveling up the containing block chain.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        Removed the region fitting optimization, since eventually everyone is going to care, and there's no reason
+        to limit it with the results now being cached.
+
+        (WebCore::RenderFlowThread::layout):
+        All box-specific region information is always cleared whenever the regions are invalidated.
+
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        Modified to set up RenderBoxRegionInfo for the flow thread in all regions.
+        
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        (WebCore::RenderFlowThread::hitTestRegion):
+        Modified to take the region instead of the region's rectangle so that painting and hit testing of the flow
+        thread layer tree can properly receive the active region.
+
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        Helper for removing a box's information from all regions. For now it grovels through every region, so eventually
+        we may want to have a cache of the start/end regions for a given box somewhere.
+
+        * rendering/RenderFlowThread.h:
+        Removal of the region fitting stuff.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::paintPaginatedChildLayer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        Modified to pass the current region down through painting functions so that it is known at paint time.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        Added a new bit to RenderObjects, inRenderFlowThread(), so that it is quick to determine whether or not an
+        object needs flow thread special casing.
+
+        (WebCore::RenderObject::enclosingRenderFlowThread):
+        Modified enclosingRenderFlowThread to be able to quickly return 0 if the object is not in a flow thread.
+
+        (WebCore::RenderObject::containerForRepaint):
+        Same.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setParent):
+        setParent now updates inRenderFlowThread() state.
+
+        (WebCore::RenderObject::inRenderFlowThread):
+        (WebCore::RenderObject::setInRenderFlowThread):
+        Adding the new bit.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        Make sure when an object is removed from a RenderFlowThread that it deletes its box-specific information
+        in all regions.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::~RenderRegion):
+        (WebCore::RenderRegion::paintReplaced):
+        (WebCore::RenderRegion::nodeAtPoint):
+        (WebCore::RenderRegion::renderBoxRegionInfo):
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::deleteAllRenderBoxRegionInfo):
+        (WebCore::RenderRegion::matchesRenderFlowThreadLogicalWidth):
+        * rendering/RenderRegion.h:
+        Added the new HashMap for holding box-specific region information. Also added an additional optimization to
+        check if a specific region matches the overall width of the RenderFlowThread. If it does, we don't need to 
+        cache box-specific information for that region.
+
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::renderSubtreeToImageBuffer):
+        Modified the PaintInfo construction to include the region argument. It's not optional so that callers will
+        have to consider it (since masks illustrated this is necessary).
+
 2011-09-30  Tim Horton  <timothy_horton@apple.com>
 
         feBlend uses a table of function pointers which reduces inlineability inside the main loop

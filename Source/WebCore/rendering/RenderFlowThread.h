@@ -81,8 +81,8 @@ public:
     void computeLogicalWidth();
     void computeLogicalHeight();
 
-    void paintIntoRegion(PaintInfo&, const LayoutRect& regionRect, const LayoutPoint& paintOffset);
-    bool hitTestRegion(const LayoutRect& regionRect, const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
+    void paintIntoRegion(PaintInfo&, RenderRegion*, const LayoutPoint& paintOffset);
+    bool hitTestRegion(RenderRegion*, const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
     bool hasRegions() const { return m_regionList.size(); }
     bool hasValidRegions() const { ASSERT(!m_regionsInvalidated); return m_hasValidRegions; }
@@ -100,20 +100,17 @@ public:
     LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
     LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
     LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, bool includeBoundaryPoint = true) const;
-
-    bool isRegionFittingEnabled() const { return !m_regionFittingDisableCount; }
-    void disableRegionFitting() { m_regionFittingDisableCount++; }
-    void enableRegionFitting() { ASSERT(m_regionFittingDisableCount > 0); m_regionFittingDisableCount--; }
+    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
 
     RenderRegion* mapFromFlowToRegion(TransformState&) const;
 
+    void removeRenderBoxRegionInfo(RenderBox*);
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
-
-    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
 
     bool dependsOn(RenderFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderFlowThread*);
@@ -142,7 +139,6 @@ private:
     bool m_regionsInvalidated;
     bool m_regionsHaveUniformLogicalWidth;
     bool m_regionsHaveUniformLogicalHeight;
-    unsigned m_regionFittingDisableCount;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
@@ -159,28 +155,6 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderFlowThread(const RenderFlowThread*);
-
-class RegionFittingDisabler {
-    WTF_MAKE_NONCOPYABLE(RegionFittingDisabler);
-public:
-    RegionFittingDisabler(RenderFlowThread* flowThread, bool disable)
-    {
-        if (flowThread && disable) {
-            m_flowThread = flowThread;
-            m_flowThread->disableRegionFitting();
-        } else
-            m_flowThread = 0;
-    }
-
-    ~RegionFittingDisabler()
-    {
-        if (m_flowThread)
-            m_flowThread->enableRegionFitting();
-    }
-private:
-    RenderFlowThread* m_flowThread;
-};
-
 
 } // namespace WebCore
 

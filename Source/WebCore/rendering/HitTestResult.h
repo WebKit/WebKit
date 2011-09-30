@@ -38,6 +38,7 @@ class HTMLMediaElement;
 class Image;
 class KURL;
 class Node;
+class RenderRegion;
 class Scrollbar;
 
 class HitTestResult {
@@ -59,6 +60,9 @@ public:
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
+
+    RenderRegion* region() const { return m_region; }
+    void setRegion(RenderRegion* region) { m_region = region; }
 
     void setToNonShadowAncestor();
 
@@ -139,6 +143,9 @@ private:
     int m_rightPadding;
     int m_bottomPadding;
     int m_leftPadding;
+    
+    RenderRegion* m_region; // The region we're inside.
+
     mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };
 

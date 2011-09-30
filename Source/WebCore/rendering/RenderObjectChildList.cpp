@@ -114,6 +114,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         if (oldChild->isRenderRegion())
             toRenderRegion(oldChild)->detachRegion();
 
+        if (oldChild->inRenderFlowThread() && oldChild->isBox())
+            oldChild->enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(oldChild));
+
         if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
             containerFlowThread->removeFlowChild(oldChild);
 

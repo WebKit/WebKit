@@ -5329,6 +5329,7 @@
 		BCEA488C097D93020094C9E4 /* RenderText.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA484D097D93020094C9E4 /* RenderText.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */; };
 		BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA484F097D93020094C9E4 /* RenderTextFragment.h */; };
+		BCEB179C143379F50052EAE9 /* RenderBoxRegionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEB179B143379F50052EAE9 /* RenderBoxRegionInfo.h */; };
 		BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */; };
 		BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01BB0C274DAC009F4EC9 /* Screen.h */; };
 		BCEC01C20C274DDD009F4EC9 /* JSScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */; };
@@ -12090,6 +12091,7 @@
 		BCEA484D097D93020094C9E4 /* RenderText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderText.h; sourceTree = "<group>"; };
 		BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextFragment.cpp; sourceTree = "<group>"; };
 		BCEA484F097D93020094C9E4 /* RenderTextFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextFragment.h; sourceTree = "<group>"; };
+		BCEB179B143379F50052EAE9 /* RenderBoxRegionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBoxRegionInfo.h; sourceTree = "<group>"; };
 		BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Screen.cpp; sourceTree = "<group>"; };
 		BCEC01BB0C274DAC009F4EC9 /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Screen.h; sourceTree = "<group>"; };
 		BCEC01BC0C274DAC009F4EC9 /* Screen.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Screen.idl; sourceTree = "<group>"; };
@@ -19706,6 +19708,7 @@
 				BCEA4823097D93020094C9E4 /* RenderBox.h */,
 				BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */,
 				BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */,
+				BCEB179B143379F50052EAE9 /* RenderBoxRegionInfo.h */,
 				BCEA4824097D93020094C9E4 /* RenderBR.cpp */,
 				BCEA4825097D93020094C9E4 /* RenderBR.h */,
 				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
@@ -23543,6 +23546,7 @@
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
+				BCEB179C143379F50052EAE9 /* RenderBoxRegionInfo.h in Headers */,
 				59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

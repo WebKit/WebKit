@@ -1109,14 +1109,14 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         // Establish the clip used to paint our background.
         m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
         
-        PaintInfo info(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        PaintInfo info(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, 0, 0);
         renderer()->paint(info, paintOffset);
 
         // Restore the clip.
         m_owningLayer->restoreClip(context, paintDirtyRect, damageRect);
 
         // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
-        m_owningLayer->paintList(m_owningLayer->negZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0);
+        m_owningLayer->paintList(m_owningLayer->negZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
     }
                 
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
@@ -1127,7 +1127,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
         PaintInfo paintInfo(context, clipRectToApply.rect(), 
                             selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                            forceBlackText, paintingRootForRenderer, 0);
+                            forceBlackText, paintingRootForRenderer, 0, 0);
         renderer()->paint(paintInfo, paintOffset);
 
         if (!selectionOnly) {
@@ -1146,17 +1146,17 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
         if (!outlineRect.isEmpty()) {
             // Paint our own outline
-            PaintInfo paintInfo(context, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
+            PaintInfo paintInfo(context, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, 0, 0);
             m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
             renderer()->paint(paintInfo, paintOffset);
             m_owningLayer->restoreClip(context, paintDirtyRect, outlineRect);
         }
 
         // Paint any child layers that have overflow.
-        m_owningLayer->paintList(m_owningLayer->normalFlowList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0);
+        m_owningLayer->paintList(m_owningLayer->normalFlowList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
 
         // Now walk the sorted list of children with positive z-indices.
-        m_owningLayer->paintList(m_owningLayer->posZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0);
+        m_owningLayer->paintList(m_owningLayer->posZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
     }
     
     if (shouldPaint && (paintingPhase & GraphicsLayerPaintMask)) {
@@ -1164,7 +1164,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
 
             // Paint the mask.
-            PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, 0);
+            PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, 0, 0);
             renderer()->paint(paintInfo, paintOffset);
             
             // Restore the clip.
