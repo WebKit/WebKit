@@ -1,3 +1,13 @@
+2011-09-30  Aaron Colwell  <acolwell@chromium.org>
+
+        Fix EnabledAtRuntime support for constants.
+        https://bugs.webkit.org/show_bug.cgi?id=67311
+
+        Reviewed by Adam Barth.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+
 2011-09-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69043

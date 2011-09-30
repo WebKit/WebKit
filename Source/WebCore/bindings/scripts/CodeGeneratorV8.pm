@@ -2099,6 +2099,7 @@ END
 
     # Setup constants
     my $has_constants = 0;
+    my @constantsEnabledAtRuntime;
     if (@{$dataNode->constants}) {
         $has_constants = 1;
         push(@implContent, "static const BatchedConstant ${interfaceName}Consts[] = {\n");
@@ -2106,12 +2107,17 @@ END
     foreach my $constant (@{$dataNode->constants}) {
         my $name = $constant->name;
         my $value = $constant->value;
-        # FIXME: we need the static_cast here only because of one constant, NodeFilter.idl
-        # defines "const unsigned long SHOW_ALL = 0xFFFFFFFF".  It would be better if we
-        # handled this here, and converted it to a -1 constant in the c++ output.
-        push(@implContent, <<END);
+        my $attrExt = $constant->extendedAttributes;
+        if ($attrExt->{"EnabledAtRuntime"}) {
+            push(@constantsEnabledAtRuntime, $constant);
+        } else {
+            # FIXME: we need the static_cast here only because of one constant, NodeFilter.idl
+            # defines "const unsigned long SHOW_ALL = 0xFFFFFFFF".  It would be better if we
+            # handled this here, and converted it to a -1 constant in the c++ output.
+            push(@implContent, <<END);
     {"${name}", static_cast<signed int>($value)},
 END
+        }
     }
     if ($has_constants) {
         push(@implContent, "};\n\n");
@@ -2231,6 +2237,22 @@ END
         configureAttribute(instance, proto, attrData);
     }
 END
+        push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+    }
+
+    # Setup the enable-at-runtime constants if we have them
+    foreach my $runtime_const (@constantsEnabledAtRuntime) {
+        my $enable_function = GetRuntimeEnableFunctionName($runtime_const);
+        my $conditionalString = GenerateConditionalString($runtime_const);
+        my $name = $runtime_const->name;
+        my $value = $runtime_const->value;
+        push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+        push(@implContent, "    if (${enable_function}()) {\n");
+        push(@implContent, <<END);
+        static const BatchedConstant constData = {"${name}", static_cast<signed int>(${value})};
+        batchConfigureConstants(desc, proto, &constData, 1);
+END
+        push(@implContent, "    }\n");
         push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     }
 
