@@ -998,6 +998,9 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.assembler().cdq();
             m_jit.assembler().idivl_r(op2GPR);
             
+            if (temp2 != InvalidGPRReg)
+                unlock(temp2);
+
             // Check that there was no remainder. If there had been, then we'd be obligated to
             // produce a double result instead.
             speculationCheck(m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));

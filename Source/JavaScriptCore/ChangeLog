@@ -1,3 +1,19 @@
+2011-09-29  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT - register not unlocked after usage in ArithDiv
+        https://bugs.webkit.org/show_bug.cgi?id=69122
+
+        Reviewed by Geoffrey Garen.
+
+        Some allocated register is not unlocked after the usage in ArithDiv. 
+        Also there's a typo in "ENBALE_DFG_CONSISTENTCY_CHECK".
+
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::toObject

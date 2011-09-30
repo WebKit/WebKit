@@ -44,7 +44,7 @@
 #define ENABLE_DFG_JIT_ASSERT 0
 #endif
 // Consistency check contents compiler data structures.
-#define ENBALE_DFG_CONSISTENCY_CHECK 0
+#define ENABLE_DFG_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
 #define ENABLE_DFG_JIT_BREAK_ON_EVERY_FUNCTION 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
