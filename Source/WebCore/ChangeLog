@@ -1,3 +1,21 @@
+2011-09-30  Cary Clark  <caryclark@google.com>
+
+        Inset focus ring (Skia on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=69166
+        http://code.google.com/p/chromium/issues/detail?id=97956
+
+        This focus ring was drawn too large and was left tracks
+        in subsequent invalidations. Make it more closely match
+        the CG version.
+
+        Reviewed by Stephen White.
+
+        No new tests. This platform is not enabled.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::getFocusRingOutset):
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2011-09-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96422.
