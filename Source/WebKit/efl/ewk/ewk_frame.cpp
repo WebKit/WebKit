@@ -101,7 +101,7 @@ struct Eina_Iterator_Ewk_Frame {
 #endif
 
 #define EWK_FRAME_SD_GET(o, ptr)                                \
-    Ewk_Frame_Smart_Data *ptr = (Ewk_Frame_Smart_Data*)evas_object_smart_data_get(o)
+    Ewk_Frame_Smart_Data* ptr = static_cast<Ewk_Frame_Smart_Data*>(evas_object_smart_data_get(o))
 
 #define EWK_FRAME_SD_GET_OR_RETURN(o, ptr, ...)         \
     EWK_FRAME_TYPE_CHECK(o, __VA_ARGS__);               \
@@ -181,7 +181,7 @@ static void _ewk_frame_smart_add(Evas_Object* o)
     EWK_FRAME_SD_GET(o, sd);
 
     if (!sd) {
-        sd = (Ewk_Frame_Smart_Data*)calloc(1, sizeof(Ewk_Frame_Smart_Data));
+        sd = static_cast<Ewk_Frame_Smart_Data*>(calloc(1, sizeof(Ewk_Frame_Smart_Data)));
         if (!sd) {
             CRITICAL("could not allocate Ewk_Frame_Smart_Data");
             return;
@@ -233,14 +233,14 @@ static void _ewk_frame_smart_add(Evas_Object* o)
 #endif
 }
 
-static void _ewk_frame_smart_del(Evas_Object *o)
+static void _ewk_frame_smart_del(Evas_Object* o)
 {
     WRN("o=%p", o); // XXX REMOVE ME LATER
     EWK_FRAME_SD_GET(o, sd);
 
     if (sd) {
         if (sd->frame) {
-            WebCore::FrameLoaderClientEfl *flc = _ewk_frame_loader_efl_get(sd->frame);
+            WebCore::FrameLoaderClientEfl* flc = _ewk_frame_loader_efl_get(sd->frame);
             flc->setWebFrame(0);
             sd->frame->loader()->detachFromParent();
             sd->frame->loader()->cancelAndClear();
@@ -301,8 +301,8 @@ Evas_Object* ewk_frame_view_get(const Evas_Object* o)
 Eina_Iterator* ewk_frame_children_iterator_new(Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
-    Eina_Iterator_Ewk_Frame* it = (Eina_Iterator_Ewk_Frame*)
-                                  calloc(1, sizeof(Eina_Iterator_Ewk_Frame));
+    Eina_Iterator_Ewk_Frame* it = static_cast<Eina_Iterator_Ewk_Frame*>
+                                  (calloc(1, sizeof(Eina_Iterator_Ewk_Frame)));
     if (!it)
         return 0;
 
@@ -686,7 +686,7 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* o, int x, int y)
     if (!result.innerNode())
         return 0;
 
-    Ewk_Hit_Test* hit_test = (Ewk_Hit_Test*)calloc(1, sizeof(Ewk_Hit_Test));
+    Ewk_Hit_Test* hit_test = static_cast<Ewk_Hit_Test*>(calloc(1, sizeof(Ewk_Hit_Test)));
     if (!hit_test) {
         CRITICAL("Could not allocate memory for hit test.");
         return 0;

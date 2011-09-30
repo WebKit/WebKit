@@ -32,7 +32,7 @@ static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
 static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* t, const Eina_Rectangle* area)
 {
-    Ewk_View_Private_Data* priv = (Ewk_View_Private_Data*)data;
+    Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
     Eina_Rectangle r = {area->x + t->x, area->y + t->y, area->w, area->h};
 
     return ewk_view_paint_contents(priv, t->cairo, &r);
@@ -40,7 +40,7 @@ static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* t, const Eina_R
 
 static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* o)
 {
-    Ewk_View_Private_Data* priv = (Ewk_View_Private_Data*)data;
+    Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
     ewk_view_layout_if_needed_recursive(priv);
     return 0;
 }
@@ -58,8 +58,8 @@ static Evas_Object* _ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data*
 static void
 _ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* o, void* event_info)
 {
-    Evas_Coord* size = (Evas_Coord*)event_info;
-    Ewk_View_Smart_Data* sd = (Ewk_View_Smart_Data*)data;
+    Evas_Coord* size = static_cast<Evas_Coord*>(event_info);
+    Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
 
     ewk_tiled_backing_store_contents_resize
         (sd->backing_store, size[0], size[1]);
@@ -71,7 +71,7 @@ static void _ewk_view_tiled_smart_add(Evas_Object* o)
 
     _parent_sc.sc.add(o);
 
-    sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
+    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o));
     if (!sd)
         return;
 

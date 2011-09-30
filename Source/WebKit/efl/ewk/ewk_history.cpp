@@ -83,7 +83,7 @@ static inline Ewk_History_Item* _ewk_history_item_new(WebCore::HistoryItem* core
         return 0;
     }
 
-    item = (Ewk_History_Item*)calloc(1, sizeof(Ewk_History_Item));
+    item = static_cast<Ewk_History_Item*>(calloc(1, sizeof(Ewk_History_Item)));
     if (!item) {
         CRITICAL("Could not allocate item memory.");
         return 0;
@@ -271,7 +271,7 @@ const char* ewk_history_item_title_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = (Ewk_History_Item*)item;
+    Ewk_History_Item* i = const_cast<Ewk_History_Item*>(item);
     eina_stringshare_replace(&i->title, core->title().utf8().data());
     return i->title;
 }
@@ -280,7 +280,7 @@ const char* ewk_history_item_title_alternate_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = (Ewk_History_Item*)item;
+    Ewk_History_Item* i = const_cast<Ewk_History_Item*>(item);
     eina_stringshare_replace(&i->alternate_title,
                              core->alternateTitle().utf8().data());
     return i->alternate_title;
@@ -298,7 +298,7 @@ const char* ewk_history_item_uri_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = (Ewk_History_Item*)item;
+    Ewk_History_Item* i = const_cast<Ewk_History_Item*>((item));
     eina_stringshare_replace(&i->uri, core->urlString().utf8().data());
     return i->uri;
 }
@@ -307,7 +307,7 @@ const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = (Ewk_History_Item*)item;
+    Ewk_History_Item* i = const_cast<Ewk_History_Item*>(item);
     eina_stringshare_replace(&i->original_uri,
                              core->originalURLString().utf8().data());
     return i->original_uri;
@@ -383,7 +383,7 @@ Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* core)
     EINA_SAFETY_ON_NULL_RETURN_VAL(core, 0);
     DBG("core=%p", core);
 
-    history = (Ewk_History*)malloc(sizeof(Ewk_History));
+    history = static_cast<Ewk_History*>(malloc(sizeof(Ewk_History)));
     if (!history) {
         CRITICAL("Could not allocate history memory.");
         return 0;

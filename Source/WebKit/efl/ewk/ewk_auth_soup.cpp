@@ -79,7 +79,7 @@ void ewk_auth_soup_credentials_set(const char* username, const char* password, v
     if (!data)
         return;
 
-    Ewk_Auth_Data* auth_data = (Ewk_Auth_Data*)data;
+    Ewk_Auth_Data* auth_data = static_cast<Ewk_Auth_Data*>(data);
     soup_auth_authenticate(auth_data->auth, username, password);
     soup_session_unpause_message(auth_data->session, auth_data->msg);
     free_auth_data(auth_data);
@@ -94,7 +94,7 @@ static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAut
     if (!ewk_auth_show_dialog_callback)
         return;
 
-    auth_data = (Ewk_Auth_Data*)calloc(1, sizeof(Ewk_Auth_Data));
+    auth_data = static_cast<Ewk_Auth_Data*>(calloc(1, sizeof(Ewk_Auth_Data)));
 
     if (!auth_data) {
         CRITICAL("could not allocate Ewk_Auth_Data");

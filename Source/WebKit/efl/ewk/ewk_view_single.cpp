@@ -43,7 +43,7 @@ static void _ewk_view_single_smart_add(Evas_Object* o)
 
     _parent_sc.sc.add(o);
 
-    sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
+    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o));
     if (!sd)
         return;
 
@@ -67,7 +67,7 @@ static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data
 
 static void _ewk_view_single_smart_resize(Evas_Object* o, Evas_Coord w, Evas_Coord h)
 {
-    Ewk_View_Smart_Data* sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
+    Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o));
     _parent_sc.sc.resize(o, w, h);
 
     if (!sd)
@@ -251,7 +251,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
                 sx, sy + sh + sr->dy, sw, -sr->dy);
 
             _ewk_view_4b_move_region_up
-                ((uint32_t*)pixels, -sr->dy, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), -sr->dy, sx, sy, sw, sh, ow);
             evas_object_image_data_update_add
                 (sd->backing_store, sx, sy, sw, sh + sr->dy);
 
@@ -263,7 +263,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
                 sx, sy, sw, sr->dy);
 
             _ewk_view_4b_move_region_down
-                ((uint32_t*)pixels, sr->dy, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), sr->dy, sx, sy, sw, sh, ow);
             evas_object_image_data_update_add
                 (sd->backing_store, sx, sy + sr->dy, sw, sh - sr->dy);
 
@@ -277,7 +277,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
                 sx + sw + sr->dx, sy, -sr->dx, sh);
 
             _ewk_view_4b_move_region_left
-                ((uint32_t*)pixels, -sr->dx, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), -sr->dx, sx, sy, sw, sh, ow);
             evas_object_image_data_update_add
                 (sd->backing_store, sx, sy, sw + sr->dx, sh);
 
@@ -289,7 +289,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
                 sx, sy, sr->dx, sh);
 
             _ewk_view_4b_move_region_right
-                ((uint32_t*)pixels, sr->dx, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), sr->dx, sx, sy, sw, sh, ow);
             evas_object_image_data_update_add
                 (sd->backing_store, sx + sr->dx, sy, sw - sr->dx, sh);
 
@@ -332,7 +332,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
             sr->dx, sr->dy, mx, my, mw, mh, ax, ay, aw, ah, bx, by, bw, bh);
 
         _ewk_view_4b_move_region
-            ((uint32_t*)pixels, sr->dx, sr->dy, sx, sy, sw, sh, ow);
+            (static_cast<uint32_t*>(pixels), sr->dx, sr->dy, sx, sy, sw, sh, ow);
 
         evas_object_image_data_update_add(sd->backing_store, mx, my, mw, mh);
         ewk_view_repaint_add(sd->_priv, ax, ay, aw, ah);
@@ -400,7 +400,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
     format = CAIRO_FORMAT_ARGB32;
 
     surface = cairo_image_surface_create_for_data
-                  ((unsigned char*)pixels, format, ow, oh, ow * 4);
+                  (static_cast<unsigned char*>(pixels), format, ow, oh, ow * 4);
     status = cairo_surface_status(surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create surface from data %dx%d: %s",

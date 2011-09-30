@@ -103,7 +103,7 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
                                                  Ewk_Context_Menu_Action action, Ewk_Context_Menu* submenu,
                                                  const char* title, Eina_Bool checked, Eina_Bool enabled)
 {
-    Ewk_Context_Menu_Item* item = (Ewk_Context_Menu_Item*) malloc(sizeof(*item));
+    Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(malloc(sizeof(*item)));
     if (!item)
         return 0;
 
