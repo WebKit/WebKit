@@ -62,13 +62,13 @@ protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::MethodList&);
     void finishCreation(JSGlobalData&, const Identifier&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+    virtual CallType getCallDataVirtual(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
 
 private:
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-    virtual CallType getCallDataVirtual(CallData&);
-    static CallType getCallData(JSCell*, CallData&);
 
     OwnPtr<Bindings::MethodList> _methodList;
 };

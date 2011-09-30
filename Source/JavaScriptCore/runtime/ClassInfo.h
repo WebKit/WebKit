@@ -33,10 +33,14 @@ namespace JSC {
     struct MethodTable {
         typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
         VisitChildrenFunctionPtr visitChildren;
+
+        typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
+        GetCallDataFunctionPtr getCallData;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \
-        &ClassName::visitChildren \
+        &ClassName::visitChildren, \
+        &ClassName::getCallData \
     }
 
     struct ClassInfo {
