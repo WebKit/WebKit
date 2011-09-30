@@ -1586,11 +1586,101 @@ void JITCodeGenerator::nonSpeculativeLogicalNot(Node& node)
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
 }
 
-void NO_RETURN JITCodeGenerator::emitCall(Node& node)
+void JITCodeGenerator::emitCall(Node& node)
 {
-    // FIXME: It's not supported yet!
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(node);
+    P_DFGOperation_E slowCallFunction;
+    bool isCall;
+
+    if (node.op == Call) {
+        slowCallFunction = operationLinkCall;
+        isCall = true;
+    } else {
+        ASSERT(node.op == Construct);
+        slowCallFunction = operationLinkConstruct;
+        isCall = false;
+    }
+
+    NodeIndex calleeNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
+    JSValueOperand callee(this, calleeNodeIndex);
+    GPRReg calleeTagGPR = callee.tagGPR();
+    GPRReg calleePayloadGPR = callee.payloadGPR();
+    use(calleeNodeIndex);
+
+    // the call instruction's first child is either the function (normal call) or the
+    // receiver (method call). subsequent children are the arguments.
+    int numArgs = node.numChildren() - 1;
+
+    // For constructors, the this argument is not passed but we have to make space
+    // for it.
+    int numPassedArgs = numArgs + (isCall ? 0 : 1);
+
+    // amount of stuff (in units of sizeof(Register)) that we need to place at the
+    // top of the JS stack.
+    int callDataSize = 0;
+
+    // first there are the arguments
+    callDataSize += numPassedArgs;
+
+    // and then there is the call frame header
+    callDataSize += RegisterFile::CallFrameHeaderSize;
+
+    m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), payloadOfCallData(RegisterFile::ArgumentCount));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::Int32Tag), tagOfCallData(RegisterFile::ArgumentCount));
+    m_jit.storePtr(GPRInfo::callFrameRegister, payloadOfCallData(RegisterFile::CallerFrame));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), tagOfCallData(RegisterFile::CallerFrame));
+
+    for (int argIdx = 0; argIdx < numArgs; argIdx++) {
+        NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + argIdx];
+        JSValueOperand arg(this, argNodeIndex);
+        GPRReg argTagGPR = arg.tagGPR();
+        GPRReg argPayloadGPR = arg.payloadGPR();
+        use(argNodeIndex);
+
+        m_jit.store32(argTagGPR, tagOfCallData(-callDataSize + argIdx + (isCall ? 0 : 1)));
+        m_jit.store32(argPayloadGPR, payloadOfCallData(-callDataSize + argIdx + (isCall ? 0 : 1)));
+    }
+
+    m_jit.store32(calleeTagGPR, tagOfCallData(RegisterFile::Callee));
+    m_jit.store32(calleePayloadGPR, payloadOfCallData(RegisterFile::Callee));
+
+    flushRegisters();
+
+    GPRResult resultPayload(this);
+    GPRResult2 resultTag(this);
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+    GPRReg resultTagGPR = resultTag.gpr();
+
+    JITCompiler::DataLabelPtr targetToCheck;
+    JITCompiler::Jump slowPath;
+
+    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck);
+    m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultPayloadGPR);
+    m_jit.storePtr(resultPayloadGPR, payloadOfCallData(RegisterFile::ScopeChain));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), tagOfCallData(RegisterFile::ScopeChain));
+
+    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+
+    JITCompiler::Call fastCall = m_jit.nearCall();
+    m_jit.notifyCall(fastCall, m_jit.graph()[m_compileIndex].codeOrigin);
+
+    JITCompiler::Jump done = m_jit.jump();
+
+    slowPath.link(&m_jit);
+
+    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    m_jit.push(GPRInfo::argumentGPR0);
+    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.move(Imm32(numPassedArgs), GPRInfo::regT1);
+    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), m_jit.graph()[m_compileIndex].codeOrigin);
+
+    done.link(&m_jit);
+
+    setupResults(resultTagGPR, resultPayloadGPR);
+
+    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
+
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, m_jit.graph()[m_compileIndex].codeOrigin);
 }
 
 #endif

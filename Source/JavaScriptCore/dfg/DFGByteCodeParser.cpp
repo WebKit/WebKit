@@ -1382,7 +1382,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(ThrowReferenceError);
             LAST_OPCODE(op_throw_reference_error);
             
-#if USE(JSVALUE64)
         case op_call: {
             NodeIndex callTarget = get(currentInstruction[1].u.operand);
             if (m_graph.isFunctionConstant(m_codeBlock, callTarget)) {
@@ -1416,7 +1415,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addCall(interpreter, currentInstruction, Construct);
             NEXT_OPCODE(op_construct);
         }
-#endif
             
         case op_call_put_result:
             NEXT_OPCODE(op_call_put_result);

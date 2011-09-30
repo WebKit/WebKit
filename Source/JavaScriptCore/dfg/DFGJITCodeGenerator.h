@@ -785,7 +785,19 @@ protected:
     {
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
     }
-    
+
+#if USE(JSVALUE32_64)    
+    MacroAssembler::Address tagOfCallData(int idx)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+    }
+
+    MacroAssembler::Address payloadOfCallData(int idx)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    }
+#endif
+
     void emitCall(Node&);
     
     void speculationCheck(MacroAssembler::Jump jumpToFail);
