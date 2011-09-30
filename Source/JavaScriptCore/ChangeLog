@@ -1,3 +1,29 @@
+2011-09-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Crash due to out of bounds read/write in MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=69148
+        
+        This was a case of being surprised by a poorly aritulcated cell size limit,
+        plus an incorrect ASSERT guarding the cell size limit.
+
+        Reviewed by Oliver Hunt.
+
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::sizeClassFor): Changed heap size ranges to be inclusive,
+        since it makes the ranges easier to understand.
+        
+        Bumped up the max cell size to support the use case in this bug. Since the
+        atomSize is much bigger than it used to be, there isn't much accounting
+        cost to handling more size classes.
+        
+        Switched to FixedArray, to help catch SizeClass indexing bugs in the future.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocator):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData): Updated for size ranges
+        being inclusive.
+
 2011-09-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Build fix: Qt::escape is deprecated in Qt5

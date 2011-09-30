@@ -35,10 +35,10 @@ MarkedSpace::MarkedSpace(Heap* heap)
     , m_highWaterMark(0)
     , m_heap(heap)
 {
-    for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).cellSize = cellSize;
 
-    for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
         sizeClassFor(cellSize).cellSize = cellSize;
 }
 
@@ -64,19 +64,19 @@ void MarkedSpace::resetAllocator()
 {
     m_waterMark = 0;
 
-    for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).resetAllocator();
 
-    for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
         sizeClassFor(cellSize).resetAllocator();
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()
 {
-    for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).zapFreeList();
 
-    for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
         sizeClassFor(cellSize).zapFreeList();
 }
 

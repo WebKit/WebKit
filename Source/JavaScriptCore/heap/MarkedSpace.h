@@ -32,7 +32,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < MarkedSpace::maxCellSize, class_fits_in_cell)
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedSpace::maxCellSize, class_fits_in_cell)
 
 namespace JSC {
 
@@ -45,7 +45,7 @@ class SlotVisitor;
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
-    static const size_t maxCellSize = 1024;
+    static const size_t maxCellSize = 2048;
 
     struct SizeClass {
         SizeClass();
@@ -78,19 +78,18 @@ public:
     template<typename Functor> typename Functor::ReturnType forEachBlock();
 
 private:
-    // [ 8, 16... 128 )
+    // [ 32... 256 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
-    static const size_t preciseCutoff = 128;
-    static const size_t maximumPreciseAllocationSize = preciseCutoff - preciseStep;
-    static const size_t preciseCount = preciseCutoff / preciseStep - 1;
+    static const size_t preciseCutoff = 256;
+    static const size_t preciseCount = preciseCutoff / preciseStep;
 
-    // [ 128, 256... 1024 )
+    // [ 512... 2048 ]
     static const size_t impreciseStep = preciseCutoff;
     static const size_t impreciseCutoff = maxCellSize;
-    static const size_t impreciseCount = impreciseCutoff / impreciseStep - 1;
+    static const size_t impreciseCount = impreciseCutoff / impreciseStep;
 
-    SizeClass m_preciseSizeClasses[preciseCount];
-    SizeClass m_impreciseSizeClasses[impreciseCount];
+    FixedArray<SizeClass, preciseCount> m_preciseSizeClasses;
+    FixedArray<SizeClass, impreciseCount> m_impreciseSizeClasses;
     size_t m_waterMark;
     size_t m_highWaterMark;
     Heap* m_heap;
@@ -113,8 +112,8 @@ inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
 
 inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
 {
-    ASSERT(bytes && bytes < maxCellSize);
-    if (bytes <= maximumPreciseAllocationSize)
+    ASSERT(bytes && bytes <= maxCellSize);
+    if (bytes <= preciseCutoff)
         return m_preciseSizeClasses[(bytes - 1) / preciseStep];
     return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
 }
