@@ -603,6 +603,7 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
+        addSlowCase();
         JITStubCall stubCall(this, cti_op_add);
         stubCall.addArgument(op1);
         stubCall.addArgument(op2);
@@ -674,8 +675,10 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
     unsigned op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-    if (!types.first().mightBeNumber() || !types.second().mightBeNumber())
+    if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
+        linkDummySlowCase(iter);
         return;
+    }
 
     unsigned op;
     int32_t constant;

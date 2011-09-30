@@ -1,3 +1,21 @@
+2011-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG 32-bit support for op_call and op_construct causes
+        run-javascriptcore-tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=69171
+
+        Reviewed by Gavin Barraclough.
+        
+        This fixes one obvious bug that was causing test failures (no
+        support for dummy slow case for op_add in 32_64), and disables
+        op_call and op_construct by default.        
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+
 2011-09-30  Geoffrey Garen  <ggaren@apple.com>
 
         Crash due to out of bounds read/write in MarkedSpace
