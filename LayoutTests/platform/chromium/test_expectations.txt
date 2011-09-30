@@ -3137,7 +3137,7 @@ BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.htm
 BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = IMAGE+TEXT
 BUGWK60414 WIN : platform/win/plugins/iframe-inside-overflow.html = TEXT
 
-BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TEXT
+BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TIMEOUT TEXT
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT
 
@@ -3630,7 +3630,7 @@ BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PAS
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
-BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = IMAGE
+BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.

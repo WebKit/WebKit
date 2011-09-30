@@ -1,3 +1,9 @@
+2011-09-29  Adam Barth  <abarth@webkit.org>
+
+        These tests can also time out.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-29  Martin Robinson  <mrobinson@igalia.com>
 
         [Freetype] Some text in Planet GNOME renders in the wrong place
