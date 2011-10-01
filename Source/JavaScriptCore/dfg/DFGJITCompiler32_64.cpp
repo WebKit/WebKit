@@ -146,7 +146,8 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // Int32s, have no FPRs, and have no constants. If there are constants, we
     // expect most of them to be jsUndefined(); if that's true then we handle that
     // specially to minimize code size and execution time.
-    bool haveUnboxedInt32s = false;
+    bool haveUnboxedInt32InRegisterFile = false;
+    bool haveUnboxedCellInRegisterFile = false;
     bool haveFPRs = false;
     bool haveConstants = false;
     bool haveUndefined = false;
@@ -182,8 +183,12 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             }
             break;
             
-        case UnboxedInt32InGPR:
-            haveUnboxedInt32s = true;
+        case AlreadyInRegisterFileAsUnboxedInt32:
+            haveUnboxedInt32InRegisterFile = true;
+            break;
+            
+        case AlreadyInRegisterFileAsUnboxedCell:
+            haveUnboxedCellInRegisterFile = true;
             break;
             
         case InFPR:
@@ -206,9 +211,26 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // From here on, the code assumes that it is profitable to maximize the distance
     // between when something is computed and when it is stored.
     
-    // 4) Perform all reboxing of integers.
-    //    Currently we don't rebox for JSValue32_64.
-    
+    // 4) Perform all reboxing of integers and cells, except for those in registers.
+
+    if (haveUnboxedInt32InRegisterFile || haveUnboxedCellInRegisterFile) {
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            switch (recovery.technique()) {
+            case AlreadyInRegisterFileAsUnboxedInt32:
+                store32(TrustedImm32(JSValue::Int32Tag), tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
+                break;
+
+            case AlreadyInRegisterFileAsUnboxedCell:
+                store32(TrustedImm32(JSValue::CellTag), tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
     // 5) Dump all non-poisoned GPRs. For poisoned GPRs, save them into the scratch storage.
     //    Note that GPRs do not have a fast change (like haveFPRs) because we expect that
     //    most OSR failure points will have at least one GPR that needs to be dumped.

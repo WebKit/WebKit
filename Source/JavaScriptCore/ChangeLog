@@ -1,3 +1,25 @@
+2011-10-01  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        JSVALUE32_64 DFG JIT - unboxed integers and cells in register file must be reboxed before exiting from DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69205
+
+        Reviewed by Gavin Barraclough.
+
+        If there are unboxed integers and cells in register file (e.g. by SetLocal), 
+        they must be reboxed before exiting from the speculative DFG JIT execution.
+        This patch also adds a new ValueSourceKind (CellInRegisterFile) and a new
+        ValueRecoveryTechnique (AlreadyInRegisterFileAsCell).
+
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::ValueRecovery::dump):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueSource::forPrediction):
+        (JSC::DFG::ValueRecovery::alreadyInRegisterFileAsUnboxedCell):
+
 2011-10-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96421.

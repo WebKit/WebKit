@@ -44,6 +44,9 @@ void ValueSource::dump(FILE* out) const
     case Int32InRegisterFile:
         fprintf(out, "Int32");
         break;
+    case CellInRegisterFile:
+        fprintf(out, "Cell");
+        break;
     case HaveNode:
         fprintf(out, "Node(%d)", m_nodeIndex);
         break;
@@ -58,6 +61,9 @@ void ValueRecovery::dump(FILE* out) const
         break;
     case AlreadyInRegisterFileAsUnboxedInt32:
         fprintf(out, "(int32)");
+        break;
+    case AlreadyInRegisterFileAsUnboxedCell:
+        fprintf(out, "(cell)");
         break;
     case InGPR:
         fprintf(out, "%%%s", GPRInfo::debugName(gpr()));
@@ -398,6 +404,9 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         
     case Int32InRegisterFile:
         return ValueRecovery::alreadyInRegisterFileAsUnboxedInt32();
+
+    case CellInRegisterFile:
+        return ValueRecovery::alreadyInRegisterFileAsUnboxedCell();
 
     case HaveNode: {
         if (m_jit.isConstant(valueSource.nodeIndex()))

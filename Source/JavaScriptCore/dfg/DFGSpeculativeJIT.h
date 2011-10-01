@@ -70,6 +70,7 @@ enum ValueSourceKind {
     SourceNotSet,
     ValueInRegisterFile,
     Int32InRegisterFile,
+    CellInRegisterFile,
     HaveNode
 };
 
@@ -97,6 +98,8 @@ public:
     {
         if (isInt32Prediction(prediction))
             return ValueSource(Int32InRegisterFile);
+        if (isCellPrediction(prediction))
+            return ValueSource(CellInRegisterFile);
         return ValueSource(ValueInRegisterFile);
     }
     
@@ -145,6 +148,7 @@ enum ValueRecoveryTechnique {
     AlreadyInRegisterFile,
     // It's already in the register file but unboxed.
     AlreadyInRegisterFileAsUnboxedInt32,
+    AlreadyInRegisterFileAsUnboxedCell,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -178,6 +182,13 @@ public:
     {
         ValueRecovery result;
         result.m_technique = AlreadyInRegisterFileAsUnboxedInt32;
+        return result;
+    }
+    
+    static ValueRecovery alreadyInRegisterFileAsUnboxedCell()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFileAsUnboxedCell;
         return result;
     }
     
