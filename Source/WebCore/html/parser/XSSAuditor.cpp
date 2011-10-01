@@ -239,11 +239,13 @@ void XSSAuditor::init()
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             String httpBodyAsString = httpBody->flattenToString();
-            m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, decoder);
-            if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
-                m_decodedHTTPBody = String();
-            if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
-                m_decodedHTTPBodySuffixTree = adoptPtr(new SuffixTree<ASCIICodebook>(m_decodedHTTPBody, suffixTreeDepth));
+            if (!httpBodyAsString.isEmpty()) {
+                m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, decoder);
+                if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
+                    m_decodedHTTPBody = String();
+                if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
+                    m_decodedHTTPBodySuffixTree = adoptPtr(new SuffixTree<ASCIICodebook>(m_decodedHTTPBody, suffixTreeDepth));
+            }
         }
     }
 
