@@ -58,8 +58,6 @@ v8 {
     include($$PWD/../JavaScriptCore/yarr/yarr.pri)
     include($$PWD/../JavaScriptCore/wtf/wtf.pri)
 
-    INCLUDEPATH = $$PWD/../JavaScriptCore/wtf/qt $$INCLUDEPATH
-
     SOURCES += \
         platform/qt/PlatformSupportQt.cpp \
         bindings/generic/BindingSecurityBase.cpp \

@@ -33,7 +33,6 @@ JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD/runtime \
     $$PWD/wtf \
     $$PWD/wtf/gobject \
-    $$PWD/wtf/qt \
     $$PWD/wtf/symbian \
     $$PWD/wtf/unicode \
     $$PWD/yarr \

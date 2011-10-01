@@ -1,3 +1,18 @@
+2011-10-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96421.
+        http://trac.webkit.org/changeset/96421
+        https://bugs.webkit.org/show_bug.cgi?id=69206
+
+        It broke Qt-WK2 build (Requested by ossy on #webkit).
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+
 2011-09-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Build fix: Qt::escape is deprecated in Qt5

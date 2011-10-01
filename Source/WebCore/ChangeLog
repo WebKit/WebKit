@@ -1,3 +1,13 @@
+2011-10-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96421.
+        http://trac.webkit.org/changeset/96421
+        https://bugs.webkit.org/show_bug.cgi?id=69206
+
+        It broke Qt-WK2 build (Requested by ossy on #webkit).
+
+        * WebCore.pro:
+
 2011-09-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Track separate scroll deltas on the compositor thread

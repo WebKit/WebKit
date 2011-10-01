@@ -108,7 +108,6 @@
 #include "SystemInfo.h"
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
-#include "UtilsQt.h"
 #include "WebPlatformStrategies.h"
 #if USE(QTKIT)
 #include "WebSystemInterface.h"
@@ -140,6 +139,7 @@
 #include <QStyle>
 #include <QSysInfo>
 #include <QTextCharFormat>
+#include <QTextDocument>
 #include <QTouchEvent>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -2110,7 +2110,7 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
     Q_UNUSED(frame)
 #ifndef QT_NO_MESSAGEBOX
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    QMessageBox::information(parent, tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QMessageBox::Ok);
+    QMessageBox::information(parent, tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Ok);
 #endif
 }
 
@@ -2127,7 +2127,7 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
     return true;
 #else
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    return QMessageBox::Yes == QMessageBox::information(parent, tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QMessageBox::Yes, QMessageBox::No);
+    return QMessageBox::Yes == QMessageBox::information(parent, tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Yes, QMessageBox::No);
 #endif
 }
 
@@ -2147,7 +2147,7 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    QString x = QInputDialog::getText(parent, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QLineEdit::Normal, defaultValue, &ok);
+    QString x = QInputDialog::getText(parent, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QLineEdit::Normal, defaultValue, &ok);
     if (ok && result)
         *result = x;
 #endif
