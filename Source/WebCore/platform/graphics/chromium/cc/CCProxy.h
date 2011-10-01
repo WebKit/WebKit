@@ -88,7 +88,7 @@ public:
 
 protected:
     CCProxy() { }
-    friend class ScopedSetImplThread;
+    friend class DebugScopedSetImplThread;
 };
 
 }

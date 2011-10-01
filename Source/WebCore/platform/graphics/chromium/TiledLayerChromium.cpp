@@ -220,24 +220,6 @@ void TiledLayerChromium::setIsMask(bool isMask)
     setTilingOption(isMask ? NeverTile : AutoTile);
 }
 
-TransformationMatrix TiledLayerChromium::tilingTransform() const
-{
-    TransformationMatrix transform = drawTransform();
-
-    if (contentBounds().isEmpty())
-        return transform;
-
-    transform.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
-                              bounds().height() / static_cast<double>(contentBounds().height()));
-
-    // Tiler draws with a different origin from other layers.
-    transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
-
-    transform.translate(-scrollPosition().x(), -scrollPosition().y());
-
-    return transform;
-}
-
 void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     LayerChromium::pushPropertiesTo(layer);
@@ -248,7 +230,6 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         return;
     }
 
-    tiledLayer->setTilingTransform(tilingTransform());
     tiledLayer->setSkipsDraw(m_skipsDraw);
     tiledLayer->setTextureOrientation(m_textureOrientation);
     tiledLayer->setSampledTexelFormat(m_sampledTexelFormat);

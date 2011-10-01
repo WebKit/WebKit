@@ -159,4 +159,28 @@ void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& z
     m_layerRenderer->setZoomAnimatorTransform(zoom);
 }
 
+void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
+{
+    if (!m_rootLayerImpl || !m_rootLayerImpl->scrollable())
+        return;
+
+    m_rootLayerImpl->scrollBy(scrollDelta);
+}
+
+PassOwnPtr<CCScrollUpdateSet> CCLayerTreeHostImpl::processScrollDeltas()
+{
+    OwnPtr<CCScrollUpdateSet> scrollInfo = adoptPtr(new CCScrollUpdateSet());
+    // FIXME: track scrolls from layers other than the root
+    if (rootLayer() && !rootLayer()->scrollDelta().isZero()) {
+        CCLayerTreeHostCommon::ScrollUpdateInfo info;
+        info.layerId = rootLayer()->id();
+        info.scrollDelta = rootLayer()->scrollDelta();
+        scrollInfo->append(info);
+
+        rootLayer()->setScrollPosition(rootLayer()->scrollPosition() + rootLayer()->scrollDelta());
+        rootLayer()->setScrollDelta(IntSize());
+    }
+    return scrollInfo.release();
+}
+
 }

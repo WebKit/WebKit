@@ -279,15 +279,19 @@ PassOwnPtr<CCMainThread::Task> CCThreadProxy::createBeginFrameAndCommitTaskOnCCT
     // numbers below the last executed one.
     int thisTaskSequenceNumber = m_numBeginFrameAndCommitsIssuedOnCCThread;
     m_numBeginFrameAndCommitsIssuedOnCCThread++;
-    return createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, thisTaskSequenceNumber, frameBeginTime);
+    OwnPtr<CCScrollUpdateSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+    return createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, thisTaskSequenceNumber, frameBeginTime, scrollInfo.release());
 }
 
-void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime)
+void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet> scrollInfo)
 {
     TRACE_EVENT("CCThreadProxy::beginFrameAndCommit", this, 0);
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
+
+    // Scroll deltas need to be applied even if the commit will be dropped.
+    m_layerTreeHost->applyScrollDeltas(*scrollInfo.get());
 
     // Drop beginFrameAndCommit calls that occur out of sequence. See createBeginFrameAndCommitTaskOnCCThread for
     // an explanation of how out-of-sequence beginFrameAndCommit tasks can occur.

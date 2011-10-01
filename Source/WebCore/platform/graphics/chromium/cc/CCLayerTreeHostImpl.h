@@ -26,6 +26,7 @@
 #define CCLayerTreeHostImpl_h
 
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include <wtf/RefPtr.h>
 
 #if USE(SKIA)
@@ -81,6 +82,11 @@ public:
     void setZoomAnimatorTransform(const TransformationMatrix&);
 
     const CCSettings& settings() const { return m_settings; }
+
+    void scrollRootLayer(const IntSize&);
+
+    PassOwnPtr<CCScrollUpdateSet> processScrollDeltas();
+
 protected:
     explicit CCLayerTreeHostImpl(const CCSettings&);
     int m_sourceFrameNumber;

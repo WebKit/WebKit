@@ -28,6 +28,7 @@
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "TransformationMatrix.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
 #include <wtf/PassOwnPtr.h>
@@ -50,6 +51,7 @@ class TextureManager;
 class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
+    virtual void applyScrollDelta(const IntSize&) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
 #if !USE(THREADED_COMPOSITING)
@@ -150,6 +152,7 @@ public:
 
     void updateLayers();
 
+    void applyScrollDeltas(const CCScrollUpdateSet&);
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
     bool initialize();

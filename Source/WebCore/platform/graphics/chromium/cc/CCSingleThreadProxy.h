@@ -76,6 +76,25 @@ private:
     int m_timesRecreateShouldFail; // Used during testing.
 };
 
-}
+// For use in the single-threaded case. In debug builds, it pretends that the
+// code is running on the thread to satisfy assertion checks.
+class DebugScopedSetImplThread {
+public:
+    DebugScopedSetImplThread()
+    {
+#if !ASSERT_DISABLED
+        ASSERT(CCProxy::isMainThread());
+        CCProxy::setImplThread(true);
+#endif
+    }
+    ~DebugScopedSetImplThread()
+    {
+#if !ASSERT_DISABLED
+        CCProxy::setImplThread(false);
+#endif
+    }
+};
+
+} // namespace WebCore
 
 #endif

@@ -130,6 +130,13 @@ public:
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
 
+    const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
+    void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
+
+    IntSize scrollDelta() const { return IntSize(); }
+
+    bool scrollable() const { return !maxScrollPosition().isZero(); }
+
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
@@ -237,6 +244,7 @@ private:
     IntSize m_bounds;
     IntRect m_visibleLayerRect;
     IntPoint m_scrollPosition;
+    IntSize m_maxScrollPosition;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;

@@ -2704,6 +2704,14 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
     layout();
 }
 
+void WebViewImpl::applyScrollDelta(const IntSize& scrollDelta)
+{
+    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
+        return;
+
+    mainFrameImpl()->frameView()->scrollBy(scrollDelta);
+}
+
 void WebViewImpl::didRecreateGraphicsContext(bool success)
 {
 

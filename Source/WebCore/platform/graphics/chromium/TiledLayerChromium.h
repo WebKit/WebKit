@@ -78,7 +78,6 @@ private:
 
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);
-    TransformationMatrix tilingTransform() const;
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);

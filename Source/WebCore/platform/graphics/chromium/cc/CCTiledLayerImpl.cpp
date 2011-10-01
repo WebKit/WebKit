@@ -92,6 +92,24 @@ DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
     return tile.get();
 }
 
+TransformationMatrix CCTiledLayerImpl::tilingTransform() const
+{
+    TransformationMatrix transform = drawTransform();
+
+    if (contentBounds().isEmpty())
+        return transform;
+
+    transform.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
+                              bounds().height() / static_cast<double>(contentBounds().height()));
+
+    // Tiler draws with a different origin from other layers.
+    transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
+
+    transform.translate(-scrollPosition().x(), -scrollPosition().y());
+
+    return transform;
+}
+
 void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
 {
     const IntRect& layerRect = visibleLayerRect();

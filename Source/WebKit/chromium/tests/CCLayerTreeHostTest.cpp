@@ -28,10 +28,10 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
-#include "CCThreadImpl.h"
 #include "GraphicsContext3DPrivate.h"
 #include <gtest/gtest.h>
 #include "LayerChromium.h"
@@ -58,6 +58,7 @@ public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
+    virtual void applyScrollDelta(const IntSize&) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -149,6 +150,11 @@ public:
 
     virtual void animateAndLayout(double frameBeginTime)
     {
+    }
+
+    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    {
+        m_testHooks->applyScrollDelta(scrollDelta);
     }
 
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
@@ -250,7 +256,7 @@ protected:
           test->m_layerTreeHost->setNeedsRedraw();
     }
 
-    void runTest()
+    virtual void runTest()
     {
         webkit_support::PostDelayedTask(CCLayerTreeHostTest::onBeginTest, static_cast<void*>(this), 0);
         webkit_support::PostDelayedTask(CCLayerTreeHostTest::testTimeout, static_cast<void*>(this), 5000);
@@ -296,7 +302,7 @@ void CCLayerTreeHostTest::doBeginTest()
     m_running = true;
     m_client = MockLayerTreeHostClient::create(this);
 
-    RefPtr<LayerChromium> rootLayer;
+    RefPtr<LayerChromium> rootLayer = LayerChromium::create(0);
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT(m_layerTreeHost);
 
@@ -321,6 +327,15 @@ void CCLayerTreeHostTest::endTest()
             onEndTest(static_cast<void*>(this));
     }
 }
+
+class CCLayerTreeHostTestThreadOnly : public CCLayerTreeHostTest {
+public:
+    virtual void runTest()
+    {
+        if (m_settings.enableCompositorThread)
+            CCLayerTreeHostTest::runTest();
+    }
+};
 
 // Shortlived layerTreeHosts shouldn't die.
 class CCLayerTreeHostTestShortlived1 : public CCLayerTreeHostTest {
@@ -553,6 +568,149 @@ private:
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, run)
 {
     CCSettings setings;
+    runTest();
+}
+
+class CCLayerTreeHostTestScrollSimple : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestScrollSimple()
+        : m_initialScroll(IntPoint(10, 20))
+        , m_secondScroll(IntPoint(40, 5))
+        , m_scrollAmount(2, -1)
+        , m_scrolls(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
+        m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        LayerChromium* root = m_layerTreeHost->rootLayer();
+        if (!m_layerTreeHost->frameNumber())
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll);
+        else {
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount);
+
+            // Pretend like Javascript updated the scroll position itself.
+            root->setScrollPosition(m_secondScroll);
+        }
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        CCLayerImpl* root = impl->rootLayer();
+        EXPECT_EQ(root->scrollDelta(), IntSize());
+
+        root->scrollBy(m_scrollAmount);
+
+        if (impl->frameNumber() == 1) {
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll);
+            EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
+            postSetNeedsCommitToMainThread();
+        } else if (impl->frameNumber() == 2) {
+            EXPECT_EQ(root->scrollPosition(), m_secondScroll);
+            EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
+            endTest();
+        }
+    }
+
+    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    {
+        IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
+        m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
+        m_scrolls++;
+    }
+
+    virtual void afterTest()
+    {
+        EXPECT_EQ(1, m_scrolls);
+    }
+private:
+    IntPoint m_initialScroll;
+    IntPoint m_secondScroll;
+    IntSize m_scrollAmount;
+    int m_scrolls;
+};
+TEST_F(CCLayerTreeHostTestScrollSimple, run)
+{
+    runTest();
+}
+
+class CCLayerTreeHostTestScrollMultipleRedraw : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestScrollMultipleRedraw()
+        : m_initialScroll(IntPoint(40, 10))
+        , m_scrollAmount(-3, 17)
+        , m_scrolls(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
+        m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        LayerChromium* root = m_layerTreeHost->rootLayer();
+        if (!m_layerTreeHost->frameNumber())
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll);
+        else if (m_layerTreeHost->frameNumber() == 1)
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
+        else if (m_layerTreeHost->frameNumber() == 2)
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        CCLayerImpl* root = impl->rootLayer();
+
+        if (impl->frameNumber() == 1) {
+            EXPECT_EQ(root->scrollDelta(), IntSize());
+            root->scrollBy(m_scrollAmount);
+            EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
+
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll);
+            postSetNeedsRedrawToMainThread();
+        } else if (impl->frameNumber() == 2) {
+            EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
+            root->scrollBy(m_scrollAmount);
+            EXPECT_EQ(root->scrollDelta(), m_scrollAmount + m_scrollAmount);
+
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll);
+            postSetNeedsCommitToMainThread();
+        } else if (impl->frameNumber() == 3) {
+            EXPECT_EQ(root->scrollDelta(), IntSize());
+            EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
+            endTest();
+        }
+    }
+
+    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    {
+        IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
+        m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
+        m_scrolls++;
+    }
+
+    virtual void afterTest()
+    {
+        EXPECT_EQ(1, m_scrolls);
+    }
+private:
+    IntPoint m_initialScroll;
+    IntSize m_scrollAmount;
+    int m_scrolls;
+};
+TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, run)
+{
     runTest();
 }
 

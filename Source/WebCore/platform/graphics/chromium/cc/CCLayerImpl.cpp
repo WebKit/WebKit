@@ -118,6 +118,15 @@ void CCLayerImpl::bindContentsTexture(LayerRendererChromium*)
     ASSERT_NOT_REACHED();
 }
 
+void CCLayerImpl::scrollBy(const IntSize& scroll)
+{
+    IntSize newDelta = m_scrollDelta + scroll;
+    IntSize minDelta = -toSize(m_scrollPosition);
+    IntSize maxDelta = m_maxScrollPosition - toSize(m_scrollPosition);
+    // Clamp newDelta so that position + delta stays within scroll bounds.
+    m_scrollDelta = newDelta.expandedTo(minDelta).shrunkTo(maxDelta);
+}
+
 void CCLayerImpl::cleanupResources()
 {
     if (renderSurface())

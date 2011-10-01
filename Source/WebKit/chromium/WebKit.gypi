@@ -56,6 +56,7 @@
             'tests/AssociatedURLLoaderTest.cpp',
             'tests/CCLayerSorterTest.cpp',
             'tests/CCLayerTreeHostTest.cpp',
+            'tests/CCLayerTreeHostImplTest.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CCThreadTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',

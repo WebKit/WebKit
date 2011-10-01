@@ -37,23 +37,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-class ScopedSetImplThread {
-public:
-    ScopedSetImplThread()
-    {
-#ifndef NDEBUG
-        ASSERT(CCProxy::isMainThread());
-        CCProxy::setImplThread(true);
-#endif
-    }
-    ~ScopedSetImplThread()
-    {
-#ifndef NDEBUG
-        CCProxy::setImplThread(false);
-#endif
-    }
-};
-
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCSingleThreadProxy(layerTreeHost));
@@ -71,7 +54,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
 
 void CCSingleThreadProxy::start()
 {
-    ScopedSetImplThread impl;
+    DebugScopedSetImplThread impl;
     m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl();
 }
 
@@ -105,7 +88,7 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 GraphicsContext3D* CCSingleThreadProxy::context()
 {
     ASSERT(CCProxy::isMainThread());
-    ScopedSetImplThread impl;
+    DebugScopedSetImplThread impl;
     return m_layerTreeHostImpl->context();
 }
 
@@ -113,7 +96,7 @@ void CCSingleThreadProxy::finishAllRendering()
 {
     ASSERT(CCProxy::isMainThread());
     {
-        ScopedSetImplThread impl;
+        DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->finishAllRendering();
     }
 }
@@ -133,7 +116,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
     ASSERT(context->hasOneRef());
 
     {
-        ScopedSetImplThread impl;
+        DebugScopedSetImplThread impl;
         bool ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
         if (ok)
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -158,10 +141,17 @@ void CCSingleThreadProxy::setNeedsCommit()
     ASSERT(CCProxy::isMainThread());
     // Commit immediately
     {
-        ScopedSetImplThread impl;
+        DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
         m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
+
+#if !ASSERT_DISABLED
+        // In the single-threaded case, the scroll deltas should never be
+        // touched on the impl layer tree.
+        OwnPtr<CCScrollUpdateSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+        ASSERT(!scrollInfo->size());
+#endif
     }
     m_layerTreeHost->commitComplete();
 }
@@ -189,7 +179,7 @@ void CCSingleThreadProxy::stop()
     TRACE_EVENT("CCSingleThreadProxy::stop", this, 0);
     ASSERT(CCProxy::isMainThread());
     {
-        ScopedSetImplThread impl;
+        DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHostImpl.clear();
     }
@@ -226,7 +216,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
         ASSERT(context->hasOneRef());
         bool ok;
         {
-            ScopedSetImplThread impl;
+            DebugScopedSetImplThread impl;
             m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
             ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
             if (ok)
@@ -262,7 +252,7 @@ void CCSingleThreadProxy::commitIfNeeded()
 
     // Commit
     {
-        ScopedSetImplThread impl;
+        DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
         m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
@@ -275,7 +265,7 @@ bool CCSingleThreadProxy::doComposite()
     ASSERT(!m_graphicsContextLost);
 
     {
-      ScopedSetImplThread impl;
+      DebugScopedSetImplThread impl;
       m_layerTreeHostImpl->drawLayers();
       if (m_layerTreeHostImpl->isContextLost()) {
           // Trying to recover the context right here will not work if GPU process

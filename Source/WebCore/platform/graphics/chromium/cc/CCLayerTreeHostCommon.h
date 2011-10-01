@@ -25,6 +25,7 @@
 #ifndef CCLayerTreeHostCommon_h
 #define CCLayerTreeHostCommon_h
 
+#include "IntSize.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -33,7 +34,6 @@ namespace WebCore {
 class CCLayerImpl;
 class CCLayerSorter;
 class IntRect;
-class IntSize;
 class LayerChromium;
 class TransformationMatrix;
 
@@ -46,7 +46,13 @@ public:
 
     static void calculateDrawTransformsAndVisibility(CCLayerImpl*, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<CCLayerImpl> >& renderSurfaceLayerList, Vector<RefPtr<CCLayerImpl> >& layerList, CCLayerSorter*, int maxTextureSize);
 
+    struct ScrollUpdateInfo {
+        int layerId;
+        IntSize scrollDelta;
+    };
 };
+
+typedef Vector<CCLayerTreeHostCommon::ScrollUpdateInfo> CCScrollUpdateSet;
 
 } // namespace WebCore
 

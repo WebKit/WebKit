@@ -69,6 +69,8 @@ private:
 
     virtual const char* layerTypeAsString() const { return "ContentLayer"; }
 
+    TransformationMatrix tilingTransform() const;
+
     // Draw all tiles that intersect with the content rect.
     void draw(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix&, float opacity);
 

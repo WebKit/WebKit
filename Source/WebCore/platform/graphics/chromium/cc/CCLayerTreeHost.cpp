@@ -415,4 +415,18 @@ void CCLayerTreeHost::clearPendingUpdate()
     m_updateList.clear();
 }
 
+void CCLayerTreeHost::applyScrollDeltas(const CCScrollUpdateSet& info)
+{
+    for (size_t i = 0; i < info.size(); ++i) {
+        int layerId = info[i].layerId;
+        IntSize scrollDelta = info[i].scrollDelta;
+
+        // FIXME: pushing scroll offsets to non-root layers not implemented
+        if (rootLayer()->id() == layerId)
+            m_client->applyScrollDelta(scrollDelta);
+        else
+            ASSERT_NOT_REACHED();
+    }
+}
+
 }

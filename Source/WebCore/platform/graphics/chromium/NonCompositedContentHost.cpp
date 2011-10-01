@@ -65,6 +65,12 @@ void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const In
 
     m_viewportSize = viewportSize;
     m_graphicsLayer->platformLayer()->setScrollPosition(scrollPosition);
+    IntSize maxScroll = contentsSize - viewportSize;
+    // The viewport may be larger than the contents in some cases, such as
+    // having a vertical scrollbar but no horizontal overflow.
+    maxScroll.clampNegativeToZero();
+
+    m_graphicsLayer->platformLayer()->setMaxScrollPosition(maxScroll);
     m_graphicsLayer->setSize(contentsSize);
 
     if (visibleRectChanged)
@@ -106,4 +112,3 @@ bool NonCompositedContentHost::showRepaintCounter() const
 }
 
 } // namespace WebCore
-

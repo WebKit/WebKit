@@ -1,3 +1,85 @@
+2011-09-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Track separate scroll deltas on the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=69034
+
+        Reviewed by James Robinson.
+
+        Test: new tests in CCLayerTreeHostImplTest/CCLayerTreeHostTest
+
+        Track scroll deltas and maximum scrolls on LayerChromium/CCLayerImpl.
+        The CCLayerImpl tree is now able to adjust these scroll deltas
+        independent of the main thread. To push them back to the main thread,
+        CCLayerTreeHostImpl collects them all and then bakes them into the
+        scroll position during a begin frame and commit call. This allows new
+        deltas to be collected while the scroll position containing the old
+        delta and the old scroll position will be overwritten during the next
+        commit.
+
+        Only the main frame is supported right now for pushing this scroll
+        delta back into the authoritative WebKit source to keep both sides in
+        sync.
+
+        Move tilingTransform() to the impl tree because drawTransform() is now
+        updated using scroll deltas and so the results from calculating draw
+        transforms needs to be dynamic so that children are updated properly.
+
+        Also, exposed DebugScopedSetImplThread public because it's used in a
+        few places.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::maxScrollPosition):
+        (WebCore::LayerChromium::setMaxScrollPosition):
+        (WebCore::LayerChromium::scrollDelta):
+        (WebCore::LayerChromium::scrollable):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::setViewport):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::scrollBy):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::maxScrollPosition):
+        (WebCore::CCLayerImpl::setMaxScrollPosition):
+        (WebCore::CCLayerImpl::scrollDelta):
+        (WebCore::CCLayerImpl::setScrollDelta):
+        (WebCore::CCLayerImpl::scrollable):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::applyScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::scrollRootLayer):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::start):
+        (WebCore::CCSingleThreadProxy::context):
+        (WebCore::CCSingleThreadProxy::finishAllRendering):
+        (WebCore::CCSingleThreadProxy::initializeLayerRenderer):
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::recreateContextIfNeeded):
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::DebugScopedSetImplThread::DebugScopedSetImplThread):
+        (WebCore::DebugScopedSetImplThread::~DebugScopedSetImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::tilingTransform):
+        (WebCore::CCTiledLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2011-09-30  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69202

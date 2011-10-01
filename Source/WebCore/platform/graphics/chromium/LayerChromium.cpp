@@ -288,6 +288,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDrawsContent(drawsContent());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
+    layer->setMaxScrollPosition(m_maxScrollPosition);
     layer->setName(m_name);
     layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
@@ -295,7 +296,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setScrollPosition(m_scrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
     layer->setTransform(m_transform);
-    layer->setVisibleLayerRect(m_visibleLayerRect);
 
     if (maskLayer())
         maskLayer()->pushPropertiesTo(layer->maskLayer());

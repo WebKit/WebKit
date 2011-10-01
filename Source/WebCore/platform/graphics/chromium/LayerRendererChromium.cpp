@@ -534,6 +534,10 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
     } else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
+    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), layer->drawTransform());
+    visibleLayerRect.move(toSize(layer->scrollPosition()));
+    layer->setVisibleLayerRect(visibleLayerRect);
+
     // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
     // This second condition is checked by computing the transformed normal of the layer.
     if (!layer->doubleSided()) {

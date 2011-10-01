@@ -111,7 +111,7 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     //        S is the scale adjustment (to scale up to the layer size)
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
-    FloatPoint position = layer->position();
+    FloatPoint position = layer->position() - layer->scrollDelta();
 
     // Offset between anchor point and the center of the quad.
     float centerOffsetX = (0.5 - anchorPoint.x()) * bounds.width();

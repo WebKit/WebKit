@@ -1,3 +1,43 @@
+2011-09-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Track separate scroll deltas on the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=69034
+
+        Reviewed by James Robinson.
+
+        Add testing support for scroll deltas on layers.
+
+        * WebKit.gypi:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyScrollDelta):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostImplTest.cpp: Added.
+        (WebCore::CCLayerTreeHostImplTest::CCLayerTreeHostImplTest):
+        (WebCore::CCLayerTreeHostImplTest::expectClearedScrollDeltasRecursive):
+        (WebCore::CCLayerTreeHostImplTest::expectContains):
+        (WebCore::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::applyScrollDelta):
+        (WTF::MockLayerTreeHostClient::applyScrollDelta):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTestThreadOnly::runTest):
+        (WTF::CCLayerTreeHostTestScrollSimple::CCLayerTreeHostTestScrollSimple):
+        (WTF::CCLayerTreeHostTestScrollSimple::beginTest):
+        (WTF::CCLayerTreeHostTestScrollSimple::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollSimple::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollSimple::applyScrollDelta):
+        (WTF::CCLayerTreeHostTestScrollSimple::afterTest):
+        (WTF::TEST_F):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::CCLayerTreeHostTestScrollMultipleRedraw):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::applyScrollDelta):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::afterTest):
+        * tests/TreeSynchronizerTest.cpp:
+        (WebCore::TEST):
+
 2011-09-30  Shawn Singh  <shawnsingh@chromium.org>
 
         Adding unit tests for LayerChromium.  Emphasis on verifying

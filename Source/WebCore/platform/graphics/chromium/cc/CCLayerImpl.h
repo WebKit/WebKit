@@ -145,6 +145,15 @@ public:
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
 
+    const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
+    void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
+
+    const IntSize& scrollDelta() const { return m_scrollDelta; }
+    void setScrollDelta(const IntSize& scrollDelta) { m_scrollDelta = scrollDelta; }
+
+    void scrollBy(const IntSize& scroll);
+    bool scrollable() const { return !maxScrollPosition().isZero(); }
+
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
@@ -191,11 +200,12 @@ private:
     IntSize m_bounds;
     IntSize m_contentBounds;
     IntPoint m_scrollPosition;
-    IntRect m_visibleLayerRect;
+    IntSize m_maxScrollPosition;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;
 
+    IntRect m_visibleLayerRect;
     bool m_masksToBounds;
     float m_opacity;
     FloatPoint m_position;
@@ -206,6 +216,8 @@ private:
     bool m_isNonCompositedContent;
 
     bool m_drawsContent;
+
+    IntSize m_scrollDelta;
 
     // Properties owned exclusively by this CCLayerImpl.
     // Debugging.
