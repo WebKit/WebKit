@@ -30,6 +30,7 @@
 
 #include "DFGCapabilities.h"
 #include "CodeBlock.h"
+#include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
@@ -404,6 +405,19 @@ private:
         return getJSConstant(m_constantNaN);
     }
     
+    NodeIndex cellConstant(JSCell* cell)
+    {
+        HashMap<JSCell*, unsigned>::iterator iter = m_cellConstants.find(cell);
+        if (iter != m_cellConstants.end())
+            return getJSConstant(iter->second);
+        
+        m_codeBlock->addConstant(cell);
+        m_constants.append(ConstantRecord());
+        ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
+        
+        return getJSConstant(m_codeBlock->numberOfConstantRegisters() - 1);
+    }
+    
     CodeOrigin currentCodeOrigin()
     {
         return CodeOrigin(m_currentIndex);
@@ -576,6 +590,7 @@ private:
     unsigned m_constantNull;
     unsigned m_constantNaN;
     unsigned m_constant1;
+    HashMap<JSCell*, unsigned> m_cellConstants;
 
     // A constant in the constant pool may be represented by more than one
     // node in the graph, depending on the context in which it is being used.
@@ -1154,7 +1169,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 size_t offset = structure->get(*m_globalData, identifier);
                 
                 if (offset != notFound) {
-                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(CheckStructure, OpInfo(structure), base));
+                    addToGraph(CheckStructure, OpInfo(structure), base);
+                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base));
                     
                     StorageAccessData storageAccessData;
                     storageAccessData.offset = offset;
@@ -1174,13 +1190,84 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_id: {
             NodeIndex value = get(currentInstruction[3].u.operand);
             NodeIndex base = get(currentInstruction[1].u.operand);
-            unsigned identifier = currentInstruction[2].u.operand;
+            unsigned identifierNumber = currentInstruction[2].u.operand;
             bool direct = currentInstruction[8].u.operand;
 
-            if (direct)
-                addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
-            else
-                addToGraph(PutById, OpInfo(identifier), base, value);
+            StructureStubInfo& stubInfo = m_profiledBlock->getStubInfo(m_currentIndex);
+            if (!stubInfo.seen)
+                addToGraph(ForceOSRExit);
+            
+            bool alreadyGenerated = false;
+            
+            if (stubInfo.seen && !m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
+                switch (stubInfo.accessType) {
+                case access_put_by_id_replace: {
+                    Structure* structure = stubInfo.u.putByIdReplace.baseObjectStructure.get();
+                    Identifier identifier = m_codeBlock->identifier(identifierNumber);
+                    size_t offset = structure->get(*m_globalData, identifier);
+                    
+                    if (offset != notFound) {
+                        addToGraph(CheckStructure, OpInfo(structure), base);
+                        addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
+                        
+                        StorageAccessData storageAccessData;
+                        storageAccessData.offset = offset;
+                        storageAccessData.identifierNumber = identifierNumber;
+                        m_graph.m_storageAccessData.append(storageAccessData);
+                        
+                        alreadyGenerated = true;
+                    }
+                    break;
+                }
+                    
+                case access_put_by_id_transition: {
+                    Structure* previousStructure = stubInfo.u.putByIdTransition.previousStructure.get();
+                    Structure* newStructure = stubInfo.u.putByIdTransition.structure.get();
+                    
+                    if (previousStructure->propertyStorageCapacity() != newStructure->propertyStorageCapacity())
+                        break;
+                    
+                    StructureChain* structureChain = stubInfo.u.putByIdTransition.chain.get();
+                    
+                    Identifier identifier = m_codeBlock->identifier(identifierNumber);
+                    size_t offset = newStructure->get(*m_globalData, identifier);
+                    
+                    if (offset != notFound) {
+                        addToGraph(CheckStructure, OpInfo(previousStructure), base);
+                        if (!direct) {
+                            for (WriteBarrier<Structure>* it = structureChain->head(); *it; ++it) {
+                                JSValue prototype = (*it)->storedPrototype();
+                                if (prototype.isNull())
+                                    continue;
+                                ASSERT(prototype.isCell());
+                                addToGraph(CheckStructure, OpInfo(prototype.asCell()->structure()), cellConstant(prototype.asCell()));
+                            }
+                        }
+                        addToGraph(PutStructure, OpInfo(newStructure), base);
+                        
+                        addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
+                        
+                        StorageAccessData storageAccessData;
+                        storageAccessData.offset = offset;
+                        storageAccessData.identifierNumber = identifierNumber;
+                        m_graph.m_storageAccessData.append(storageAccessData);
+                        
+                        alreadyGenerated = true;
+                    }
+                    break;
+                }
+                    
+                default:
+                    break;
+                }
+            }
+            
+            if (!alreadyGenerated) {
+                if (direct)
+                    addToGraph(PutByIdDirect, OpInfo(identifierNumber), base, value);
+                else
+                    addToGraph(PutById, OpInfo(identifierNumber), base, value);
+            }
 
             NEXT_OPCODE(op_put_by_id);
         }

@@ -1,3 +1,47 @@
+2011-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG does not speculate aggressively enough on put_by_id
+        https://bugs.webkit.org/show_bug.cgi?id=69114
+
+        Reviewed by Oliver Hunt.
+
+        This adds new nodes along with optimizations for those nodes:
+        
+        GetPropertyStorage: CheckStructure used to do both the structure
+        check and retrieve the storage pointer. Now CheckStructure just
+        checks the structure, and GetPropertyStorage retrieves the
+        storage pointer.
+        
+        PutStructure: Changes the structure, and has the expected store
+        to load optimization with CheckStructure.
+        
+        PutByOffset: Directly sets the value. Has store to load
+        optimization with GetByOffset.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::cellConstant):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::hasStorageAccessData):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::impureCSE):
+        (JSC::DFG::Propagator::checkStructureLoadElimination):
+        (JSC::DFG::Propagator::getByOffsetLoadElimination):
+        (JSC::DFG::Propagator::getPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::eliminate):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-30  Gavin Barraclough  <barraclough@apple.com>
 
         StringRecursionChecker should not work in terms of EncodedJSValue

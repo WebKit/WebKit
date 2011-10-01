@@ -313,8 +313,11 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
-    macro(CheckStructure, NodeResultStorage | NodeMustGenerate) \
+    macro(CheckStructure, NodeMustGenerate) \
+    macro(PutStructure, NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetPropertyStorage, NodeResultStorage) \
     macro(GetByOffset, NodeResultJS) \
+    macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
@@ -782,7 +785,7 @@ struct Node {
     
     bool hasStructure()
     {
-        return op == CheckStructure;
+        return op == CheckStructure || op == PutStructure;
     }
     
     Structure* structure()
@@ -792,7 +795,7 @@ struct Node {
     
     bool hasStorageAccessData()
     {
-        return op == GetByOffset;
+        return op == GetByOffset || op == PutByOffset;
     }
     
     unsigned storageAccessDataIndex()

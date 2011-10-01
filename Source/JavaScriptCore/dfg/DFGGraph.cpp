@@ -149,6 +149,20 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
         hasPrinted = true;
     }
+    if (node.hasStructure()) {
+        printf("%sstruct(%p)", hasPrinted ? ", " : "", node.structure());
+        hasPrinted = true;
+    }
+    if (node.hasStorageAccessData()) {
+        StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
+        if (codeBlock)
+            printf("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
+        else
+            printf("%sid%u", hasPrinted ? ", " : "", storageAccessData.identifierNumber);
+        
+        printf(", %lu", storageAccessData.offset);
+        hasPrinted = true;
+    }
     ASSERT(node.hasVariableAccessData() == node.hasLocal());
     if (node.hasVariableAccessData()) {
         VariableAccessData* variableAccessData = node.variableAccessData();

@@ -267,6 +267,39 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex 
 #endif
 }
 
+void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
+{
+    UNUSED_PARAM(ownerGPR);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(scratch1);
+    UNUSED_PARAM(scratch2);
+    UNUSED_PARAM(useKind);
+    
+    if (Heap::isMarked(value))
+        return;
+
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+#endif
+
+#if ENABLE(GGC)
+    GPRTemporary temp1;
+    GPRTemporary temp2;
+    if (scratch1 == InvalidGPRReg) {
+        GPRTemporary scratchGPR(this);
+        temp1.adopt(scratchGPR);
+        scratch1 = temp1.gpr();
+    }
+    if (scratch2 == InvalidGPRReg) {
+        GPRTemporary scratchGPR(this);
+        temp2.adopt(scratchGPR);
+        scratch2 = temp2.gpr();
+    }
+
+    markCellCard(m_jit, ownerGPR, scratch1, scratch2);
+#endif
+}
+
 void JITCodeGenerator::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind useKind, GPRReg scratch)
 {
     UNUSED_PARAM(owner);

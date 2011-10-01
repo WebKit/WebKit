@@ -448,7 +448,7 @@ private:
             break;
         }
             
-        case CheckStructure: {
+        case GetPropertyStorage: {
             changed |= setPrediction(PredictOther);
             break;
         }
@@ -583,6 +583,9 @@ private:
         case PutByValAlias:
         case PutById:
         case PutByIdDirect:
+        case CheckStructure:
+        case PutStructure:
+        case PutByOffset:
             break;
             
         // This gets ignored because it doesn't do anything.
@@ -888,6 +891,39 @@ private:
         }
     }
     
+    NodeIndex impureCSE(Node& node)
+    {
+        NodeIndex child1 = canonicalize(node.child1());
+        NodeIndex child2 = canonicalize(node.child2());
+        NodeIndex child3 = canonicalize(node.child3());
+        
+        NodeIndex start = startIndex();
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& otherNode = m_graph[index];
+            if (node.op == otherNode.op
+                && node.arithNodeFlagsForCompare() == otherNode.arithNodeFlagsForCompare()) {
+                NodeIndex otherChild = canonicalize(otherNode.child1());
+                if (otherChild == NoNode)
+                    return index;
+                if (otherChild == child1) {
+                    otherChild = canonicalize(otherNode.child2());
+                    if (otherChild == NoNode)
+                        return index;
+                    if (otherChild == child2) {
+                        otherChild = canonicalize(otherNode.child3());
+                        if (otherChild == NoNode)
+                            return index;
+                        if (otherChild == child3)
+                            return index;
+                    }
+                }
+            }
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
     NodeIndex globalVarLoadElimination(unsigned varNumber)
     {
         NodeIndex start = startIndexForChildren();
@@ -950,19 +986,35 @@ private:
         return NoNode;
     }
     
-    NodeIndex checkStructureLoadElimination(Structure* structure, NodeIndex child1)
+    bool checkStructureLoadElimination(Structure* structure, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
-            if (node.op == CheckStructure
-                && node.child1() == child1
-                && node.structure() == structure)
-                return index;
-            if (clobbersWorld(index))
+            switch (node.op) {
+            case CheckStructure:
+                if (node.child1() == child1
+                    && node.structure() == structure)
+                    return true;
                 break;
+                
+            case PutStructure:
+                if (node.child1() == child1
+                    && node.structure() == structure)
+                    return true;
+                return false;
+                
+            case PutByOffset:
+                // Setting a property cannot change the structure.
+                break;
+                
+            default:
+                if (clobbersWorld(index))
+                    return false;
+                break;
+            }
         }
-        return NoNode;
+        return false;
     }
     
     NodeIndex getByOffsetLoadElimination(unsigned identifierNumber, NodeIndex child1)
@@ -970,12 +1022,56 @@ private:
         NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
-            if (node.op == GetByOffset
-                && node.child1() == child1
-                && m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber)
-                return index;
-            if (clobbersWorld(index))
+            switch (node.op) {
+            case GetByOffset:
+                if (node.child1() == child1
+                    && m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber)
+                    return index;
                 break;
+                
+            case PutByOffset:
+                if (m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber) {
+                    if (node.child2() == child1)
+                        return node.child3();
+                    return NoNode;
+                }
+                break;
+                
+            case PutStructure:
+                // Changing the structure cannot change the outcome of a property get.
+                break;
+                
+            default:
+                if (clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+        }
+        return NoNode;
+    }
+    
+    NodeIndex getPropertyStorageLoadElimination(NodeIndex child1)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case GetPropertyStorage:
+                if (node.child1() == child1)
+                    return index;
+                break;
+                
+            case PutByOffset:
+            case PutStructure:
+                // Changing the structure or putting to the storage cannot
+                // change the property storage pointer.
+                break;
+                
+            default:
+                if (clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
         }
         return NoNode;
     }
@@ -1032,6 +1128,18 @@ private:
         
         // At this point we will eliminate all references to this node.
         m_replacements[m_compileIndex] = replacement;
+    }
+    
+    void eliminate()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   Eliminating @%u", m_compileIndex);
+#endif
+        
+        Node& node = m_graph[m_compileIndex];
+        ASSERT(node.refCount() == 1);
+        ASSERT(node.mustGenerate());
+        node.op = Phantom;
     }
     
     void performNodeCSE(Node& node)
@@ -1133,7 +1241,12 @@ private:
             break;
             
         case CheckStructure:
-            setReplacement(checkStructureLoadElimination(node.structure(), node.child1()));
+            if (checkStructureLoadElimination(node.structure(), node.child1()))
+                eliminate();
+            break;
+            
+        case GetPropertyStorage:
+            setReplacement(getPropertyStorageLoadElimination(node.child1()));
             break;
             
         case GetByOffset:

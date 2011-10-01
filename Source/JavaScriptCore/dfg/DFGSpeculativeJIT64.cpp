@@ -1717,12 +1717,36 @@ void SpeculativeJIT::compile(Node& node)
 
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
+        
+        GPRReg baseGPR = base.gpr();
+        
+        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structure())));
+        
+        noResult(m_compileIndex);
+        break;
+    }
+        
+    case PutStructure: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRReg baseGPR = base.gpr();
+        
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+        // Must always emit this write barrier as the structure transition itself requires it
+        writeBarrier(baseGPR, node.structure(), WriteBarrierForGenericAccess);
+#endif
+        
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node.structure()), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+        
+        noResult(m_compileIndex);
+        break;
+    }
+        
+    case GetPropertyStorage: {
+        SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);
         
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
-        
-        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structure())));
         
         m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
         
@@ -1742,6 +1766,28 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(JITCompiler::Address(storageGPR, storageAccessData.offset * sizeof(EncodedJSValue)), resultGPR);
         
         jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case PutByOffset: {
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+        SpeculateCellOperand base(this, node.child1());
+#endif
+        StorageOperand storage(this, node.child2());
+        JSValueOperand value(this, node.child3());
+
+        GPRReg storageGPR = storage.gpr();
+        GPRReg valueGPR = value.gpr();
+        
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+        writeBarrier(base.gpr(), value.gpr(), node.child3(), WriteBarrierForPropertyAccess);
+#endif
+
+        StorageAccessData& storageAccessData = m_jit.graph().m_storageAccessData[node.storageAccessDataIndex()];
+        
+        m_jit.storePtr(valueGPR, JITCompiler::Address(storageGPR, storageAccessData.offset * sizeof(EncodedJSValue)));
+        
+        noResult(m_compileIndex);
         break;
     }
         
