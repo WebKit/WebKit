@@ -1,5 +1,11 @@
 2011-10-01  Adam Barth  <abarth@webkit.org>
 
+        Delete bogus text expectation.
+
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Removed.
+
+2011-10-01  Adam Barth  <abarth@webkit.org>
+
         Note test as timing out.
 
         * platform/chromium/test_expectations.txt:
