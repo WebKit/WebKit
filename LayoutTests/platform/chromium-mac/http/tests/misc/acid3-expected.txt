@@ -13,12 +13,12 @@ layer at (20,20) size 644x433
         RenderBlock {P} at (145,48) size 74x58 [bgcolor=#FFFF00] [border: (1px solid #000000)]
         RenderBlock {P} at (231,32) size 86x66 [bgcolor=#00FF00] [border: (1px solid #000000)]
         RenderBlock {P} at (330,16) size 96x74 [bgcolor=#0000FF] [border: (1px solid #000000)]
-        RenderBlock {P} at (441,0) size 106x82 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+        RenderBlock {P} at (441,0) size 106x82 [bgcolor=#808080] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,214) size 568x120
         RenderInline {SPAN} at (0,0) size 112x112
           RenderText {#text} at (260,4) size 112x112
-            text run at (260,4) width 112: "94"
+            text run at (260,4) width 112: "91"
         RenderInline {SPAN} at (0,0) size 28x112
           RenderText {#text} at (372,4) size 28x112
             text run at (372,4) width 28: "/"
