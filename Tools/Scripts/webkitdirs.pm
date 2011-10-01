@@ -43,10 +43,26 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &XcodeOptionString &XcodeOptionStringNoConfig &passedConfiguration &setConfiguration &safariPath &checkFrameworks &currentSVNRevision);
+   @EXPORT      = qw(
+       &XcodeOptionString
+       &XcodeOptionStringNoConfig
+       &XcodeOptions
+       &baseProductDir
+       &chdirWebKit
+       &checkFrameworks
+       &currentSVNRevision
+       &passedConfiguration
+       &productDir
+       &runMacWebKitApp
+       &safariPath
+       &setConfiguration
+       USE_OPEN_COMMAND
+   );
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
+
+use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 
 our @EXPORT_OK;
 
@@ -2000,22 +2016,31 @@ sub setPathForRunningWebKitApp
     }
 }
 
+sub runMacWebKitApp($;$)
+{
+    my ($appPath, $useOpenCommand) = @_;
+    my $productDir = productDir();
+    print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+    if ($useOpenCommand == USE_OPEN_COMMAND) {
+        return system("open", "-W", "-a", $appPath, "--args", @ARGV);
+    }
+    if (architecture()) {
+        return system "arch", "-" . architecture(), $appPath, @ARGV;
+    }
+    return system { $appPath } $appPath, @ARGV;
+}
+
 sub runSafari
 {
     my ($debugger) = @_;
 
     if (isAppleMacWebKit()) {
-        return system "$FindBin::Bin/gdb-safari", argumentsForConfiguration() if $debugger;
-
-        my $productDir = productDir();
-        print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        if (architecture()) {
-            return system "arch", "-" . architecture(), safariPath(), @ARGV;
-        } else {
-            return system safariPath(), @ARGV;
+        if ($debugger) {
+            return system "$FindBin::Bin/gdb-safari", argumentsForConfiguration();
         }
+        return runMacWebKitApp(safariPath());
     }
 
     if (isAppleWinWebKit()) {
@@ -2040,16 +2065,7 @@ sub runSafari
 sub runMiniBrowser
 {
     if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        print "Starting MiniBrowser with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
-        if (architecture()) {
-            return system "arch", "-" . architecture(), $miniBrowserPath, @ARGV;
-        } else {
-            return system $miniBrowserPath, @ARGV;
-        }
+        return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     }
 
     return 1;
@@ -2080,16 +2096,7 @@ sub debugMiniBrowser
 sub runWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        print "Starting WebKitTestRunner with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
-        if (architecture()) {
-            return system "arch", "-" . architecture(), $webKitTestRunnerPath, @ARGV;
-        } else {
-            return system $webKitTestRunnerPath, @ARGV;
-        }
+        return runMacWebKitApp(File::Spec->catfile(productDir(), "WebKitTestRunner"));
     } elsif (isGtk()) {
         my $productDir = productDir();
         my $injectedBundlePath = "$productDir/Libraries/.libs/libTestRunnerInjectedBundle";
@@ -2126,16 +2133,7 @@ sub debugWebKitTestRunner
 sub runTestWebKitAPI
 {
     if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        print "Starting TestWebKitAPI with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $testWebKitAPIPath = "$productDir/TestWebKitAPI";
-        if (architecture()) {
-            return system "arch", "-" . architecture(), $testWebKitAPIPath, @ARGV;
-        } else {
-            return system $testWebKitAPIPath, @ARGV;
-        }
+        return runMacWebKitApp(File::Spec->catfile(productDir(), "TestWebKitAPI"));
     }
 
     return 1;
