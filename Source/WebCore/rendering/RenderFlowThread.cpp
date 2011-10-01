@@ -636,4 +636,46 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
     }
 }
 
+LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstRegion() const
+{
+    if (!hasValidRegions())
+        return 0;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        return isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+LayoutUnit RenderFlowThread::contentLogicalHeightOfFirstRegion() const
+{
+    if (!hasValidRegions())
+        return 0;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        return isHorizontalWritingMode() ? region->contentHeight() : region->contentWidth();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+ 
+LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
+{
+    if (!hasValidRegions())
+        return 0;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        return isHorizontalWritingMode() ? region->regionRect().x() : region->regionRect().y();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 } // namespace WebCore

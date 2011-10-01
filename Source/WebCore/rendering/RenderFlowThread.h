@@ -109,6 +109,10 @@ public:
 
     void removeRenderBoxRegionInfo(RenderBox*);
 
+    LayoutUnit contentLogicalWidthOfFirstRegion() const;
+    LayoutUnit contentLogicalHeightOfFirstRegion() const;
+    LayoutUnit contentLogicalLeftOfFirstRegion() const;
+    
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 

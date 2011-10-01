@@ -869,7 +869,7 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
     if (child->style()->isOriginalDisplayInlineType())
         child->layer()->setStaticInlinePosition(block->startAlignedOffsetForLine(child, blockHeight, false));
     else
-        child->layer()->setStaticInlinePosition(block->borderAndPaddingStart());
+        child->layer()->setStaticInlinePosition(block->startOffsetForContent(blockHeight));
     child->layer()->setStaticBlockPosition(blockHeight);
 }
 
@@ -2152,7 +2152,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             RenderBox* box = toRenderBox(current.m_obj);
             bool isInlineType = box->style()->isOriginalDisplayInlineType();
             if (!isInlineType)
-                box->layer()->setStaticInlinePosition(m_block->borderAndPaddingStart());
+                box->layer()->setStaticInlinePosition(m_block->startOffsetForContent(m_block->logicalHeight()));
             else  {
                 // If our original display was an INLINE type, then we can go ahead
                 // and determine our static y position now.
@@ -2714,7 +2714,7 @@ LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit p
     updateLogicalWidthForAlignment(textAlign, 0l, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
     if (!style()->isLeftToRightDirection())
-        return width() - (logicalLeft + totalLogicalWidth);
+        return logicalWidth() - (logicalLeft + totalLogicalWidth);
     return logicalLeft;
 }
 

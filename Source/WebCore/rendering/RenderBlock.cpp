@@ -1473,7 +1473,7 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
     bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
     RenderLayer* childLayer = child->layer();
         
-    childLayer->setStaticInlinePosition(borderAndPaddingStart());
+    childLayer->setStaticInlinePosition(startOffsetForContent(logicalHeight()));
 
     LayoutUnit logicalTop = logicalHeight();
     if (!marginInfo.canCollapseWithMarginBefore()) {

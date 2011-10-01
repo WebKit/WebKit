@@ -2268,8 +2268,11 @@ int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObje
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
-    if (containingBlock->isBox())
+    if (containingBlock->isBox()) {
+        if (inRenderFlowThread() && containingBlock->isRenderFlowThread())
+            return toRenderFlowThread(containingBlock)->contentLogicalWidthOfFirstRegion();
         return toRenderBox(containingBlock)->clientLogicalWidth();
+    }
 
     ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
 
@@ -2299,8 +2302,11 @@ int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObj
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, false);
 
-    if (containingBlock->isBox())
+    if (containingBlock->isBox()) {
+        if (inRenderFlowThread() && containingBlock->isRenderFlowThread())
+            return toRenderFlowThread(containingBlock)->contentLogicalHeightOfFirstRegion();
         return toRenderBox(containingBlock)->clientLogicalHeight();
+    }
         
     ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
 
@@ -2334,6 +2340,13 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
             if (curr->isBox())
                 staticPosition += toRenderBox(curr)->logicalLeft();
         }
+        
+        // If our container block is an RTL RenderFlowThread, then we also have to subtract out the region offset.
+        if (child->inRenderFlowThread() && containerBlock->isRenderFlowThread()
+            && (child->isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode())
+            && containerBlock->style()->direction() == RTL)
+            staticPosition -= toRenderFlowThread(containerBlock)->contentLogicalLeftOfFirstRegion();
+        
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
         RenderBox* enclosingBox = child->parent()->enclosingBox();
@@ -2343,6 +2356,13 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
             if (curr->isBox())
                 staticPosition -= toRenderBox(curr)->logicalLeft();
         }
+        
+        // If our container block is an RTL RenderFlowThread, then we also have to subtract out the region offset.
+        if (child->inRenderFlowThread() && containerBlock->isRenderFlowThread()
+            && (child->isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode())
+            && containerBlock->style()->direction() == RTL)
+            staticPosition += toRenderFlowThread(containerBlock)->contentLogicalLeftOfFirstRegion();
+
         logicalRight.setValue(Fixed, staticPosition);
     }
 }
@@ -2489,8 +2509,15 @@ static void computeLogicalLeftPositionedOffset(LayoutUnit& logicalLeftPos, const
     if (containerBlock->isHorizontalWritingMode() != child->isHorizontalWritingMode() && containerBlock->style()->isFlippedBlocksWritingMode()) {
         logicalLeftPos = containerLogicalWidth - logicalWidthValue - logicalLeftPos;
         logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock->borderRight() : containerBlock->borderBottom());
-    } else
+    } else {
         logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
+        
+        // If our container block is an RTL RenderFlowThread, then we also have to add in the region offset.
+        if (child->inRenderFlowThread() && containerBlock->isRenderFlowThread()
+            && (child->isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode())
+            && containerBlock->style()->direction() == RTL)
+            logicalLeftPos += toRenderFlowThread(containerBlock)->contentLogicalLeftOfFirstRegion();
+    }
 }
 
 void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
@@ -2807,6 +2834,12 @@ static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const R
         else
             logicalTopPos += containerBlock->borderLeft();
     }
+    
+    // If our container block is an RTL RenderFlowThread, then we also have to add in the region offset.
+    if (child->inRenderFlowThread() && containerBlock->isRenderFlowThread()
+        && (child->isHorizontalWritingMode() != containerBlock->isHorizontalWritingMode())
+        && containerBlock->style()->direction() == RTL)
+        logicalTopPos += toRenderFlowThread(containerBlock)->contentLogicalLeftOfFirstRegion();
 }
 
 void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, const RenderBoxModelObject* containerBlock,

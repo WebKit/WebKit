@@ -128,7 +128,7 @@ public:
     LayoutUnit availableLogicalWidthForLine(LayoutUnit position, bool firstLine) const;
     LayoutUnit logicalRightOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(position), firstLine); }
     LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine); }
-    LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : width() - logicalRightOffsetForLine(position, firstLine); }
+    LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : logicalWidth() - logicalRightOffsetForLine(position, firstLine); }
     LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
     LayoutUnit textIndentOffset() const;
 
@@ -263,6 +263,7 @@ public:
     LayoutUnit logicalLeftOffsetForContent(LayoutUnit position) const;
     LayoutUnit logicalRightOffsetForContent(LayoutUnit position) const;
     LayoutUnit availableLogicalWidthForContent(LayoutUnit position) const { return max(0, logicalRightOffsetForContent(position) - logicalLeftOffsetForContent(position)); }
+    LayoutUnit startOffsetForContent(LayoutUnit position) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForContent(position) : logicalWidth() - logicalRightOffsetForContent(position); }
 
 #ifndef NDEBUG
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
