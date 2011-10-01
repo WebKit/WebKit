@@ -538,10 +538,10 @@ static inline void drawInnerPath(SkCanvas* canvas, const SkPath& path, SkPaint& 
 #endif
 }
 
-static inline SkScalar getFocusRingOutset()
+static inline SkScalar getFocusRingOutset(int width)
 {
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-    return 0.75f;
+    return (width * 0.5f) + 0.25f;
 #else
     return 0.5f;
 #endif
@@ -557,7 +557,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
         return;
 
     SkRegion focusRingRegion;
-    const SkScalar focusRingOutset = getFocusRingOutset();
+    const SkScalar focusRingOutset = getFocusRingOutset(width);
     for (unsigned i = 0; i < rectCount; i++) {
         SkIRect r = rects[i];
         r.inset(-focusRingOutset, -focusRingOutset);
