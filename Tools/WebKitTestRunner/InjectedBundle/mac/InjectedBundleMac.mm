@@ -220,7 +220,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         @"Always",                        @"AppleShowScrollBars",
         nil];
 
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];    
     
     swizzleNSFontManagerMethods();
 }
