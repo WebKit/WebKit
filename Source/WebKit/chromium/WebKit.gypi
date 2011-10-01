@@ -64,6 +64,7 @@
             'tests/InnerGestureRecognizerTest.cpp',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
+            'tests/LayerChromiumTest.cpp',
             'tests/MockGraphicsContext3DTest.cpp',
             'tests/MockWebGraphicsContext3D.h',
             'tests/PODArenaTest.cpp',
