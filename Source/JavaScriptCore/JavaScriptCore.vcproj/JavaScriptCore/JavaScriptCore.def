@@ -347,7 +347,6 @@ EXPORTS
     ?toNumberSlowCase@JSValue@JSC@@ABENPAVExecState@2@@Z
     ?toObject@JSCell@JSC@@QBEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
     ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
-    ?toStrictThisObject@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@@Z
     ?toString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z

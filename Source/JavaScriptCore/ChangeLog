@@ -1,3 +1,12 @@
+2011-09-30  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Apple Windows and WinCairo Debug builds after
+        <http://trac.webkit.org/changeset/96446> (https://bugs.webkit.org/show_bug.cgi?id=69203).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Remove the symbol
+        ?toStrictThisObject@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@@Z since the
+        corresponding function, JSValue::toStrictThisObject(), was removed.
+
 2011-09-30  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG operation results are not set correctly in JSVALUE32_64 DFG JIT
