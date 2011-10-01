@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009, 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -104,6 +104,14 @@ class DownloadCommandsTest(CommandsTest):
         options.local_commit = True
         expected_stderr = "Updating working directory\n2 reviewed patches found on bug 50000.\nProcessing 2 patches from 1 bug.\nProcessing patch 10000 from bug 50000.\nProcessing patch 10001 from bug 50000.\n"
         self.assert_execute_outputs(ApplyFromBug(), [50000], options=options, expected_stderr=expected_stderr)
+
+    def test_apply_watch_list(self):
+        expected_stderr = """Processing 1 patch from 1 bug.
+Updating working directory
+MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\nProcessing patch 10000 from bug 50000.
+MockWatchList: determine_cc_and_messages
+"""
+        self.assert_execute_outputs(ApplyWatchList(), [10000], options=self._default_options(), expected_stderr=expected_stderr, tool=MockTool(log_executive=True))
 
     def test_land(self):
         expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 50000\n"

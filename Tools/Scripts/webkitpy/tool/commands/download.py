@@ -1,4 +1,4 @@
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2009, 2011 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -248,6 +248,20 @@ class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
     help_text = "Apply reviewed patches from provided bugs to the local working directory"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
+
+
+class ApplyWatchList(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
+    name = "apply-watchlist"
+    help_text = "Applies the watchlist to the specified attachments."
+    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
+    main_steps = [
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.ApplyPatch,
+        steps.ApplyWatchList,
+    ]
+    long_help = """"Applies the watchlist to the specified attachments.
+Downloads the attachment, applies it locally, runs the watchlist against it, and updates the bug with the result."""
 
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):

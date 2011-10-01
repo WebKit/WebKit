@@ -84,11 +84,11 @@ class WatchListTest(unittest.TestCase):
             '        ],'
            '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['levin@chromium.org']),
-                'messages': set(),
-                }, cc_set_and_messages)
+                'cc_list': ['levin@chromium.org'],
+                'messages': [],
+                }, cc_and_messages)
 
     def test_cc_rules_complex(self):
         watch_list = self._watch_list_parser.parse(
@@ -108,11 +108,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2|WatchList1|WatchList3": [ "levin@chromium.org", ],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['levin@chromium.org']),
-                'messages': set(),
-                }, cc_set_and_messages)
+                'cc_list': ['levin@chromium.org'],
+                'messages': [],
+                }, cc_and_messages)
 
     def test_cc_and_message_rules_complex(self):
         watch_list = self._watch_list_parser.parse(
@@ -135,11 +135,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2|WatchList1|WatchList3": [ "msg1", "msg2", ],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['levin@chromium.org']),
-                'messages': set(['msg1', 'msg2']),
-                }, cc_set_and_messages)
+                'cc_list': ['levin@chromium.org'],
+                'messages': ['msg1', 'msg2'],
+                }, cc_and_messages)
 
     def test_cc_and_message_rules_no_matches(self):
         watch_list = self._watch_list_parser.parse(
@@ -162,11 +162,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2|WatchList1|WatchList3": [ "msg1", "msg2", ],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(),
-                'messages': set(),
-                }, cc_set_and_messages)
+                'cc_list': [],
+                'messages': [],
+                }, cc_and_messages)
 
     def test_added_match(self):
         watch_list = self._watch_list_parser.parse(
@@ -184,11 +184,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2": [ "abarth@webkit.org", ],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['eric@webkit.org']),
-                'messages': set(),
-                }, cc_set_and_messages)
+                'cc_list': ['eric@webkit.org'],
+                'messages': [],
+                }, cc_and_messages)
 
     def test_deleted_match(self):
         watch_list = self._watch_list_parser.parse(
@@ -206,11 +206,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2": [ "abarth@webkit.org", ],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['abarth@webkit.org']),
-                'messages': set(),
-                }, cc_set_and_messages)
+                'cc_list': ['abarth@webkit.org'],
+                'messages': [],
+                }, cc_and_messages)
 
     def test_more_and_less_match(self):
         watch_list = self._watch_list_parser.parse(
@@ -235,11 +235,11 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList3": ["Test message."],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['levin@chromium.org']),
-                'messages': set(["Test message."]),
-                }, cc_set_and_messages)
+                'cc_list': ['levin@chromium.org'],
+                'messages': ["Test message."],
+                }, cc_and_messages)
 
     def test_complex_match(self):
         watch_list = self._watch_list_parser.parse(
@@ -270,8 +270,8 @@ class WatchListTest(unittest.TestCase):
             '        "WatchList2": ["This is a test message."],'
             '    },'
             '}')
-        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
         self.assertEquals({
-                'cc_set': set(['eric@webkit.org']),
-                'messages': set(["This is a test message."]),
-                }, cc_set_and_messages)
+                'cc_list': ['eric@webkit.org'],
+                'messages': ["This is a test message."],
+                }, cc_and_messages)

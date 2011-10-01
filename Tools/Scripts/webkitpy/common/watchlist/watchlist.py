@@ -58,17 +58,18 @@ class WatchList(object):
         for rule in rules:
             if rule.match(matching_definitions):
                 instructions.update(rule.instructions())
-        return instructions
+        # Sort the results to make the order deterministic (for consistency and easier testing).
+        return sorted(instructions)
 
-    def determine_cc_set(self, matching_definitions):
+    def determine_cc_list(self, matching_definitions):
         return self._determine_instructions(matching_definitions, self.cc_rules)
 
     def determine_messages(self, matching_definitions):
         return self._determine_instructions(matching_definitions, self.message_rules)
 
-    def determine_cc_set_and_messages(self, diff):
+    def determine_cc_and_messages(self, diff):
         definitions = self.find_matching_definitions(diff)
         return {
-            'cc_set': self.determine_cc_set(definitions),
+            'cc_list': self.determine_cc_list(definitions),
             'messages':  self.determine_messages(definitions),
-            }
+        }

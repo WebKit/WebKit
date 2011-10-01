@@ -36,6 +36,7 @@ from webkitpy.common.net import bugzilla, buildbot, statusserver, web
 from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
+from webkitpy.common.watchlist.watchlistloader import WatchListLoader
 from webkitpy.layout_tests.port.factory import PortFactory
 
 
@@ -75,6 +76,10 @@ class Host(object):
     @memoized
     def chromium_buildbot(self):
         return ChromiumBuildBot()
+
+    @memoized
+    def watch_list(self):
+        return WatchListLoader(self.filesystem).load()
 
     def ensure_irc_connected(self, irc_delegate):
         if not self._irc:

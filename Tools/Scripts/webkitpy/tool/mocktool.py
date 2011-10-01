@@ -805,6 +805,12 @@ class MockPlatformInfo(object):
         return "MockPlatform 1.0"
 
 
+class MockWatchList(object):
+    def determine_cc_and_messages(self, diff):
+        log("MockWatchList: determine_cc_and_messages")
+        return {'cc_list': ['levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }
+
+
 class MockWorkspace(object):
     def find_unused_filename(self, directory, name, extension, search_limit=10):
         return "%s/%s.%s" % (directory, name, extension)
@@ -839,6 +845,7 @@ class MockTool(object):
         self.irc_password = "MOCK irc password"
         self.port_factory = MockPortFactory()
         self.platform = MockPlatformInfo()
+        self._watch_list = MockWatchList()
 
     def scm(self):
         return self._scm
@@ -848,6 +855,9 @@ class MockTool(object):
 
     def chromium_buildbot(self):
         return self._chromium_buildbot
+
+    def watch_list(self):
+        return self._watch_list
 
     def ensure_irc_connected(self, delegate):
         if not self._irc:
