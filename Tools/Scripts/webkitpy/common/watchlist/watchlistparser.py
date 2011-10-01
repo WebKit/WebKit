@@ -26,9 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 import difflib
 import re
 
+from webkitpy.common.watchlist.amountchangedpattern import AmountChangedPattern
 from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 from webkitpy.common.watchlist.watchlist import WatchList
@@ -51,6 +53,8 @@ class WatchListParser(object):
             'filename': FilenamePattern,
             'in_added_lines': (lambda regex: ChangedLinePattern(regex, 0)),
             'in_deleted_lines': (lambda regex: ChangedLinePattern(regex, 1)),
+            'less': (lambda regex: AmountChangedPattern(regex, 1)),
+            'more': (lambda regex: AmountChangedPattern(regex, 0)),
         }
 
     def parse(self, watch_list_contents):

@@ -212,18 +212,49 @@ class WatchListTest(unittest.TestCase):
                 'messages': set(),
                 }, cc_set_and_messages)
 
+    def test_more_and_less_match(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            # This pattern is in both added and deleted lines, so no match.
+            '            "more": r"userSelect == o\.userSelect",'
+            '        },'
+            '        "WatchList2": {'
+            '            "more": r"boxOrient\(o\.boxOrient\)",'
+            '        },'
+            '        "WatchList3": {'
+            '            "less": r"unsigned orient"'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": [ "eric@webkit.org", ],'
+            '        "WatchList2": [ "levin@chromium.org", ],'
+            '    },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList3": ["Test message."],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['levin@chromium.org']),
+                'messages': set(["Test message."]),
+                }, cc_set_and_messages)
+
     def test_complex_match(self):
         watch_list = self._watch_list_parser.parse(
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
             '            "filename": r"WebCore/rendering/style/StyleRareInheritedData\.cpp",'
-            '            "in_added_lines": r"\&\& boxOrient == o.boxOrient;",'
-            '            "in_deleted_lines": r"\&\& userSelect == o.userSelect;",'
+            '            "in_added_lines": r"\&\& boxOrient == o\.boxOrient;",'
+            '            "in_deleted_lines": r"\&\& userSelect == o\.userSelect;",'
+            '            "more": r"boxOrient\(o\.boxOrient\)",'
             '        },'
             '        "WatchList2": {'
             '            "filename": r"WebCore/rendering/style/StyleRareInheritedData\.cpp",'
             '            "in_added_lines": r"RenderStyle::initialBoxOrient",'
+            '            "less": r"userSelect;"'
             '        },'
             # WatchList3 won't match because these two patterns aren't in the same file.
             '        "WatchList3": {'
