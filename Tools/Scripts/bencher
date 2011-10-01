@@ -209,6 +209,8 @@ $verbosity=0
 $innerMode=:reload
 $timeMode=:auto
 $keepFiles=false
+$forceVMKind=nil
+$brief=false
 
 # Helpful functions and classes
 
@@ -250,6 +252,9 @@ def usage
   puts "--timing-mode        Set the way that bencher measures time.  Possible values"
   puts "                     are 'preciseTime', 'date', and 'auto'.  Default is"
   puts "                     'auto', which automatically detects the best way."
+  puts "--force-vm-kind      Turn off auto-detection of VM kind, and assume that it is"
+  puts "                     the one specified.  Valid arguments are 'jsc' or"
+  puts "                     'DumpRenderTree'."
   puts "--v8-only            Only run V8."
   puts "--sunspider-only     Only run SunSpider."
   puts "--kraken-only        Only run Kraken."
@@ -259,6 +264,7 @@ def usage
   puts "--benchmarks         Only run benchmarks matching the given regular expression."
   puts "--keep-files         Keep temporary files.  Useful for debugging."
   puts "--verbose or -v      Print more stuff."
+  puts "--brief              Print only the final result for each VM."
   puts "--help or -h         Display this message."
   puts
   puts "Example:"
@@ -691,26 +697,31 @@ class VM < StatsAccumulator
     @name = name
     @nameKind = nameKind
     
-    Tempfile.open("bencher-vmtest") {
-      | file |
-      file.puts "print(\"here\");"
-      file.flush
-      
-      result = nil
-      @vmType = :jsc
-      run(file.path) {
-        | inp |
-        result = inp.read
-      }
-      
-      if result.chomp == "here"
-        $stderr.puts "#{@name} is definitely a jsc-style VM." if $verbosity>=1
+    if $forceVMKind
+      @vmType = $forceVMKind
+    else
+      Tempfile.open("bencher-vmtest") {
+        | file |
+        file.puts "print(\"here\");"
+        file.flush
+        
+        result = nil
         @vmType = :jsc
-      else
-        $stderr.puts "Assuming that #{@name} is a DumpRenderTree-style VM." if $verbosity>=1
-        @vmType = :dumpRenderTree
-      end
-    }
+        run(file.path) {
+          | inp |
+          result = inp.read
+          $stderr.puts "stdout: #{result}" if $verbosity>=2
+        }
+        
+        if result.chomp == "here"
+          $stderr.puts "#{@name} is definitely a jsc-style VM." if $verbosity>=1
+          @vmType = :jsc
+        else
+          $stderr.puts "Assuming that #{@name} is a DumpRenderTree-style VM." if $verbosity>=1
+          @vmType = :dumpRenderTree
+        end
+      }
+    end
   end
   
   def to_s
@@ -928,9 +939,10 @@ class KrakenBenchmark
 end
 
 class BenchmarkSuite
-  def initialize(name, path)
+  def initialize(name, path, preferredMean)
     @name = name
     @path = path
+    @preferredMean = preferredMean
     @benchmarks = []
   end
   
@@ -966,6 +978,14 @@ class BenchmarkSuite
       | benchmark |
       not yield benchmark
     }
+  end
+  
+  def preferredMean
+    @preferredMean
+  end
+  
+  def computeMean(stat)
+    stat.send @preferredMean
   end
 end
 
@@ -1093,7 +1113,15 @@ def center(str,chars)
 end
 
 def statsToStr(stats)
-  lpad(numToStr(stats.mean),11)+"+-"+rpad(numToStr(stats.confInt),9)
+  if $inner*$outer == 1
+    string = numToStr(stats.mean)
+    raise unless string =~ /\./
+    left = $~.pre_match
+    right = $~.post_match
+    lpad(left,12)+"."+rpad(right,9)
+  else
+    lpad(numToStr(stats.mean),11)+"+-"+rpad(numToStr(stats.confInt),9)
+  end
 end
   
 begin
@@ -1108,9 +1136,11 @@ begin
                  ['--exclude-v8', GetoptLong::NO_ARGUMENT],
                  ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
                  ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
                  ['--load-once', GetoptLong::NO_ARGUMENT],
                  ['--keep-files', GetoptLong::NO_ARGUMENT],
                  ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+                 ['--brief', GetoptLong::NO_ARGUMENT],
                  ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -1129,6 +1159,17 @@ begin
         $timeMode = :auto
       else
         quickFail("Expected either 'preciseTime', 'date', or 'auto' for --time-mode, but got '#{arg}'.",
+                  "Invalid argument for command-line option")
+      end
+    when '--force-vm-kind'
+      if arg.upcase == "JSC"
+        $forceVMKind = :jsc
+      elsif arg.upcase == "DUMPRENDERTREE"
+        $forceVMKind = :dumpRenderTree
+      elsif arg.upcase == "AUTO"
+        $forceVMKind = nil
+      else
+        quickFail("Expected either 'jsc' or 'DumpRenderTree' for --force-vm-kind, but got '#{arg}'.",
                   "Invalid argument for command-line option")
       end
     when '--sunspider-only'
@@ -1154,6 +1195,8 @@ begin
       $keepFiles = true
     when '--verbose'
       $verbosity += 1
+    when '--brief'
+      $brief = true
     when '--help'
       usage
     else
@@ -1166,7 +1209,7 @@ begin
               "Insufficient arguments")
   end
   
-  SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH)
+  SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH, :arithmeticMean)
   ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
    "access-fannkuch", "access-nbody", "access-nsieve",
    "bitops-3bit-bits-in-byte", "bitops-bits-in-byte", "bitops-bitwise-and",
@@ -1179,14 +1222,14 @@ begin
     SUNSPIDER.add SunSpiderBenchmark.new(name)
   }
 
-  V8 = BenchmarkSuite.new("V8", V8_PATH)
+  V8 = BenchmarkSuite.new("V8", V8_PATH, :geometricMean)
   ["crypto", "deltablue", "earley-boyer", "raytrace",
    "regexp", "richards", "splay"].each {
     | name |
     V8.add V8Benchmark.new(name)
   }
 
-  KRAKEN = BenchmarkSuite.new("Kraken", KRAKEN_PATH)
+  KRAKEN = BenchmarkSuite.new("Kraken", KRAKEN_PATH, :arithmeticMean)
   ["ai-astar", "audio-beat-detection", "audio-dft", "audio-fft",
    "audio-oscillator", "imaging-darkroom", "imaging-desaturate",
    "imaging-gaussian-blur", "json-parse-financial",
@@ -1285,6 +1328,11 @@ begin
     | suite |
     $suitesOnVMsForSuite[suite] = []
   }
+  $suitesOnVMsForVM = {}
+  $vms.each {
+    | vm |
+    $suitesOnVMsForVM[vm] = []
+  }
   
   $benchmarksOnVMs = []
   $benchmarksOnVMsForBenchmark = {}
@@ -1300,6 +1348,7 @@ begin
       suiteOnVM = SuiteOnVM.new(vm, suite)
       $suitesOnVMs << suiteOnVM
       $suitesOnVMsForSuite[suite] << suiteOnVM
+      $suitesOnVMsForVM[vm] << suiteOnVM
       suite.benchmarks.each {
         | benchmark |
         benchmarkOnVM = BenchmarkOnVM.new(vm, benchmark, suiteOnVM)
@@ -1326,7 +1375,7 @@ begin
   }.max + 1
   
   $benchpad = ($benchmarks +
-               ["<arithmetic>", "<geometric>", "<harmonic>"]).collect {
+               ["<arithmetic> *", "<geometric> *", "<harmonic> *"]).collect {
     | benchmark |
     benchmark.to_s.size
   }.max + 1
@@ -1335,10 +1384,21 @@ begin
     | vm |
     vm.to_s.size
   }.max + 1
+
+  unless $brief
+    3.times {
+      | idx |
+      $stderr.print "\rStarting in #{3-idx}..."
+      $stderr.flush
+      sleep 1
+    }
+    $stderr.print "\r                       \r"
+    $stderr.flush
+  end
   
   $plans.each_with_index {
     | plan, idx |
-    if $verbosity == 0
+    if $verbosity == 0 and not $brief
       text1 = lpad(idx.to_s,$plans.size.to_s.size)+"/"+$plans.size.to_s
       text2 = plan.suite.to_s+"/"+plan.benchmark.to_s+"/"+plan.vm.to_s
       $stderr.print "\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}"
@@ -1348,10 +1408,43 @@ begin
     plan.runAndRecord
   }
   
-  if $verbosity == 0
+  if $verbosity == 0 and not $brief
     $stderr.print "\r#{$plans.size}/#{$plans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}"
     $stderr.puts "\r#{$plans.size}/#{$plans.size}"
   end
+  
+  # Compute the geomean of the preferred means of results on a SuiteOnVM
+  $overallResults = []
+  $vms.each {
+    | vm |
+    result = Stats.new
+    $outer.times {
+      | outerIndex |
+      $inner.times {
+        | innerIndex |
+        curResult = Stats.new
+        $suitesOnVMsForVM[vm].each {
+          | suiteOnVM |
+          # For a given iteration, suite, and VM, compute the suite's preferred mean
+          # over the data collected for all benchmarks in that suite. We'll have one
+          # sample per benchmark. For example on V8 this will be the geomean of 1
+          # sample for crypto, 1 sample for deltablue, and so on, and 1 sample for
+          # splay.
+          curResult.add(suiteOnVM.suite.computeMean(suiteOnVM.statsForIteration(outerIndex, innerIndex)))
+        }
+        
+        # curResult now holds 1 sample for each of the means computed in the above
+        # loop. Compute the geomean over this, and store it.
+        result.add(curResult.geometricMean)
+      }
+    }
+
+    # $overallResults will have a Stats for each VM. That Stats object will hold
+    # $inner*$outer geomeans, allowing us to compute the arithmetic mean and
+    # confidence interval of the geomeans of preferred means. Convoluted, but
+    # useful and probably sound.
+    $overallResults << result
+  }
   
   if $verbosity >= 2
     $benchmarksOnVMs.each {
@@ -1365,7 +1458,7 @@ begin
       $stderr.puts "#{vm} (geometricMean): #{vm.geometricMeanStats}"
     }
   end
-  
+
   reportName =
     (if ($vms.collect {
            | vm |
@@ -1389,8 +1482,10 @@ begin
            time.hour, time.min ]
      end) +
     "_benchReport.txt"
-  
-  $stderr.puts "Generating benchmark report at #{reportName}"
+
+  unless $brief
+    $stderr.puts "Generating benchmark report at #{reportName}"
+  end
   
   outp = $stdout
   begin
@@ -1521,18 +1616,26 @@ begin
     outp.puts
   end
   
-  def allSummaryStats(outp, accumulators)
-    summaryStats(outp, accumulators, "<arithmetic>") {
+  def meanName(currentMean, preferredMean)
+    result = "<#{currentMean}>"
+    if "#{currentMean}Mean" == preferredMean.to_s
+      result += " *"
+    end
+    result
+  end
+  
+  def allSummaryStats(outp, accumulators, preferredMean)
+    summaryStats(outp, accumulators, meanName("arithmetic", preferredMean)) {
       | stat |
       stat.arithmeticMean
     }
     
-    summaryStats(outp, accumulators, "<geometric>") {
+    summaryStats(outp, accumulators, meanName("geometric", preferredMean)) {
       | stat |
       stat.geometricMean
     }
     
-    summaryStats(outp, accumulators, "<harmonic>") {
+    summaryStats(outp, accumulators, meanName("harmonic", preferredMean)) {
       | stat |
       stat.harmonicMean
     }
@@ -1565,23 +1668,47 @@ begin
       outp.puts
     }
     outp.puts
-    allSummaryStats(outp, $suitesOnVMsForSuite[suite])
+    allSummaryStats(outp, $suitesOnVMsForSuite[suite], suite.preferredMean)
     outp.puts if $suites.size > 1
   }
   
   if $suites.size > 1
     printVMs(outp)
     outp.puts "All benchmarks:"
-    allSummaryStats(outp, $vms)
+    allSummaryStats(outp, $vms, nil)
+    
+    outp.puts
+    printVMs(outp)
+    outp.puts "Geomean of preferred means:"
+    outp.print "   "
+    outp.print rpad("<scaled-result>", $benchpad)
+    outp.print " "
+    $vms.size.times {
+      | index |
+      if index != 0
+        outp.print " "+$overallResults[index].compareTo($overallResults[index-1]).shortForm
+      end
+      outp.print statsToStr($overallResults[index])
+    }
+    if $overallResults.size>=2
+      outp.print("    "+$overallResults[-1].compareTo($overallResults[0]).to_s)
+    end
+    outp.puts
+    outp.puts
   end
   
-  if outp != $stdout
+  if outp != $stdout and not $brief
     outp.close
     puts
     File.open(reportName) {
       | inp |
       puts inp.read
     }
+  end
+  
+  if $brief
+    puts($overallResults.collect{|stats| stats.mean}.join("\t"))
+    puts($overallResults.collect{|stats| stats.confInt}.join("\t"))
   end
   
 rescue => e

@@ -1,3 +1,23 @@
+2011-10-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Bencher script makes it difficult to do automated performance testing
+        https://bugs.webkit.org/show_bug.cgi?id=69207
+
+        Reviewed by Sam Weinig.
+        
+        This adds two new features:
+        
+        The ability to disable automatic VM detection, which is flaky if any
+        profiling features are enabled in jsc.
+        
+        The ability to compute, and report, a scaled result for all benchmark
+        suites. It is the geometric mean of three numbers: SunSpider's
+        arithmetic mean, V8's geometric mean, and Kraken's arithmetic mean.
+        It is also possible to turn off all other output from bencher and just
+        get this number with the --brief option.
+
+        * Scripts/bencher:
+
 2011-10-01  Sam Weinig  <sam@webkit.org>
 
         WTR is not successfully changing the NSUserDefaults
