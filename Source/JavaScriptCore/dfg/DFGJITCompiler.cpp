@@ -451,12 +451,12 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     move(TrustedImmPtr(codeBlock()->alternative()), GPRInfo::regT0);
     
     Jump fewFails = branch32(BelowOrEqual, GPRInfo::regT2, Imm32(codeBlock()->largeFailCountThreshold()));
-    mul32(Imm32(codeBlock()->desiredSuccessFailRatio()), GPRInfo::regT2, GPRInfo::regT2);
+    mul32(Imm32(Heuristics::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
     
     Jump lowFailRate = branch32(BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
     
     // Reoptimize as soon as possible.
-    store32(Imm32(CodeBlock::counterValueForOptimizeNextInvocation()), Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    store32(Imm32(Heuristics::executionCounterValueForOptimizeNextInvocation), Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
     Jump doneAdjusting = jump();
     
     fewFails.link(this);

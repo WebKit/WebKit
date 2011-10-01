@@ -81,6 +81,8 @@
 		0FD82F2B1426CA6D00179C94 /* JettisonedCodeBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82F291426CA5A00179C94 /* JettisonedCodeBlocks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82F2C1426CA7400179C94 /* JettisonedCodeBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82F281426CA5A00179C94 /* JettisonedCodeBlocks.cpp */; };
 		0FD82F4B142806A100179C94 /* BitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82F491428069200179C94 /* BitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE228ED1436AB2700196C48 /* Heuristics.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Heuristics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE228EE1436AB2C00196C48 /* Heuristics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Heuristics.cpp */; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -836,6 +838,8 @@
 		0FD82F281426CA5A00179C94 /* JettisonedCodeBlocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JettisonedCodeBlocks.cpp; sourceTree = "<group>"; };
 		0FD82F291426CA5A00179C94 /* JettisonedCodeBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JettisonedCodeBlocks.h; sourceTree = "<group>"; };
 		0FD82F491428069200179C94 /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
+		0FE228EA1436AB2300196C48 /* Heuristics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Heuristics.cpp; sourceTree = "<group>"; };
+		0FE228EB1436AB2300196C48 /* Heuristics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Heuristics.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -2029,6 +2033,8 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				0FE228EA1436AB2300196C48 /* Heuristics.cpp */,
+				0FE228EB1436AB2300196C48 /* Heuristics.h */,
 				0F7700911402FF280078EB39 /* SamplingCounter.cpp */,
 				0F77008E1402FDD60078EB39 /* SamplingCounter.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
@@ -2856,6 +2862,7 @@
 				A7521E131429169A003C8D0C /* CardSet.h in Headers */,
 				0FD52AAE143035A00026DC9F /* UnionFind.h in Headers */,
 				86880F1E14328BB900B08D42 /* DFGJITCompilerInlineMethods.h in Headers */,
+				0FE228ED1436AB2700196C48 /* Heuristics.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3386,6 +3393,7 @@
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				86880F44143531A800B08D42 /* DFGJITCodeGenerator64.cpp in Sources */,
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
+				0FE228EE1436AB2C00196C48 /* Heuristics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

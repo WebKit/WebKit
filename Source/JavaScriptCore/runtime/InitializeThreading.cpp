@@ -31,6 +31,7 @@
 
 #include "ExecutableAllocator.h"
 #include "Heap.h"
+#include "Heuristics.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
@@ -52,6 +53,7 @@ static void initializeThreadingOnce()
 {
     WTF::double_conversion::initialize();
     WTF::initializeThreading();
+    Heuristics::initializeHeuristics();
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::initialize();
 #endif

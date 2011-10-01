@@ -33,6 +33,7 @@
 #include "CompactJITCodeMap.h"
 #include "DFGOSREntry.h"
 #include "EvalCodeCache.h"
+#include "Heuristics.h"
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITWriteBarrier.h"
@@ -718,32 +719,25 @@ namespace JSC {
         // to avoid thrashing.
         unsigned reoptimizationRetryCounter() const
         {
-            ASSERT(m_reoptimizationRetryCounter <= 18);
+            ASSERT(m_reoptimizationRetryCounter <= Heuristics::reoptimizationRetryCounterMax);
             return m_reoptimizationRetryCounter;
         }
         
         void countReoptimization()
         {
             m_reoptimizationRetryCounter++;
-            if (m_reoptimizationRetryCounter > 18)
-                m_reoptimizationRetryCounter = 18;
-        }
-        
-        // These functions are provided to support calling
-        // optimizeXYZ() methods from JIT-generated code.
-        static int32_t counterValueForOptimizeNextInvocation()
-        {
-            return 0;
+            if (m_reoptimizationRetryCounter > Heuristics::reoptimizationRetryCounterMax)
+                m_reoptimizationRetryCounter = Heuristics::reoptimizationRetryCounterMax;
         }
         
         int32_t counterValueForOptimizeAfterWarmUp()
         {
-            return -1000 << reoptimizationRetryCounter();
+            return Heuristics::executionCounterValueForOptimizeAfterWarmUp << reoptimizationRetryCounter();
         }
         
         int32_t counterValueForOptimizeAfterLongWarmUp()
         {
-            return -5000 << reoptimizationRetryCounter();
+            return Heuristics::executionCounterValueForOptimizeAfterLongWarmUp << reoptimizationRetryCounter();
         }
         
         int32_t* addressOfExecuteCounter()
@@ -762,7 +756,7 @@ namespace JSC {
         // expensive than executing baseline code.
         void optimizeNextInvocation()
         {
-            m_executeCounter = counterValueForOptimizeNextInvocation();
+            m_executeCounter = Heuristics::executionCounterValueForOptimizeNextInvocation;
         }
         
         // Call this to prevent optimization from happening again. Note that
@@ -772,7 +766,7 @@ namespace JSC {
         // the future as well.
         void dontOptimizeAnytimeSoon()
         {
-            m_executeCounter = std::numeric_limits<int32_t>::min();
+            m_executeCounter = Heuristics::executionCounterValueForDontOptimizeAnytimeSoon;
         }
         
         // Call this to reinitialize the counter to its starting state,
@@ -813,7 +807,7 @@ namespace JSC {
         // in the baseline code.
         void optimizeSoon()
         {
-            m_executeCounter = -100 << reoptimizationRetryCounter();
+            m_executeCounter = Heuristics::executionCounterValueForOptimizeSoon << reoptimizationRetryCounter();
         }
         
         // The speculative JIT tracks its success rate, so that we can
@@ -845,25 +839,18 @@ namespace JSC {
         static ptrdiff_t offsetOfSpeculativeSuccessCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeSuccessCounter); }
         static ptrdiff_t offsetOfSpeculativeFailCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeFailCounter); }
         
-        // The amount by which the JIT will increment m_executeCounter.
-        static unsigned executeCounterIncrementForLoop() { return 1; }
-        static unsigned executeCounterIncrementForReturn() { return 15; }
-
-        // The success/failure ratio we want.
-        unsigned desiredSuccessFailRatio() { return 6; }
-        
         // The number of failures that triggers the use of the ratio.
-        unsigned largeFailCountThreshold() { return 20 << alternative()->reoptimizationRetryCounter(); }
-        unsigned largeFailCountThresholdForLoop() { return 1 << alternative()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThreshold() { return Heuristics::largeFailCountThresholdBase << alternative()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThresholdForLoop() { return Heuristics::largeFailCountThresholdBaseForLoop << alternative()->reoptimizationRetryCounter(); }
         
         bool shouldReoptimizeNow()
         {
-            return desiredSuccessFailRatio() * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
+            return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
         }
         
         bool shouldReoptimizeFromLoopNow()
         {
-            return desiredSuccessFailRatio() * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
+            return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
         }
         
 #if ENABLE(VALUE_PROFILER)

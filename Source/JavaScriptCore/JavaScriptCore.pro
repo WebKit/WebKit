@@ -144,6 +144,7 @@ SOURCES += \
     runtime/FunctionPrototype.cpp \
     runtime/GCActivityCallback.cpp \
     runtime/GetterSetter.cpp \
+    runtime/Heuristics.cpp \
     runtime/Identifier.cpp \
     runtime/InitializeThreading.cpp \
     runtime/InternalFunction.cpp \

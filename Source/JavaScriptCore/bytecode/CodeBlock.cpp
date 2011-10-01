@@ -1972,7 +1972,7 @@ bool CodeBlock::shouldOptimizeNow()
     dumpValueProfiles();
 #endif
 
-    if (m_optimizationDelayCounter >= 5)
+    if (m_optimizationDelayCounter >= Heuristics::maximumOptimizationDelay)
         return true;
     
     unsigned numberOfNonArgumentValueProfiles = 0;
@@ -1998,8 +1998,8 @@ bool CodeBlock::shouldOptimizeNow()
     printf("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles, (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
 #endif
 
-    if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= 0.75)
-        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.25))
+    if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= Heuristics::desiredProfileLivenessRate)
+        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= Heuristics::desiredProfileFullnessRate))
         return true;
     
     m_optimizationDelayCounter++;

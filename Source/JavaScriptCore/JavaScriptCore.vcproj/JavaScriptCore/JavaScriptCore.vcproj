@@ -734,6 +734,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\Heuristics.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Heuristics.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>

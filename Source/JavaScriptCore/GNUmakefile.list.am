@@ -329,6 +329,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
+	Source/JavaScriptCore/runtime/Heuristics.cpp \
+	Source/JavaScriptCore/runtime/Heuristics.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
