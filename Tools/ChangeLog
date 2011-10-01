@@ -1,5 +1,11 @@
 2011-10-01  Filip Pizlo  <fpizlo@apple.com>
 
+        Added myself to reviewers, because I'm now a reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-10-01  Filip Pizlo  <fpizlo@apple.com>
+
         Bencher script makes it difficult to do automated performance testing
         https://bugs.webkit.org/show_bug.cgi?id=69207
 
