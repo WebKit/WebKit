@@ -1,5 +1,11 @@
 2011-10-01  Adam Barth  <abarth@webkit.org>
 
+        Note test as timing out.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-01  Adam Barth  <abarth@webkit.org>
+
         Update Mac baselines.
 
         * platform/chromium-cg-mac-leopard/fast/css/last-of-type-pseudo-class-expected.txt: Added.
