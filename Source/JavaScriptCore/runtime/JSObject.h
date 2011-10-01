@@ -138,7 +138,6 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSValue toStrictThisObject(ExecState*) const;
         virtual JSObject* unwrappedObject();
 
         bool getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificFunction) const;
@@ -829,23 +828,6 @@ ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
 }
 
 // --- JSValue inlines ----------------------------
-
-ALWAYS_INLINE UString JSValue::toThisString(ExecState* exec) const
-{
-    return isString() ? static_cast<JSString*>(asCell())->value(exec) : toThisObject(exec)->toString(exec);
-}
-
-inline JSString* JSValue::toThisJSString(ExecState* exec) const
-{
-    return isString() ? static_cast<JSString*>(asCell()) : jsString(exec, toThisObject(exec)->toString(exec));
-}
-
-inline JSValue JSValue::toStrictThisObject(ExecState* exec) const
-{
-    if (!isObject())
-        return *this;
-    return asObject(asCell())->toStrictThisObject(exec);
-}
 
 ALWAYS_INLINE JSObject* Register::function() const
 {

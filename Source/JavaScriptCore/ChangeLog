@@ -1,3 +1,23 @@
+2011-09-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove toStrictThisObject, toThisString, toThisJSString
+        https://bugs.webkit.org/show_bug.cgi?id=69203
+
+        Rubber stamped by Sam Weinig
+
+        These are no longer used.
+
+        * JavaScriptCore.exp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSValue.h:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StrictEvalActivation.h:
+
 2011-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         DFG does not speculate aggressively enough on put_by_id

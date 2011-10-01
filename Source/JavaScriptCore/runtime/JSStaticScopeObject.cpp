@@ -47,11 +47,6 @@ JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
     return exec->globalThisValue();
 }
 
-JSValue JSStaticScopeObject::toStrictThisObject(ExecState*) const
-{
-    return jsNull();
-}
-
 void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (slot.isStrictMode()) {

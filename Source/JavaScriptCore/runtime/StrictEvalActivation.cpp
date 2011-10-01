@@ -43,9 +43,4 @@ JSObject* StrictEvalActivation::toThisObject(ExecState* exec) const
     return exec->globalThisValue();
 }
 
-JSValue StrictEvalActivation::toStrictThisObject(ExecState*) const
-{
-    return jsNull();
-}
-
 }

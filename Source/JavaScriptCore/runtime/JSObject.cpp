@@ -517,11 +517,6 @@ JSObject* JSObject::toThisObject(ExecState*) const
     return const_cast<JSObject*>(this);
 }
 
-JSValue JSObject::toStrictThisObject(ExecState*) const
-{
-    return const_cast<JSObject*>(this);
-}
-
 JSObject* JSObject::unwrappedObject()
 {
     return this;

@@ -70,7 +70,6 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSValue toStrictThisObject(ExecState*) const;
 
         void copyRegisters(JSGlobalData&);
         
