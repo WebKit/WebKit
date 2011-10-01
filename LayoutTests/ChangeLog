@@ -1,3 +1,9 @@
+2011-09-30  Adam Barth  <abarth@webkit.org>
+
+        Update baseline for this test on Leopard.
+
+        * platform/chromium-cg-mac-leopard/fast/text/complex-synthetic-bold-space-width-expected.png: Added.
+
 2011-09-30  Ilya Sherman  <isherman@chromium.org>
 
         Fix assertion failure in XSS Auditor
