@@ -1,3 +1,14 @@
+2011-09-30  Adam Barth  <abarth@webkit.org>
+
+        Remove ASSERT introduced in http://trac.webkit.org/changeset/96427
+        which is triggering all over the place.
+
+        Sorting this out is covered in this bug:
+        https://bugs.webkit.org/show_bug.cgi?id=69200
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+
 2011-09-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96426.
