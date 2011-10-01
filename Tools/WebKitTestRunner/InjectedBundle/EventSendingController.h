@@ -50,6 +50,7 @@ public:
     void mouseDown(int button, JSValueRef modifierArray);
     void mouseUp(int button, JSValueRef modifierArray);
     void mouseMoveTo(int x, int y);
+    void mouseScrollBy(int x, int y);
     void leapForward(int milliseconds);
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);

@@ -1133,6 +1133,20 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 }
 
+void WebPage::wheelEventSyncForTesting(const WebWheelEvent& wheelEvent, bool& handled)
+{
+    CurrentEvent currentEvent(wheelEvent);
+
+#if PLATFORM(MAC)
+    if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseBegan || wheelEvent.phase() == WebWheelEvent::PhaseBegan)
+        m_drawingArea->disableDisplayThrottling();
+    else if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseEnded || wheelEvent.phase() == WebWheelEvent::PhaseEnded)
+        m_drawingArea->enableDisplayThrottling();
+#endif
+
+    handled = handleWheelEvent(wheelEvent, m_page.get());
+}
+
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 {
     if (!page->mainFrame()->view())

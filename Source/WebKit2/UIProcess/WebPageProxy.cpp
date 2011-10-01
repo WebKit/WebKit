@@ -869,7 +869,13 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     m_currentlyProcessedWheelEvents.append(event);
 
     process()->responsivenessTimer()->start();
-    process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
+
+    if (m_shouldSendEventsSynchronously) {
+        bool handled = false;
+        process()->sendSync(Messages::WebPage::WheelEventSyncForTesting(event), Messages::WebPage::WheelEventSyncForTesting::Reply(handled), m_pageID);
+        didReceiveEvent(event.type(), handled);
+    } else
+        process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)

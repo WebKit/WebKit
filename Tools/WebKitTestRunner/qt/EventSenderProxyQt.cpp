@@ -295,6 +295,11 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     sendOrQueueEvent(event);
 }
 
+void EventSenderProxy::mouseScrollBy(int, int)
+{
+    // FIXME: Implement this.
+}
+
 void EventSenderProxy::leapForward(int ms)
 {
     eventQueue[endOfQueue].m_delay = ms;

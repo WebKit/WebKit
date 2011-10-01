@@ -1,3 +1,23 @@
+2011-09-30  Sam Weinig  <sam@webkit.org>
+
+        Add support for eventSender.mouseScrollBy in WTR
+        https://bugs.webkit.org/show_bug.cgi?id=69189
+
+        Add implementation of eventSender.mouseScrollBy for the mac.
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::mouseScrollBy):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollBy):
+
 2011-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         fast/forms/text-control-intrinsic-widths.html fails on Mac if Word/Office fonts are installed

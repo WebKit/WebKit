@@ -489,6 +489,7 @@ private:
     void mouseEvent(const WebMouseEvent&);
     void mouseEventSyncForTesting(const WebMouseEvent&, bool&);
     void wheelEvent(const WebWheelEvent&);
+    void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
     void keyEvent(const WebKeyboardEvent&);
     void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);
 #if ENABLE(GESTURE_EVENTS)
