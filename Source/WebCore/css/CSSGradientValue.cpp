@@ -412,6 +412,11 @@ bool CSSGradientValue::isCacheable() const
 {
     for (size_t i = 0; i < m_stops.size(); ++i) {
         const CSSGradientColorStop& stop = m_stops[i];
+
+        CSSPrimitiveValue* color = stop.m_color.get();
+        if (color->getIdent() == CSSValueCurrentcolor)
+            return false;
+
         if (!stop.m_position)
             continue;
 

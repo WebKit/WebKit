@@ -1,3 +1,24 @@
+2011-09-30  David Barr  <davidbarr@chromium.org>
+
+        Implement currentColor support for CSS gradients
+        https://bugs.webkit.org/show_bug.cgi?id=58730
+
+        Reviewed by Adam Barth.
+
+        Allow currentColor as a CSS3 gradient color-stop.
+
+        Test: fast/css/linear-gradient-currentcolor.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::isCacheable): Make currentColor uncacheable since the
+        background image may be invalidated if currentColor is used as a gradient stop and
+        the value of the 'color' property changes.
+        * css/CSSParser.cpp:
+        (WebCore::parseGradientColorOrKeyword): Accept the currentColor keyword.
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::image): Initialize document styleSelector so that
+        currentColor may be computed for a StyleGeneratedImage.
+
 2011-09-30  Gavin Barraclough  <barraclough@apple.com>
 
         Remove toStrictThisObject, toThisString, toThisJSString
