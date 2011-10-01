@@ -579,6 +579,18 @@ private:
             return false;
         }
     }
+
+    bool isKnownString(NodeIndex op1)
+    {
+        Node& node = m_jit.graph()[op1];
+        switch (node.op) {
+        case GetLocal:
+            return isStringPrediction(node.variableAccessData()->prediction());
+
+        default:
+            return false;
+        }
+    }
     
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
     bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);

@@ -445,7 +445,9 @@ namespace JSC {
         {
             return Structure::create(globalData, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot), &s_info);
         }
-        
+
+        static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
+
         static const ClassInfo s_info;
 
     private:

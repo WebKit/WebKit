@@ -1,3 +1,27 @@
+2011-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Support string length in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=69215
+
+        Reviewed by Geoff Garen.
+
+        Adds a GetStringLength node to the DFG so that we can support
+        string.length inline.
+
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isKnownString):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSString.h:
+        (JSC::JSString::offsetOfLength):
+
 2011-10-01  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         JSVALUE32_64 DFG JIT - unboxed integers and cells in register file must be reboxed before exiting from DFG JIT

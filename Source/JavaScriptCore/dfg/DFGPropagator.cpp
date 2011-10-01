@@ -559,7 +559,8 @@ private:
         }
             
         case ValueToDouble:
-        case GetArrayLength: {
+        case GetArrayLength:
+        case GetStringLength: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             ASSERT_NOT_REACHED();
@@ -706,7 +707,9 @@ private:
         }
             
         case GetById: {
-            if (!isArrayPrediction(m_predictions[node.child1()]))
+            bool isArray = isArrayPrediction(m_predictions[node.child1()]);
+            bool isString = isStringPrediction(m_predictions[node.child1()]);
+            if (!isArray && !isString)
                 break;
             if (!isInt32Prediction(m_predictions[m_compileIndex]))
                 break;
@@ -714,9 +717,9 @@ private:
                 break;
             
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-            printf("  @%u -> GetArrayLength", nodeIndex);
+            printf("  @%u -> %s", nodeIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
-            node.op = GetArrayLength;
+            node.op = isArray ? GetArrayLength : GetStringLength;
             break;
         }
             
@@ -1189,6 +1192,7 @@ private:
         case ArithSqrt:
         case GetCallee:
         case GetArrayLength:
+        case GetStringLength:
             setReplacement(pureCSE(node));
             break;
             

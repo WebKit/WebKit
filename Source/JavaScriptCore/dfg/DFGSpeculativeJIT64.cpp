@@ -1715,6 +1715,22 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case GetStringLength: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        if (!isKnownString(node.child1()))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+        
+        m_jit.load32(MacroAssembler::Address(baseGPR, JSString::offsetOfLength()), resultGPR);
+
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
         

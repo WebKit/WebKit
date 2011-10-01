@@ -319,6 +319,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \
+    macro(GetStringLength, NodeResultInt32) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetScopeChain, NodeResultJS) \
