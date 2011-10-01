@@ -921,6 +921,7 @@ protected:
         m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }
 
+#if CPU(X86_64)
     // These methods used to sort arguments into the correct registers.
     template<GPRReg destA, GPRReg destB>
     void setupTwoStubArgs(GPRReg srcA, GPRReg srcB)
@@ -950,7 +951,6 @@ protected:
         } else
             m_jit.swap(destA, destB);
     }
-#if CPU(X86_64)
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
     {
@@ -1182,7 +1182,21 @@ protected:
 
     void setupResults(GPRReg tag, GPRReg payload)
     {
-        setupTwoStubArgs<GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2>(payload, tag);
+        GPRReg srcA = GPRInfo::returnValueGPR;
+        GPRReg srcB = GPRInfo::returnValueGPR2;
+        GPRReg destA = payload;
+        GPRReg destB = tag;
+
+        if (srcB != destA) {
+            // Handle the easy cases - two simple moves.
+            m_jit.move(srcA, destA);
+            m_jit.move(srcB, destB);
+        } else if (srcA != destB) {
+            // Handle the non-swap case - just put srcB in place first.
+            m_jit.move(srcB, destB);
+            m_jit.move(srcA, destA);
+        } else
+            m_jit.swap(destA, destB);
     }
 
     // These methods add calls to C++ helper functions.

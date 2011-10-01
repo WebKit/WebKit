@@ -253,7 +253,6 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
         GPRReg gpr = info.gpr();
         // If the register has already been locked we need to take a copy.
         // If not, we'll zero extend in place, so mark on the info that this is now type DataFormatInteger, not DataFormatJSInteger.
-        tagGPR = allocate();
         if (m_gprs.isLocked(gpr)) {
             payloadGPR = allocate();
             m_jit.move(gpr, payloadGPR);
@@ -261,6 +260,7 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
             payloadGPR = gpr;
             m_gprs.lock(gpr);
         }
+        tagGPR = allocate();
         m_jit.move(info.registerFormat() == DataFormatInteger ? JITCompiler::TrustedImm32(JSValue::Int32Tag) : JITCompiler::TrustedImm32(JSValue::CellTag), tagGPR);
         m_gprs.release(gpr);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
@@ -386,9 +386,11 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
 
         silentSpillAllRegisters(gpr);
 
-        m_jit.moveDouble(fpr, FPRInfo::argumentFPR0);
+        m_jit.subPtr(TrustedImm32(sizeof(double)), JITCompiler::stackPointerRegister);
+        m_jit.storeDouble(fpr, JITCompiler::stackPointerRegister);
         appendCallWithExceptionCheck(toInt32);
         m_jit.move(GPRInfo::returnValueGPR, gpr);
+        m_jit.addPtr(TrustedImm32(sizeof(double)), JITCompiler::stackPointerRegister);
 
         silentFillAllRegisters(gpr);
 
@@ -1353,7 +1355,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
     } else {
         GPRTemporary resultTag(this, arg1);
         GPRTemporary resultPayload(this, arg1, false);
-        GPRReg resultTagGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
 
         arg1.use();

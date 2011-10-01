@@ -1,3 +1,21 @@
+2011-09-30  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG operation results are not set correctly in JSVALUE32_64 DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69126
+
+        Reviewed by Gavin Barraclough.
+
+        The setupResults routine has the bug of reversing the source and destination. 
+        Also some other trivial (but stupid) bugs need to be fixed in JSVALUE32_64 DFG JIT.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::setupTwoStubArgs):
+        (JSC::DFG::setupResults):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+
 2011-09-30  Gavin Barraclough  <barraclough@apple.com>
 
         Remove toStrictThisObject, toThisString, toThisJSString
