@@ -1,3 +1,19 @@
+2011-10-01  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Fixing draw matrix for composited layers. This
+        was a regression introduced by:
+        http://trac.webkit.org/changeset/96454
+
+        https://bugs.webkit.org/show_bug.cgi?id=69217
+
+        Reviewed by James Robinson.
+
+        Tests: compositor test now pass
+
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2011-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Removed redundant helper functions for allocating Strong handles

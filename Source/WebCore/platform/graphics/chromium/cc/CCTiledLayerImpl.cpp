@@ -117,7 +117,8 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || layerRect.isEmpty() || !layerRenderer)
         return;
 
-    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer->windowMatrix() * layerRenderer->projectionMatrix() * m_tilingTransform).to2dTransform();
+    TransformationMatrix layerTransform = tilingTransform();
+    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer->windowMatrix() * layerRenderer->projectionMatrix() * layerTransform).to2dTransform();
 
     // Don't draw any tiles when device matrix is not invertible.
     if (!deviceMatrix.isInvertible())
@@ -150,19 +151,19 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     case LayerTextureUpdater::SampledTexelFormatRGBA:
         if (useAA) {
             const ProgramAA* program = layerRenderer->tilerProgramAA();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
+            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
             const Program* program = layerRenderer->tilerProgram();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
         }
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
         if (useAA) {
             const ProgramSwizzleAA* program = layerRenderer->tilerProgramSwizzleAA();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
+            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
             const ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
         }
         break;
     default:

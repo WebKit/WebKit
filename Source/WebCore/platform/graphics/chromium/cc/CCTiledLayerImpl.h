@@ -48,7 +48,6 @@ public:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-    void setTilingTransform(const TransformationMatrix& tilingTransform) { m_tilingTransform = tilingTransform; }
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
     void setTextureOrientation(LayerTextureUpdater::Orientation textureOrientation) { m_textureOrientation = textureOrientation; }
     void setSampledTexelFormat(LayerTextureUpdater::SampledTexelFormat sampledTexelFormat) { m_sampledTexelFormat = sampledTexelFormat; }
@@ -81,7 +80,6 @@ private:
     template <class T>
     void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
 
-    TransformationMatrix m_tilingTransform;
     bool m_skipsDraw;
     LayerTextureUpdater::Orientation m_textureOrientation;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
