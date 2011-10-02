@@ -93,11 +93,7 @@ test('SuspiciousCommit', 2, function() {
                 '<span class="author">author</span>' +
                 '<span class="reviewer">reviewer</span>' +
             '</span>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
-            '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
-        '</ul>');
+        '</div>');
 });
 
 test('FailingTestsSummary', 12, function() {
@@ -117,7 +113,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -140,7 +135,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -164,7 +158,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -190,7 +183,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -203,10 +195,6 @@ test('FailingTestsSummary', 12, function() {
                             '<span class="reviewer">reviewer</span>' +
                         '</span>' +
                     '</div>' +
-                    '<ul class="actions">' +
-                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
-                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
-                    '</ul>' +
                 '</li>' +
             '</ul>' +
         '</div>');
@@ -221,7 +209,7 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
                 '</tbody>' +
@@ -236,7 +224,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -249,10 +236,6 @@ test('FailingTestsSummary', 12, function() {
                             '<span class="reviewer">reviewer</span>' +
                         '</span>' +
                     '</div>' +
-                    '<ul class="actions">' +
-                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
-                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
-                    '</ul>' +
                 '</li>' +
             '</ul>' +
         '</div>');
@@ -267,11 +250,11 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="">' +
                         '<td>BUILDING</td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
                         '<td></td>' +
                     '</tr>' +
                 '</tbody>' +
@@ -286,7 +269,6 @@ test('FailingTestsSummary', 12, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -299,10 +281,6 @@ test('FailingTestsSummary', 12, function() {
                             '<span class="reviewer">reviewer</span>' +
                         '</span>' +
                     '</div>' +
-                    '<ul class="actions">' +
-                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
-                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
-                    '</ul>' +
                 '</li>' +
             '</ul>' +
         '</div>');
@@ -332,7 +310,6 @@ test('FailingTestsSummary (grouping)', 1, function() {
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                     '<li><button class="action">Rebaseline</button></li>' +
-                    '<li><button class="action">Mark as Expected</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +

@@ -1,3 +1,25 @@
+2011-10-02  Adam Barth  <abarth@webkit.org>
+
+        Rip out half-backed garden-o-matic features in preparation for wider use
+        https://bugs.webkit.org/show_bug.cgi?id=69226
+
+        This patch rips out a bunch of half-baked features and cleans up a
+        bunch of small nits with the core set of features.  We're going to ask
+        more folks to start using the tool, and having a bunch of half-baked
+        features around is distracting.  We can add these features back under a
+        flag and interate on them after we've got the core functionality
+        nailed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css:
+
 2011-10-01  Brent Fulgham  <bfulgham@webkit.org>
 
         Correct post-build step for WinCairo test runs.

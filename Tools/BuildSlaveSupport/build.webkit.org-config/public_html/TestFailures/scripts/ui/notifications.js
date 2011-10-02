@@ -100,10 +100,6 @@ var Cause = base.extends('li', {
     {
         this._description = this.appendChild(document.createElement('div'));
         this._description.className = 'description';
-        this.appendChild(new ui.actions.List([
-            new ui.actions.Blame(),
-            new ui.actions.Rollout(),
-        ]));
     }
 });
 
@@ -159,7 +155,6 @@ ui.notifications.FailingTests = base.extends(ui.notifications.Failure, {
         this._problem.appendChild(new ui.actions.List([
             new ui.actions.Examine().makeDefault(),
             new ui.actions.Rebaseline(),
-            new ui.actions.UpdateExpectations(),
         ]));
         this._testNameList = [];
     },

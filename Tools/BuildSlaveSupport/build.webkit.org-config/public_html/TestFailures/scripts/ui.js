@@ -59,21 +59,15 @@ ui.onebar = base.extends('div', {
             '<ul>' +
                 '<li><a href="#summary">Summary</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
-                '<li><a href="#commits">Commits</a></li>' +
-                '<li><a href="#failures">Failures</a></li>' +
             '</ul>' +
             '<div id="summary"></div>' +
-            '<div id="results"></div>' +
-            '<div id="commits">Coming soon...</div>' +
-            '<div id="failures"></div>';
+            '<div id="results"></div>';
         this._tabNames = [
             'summary',
             'results',
-            'commits',
-            'failures',
         ]
         this._tabs = $(this).tabs({
-            disabled: [1, 2, 3],
+            disabled: [1],
         });
     },
     attach: function()
@@ -91,10 +85,6 @@ ui.onebar = base.extends('div', {
     results: function()
     {
         return this.tabNamed('results');
-    },
-    failures: function()
-    {
-        return this.tabNamed('failures');
     },
     select: function(tabName)
     {
@@ -162,7 +152,7 @@ ui.MessageBox = base.extends('div',  {
     {
         this.addMessage(message);
         this.appendChild(new ui.actions.List([new ui.actions.Close()]));
-        $(this).bind('close', statusView.close.bind(statusView));
+        $(this).bind('close', this.close.bind(this));
     }
 });
 

@@ -71,7 +71,7 @@ test("optimizeBaselines", 3, function() {
     });
 });
 
-test("rebaseline", 7, function() {
+test("rebaseline", 6, function() {
     var simulator = new NetworkSimulator();
 
     var requestedURLs = [];
@@ -82,7 +82,8 @@ test("rebaseline", 7, function() {
     };
     simulator.ajax = function(options)
     {
-        ok(options.url.indexOf('/ping') != -1);
+        if (options.url.indexOf('/ping') != -1)
+            ok(false, 'Recieved non-ping ajax request.');
         simulator.scheduleCallback(options.success);
     };
 

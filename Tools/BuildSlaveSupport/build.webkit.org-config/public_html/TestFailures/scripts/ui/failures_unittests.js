@@ -41,7 +41,7 @@ test('Configuration', 8, function() {
     ]);
     equal(configuration.outerHTML, '<a target="_blank"></a>');
     configuration = new ui.failures.Configuration({is64bit: true, version: 'lucid'});
-    equal(configuration.outerHTML, '<a target="_blank"><span class="architecture">64-bit</span><span class="version">lucid</span></a>');
+    equal(configuration.outerHTML, '<a target="_blank"><span class="version">lucid</span><span class="architecture">64-bit</span></a>');
     configuration = new ui.failures.Configuration({version: 'xp'});
     equal(configuration.outerHTML, '<a target="_blank"><span class="version">xp</span></a>');
     configuration._addSpan('foo', 'bar');
@@ -93,7 +93,7 @@ test('FailureGrid', 9, function() {
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
@@ -104,13 +104,13 @@ test('FailureGrid', 9, function() {
         '<tbody>' +
             '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
-                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
@@ -121,13 +121,13 @@ test('FailureGrid', 9, function() {
         '<tbody>' +
             '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
-                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +

@@ -47,7 +47,7 @@ ol.notifications>li {
 }
 
 ol.notifications div.how {
-    width: 300px;
+    width: 350px;
 }
 
 ol.notifications time {
@@ -105,16 +105,15 @@ ol.notifications>li ul.causes>li>ul.actions {
     }
 
         ol.notifications>li ul.causes>li>div.description>a {
-            padding: 0 20px 0 10px;
+            padding: 5px 10px 5px 10px;
+            margin: -5px 10px -2px 0;
             border-radius: 4px;
+            display: inline-block;
         }
 
         ol.notifications>li ul.causes>li:hover>div.description>a {
             background-color: #555;
-            padding: 5px 10px 5px 10px;
-            margin: -5px 10px -1px 0;
             color: White;
-            display: inline-block;
         }
 
         ol.notifications>li ul.causes>li:hover>div.description>a::after {
@@ -171,7 +170,7 @@ ol.notifications table.failures {
     border-collapse: collapse;
     table-layout: fixed;
     font-size: 11px;
-    width: 300px;
+    width: 350px;
 }
 
     ol.notifications table.failures thead tr td:first-child {
@@ -182,8 +181,12 @@ ol.notifications table.failures {
         border-top: 1px solid #eee;
     }
 
+    ol.notifications table.failures tbody td:first-child {
+        width: 20%;
+    }
+
     ol.notifications table.failures tbody td {
-        width: 33%;
+        width: 40%;
         padding: 2px;
     }
 
@@ -208,5 +211,9 @@ ol.notifications table.failures {
         }
 
         ol.notifications table.failures tbody td:nth-child(n+2)>a>span.architecture {
-            padding: 0 3px 0 0;
+            padding: 0 2px;
+        }
+
+        ol.notifications table.failures tbody td:nth-child(n+2)>a>span.graphics {
+            padding: 0 2px;
         }

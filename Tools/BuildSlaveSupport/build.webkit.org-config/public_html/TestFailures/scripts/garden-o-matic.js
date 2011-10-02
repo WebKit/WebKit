@@ -31,7 +31,6 @@ var g_updateTimerId = 0;
 var g_buildersFailing = null;
 
 var g_unexpectedFailuresController = null;
-var g_failuresController = null;
 
 var g_failingBuilders = null;
 
@@ -77,9 +76,6 @@ $(document).ready(function() {
     var unexpectedFailuresView = new ui.notifications.Stream();
     g_unexpectedFailuresController = new controllers.UnexpectedFailures(model.state, unexpectedFailuresView, onebarController);
 
-    var failuresView = new ui.notifications.Stream();
-    g_failuresController = new controllers.Failures(model.state, failuresView, onebarController);
-
     g_info = new ui.notifications.Stream();
     g_failingBuilders = new controllers.FailingBuilders(g_info);
 
@@ -92,9 +88,6 @@ $(document).ready(function() {
     summary.appendChild(updateButton);
     summary.appendChild(g_info);
     summary.appendChild(unexpectedFailuresView);
-
-    var failures = onebar.failures();
-    failures.appendChild(failuresView);
 
     update();
 });
