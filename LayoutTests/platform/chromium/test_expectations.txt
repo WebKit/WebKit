@@ -3707,13 +3707,13 @@ BUGWK68270 LEOPARD CPU GPU : transitions = PASS TEXT IMAGE IMAGE+TEXT
 
 // The *-pseudo-class tests are already marked flaky (for TEXT failure) on all platforms,
 // but reliably fail with IMAGE on Mac10.5 with Skia graphics.
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/empty-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-child-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-of-type-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-child-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-child-pseudo-class.html = IMAGE
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/empty-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-child-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-child-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
 
 BUGWK68445 : fast/js/string-split-conformance.html = FAIL
 

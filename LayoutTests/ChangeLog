@@ -1,5 +1,12 @@
 2011-10-01  Adam Barth  <abarth@webkit.org>
 
+        Tweak expectations for leopard some more.
+
+        * platform/chromium-cg-mac-leopard/fast/css/last-of-type-pseudo-class-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-10-01  Adam Barth  <abarth@webkit.org>
+
         Delete bogus text expectation.
 
         * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Removed.
