@@ -29,6 +29,7 @@
 #import <AppKit/NSControl.h>
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTrackingArea.h>
+#import <AppKit/NSWindow.h>
 #import <AppKit/NSWindowController.h>
 
 namespace WebCore {

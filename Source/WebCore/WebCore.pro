@@ -3061,7 +3061,9 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
     contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += \
-            $$SOURCE_DIR/../WebKitLibraries/
+            $$SOURCE_DIR/../WebKitLibraries/ \
+            $$PWD/platform/mac
+
 
         HEADERS += \
             platform/graphics/mac/MediaPlayerPrivateQTKit.h \
@@ -3088,6 +3090,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/mac/SharedBufferMac.mm \
             platform/mac/KURLMac.mm \
             platform/text/mac/StringMac.mm \
+            platform/text/mac/StringImplMac.mm \
             platform/graphics/mac/FloatSizeMac.mm \
             platform/graphics/mac/IntRectMac.mm \
             platform/mac/WebVideoFullscreenController.mm \

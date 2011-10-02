@@ -6,7 +6,8 @@ CONFIG += qt plugin
 SOURCES += plugin.cpp
 
 include(../../../../../WebKit.pri)
-QT += declarative
+QT += declarative \
+      network
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 

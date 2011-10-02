@@ -1,3 +1,16 @@
+2011-10-02  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2][Mac] WebKit2 does not build on mac after merge of Qt5 refactor branch.
+        https://bugs.webkit.org/show_bug.cgi?id=69223
+
+        After the merge of the Qt5 refactor branch, networking stuff has been
+        extracted into a separate library. The qmlplugin needs to link to that
+        library to get QNetworkReply defined.
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/API/qt/qmlplugin/qmlplugin.pro:
+
 2011-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Removed redundant helper functions for allocating Strong handles
