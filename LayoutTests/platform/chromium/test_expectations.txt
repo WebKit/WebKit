@@ -3857,3 +3857,6 @@ BUGWK69124 WIN LINUX GPU : platform/chromium/compositing/3d-corners.html = TEXT
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-rotation-hit.html = IMAGE
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-scaling-hit.html = IMAGE
 BUGWK48544 MAC LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
+
+// New test in http://trac.webkit.org/changeset/96470
+BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE

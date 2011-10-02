@@ -1,3 +1,53 @@
+2011-10-02  Adam Barth  <abarth@webkit.org>
+
+        Update baseline and expectations after http://trac.webkit.org/changeset/96470
+
+        * platform/chromium-cg-mac-leopard/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/mask-colorspace-expected.png: Removed.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/chromium-cg-mac/svg/custom/grayscale-gradient-mask-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/custom/mask-colorspace-expected.png: Added.
+        * platform/chromium-cg-mac/svg/custom/mask-with-all-units-expected.png: Added.
+        * platform/chromium-cg-mac/svg/filters/filter-clip-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mask-colorspace-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/mask-colorspace-expected.png:
+        * platform/chromium-mac/svg/filters/filter-clip-expected.png:
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Added.
+        * platform/chromium-win-vista/svg/css: Added.
+        * platform/chromium-win-vista/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/chromium-win-xp/svg/css: Added.
+        * platform/chromium-win-xp/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-win/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.png:
+        * platform/chromium-win/svg/filters/filter-clip-expected.txt: Added.
+        * platform/chromium/svg/filters: Added.
+        * platform/chromium/svg/filters/filter-clip-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/custom/grayscale-gradient-mask-expected.txt: Removed.
+        * platform/gtk/svg/custom/mask-with-all-units-expected.txt: Removed.
+        * platform/gtk/svg/filters/filter-clip-expected.txt: Removed.
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.txt: Removed.
+        * platform/mac/svg/custom/mask-with-all-units-expected.txt: Removed.
+        * platform/mac/svg/filters/filter-clip-expected.txt: Removed.
+        * platform/qt/svg/custom/grayscale-gradient-mask-expected.txt: Removed.
+        * platform/qt/svg/custom/mask-with-all-units-expected.txt: Removed.
+        * platform/qt/svg/filters/filter-clip-expected.txt: Removed.
+        * svg/custom/grayscale-gradient-mask-expected.txt: Added.
+        * svg/custom/mask-with-all-units-expected.txt: Added.
+        * svg/filters/filter-clip-expected.txt: Added.
+
 2011-10-02  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r95502): Assertion failure in CSSPrimitiveValue::computeLengthDouble() when media query specifies unit-less length
