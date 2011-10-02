@@ -106,7 +106,11 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         if (!maskElement)
             return false;
 
-        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskerData->maskImage, ColorSpaceLinearRGB))
+        ASSERT(style());
+        const SVGRenderStyle* svgStyle = style()->svgStyle();
+        ASSERT(svgStyle);
+        ColorSpace colorSpace = svgStyle->colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
+        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskerData->maskImage, colorSpace))
             return false;
 
         GraphicsContext* maskImageContext = maskerData->maskImage->context();
@@ -117,7 +121,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         maskImageContext->translate(-clampedAbsoluteTargetRect.x(), -clampedAbsoluteTargetRect.y());
         maskImageContext->concatCTM(absoluteTransform);
 
-        drawContentIntoMaskImage(maskerData, maskElement, object);
+        drawContentIntoMaskImage(maskerData, colorSpace, maskElement, object);
     }
 
     if (!maskerData->maskImage)
@@ -127,7 +131,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     return true;
 }
 
-void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const SVGMaskElement* maskElement, RenderObject* object)
+void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, ColorSpace colorSpace, const SVGMaskElement* maskElement, RenderObject* object)
 {
     GraphicsContext* maskImageContext = maskerData->maskImage->context();
     ASSERT(maskImageContext);
@@ -155,7 +159,9 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
     maskImageContext->restore();
 
 #if !USE(CG)
-    maskerData->maskImage->transformColorSpace(ColorSpaceDeviceRGB, ColorSpaceLinearRGB);
+    maskerData->maskImage->transformColorSpace(ColorSpaceDeviceRGB, colorSpace);
+#else
+    UNUSED_PARAM(colorSpace);
 #endif
 
     // Create the luminance mask.

@@ -1,3 +1,23 @@
+2011-10-02  Dirk Schulze  <krit@webkit.org>
+
+        SVG Mask should take 'color-interpolation' into account to determine the color space of the mask image
+        https://bugs.webkit.org/show_bug.cgi?id=69076
+
+        Reviewed by Simon Fraser.
+        
+        SVG Masks should take 'color-interpolation' into account to determine the color space of the mask image.
+        The behavior was changed in SVG 1.1 SE. The color space of the mask image gets defined by the computed value of the
+        'color-interpolation' property. This will switch the default color space from linearRGB to sRGB for mask images and
+        is a performance improvement for platforms without native support for linearRGB color space. The
+        color space transformation can be avoided.
+
+        Test: svg/custom/grayscale-gradient-mask-2.svg
+
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceMasker.h:
+
 2011-10-01  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Fixing draw matrix for composited layers. This
