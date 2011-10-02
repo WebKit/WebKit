@@ -1,3 +1,13 @@
+2011-10-01  Brent Fulgham  <bfulgham@webkit.org>
+
+        Correct post-build step for WinCairo test runs.
+        https://bugs.webkit.org/show_bug.cgi?id=69191 
+
+        Reviewed by Brian Weinstein.
+
+        * DumpRenderTree/win/DumpRenderTreePostBuild.cmd: Add additional
+        shell case to handle the CFLite build.
+
 2011-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         Added myself to reviewers, because I'm now a reviewer.
