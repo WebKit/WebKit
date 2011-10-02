@@ -126,18 +126,12 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
     struct ColumnStruct {
-        enum {
-            WidthUndefined = 0xffff
-        };
-
         ColumnStruct()
             : span(1)
-            , width(WidthUndefined)
         {
         }
 
         unsigned span;
-        unsigned width; // the calculated position of the column
     };
 
     Vector<ColumnStruct>& columns() { return m_columns; }

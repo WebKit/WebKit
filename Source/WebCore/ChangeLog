@@ -1,3 +1,19 @@
+2011-10-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove an unused member in RenderTable::ColumnStruct
+        https://bugs.webkit.org/show_bug.cgi?id=69119
+
+        Reviewed by Darin Adler.
+
+        No test as there should be no change in behavior.
+
+        The member was added several years ago and its users were removed or changed. The code would
+        need a refactoring but this would be tricky to get right. This change just removes the member
+        to reap the short-term benefits.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::ColumnStruct::ColumnStruct): Remove anything associated with m_width.
+
 2011-10-02  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r95502): Assertion failure in CSSPrimitiveValue::computeLengthDouble() when media query specifies unit-less length
