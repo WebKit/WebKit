@@ -630,6 +630,14 @@ static bool shouldEnableLoadDeferring()
     [types release];
 }
 
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+// This method should be removed once we no longer want to keep Safari 5.0.x working with nightly builds.
+- (BOOL)_usesDocumentViews
+{
+    return true;
+}
+#endif
+
 static NSString *leakMailQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
