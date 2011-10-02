@@ -56,6 +56,7 @@
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "StrictEvalActivation.h"
+#include "StrongInlines.h"
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #if PLATFORM(MAC)

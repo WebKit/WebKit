@@ -1,3 +1,21 @@
+2011-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed redundant helper functions for allocating Strong handles
+        https://bugs.webkit.org/show_bug.cgi?id=69218
+
+        Reviewed by Sam Weinig.
+
+        * ForwardingHeaders/heap/StrongInlines.h: Added.
+        * bindings/js/JSCallbackData.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCachedFrameData.cpp:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptState.cpp:
+        * bindings/js/ScriptValue.h:
+        * bindings/js/WorkerScriptController.cpp:
+        * bridge/runtime_root.cpp:
+
 2011-10-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96421.

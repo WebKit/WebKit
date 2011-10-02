@@ -125,7 +125,7 @@ public:
     {
         pair<typename MapType::iterator, bool> iter = m_map.add(key, 0);
         if (iter.second) {
-            HandleSlot slot = globalData.allocateGlobalHandle();
+            HandleSlot slot = globalData.heap.handleHeap()->allocate();
             iter.first->second = slot;
             HandleHeap::heapFor(slot)->makeWeak(slot, this, FinalizerCallback::finalizerContextFor(key));
             HandleHeap::heapFor(slot)->writeBarrier(slot, value);
@@ -147,7 +147,7 @@ public:
         pair<typename MapType::iterator, bool> iter = m_map.add(key, 0);
         HandleSlot slot = iter.first->second;
         if (iter.second) {
-            slot = globalData.allocateGlobalHandle();
+            slot = globalData.heap.handleHeap()->allocate();
             HandleHeap::heapFor(slot)->makeWeak(slot, this, key);
             iter.first->second = slot;
         }

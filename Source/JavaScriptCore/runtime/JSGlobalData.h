@@ -295,8 +295,6 @@ namespace JSC {
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);
 #endif
         void dumpRegExpTrace();
-        HandleSlot allocateGlobalHandle() { return heap.allocateGlobalHandle(); }
-        HandleSlot allocateLocalHandle() { return heap.allocateLocalHandle(); }
         void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
@@ -319,11 +317,6 @@ namespace JSC {
         bool m_isInitializingObject;
 #endif
     };
-
-    inline HandleSlot allocateGlobalHandle(JSGlobalData& globalData)
-    {
-        return globalData.allocateGlobalHandle();
-    }
 
 #if ENABLE(GC_VALIDATION)
     inline bool JSGlobalData::isInitializingObject() const

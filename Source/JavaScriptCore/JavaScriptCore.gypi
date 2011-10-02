@@ -38,6 +38,7 @@
             'heap/Local.h',
             'heap/LocalScope.h',
             'heap/Strong.h',
+            'heap/StrongInlines.h',
             'heap/Weak.h',
             'config.h',
             'debugger/Debugger.h',

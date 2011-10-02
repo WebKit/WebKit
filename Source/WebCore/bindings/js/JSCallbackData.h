@@ -33,6 +33,7 @@
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include <heap/Strong.h>
+#include <heap/StrongInlines.h>
 #include <runtime/JSObject.h>
 #include <wtf/Threading.h>
 

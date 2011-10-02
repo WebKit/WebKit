@@ -32,6 +32,7 @@
 #include "UserObjectImp.h"
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/SourceCode.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* structure, Structure* userObjectStructure, JSFlags flags)
     : JSGlobalObject(globalData, structure)

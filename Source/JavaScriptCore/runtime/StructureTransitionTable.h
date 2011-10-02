@@ -156,7 +156,7 @@ private:
         ASSERT(isUsingSingleSlot());
         HandleSlot slot = this->slot();
         if (!slot) {
-            slot = globalData.allocateGlobalHandle();
+            slot = globalData.heap.handleHeap()->allocate();
             HandleHeap::heapFor(slot)->makeWeak(slot, 0, 0);
             m_data = reinterpret_cast<intptr_t>(slot) | UsingSingleSlotFlag;
         }

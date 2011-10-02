@@ -34,6 +34,7 @@
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "ScopeChain.h"
+#include "StrongInlines.h"
 #include "UString.h"
 
 using namespace std;

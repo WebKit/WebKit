@@ -33,7 +33,6 @@
 namespace JSC {
 
 class JSGlobalData;
-HandleSlot allocateGlobalHandle(JSGlobalData&);
 
 // A strongly referenced handle that prevents the object it points to from being garbage collected.
 template <typename T> class Strong : public Handle<T> {
@@ -48,17 +47,9 @@ public:
     {
     }
     
-    Strong(JSGlobalData& globalData, ExternalType value = ExternalType())
-        : Handle<T>(allocateGlobalHandle(globalData))
-    {
-        set(value);
-    }
+    Strong(JSGlobalData&, ExternalType = ExternalType());
 
-    Strong(JSGlobalData& globalData, Handle<T> handle)
-        : Handle<T>(allocateGlobalHandle(globalData))
-    {
-        set(handle.get());
-    }
+    Strong(JSGlobalData&, Handle<T>);
     
     Strong(const Strong& other)
         : Handle<T>()
@@ -95,12 +86,7 @@ public:
         Handle<T>::swap(other);
     }
 
-    void set(JSGlobalData& globalData, ExternalType value)
-    {
-        if (!slot())
-            setSlot(allocateGlobalHandle(globalData));
-        set(value);
-    }
+    void set(JSGlobalData&, ExternalType);
 
     template <typename U> Strong& operator=(const Strong<U>& other)
     {

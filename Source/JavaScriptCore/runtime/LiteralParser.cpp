@@ -29,6 +29,7 @@
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"
+#include "StrongInlines.h"
 #include "UStringBuilder.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>

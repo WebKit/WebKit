@@ -31,6 +31,7 @@
 #include "JSRun.h"
 #include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/PropertyNameArray.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <pthread.h>
 
 JSValueWrapper::JSValueWrapper(JSValue inValue)

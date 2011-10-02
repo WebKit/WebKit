@@ -57,13 +57,13 @@ private:
 };
 
 template <typename T> inline Local<T>::Local(JSGlobalData& globalData, ExternalType value)
-    : Handle<T>(globalData.allocateLocalHandle())
+    : Handle<T>(globalData.heap.handleStack()->push())
 {
     set(value);
 }
 
 template <typename T> inline Local<T>::Local(JSGlobalData& globalData, Handle<T> other)
-    : Handle<T>(globalData.allocateLocalHandle())
+    : Handle<T>(globalData.heap.handleStack()->push())
 {
     set(other.get());
 }

@@ -1,3 +1,46 @@
+2011-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed redundant helper functions for allocating Strong handles
+        https://bugs.webkit.org/show_bug.cgi?id=69218
+
+        Reviewed by Sam Weinig.
+
+        * heap/Heap.h:
+        (JSC::Heap::handleHeap):
+        * runtime/JSGlobalData.h: Removed these helper functions, since they
+        just created indirection.
+
+        * heap/StrongInlines.h: Added. Broke out a header for inline functions
+        to resolve circular dependencies created by inlining. I'm told this is
+        the future for JavaScriptCore.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Go forth and build.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::init):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::set):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::setSingleTransition):
+        * heap/Local.h:
+        (JSC::::Local):
+        * heap/Strong.h:
+        (JSC::::Strong):
+        (JSC::::set):
+        * heap/Weak.h:
+        (JSC::Weak::Weak):
+        (JSC::Weak::set): Allocate handles directly instead of going through a
+        chain of forwarding functions.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        * runtime/JSGlobalData.cpp:
+        * runtime/LiteralParser.cpp:
+        * runtime/RegExpCache.cpp: Updated for header changes.
+
 2011-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         All of JSC's heuristics should be in one place for easier tuning

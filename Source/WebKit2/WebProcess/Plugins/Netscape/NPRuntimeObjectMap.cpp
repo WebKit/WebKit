@@ -36,6 +36,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <WebCore/Frame.h>
 
 using namespace JSC;

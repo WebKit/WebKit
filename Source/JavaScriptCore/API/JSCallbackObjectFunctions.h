@@ -106,7 +106,7 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
     for (JSClassRef jsClassPtr = classRef(); jsClassPtr && !needsFinalizer; jsClassPtr = jsClassPtr->parentClass)
         needsFinalizer = jsClassPtr->finalize;
     if (needsFinalizer) {
-        HandleSlot slot = exec->globalData().allocateGlobalHandle();
+        HandleSlot slot = exec->globalData().heap.handleHeap()->allocate();
         HandleHeap::heapFor(slot)->makeWeak(slot, m_callbackObjectData.get(), classRef());
         HandleHeap::heapFor(slot)->writeBarrier(slot, this);
         *slot = this;

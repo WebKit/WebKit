@@ -118,11 +118,10 @@ namespace JSC {
         
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
-        
-        HandleSlot allocateGlobalHandle() { return m_handleHeap.allocate(); }
-        HandleSlot allocateLocalHandle() { return m_handleStack.push(); }
 
+        HandleHeap* handleHeap() { return &m_handleHeap; }
         HandleStack* handleStack() { return &m_handleStack; }
+
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     private:
