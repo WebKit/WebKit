@@ -1,3 +1,10 @@
+2011-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Leopard build fix: Updated for Strong<T> changes.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        * WebView/WebScriptDebugger.mm:
+
 2011-09-28  Joseph Pecoraro  <joepeck@webkit.org>
 
         ASSERT if WebView's UIDelegate does not implement webView:runOpenPanel
