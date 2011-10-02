@@ -306,12 +306,33 @@ static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFea
     return false;
 }
 
+static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, RenderStyle* rootStyle, int& result)
+{
+    if (!value->isPrimitiveValue())
+        return false;
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+        result = primitiveValue->getIntValue();
+        return !strict || !result;
+    }
+
+    if (primitiveValue->isLength()) {
+        result = primitiveValue->computeLength<int>(style, rootStyle);
+        return true;
+    }
+
+    return false;
+}
+
 static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        return value->isPrimitiveValue() && compareValue(static_cast<int>(sg.height()), static_cast<CSSPrimitiveValue*>(value)->computeLength<int>(style, rootStyle), op);
+        int length;
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(sg.height()), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
@@ -323,7 +344,8 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        return value->isPrimitiveValue() && compareValue(static_cast<int>(sg.width()), static_cast<CSSPrimitiveValue*>(value)->computeLength<int>(style, rootStyle), op);
+        int length;
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(sg.width()), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
@@ -333,10 +355,12 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
 static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     FrameView* view = frame->view();
-    RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
 
-    if (value)
-        return value->isPrimitiveValue() && compareValue(view->layoutHeight(), static_cast<CSSPrimitiveValue*>(value)->computeLength<int>(style, rootStyle), op);
+    if (value) {
+        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        int length;
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutHeight(), length, op);
+    }
 
     return view->layoutHeight() != 0;
 }
@@ -344,10 +368,12 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
 static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     FrameView* view = frame->view();
-    RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
 
-    if (value)
-        return value->isPrimitiveValue() && compareValue(view->layoutWidth(), static_cast<CSSPrimitiveValue*>(value)->computeLength<int>(style, rootStyle), op);
+    if (value) {
+        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        int length;
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutWidth(), length, op);
+    }
 
     return view->layoutWidth() != 0;
 }
