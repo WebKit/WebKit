@@ -1,5 +1,30 @@
 2011-10-02  Adam Barth  <abarth@webkit.org>
 
+        Remove temporary baselines after http://trac.webkit.org/changeset/96470.
+
+        * platform/chromium-cg-mac-leopard/svg/custom/grayscale-gradient-mask-2-expected.png: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Removed.
+        * platform/chromium-cg-mac/svg/custom/grayscale-gradient-mask-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Removed.
+        * platform/chromium-linux/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/css: Removed.
+        * platform/chromium-win-vista/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/css: Removed.
+        * platform/chromium-win-xp/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/filter-clip-expected.txt: Removed.
+        * platform/chromium/svg/filters: Removed.
+        * platform/chromium/svg/filters/filter-clip-expected.txt: Removed.
+        * platform/gtk/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+
+2011-10-02  Adam Barth  <abarth@webkit.org>
+
         Update baseline and expectations after http://trac.webkit.org/changeset/96470
 
         * platform/chromium-cg-mac-leopard/svg/custom/grayscale-gradient-mask-expected.png:
