@@ -1,5 +1,18 @@
 2011-10-02  Adam Barth  <abarth@webkit.org>
 
+        Clean up obsolete code in gardeningserver.py related to
+        STATIC_FILE_NAMES.  Rather than serve the UI via the Python HTTP
+        server, we just serve it off the filesystem directly.
+
+        We had planned to serve the UI off build.webkit.org, but that server is
+        somewhat slow.  We'll probably serve the UI of some web server, but
+        we'll need to work that out later.
+
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
+2011-10-02  Adam Barth  <abarth@webkit.org>
+
         Rip out half-backed garden-o-matic features in preparation for wider use
         https://bugs.webkit.org/show_bug.cgi?id=69226
 
