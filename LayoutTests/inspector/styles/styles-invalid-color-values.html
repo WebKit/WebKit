@@ -1,0 +1,71 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+function test()
+{
+    var colors = [
+        // Each of these is red. Some may need to be clipped to [0, 255].
+        'red',
+        '#F00',
+        'rgb(255,0,0)',
+        'rgb(300,0,0)',        // clipped to rgb(255,0,0)
+        'rgb(255,-10,0)',      // clipped to rgb(255,0,0)
+        'rgb(110%, 0%, 0%)',   // clipped to rgb(100%,0%,0%)
+
+        // Each of these has their alpha clipped [0.0, 1.0].
+        'rgba(255, 0, 0, -5)', // clipped to rgba(255,0,0,0)
+        'rgba(255, 0, 0, 5)',  // clipped to rgba(255,0,0,1)
+    ];
+
+    InspectorTest.runTestSuite([
+        function testColors(next)
+        {
+            for (var i = 0; i < colors.length; ++i)
+                dumpColorRepresentationsForColor(colors[i]);
+            next();
+        },
+    ]);
+
+    function dumpColorRepresentationsForColor(colorString)
+    {
+        try {
+            var color = new WebInspector.Color(colorString);
+        } catch (e) {
+            InspectorTest.addResult("FAIL: Error parsing color '" + colorString + "'.");
+            return;
+        }
+
+        InspectorTest.addResult("");
+        InspectorTest.addResult("color: " + colorString);
+        InspectorTest.addResult("  simple: " + color.simple);
+        var cf = WebInspector.StylesSidebarPane.ColorFormat;
+        for (var colorFormatKey in cf) {
+            var colorFormat = cf[colorFormatKey];
+            // Simple colors do not have RGBA and HSLA representations.
+            if (color.simple && (colorFormat === cf.RGBA || colorFormat === cf.HSLA))
+                continue;
+            // Advanced colors do not have HEX representations.
+            if (!color.simple && (colorFormat === cf.ShortHEX || colorFormat === cf.HEX))
+                continue;
+            // If there is no ShortHEX then skip it.
+            if (colorFormat === cf.ShortHEX && !color.hasShortHex())
+                continue;
+            // If there is no nickname, then skip it.
+            if (colorFormat === cf.Nickname && !color.nickname)
+                continue;
+            InspectorTest.addResult('  ' + colorFormat + ": " + color.toString(colorFormat));
+        }
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that the displayed string for colors correctly handles clipped CSS values and RGB percentages.
+</p>
+
+</body>
+</html>

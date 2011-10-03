@@ -1,3 +1,33 @@
+2011-10-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Web Inspector: rgb() with percentages shows wrong hex/hsl values
+        https://bugs.webkit.org/show_bug.cgi?id=69152
+
+        Reviewed by Pavel Feldman.
+
+        Previously we assumed rgb values were always in byte form,
+        but they could include percentage values. Ex. rgb(100%,0,0).
+        This patch fixes this, and in the process includes clamping
+        for invalid percentages, byte values, and alpha values.
+
+        Test: inspector/styles/styles-invalid-color-values.html
+
+        * inspector/front-end/Color.js:
+        (WebInspector.Color.prototype._clamp):
+        (WebInspector.Color.prototype._individualRGBValueToFloatValue):
+        (WebInspector.Color.prototype._individualRGBValueToHexValue):
+        (WebInspector.Color.prototype._rgbToHex):
+        (WebInspector.Color.prototype._rgbToHSL):
+        An individual rgb value can be either a decimal/float or a
+        percentage. Rewrite the conversion functions to handle either
+        input. Regardless of the type of input, always return a clamped
+        decimal/float value between 0 and 255.
+
+        (WebInspector.Color.prototype._rgbaToHSLA):
+        (WebInspector.Color.prototype._hslaToRGBA):
+        (WebInspector.Color.prototype._parse):
+        Clamp the alpha value between 0 and 1.
+
 2011-10-03  Dirk Schulze  <krit@webkit.org>
 
         SVG Pattern tile pixelated on patternTransform

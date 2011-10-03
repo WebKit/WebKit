@@ -1,0 +1,75 @@
+Tests that the displayed string for colors correctly handles clipped CSS values and RGB percentages.
+
+
+Running: testColors
+
+color: red
+  simple: true
+  original: red
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: #F00
+  simple: true
+  original: #F00
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: rgb(255,0,0)
+  simple: true
+  original: rgb(255,0,0)
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: rgb(300,0,0)
+  simple: true
+  original: rgb(300,0,0)
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: rgb(255,-10,0)
+  simple: true
+  original: rgb(255,-10,0)
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: rgb(110%, 0%, 0%)
+  simple: true
+  original: rgb(110%, 0%, 0%)
+  nickname: red
+  hex: #FF0000
+  shorthex: #F00
+  rgb: rgb(255, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+
+color: rgba(255, 0, 0, -5)
+  simple: false
+  original: rgba(255, 0, 0, -5)
+  rgb: rgb(255, 0, 0)
+  rgba: rgba(255, 0, 0, 0)
+  hsl: hsl(0, 100%, 50%)
+  hsla: hsla(0, 100%, 50%, 0)
+
+color: rgba(255, 0, 0, 5)
+  simple: false
+  original: rgba(255, 0, 0, 5)
+  rgb: rgb(255, 0, 0)
+  rgba: rgba(255, 0, 0, 1)
+  hsl: hsl(0, 100%, 50%)
+  hsla: hsla(0, 100%, 50%, 1)
+

@@ -1,3 +1,18 @@
+2011-10-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Web Inspector: rgb() with percentages shows wrong hex/hsl values
+        https://bugs.webkit.org/show_bug.cgi?id=69152
+
+        Reviewed by Pavel Feldman.
+
+        This test outputs all of the supported color format representations
+        for supplied CSS color values. We expect some of the CSS values
+        to be clamped, e.g. rgb(300,0,0) to rgb(255,0,0). This also tests
+        that rgb percentages, such as rgb(100%,0,0), work correctly.
+
+        * inspector/styles/styles-invalid-color-values-expected.txt: Added.
+        * inspector/styles/styles-invalid-color-values.html: Added.
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         Update chromium-cg-mac results after http://trac.webkit.org/changeset/96530.
