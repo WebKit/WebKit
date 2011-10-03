@@ -2977,6 +2977,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderBlockLineLayout.cpp \
 	Source/WebCore/rendering/RenderBox.cpp \
 	Source/WebCore/rendering/RenderBox.h \
+	Source/WebCore/rendering/RenderBoxRegionInfo.h \
 	Source/WebCore/rendering/RenderBoxModelObject.cpp \
 	Source/WebCore/rendering/RenderBoxModelObject.h \
 	Source/WebCore/rendering/RenderBR.cpp \

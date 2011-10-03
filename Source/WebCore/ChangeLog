@@ -1,3 +1,13 @@
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix make distcheck build
+        https://bugs.webkit.org/show_bug.cgi?id=69243
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2011-10-03  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Build fix: Qt::escape is deprecated in Qt5

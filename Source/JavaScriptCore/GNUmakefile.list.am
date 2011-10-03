@@ -81,6 +81,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
+	Source/JavaScriptCore/bytecode/ActionablePrediction.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
@@ -135,6 +136,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/heap/AllocationSpace.cpp \
 	Source/JavaScriptCore/heap/AllocationSpace.h \
+	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/Handle.h \
@@ -564,6 +566,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/OwnPtr.h \
+	Source/JavaScriptCore/wtf/PackedIntVector.h \
 	Source/JavaScriptCore/wtf/PageAllocation.h \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.cpp \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.h \
@@ -639,6 +642,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/ThreadSpecific.h \
 	Source/JavaScriptCore/wtf/TypeTraits.cpp \
 	Source/JavaScriptCore/wtf/TypeTraits.h \
+	Source/JavaScriptCore/wtf/UnionFind.h \
 	Source/JavaScriptCore/wtf/unicode/CharacterNames.h \
 	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	Source/JavaScriptCore/wtf/unicode/Collator.h \

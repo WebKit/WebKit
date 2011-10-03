@@ -891,7 +891,9 @@ EXTRA_DIST += \
 	Source/WebCore/inspector/CodeGeneratorInspector.pm \
 	Source/WebCore/inspector/InjectedScriptSource.js \
 	Source/WebCore/inspector/Inspector.json \
+	Source/WebCore/inspector/Inspector-0.1.json \
 	Source/WebCore/inspector/generate-inspector-idl \
+	Source/WebCore/inspector/generate-inspector-protocol-version \
 	Source/WebCore/inspector/xxd.pl \
 	Source/WebCore/LICENSE-APPLE \
 	Source/WebCore/LICENSE-LGPL-2 \
