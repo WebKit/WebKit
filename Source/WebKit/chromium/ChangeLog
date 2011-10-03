@@ -1,3 +1,15 @@
+2011-10-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Tweak WebCompositor API for input event handling to express three possible states
+        https://bugs.webkit.org/show_bug.cgi?id=69304
+
+        Reviewed by Darin Fisher.
+
+        * public/WebCompositorClient.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::~WebCompositorImpl):
+        (WebKit::WebCompositorImpl::handleInputEvent):
+
 2011-10-03  Anders Carlsson  <andersca@apple.com>
 
         Remove custom scrollbar painting hooks

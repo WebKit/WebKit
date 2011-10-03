@@ -89,6 +89,9 @@ WebCompositorImpl::WebCompositorImpl()
 
 WebCompositorImpl::~WebCompositorImpl()
 {
+    if (m_client)
+        m_client->willShutdown();
+
     ASSERT(s_compositorsLock);
     MutexLocker lock(*s_compositorsLock);
     ASSERT(s_compositors);
@@ -110,7 +113,7 @@ void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
 {
     ASSERT(CCProxy::isImplThread());
     // FIXME: Do something interesting with the event here.
-    m_client->didHandleInputEvent(false);
+    m_client->didNotHandleInputEvent(true /* sendToWidget */);
 }
 
 }
