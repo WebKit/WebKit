@@ -117,7 +117,7 @@ static gboolean loadStatusProvisionalLoadReceivedServerRedirect(WebKitWebLoaderC
     return TRUE;
 }
 
-static gboolean loadStatusProvisionalLoadFailed(WebKitWebLoaderClient *client, GError *error, WebLoadingFixture *fixture)
+static gboolean loadStatusProvisionalLoadFailed(WebKitWebLoaderClient *client, const gchar *failingURI, GError *error, WebLoadingFixture *fixture)
 {
     g_assert_not_reached();
     return TRUE;
@@ -146,7 +146,7 @@ static gboolean loadStatusLoadFinished(WebKitWebLoaderClient *client, WebLoading
     return TRUE;
 }
 
-static gboolean loadStatusLoadFailed(WebKitWebLoaderClient *client, GError *error, WebLoadingFixture *fixture)
+static gboolean loadStatusLoadFailed(WebKitWebLoaderClient *client, const gchar *failingURI, GError *error, WebLoadingFixture *fixture)
 {
     g_assert_not_reached();
     return TRUE;
@@ -185,7 +185,7 @@ static gboolean loadErrorProvisionalLoadStarted(WebKitWebLoaderClient *client, W
     return TRUE;
 }
 
-static gboolean loadErrorProvisionalLoadFailed(WebKitWebLoaderClient *client, GError *error, WebLoadingFixture *fixture)
+static gboolean loadErrorProvisionalLoadFailed(WebKitWebLoaderClient *client, const gchar *failingURI, GError *error, WebLoadingFixture *fixture)
 {
     g_assert(fixture->hasBeenProvisional);
     g_assert(!fixture->hasBeenFailed);

@@ -84,7 +84,8 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
                                                  resourceError.errorCode(),
                                                  resourceError.localizedDescription().utf8().data()));
     gboolean returnValue;
-    g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[PROVISIONAL_LOAD_FAILED], 0, webError.get(), &returnValue);
+    g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[PROVISIONAL_LOAD_FAILED], 0, resourceError.failingURL().utf8().data(),
+                  webError.get(), &returnValue);
 }
 
 static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -115,7 +116,8 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
                                                  resourceError.errorCode(),
                                                  resourceError.localizedDescription().utf8().data()));
     gboolean returnValue;
-    g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[LOAD_FAILED], 0, webError.get(), &returnValue);
+    g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[LOAD_FAILED], 0, resourceError.failingURL().utf8().data(),
+                  webError.get(), &returnValue);
 }
 
 static void webkitWebLoaderClientConstructed(GObject* object)
@@ -284,8 +286,9 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                      G_SIGNAL_RUN_LAST,
                      G_STRUCT_OFFSET(WebKitWebLoaderClientClass, provisional_load_failed),
                      g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__POINTER,
-                     G_TYPE_BOOLEAN, 1,
+                     webkit_marshal_BOOLEAN__STRING_POINTER,
+                     G_TYPE_BOOLEAN, 2,
+                     G_TYPE_STRING,
                      G_TYPE_POINTER);
 
     /**
@@ -356,8 +359,9 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                      G_SIGNAL_RUN_LAST,
                      G_STRUCT_OFFSET(WebKitWebLoaderClientClass, load_failed),
                      g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__POINTER,
-                     G_TYPE_BOOLEAN, 1,
+                     webkit_marshal_BOOLEAN__STRING_POINTER,
+                     G_TYPE_BOOLEAN, 2,
+                     G_TYPE_STRING,
                      G_TYPE_POINTER);
 
     g_type_class_add_private(clientClass, sizeof(WebKitWebLoaderClientPrivate));

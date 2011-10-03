@@ -1,5 +1,25 @@
 2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add failing uri parameter to provisional-load-failed and load-failed signals
+        https://bugs.webkit.org/show_bug.cgi?id=69252
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (didFailProvisionalLoadWithErrorForFrame): Pass failing URL to
+        signal handler.
+        (didFailLoadWithErrorForFrame): Ditto.
+        (webkit_web_loader_client_class_init): Add failing URL parameter
+        to provisional-load-failed and load-failed signals.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h:
+        * UIProcess/API/gtk/tests/testloading.c:
+        (loadStatusProvisionalLoadFailed): Update to API changes.
+        (loadStatusLoadFailed): Ditto.
+        (loadErrorProvisionalLoadFailed): Ditto.
+        * UIProcess/API/gtk/webkit2marshal.list:
+
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix memory leak when loading url
         https://bugs.webkit.org/show_bug.cgi?id=69247
 

@@ -53,10 +53,12 @@ struct _WebKitWebLoaderClientClass {
     gboolean (* provisional_load_started)                  (WebKitWebLoaderClient *loader_client);
     gboolean (* provisional_load_received_server_redirect) (WebKitWebLoaderClient *loader_client);
     gboolean (* provisional_load_failed)                   (WebKitWebLoaderClient *loader_client,
+                                                            const gchar           *failing_uri,
                                                             GError                *error);
     gboolean (* load_committed)                            (WebKitWebLoaderClient *loader_client);
     gboolean (* load_finished)                             (WebKitWebLoaderClient *loader_client);
     gboolean (* load_failed)                               (WebKitWebLoaderClient *loader_client,
+                                                            const gchar           *failing_uri,
                                                             GError                *error);
 };
 
