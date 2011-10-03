@@ -185,17 +185,17 @@ WebInspector.Cookie.prototype = {
 
     get path()
     {
-        return this._attributes.path;
+        return this._attributes["path"];
     },
 
     get domain()
     {
-        return this._attributes.domain;
+        return this._attributes["domain"];
     },
 
     expires: function(requestDate)
     {
-        return this._attributes.expires ? new Date(this._attributes.expires) :
+        return this._attributes["expires"] ? new Date(this._attributes["expires"]) :
             (this._attributes["max-age"] ? new Date(requestDate.getTime() + 1000 * this._attributes["max-age"]) : null);
     },
 

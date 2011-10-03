@@ -387,10 +387,13 @@ WebInspector.ResourceTreeModel.prototype = {
         }
     },
 
+    /**
+     * @param {PageAgent.Frame} frame
+     * @param {string} url
+     */
     _createResource: function(frame, url)
     {
-        var resource = new WebInspector.Resource(null, url, frame.loaderId);
-        resource.frameId = frame.id;
+        var resource = new WebInspector.Resource(null, url, frame.id, frame.loaderId);
         resource.documentURL = frame.url;
         resource.mimeType = frame.mimeType;
         return resource;

@@ -1,3 +1,9 @@
+2011-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Add Zoltán Árvai as contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-10-03  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Add DumpHistoryItem.{cpp,h}

@@ -46,6 +46,8 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
 
 /** @param {string} url */
 WebInspector.linkifyStringAsFragment = function(url) {}
+/** @param {string} url */
+WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(url, linkifier) {}
 
 /**
  * @param {string} url
@@ -71,3 +73,41 @@ JSON.stringify = function(str) {}
 Element.prototype.scrollIntoViewIfNeeded = function() {}
 
 Array.prototype.remove = function(obj) {}
+
+WebInspector.extensionServer = {}
+WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
+
+/**
+ * @param {string} url
+ * @return {?WebInspector.Resource}
+ */
+WebInspector.resourceForURL = function(url) {}
+
+WebInspector.debuggerPresentationModel = {
+    linkifyLocation: function(url, lineNumber, columnNumber, className) {}
+}
+
+/**
+ * @constructor
+ */
+WebInspector.ObjectPropertiesSection = function(obj, title)
+{
+    this.element = null;
+}
+
+/**
+ * @constructor
+ * @extends {TreeOutline}
+ */
+WebInspector.ElementsTreeOutline = function()
+{
+    this.element = null;
+}
+
+/**
+ * @param {NetworkAgent.RequestId} requestId
+ * @return {?WebInspector.Resource}
+ */
+WebInspector.networkResourceById = function(requestId)
+{
+}

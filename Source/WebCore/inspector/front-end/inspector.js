@@ -556,7 +556,9 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    this.console.enableAgent();
+    // There is no console agent for workers yet.
+    if (!WebInspector.WorkerManager.isWorkerFrontend())
+        this.console.enableAgent();
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 
@@ -1142,7 +1144,7 @@ WebInspector.log = function(message, messageLevel)
         message = WebInspector.RemoteObject.fromPrimitiveValue(message);
 
         // post the message
-        var msg = new WebInspector.ConsoleMessage(
+        var msg = WebInspector.ConsoleMessage.create(
             WebInspector.ConsoleMessage.MessageSource.Other,
             WebInspector.ConsoleMessage.MessageType.Log,
             messageLevel || WebInspector.ConsoleMessage.MessageLevel.Debug,

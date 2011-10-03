@@ -664,7 +664,11 @@ Array.convert = function(list)
     return Array.prototype.slice.call(list);
 }
 
-String.sprintf = function(format)
+/**
+ * @param {string} format
+ * @param {...*} var_arg
+ */
+String.sprintf = function(format, var_arg)
 {
     return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));
 }

@@ -1,3 +1,79 @@
+2011-10-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: more compilation fixes including making ConsoleMessage a part of console model.
+        https://bugs.webkit.org/show_bug.cgi?id=69253
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.create):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleMessageImpl):
+        * inspector/front-end/ConsoleModel.js:
+        (WebInspector.ConsoleModel.prototype._messageRepeatCountUpdated):
+        (WebInspector.ConsoleMessage.create):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleDispatcher.prototype.messageAdded):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleCommandResult):
+        (WebInspector.ConsoleCommandResult.prototype.toMessageElement):
+        * inspector/front-end/CookieParser.js:
+        (WebInspector.Cookie.prototype.get path):
+        (WebInspector.Cookie.prototype.get domain):
+        (WebInspector.Cookie.prototype.expires):
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onAddConsoleMessage):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        (WebInspector.NetworkDispatcher.prototype.requestWillBeSent):
+        (WebInspector.NetworkDispatcher.prototype.requestServedFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype.webSocketCreated):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.setContent):
+        (WebInspector.Resource.prototype.searchInContent):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._createResource):
+        * inspector/front-end/externs.js:
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+        (WebInspector.extensionServer.notifyResourceContentCommitted):
+        (WebInspector.resourceForURL):
+        (WebInspector.debuggerPresentationModel.linkifyLocation):
+        (WebInspector.ObjectPropertiesSection):
+        (WebInspector.ElementsTreeOutline):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        * inspector/generate-protocol-externs:
+
+2011-10-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move console message formatting from ConsoleView.js into ConsoleMessage.js
+        https://bugs.webkit.org/show_bug.cgi?id=69244
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype._formatMessage.else.else.linkifier):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype._format):
+        (WebInspector.ConsoleMessage.prototype._formatParameter):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsValue):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessage.prototype._printArray):
+        (WebInspector.ConsoleMessage.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString):
+        * inspector/front-end/ConsoleView.js:
+
 2011-10-03  Dirk Schulze  <krit@webkit.org>
 
         feColorMatrix saturation is not limited to range 0..1 anymore

@@ -548,6 +548,28 @@
                 ]
             },
             {
+                "id": "WebSocketRequest",
+                "type": "object",
+                "description": "WebSocket request data.",
+                "hidden": true,
+                "properties": [
+                    { "name": "requestKey3", "type": "string", "description": "HTTP response status text." },
+                    { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
+                ]
+            },
+            {
+                "id": "WebSocketResponse",
+                "type": "object",
+                "description": "WebSocket response data.",
+                "hidden": true,
+                "properties": [
+                    { "name": "status", "type": "number", "description": "HTTP response status code." },
+                    { "name": "statusText", "type": "string", "description": "HTTP response status text." },
+                    { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." },
+                    { "name": "challengeResponse", "type": "string", "description": "Challenge response." }
+                ]
+            },
+            {
                 "id": "CachedResource",
                 "type": "object",
                 "description": "Information about the cached resource.",
@@ -700,7 +722,7 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
-                    { "name": "request", "type": "object", "description": "WebSocket request data." }
+                    { "name": "request", "$ref": "WebSocketRequest", "description": "WebSocket request data." }
                 ],
                 "hidden": true
             },
@@ -710,7 +732,7 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
-                    { "name": "response", "type": "object", "description": "WebSocket response data." }
+                    { "name": "response", "$ref": "WebSocketResponse", "description": "WebSocket response data." }
                 ],
                 "hidden": true
             },
@@ -932,6 +954,7 @@
                     { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId." },
                     { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId." },
                     { "name": "internalSubset", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s internalSubset." },
+                    { "name": "xmlVersion", "type": "string", "optional": true, "description": "<code>Document</code>'s XML version in case of XML documents." },
                     { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                     { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." }
                 ],

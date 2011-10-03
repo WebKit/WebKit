@@ -701,19 +701,19 @@ WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingComma
 {
     var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, [result]);
+    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, [result]);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {
     toMessageElement: function()
     {
-        var element = WebInspector.ConsoleMessage.prototype.toMessageElement.call(this);
+        var element = WebInspector.ConsoleMessageImpl.prototype.toMessageElement.call(this);
         element.addStyleClass("console-user-command-result");
         return element;
     }
 }
 
-WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
+WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessageImpl.prototype;
 
 WebInspector.ConsoleGroup = function(parentGroup)
 {

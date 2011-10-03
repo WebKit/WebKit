@@ -127,7 +127,7 @@ WebInspector.NetworkDispatcher.prototype = {
             resource.timing = response.timing;
 
         if (!this._mimeTypeIsConsistentWithType(resource)) {
-            WebInspector.console.addMessage(new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+            WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Other,
                 WebInspector.ConsoleMessage.MessageType.Log,
                 WebInspector.ConsoleMessage.MessageLevel.Warning,
                 -1,
@@ -180,7 +180,7 @@ WebInspector.NetworkDispatcher.prototype = {
         var resource = this._inflightResourcesById[requestId];
         if (resource) {
             // FIXME: move this check to the backend.
-            if (this._isNull(redirectResponse))
+            if (!redirectResponse)
                 return;
             this.responseReceived(requestId, time, "Other", redirectResponse);
             resource = this._appendRedirect(requestId, time, request.url);
@@ -258,7 +258,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     requestServedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, time, initiator, cachedResource)
     {
-        var resource = this._createResource(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator);
+        var resource = this._createResource(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator, null);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
@@ -269,7 +269,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     webSocketCreated: function(requestId, requestURL)
     {
-        var resource = this._createResource(requestId, null, null, requestURL);
+        var resource = new WebInspector.Resource(requestId, requestURL, null, null);
         resource.type = WebInspector.Resource.Type.WebSocket;
         this._startResource(resource);
     },
@@ -352,11 +352,19 @@ WebInspector.NetworkDispatcher.prototype = {
         this._manager.dispatchEventToListeners(eventType, resource);
     },
 
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @param {string} frameId
+     * @param {NetworkAgent.LoaderId} loaderId
+     * @param {string} url
+     * @param {string} documentURL
+     * @param {NetworkAgent.Initiator} initiator
+     * @param {ConsoleAgent.StackTrace=} stackTrace
+     */
     _createResource: function(requestId, frameId, loaderId, url, documentURL, initiator, stackTrace)
     {
-        var resource = new WebInspector.Resource(requestId, url, loaderId);
+        var resource = new WebInspector.Resource(requestId, url, frameId, loaderId);
         resource.documentURL = documentURL;
-        resource.frameId = frameId;
         resource.initiator = initiator;
         resource.stackTrace = stackTrace;
         return resource;

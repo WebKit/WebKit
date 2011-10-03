@@ -31,7 +31,7 @@
 
 /**
  * @constructor
- * @param {DOMAgent.Node} payload.
+ * @param {DOMAgent.Node} payload
  */
 WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
@@ -268,7 +268,7 @@ WebInspector.DOMNode.prototype = {
     },
 
     /**
-     * @param {DOMAgent.Node} payload.
+     * @param {DOMAgent.Node} payload
      */
     _insertChild: function(prev, payload)
     {
@@ -370,7 +370,7 @@ WebInspector.DOMNode.prototype = {
 /**
  * @extends {WebInspector.DOMNode}
  * @constructor
- * @param {DOMAgent.Node} payload.
+ * @param {DOMAgent.Node} payload
  */
 WebInspector.DOMDocument = function(domAgent, payload)
 {
@@ -546,7 +546,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {DOMAgent.Node} payload.
+     * @param {DOMAgent.Node} payload
      */
     _setDocument: function(payload)
     {
@@ -562,7 +562,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {DOMAgent.Node} payload.
+     * @param {DOMAgent.Node} payload
      */
     _setDetachedRoot: function(payload)
     {

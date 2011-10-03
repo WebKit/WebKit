@@ -28,25 +28,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
-WebInspector.ConsoleStackFrame = function()
+WebInspector.ConsoleMessage.create = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
 {
-    this.url = undefined;
-    this.functionName = undefined;
-    this.lineNumber = undefined;
-    this.columnNumber = undefined;
+    return new WebInspector.ConsoleMessageImpl(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request);
+}
+
+WebInspector.ConsoleMessage.createTextMessage = function(text, level)
+{
+    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
+    return new WebInspector.ConsoleMessageImpl(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
 }
 
 /**
  * @constructor
+ * @extends {WebInspector.ConsoleMessage}
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
  * @param {WebInspector.Resource=} request
  */
-WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
+WebInspector.ConsoleMessageImpl = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
 {
+    WebInspector.ConsoleMessage.call();
+
     this.source = source;
     this.type = type;
     this.level = level;
@@ -74,17 +77,9 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString
     };
-
-    this._formatMessage();
 }
 
-WebInspector.ConsoleMessage.createTextMessage = function(text, level)
-{
-    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
-    return new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
-}
-
-WebInspector.ConsoleMessage.prototype = {
+WebInspector.ConsoleMessageImpl.prototype = {
     _formatMessage: function()
     {
         this._formattedMessage = document.createElement("span");
@@ -185,6 +180,13 @@ WebInspector.ConsoleMessage.prototype = {
 
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
         this.message = (urlElement ? urlElement.textContent + " " : "") + messageText.textContent;
+    },
+
+    get formattedMessage()
+    {
+        if (!this._formattedMessage)
+            this._formatMessage();
+        return this._formattedMessage;
     },
 
     _linkifyLocation: function(url, lineNumber, columnNumber)
@@ -395,6 +397,9 @@ WebInspector.ConsoleMessage.prototype = {
 
     clearHighlight: function()
     {
+        if (!this._formattedMessage)
+            return;
+
         var highlightedMessage = this._formattedMessage;
         delete this._formattedMessage;
         this._formatMessage();
@@ -403,6 +408,9 @@ WebInspector.ConsoleMessage.prototype = {
 
     highlightSearchResults: function(regexObject)
     {
+        if (!this._formattedMessage)
+            return;
+
         regexObject.lastIndex = 0;
         var text = this.message;
         var match = regexObject.exec(text);
@@ -453,10 +461,10 @@ WebInspector.ConsoleMessage.prototype = {
         if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup || this.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
             element.addStyleClass("console-group-title");
 
-        element.appendChild(this._formattedMessage);
+        element.appendChild(this.formattedMessage);
 
         if (this.repeatCount > 1)
-            this._updateRepeatCount();
+            this.updateRepeatCount();
 
         return element;
     },
@@ -483,7 +491,7 @@ WebInspector.ConsoleMessage.prototype = {
         }
     },
 
-    _updateRepeatCount: function() {
+    updateRepeatCount: function() {
         if (!this.repeatCountElement) {
             this.repeatCountElement = document.createElement("span");
             this.repeatCountElement.className = "bubble";
@@ -566,7 +574,7 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
 
-        return sourceString + " " + typeString + " " + levelString + ": " + this._formattedMessage.textContent + "\n" + this.url + " line " + this.line;
+        return sourceString + " " + typeString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
 
     get text()
@@ -608,32 +616,4 @@ WebInspector.ConsoleMessage.prototype = {
     }
 }
 
-// Note: Keep these constants in sync with the ones in Console.h
-WebInspector.ConsoleMessage.MessageSource = {
-    HTML: "html",
-    XML: "xml",
-    JS: "javascript",
-    Network: "network",
-    ConsoleAPI: "console-api",
-    Other: "other"
-}
-
-WebInspector.ConsoleMessage.MessageType = {
-    Log: "log",
-    Dir: "dir",
-    DirXML: "dirxml",
-    Trace: "trace",
-    StartGroup: "startGroup",
-    StartGroupCollapsed: "startGroupCollapsed",
-    EndGroup: "endGroup",
-    Assert: "assert",
-    Result: "result"
-}
-
-WebInspector.ConsoleMessage.MessageLevel = {
-    Tip: "tip",
-    Log: "log",
-    Warning: "warning",
-    Error: "error",
-    Debug: "debug"
-}
+WebInspector.ConsoleMessageImpl.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;

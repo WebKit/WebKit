@@ -101,6 +101,11 @@ for domain in json_api:
                             suffix = "|undefined"
                         output_file.write("/** @type {%s%s} */ this.%s;\n" % (param_type(domain_name, property), suffix, property["name"]))
                 output_file.write("}\n")
+            elif type["type"] == "array":
+                suffix = ""
+                if ("optional" in property):
+                    suffix = "|undefined"
+                output_file.write("\n/** @typedef {Array.<%s>%s} */\n%sAgent.%s;\n" % (param_type(domain_name, type["items"]), suffix, domain_name, type["id"]))
             else:
                 output_file.write("\n/** @typedef {%s} */\n%sAgent.%s;\n" % (type_traits[type["type"]], domain_name, type["id"]))
                 
