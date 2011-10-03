@@ -57,7 +57,8 @@ Node* highestAncestor(Node*);
 Node* highestEditableRoot(const Position&);
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*),
     EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = 0);
-Node* lowestEditableAncestor(Node*);   
+Node* highestNodeToRemoveInPruning(Node*);
+Node* lowestEditableAncestor(Node*);
 
 Node* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 Node* enclosingTableCell(const Position&);

@@ -623,6 +623,34 @@ Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const N
     return highest;
 }
 
+static bool hasARenderedDescendant(Node* node, Node* excludedNode)
+{
+    for (Node* n = node->firstChild(); n;) {
+        if (n == excludedNode) {
+            n = n->traverseNextSibling(node);
+            continue;
+        }
+        if (n->renderer())
+            return true;
+        n = n->traverseNextNode(node);
+    }
+    return false;
+}
+
+Node* highestNodeToRemoveInPruning(Node* node)
+{
+    Node* previousNode = 0;
+    Node* rootEditableElement = node ? node->rootEditableElement() : 0;
+    for (; node; node = node->parentNode()) {
+        if (RenderObject* renderer = node->renderer()) {
+            if (!renderer->canHaveChildren() || hasARenderedDescendant(node, previousNode) || rootEditableElement == node)
+                return previousNode;
+        }
+        previousNode = node;
+    }
+    return 0;
+}
+
 Node* enclosingTableCell(const Position& p)
 {
     return static_cast<Element*>(enclosingNodeOfType(p, isTableCell));

@@ -247,34 +247,6 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
     return command->spanElement();
 }
 
-static bool hasARenderedDescendant(Node* node, Node* excludedNode)
-{
-    for (Node* n = node->firstChild(); n;) {
-        if (n == excludedNode) {
-            n = n->traverseNextSibling(node);
-            continue;
-        }
-        if (n->renderer())
-            return true;
-        n = n->traverseNextNode(node);
-    }
-    return false;
-}
-
-static Node* highestNodeToRemoveInPruning(Node* node)
-{
-    Node* previousNode = 0;
-    Node* rootEditableElement = node ? node->rootEditableElement() : 0;
-    for (; node; node = node->parentNode()) {
-        if (RenderObject* renderer = node->renderer()) {
-            if (!renderer->canHaveChildren() || hasARenderedDescendant(node, previousNode) || rootEditableElement == node)
-                return previousNode;
-        }
-        previousNode = node;
-    }
-    return 0;
-}
-
 void CompositeEditCommand::prune(PassRefPtr<Node> node)
 {
     if (RefPtr<Node> highestNodeToRemove = highestNodeToRemoveInPruning(node.get()))

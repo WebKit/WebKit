@@ -1,5 +1,36 @@
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Replace m_firstNodeInserted and m_lastLeafInserted in ReplaceSelectionCommand by positions
+        https://bugs.webkit.org/show_bug.cgi?id=68874
+
+        Reviewed by Enrica Casucci.
+
+        Replaced m_firstNodeInserted and m_lastLeafInserted by m_startOfInsertedContent and m_endOfInsertedContent
+        respectively. Also removed removeNodePreservingChildren and removeNodeAndPruneAncestors in ReplaceSelectionCommand
+        because they were not virtual in CompositeEditCommand and implicitly overriding the functions was confusing.
+        Since each of these two functions is used at exactly one place, just update positions and insertedNodes explicitly.
+
+        * editing/CompositeEditCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent):
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::mergeEndIfNeeded): Update m_endOfInsertedContent by endingSelection().visibleEnd()
+        instead of m_lastLeafInserted with destination.previous() because moveParagraph could have removed leading whitespace in
+        the text node referenced by destination. This is tested by an existing layout test.
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace): Update positions as needed. All changes are tested
+        by the existing layout tests in editing/pasteboard.
+        (WebCore::ReplaceSelectionCommand::updateNodesInserted):
+        * editing/ReplaceSelectionCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::hasARenderedDescendant): Moved from CompositeEditCommand.cpp.
+        (WebCore::highestNodeToRemoveInPruning): Ditto.
+        * editing/htmlediting.h:
+
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r94274): cloned text input loses value
         https://bugs.webkit.org/show_bug.cgi?id=69095
 

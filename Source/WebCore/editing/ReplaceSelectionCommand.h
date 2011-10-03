@@ -88,11 +88,8 @@ private:
     void removeUnrenderedTextNodesAtEnds(InsertedNodes&);
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
-    void handleStyleSpans(Node* firstNodeInserted);
+    void handleStyleSpans(InsertedNodes&);
     void handlePasteAsQuotationNode();
-    
-    virtual void removeNodePreservingChildren(Node*);
-    virtual void removeNodeAndPruneAncestors(Node*);
     
     VisiblePosition positionAtStartOfInsertedContent() const;
     VisiblePosition positionAtEndOfInsertedContent() const;
@@ -103,8 +100,8 @@ private:
 
     bool performTrivialReplace(const ReplacementFragment&);
 
-    RefPtr<Node> m_firstNodeInserted;
-    RefPtr<Node> m_lastLeafInserted;
+    Position m_startOfInsertedContent;
+    Position m_endOfInsertedContent;
     RefPtr<EditingStyle> m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;
