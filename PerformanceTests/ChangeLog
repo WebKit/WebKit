@@ -1,3 +1,26 @@
+2011-10-03  Eric Seidel  <eric@webkit.org>
+
+        PerformanceTests/Parser/html-parser is only testing parsing of the head element
+        https://bugs.webkit.org/show_bug.cgi?id=69283
+
+        Reviewed by Adam Barth.
+
+        While investigating https://bugs.webkit.org/show_bug.cgi?id=68944
+        I found that the html-parser benchmark was only parsing up to the
+        first script tag per loop!  We've fixed this by adding the sandbox
+        tag which will deny all external loads and allow the parser to
+        synchronously continue parsing the entire document to completion
+        (as we had expected it was doing).
+
+        This changes the profile somewhat.  Line number counting is much
+        hotter, since we're actually accounting for the parse of the entire
+        document in our sample.
+
+        Total sample time only about doubles, from 1800ms to 3800ms on my machine
+        which is less than I would have expected.
+
+        * Parser/html-parser.html:
+
 2011-08-09  Alexandru Chiculita  <achicu@adobe.com>
 
         Fixing 65868 REGRESSION(r92610) caused by 65668 - Optimize floating elements lookup
