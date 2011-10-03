@@ -1,3 +1,14 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        Update baselines after http://trac.webkit.org/changeset/96498.
+
+        * platform/chromium-linux-x86/svg/filters: Removed.
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feColorMatrix-saturate-expected.png: Added.
+        * platform/chromium-win-vista/svg/filters: Added.
+        * platform/chromium-win-vista/svg/filters/feColorMatrix-values-expected.png: Added.
+        * platform/chromium-win/svg/filters/feColorMatrix-saturate-expected.png: Added.
+
 2011-10-03  Dirk Schulze  <krit@webkit.org>
 
         feColorMatrix saturation is not limited to range 0..1 anymore
