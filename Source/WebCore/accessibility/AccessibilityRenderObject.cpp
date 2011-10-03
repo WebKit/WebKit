@@ -3094,6 +3094,15 @@ void AccessibilityRenderObject::updateAccessibilityRole()
         childrenChanged();
 }
     
+bool AccessibilityRenderObject::isDescendantOfElementType(const QualifiedName& tagName) const
+{
+    for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
+        if (parent->node() && parent->node()->hasTagName(tagName))
+            return true;
+    }
+    return false;
+}
+    
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
     if (!m_renderer)
@@ -3209,6 +3218,28 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(labelTag))
         return GroupRole;
 #endif
+
+    if (node && node->hasTagName(articleTag))
+        return DocumentArticleRole;
+
+    if (node && node->hasTagName(navTag))
+        return LandmarkNavigationRole;
+
+    if (node && node->hasTagName(asideTag))
+        return LandmarkComplementaryRole;
+
+    if (node && node->hasTagName(sectionTag))
+        return DocumentRegionRole;
+
+    if (node && node->hasTagName(addressTag))
+        return LandmarkContentInfoRole;
+
+    // There should only be one banner/contentInfo per page. If header/footer are being used within an article or section
+    // then it should not be exposed as whole page's banner/contentInfo
+    if (node && node->hasTagName(headerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
+        return LandmarkBannerRole;
+    if (node && node->hasTagName(footerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
+        return LandmarkContentInfoRole;
 
     if (m_renderer->isBlockFlow())
         return GroupRole;

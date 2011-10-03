@@ -299,6 +299,7 @@ private:
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     bool renderObjectIsObservable(RenderObject*) const;
     RenderObject* renderParentObject() const;
+    bool isDescendantOfElementType(const QualifiedName& tagName) const;
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
     

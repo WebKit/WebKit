@@ -1,5 +1,28 @@
 2011-10-03  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: support role mapping for HTML5 section elements
+        https://bugs.webkit.org/show_bug.cgi?id=69150
+
+        We need to map these HTML5 elements to appropriate ARIA roles. That mapping is:
+          article -> Document article
+          nav -> Landmark navigation
+          aside -> Landmark complementary
+          section -> Document region
+          address -> Landmark content info
+          header -> Landmark banner (unless it's in an article or section)
+          footer -> Landmark content info (unless it's in an article or section)
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/html-section-elements.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isDescendantOfElementType):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityRenderObject.h:
+
+2011-10-03  Chris Fleizach  <cfleizach@apple.com>
+
         AX: click point for AXHeadings often returns point on empty space (results in wrong context menu)
         https://bugs.webkit.org/show_bug.cgi?id=69262
 
