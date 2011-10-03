@@ -81,6 +81,26 @@ void HTMLFormControlElement::detach()
     HTMLElement::detach();
 }
 
+String HTMLFormControlElement::formEnctype() const
+{
+    return FormSubmission::Attributes::parseEncodingType(fastGetAttribute(formenctypeAttr));
+}
+
+void HTMLFormControlElement::setFormEnctype(const String& value)
+{
+    setAttribute(formenctypeAttr, value);
+}
+
+String HTMLFormControlElement::formMethod() const
+{
+    return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(fastGetAttribute(formmethodAttr)));
+}
+
+void HTMLFormControlElement::setFormMethod(const String& value)
+{
+    setAttribute(formmethodAttr, value);
+}
+
 bool HTMLFormControlElement::formNoValidate() const
 {
     return fastHasAttribute(formnovalidateAttr);

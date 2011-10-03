@@ -1,3 +1,19 @@
+2011-10-02  Kent Tamura  <tkent@chromium.org>
+
+        method/enctype/formMethod/formEnctype properties should be limited to known values.
+        https://bugs.webkit.org/show_bug.cgi?id=68887
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html: Correct an expectation for HTMLFormElement::method.
+        * fast/forms/enctype-attribute-expected.txt: Added.
+        * fast/forms/enctype-attribute.html: Added.
+        * fast/forms/method-attribute-expected.txt: Added.
+        * fast/forms/method-attribute.html: Added.
+        * fast/forms/script-tests/submit-form-attributes.js: Correct expectations.
+        * fast/forms/submit-form-attributes-expected.txt: ditto.
+
 2011-10-02  Gavin Barraclough  <barraclough@apple.com>
 
         Bug 67455 - Different regular expression result

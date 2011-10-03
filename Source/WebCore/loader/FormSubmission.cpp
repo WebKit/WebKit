@@ -88,26 +88,29 @@ void FormSubmission::Attributes::parseAction(const String& action)
     m_action = stripLeadingAndTrailingHTMLSpaces(action);
 }
 
-void FormSubmission::Attributes::parseEncodingType(const String& type)
+String FormSubmission::Attributes::parseEncodingType(const String& type)
 {
-    if (type.contains("multipart", false) || type.contains("form-data", false)) {
-        m_encodingType = "multipart/form-data";
-        m_isMultiPartForm = true;
-    } else if (type.contains("text", false) || type.contains("plain", false)) {
-        m_encodingType = "text/plain";
-        m_isMultiPartForm = false;
-    } else {
-        m_encodingType = "application/x-www-form-urlencoded";
-        m_isMultiPartForm = false;
-    }
+    if (type.contains("multipart", false) || type.contains("form-data", false))
+        return "multipart/form-data";
+    if (type.contains("text", false) || type.contains("plain", false))
+        return "text/plain";
+    return "application/x-www-form-urlencoded";
 }
 
-void FormSubmission::Attributes::parseMethodType(const String& type)
+void FormSubmission::Attributes::updateEncodingType(const String& type)
 {
-    if (equalIgnoringCase(type, "post"))
-        m_method = FormSubmission::PostMethod;
-    else if (equalIgnoringCase(type, "get"))
-        m_method = FormSubmission::GetMethod;
+    m_encodingType = parseEncodingType(type);
+    m_isMultiPartForm = (m_encodingType == "multipart/form-data");
+}
+
+FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type)
+{
+    return equalIgnoringCase(type, "post") ? FormSubmission::PostMethod : FormSubmission::GetMethod;
+}
+
+void FormSubmission::Attributes::updateMethodType(const String& type)
+{
+    m_method = parseMethodType(type);
 }
 
 void FormSubmission::Attributes::copyFrom(const Attributes& other)
@@ -149,9 +152,9 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         if (!(attributeValue = submitButton->getAttribute(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
         if (!(attributeValue = submitButton->getAttribute(formenctypeAttr)).isNull())
-            copiedAttributes.parseEncodingType(attributeValue);
+            copiedAttributes.updateEncodingType(attributeValue);
         if (!(attributeValue = submitButton->getAttribute(formmethodAttr)).isNull())
-            copiedAttributes.parseMethodType(attributeValue);
+            copiedAttributes.updateMethodType(attributeValue);
         if (!(attributeValue = submitButton->getAttribute(formtargetAttr)).isNull())
             copiedAttributes.setTarget(attributeValue);
     }

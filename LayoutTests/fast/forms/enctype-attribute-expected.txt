@@ -1,0 +1,25 @@
+Test enctype and formenctype attributes
+
+Missing value default:
+PASS form1.enctype is "application/x-www-form-urlencoded"
+PASS form1.getAttribute("enctype") is null
+
+Invalid value default:
+PASS form1.enctype = "foobar"; form1.enctype is "application/x-www-form-urlencoded"
+PASS form1.getAttribute("enctype") is "foobar"
+PASS form1.setAttribute("enctype", "baz"); form1.enctype is "application/x-www-form-urlencoded"
+
+Valid values:
+PASS form1.enctype = "Text/Plain"; form1.enctype is "text/plain"
+PASS form1.getAttribute("enctype") is "Text/Plain"
+PASS form1.setAttribute("enctype", "Text/Plain"); form1.enctype is "text/plain"
+
+Valid values with whitespace:
+PASS form1.enctype = "  multipart/form-data"; form1.enctype is "multipart/form-data"
+PASS form1.getAttribute("enctype") is "  multipart/form-data"
+PASS form1.enctype = "application/x-www-form-urlencoded "; form1.enctype is "application/x-www-form-urlencoded"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

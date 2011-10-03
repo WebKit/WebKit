@@ -33,7 +33,7 @@ module html {
         attribute [Reflect, URL] DOMString action;
         attribute [ConvertNullToNullString] DOMString encoding;
         attribute [ConvertNullToNullString] DOMString enctype;
-        attribute [Reflect] DOMString method;
+        attribute [ConvertNullToNullString] DOMString method;
         attribute [Reflect] DOMString target;
         attribute [Reflect] DOMString autocomplete;
         

@@ -1,3 +1,61 @@
+2011-10-02  Kent Tamura  <tkent@chromium.org>
+
+        method/enctype/formMethod/formEnctype properties should be limited to known values.
+        https://bugs.webkit.org/show_bug.cgi?id=68887
+
+        Reviewed by Hajime Morita.
+
+        According to the standard and other browser behaviors, the
+        following IDL properties should be reflected to the corresponding
+        HTML attributes on setting, but should return normalized values on
+        getting.
+        - HTMLFormElement::method
+        - HTMLFormElement::enctype
+        - HTMLInputElement::formMethod
+        - HTMLInputElement::formEnctype
+        - HTMLButtonElement::formMethod
+        - HTMLButtonElement::formEnctype
+
+        Tests: fast/forms/enctype-attribute.html
+               fast/forms/method-attribute.html
+
+        * html/HTMLButtonElement.idl:
+        Replace 'Reflect' with 'ConvertNullToNullString' in order to use a
+        getter function.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formEnctype):
+        Normalizes the value by parseEncodingType().
+        (WebCore::HTMLFormControlElement::setFormEnctype):
+        Simply calls setAttribute()
+        (WebCore::HTMLFormControlElement::formMethod):
+        Normalizes the value by parseMethodType().
+        (WebCore::HTMLFormControlElement::setFormMethod):
+        Simply calls setAttribute()
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        Follow the Attributes function renaming.
+        (WebCore::HTMLFormElement::method):
+        Normalizes the value by parseMethodType().
+        * html/HTMLFormElement.idl:
+        Replace 'Reflect' with 'ConvertNullToNullString' in order to use a
+        getter function.
+        * html/HTMLInputElement.idl: ditto.
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::Attributes::parseEncodingType):
+        New function made from a part of old parseEncodingType().
+        (WebCore::FormSubmission::Attributes::updateEncodingType):
+        Renamed from parseEncodingType().
+        (WebCore::FormSubmission::Attributes::parseMethodType):
+        New function made from a part of old parseMethodType().
+        (WebCore::FormSubmission::Attributes::updateMethodType):
+        Renamed from parseMethodType().
+        (WebCore::FormSubmission::create):
+        Follow the Attributes function renaming.
+        * loader/FormSubmission.h:
+        (WebCore::FormSubmission::Attributes::methodString):
+        A helper function to provide normalized strings for FormSubmission::Method.
+
 2011-10-02  Sam Weinig  <sam@webkit.org>
 
         Strength reduce Mac only Frame::searchForLabelsBeforeElement and Frame::matchLabelsAgainstElement into callers

@@ -370,9 +370,9 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == targetAttr)
         m_attributes.setTarget(attr->value());
     else if (attr->name() == methodAttr)
-        m_attributes.parseMethodType(attr->value());
+        m_attributes.updateMethodType(attr->value());
     else if (attr->name() == enctypeAttr)
-        m_attributes.parseEncodingType(attr->value());
+        m_attributes.updateEncodingType(attr->value());
     else if (attr->name() == accept_charsetAttr)
         m_attributes.setAcceptCharset(attr->value());
     else if (attr->name() == autocompleteAttr) {
@@ -547,7 +547,7 @@ void HTMLFormElement::setEnctype(const String &value)
 
 String HTMLFormElement::method() const
 {
-    return getAttribute(methodAttr);
+    return FormSubmission::Attributes::methodString(m_attributes.method());
 }
 
 void HTMLFormElement::setMethod(const String &value)

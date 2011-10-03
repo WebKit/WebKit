@@ -58,7 +58,9 @@ public:
         }
 
         Method method() const { return m_method; }
-        void parseMethodType(const String&);
+        static Method parseMethodType(const String&);
+        void updateMethodType(const String&);
+        static String methodString(Method method) { return method == PostMethod ? "post" : "get"; }
 
         const String& action() const { return m_action; }
         void parseAction(const String&);
@@ -67,7 +69,8 @@ public:
         void setTarget(const String& target) { m_target = target; }
 
         const String& encodingType() const { return m_encodingType; }
-        void parseEncodingType(const String&);
+        static String parseEncodingType(const String&);
+        void updateEncodingType(const String&);
         bool isMultiPartForm() const { return m_isMultiPartForm; }
 
         const String& acceptCharset() const { return m_acceptCharset; }

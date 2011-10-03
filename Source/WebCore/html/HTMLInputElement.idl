@@ -25,8 +25,8 @@ module html {
         attribute [Reflect=checked] boolean defaultChecked;
         readonly attribute HTMLFormElement form;
         attribute [Reflect, URL] DOMString formAction;
-        attribute [Reflect] DOMString formEnctype;
-        attribute [Reflect] DOMString formMethod;
+        attribute [ConvertNullToNullString] DOMString formEnctype;
+        attribute [ConvertNullToNullString] DOMString formMethod;
         attribute [Reflect] boolean formNoValidate;
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;

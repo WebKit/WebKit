@@ -43,6 +43,10 @@ public:
 
     HTMLFormElement* form() const { return FormAssociatedElement::form(); }
 
+    String formEnctype() const;
+    void setFormEnctype(const String&);
+    String formMethod() const;
+    void setFormMethod(const String&);
     bool formNoValidate() const;
 
     virtual void reset() { }

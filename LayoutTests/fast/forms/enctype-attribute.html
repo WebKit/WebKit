@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<link rel=stylesheet href="../js/resources/js-test-style.css">
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+
+<p>Test enctype and formenctype attributes</p>
+
+<form id=f1></form>
+
+<div id=console></div>
+<script>
+var form1 = document.getElementById('f1');
+
+debug('Missing value default:');
+shouldBe('form1.enctype', '"application/x-www-form-urlencoded"');
+shouldBeNull('form1.getAttribute("enctype")');
+
+debug('');
+debug('Invalid value default:');
+shouldBe('form1.enctype = "foobar"; form1.enctype', '"application/x-www-form-urlencoded"');
+shouldBe('form1.getAttribute("enctype")', '"foobar"');
+shouldBe('form1.setAttribute("enctype", "baz"); form1.enctype', '"application/x-www-form-urlencoded"');
+
+debug('');
+debug('Valid values:');
+shouldBe('form1.enctype = "Text/Plain"; form1.enctype', '"text/plain"');
+shouldBe('form1.getAttribute("enctype")', '"Text/Plain"');
+shouldBe('form1.setAttribute("enctype", "Text/Plain"); form1.enctype', '"text/plain"');
+
+debug('');
+debug('Valid values with whitespace:');
+// Note: IE9 thorws "Invalid argument.", Firefox 6 doesn't allow leading whitespace.
+// Firefox matches to the specification.
+shouldBe('form1.enctype = "  multipart/form-data"; form1.enctype', '"multipart/form-data"');
+shouldBe('form1.getAttribute("enctype")', '"  multipart/form-data"');
+
+shouldBe('form1.enctype = "application/x-www-form-urlencoded "; form1.enctype', '"application/x-www-form-urlencoded"');
+
+debug('');
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

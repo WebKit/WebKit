@@ -81,7 +81,7 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLFormElement.acceptCh
 TEST SUCCEEDED: The value was the empty string. [tested HTMLFormElement.action]
 TEST SUCCEEDED: The value was the string 'application/x-www-form-urlencoded'. [tested HTMLFormElement.encoding]
 TEST SUCCEEDED: The value was the string 'application/x-www-form-urlencoded'. [tested HTMLFormElement.enctype]
-TEST SUCCEEDED: The value was the empty string. [tested HTMLFormElement.method]
+TEST SUCCEEDED: The value was the string 'get'. [tested HTMLFormElement.method]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLFormElement.target]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLFrameElement.frameBorder]
