@@ -108,6 +108,7 @@ static uint32_t getDefaultGDITextFlags()
     static uint32_t gFlags;
     if (!gInited) {
         BOOL enabled;
+        gFlags = 0;
         if (SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &enabled, 0) && enabled) {
             gFlags |= SkPaint::kAntiAlias_Flag;
 
@@ -140,31 +141,33 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* 
     paint->setTypeface(face);
     SkSafeUnref(face);
 
-    uint32_t flags = paint->getFlags();
-    // clear our flags initially, and then selectively set them
-    // based on the LOGFONT quality
-    flags &= SkPaint::kAntiAlias_Flag;
-    flags &= SkPaint::kLCDRenderText_Flag;
-
+    // turn lfQuality into text flags
+    uint32_t textFlags;
     switch (info.lfQuality) {
     case NONANTIALIASED_QUALITY:
+        textFlags = 0;
         break;
     case ANTIALIASED_QUALITY:
-        flags |= SkPaint::kAntiAlias_Flag;
+        textFlags = SkPaint::kAntiAlias_Flag;
         break;
     case CLEARTYPE_QUALITY:
-        flags |= SkPaint::kAntiAlias_Flag;
-        flags |= SkPaint::kLCDRenderText_Flag;
+        textFlags = (SkPaint::kAntiAlias_Flag | SkPaint::kLCDRenderText_Flag);
         break;
     default:
-        flags |= getDefaultGDITextFlags();
+        textFlags = getDefaultGDITextFlags();
         break;
     }
+    // only allow features that SystemParametersInfo allows
+    textFlags &= getDefaultGDITextFlags();
 
     // do this check after our switch on lfQuality
     if (disableTextLCD(pcs))
-        flags &= ~SkPaint::kLCDRenderText_Flag;
+        textFlags &= ~SkPaint::kLCDRenderText_Flag;
 
+    // now copy in just the text flags
+    uint32_t flags = paint->getFlags();
+    flags &= ~(SkPaint::kAntiAlias_Flag | SkPaint::kLCDRenderText_Flag);
+    flags |= textFlags;
     paint->setFlags(flags);
 }
 
@@ -176,9 +179,6 @@ void paintSkiaText(GraphicsContext* context,
                    const GOFFSET* offsets,
                    const SkPoint* origin)
 {
-    HDC dc = GetDC(0);
-    HGDIOBJ oldFont = SelectObject(dc, hfont);
-
     PlatformContextSkia* platformContext = context->platformContext();
     SkCanvas* canvas = platformContext->canvas();
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
@@ -221,9 +221,6 @@ void paintSkiaText(GraphicsContext* context,
 
         skiaDrawText(canvas, *origin, &paint, &glyphs[0], &advances[0], &offsets[0], numGlyphs);
     }
-
-    SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
 }
 
 }  // namespace WebCore
