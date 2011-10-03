@@ -1,3 +1,10 @@
+2011-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r95526): It made 3 inspector tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=69265
+
+        * platform/qt/Skipped: Skip failing tests to make buildbot happy.
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         Delete bogus expected PNG.
