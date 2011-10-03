@@ -61,8 +61,10 @@ static void loadURI(const gchar *uri, WKContextRef processContext)
     WKViewRef webView = WKViewCreate(processContext, 0);
     GtkWidget *mainWindow = browser_window_new(webView);
     gchar *url = argumentToURL(uri);
-    WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(url));
+    WKURLRef wkURL = WKURLCreateWithUTF8CString(url);
     g_free(url);
+    WKPageLoadURL(WKViewGetPage(webView), wkURL);
+    WKRelease(wkURL);
 
     gtk_widget_grab_focus(GTK_WIDGET(webView));
     gtk_widget_show(mainWindow);

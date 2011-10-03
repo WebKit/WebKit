@@ -1,5 +1,17 @@
 2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix memory leak when loading url
+        https://bugs.webkit.org/show_bug.cgi?id=69247
+
+        Reviewed by Martin Robinson.
+
+        Release URL created with WKURLCreateWithUTF8CString().
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_uri):
+
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [UNIX] Rename NetscapePluginModule::pluginInfo to NetscapePluginModule::getPluginInfoForLoadedPlugin()
         https://bugs.webkit.org/show_bug.cgi?id=69147
 

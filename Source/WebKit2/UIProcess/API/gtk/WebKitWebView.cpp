@@ -216,8 +216,10 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
+    WKURLRef url = WKURLCreateWithUTF8CString(uri);
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageLoadURL(toAPI(page), WKURLCreateWithUTF8CString(uri));
+    WKPageLoadURL(toAPI(page), url);
+    WKRelease(url);
 }
 
 /**

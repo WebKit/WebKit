@@ -64,8 +64,9 @@ G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
 
 static void activateUriEntryCallback(BrowserWindow* window)
 {
-    const gchar *uri = gtk_entry_get_text(GTK_ENTRY(window->uriEntry));
-    WKPageLoadURL(WKViewGetPage(window->webView), WKURLCreateWithUTF8CString(uri));
+    WKURLRef url = WKURLCreateWithUTF8CString(gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
+    WKPageLoadURL(WKViewGetPage(window->webView), url);
+    WKRelease(url);
 }
 
 static void goBackCallback(BrowserWindow* window)
