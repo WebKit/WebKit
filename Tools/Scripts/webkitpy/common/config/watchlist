@@ -11,6 +11,9 @@
         "ThreadingUsage": {
             "more": r"deprecatedTurnOffVerifier|crossThreadString|threadsafeCopy|ThreadSafeRefCounted|CrossThreadRefCounted",
         },
+        "ChromiumGraphics": {
+            "filename": r"Source/WebCore/platform/graphics/chromium/.*",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -18,5 +21,6 @@
         # two different accounts as far as bugzilla is concerned.
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
+        "ChromiumGraphics": [ "jamesr@chromium.org", ],
     },
 }
