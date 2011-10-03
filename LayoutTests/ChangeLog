@@ -1,3 +1,14 @@
+2011-10-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96532.
+        http://trac.webkit.org/changeset/96532
+        https://bugs.webkit.org/show_bug.cgi?id=69289
+
+        Accidentally marked failures as expected instead of creating
+        new baseline. (Requested by krit on #webkit).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-03  Dirk Schulze  <krit@webkit.org>
 
         Uneviewed by rebaseline after SVG Pattern patch with bug 69261.
