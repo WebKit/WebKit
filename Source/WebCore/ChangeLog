@@ -1,3 +1,17 @@
+2011-10-03  Dirk Schulze  <krit@webkit.org>
+
+        SVG Pattern tile pixelated on patternTransform
+        https://bugs.webkit.org/show_bug.cgi?id=69261
+
+        Reviewed by Rob Buis.
+
+        Scale the SVG pattern tile by the scale level of patternTransform to avoid pixelation.
+
+        Test: svg/custom/pattern-scaled-pattern-space.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+
 2011-10-03  Jer Noble  <jer.noble@apple.com>
 
         Enable WEB_AUDIO by default in the WebKit/mac port.
