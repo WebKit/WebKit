@@ -246,5 +246,11 @@ shouldBe("regexp56.exec('a')", "['','']");
 var regexp57 = /(a|)/;
 shouldBe("regexp57.exec('a')", "['a','a']");
 
+// Tests that non-greedy repeat quantified parentheses will backtrack through multiple frames of subpattern matches.
+var regexp58 = /a|b(?:[^b])*?c/;
+shouldBe("regexp58.exec('badbc')", "['a']");
+var regexp59 = /(X(?:.(?!X))*?Y)|(Y(?:.(?!Y))*?Z)/g;
+shouldBe("'Y aaa X Match1 Y aaa Y Match2 Z'.match(regexp59)", "['X Match1 Y','Y Match2 Z']");
+
 var successfullyParsed = true;
 

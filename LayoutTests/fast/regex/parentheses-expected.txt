@@ -93,6 +93,8 @@ PASS regexp54.exec('#') is ['','',undefined,undefined,'']
 PASS regexp55.exec('#') is ['','']
 PASS regexp56.exec('a') is ['','']
 PASS regexp57.exec('a') is ['a','a']
+PASS regexp58.exec('badbc') is ['a']
+PASS 'Y aaa X Match1 Y aaa Y Match2 Z'.match(regexp59) is ['X Match1 Y','Y Match2 Z']
 PASS successfullyParsed is true
 
 TEST COMPLETE

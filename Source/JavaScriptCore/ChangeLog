@@ -1,3 +1,21 @@
+2011-10-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Bug 67455 - Different regular expression result
+
+        Reviewed by Darin Adler.
+        
+        Fix a regression introduced in r72140. A return was added to the backtracking loop for
+        backtrackParentheses with QuantifierNonGreedy, so it always returns after one iteration.
+        This is incorrect. The additional return should only trigger to force an early return if
+        an error has occured.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchParentheses):
+            - Simplify some nested if else logic.
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+            - Simplify some nested if else logic.
+            - Only return early from backtrackParentheses on success/error, not on failure.
+
 2011-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Removed redundant helper functions for allocating Strong handles

@@ -1,3 +1,18 @@
+2011-10-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Bug 67455 - Different regular expression result
+
+        Reviewed by Darin Adler.
+        
+        Fix a regression introduced in r72140. A return was added to the backtracking loop for
+        backtrackParentheses with QuantifierNonGreedy, so it always returns after one iteration.
+        This is incorrect. The additional return should only trigger to force an early return if
+        an error has occured.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+            - Added test cases from bug.
+
 2011-10-02  Adam Barth  <abarth@webkit.org>
 
         Remove temporary baselines after http://trac.webkit.org/changeset/96470.
