@@ -229,7 +229,7 @@ namespace JSC {
                 materializePropertyMap(globalData);
         }
 
-        signed char transitionCount() const
+        int transitionCount() const
         {
             // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
             return m_offset == noOffset ? 0 : m_offset + 1;
