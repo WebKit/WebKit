@@ -252,7 +252,7 @@ class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
 
 class ApplyWatchList(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "apply-watchlist"
-    help_text = "Applies the watchlist to the specified attachments."
+    help_text = "Applies the watchlist to the specified attachments"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
         steps.CleanWorkingDirectory,

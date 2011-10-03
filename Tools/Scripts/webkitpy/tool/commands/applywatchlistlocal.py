@@ -32,9 +32,19 @@ from webkitpy.tool import steps
 
 class ApplyWatchListLocal(AbstractSequencedCommand):
     name = "apply-watchlist-local"
-    help_text = "Applies the watchlist to local changes."
+    help_text = "Applies the watchlist to local changes"
+    argument_names = "[BUGID]"
     steps = [
         steps.ApplyWatchList,
     ]
     long_help = """"Applies the watchlist to local changes.
-The results is logged but not applied to any bug. This may be used to try out a watchlist change."""
+The results is logged if a bug is no given. This may be used to try out a watchlist change."""
+
+    def _prepare_state(self, options, args, tool):
+        if len(args) > 1:
+            raise Exception("Too many arguments given: %s" % (' '.join(args)))
+        if not args:
+            return {}
+        return {
+            "bug_id": args[0],
+        }

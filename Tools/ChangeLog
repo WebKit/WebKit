@@ -1,3 +1,18 @@
+2011-10-03  David Levin  <levin@chromium.org>
+
+        watchlist: Allow specified a bug to attach the watchlist info to.
+        https://bugs.webkit.org/show_bug.cgi?id=69288
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal.py: Add support for bugid.
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py:
+        Add tests and fix an existing test because the unit tests do not go through the
+        normal command line processing (so the -g argument remained when we determined bug ids).
+        * Scripts/webkitpy/tool/commands/commandtest.py: Change the derivation to
+        get the assert raises regex method.
+        * Scripts/webkitpy/tool/commands/download.py: Fix the command help to be more unixy.
+
 2011-10-03  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] DRT: Add JSStringUtils.{cpp,h}
