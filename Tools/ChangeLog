@@ -1,3 +1,15 @@
+2011-10-03  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2][Mac] WebKit2 does not build on mac after merge of Qt5 refactor branch.
+        https://bugs.webkit.org/show_bug.cgi?id=69223
+
+        WebKitTestRunner must include Qt / qnamespace header
+        to get a definition of Qt::MouseButtons.
+
+        Reviewed by Andreas Kling.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+
 2011-10-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Add Zoltán Árvai as contributor.

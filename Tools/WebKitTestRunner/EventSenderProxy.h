@@ -27,6 +27,10 @@
 #ifndef EventSenderProxy_h
 #define EventSenderProxy_h
 
+#if PLATFORM(QT)
+#include <Qt>
+#endif
+
 namespace WTR {
 
 class TestController;
