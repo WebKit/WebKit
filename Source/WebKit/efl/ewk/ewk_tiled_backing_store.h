@@ -42,10 +42,6 @@
 #define TILE_ZOOM_AT_SIZE(SIZE, ORIG_TILE) ((float)(SIZE) / (float)(ORIG_TILE))
 #define ROUNDED_ZOOM(SIZE, ZOOM) ((float)(SIZE) / (float)(((int)roundf((SIZE) / (ZOOM)))))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <Evas.h>
 #include <cairo.h>
 
@@ -123,7 +119,4 @@ void ewk_tiled_backing_store_pre_render_cancel(Evas_Object* o);
 
 Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object* o);
 Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object* o);
-#ifdef __cplusplus
-}
-#endif
 #endif // ewk_tiled_backing_store_h

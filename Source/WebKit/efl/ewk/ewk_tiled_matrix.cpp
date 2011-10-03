@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ewk_tiled_matrix.h"
 
-#define _GNU_SOURCE
 #include "ewk_tiled_backing_store.h"
 #include "ewk_tiled_private.h"
 #include <Eina.h>
@@ -62,8 +61,8 @@ static uint64_t bytes_leaked = 0;
 /* called when matrixsparse is resized or freed */
 static void _ewk_tile_matrix_cell_free(void *user_data, void *cell_data)
 {
-    Ewk_Tile_Matrix *tm = user_data;
-    Ewk_Tile *t = cell_data;
+    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(user_data);
+    Ewk_Tile* t = static_cast<Ewk_Tile*>(cell_data);
 
     if (!t)
         return;
@@ -94,7 +93,7 @@ static void _ewk_tile_matrix_cell_free(void *user_data, void *cell_data)
 /* called when cache of unused tile is flushed */
 static void _ewk_tile_matrix_tile_free(void *data, Ewk_Tile *t)
 {
-    Ewk_Tile_Matrix *tm = data;
+    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(data);
     Eina_Matrixsparse_Cell *cell;
  
     if (!eina_matrixsparse_cell_idx_get(tm->matrix, t->row, t->col, &cell)) {
@@ -111,7 +110,7 @@ static void _ewk_tile_matrix_tile_free(void *data, Ewk_Tile *t)
         tm->updates = eina_list_remove(tm->updates, t);
 
     /* set to null to avoid double free */
-    eina_matrixsparse_cell_data_replace(cell, NULL, NULL);
+    eina_matrixsparse_cell_data_replace(cell, 0, 0);
     eina_matrixsparse_cell_clear(cell);
 
     if (EINA_UNLIKELY(!!t->visible)) {
@@ -136,7 +135,7 @@ static void _ewk_tile_matrix_tile_free(void *data, Ewk_Tile *t)
  * existing tiles and give them back, allowing them to be
  * freed/replaced by the cache.
  *
- * @param tuc cache of unused tiles or @c NULL to create one
+ * @param tuc cache of unused tiles or @c 0 to create one
  *        automatically.
  * @param cols number of columns in the matrix.
  * @param rows number of rows in the matrix.
@@ -144,19 +143,19 @@ static void _ewk_tile_matrix_tile_free(void *data, Ewk_Tile *t)
  * @param render_cb function used to render given tile update.
  * @param render_data context to give back to @a render_cb.
  *
- * @return newly allocated instance on success, @c NULL on failure.
+ * @return newly allocated instance on success, @c 0 on failure.
  */
 Ewk_Tile_Matrix *ewk_tile_matrix_new(Ewk_Tile_Unused_Cache *tuc, unsigned long cols, unsigned long rows, Evas_Colorspace cspace, void (*render_cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *update), const void *render_data)
 {
-    Ewk_Tile_Matrix *tm;
-
-    CALLOC_OR_OOM_RET(tm, sizeof(Ewk_Tile_Matrix), NULL);
+    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(calloc(1, sizeof(Ewk_Tile_Matrix)));
+    if (!tm)
+        return 0;
 
     tm->matrix = eina_matrixsparse_new(rows, cols, _ewk_tile_matrix_cell_free, tm);
     if (!tm->matrix) {
         ERR("could not create sparse matrix.");
         free(tm);
-        return NULL;
+        return 0;
     }
 
     if (tuc)
@@ -167,7 +166,7 @@ Ewk_Tile_Matrix *ewk_tile_matrix_new(Ewk_Tile_Unused_Cache *tuc, unsigned long c
             ERR("no cache of unused tile!");
             eina_matrixsparse_free(tm->matrix);
             free(tm);
-            return NULL;
+            return 0;
         }
     }
 
@@ -244,7 +243,7 @@ void ewk_tile_matrix_resize(Ewk_Tile_Matrix *tm, unsigned long cols, unsigned lo
  */
 Ewk_Tile_Unused_Cache *ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix *tm)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tm, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tm, 0);
     return tm->tuc;
 }
 
@@ -262,7 +261,7 @@ Ewk_Tile_Unused_Cache *ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix *t
  * @param row the row number.
  * @param zoom the exact zoom to use.
  *
- * @return The tile instance or @c NULL if none is found. If the tile
+ * @return The tile instance or @c 0 if none is found. If the tile
  *         was in the unused cache it will be @b removed (thus
  *         considered used) and one should give it back with
  *         ewk_tile_matrix_tile_put() afterwards.
@@ -271,10 +270,9 @@ Ewk_Tile_Unused_Cache *ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix *t
  */
 Ewk_Tile *ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, float zoom)
 {
-    Ewk_Tile *t;
-    t = eina_matrixsparse_data_idx_get(tm->matrix, row, col);
+    Ewk_Tile* t = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tm->matrix, row, col));
     if (!t)
-        return NULL;
+        return 0;
 
     if (t->zoom == zoom)
         goto end;
@@ -302,10 +300,7 @@ Ewk_Tile *ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix *tm, unsigned long col,
  */
 Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, float zoom)
 {
-    Ewk_Tile *t;
-
-    t = eina_matrixsparse_data_idx_get(tm->matrix, row, col);
-    if (!t)
+    if (!eina_matrixsparse_data_idx_get(tm->matrix, row, col))
         return EINA_FALSE;
 
     return EINA_TRUE;
@@ -328,8 +323,8 @@ Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned lon
     Evas_Coord tw, th;
     Ewk_Tile *t;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tm, NULL);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(zoom > 0.0, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tm, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(zoom > 0.0, 0);
 
     tw = tm->tile.w;
     th = tm->tile.h;
@@ -337,13 +332,13 @@ Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned lon
     t = ewk_tile_new(evas, tw, th, zoom, tm->cspace);
     if (!t) {
         ERR("could not create tile %dx%d at %f, cspace=%d", tw, th, (double)zoom, tm->cspace);
-        return NULL;
+        return 0;
     }
 
     if (!eina_matrixsparse_data_idx_set(tm->matrix, row, col, t)) {
         ERR("could not set matrix cell, row/col outside matrix dimensions!");
         ewk_tile_free(t);
-        return NULL;
+        return 0;
     }
 
     t->col = col;
@@ -376,7 +371,7 @@ Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned lon
  * unused cache.
  *
  * @param tm the tile matrix to return tile to.
- * @param t the tile instance to return, must @b not be @c NULL.
+ * @param t the tile instance to return, must @b not be @c 0.
  * @param last_used time in which tile was last used.
  *
  * @return #EINA_TRUE on success or #EINA_FALSE on failure.
@@ -395,7 +390,6 @@ Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix *tm, Ewk_Tile *t, double last
 
 Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, const Eina_Rectangle *update)
 {
-    Ewk_Tile *t;
     Eina_Rectangle new_update;
     EINA_SAFETY_ON_NULL_RETURN_VAL(tm, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(update, EINA_FALSE);
@@ -412,8 +406,7 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, un
     if (update->y + update->h - 1 >= tm->tile.h)
         new_update.h = tm->tile.h - update->y;
 
-    t = eina_matrixsparse_data_idx_get(tm->matrix, row, col);
-
+    Ewk_Tile* t = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tm->matrix, row, col));
     if (!t)
         return EINA_TRUE;
 
@@ -426,7 +419,6 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, un
 
 Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row)
 {
-    Ewk_Tile *t;
     Eina_Matrixsparse_Cell *cell;
     EINA_SAFETY_ON_NULL_RETURN_VAL(tm, EINA_FALSE);
 
@@ -436,7 +428,7 @@ Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix *tm, unsigned long co
     if (!cell)
         return EINA_TRUE;
 
-    t = eina_matrixsparse_cell_data_get(cell);
+    Ewk_Tile* t = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
     if (!t) {
         CRITICAL("matrix cell with no tile!");
         return EINA_TRUE;
@@ -518,11 +510,10 @@ Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix *tm, const Eina_Rectangle *upda
 
     while (eina_tile_grid_slicer_next(&slicer, &info)) {
         unsigned long col, row;
-        Ewk_Tile *t;
         col = info->col;
         row = info->row;
 
-        t = eina_matrixsparse_data_idx_get(tm->matrix, row, col);
+        Ewk_Tile* t = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tm->matrix, row, col));
         if (!t)
             continue;
 
@@ -541,14 +532,15 @@ Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix *tm, const Eina_Rectangle *upda
 void ewk_tile_matrix_updates_process(Ewk_Tile_Matrix *tm)
 {
     Eina_List *l, *l_next;
-    Ewk_Tile *t;
+    void* item;
     EINA_SAFETY_ON_NULL_RETURN(tm);
 
     // process updates, unflag tiles
-    EINA_LIST_FOREACH_SAFE(tm->updates, l, l_next, t) {
-        ewk_tile_updates_process(t, tm->render.cb, tm->render.data);
-        if (t->visible) {
-            ewk_tile_updates_clear(t);
+    EINA_LIST_FOREACH_SAFE(tm->updates, l, l_next, item) {
+        Ewk_Tile* tile = static_cast<Ewk_Tile*>(item);
+        ewk_tile_updates_process(tile, tm->render.cb, tm->render.data);
+        if (tile->visible) {
+            ewk_tile_updates_clear(tile);
             tm->updates = eina_list_remove_list(tm->updates, l);
         }
     }
@@ -556,12 +548,12 @@ void ewk_tile_matrix_updates_process(Ewk_Tile_Matrix *tm)
 
 void ewk_tile_matrix_updates_clear(Ewk_Tile_Matrix *tm)
 {
-    Ewk_Tile *t;
+    void* item;
     EINA_SAFETY_ON_NULL_RETURN(tm);
 
-    EINA_LIST_FREE(tm->updates, t)
-        ewk_tile_updates_clear(t);
-    tm->updates = NULL;
+    EINA_LIST_FREE(tm->updates, item)
+        ewk_tile_updates_clear(static_cast<Ewk_Tile*>(item));
+    tm->updates = 0;
 }
 
 // remove me later!
@@ -584,10 +576,9 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix *tm)
 
     EINA_ITERATOR_FOREACH(it, cell) {
         unsigned long row, col;
-        Ewk_Tile *t;
         eina_matrixsparse_cell_position_get(cell, &row, &col);
-        t = eina_matrixsparse_cell_data_get(cell);
 
+        Ewk_Tile* t = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
         if (!t) {
             if (!last_empty) {
                 last_empty = EINA_TRUE;

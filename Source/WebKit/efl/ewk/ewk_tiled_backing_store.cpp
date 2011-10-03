@@ -21,10 +21,11 @@
 #include "config.h"
 #include "ewk_tiled_backing_store.h"
 
-#define _GNU_SOURCE
+#include "ewk_tiled_matrix.h"
 #include "ewk_tiled_private.h"
 #include <Ecore.h>
 #include <Eina.h>
+#include <algorithm>
 #include <errno.h>
 #include <math.h>
 #include <stdio.h> // XXX REMOVE ME LATER
@@ -33,15 +34,6 @@
 
 #define IDX(col, row, rowspan) (col + (row * rowspan))
 
-#if !defined(MIN)
-# define MIN(a, b) ((a < b) ? a : b)
-#endif
-
-#if !defined(MAX)
-# define MAX(a, b) ((a > b) ? a : b)
-#endif
-
-typedef enum _Ewk_Tiled_Backing_Store_Pre_Render_Priority Ewk_Tiled_Backing_Store_Pre_Render_Priority;
 typedef struct _Ewk_Tiled_Backing_Store_Data Ewk_Tiled_Backing_Store_Data;
 typedef struct _Ewk_Tiled_Backing_Store_Item Ewk_Tiled_Backing_Store_Item;
 typedef struct _Ewk_Tiled_Backing_Store_Pre_Render_Request Ewk_Tiled_Backing_Store_Pre_Render_Request;
@@ -50,6 +42,7 @@ enum _Ewk_Tiled_Backing_Store_Pre_Render_Priority {
     PRE_RENDER_PRIORITY_LOW = 0, /**< Append the request to the list */
     PRE_RENDER_PRIORITY_HIGH     /**< Prepend the request to the list */
 };
+typedef enum _Ewk_Tiled_Backing_Store_Pre_Render_Priority Ewk_Tiled_Backing_Store_Pre_Render_Priority;
 
 struct _Ewk_Tiled_Backing_Store_Item {
     EINA_INLIST;
@@ -126,7 +119,7 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 int _ewk_tiled_log_dom = -1;
 
 #define PRIV_DATA_GET_OR_RETURN(obj, ptr, ...)                       \
-    Ewk_Tiled_Backing_Store_Data *ptr = evas_object_smart_data_get(obj); \
+    Ewk_Tiled_Backing_Store_Data* ptr = static_cast<Ewk_Tiled_Backing_Store_Data*>(evas_object_smart_data_get(obj)); \
     if (!ptr) {                                                      \
         CRITICAL("no private data in obj=%p", obj);                  \
         return __VA_ARGS__;                                          \
@@ -138,7 +131,7 @@ static inline void _ewk_tiled_backing_store_changed(Ewk_Tiled_Backing_Store_Data
 
 static inline void _ewk_tiled_backing_store_updates_process(Ewk_Tiled_Backing_Store_Data *priv)
 {
-    void *data = NULL;
+    void *data = 0;
 
     /* Do not process updates. Note that we still want to get updates requests
      * in the queue in order to not miss any updates after the render is
@@ -158,7 +151,7 @@ static inline void _ewk_tiled_backing_store_updates_process(Ewk_Tiled_Backing_St
 
 static int _ewk_tiled_backing_store_flush(void *data)
 {
-    Ewk_Tiled_Backing_Store_Data *priv = data;
+    Ewk_Tiled_Backing_Store_Data* priv = static_cast<Ewk_Tiled_Backing_Store_Data*>(data);
     Ewk_Tile_Unused_Cache *tuc = ewk_tile_matrix_unused_cache_get(priv->model.matrix);
 
     if (tuc) {
@@ -176,7 +169,7 @@ static Ewk_Tile *_ewk_tiled_backing_store_tile_new(Ewk_Tiled_Backing_Store_Data 
     Evas *evas = evas_object_evas_get(priv->self);
     if (!evas) {
         CRITICAL("evas_object_evas_get failed!");
-        return NULL;
+        return 0;
     }
 
     t = ewk_tile_matrix_tile_new
@@ -184,7 +177,7 @@ static Ewk_Tile *_ewk_tiled_backing_store_tile_new(Ewk_Tiled_Backing_Store_Data 
 
     if (!t) {
         CRITICAL("ewk_tile_matrix_tile_new failed!");
-        return NULL;
+        return 0;
     }
 
     return t;
@@ -213,7 +206,7 @@ static void _ewk_tiled_backing_store_item_resize(Ewk_Tiled_Backing_Store_Item *i
 static void _ewk_tiled_backing_store_tile_associate(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tile *t, Ewk_Tiled_Backing_Store_Item *it)
 {
     if (it->tile)
-        CRITICAL("it->tile=%p, but it should be NULL!", it->tile);
+        CRITICAL("it->tile=%p, but it should be 0!", it->tile);
     it->tile = t;
     evas_object_move(it->tile->image, it->geometry.x, it->geometry.y);
     evas_object_resize(it->tile->image, it->geometry.w, it->geometry.h);
@@ -237,7 +230,7 @@ static void _ewk_tiled_backing_store_tile_dissociate(Ewk_Tiled_Backing_Store_Dat
     tuc = ewk_tile_matrix_unused_cache_get(priv->model.matrix);
     ewk_tile_unused_cache_auto_flush(tuc);
 
-    it->tile = NULL;
+    it->tile = 0;
 }
 
 static void _ewk_tiled_backing_store_tile_dissociate_all(Ewk_Tiled_Backing_Store_Data *priv)
@@ -259,7 +252,9 @@ static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tile
 {
     Ewk_Tiled_Backing_Store_Pre_Render_Request *r;
 
-    MALLOC_OR_OOM_RET(r, sizeof(*r), EINA_FALSE);
+    r = static_cast<Ewk_Tiled_Backing_Store_Pre_Render_Request*>(malloc(sizeof(*r)));
+    if (!r)
+        return EINA_FALSE;
 
     if (priority == PRE_RENDER_PRIORITY_HIGH)
         priv->render.pre_render_requests = eina_inlist_prepend
@@ -365,7 +360,7 @@ end:
 
 static Eina_Bool _ewk_tiled_backing_store_item_process_idler_cb(void *data)
 {
-    Ewk_Tiled_Backing_Store_Data *priv = data;
+    Ewk_Tiled_Backing_Store_Data* priv = static_cast<Ewk_Tiled_Backing_Store_Data*>(data);
 
     if (priv->process.pre_cb)
         data = priv->process.pre_cb(priv->process.pre_data, priv->self);
@@ -376,7 +371,7 @@ static Eina_Bool _ewk_tiled_backing_store_item_process_idler_cb(void *data)
         priv->process.post_cb(priv->process.post_data, data, priv->self);
 
     if (!priv->render.pre_render_requests) {
-        priv->render.idler = NULL;
+        priv->render.idler = 0;
         return EINA_FALSE;
     }
 
@@ -389,7 +384,7 @@ static inline void _ewk_tiled_backing_store_item_process_idler_stop(Ewk_Tiled_Ba
         return;
 
     ecore_idler_del(priv->render.idler);
-    priv->render.idler = NULL;
+    priv->render.idler = 0;
 }
 
 static inline void _ewk_tiled_backing_store_item_process_idler_start(Ewk_Tiled_Backing_Store_Data *priv)
@@ -447,9 +442,9 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
         t = ewk_tile_matrix_tile_exact_get(priv->model.matrix, m_col, m_row, zoom);
 
         if (!t) {
-            /* NOTE: it never returns NULL if it->tile was set! */
+            /* NOTE: it never returns 0 if it->tile was set! */
             if (it->tile) {
-                CRITICAL("it->tile=%p, but it should be NULL!", it->tile);
+                CRITICAL("it->tile=%p, but it should be 0!", it->tile);
                 _ewk_tiled_backing_store_tile_dissociate(priv, it,
                                                          last_used);
             }
@@ -483,21 +478,23 @@ static Ewk_Tiled_Backing_Store_Item *_ewk_tiled_backing_store_item_add(Ewk_Tiled
 
     DBG("o=%p", priv->self);
 
-    MALLOC_OR_OOM_RET(it, sizeof(*it), NULL);
+    it = static_cast<Ewk_Tiled_Backing_Store_Item*>(malloc(sizeof(*it)));
+    if (!it)
+        return 0;
 
     tw = priv->view.tile.w;
     th = priv->view.tile.h;
     x = priv->view.offset.base.x + priv->view.x + tw  *col;
     y = priv->view.offset.base.y + priv->view.y + th  *row;
 
-    it->tile = NULL;
+    it->tile = 0;
 
     it->smooth_scale = priv->view.tile.zoom_weak_smooth_scale;
     _ewk_tiled_backing_store_item_move(it, x, y);
     _ewk_tiled_backing_store_item_resize(it, tw, th);
     if (!_ewk_tiled_backing_store_item_fill(priv, it, col, row)) {
         free(it);
-        return NULL;
+        return 0;
     }
 
     return it;
@@ -582,7 +579,7 @@ static void _ewk_tiled_backing_store_view_rows_range_del(Ewk_Tiled_Backing_Store
 {
     for (; start < end; start++) {
         _ewk_tiled_backing_store_view_row_del(priv, *start);
-        *start = NULL;
+        *start = 0;
     }
 }
 
@@ -596,14 +593,14 @@ static void _ewk_tiled_backing_store_view_rows_all_del(Ewk_Tiled_Backing_Store_D
     _ewk_tiled_backing_store_view_rows_range_del(priv, start, end);
 
     free(priv->view.items);
-    priv->view.items = NULL;
+    priv->view.items = 0;
     priv->view.cols = 0;
     priv->view.rows = 0;
 }
 
 static void _ewk_tiled_backing_store_render(void *data, Ewk_Tile *t, const Eina_Rectangle *area)
 {
-    Ewk_Tiled_Backing_Store_Data *priv = data;
+    Ewk_Tiled_Backing_Store_Data* priv = static_cast<Ewk_Tiled_Backing_Store_Data*>(data);
 
     INF("TODO %p (visible? %d) [%lu,%lu] %d,%d + %dx%d",
         t, t->visible, t->col, t->row, area->x, area->y, area->w, area->h);
@@ -696,7 +693,9 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object *o)
 
     DBG("o=%p", o);
 
-    CALLOC_OR_OOM_RET(priv, sizeof(*priv));
+    priv = static_cast<Ewk_Tiled_Backing_Store_Data*>(calloc(1, sizeof(*priv)));
+    if (!priv)
+        return;
 
     priv->self = o;
     priv->view.tile.zoom = 1.0;
@@ -732,7 +731,7 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object *o)
     evas_object_show(priv->contents_clipper);
     evas_object_smart_member_add(priv->contents_clipper, o);
 
-    _ewk_tiled_backing_store_model_matrix_create(priv, NULL);
+    _ewk_tiled_backing_store_model_matrix_create(priv, 0);
     evas_object_move(priv->base.clipper, 0, 0);
     evas_object_resize(priv->base.clipper, 0, 0);
     evas_object_clip_set(priv->contents_clipper, priv->base.clipper);
@@ -831,7 +830,12 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
         end = priv->view.items + old_rows;
         _ewk_tiled_backing_store_view_rows_range_del(priv, start, end);
     }
-    REALLOC_OR_OOM_RET(priv->view.items, sizeof(Eina_Inlist*) * (int)rows);
+
+    void* newItems = realloc(priv->view.items, sizeof(Eina_Inlist*) * rows);
+    if (!newItems)
+        return;
+
+    priv->view.items = static_cast<Eina_Inlist**>(newItems);
     priv->view.rows = rows;
     priv->view.cols = cols;
     if (rows > old_rows) {
@@ -840,7 +844,7 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
         end = priv->view.items + rows;
         for (; start < end; start++) {
             Eina_Bool r;
-            *start = NULL;
+            *start = 0;
             r = _ewk_tiled_backing_store_view_cols_end_add
                 (priv, start, 0, cols);
             if (!r) {
@@ -857,7 +861,7 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
         Eina_Inlist **start, **end;
         int todo = cols - old_cols;
         start = priv->view.items;
-        end = start + MIN(old_rows, rows);
+        end = start + std::min(old_rows, rows);
         if (todo > 0) {
             for (; start < end; start++) {
                 Eina_Bool r;
@@ -1375,10 +1379,10 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object *o)
 
 Evas_Object *ewk_tiled_backing_store_add(Evas *e)
 {
-    static Evas_Smart *smart = NULL;
+    static Evas_Smart *smart = 0;
 
     if (_ewk_tiled_log_dom < 0)
-        _ewk_tiled_log_dom = eina_log_domain_register("Ewk_Tiled_Backing_Store", NULL);
+        _ewk_tiled_log_dom = eina_log_domain_register("Ewk_Tiled_Backing_Store", 0);
 
     if (!smart) {
         static Evas_Smart_Class sc =
@@ -1411,7 +1415,7 @@ void ewk_tiled_backing_store_render_cb_set(Evas_Object *o, Eina_Bool (*cb)(void 
 
 Ewk_Tile_Unused_Cache *ewk_tiled_backing_store_tile_unused_cache_get(const Evas_Object *o)
 {
-    PRIV_DATA_GET_OR_RETURN(o, priv, NULL);
+    PRIV_DATA_GET_OR_RETURN(o, priv, 0);
     return ewk_tile_matrix_unused_cache_get(priv->model.matrix);
 }
 
@@ -1613,7 +1617,7 @@ Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas
 
     if (recalc) {
         Evas_Coord w, h;
-        evas_object_geometry_get(o, NULL, NULL, &w, &h);
+        evas_object_geometry_get(o, 0, 0, &w, &h);
         _ewk_tiled_backing_store_recalc_renderers(priv, w, h, tw, th);
         _ewk_tiled_backing_store_fill_renderers(priv);
         _ewk_tiled_backing_store_updates_process(priv);
@@ -1789,7 +1793,7 @@ void ewk_tiled_backing_store_disabled_update_set(Evas_Object *o, Eina_Bool value
 void ewk_tiled_backing_store_flush(Evas_Object *o)
 {
     PRIV_DATA_GET_OR_RETURN(o, priv);
-    Ewk_Tile_Unused_Cache *tuc = NULL;
+    Ewk_Tile_Unused_Cache *tuc = 0;
 
     priv->view.offset.cur.x = 0;
     priv->view.offset.cur.y = 0;
@@ -1863,9 +1867,9 @@ Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object *o, uns
             priv->model.base.row, n, priv->view.rows);
     start_row = (long)priv->model.base.row - n;
     start_col = (long)priv->model.base.col - n;
-    end_row = MIN(priv->model.cur.rows - 1,
+    end_row = std::min(priv->model.cur.rows - 1,
                   priv->model.base.row + priv->view.rows + n - 1);
-    end_col = MIN(priv->model.cur.cols - 1,
+    end_col = std::min(priv->model.cur.cols - 1,
                   priv->model.base.col + priv->view.cols + n - 1);
 
     INF("start_row=%lu, end_row=%lu, start_col=%lu, end_col=%lu",

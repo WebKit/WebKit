@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ewk_tiled_model.h"
 
-#define _GNU_SOURCE
 #include "ewk_tiled_backing_store.h"
 #include "ewk_tiled_private.h"
 #include <Ecore_Evas.h>
@@ -37,13 +36,7 @@
 #include <sys/time.h>
 #endif
 
-#ifndef CAIRO_FORMAT_RGB16_565
-#define CAIRO_FORMAT_RGB16_565 4
-#endif
-
 #define IDX(col, row, rowspan) (col + (row * rowspan))
-#define MIN(a, b) ((a < b) ? a : b)
-#define MAX(a, b) ((a > b) ? a : b)
 
 #ifdef DEBUG_MEM_LEAKS
 static uint64_t tiles_allocated = 0;
@@ -60,7 +53,7 @@ struct tile_account {
 };
 
 static size_t accounting_len = 0;
-static struct tile_account *accounting = NULL;
+static struct tile_account *accounting = 0;
 
 static inline struct tile_account *_ewk_tile_account_get(const Ewk_Tile *t)
 {
@@ -73,7 +66,7 @@ static inline struct tile_account *_ewk_tile_account_get(const Ewk_Tile *t)
     }
 
     i = (accounting_len + 1) * sizeof(struct tile_account);
-    REALLOC_OR_OOM_RET(accounting, i, NULL);
+    REALLOC_OR_OOM_RET(accounting, i, 0);
 
     acc = accounting + accounting_len;
     acc->size = t->w;
@@ -266,12 +259,15 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
         format = CAIRO_FORMAT_RGB16_565;
     } else {
         ERR("unknown color space: %d", cspace);
-        return NULL;
+        return 0;
     }
 
     DBG("size: %dx%d (%d), zoom: %f, cspace=%d", w, h, area, (double)zoom, cspace);
 
-    MALLOC_OR_OOM_RET(t, sizeof(Ewk_Tile), NULL);
+    t = static_cast<Ewk_Tile*>(malloc(sizeof(Ewk_Tile)));
+    if (!t)
+        return 0;
+
     t->image = evas_object_image_add(evas);
 
     ee = ecore_evas_ecore_evas_get(evas);
@@ -280,7 +276,7 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
         evas_object_image_content_hint_set(t->image, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
 
     t->visible = 0;
-    t->updates = NULL;
+    t->updates = 0;
 
     memset(&t->stats, 0, sizeof(Ewk_Tile_Stats));
     t->stats.area = area;
@@ -303,14 +299,14 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
 
     evas_object_image_size_set(t->image, t->w, t->h);
     evas_object_image_colorspace_set(t->image, t->cspace);
-    t->pixels = evas_object_image_data_get(t->image, EINA_TRUE);
+    t->pixels = static_cast<uint8_t*>(evas_object_image_data_get(t->image, EINA_TRUE));
     t->surface = cairo_image_surface_create_for_data(t->pixels, format, w, h, stride);
     status = cairo_surface_status(t->surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("failed to create cairo surface: %s",
             cairo_status_to_string(status));
         free(t);
-        return NULL;
+        return 0;
     }
 
     t->cairo = cairo_create(t->surface);
@@ -320,7 +316,7 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
         cairo_surface_destroy(t->surface);
         evas_object_del(t->image);
         free(t);
-        return NULL;
+        return 0;
     }
 
     _ewk_tile_account_allocated(t);
@@ -383,7 +379,7 @@ void ewk_tile_update_full(Ewk_Tile *t)
         t->stats.full_update = EINA_TRUE;
         if (t->updates) {
             eina_tiler_free(t->updates);
-            t->updates = NULL;
+            t->updates = 0;
         }
     }
 }
@@ -403,7 +399,7 @@ void ewk_tile_update_area(Ewk_Tile *t, const Eina_Rectangle *r)
         t->stats.full_update = EINA_TRUE;
         if (t->updates) {
             eina_tiler_free(t->updates);
-            t->updates = NULL;
+            t->updates = 0;
         }
         return;
     }
@@ -436,13 +432,13 @@ void ewk_tile_updates_process(Ewk_Tile *t, void (*cb)(void *data, Ewk_Tile *t, c
 #ifdef TILE_STATS_ACCOUNT_RENDER_TIME
         struct timeval timev;
         double render_start;
-        gettimeofday(&timev, NULL);
+        gettimeofday(&timev, 0);
         render_start = (double)timev.tv_sec +
             (((double)timev.tv_usec) / 1000000);
 #endif
         cb((void *)data, t, &r);
 #ifdef TILE_STATS_ACCOUNT_RENDER_TIME
-        gettimeofday(&timev, NULL);
+        gettimeofday(&timev, 0);
         t->stats.render_time = (double)timev.tv_sec +
             (((double)timev.tv_usec) / 1000000) - render_start;
 #endif
@@ -478,7 +474,7 @@ void ewk_tile_updates_clear(Ewk_Tile *t)
         t->stats.full_update = 0;
     else if (t->updates) {
         eina_tiler_free(t->updates);
-        t->updates = NULL;
+        t->updates = 0;
     }
 }
 
@@ -524,13 +520,15 @@ static const size_t TILE_UNUSED_CACHE_MAX_FREE = 32;
  *
  * @return newly allocated cache of unused tiles, use
  *         ewk_tile_unused_cache_free() to release resources. If not
- *         possible to allocate memory, @c NULL is returned.
+ *         possible to allocate memory, @c 0 is returned.
  */
 Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_new(size_t max)
 {
     Ewk_Tile_Unused_Cache *tuc;
 
-    CALLOC_OR_OOM_RET(tuc, sizeof(Ewk_Tile_Unused_Cache), NULL);
+    tuc = static_cast<Ewk_Tile_Unused_Cache*>(calloc(1, sizeof(Ewk_Tile_Unused_Cache)));
+    if (!tuc)
+        return 0;
 
     DBG("tuc=%p", tuc);
     tuc->memory.max = max;
@@ -591,13 +589,14 @@ static void _ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache *tuc)
  */
 void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache *tuc)
 {
-    Ewk_Tile_Unused_Cache_Entry *itr;
     EINA_SAFETY_ON_NULL_RETURN(tuc);
 
     if (!tuc->entries.count)
         return;
 
-    EINA_LIST_FREE(tuc->entries.list, itr) {
+    void* item;
+    EINA_LIST_FREE(tuc->entries.list, item) {
+        Ewk_Tile_Unused_Cache_Entry* itr = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         itr->tile_free.cb(itr->tile_free.data, itr->tile);
         free(itr);
     }
@@ -615,7 +614,7 @@ void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache *tuc)
  */
 Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_ref(Ewk_Tile_Unused_Cache *tuc)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tuc, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tuc, 0);
     tuc->references++;
     return tuc;
 }
@@ -654,7 +653,6 @@ size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc)
 
 size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes)
 {
-    Ewk_Tile_Unused_Cache_Entry *itr;
     Eina_List *l, *l_next;
     EINA_SAFETY_ON_NULL_RETURN_VAL(tuc, 0);
     size_t done;
@@ -670,9 +668,11 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes)
      * Don't need to sort any more.
      */
 
+    void* item;
     done = 0;
     count = 0;
-    EINA_LIST_FOREACH_SAFE(tuc->entries.list, l, l_next, itr) {
+    EINA_LIST_FOREACH_SAFE(tuc->entries.list, l, l_next, item) {
+        Ewk_Tile_Unused_Cache_Entry* itr = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         Ewk_Tile *t = itr->tile;
         if (done > bytes)
             break;
@@ -752,12 +752,12 @@ void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache *tuc)
  */
 Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t)
 {
-    Ewk_Tile_Unused_Cache_Entry *entry;
     Eina_List *e, *l;
 
-    e = NULL;
-    EINA_LIST_FOREACH(tuc->entries.list, l, entry)
-    {
+    void* item;
+    e = 0;
+    EINA_LIST_FOREACH(tuc->entries.list, l, item) {
+        Ewk_Tile_Unused_Cache_Entry* entry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         if (entry->tile == t) {
             e = l;
             break;
@@ -771,7 +771,7 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t
     tuc->entries.count--;
     tuc->memory.used -= sizeof(Ewk_Tile) + t->bytes;
     tuc->entries.list = eina_list_remove_list(tuc->entries.list, e);
-    free(entry);
+    free(item);
 
     return EINA_TRUE;
 }
@@ -807,7 +807,10 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t
         return EINA_FALSE;
     }
 
-    MALLOC_OR_OOM_RET(e, sizeof(Ewk_Tile_Unused_Cache_Entry), EINA_FALSE);
+    e = static_cast<Ewk_Tile_Unused_Cache_Entry*>(malloc(sizeof(Ewk_Tile_Unused_Cache_Entry)));
+    if (!e)
+        return EINA_FALSE;
+
     tuc->entries.list = eina_list_append(tuc->entries.list, e);
     if (eina_error_get()) {
         ERR("List allocation failed");
@@ -827,15 +830,15 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t
 
 void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache *tuc)
 {
-    Ewk_Tile_Unused_Cache_Entry *itr;
+    void* item;
     Eina_List *l;
     int count = 0;
     printf("Cache of unused tiles: entries: %zu/%zu, memory: %zu/%zu\n",
            tuc->entries.count, tuc->entries.allocated,
            tuc->memory.used, tuc->memory.max);
 
-    EINA_LIST_FOREACH(tuc->entries.list, l, itr) {
-        const Ewk_Tile *t = itr->tile;
+    EINA_LIST_FOREACH(tuc->entries.list, l, item) {
+        const Ewk_Tile *t = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item)->tile;
         printf(" [%3lu,%3lu + %dx%d @ %0.3f]%c",
                t->col, t->row, t->w, t->h, t->zoom,
                t->visible ? '*': ' ');
