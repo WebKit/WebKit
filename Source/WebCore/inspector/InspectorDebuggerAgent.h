@@ -81,6 +81,7 @@ public:
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, PassRefPtr<InspectorObject> location);
 
+    void searchInContent(ErrorString*, const String& scriptId, const String& query, RefPtr<InspectorArray>*);
     void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
     void getScriptSource(ErrorString*, const String& scriptId, String* scriptSource);
     void schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data);

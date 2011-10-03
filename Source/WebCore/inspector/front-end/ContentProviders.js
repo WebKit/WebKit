@@ -46,6 +46,11 @@ WebInspector.ScriptContentProvider.prototype = {
             callback(this._mimeType, source);
         }
         this._script.requestSource(didRequestSource.bind(this));
+    },
+
+    searchInContent: function(query, callback)
+    {
+        this._script.searchInContent(query, callback);
     }
 }
 
@@ -75,6 +80,39 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
        }
        for (var i = 0; i < scripts.length; ++i)
            scripts[i].requestSource(didRequestSource.bind(this));
+   },
+
+   searchInContent: function(query, callback)
+   {
+       var results = {};
+       var scriptsLeft = this._scripts.length;
+
+       function maybeCallback()
+       {
+           if (!scriptsLeft) {
+               var result = [];
+               for (var i = 0; i < this._scripts.length; ++i)
+                   result = result.concat(results[this._scripts[i].scriptId]);
+               callback(result);
+           }
+       }
+
+       function searchCallback(script, searchMatches)
+       {
+           results[script.scriptId] = [];
+           for (var i = 0; i < searchMatches.length; ++i) {
+               var searchMatch = {};
+               searchMatch.lineNumber = searchMatches[i].lineNumber + script.lineOffset;
+               searchMatch.lineContent = searchMatches[i].lineContent;
+               results[script.scriptId].push(searchMatch);
+           }
+           scriptsLeft--;
+           maybeCallback.call(this);
+       }
+
+       maybeCallback();
+       for (var i = 0; i < this._scripts.length; ++i)
+           this._scripts[i].searchInContent(query, searchCallback.bind(this, this._scripts[i]));
    },
 
    _concatenateScriptsContent: function(scripts, sources)

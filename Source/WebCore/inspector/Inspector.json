@@ -1742,6 +1742,17 @@
                 "description": "Resumes JavaScript execution."
             },
             {
+                "name": "searchInContent",
+                "parameters": [
+                    { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to search in." },
+                    { "name": "query", "type": "string", "description": "String to search for."  }
+                ],
+                "returns": [
+                    { "name": "result", "type": "array", "items": { "$ref": "Page.SearchMatch" }, "description": "List of search matches." }
+                ],
+                "description": "Searches for given string in script content."
+            },
+            {
                 "name": "setScriptSource",
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to edit." },

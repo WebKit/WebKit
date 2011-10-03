@@ -1,3 +1,29 @@
+2011-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for backend search in script content.
+        https://bugs.webkit.org/show_bug.cgi?id=69015
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest):
+        * http/tests/inspector/resources-test.js:
+        (initialize_ResourceTest.InspectorTest.runAfterResourcesAreFinished):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.maybeCallback):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.addSniffer):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.resourceAddedToFrame):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.visit):
+        (initialize_ResourceTest):
+        * http/tests/inspector/search/resources/search-concatenated.html: Added.
+        * http/tests/inspector/search/search-in-concatenated-script-expected.txt: Added.
+        * http/tests/inspector/search/search-in-concatenated-script.html: Added.
+        * http/tests/inspector/search/search-in-resource.html:
+        * http/tests/inspector/search/search-in-script-expected.txt: Added.
+        * http/tests/inspector/search/search-in-script.html: Added.
+        * http/tests/inspector/search/search-test.js:
+        (initialize_SearchTest):
+
 2011-10-03  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         Unreviewed Qt gardening after r96404

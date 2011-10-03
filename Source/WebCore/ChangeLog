@@ -1,3 +1,28 @@
+2011-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for backend search in script content.
+        https://bugs.webkit.org/show_bug.cgi?id=69015
+
+        Reviewed by Pavel Feldman.
+
+        Tests: http/tests/inspector/search/search-in-concatenated-script.html
+               http/tests/inspector/search/search-in-script.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.ScriptContentProvider.prototype.requestContent):
+        (WebInspector.ScriptContentProvider.prototype.searchInContent):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent.maybeCallback):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent.searchCallback):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.requestSource):
+        (WebInspector.Script.prototype.searchInContent):
+
 2011-10-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move console message formatting from ConsoleView.js into ConsoleMessage.js
