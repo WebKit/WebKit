@@ -412,6 +412,7 @@ class StyleQueue(AbstractReviewQueue):
 
     def review_patch(self, patch):
         self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
+        self.run_webkit_patch(["apply-watchlist-local", patch.bug_id()])
         return True
 
     @classmethod
