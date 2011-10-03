@@ -1,3 +1,16 @@
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r94274): cloned text input loses value
+        https://bugs.webkit.org/show_bug.cgi?id=69095
+
+        Reviewed by Darin Adler.
+
+        Added a regression test that clones an input element with a dirty value.
+        The cloned input element should have the edited value.
+
+        * fast/forms/clone-input-with-dirty-value-expected.txt: Added.
+        * fast/forms/clone-input-with-dirty-value.html: Added.
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         Update results again now that Leopard has finally cycled.

@@ -1027,6 +1027,9 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
     m_isIndeterminate = sourceElement->m_isIndeterminate;
 
     HTMLTextFormControlElement::copyNonAttributeProperties(source);
+
+    setFormControlValueMatchesRenderer(false);
+    updateInnerTextValue();
 }
 
 String HTMLInputElement::value() const

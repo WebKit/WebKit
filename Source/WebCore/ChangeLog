@@ -1,5 +1,20 @@
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r94274): cloned text input loses value
+        https://bugs.webkit.org/show_bug.cgi?id=69095
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by copyNonAttributeProperties not updating inner element text after copying
+        m_valueIfDirty. Fixed the bug by calling updateInnerTextValue.
+
+        Test: fast/forms/clone-input-with-dirty-value.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Leopard build fix after r96530.
 
         * rendering/svg/RenderSVGResourcePattern.cpp:
