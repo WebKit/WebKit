@@ -1,3 +1,11 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        Update results to account for Windows Vista.
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+
 2011-10-03  Joseph Pecoraro  <joepeck@webkit.org>
 
         Web Inspector: rgb() with percentages shows wrong hex/hsl values
