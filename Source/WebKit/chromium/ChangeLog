@@ -1,3 +1,23 @@
+2011-10-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebWidget API for accessing the current WebCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=69181
+
+        Reviewed by Darin Fisher.
+
+        Add new WebWidgetClient::did(Activate|Deactivate)Compositor calls intended to replace
+        didActivateAccleratedCompositing(bool) so that the enable call can be parameterized.
+
+        Add a WebCompositor identifier parameter to didEnableAcceleratedCompositing that can be used on the compositor
+        thread to get access to a WebCompositor pointer.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::compositor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::compositor):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2011-10-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96481.

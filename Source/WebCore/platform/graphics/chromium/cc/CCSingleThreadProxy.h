@@ -83,7 +83,6 @@ public:
     DebugScopedSetImplThread()
     {
 #if !ASSERT_DISABLED
-        ASSERT(CCProxy::isMainThread());
         CCProxy::setImplThread(true);
 #endif
     }

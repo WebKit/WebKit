@@ -23,32 +23,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositor_h
-#define WebCompositor_h
+#include "config.h"
 
-#include "WebCommon.h"
+#include "WebCompositorImpl.h"
 
-namespace WebKit {
+#include "cc/CCProxy.h"
 
-class WebCompositorClient;
-class WebInputEvent;
-class WebThread;
+#include <gtest/gtest.h>
+#include <wtf/OwnPtr.h>
 
-// This represents the compositor associated with a WebWidget. All calls to the WebCompositor must
-// be made from the compositor thread.
-class WebCompositor {
-public:
-    // This must be called once with a non-null WebThread before any compositors attempt to initialize.
-    WEBKIT_EXPORT static void setThread(WebThread*);
-    WEBKIT_EXPORT static WebCompositor* fromIdentifier(int);
+using WebKit::WebCompositor;
+using WebKit::WebCompositorImpl;
 
-    virtual void setClient(WebCompositorClient*) = 0;
-    virtual void handleInputEvent(const WebInputEvent&) = 0;
+namespace {
 
-protected:
-    virtual ~WebCompositor() { }
-};
-
-} // namespace WebKit
-
+TEST(WebCompositorImpl, fromIdentifier)
+{
+#ifndef NDEBUG
+    // WebCompositor APIs can only be called from the compositor thread.
+    WebCore::CCProxy::setImplThread(true);
 #endif
+
+    // Before creating any WebCompositors, lookups for any value should fail and not crash.
+    EXPECT_EQ(0, WebCompositor::fromIdentifier(2));
+    EXPECT_EQ(0, WebCompositor::fromIdentifier(0));
+    EXPECT_EQ(0, WebCompositor::fromIdentifier(-1));
+
+    int compositorIdentifier = -1;
+    {
+#ifndef NDEBUG
+        WebCore::CCProxy::setImplThread(false);
+#endif
+        OwnPtr<WebCompositorImpl> comp = WebCompositorImpl::create();
+#ifndef NDEBUG
+        WebCore::CCProxy::setImplThread(true);
+#endif
+        compositorIdentifier = comp->identifier();
+        // The compositor we just created should be locatable.
+        EXPECT_EQ(comp.get(), WebCompositor::fromIdentifier(compositorIdentifier));
+
+        // But nothing else.
+        EXPECT_EQ(0, WebCompositor::fromIdentifier(comp->identifier() + 10));
+    }
+
+    // After the compositor is destroyed, its entry should be removed from the map.
+    EXPECT_EQ(0, WebCompositor::fromIdentifier(compositorIdentifier));
+}
+
+}

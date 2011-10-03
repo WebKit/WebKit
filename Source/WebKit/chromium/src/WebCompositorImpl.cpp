@@ -31,6 +31,7 @@
 #include "WebCompositorClient.h"
 #include "WebInputEvent.h"
 #include "cc/CCThreadProxy.h"
+#include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
 
@@ -42,23 +43,72 @@ void WebCompositor::setThread(WebThread* compositorThread)
     CCThreadProxy::setThread(CCThreadImpl::create(compositorThread).leakPtr());
 }
 
+int WebCompositorImpl::s_nextAvailableIdentifier = 1;
+
+// These data structures are always allocated from the main thread, but may
+// be accessed and mutated on the main or compositor thread.
+// s_compositors is deleted when it has no elements. s_compositorsLock is never
+// deleted.
+HashSet<WebCompositorImpl*>* WebCompositorImpl::s_compositors = 0;
+Mutex* WebCompositorImpl::s_compositorsLock = 0;
+
+WebCompositor* WebCompositor::fromIdentifier(int identifier)
+{
+    return WebCompositorImpl::fromIdentifier(identifier);
+}
+
+WebCompositor* WebCompositorImpl::fromIdentifier(int identifier)
+{
+    ASSERT(CCProxy::isImplThread());
+    if (!s_compositorsLock)
+        return 0;
+
+    MutexLocker lock(*s_compositorsLock);
+    if (!s_compositors)
+        return 0;
+
+    for (HashSet<WebCompositorImpl*>::iterator it = s_compositors->begin(); it != s_compositors->end(); ++it) {
+        if ((*it)->identifier() == identifier)
+            return *it;
+    }
+    return 0;
+}
+
 WebCompositorImpl::WebCompositorImpl()
     : m_client(0)
+    , m_identifier(s_nextAvailableIdentifier++)
 {
+    ASSERT(CCProxy::isMainThread());
+    if (!s_compositorsLock)
+        s_compositorsLock = new Mutex;
+    MutexLocker lock(*s_compositorsLock);
+    if (!s_compositors)
+        s_compositors = new HashSet<WebCompositorImpl*>;
+    s_compositors->add(this);
 }
 
 WebCompositorImpl::~WebCompositorImpl()
 {
+    ASSERT(s_compositorsLock);
+    MutexLocker lock(*s_compositorsLock);
+    ASSERT(s_compositors);
+    s_compositors->remove(this);
+    if (!s_compositors->size()) {
+        delete s_compositors;
+        s_compositors = 0;
+    }
 }
 
 void WebCompositorImpl::setClient(WebCompositorClient* client)
 {
+    ASSERT(CCProxy::isImplThread());
     ASSERT(client);
     m_client = client;
 }
 
 void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
 {
+    ASSERT(CCProxy::isImplThread());
     // FIXME: Do something interesting with the event here.
     m_client->didHandleInputEvent(false);
 }
