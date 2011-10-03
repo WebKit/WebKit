@@ -198,7 +198,7 @@ void InlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Layo
 
     LayoutPoint childPoint = paintOffset;
     if (parent()->renderer()->style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
-        childPoint = renderer()->containingBlock()->flipForWritingMode(toRenderBox(renderer()), childPoint, RenderBox::ParentToChildFlippingAdjustment);
+        childPoint = renderer()->containingBlock()->flipForWritingModeForChild(toRenderBox(renderer()), childPoint);
     
     // Paint all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1

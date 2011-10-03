@@ -405,8 +405,7 @@ public:
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
-    enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
-    LayoutPoint flipForWritingMode(const RenderBox* child, const LayoutPoint&, FlippingAdjustment) const;
+    LayoutPoint flipForWritingModeForChild(const RenderBox* child, const LayoutPoint&) const;
     int flipForWritingMode(int position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     IntPoint flipForWritingMode(const IntPoint&) const;
     LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;

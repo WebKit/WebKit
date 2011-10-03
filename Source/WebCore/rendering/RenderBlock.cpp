@@ -2457,7 +2457,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOf
             }
         }
 
-        LayoutPoint childPoint = flipForWritingMode(child, paintOffset, ParentToChildFlippingAdjustment);
+        LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);
         if (!child->hasSelfPaintingLayer() && !child->isFloating())
             child->paint(info, childPoint);
 
@@ -2583,13 +2583,13 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 }
 
-LayoutPoint RenderBlock::flipFloatForWritingMode(const FloatingObject* child, const LayoutPoint& point) const
+LayoutPoint RenderBlock::flipFloatForWritingModeForChild(const FloatingObject* child, const LayoutPoint& point) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return point;
     
-    // This is similar to the ParentToChildFlippingAdjustment in RenderBox::flipForWritingMode.  We have to subtract out our left/top offsets twice, since
-    // it's going to get added back in.  We hide this complication here so that the calling code looks normal for the unflipped
+    // This is similar to RenderBox::flipForWritingModeForChild. We have to subtract out our left/top offsets twice, since
+    // it's going to get added back in. We hide this complication here so that the calling code looks normal for the unflipped
     // case.
     if (isHorizontalWritingMode())
         return LayoutPoint(point.x(), point.y() + height() - child->renderer()->height() - 2 * yPositionForFloatIncludingMargin(child));
@@ -2609,7 +2609,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-            LayoutPoint childPoint = flipFloatForWritingMode(r, LayoutPoint(paintOffset.x() + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), paintOffset.y() + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
+            LayoutPoint childPoint = flipFloatForWritingModeForChild(r, LayoutPoint(paintOffset.x() + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), paintOffset.y() + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
             r->m_renderer->paint(currentPaintInfo, childPoint);
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
@@ -4137,7 +4137,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
             LayoutUnit xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
             LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
-            LayoutPoint childPoint = flipFloatForWritingMode(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
+            LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
                 updateHitTestResult(result, pointInContainer - toLayoutSize(childPoint));
                 return true;
@@ -4206,7 +4206,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-            LayoutPoint childPoint = flipForWritingMode(child, accumulatedOffset, ParentToChildFlippingAdjustment);
+            LayoutPoint childPoint = flipForWritingModeForChild(child, accumulatedOffset);
             if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint, childHitTest))
                 return true;
         }

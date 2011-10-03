@@ -1,3 +1,40 @@
+2011-09-27  Ojan Vafai  <ojan@chromium.org>
+
+        remove dead code in flipForWritingMode
+        https://bugs.webkit.org/show_bug.cgi?id=68948
+
+        Reviewed by Hajime Morita.
+
+        ChildToParentFlippingAdjustment is never used, so the third argument
+        to flipForWritingMode always has the same value.
+
+        In addition, renamed to flipForWritingModeForChild to be more clear
+        that it's operating on the child and renamed flipFloatForWritingMode to match.
+
+        No new tests. This is just a code cleanup. No functional changes. 
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::flipFloatForWritingModeForChild):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::flipForWritingModeForChild):
+        (WebCore::RenderBox::topLeftLocation):
+        * rendering/RenderBox.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintCell):
+        (WebCore::RenderTableSection::nodeAtPoint):
+
 2011-10-03  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, rolling out r96526.

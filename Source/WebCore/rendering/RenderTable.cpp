@@ -522,7 +522,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
-            LayoutPoint childPoint = flipForWritingMode(toRenderBox(child), paintOffset, ParentToChildFlippingAdjustment);
+            LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), paintOffset);
             child->paint(info, childPoint);
         }
     }
@@ -537,7 +537,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             m_currentBorder = &m_collapsedBorders[i];
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection()) {
-                    LayoutPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);
+                    LayoutPoint childPoint = flipForWritingModeForChild(toRenderTableSection(child), paintOffset);
                     child->paint(info, childPoint);
                 }
         }
@@ -1198,7 +1198,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (!hasOverflowClip() || overflowClipRect(adjustedLocation).intersects(result.rectForPoint(pointInContainer))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
-                LayoutPoint childPoint = flipForWritingMode(toRenderBox(child), adjustedLocation, ParentToChildFlippingAdjustment);
+                LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);
                 if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(pointInContainer - childPoint));
                     return true;

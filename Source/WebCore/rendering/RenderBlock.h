@@ -507,7 +507,7 @@ private:
 #endif
     };
 
-    LayoutPoint flipFloatForWritingMode(const FloatingObject*, const LayoutPoint&) const;
+    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&) const;
 
     LayoutUnit logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
     LayoutUnit logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }

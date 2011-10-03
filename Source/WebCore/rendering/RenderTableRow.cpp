@@ -204,7 +204,7 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
         if (child->isTableCell() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-            LayoutPoint cellPoint = flipForWritingMode(toRenderTableCell(child), accumulatedOffset, ParentToChildFlippingAdjustment);
+            LayoutPoint cellPoint = flipForWritingModeForChild(toRenderTableCell(child), accumulatedOffset);
             if (child->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
                 updateHitTestResult(result, pointInContainer - toLayoutSize(cellPoint));
                 return true;

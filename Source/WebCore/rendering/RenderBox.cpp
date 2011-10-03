@@ -3693,7 +3693,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
     return rect;
 }
 
-LayoutPoint RenderBox::flipForWritingMode(const RenderBox* child, const LayoutPoint& point, FlippingAdjustment adjustment) const
+LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox* child, const LayoutPoint& point) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return point;
@@ -3701,8 +3701,8 @@ LayoutPoint RenderBox::flipForWritingMode(const RenderBox* child, const LayoutPo
     // The child is going to add in its x() and y(), so we have to make sure it ends up in
     // the right place.
     if (isHorizontalWritingMode())
-        return LayoutPoint(point.x(), point.y() + height() - child->height() - child->y() - (adjustment == ParentToChildFlippingAdjustment ? child->y() : 0));
-    return LayoutPoint(point.x() + width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), point.y());
+        return LayoutPoint(point.x(), point.y() + height() - child->height() - (2 * child->y()));
+    return LayoutPoint(point.x() + width() - child->width() - (2 * child->x()), point.y());
 }
 
 void RenderBox::flipForWritingMode(IntRect& rect) const
@@ -3767,7 +3767,7 @@ LayoutPoint RenderBox::topLeftLocation() const
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
-    return containerBlock->flipForWritingMode(this, location(), RenderBox::ParentToChildFlippingAdjustment);
+    return containerBlock->flipForWritingModeForChild(this, location());
 }
 
 LayoutSize RenderBox::topLeftLocationOffset() const

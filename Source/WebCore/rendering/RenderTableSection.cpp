@@ -960,7 +960,7 @@ static inline bool compareCellPositionsWithOverflowingCells(RenderTableCell* ele
 
 void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    LayoutPoint cellPoint = flipForWritingMode(cell, paintOffset, ParentToChildFlippingAdjustment);
+    LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
     PaintPhase paintPhase = paintInfo.phase;
     RenderTableRow* row = toRenderTableRow(cell->parent());
 
@@ -1219,7 +1219,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-                LayoutPoint childPoint = flipForWritingMode(toRenderBox(child), adjustedLocation, ParentToChildFlippingAdjustment);
+                LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);
                 if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(pointInContainer - childPoint));
                     return true;
@@ -1263,7 +1263,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     for (int i = current.cells.size() - 1; i >= 0; --i) {
         RenderTableCell* cell = current.cells[i];
-        LayoutPoint cellPoint = flipForWritingMode(cell, adjustedLocation, ParentToChildFlippingAdjustment);
+        LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
         if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
             updateHitTestResult(result, toLayoutPoint(pointInContainer - cellPoint));
             return true;
