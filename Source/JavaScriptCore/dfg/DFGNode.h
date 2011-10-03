@@ -26,6 +26,7 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
+#include "DFGStructureSet.h"
 #include <wtf/BoundsCheckedPointer.h>
 #include <wtf/Platform.h>
 #include <wtf/UnionFind.h>
@@ -152,6 +153,19 @@ private:
 
     VirtualRegister m_local;
     PredictedType m_prediction;
+};
+
+struct StructureTransitionData {
+    Structure* previousStructure;
+    Structure* newStructure;
+    
+    StructureTransitionData() { }
+    
+    StructureTransitionData(Structure* previousStructure, Structure* newStructure)
+        : previousStructure(previousStructure)
+        , newStructure(newStructure)
+    {
+    }
 };
 
 typedef unsigned ArithNodeFlags;
@@ -784,14 +798,26 @@ struct Node {
         return m_opInfo2;
     }
     
-    bool hasStructure()
+    bool hasStructureTransitionData()
     {
-        return op == CheckStructure || op == PutStructure;
+        return op == PutStructure;
     }
     
-    Structure* structure()
+    StructureTransitionData& structureTransitionData()
     {
-        return reinterpret_cast<Structure*>(m_opInfo);
+        ASSERT(hasStructureTransitionData());
+        return *reinterpret_cast<StructureTransitionData*>(m_opInfo);
+    }
+    
+    bool hasStructureSet()
+    {
+        return op == CheckStructure;
+    }
+    
+    StructureSet& structureSet()
+    {
+        ASSERT(hasStructureSet());
+        return *reinterpret_cast<StructureSet*>(m_opInfo);
     }
     
     bool hasStorageAccessData()

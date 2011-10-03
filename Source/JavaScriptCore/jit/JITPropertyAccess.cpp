@@ -702,6 +702,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
 {
     Jump failureCase = checkStructure(regT0, structure);
     bool needsStubLink = false;
+    bool isDirect = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
         compileGetDirectOffset(regT0, regT1, cachedOffset);
@@ -718,8 +719,10 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         stubCall.addArgument(TrustedImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
-    } else
+    } else {
+        isDirect = true;
         compileGetDirectOffset(regT0, regT0, cachedOffset);
+    }
     Jump success = jump();
 
     LinkBuffer patchBuffer(*m_globalData, this);
@@ -743,7 +746,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
 
     MacroAssemblerCodeRef stubCode = patchBuffer.finalizeCode();
 
-    polymorphicStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure);
+    polymorphicStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure, isDirect);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
@@ -766,6 +769,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     // Checks out okay!
     bool needsStubLink = false;
+    bool isDirect = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
         compileGetDirectOffset(protoObject, regT1, cachedOffset);
@@ -782,8 +786,10 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
         stubCall.addArgument(TrustedImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
-    } else
+    } else {
+        isDirect = true;
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    }
 
     Jump success = jump();
 
@@ -805,7 +811,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
 
     MacroAssemblerCodeRef stubCode = patchBuffer.finalizeCode();
-    prototypeStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure, prototypeStructure);
+    prototypeStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure, prototypeStructure, isDirect);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
@@ -833,6 +839,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     ASSERT(protoObject);
     
     bool needsStubLink = false;
+    bool isDirect = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
         compileGetDirectOffset(protoObject, regT1, cachedOffset);
@@ -849,8 +856,10 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
         stubCall.addArgument(TrustedImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
-    } else
+    } else {
+        isDirect = true;
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    }
     Jump success = jump();
 
     LinkBuffer patchBuffer(*m_globalData, this);
@@ -873,7 +882,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     CodeRef stubRoutine = patchBuffer.finalizeCode();
 
     // Track the stub we have created so that it will be deleted later.
-    prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), stubRoutine, structure, chain);
+    prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), stubRoutine, structure, chain, isDirect);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);

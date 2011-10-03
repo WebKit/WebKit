@@ -134,6 +134,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
+	Source/JavaScriptCore/dfg/DFGStructureSet.h \
 	Source/JavaScriptCore/heap/AllocationSpace.cpp \
 	Source/JavaScriptCore/heap/AllocationSpace.h \
 	Source/JavaScriptCore/heap/CardSet.h \

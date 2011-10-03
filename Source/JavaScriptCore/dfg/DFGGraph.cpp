@@ -149,8 +149,14 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
         hasPrinted = true;
     }
-    if (node.hasStructure()) {
-        printf("%sstruct(%p)", hasPrinted ? ", " : "", node.structure());
+    if (node.hasStructureSet()) {
+        for (size_t i = 0; i < node.structureSet().size(); ++i) {
+            printf("%sstruct(%p)", hasPrinted ? ", " : "", node.structureSet()[i]);
+            hasPrinted = true;
+        }
+    }
+    if (node.hasStructureTransitionData()) {
+        printf("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
         hasPrinted = true;
     }
     if (node.hasStorageAccessData()) {

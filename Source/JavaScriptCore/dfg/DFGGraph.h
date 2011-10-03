@@ -329,6 +329,19 @@ public:
 #endif
 
     void predictArgumentTypes(ExecState*, CodeBlock*);
+    
+    StructureSet* addStructureSet(const StructureSet& structureSet)
+    {
+        ASSERT(structureSet.size());
+        m_structureSet.append(structureSet);
+        return &m_structureSet.last();
+    }
+    
+    StructureTransitionData* addStructureTransitionData(const StructureTransitionData& structureTransitionData)
+    {
+        m_structureTransitionData.append(structureTransitionData);
+        return &m_structureTransitionData.last();
+    }
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;
@@ -337,6 +350,8 @@ public:
     Vector<ResolveGlobalData> m_resolveGlobalData;
     Vector<NodeIndex, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
+    SegmentedVector<StructureSet, 16> m_structureSet;
+    SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     unsigned m_preservedVars;
     unsigned m_localVars;
     unsigned m_parameterSlots;

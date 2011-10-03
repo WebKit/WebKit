@@ -1013,7 +1013,7 @@ private:
         return NoNode;
     }
     
-    bool checkStructureLoadElimination(Structure* structure, NodeIndex child1)
+    bool checkStructureLoadElimination(const StructureSet& structureSet, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
@@ -1021,15 +1021,17 @@ private:
             switch (node.op) {
             case CheckStructure:
                 if (node.child1() == child1
-                    && node.structure() == structure)
+                    && structureSet.isSupersetOf(node.structureSet()))
                     return true;
                 break;
                 
             case PutStructure:
                 if (node.child1() == child1
-                    && node.structure() == structure)
+                    && structureSet.contains(node.structureTransitionData().newStructure))
                     return true;
-                return false;
+                if (structureSet.contains(node.structureTransitionData().previousStructure))
+                    return false;
+                break;
                 
             case PutByOffset:
                 // Setting a property cannot change the structure.
@@ -1293,7 +1295,7 @@ private:
             break;
             
         case CheckStructure:
-            if (checkStructureLoadElimination(node.structure(), node.child1()))
+            if (checkStructureLoadElimination(node.structureSet(), node.child1()))
                 eliminate();
             break;
             

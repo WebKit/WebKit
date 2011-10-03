@@ -1,3 +1,74 @@
+2011-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should speculate more aggressively on obvious cases on
+        polymorphic get_by_id
+        https://bugs.webkit.org/show_bug.cgi?id=69235
+
+        Reviewed by Oliver Hunt.
+        
+        This implements trivial polymorphic get_by_id. It also fixes
+        problems in the CSE for CheckStructure in the put_by_id
+        transition case.
+        
+        Doing this required knowing whether a polymorphic get_by_id stub
+        was doing a direct access rather than a call of some kind.
+        
+        Slight speed-up on Kraken and SunSpider. 0.5% speed-up in the
+        scaled mean of all benchmarks.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::cellConstant):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addStructureSet):
+        (JSC::DFG::Graph::addStructureTransitionData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::StructureTransitionData::StructureTransitionData):
+        (JSC::DFG::Node::hasStructureTransitionData):
+        (JSC::DFG::Node::structureTransitionData):
+        (JSC::DFG::Node::hasStructureSet):
+        (JSC::DFG::Node::structureSet):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::checkStructureLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::tryBuildGetByIDProtoList):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureSet.h: Added.
+        (JSC::DFG::StructureSet::StructureSet):
+        (JSC::DFG::StructureSet::add):
+        (JSC::DFG::StructureSet::addAll):
+        (JSC::DFG::StructureSet::remove):
+        (JSC::DFG::StructureSet::contains):
+        (JSC::DFG::StructureSet::isSubsetOf):
+        (JSC::DFG::StructureSet::isSupersetOf):
+        (JSC::DFG::StructureSet::size):
+        (JSC::DFG::StructureSet::at):
+        (JSC::DFG::StructureSet::operator[]):
+        (JSC::DFG::StructureSet::last):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::getPolymorphicAccessStructureListSlot):
+
 2011-10-03  Jer Noble  <jer.noble@apple.com>
 
         Enable WEB_AUDIO by default in the WebKit/mac port.

@@ -415,6 +415,8 @@ private:
         m_constants.append(ConstantRecord());
         ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         
+        m_cellConstants.add(cell, m_codeBlock->numberOfConstantRegisters() - 1);
+        
         return getJSConstant(m_codeBlock->numberOfConstantRegisters() - 1);
     }
     
@@ -1160,29 +1162,74 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = currentInstruction[3].u.operand;
             
+            Identifier identifier = m_codeBlock->identifier(identifierNumber);
             StructureStubInfo& stubInfo = m_profiledBlock->getStubInfo(m_currentIndex);
             
-            NodeIndex getById = NoNode;
-            if (stubInfo.seen && stubInfo.accessType == access_get_by_id_self) {
-                Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
-                Identifier identifier = m_codeBlock->identifier(identifierNumber);
-                size_t offset = structure->get(*m_globalData, identifier);
-                
-                if (offset != notFound) {
-                    addToGraph(CheckStructure, OpInfo(structure), base);
-                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base));
+            size_t offset = notFound;
+            StructureSet structureSet;
+            if (stubInfo.seen) {
+                switch (stubInfo.accessType) {
+                case access_get_by_id_self: {
+                    Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
+                    offset = structure->get(*m_globalData, identifier);
                     
-                    StorageAccessData storageAccessData;
-                    storageAccessData.offset = offset;
-                    storageAccessData.identifierNumber = identifierNumber;
-                    m_graph.m_storageAccessData.append(storageAccessData);
+                    if (offset != notFound)
+                        structureSet.add(structure);
+
+                    if (offset != notFound)
+                        ASSERT(structureSet.size());
+                    break;
+                }
+                    
+                case access_get_by_id_self_list: {
+                    PolymorphicAccessStructureList* list = stubInfo.u.getByIdProtoList.structureList;
+                    unsigned size = stubInfo.u.getByIdProtoList.listSize;
+                    for (unsigned i = 0; i < size; ++i) {
+                        if (!list->list[i].isDirect) {
+                            offset = notFound;
+                            break;
+                        }
+                        
+                        Structure* structure = list->list[i].base.get();
+                        size_t myOffset = structure->get(*m_globalData, identifier);
+                    
+                        if (myOffset == notFound) {
+                            offset = notFound;
+                            break;
+                        }
+                    
+                        if (!i)
+                            offset = myOffset;
+                        else if (offset != myOffset) {
+                            offset = notFound;
+                            break;
+                        }
+                    
+                        structureSet.add(structure);
+                    }
+                    
+                    if (offset != notFound)
+                        ASSERT(structureSet.size());
+                    break;
+                }
+                    
+                default:
+                    ASSERT(offset == notFound);
+                    break;
                 }
             }
-            
-            if (getById == NoNode)
-                getById = addToGraph(GetById, OpInfo(identifierNumber), OpInfo(prediction), base);
-            
-            set(currentInstruction[1].u.operand, getById);
+                        
+            if (offset != notFound) {
+                ASSERT(structureSet.size());
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), base);
+                set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base)));
+                
+                StorageAccessData storageAccessData;
+                storageAccessData.offset = offset;
+                storageAccessData.identifierNumber = identifierNumber;
+                m_graph.m_storageAccessData.append(storageAccessData);
+            } else
+                set(currentInstruction[1].u.operand, addToGraph(GetById, OpInfo(identifierNumber), OpInfo(prediction), base));
 
             NEXT_OPCODE(op_get_by_id);
         }
@@ -1207,7 +1254,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     size_t offset = structure->get(*m_globalData, identifier);
                     
                     if (offset != notFound) {
-                        addToGraph(CheckStructure, OpInfo(structure), base);
+                        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), base);
                         addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
                         
                         StorageAccessData storageAccessData;
@@ -1233,17 +1280,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     size_t offset = newStructure->get(*m_globalData, identifier);
                     
                     if (offset != notFound) {
-                        addToGraph(CheckStructure, OpInfo(previousStructure), base);
+                        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(previousStructure)), base);
                         if (!direct) {
                             for (WriteBarrier<Structure>* it = structureChain->head(); *it; ++it) {
                                 JSValue prototype = (*it)->storedPrototype();
                                 if (prototype.isNull())
                                     continue;
                                 ASSERT(prototype.isCell());
-                                addToGraph(CheckStructure, OpInfo(prototype.asCell()->structure()), cellConstant(prototype.asCell()));
+                                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(prototype.asCell()->structure())), cellConstant(prototype.asCell()));
                             }
                         }
-                        addToGraph(PutStructure, OpInfo(newStructure), base);
+                        addToGraph(PutStructure, OpInfo(m_graph.addStructureTransitionData(StructureTransitionData(previousStructure, newStructure))), base);
                         
                         addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
                         

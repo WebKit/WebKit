@@ -1734,9 +1734,24 @@ void SpeculativeJIT::compile(Node& node)
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
         
-        GPRReg baseGPR = base.gpr();
+        ASSERT(node.structureSet().size());
         
-        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structure())));
+        if (node.structureSet().size() == 1)
+            speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(base.gpr(), JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structureSet()[0])));
+        else {
+            GPRTemporary structure(this);
+            
+            m_jit.loadPtr(JITCompiler::Address(base.gpr(), JSCell::structureOffset()), structure.gpr());
+            
+            JITCompiler::JumpList done;
+            
+            for (size_t i = 0; i < node.structureSet().size() - 1; ++i)
+                done.append(m_jit.branchPtr(JITCompiler::Equal, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet()[i])));
+            
+            speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet().last())));
+            
+            done.link(&m_jit);
+        }
         
         noResult(m_compileIndex);
         break;
@@ -1748,10 +1763,10 @@ void SpeculativeJIT::compile(Node& node)
         
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
         // Must always emit this write barrier as the structure transition itself requires it
-        writeBarrier(baseGPR, node.structure(), WriteBarrierForGenericAccess);
+        writeBarrier(baseGPR, node.structureTransitionData().newStructure, WriteBarrierForGenericAccess);
 #endif
         
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node.structure()), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node.structureTransitionData().newStructure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
         
         noResult(m_compileIndex);
         break;
