@@ -1,3 +1,19 @@
+2011-10-03  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Add DumpHistoryItem.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=63992
+
+        Reviewed by Antonio Gomes.
+
+        This is the code responsible for dumping the back and forward history
+        list.
+
+        * DumpRenderTree/efl/DumpHistoryItem.cpp: Added.
+        (dumpHistoryItem):
+        (dumpBackForwardListForWebView):
+        (dumpBackForwardListForWebViews):
+        * DumpRenderTree/efl/DumpHistoryItem.h: Added.
+
 2011-10-03  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2][Mac] WebKit2 does not build on mac after merge of Qt5 refactor branch.
