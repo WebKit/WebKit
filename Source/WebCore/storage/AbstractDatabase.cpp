@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,9 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+static const char versionKey[] = "WebKitDatabaseVersionKey";
+static const char infoTableName[] = "__WebKitDatabaseInfoTable__";
 
 static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
@@ -96,16 +99,15 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
 static Mutex& guidMutex()
 {
-    // Note: We don't have to use AtomicallyInitializedStatic here because
-    // this function is called once in the constructor on the main thread
-    // before any other threads that call this function are used.
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
     return mutex;
 }
 
 typedef HashMap<int, String> GuidVersionMap;
 static GuidVersionMap& guidToVersionMap()
 {
+    // Ensure the the mutex is locked.
+    ASSERT(!guidMutex().tryLock());
     DEFINE_STATIC_LOCAL(GuidVersionMap, map, ());
     return map;
 }
@@ -129,19 +131,19 @@ static inline void updateGuidVersionMap(int guid, String newVersion)
 typedef HashMap<int, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
 static GuidDatabaseMap& guidToDatabaseMap()
 {
+    // Ensure the the mutex is locked.
+    ASSERT(!guidMutex().tryLock());
     DEFINE_STATIC_LOCAL(GuidDatabaseMap, map, ());
     return map;
 }
 
 static int guidForOriginAndName(const String& origin, const String& name)
 {
+    // Ensure the the mutex is locked.
+    ASSERT(!guidMutex().tryLock());
+
     String stringID = origin + "/" + name;
 
-    // Note: We don't have to use AtomicallyInitializedStatic here because
-    // this function is called once in the constructor on the main thread
-    // before any other threads that call this function are used.
-    DEFINE_STATIC_LOCAL(Mutex, stringIdentifierMutex, ());
-    MutexLocker locker(stringIdentifierMutex);
     typedef HashMap<String, int> IDGuidMap;
     DEFINE_STATIC_LOCAL(IDGuidMap, stringIdentifierToGUIDMap, ());
     int guid = stringIdentifierToGUIDMap.get(stringID);
@@ -167,10 +169,9 @@ void AbstractDatabase::setIsAvailable(bool available)
 }
 
 // static
-const String& AbstractDatabase::databaseInfoTableName()
+const char* AbstractDatabase::databaseInfoTableName()
 {
-    DEFINE_STATIC_LOCAL(String, name, ("__WebKitDatabaseInfoTable__"));
-    return name;
+    return infoTableName;
 }
 
 AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
@@ -187,15 +188,14 @@ AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String
     ASSERT(context->isContextThread());
     m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin();
 
-    m_databaseAuthorizer = DatabaseAuthorizer::create(databaseInfoTableName());
+    m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);
 
     if (m_name.isNull())
         m_name = "";
 
-    m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
     {
         MutexLocker locker(guidMutex());
-
+        m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
         HashSet<AbstractDatabase*>* hashSet = guidToDatabaseMap().get(m_guid);
         if (!hashSet) {
             hashSet = new HashSet<AbstractDatabase*>;
@@ -264,15 +264,15 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
         GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGuidVersionMap()).
-            currentVersion = entry->second.isNull() ? String("") : entry->second;
+            currentVersion = entry->second.isNull() ? String("") : entry->second.threadsafeCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
 
 #if PLATFORM(CHROMIUM)
             // Note: In multi-process browsers the cached value may be inaccurate, but
             // we cannot read the actual version from the database without potentially
             // inducing a form of deadlock, a busytimeout error when trying to
-            // access the database. So we'll use the cached value if we're able to read
-            // the value without waiting, and otherwise use the cached value (which may be off).
+            // access the database. So we'll use the cached value if we're unable to read
+            // the value from the database file without waiting.
             // FIXME: Add an async openDatabase method to the DatabaseAPI.
             const int noSqliteBusyWaitTime = 0;
             m_sqliteDatabase.setBusyTimeout(noSqliteBusyWaitTime);
@@ -295,11 +295,12 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
                 return false;
             }
 
-            if (!m_sqliteDatabase.tableExists(databaseInfoTableName())) {
+            String tableName(infoTableName);
+            if (!m_sqliteDatabase.tableExists(tableName)) {
                 m_new = true;
 
-                if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-                    LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
+                if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+                    LOG_ERROR("Unable to create table %s in database %s", infoTableName, databaseDebugName().ascii().data());
                     ec = INVALID_STATE_ERR;
                     transaction.rollback();
                     m_sqliteDatabase.close();
@@ -390,20 +391,13 @@ String AbstractDatabase::fileName() const
     return m_filename.threadsafeCopy();
 }
 
-// static
-const String& AbstractDatabase::databaseVersionKey()
-{
-    DEFINE_STATIC_LOCAL(String, key, ("WebKitDatabaseVersionKey"));
-    return key;
-}
-
 bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    DEFINE_STATIC_LOCAL(String, getVersionQuery, ("SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';"));
+    String query(String("SELECT value FROM ") + infoTableName +  " WHERE key = '" + versionKey + "';");
 
     m_databaseAuthorizer->disable();
 
-    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.threadsafeCopy(), version);
+    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, query, version);
     if (result) {
         if (shouldCacheVersion)
             setCachedVersion(version);
@@ -419,16 +413,16 @@ bool AbstractDatabase::setVersionInDatabase(const String& version, bool shouldCa
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    DEFINE_STATIC_LOCAL(String, setVersionQuery, ("INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);"));
+    String query(String("INSERT INTO ") + infoTableName +  " (key, value) VALUES ('" + versionKey + "', ?);");
 
     m_databaseAuthorizer->disable();
 
-    bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.threadsafeCopy(), version);
+    bool result = setTextValueInDatabase(m_sqliteDatabase, query, version);
     if (result) {
         if (shouldCacheVersion)
             setCachedVersion(version);
     } else
-        LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), setVersionQuery.ascii().data());
+        LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), query.ascii().data());
 
     m_databaseAuthorizer->enable();
 

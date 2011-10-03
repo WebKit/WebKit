@@ -1,3 +1,31 @@
+2011-10-03  Michael Nordman  <michaeln@google.com>
+
+        A little more WebSQLDatabase thread safety.
+        https://bugs.webkit.org/show_bug.cgi?id=69277
+
+        - switch to using AtomicallyInitializedStatic where appropiate
+        - avoid using some Strings across threads
+
+        Reviewed by David Levin.
+
+        Existing tests apply.
+
+        * storage/AbstractDatabase.cpp:
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::guidForOriginAndName):
+        (WebCore::AbstractDatabase::databaseInfoTableName):
+        (WebCore::AbstractDatabase::AbstractDatabase):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::getVersionFromDatabase):
+        (WebCore::AbstractDatabase::setVersionInDatabase):
+        * storage/AbstractDatabase.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::tracker):
+        * storage/chromium/QuotaTracker.cpp:
+        (WebCore::QuotaTracker::instance):
+
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace m_firstNodeInserted and m_lastLeafInserted in ReplaceSelectionCommand by positions
