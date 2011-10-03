@@ -117,6 +117,7 @@ private:
     {
         bool success = initialize();
         ASSERT(success);
+        UNUSED_PARAM(success);
     }
 
     TestHooks* m_testHooks;
