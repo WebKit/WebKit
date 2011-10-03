@@ -631,10 +631,7 @@ WebInspector.ElementsPanel.prototype = {
                     break;
 
                 case Node.TEXT_NODE:
-                    if (current.isWhitespace())
-                        crumbTitle = WebInspector.UIString("(whitespace)");
-                    else
-                        crumbTitle = WebInspector.UIString("(text)");
+                    crumbTitle = WebInspector.UIString("(text)");
                     break
 
                 case Node.COMMENT_NODE:

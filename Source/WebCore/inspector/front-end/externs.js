@@ -69,3 +69,5 @@ JSON.parse = function(str) {}
 JSON.stringify = function(str) {}
 
 Element.prototype.scrollIntoViewIfNeeded = function() {}
+
+Array.prototype.remove = function(obj) {}

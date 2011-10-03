@@ -26,6 +26,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  * @param {Element=} element
  */
 WebInspector.View = function(element)
@@ -68,6 +69,9 @@ WebInspector.View.prototype = {
         this.element.addStyleClass("visible");
     },
 
+    /**
+     * @param {Element=} parentElement
+     */
     show: function(parentElement)
     {
         this._visible = true;

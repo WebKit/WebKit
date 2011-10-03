@@ -34,32 +34,21 @@ python Source/WebCore/inspector/generate-protocol-externs -o Source/WebCore/insp
 java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warning_level VERBOSE --language_in ECMASCRIPT5 --accept_const_keyword \
     --externs Source/WebCore/inspector/front-end/externs.js \
     --externs Source/WebCore/inspector/front-end/protocol-externs.js \
-    --module jsmodule_util:2 \
+    --module jsmodule_core:2 \
         --js Source/WebCore/inspector/front-end/utilities.js \
         --js Source/WebCore/inspector/front-end/treeoutline.js \
-    --module jsmodule_host:1 \
-        --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_common:4:jsmodule_util,jsmodule_host \
-        --js Source/WebCore/inspector/front-end/BinarySearch.js \
-        --js Source/WebCore/inspector/front-end/Object.js \
+    --module jsmodule_env:3 \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:15:jsmodule_common,jsmodule_host \
-        --js Source/WebCore/inspector/front-end/DebuggerModel.js \
-        --js Source/WebCore/inspector/front-end/BreakpointManager.js \
-        --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
-        --js Source/WebCore/inspector/front-end/ConsoleModel.js \
-        --js Source/WebCore/inspector/front-end/DebuggerPresentationModel.js \
-        --js Source/WebCore/inspector/front-end/CookieParser.js \
+        --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
+    --module jsmodule_sdk:7:jsmodule_core,jsmodule_env \
+        --js Source/WebCore/inspector/front-end/BinarySearch.js \
         --js Source/WebCore/inspector/front-end/DOMAgent.js \
-        --js Source/WebCore/inspector/front-end/NetworkManager.js \
+        --js Source/WebCore/inspector/front-end/DebuggerModel.js \
+        --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Script.js \
-        --js Source/WebCore/inspector/front-end/ScriptFormatter.js \
-        --js Source/WebCore/inspector/front-end/SourceFile.js \
         --js Source/WebCore/inspector/front-end/RemoteObject.js \
-        --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/ResourceCategory.js \
-        --js Source/WebCore/inspector/front-end/UISourceCode.js \
     --module jsmodule_misc:10:jsmodule_sdk \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \

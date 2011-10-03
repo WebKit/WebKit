@@ -118,12 +118,29 @@
                 "type": "object",
                 "description": "Search result for resource.",
                 "properties": [
-	                { "name": "url", "type": "string", "description": "Resource URL." },
+                    { "name": "url", "type": "string", "description": "Resource URL." },
                     { "name": "frameId", "type": "string", "description": "Resource frame id." },
                     { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." }
                 ],
                 "hidden": true
-            }
+            },
+            {
+                "id": "Cookie",
+                "type": "object",
+                "description": "Cookie object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Cookie name." },
+                    { "name": "value", "type": "string", "description": "Cookie value." },
+                    { "name": "domain", "type": "string", "description": "Cookie domain." },
+                    { "name": "path", "type": "string", "description": "Cookie path." },
+                    { "name": "expires", "type": "integer", "description": "Cookie expires." },
+                    { "name": "size", "type": "integer", "description": "Cookie size." },
+                    { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                    { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                    { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
+                ],
+                "hidden": true
+            },
         ],
         "commands": [
             {
@@ -774,7 +791,7 @@
                 "parameters": [
                     { "name": "transactionId", "type": "integer" },
                     { "name": "columnNames", "type": "array", "items": { "type": "string" } },
-                    { "name": "values", "type": "array", "items": { "type": "string or number" }}
+                    { "name": "values", "type": "array", "items": { "type": "any" }}
                 ]
             },
             {
@@ -789,7 +806,19 @@
     {
         "domain": "DOMStorage",
         "hidden": true,
-        "types": [],
+        "types": [
+            {
+                "id": "Entry",
+                "type": "object",
+                "description": "DOM Storage entry.",
+                "hidden": true,
+                "properties": [
+                    { "name": "host", "type": "string", "description": "Domain name." },
+                    { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
+                    { "name": "id", "type": "number", "description": "Entry id for further reference." }
+                ]
+            },
+        ],
         "commands": [
             {
                 "name": "enable",
@@ -805,7 +834,7 @@
                     { "name": "storageId", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "entries", "type": "array", "items": { "$ref": "DOMStorageEntry"} }
+                    { "name": "entries", "type": "array", "items": { "$ref": "Entry"} }
                 ]
             },
             {

@@ -47,6 +47,7 @@ json_api = eval(json_string)["domains"]
 output_file = open(output_path, "w")
 
 type_traits = {
+    "any": "*",
     "string": "string",
     "integer": "number",
     "number": "number",
@@ -65,12 +66,15 @@ def full_qualified_type_id(domain_name, type_id):
 
 def param_type(domain_name, param):
     if "type" in param:
-        return type_traits[param["type"]]
+        if param["type"] == "array":
+            items = param["items"]
+            return "Array.<%s>" % param_type(domain_name, items)
+        else:
+            return type_traits[param["type"]]
     if "$ref" in param:
         type_id = full_qualified_type_id(domain_name, param["$ref"])
         if type_id in ref_types:
-            ref_type = ref_types[type_id]
-            return type_traits[ref_type["type"]]
+            return ref_types[type_id]
         else:
             print "Type not found: " + type_id
             return "!! Type not found: " + type_id
@@ -80,11 +84,27 @@ for domain in json_api:
     if "types" in domain:
         for type in domain["types"]:
             type_id = full_qualified_type_id(domain_name, type["id"])
-            ref_types[type_id] = type;
+            ref_types[type_id] = "%sAgent.%s" % (domain_name, type["id"])
 
 for domain in json_api:
     domain_name = domain["domain"]
     output_file.write("\n\n\nvar %sAgent = {};\n" % domain_name)
+    if "types" in domain:
+        for type in domain["types"]:
+            if type["type"] == "object":
+                output_file.write("\n/** @constructor */\n")
+                output_file.write("%sAgent.%s = function()\n{\n" % (domain_name, type["id"]))
+                if "properties" in type:
+                    for property in type["properties"]:
+                        suffix = ""
+                        if ("optional" in property):
+                            suffix = "|undefined"
+                        output_file.write("/** @type {%s%s} */ this.%s;\n" % (param_type(domain_name, property), suffix, property["name"]))
+                output_file.write("}\n")
+            else:
+                output_file.write("\n/** @typedef {%s} */\n%sAgent.%s;\n" % (type_traits[type["type"]], domain_name, type["id"]))
+                
+
     if "commands" in domain:
         for command in domain["commands"]:
             output_file.write("\n/**\n")

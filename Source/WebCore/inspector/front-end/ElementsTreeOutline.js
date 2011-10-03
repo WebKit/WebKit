@@ -1474,27 +1474,23 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.TEXT_NODE:
-                if (node.isWhitespace())
-                    info.titleDOM.appendChild(document.createTextNode("(whitespace)"));
-                else {
-                    if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
-                        var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-js-node");
-                        newNode.textContent = node.nodeValue();
+                if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
+                    var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-js-node");
+                    newNode.textContent = node.nodeValue();
 
-                        var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript", true);
-                        javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
-                    } else if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "style") {
-                        var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-css-node");
-                        newNode.textContent = node.nodeValue();
+                    var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript", true);
+                    javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
+                } else if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "style") {
+                    var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-css-node");
+                    newNode.textContent = node.nodeValue();
 
-                        var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css", true);
-                        cssSyntaxHighlighter.syntaxHighlightNode(newNode);
-                    } else {
-                        info.titleDOM.appendChild(document.createTextNode("\""));
-                        var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                        textNodeElement.textContent = node.nodeValue();
-                        info.titleDOM.appendChild(document.createTextNode("\""));
-                    }
+                    var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css", true);
+                    cssSyntaxHighlighter.syntaxHighlightNode(newNode);
+                } else {
+                    info.titleDOM.appendChild(document.createTextNode("\""));
+                    var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
+                    textNodeElement.textContent = node.nodeValue();
+                    info.titleDOM.appendChild(document.createTextNode("\""));
                 }
                 break;
 

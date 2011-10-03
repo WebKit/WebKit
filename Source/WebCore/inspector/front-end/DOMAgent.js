@@ -31,6 +31,7 @@
 
 /**
  * @constructor
+ * @param {DOMAgent.Node} payload.
  */
 WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
@@ -258,15 +259,6 @@ WebInspector.DOMNode.prototype = {
         return descendant !== null && descendant.isAncestor(this);
     },
 
-    isWhitespace: function()
-    {
-        if (this.nodeType !== Node.TEXT_NODE)
-            return false;
-        if (!this.nodeValue.length)
-            return true;
-        return this.nodeValue.match(/^[\s\xA0]+$/);
-    },
-
     _setAttributesPayload: function(attrs)
     {
         this._attributes = [];
@@ -275,6 +267,9 @@ WebInspector.DOMNode.prototype = {
             this._addAttribute(attrs[i], attrs[i + 1]);
     },
 
+    /**
+     * @param {DOMAgent.Node} payload.
+     */
     _insertChild: function(prev, payload)
     {
         var node = new WebInspector.DOMNode(this.ownerDocument, payload);
@@ -375,6 +370,7 @@ WebInspector.DOMNode.prototype = {
 /**
  * @extends {WebInspector.DOMNode}
  * @constructor
+ * @param {DOMAgent.Node} payload.
  */
 WebInspector.DOMDocument = function(domAgent, payload)
 {
@@ -390,7 +386,8 @@ WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
  * @constructor
  */
 WebInspector.DOMAgent = function() {
-    this._idToDOMNode = null;
+    /** @type {Object|undefined} */
+    this._idToDOMNode = {};
     this._document = null;
     this._attributeLoadNodeIds = {};
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
@@ -409,6 +406,9 @@ WebInspector.DOMAgent.Events = {
 }
 
 WebInspector.DOMAgent.prototype = {
+    /**
+     * @param {function(WebInspector.DOMDocument)=} callback
+     */
     requestDocument: function(callback)
     {
         if (this._document) {
@@ -462,23 +462,18 @@ WebInspector.DOMAgent.prototype = {
         }
     },
 
-    _dispatchWhenDocumentAvailable: function(action)
+    _dispatchWhenDocumentAvailable: function(func, arg, callback)
     {
-        var requestArguments = Array.prototype.slice.call(arguments, 1);
-        var callbackWrapper;
+        if (callback)
+            callback = this._wrapClientCallback(callback);
 
-        if (typeof requestArguments[requestArguments.length - 1] === "function") {
-            var callback = requestArguments.pop();
-            callbackWrapper = this._wrapClientCallback(callback);
-            requestArguments.push(callbackWrapper);
-        }
         function onDocumentAvailable()
         {
             if (this._document)
-                action.apply(null, requestArguments);
+                func.call(null, arg, callback);
             else {
-                if (callbackWrapper)
-                    callbackWrapper("No document");
+                if (callback)
+                    callback("No document");
             }
         }
         this.requestDocument(onDocumentAvailable.bind(this));
@@ -551,7 +546,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {*} payload
+     * @param {DOMAgent.Node} payload.
      */
     _setDocument: function(payload)
     {
@@ -567,7 +562,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {*} payload
+     * @param {DOMAgent.Node} payload.
      */
     _setDetachedRoot: function(payload)
     {
