@@ -1,3 +1,20 @@
+2011-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG misses some obvious opportunities for common subexpression elimination
+        https://bugs.webkit.org/show_bug.cgi?id=69233
+
+        Reviewed by Oliver Hunt.
+        
+        0.7% speed-up on SunSpider.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::getMethodLoadElimination):
+        (JSC::DFG::Propagator::checkStructureLoadElimination):
+        (JSC::DFG::Propagator::getByOffsetLoadElimination):
+        (JSC::DFG::Propagator::getPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+
 2011-10-02  Gavin Barraclough  <barraclough@apple.com>
 
         Bug 67455 - Different regular expression result

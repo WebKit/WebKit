@@ -964,11 +964,18 @@ private:
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return node.child3();
                 break;
+            case PutStructure:
+            case PutByOffset:
+                // GetByVal currently always speculates that it's accessing an
+                // array with an integer index, which means that it's impossible
+                // for a structure change or a put to property storage to affect
+                // the GetByVal.
+                break;
             default:
+                if (clobbersWorld(index))
+                    return NoNode;
                 break;
             }
-            if (clobbersWorld(index))
-                break;
         }
         return NoNode;
     }
@@ -978,13 +985,30 @@ private:
         NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
-            if (node.op == CheckMethod
-                && node.child1() == child1
-                && node.identifierNumber() == identifierNumber
-                && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
-                return index;
-            if (clobbersWorld(index))
+            switch (node.op) {
+            case CheckMethod:
+                if (node.child1() == child1
+                    && node.identifierNumber() == identifierNumber
+                    && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
+                    return index;
                 break;
+                
+            case PutByOffset:
+                // If a put was optimized to by-offset then it's not changing the structure
+                break;
+                
+            case PutByVal:
+            case PutByValAlias:
+                // PutByVal currently always speculates that it's accessing an array with an
+                // integer index, which means that it's impossible for it to cause a structure
+                // change.
+                break;
+                
+            default:
+                if (clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
         }
         return NoNode;
     }
@@ -1009,6 +1033,13 @@ private:
                 
             case PutByOffset:
                 // Setting a property cannot change the structure.
+                break;
+                
+            case PutByVal:
+            case PutByValAlias:
+                // PutByVal currently always speculates that it's accessing an array with an
+                // integer index, which means that it's impossible for it to cause a structure
+                // change.
                 break;
                 
             default:
@@ -1044,6 +1075,13 @@ private:
                 // Changing the structure cannot change the outcome of a property get.
                 break;
                 
+            case PutByVal:
+            case PutByValAlias:
+                // PutByVal currently always speculates that it's accessing an array with an
+                // integer index, which means that it's impossible for it to cause a structure
+                // change.
+                break;
+                
             default:
                 if (clobbersWorld(index))
                     return NoNode;
@@ -1068,6 +1106,13 @@ private:
             case PutStructure:
                 // Changing the structure or putting to the storage cannot
                 // change the property storage pointer.
+                break;
+                
+            case PutByVal:
+            case PutByValAlias:
+                // PutByVal currently always speculates that it's accessing an array with an
+                // integer index, which means that it's impossible for it to cause a structure
+                // change.
                 break;
                 
             default:
@@ -1191,9 +1236,12 @@ private:
         case ArithMax:
         case ArithSqrt:
         case GetCallee:
-        case GetArrayLength:
         case GetStringLength:
             setReplacement(pureCSE(node));
+            break;
+            
+        case GetArrayLength:
+            setReplacement(impureCSE(node));
             break;
             
         case GetScopeChain:
