@@ -135,7 +135,7 @@ committers_unable_to_review = [
     Committer("Abhishek Arya", "inferno@chromium.org", "inferno-sec"),
     Committer("Adam Klein", "adamk@chromium.org", "aklein"),
     Committer("Adam Langley", "agl@chromium.org", "agl"),
-    Committer("Ademar de Souza Reis Junior", ["ademar.reis@openbossa.org", "ademar@webkit.org"], "ademar"),
+    Committer("Ademar de Souza Reis Jr", ["ademar.reis@gmail.com", "ademar@webkit.org"], "ademar"),
     Committer("Adrienne Walker", ["enne@google.com", "enne@chromium.org"], "enne"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Alejandro G. Castro", ["alex@igalia.com", "alex@webkit.org"], "alexg"),
