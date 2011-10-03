@@ -3841,3 +3841,24 @@ BUGWK48544 MAC LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
 
 // New test in http://trac.webkit.org/changeset/96470
 BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
+
+BUG_NEW LINUX X86 CPU : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
+BUG_NEW LINUX X86 GPU : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE GPU : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE CPU : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
+BUG_NEW LINUX X86 CPU : svg/custom/non-scaling-stroke.svg = IMAGE
+BUG_NEW LINUX X86 GPU : svg/custom/non-scaling-stroke.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE GPU : svg/custom/non-scaling-stroke.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE CPU : svg/custom/non-scaling-stroke.svg = IMAGE
+BUG_NEW LINUX X86 CPU : svg/custom/pattern-scaled-pattern-space.svg = IMAGE
+BUG_NEW LINUX X86 GPU : svg/custom/pattern-scaled-pattern-space.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE GPU : svg/custom/pattern-scaled-pattern-space.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE CPU : svg/custom/pattern-scaled-pattern-space.svg = IMAGE
+BUG_NEW LINUX X86 CPU : svg/custom/pattern-size-bigger-than-target-size.svg = IMAGE
+BUG_NEW LINUX X86 GPU : svg/custom/pattern-size-bigger-than-target-size.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE GPU : svg/custom/pattern-size-bigger-than-target-size.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE CPU : svg/custom/pattern-size-bigger-than-target-size.svg = IMAGE
+BUG_NEW LINUX X86 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
+BUG_NEW LINUX X86 GPU : svg/custom/pattern-with-transformation.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE GPU : svg/custom/pattern-with-transformation.svg = IMAGE
+BUG_NEW LINUX X86_64 RELEASE CPU : svg/custom/pattern-with-transformation.svg = IMAGE
