@@ -1,3 +1,58 @@
+2011-10-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: debuggerPresentatioModel.linkifyLocation leaks updateAnchor closure instances.
+        https://bugs.webkit.org/show_bug.cgi?id=69146
+
+        In many places we use linkifyLocation function to produce a link node which updates automatically when the source file is changed on the fly.
+        Such changes happen when we use pretty print or another operation that changes the source code somehow.
+        linkifyLocation associates a new instance of updateAnchor closure with the each link node and add the closure to the SourceMappingUpdated event's list.
+        As the result the node<->closure pairs wouldn't be collected until reset the UI and DebuggerPresentationModel.
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/performance/resources/network-append-30-requests.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.prototype._linkifyLocation):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._consoleCleared):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        ():
+        * inspector/front-end/Linkifier.js: Added.
+        (WebInspector.Linkifier):
+        (WebInspector.Linkifier.prototype.linkifyLocation):
+        (WebInspector.Linkifier.prototype.reset):
+        (WebInspector.Linkifier.prototype._updateSourceAnchors):
+        (WebInspector.Linkifier.prototype._updateAnchor):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype._reset):
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.createCell):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileView.prototype._resetClicked):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._linkifyLocation):
+        (WebInspector.TimelinePanel.prototype._linkifyCallFrame):
+        (WebInspector.TimelinePanel.prototype._clearPanel):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.PopupContentHelper):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendLinkRow):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2011-10-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: more compilation fixes including making ConsoleMessage a part of console model.

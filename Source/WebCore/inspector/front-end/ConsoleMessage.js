@@ -194,7 +194,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // FIXME(62725): stack trace line/column numbers are one-based.
         lineNumber = lineNumber ? lineNumber - 1 : undefined;
         columnNumber = columnNumber ? columnNumber - 1 : 0;
-        return WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+        return WebInspector.ConsoleView.linkifier.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
     },
 
     _linkifyCallFrame: function(callFrame)

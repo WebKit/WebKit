@@ -98,7 +98,7 @@ WebInspector.ProfileDataGridNode.prototype = {
         if (this.profileNode.url) {
             // FIXME(62725): profileNode should reference a debugger location.
             var lineNumber = this.profileNode.lineNumber ? this.profileNode.lineNumber - 1 : 0;
-            var urlElement = WebInspector.debuggerPresentationModel.linkifyLocation(this.profileNode.url, lineNumber, 0, "profile-node-file");
+            var urlElement = this.profileView._linkifier.linkifyLocation(this.profileNode.url, lineNumber, 0, "profile-node-file");
             urlElement.style.maxWidth = "75%";
             cell.insertBefore(urlElement, cell.firstChild);
         }

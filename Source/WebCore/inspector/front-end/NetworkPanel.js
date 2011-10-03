@@ -56,6 +56,7 @@ WebInspector.NetworkLogView = function(parentElement)
 
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
+    this._linkifier = new WebInspector.Linkifier(WebInspector.debuggerPresentationModel);
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
@@ -735,7 +736,7 @@ WebInspector.NetworkLogView.prototype = {
 
         this._mainResourceLoadTime = -1;
         this._mainResourceDOMContentTime = -1;
-
+        this._linkifier.reset();
     },
 
     get resources()
@@ -2041,7 +2042,7 @@ WebInspector.NetworkDataGridNode.prototype = {
                     return;
                 }
                 this._initiatorCell.title = topFrame.url + ":" + topFrame.lineNumber;
-                var urlElement = WebInspector.debuggerPresentationModel.linkifyLocation(topFrame.url, topFrame.lineNumber - 1, 0);
+                var urlElement = this._parentView._linkifier.linkifyLocation(topFrame.url, topFrame.lineNumber - 1, 0);
                 this._initiatorCell.appendChild(urlElement);
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
             } else { // initiator.type === "parser"

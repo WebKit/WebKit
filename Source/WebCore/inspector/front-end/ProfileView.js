@@ -96,6 +96,8 @@ WebInspector.CPUProfileView = function(profile)
         self._updatePercentButton();
     }
 
+    this._linkifier = new WebInspector.Linkifier(WebInspector.debuggerPresentationModel);
+
     ProfilerAgent.getProfile(this.profile.typeId, this.profile.uid, profileCallback);
 }
 
@@ -485,6 +487,7 @@ WebInspector.CPUProfileView.prototype = {
     {
         this.resetButton.visible = false;
         this.profileDataGridTree.restore();
+        this._linkiier.reset();
         this.refresh();
         this.refreshVisibleData();
     },
