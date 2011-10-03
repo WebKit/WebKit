@@ -69349,10 +69349,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Linkifier.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\MetricsSidebarPane.js"
 					>
 				</File>

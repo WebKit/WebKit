@@ -109,8 +109,6 @@ WebInspector.ConsoleView = function()
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
-
-    WebInspector.ConsoleView.linkifier = new WebInspector.Linkifier(WebInspector.debuggerPresentationModel);
 }
 
 WebInspector.ConsoleView.Events = {
@@ -330,8 +328,6 @@ WebInspector.ConsoleView.prototype = {
         delete this.previousMessage;
 
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
-
-        WebInspector.ConsoleView.linkifier.reset();
     },
 
     completions: function(wordRange, bestMatchOnly, completionsReadyCallback)

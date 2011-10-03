@@ -66,6 +66,32 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
+    linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
+    {
+        var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
+        var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
+
+        var rawSourceCode = this._rawSourceCodeForScript(sourceURL);
+        if (!rawSourceCode) {
+            anchor.setAttribute("preferred_panel", "resources");
+            anchor.setAttribute("line_number", lineNumber);
+            return anchor;
+        }
+
+        function updateAnchor()
+        {
+            var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation({ lineNumber: lineNumber, columnNumber: columnNumber });
+            anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
+            anchor.setAttribute("preferred_panel", "scripts");
+            anchor.uiSourceCode = uiLocation.uiSourceCode;
+            anchor.lineNumber = uiLocation.lineNumber;
+        }
+        if (rawSourceCode.sourceMapping)
+            updateAnchor.call(this);
+        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, updateAnchor, this);
+        return anchor;
+    },
+
     _parsedScriptSource: function(event)
     {
         this._addScript(event.data);

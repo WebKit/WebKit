@@ -36,7 +36,6 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerPresentationModel.js</file>
-    <file>Linkifier.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
     <file>DOMStorage.js</file>

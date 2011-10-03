@@ -509,9 +509,6 @@ WebInspector.doLoadedDone = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._updateErrorAndWarningCounts, this);
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
-    this.debuggerModel = new WebInspector.DebuggerModel();
-    this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
-
     this.drawer = new WebInspector.Drawer();
     this.consoleView = new WebInspector.ConsoleView();
 
@@ -524,6 +521,8 @@ WebInspector.doLoadedDone = function()
     InspectorBackend.registerInspectorDispatcher(this);
 
     this.cssModel = new WebInspector.CSSStyleModel();
+    this.debuggerModel = new WebInspector.DebuggerModel();
+    this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.searchController = new WebInspector.SearchController();
 
