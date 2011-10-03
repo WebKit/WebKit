@@ -1,3 +1,16 @@
+2011-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Enable WEB_AUDIO by default in the WebKit/mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=68587
+
+        Reviewed by Simon Fraser.
+
+        No new tests; existing webaudio/ layout tests cover this.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj: Add a build step which copies audio resources to
+            the WebCore.framework bundle.
+
 2011-10-03  Chris Rogers  <crogers@google.com>
 
         BiquadFilterNode .type attribute is not handled correctly
