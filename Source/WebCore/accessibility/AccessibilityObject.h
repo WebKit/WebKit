@@ -507,7 +507,7 @@ public:
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
     virtual LayoutRect elementRect() const = 0;
     virtual LayoutSize size() const { return elementRect().size(); }
-    virtual LayoutPoint clickPoint() const;
+    virtual LayoutPoint clickPoint();
 
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
     unsigned selectionStart() const { return selectedTextRange().start; }

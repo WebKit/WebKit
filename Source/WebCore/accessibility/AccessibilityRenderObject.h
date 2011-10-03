@@ -166,7 +166,7 @@ public:
     virtual LayoutRect boundingBoxRect() const;
     virtual LayoutRect elementRect() const;
     virtual LayoutSize size() const;
-    virtual LayoutPoint clickPoint() const;
+    virtual LayoutPoint clickPoint();
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     virtual RenderObject* renderer() const { return m_renderer; }

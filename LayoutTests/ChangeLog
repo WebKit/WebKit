@@ -1,3 +1,13 @@
+2011-10-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: click point for AXHeadings often returns point on empty space (results in wrong context menu)
+        https://bugs.webkit.org/show_bug.cgi?id=69262
+
+        Reviewed by John Sullivan.
+
+        * platform/mac/accessibility/heading-clickpoint-expected.txt: Added.
+        * platform/mac/accessibility/heading-clickpoint.html: Added.
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         Unbork the test_expectations file.

@@ -399,7 +399,7 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     || ariaRole == ComboBoxRole || ariaRole == SliderRole; 
 }
 
-LayoutPoint AccessibilityObject::clickPoint() const
+LayoutPoint AccessibilityObject::clickPoint()
 {
     LayoutRect rect = elementRect();
     return LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);

@@ -1,3 +1,26 @@
+2011-10-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: click point for AXHeadings often returns point on empty space (results in wrong context menu)
+        https://bugs.webkit.org/show_bug.cgi?id=69262
+
+        When the contextual menu is opened for a heading, often it will open on empty space because
+        the heading is wider than the content inside. The click point should thus use the content
+        inside the heading as the click point.
+
+        To accomplish this we need to query whether we have children using children() which is a non-const
+        method, hence the removal of const from clickPoint().
+
+        Reviewed by John Sullivan.
+
+        Test: platform/mac/accessibility/heading-clickpoint.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::clickPoint):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-10-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96500.

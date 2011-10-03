@@ -1496,8 +1496,12 @@ LayoutSize AccessibilityRenderObject::size() const
     return rect.size();
 }
 
-LayoutPoint AccessibilityRenderObject::clickPoint() const
+LayoutPoint AccessibilityRenderObject::clickPoint()
 {
+    // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.
+    if (isHeading() && children().size() == 1)
+        return children()[0]->clickPoint();
+
     // use the default position unless this is an editable web area, in which case we use the selection bounds.
     if (!isWebArea() || isReadOnly())
         return AccessibilityObject::clickPoint();
