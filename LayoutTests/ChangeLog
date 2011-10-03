@@ -1,3 +1,32 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        Update baselines after http://trac.webkit.org/changeset/96530.
+
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-cg-mac/svg/custom/pattern-scaled-pattern-space-expected.png: Added.
+        * platform/chromium-cg-mac/svg/custom/pattern-size-bigger-than-target-size-expected.png: Added.
+        * platform/chromium-cg-mac/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/pattern-scaled-pattern-space-expected.png: Added.
+        * platform/chromium-linux/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-mac/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-scaled-pattern-space-expected.png: Added.
+        * platform/chromium-mac/svg/custom/pattern-size-bigger-than-target-size-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-win/svg/custom/pattern-scaled-pattern-space-expected.png: Added.
+        * platform/chromium-win/svg/custom/pattern-size-bigger-than-target-size-expected.png:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.png:
+        * platform/gtk/svg/custom/pattern-size-bigger-than-target-size-expected.txt: Removed.
+        * platform/mac/svg/custom/pattern-size-bigger-than-target-size-expected.txt: Removed.
+        * platform/qt/svg/custom/pattern-size-bigger-than-target-size-expected.txt: Removed.
+        * svg/custom/pattern-size-bigger-than-target-size-expected.txt: Added.
+
 2011-10-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96532.
