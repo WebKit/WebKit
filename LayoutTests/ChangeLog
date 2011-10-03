@@ -1,5 +1,11 @@
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
+        Delete bogus expected PNG.
+
+        * platform/chromium-linux/svg/filters/feColorMatrix-values-expected.png: Removed.
+
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
         Fix typo causing race condition in this test.
 
         * svg/as-object/embedded-svg-immediate-offsetWidth-query.html:
