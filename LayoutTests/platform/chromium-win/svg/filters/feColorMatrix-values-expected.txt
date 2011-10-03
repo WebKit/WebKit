@@ -96,13 +96,13 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (210.00,270.00) startOffset 0 endOffset 17 width 154.00: "values attribute."
       RenderSVGPath {rect} at (182,292) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=302.00] [width=196.00] [height=96.00]
         [filter="satrange"] RenderSVGResourceFilter {filter} at (182.40,292.40) size 235.20x115.20
-      RenderSVGText {text} at (210,319) size 160x27 contains 1 chunk(s)
-        [filter="satrange"] RenderSVGResourceFilter {filter} at (194,316.30) size 192x32.40
-        RenderSVGInlineText {#text} at (0,0) size 160x27
+      RenderSVGText {text} at (210,319) size 131x27 contains 1 chunk(s)
+        [filter="satrange"] RenderSVGResourceFilter {filter} at (196.90,316.30) size 157.20x32.40
+        RenderSVGInlineText {#text} at (0,0) size 131x27
           [filter="satrange"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-          chunk 1 text run 1 at (210.00,340.00) startOffset 0 endOffset 16 width 160.00: "Saturate must be"
-      RenderSVGText {text} at (210,349) size 164x27 contains 1 chunk(s)
-        [filter="satrange"] RenderSVGResourceFilter {filter} at (193.60,346.30) size 196.80x32.40
-        RenderSVGInlineText {#text} at (0,0) size 164x27
+          chunk 1 text run 1 at (210.00,340.00) startOffset 0 endOffset 13 width 131.00: "Saturate must"
+      RenderSVGText {text} at (210,349) size 151x27 contains 1 chunk(s)
+        [filter="satrange"] RenderSVGResourceFilter {filter} at (194.90,346.30) size 181.20x32.40
+        RenderSVGInlineText {#text} at (0,0) size 151x27
           [filter="satrange"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-          chunk 1 text run 1 at (210.00,370.00) startOffset 0 endOffset 16 width 164.00: "between 0 and 1."
+          chunk 1 text run 1 at (210.00,370.00) startOffset 0 endOffset 15 width 151.00: "have one value."

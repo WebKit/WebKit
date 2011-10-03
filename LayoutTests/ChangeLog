@@ -1,3 +1,12 @@
+2011-10-03  Dirk Schulze  <krit@webkit.org>
+
+        feColorMatrix saturation is not limited to range 0..1 anymore
+        https://bugs.webkit.org/show_bug.cgi?id=69245
+
+        Unreviewed rebaseline of Win Chromium DRT results.
+
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.txt:
+
 2011-10-03  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: [chromium] clean up inspector layout test suppressions on chromium.
