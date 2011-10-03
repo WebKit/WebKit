@@ -1,3 +1,43 @@
+2011-09-30  Antti Koivisto  <antti@apple.com>
+
+        Add exact match attribute selectors to the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=69159
+
+        Reviewed by Sam Weinig.
+
+        Attribute selectors are increasingly common and we have them in our default style sheet too.
+        [foo] and [foo="bar"] type selectors can be resolved quickly and easily in the fast path.
+        
+        - Implement fast path checking for simple attribute selectors.
+        - Get rid of the ill-defined CSSSelector::hasAttribute(), inline CSSSelector::attribute()
+        
+        This is ~20% progression in styleForElement() performance loading the full HTML5 spec (~0.8s).
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::hasTag):
+        (WebCore::CSSSelector::attribute):
+        (WebCore::CSSSelector::isAttributeSelector):
+        * css/CSSSelectorList.cpp:
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::fastCheckRightmostSelector):
+        (WebCore::SelectorChecker::fastCheckSelector):
+        (WebCore::isFastCheckableMatch):
+        (WebCore::isFastCheckableRightmostSelector):
+        (WebCore::SelectorChecker::isFastCheckableSelector):
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore::htmlAttributeHasCaseInsensitiveValue):
+        (WebCore::anyAttributeMatches):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::attributeNameMatches):
+        (WebCore::SelectorChecker::checkExactAttribute):
+        (WebCore::SelectorChecker::fastCheckRightmostAttributeSelector):
+
 2011-10-03  Mike Reed  <reed@google.com>
 
         respect other paint flags when setting flags for the font. No need to fiddle with DC(0) in paintSkiaText.

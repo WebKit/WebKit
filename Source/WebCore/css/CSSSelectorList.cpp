@@ -142,7 +142,7 @@ public:
     {
         if (selector->hasTag() && selector->tag().prefix() != nullAtom && selector->tag().prefix() != starAtom)
             return true;
-        if (selector->hasAttribute() && selector->attribute().prefix() != nullAtom && selector->attribute().prefix() != starAtom)
+        if (selector->isAttributeSelector() && selector->attribute().prefix() != nullAtom && selector->attribute().prefix() != starAtom)
             return true;
         return false;
     }

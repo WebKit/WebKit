@@ -220,7 +220,6 @@ namespace WebCore {
         CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         bool hasTag() const { return m_tag != anyQName(); }
-        bool hasAttribute() const { return m_match == Id || m_match == Class || (m_hasRareData && m_data.m_rareData->m_attribute != anyQName()); }
         
         const QualifiedName& tag() const { return m_tag; }
         // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
@@ -297,6 +296,13 @@ namespace WebCore {
         
         QualifiedName m_tag;
     };
+
+inline const QualifiedName& CSSSelector::attribute() const
+{ 
+    ASSERT(isAttributeSelector());
+    ASSERT(m_hasRareData);
+    return m_data.m_rareData->m_attribute;
+}
     
 inline bool CSSSelector::matchesPseudoElement() const 
 { 
@@ -330,8 +336,6 @@ inline bool CSSSelector::isSiblingSelector() const
 
 inline bool CSSSelector::isAttributeSelector() const
 {
-    if (!hasAttribute())
-        return false;
     return m_match == CSSSelector::Exact
         || m_match ==  CSSSelector::Set
         || m_match == CSSSelector::List

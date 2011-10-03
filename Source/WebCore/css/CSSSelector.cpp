@@ -580,7 +580,7 @@ String CSSSelector::selectorText() const
         } else if (cs->m_match == CSSSelector::PseudoElement) {
             str += "::";
             str += cs->value();
-        } else if (cs->hasAttribute()) {
+        } else if (cs->isAttributeSelector()) {
             str += "[";
             const AtomicString& prefix = cs->attribute().prefix();
             if (!prefix.isNull()) {
@@ -638,18 +638,6 @@ String CSSSelector::selectorText() const
     }
 
     return str;
-}
-
-const QualifiedName& CSSSelector::attribute() const
-{ 
-    switch (m_match) {
-    case Id:
-        return idAttr;
-    case Class:
-        return classAttr;
-    default:
-        return m_hasRareData ? m_data.m_rareData->m_attribute : anyQName();
-    }
 }
 
 void CSSSelector::setAttribute(const QualifiedName& value) 

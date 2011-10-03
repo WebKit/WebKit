@@ -28,6 +28,7 @@
 #ifndef SelectorChecker_h
 #define SelectorChecker_h
 
+#include "Attribute.h"
 #include "CSSSelector.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
@@ -83,10 +84,13 @@ public:
     void clearHasUnknownPseudoElements() { m_hasUnknownPseudoElements = false; }
     
     static bool tagMatches(const Element*, const CSSSelector*);
+    static bool attributeNameMatches(const Attribute*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*) const;
     bool linkMatchesVisitedPseudoClass(const Element*) const;
     bool matchesFocusPseudoClass(const Element*) const;
+    static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
+    static bool checkExactAttribute(const Element*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
 
 private:
     bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
@@ -173,6 +177,35 @@ inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelecto
         return false;
     const AtomicString& namespaceURI = selector->tag().namespaceURI();
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
+}
+    
+inline bool SelectorChecker::attributeNameMatches(const Attribute* attribute, const QualifiedName& selectorAttributeName)
+{
+    if (selectorAttributeName.localName() != attribute->localName())
+        return false;
+    return selectorAttributeName.prefix() == starAtom || selectorAttributeName.namespaceURI() == attribute->namespaceURI();
+}
+    
+inline bool SelectorChecker::checkExactAttribute(const Element* element, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)
+{
+    NamedNodeMap* attributeMap = element->attributeMap();
+    if (!attributeMap)
+        return false;
+    unsigned size = attributeMap->length();
+    for (unsigned i = 0; i < size; ++i) {
+        Attribute* attribute = attributeMap->attributeItem(i);
+        if (attributeNameMatches(attribute, selectorAttributeName) && (!value || attribute->value().impl() == value))
+            return true;
+    }
+    return false;
+}
+    
+inline bool SelectorChecker::fastCheckRightmostAttributeSelector(const Element* element, const CSSSelector* selector)
+{
+    if (selector->m_match == CSSSelector::Exact || selector->m_match == CSSSelector::Set)
+        return checkExactAttribute(element, selector->attribute(), selector->value().impl());
+    ASSERT(!selector->isAttributeSelector());
+    return true;
 }
 
 }

@@ -1828,6 +1828,8 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
                 return true;
         } else if (!SelectorChecker::tagMatches(m_element, ruleData.selector()))
             return false;
+        if (!SelectorChecker::fastCheckRightmostAttributeSelector(m_element, ruleData.selector()))
+            return false;
         return m_checker.fastCheckSelector(ruleData.selector(), m_element);
     }
 

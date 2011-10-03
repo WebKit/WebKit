@@ -63,6 +63,8 @@
 namespace WebCore {
     
 using namespace HTMLNames;
+    
+static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr);
 
 SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     : m_document(document)
@@ -261,12 +263,13 @@ bool SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isF
 
 namespace {
 
-template <bool checkValue(const Element*, AtomicStringImpl*)>
+template <bool checkValue(const Element*, AtomicStringImpl*, const QualifiedName&), bool initAttributeName>
 inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*& element, const CSSSelector*& topChildOrSubselector, const Element*& topChildOrSubselectorMatchElement)
 {
     AtomicStringImpl* value = selector->value().impl();
+    const QualifiedName& attribute = initAttributeName ? selector->attribute() : anyQName();
     for (; element; element = element->parentElement()) {
-        if (checkValue(element, value) && SelectorChecker::tagMatches(element, selector)) {
+        if (checkValue(element, value, attribute) && SelectorChecker::tagMatches(element, selector)) {
             if (selector->relation() == CSSSelector::Descendant)
                 topChildOrSubselector = 0;
             else if (!topChildOrSubselector) {
@@ -296,17 +299,22 @@ inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*
     return false;
 }
 
-inline bool checkClassValue(const Element* element, AtomicStringImpl* value) 
+inline bool checkClassValue(const Element* element, AtomicStringImpl* value, const QualifiedName&) 
 {
     return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(value);
 }
 
-inline bool checkIDValue(const Element* element, AtomicStringImpl* value) 
+inline bool checkIDValue(const Element* element, AtomicStringImpl* value, const QualifiedName&) 
 {
     return element->hasID() && element->idForStyleResolution().impl() == value;
 }
 
-inline bool checkTagValue(const Element*, AtomicStringImpl*)
+inline bool checkExactAttributeValue(const Element* element, AtomicStringImpl* value, const QualifiedName& attributeName)
+{
+    return SelectorChecker::checkExactAttribute(element, attributeName, value);
+}
+
+inline bool checkTagValue(const Element*, AtomicStringImpl*, const QualifiedName&)
 {
     return true;
 }
@@ -323,9 +331,12 @@ inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selec
     case CSSSelector::None:
         return true;
     case CSSSelector::Class:
-        return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(selector->value());
+        return checkClassValue(element, selector->value().impl(), anyQName());
     case CSSSelector::Id:
-        return element->hasID() && element->idForStyleResolution() == selector->value();
+        return checkIDValue(element, selector->value().impl(), anyQName());
+    case CSSSelector::Exact:
+    case CSSSelector::Set:
+        return checkExactAttributeValue(element, selector->value().impl(), selector->attribute());
     case CSSSelector::PseudoClass:
         return commonPseudoClassSelectorMatches(element, selector);
     default:
@@ -352,15 +363,20 @@ bool SelectorChecker::fastCheckSelector(const CSSSelector* selector, const Eleme
     while (selector) {
         switch (selector->m_match) {
         case CSSSelector::Class:
-            if (!fastCheckSingleSelector<checkClassValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkClassValue, false>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         case CSSSelector::Id:
-            if (!fastCheckSingleSelector<checkIDValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkIDValue, false>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         case CSSSelector::None:
-            if (!fastCheckSingleSelector<checkTagValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkTagValue, false>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+                return false;
+            break;
+        case CSSSelector::Set:
+        case CSSSelector::Exact:
+            if (!fastCheckSingleSelector<checkExactAttributeValue, true>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         default:
@@ -375,16 +391,20 @@ static inline bool isFastCheckableRelation(CSSSelector::Relation relation)
     return relation == CSSSelector::Descendant || relation == CSSSelector::Child || relation == CSSSelector::SubSelector;
 }
 
-static inline bool isFastCheckableMatch(CSSSelector::Match match)
+static inline bool isFastCheckableMatch(const CSSSelector* selector)
 {
-    return match == CSSSelector::None || match == CSSSelector::Id || match == CSSSelector::Class;
+    if (selector->m_match == CSSSelector::Set)
+        return true;
+    if (selector->m_match == CSSSelector::Exact)
+        return !htmlAttributeHasCaseInsensitiveValue(selector->attribute());
+    return selector->m_match == CSSSelector::None || selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
 }
 
 static inline bool isFastCheckableRightmostSelector(const CSSSelector* selector)
 {
     if (!isFastCheckableRelation(selector->relation()))
         return false;
-    return isFastCheckableMatch(static_cast<CSSSelector::Match>(selector->m_match)) || SelectorChecker::isCommonPseudoClassSelector(selector);
+    return isFastCheckableMatch(selector) || SelectorChecker::isCommonPseudoClassSelector(selector);
 }
 
 bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
@@ -394,7 +414,7 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
     for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
         if (!isFastCheckableRelation(selector->relation()))
             return false;
-        if (!isFastCheckableMatch(static_cast<CSSSelector::Match>(selector->m_match)))
+        if (!isFastCheckableMatch(selector))
             return false;
     }
     return true;
@@ -578,19 +598,11 @@ static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
     return attrSet;
 }
 
-static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
+bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
 {
     static HashSet<AtomicStringImpl*>* htmlCaseInsensitiveAttributesSet = createHtmlCaseInsensitiveAttributesSet();
     bool isPossibleHTMLAttr = !attr.hasPrefix() && (attr.namespaceURI() == nullAtom);
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
-}
-
-static bool attributeQualifiedNameMatches(Attribute* attribute, const QualifiedName& selectorAttr)
-{
-    if (selectorAttr.localName() != attribute->localName())
-        return false;
-    
-    return selectorAttr.prefix() == starAtom || selectorAttr.namespaceURI() == attribute->namespaceURI();
 }
 
 static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
@@ -661,7 +673,7 @@ static bool anyAttributeMatches(NamedNodeMap* attributes, CSSSelector::Match mat
     for (size_t i = 0; i < attributes->length(); ++i) {
         Attribute* attributeItem = attributes->attributeItem(i);
         
-        if (!attributeQualifiedNameMatches(attributeItem, selectorAttr))
+        if (!SelectorChecker::attributeNameMatches(attributeItem, selectorAttr))
             continue;
         
         if (attributeValueMatches(attributeItem, match, selectorValue, caseSensitive))
@@ -677,13 +689,13 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
     if (!SelectorChecker::tagMatches(e, sel))
         return false;
     
-    if (sel->hasAttribute()) {
-        if (sel->m_match == CSSSelector::Class)
-            return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->value());
-        
-        if (sel->m_match == CSSSelector::Id)
-            return e->hasID() && e->idForStyleResolution() == sel->value();
-        
+    if (sel->m_match == CSSSelector::Class)
+        return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->value());
+    
+    if (sel->m_match == CSSSelector::Id)
+        return e->hasID() && e->idForStyleResolution() == sel->value();
+    
+    if (sel->isAttributeSelector()) {
         const QualifiedName& attr = sel->attribute();
         
         NamedNodeMap* attributes = e->attributes(true);
