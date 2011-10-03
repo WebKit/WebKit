@@ -1703,10 +1703,10 @@ void SpeculativeJIT::compile(Node& node)
         
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
         // Must always emit this write barrier as the structure transition itself requires it
-        writeBarrier(baseGPR, node.structure(), WriteBarrierForGenericAccess);
+        writeBarrier(baseGPR, node.structureTransitionData().newStructure, WriteBarrierForGenericAccess);
 #endif
         
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node.structure()), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(node.structureTransitionData().newStructure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
         
         noResult(m_compileIndex);
         break;

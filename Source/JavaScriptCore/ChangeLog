@@ -1,3 +1,12 @@
+2011-10-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed build fix for DFG JIT 32_64.
+
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should speculate more aggressively on obvious cases on
