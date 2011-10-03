@@ -1,5 +1,23 @@
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
+        Update results again now that Leopard has finally cycled.
+
+        * platform/chromium-cg-mac-leopard/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-skew-transformed-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Removed.
+
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
         Update results to account for Windows Vista.
 
         * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
