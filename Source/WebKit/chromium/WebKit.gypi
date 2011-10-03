@@ -76,7 +76,6 @@
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
-            'tests/WebCompositorImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebURLRequestTest.cpp',
         ],

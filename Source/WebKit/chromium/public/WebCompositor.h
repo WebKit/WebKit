@@ -40,7 +40,6 @@ class WebCompositor {
 public:
     // This must be called once with a non-null WebThread before any compositors attempt to initialize.
     WEBKIT_EXPORT static void setThread(WebThread*);
-    WEBKIT_EXPORT static WebCompositor* fromIdentifier(int);
 
     virtual void setClient(WebCompositorClient*) = 0;
     virtual void handleInputEvent(const WebInputEvent&) = 0;

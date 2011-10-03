@@ -52,14 +52,7 @@ public:
     virtual void didScrollRect(int dx, int dy, const WebRect& clipRect) { }
 
     // Called when the compositor enables or disables.
-    // FIXME: Remove when all implementations switch over to didEnable.../didDisable...
     virtual void didActivateAcceleratedCompositing(bool active) { }
-
-    // Called when the compositor is enabled or disabled.
-    // The WebCompositor identifier can be used on the compositor thread to get access
-    // to the WebCompositor instance associated with this WebWidget.
-    virtual void didActivateCompositor(int compositorIdentifier) { }
-    virtual void didDeactivateCompositor() { }
 
     // Called when a call to WebWidget::composite is required
     virtual void scheduleComposite() { }

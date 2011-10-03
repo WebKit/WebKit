@@ -1,3 +1,28 @@
+2011-10-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96481.
+        http://trac.webkit.org/changeset/96481
+        https://bugs.webkit.org/show_bug.cgi?id=69251
+
+        Breaks webkit_unit_tests on Linux(dbg) (Requested by hwennborg
+        on #webkit).
+
+        * WebKit.gypi:
+        * public/WebCompositor.h:
+        * public/WebWidgetClient.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::WebCompositorImpl):
+        (WebKit::WebCompositorImpl::~WebCompositorImpl):
+        (WebKit::WebCompositorImpl::setClient):
+        (WebKit::WebCompositorImpl::handleInputEvent):
+        * src/WebCompositorImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        * tests/WebCompositorImplTest.cpp: Removed.
+
 2011-10-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebWidget API for accessing the current WebCompositor

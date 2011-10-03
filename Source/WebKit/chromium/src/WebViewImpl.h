@@ -82,7 +82,6 @@ class DragScrollTimer;
 class GeolocationClientProxy;
 class SpeechInputClientImpl;
 class WebAccessibilityObject;
-class WebCompositorImpl;
 class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
@@ -576,7 +575,6 @@ private:
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<WebCore::NonCompositedContentHost> m_nonCompositedContentHost;
     RefPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
-    OwnPtr<WebCompositorImpl> m_webCompositorImpl;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;

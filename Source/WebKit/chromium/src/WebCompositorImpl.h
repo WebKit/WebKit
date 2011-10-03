@@ -27,14 +27,8 @@
 #define WebCompositorImpl_h
 
 #include "WebCompositor.h"
-
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
-
-namespace WTF {
-class Mutex;
-}
 
 namespace WebKit {
 
@@ -43,8 +37,6 @@ class WebCompositorClient;
 class WebCompositorImpl : public WebCompositor {
     WTF_MAKE_NONCOPYABLE(WebCompositorImpl);
 public:
-    static WebCompositor* fromIdentifier(int identifier);
-
     static PassOwnPtr<WebCompositorImpl> create()
     {
         return adoptPtr(new WebCompositorImpl);
@@ -55,18 +47,10 @@ public:
     virtual void setClient(WebCompositorClient*);
     virtual void handleInputEvent(const WebInputEvent&);
 
-    int identifier() const { return m_identifier; }
-
 private:
     WebCompositorImpl();
 
     WebCompositorClient* m_client;
-    int m_identifier;
-
-    static HashSet<WebCompositorImpl*>* s_compositors;
-    static Mutex* s_compositorsLock;
-
-    static int s_nextAvailableIdentifier;
 };
 
 }
