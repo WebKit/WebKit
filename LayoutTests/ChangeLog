@@ -1,3 +1,10 @@
+2011-10-03  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed gardening after r96404.
+
+        * platform/qt-4.8/fast/text/complex-synthetic-bold-space-width-expected.png: Added.
+        * platform/qt-4.8/fast/text/complex-synthetic-bold-space-width-expected.txt: Added.
+
 2011-10-03  Dirk Schulze  <krit@webkit.org>
 
         feColorMatrix saturation is not limited to range 0..1 anymore
