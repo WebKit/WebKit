@@ -1,5 +1,14 @@
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
+        Update results now that the race condition is fixed.  It seems like the
+        cross-platform results would need to be updated as well, but no bot has
+        told me that yet.
+
+        * platform/chromium-mac-leopard/svg/as-object: Added.
+        * platform/chromium-mac-leopard/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Added.
+
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
         Update baselines after http://trac.webkit.org/changeset/96530.
 
         * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
