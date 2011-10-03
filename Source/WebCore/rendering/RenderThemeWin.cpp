@@ -160,7 +160,7 @@ PassRefPtr<RenderTheme> RenderThemeWin::create()
 #if !USE(SAFARI_THEME)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* winTheme = RenderThemeWin::create().releaseRef();
+    static RenderTheme* winTheme = RenderThemeWin::create().leakRef();
     return winTheme;
 }
 #endif
@@ -891,8 +891,8 @@ bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
-    static Image* cancelImage = Image::loadPlatformResource("searchCancel").releaseRef();
-    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").releaseRef();
+    static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
     paintInfo.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage, o->style()->colorSpace(), bounds);
     return false;
 }
@@ -941,7 +941,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const Pa
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
     
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").releaseRef();
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
     paintInfo.context->drawImage(magnifierImage, o->style()->colorSpace(), bounds);
     return false;
 }
@@ -977,7 +977,7 @@ bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintI
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").releaseRef();
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
     paintInfo.context->drawImage(magnifierImage, o->style()->colorSpace(), bounds);
     return false;
 }

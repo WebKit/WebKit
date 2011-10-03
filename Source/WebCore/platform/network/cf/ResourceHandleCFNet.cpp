@@ -699,7 +699,7 @@ CFURLConnectionRef ResourceHandle::connection() const
 CFURLConnectionRef ResourceHandle::releaseConnectionForDownload()
 {
     LOG(Network, "CFNet - Job %p releasing connection %p for download", this, d->m_connection.get());
-    return d->m_connection.releaseRef();
+    return d->m_connection.leakRef();
 }
 
 CFStringRef ResourceHandle::synchronousLoadRunLoopMode()

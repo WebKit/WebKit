@@ -458,7 +458,7 @@ CSSStyleSelector::Features::~Features()
 
 static CSSStyleSheet* parseUASheet(const String& str)
 {
-    CSSStyleSheet* sheet = CSSStyleSheet::create().releaseRef(); // leak the sheet on purpose
+    CSSStyleSheet* sheet = CSSStyleSheet::create().leakRef(); // leak the sheet on purpose
     sheet->parseString(str);
     return sheet;
 }
@@ -1056,7 +1056,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     // will vanish if a style recalc happens during loading.
     if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
         if (!s_styleNotYetAvailable) {
-            s_styleNotYetAvailable = RenderStyle::create().releaseRef();
+            s_styleNotYetAvailable = RenderStyle::create().leakRef();
             s_styleNotYetAvailable->ref();
             s_styleNotYetAvailable->setDisplay(NONE);
             s_styleNotYetAvailable->font().update(m_fontSelector);

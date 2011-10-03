@@ -379,7 +379,7 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
     if (page)
         return RenderThemeEfl::create(page);
 
-    static RenderTheme* fallback = RenderThemeEfl::create(0).releaseRef();
+    static RenderTheme* fallback = RenderThemeEfl::create(0).leakRef();
     return fallback;
 }
 

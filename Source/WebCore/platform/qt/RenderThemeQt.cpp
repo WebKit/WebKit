@@ -176,7 +176,7 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
     if (page)
         return RenderThemeQt::create(page);
 
-    static RenderTheme* fallback = RenderThemeQt::create(0).releaseRef();
+    static RenderTheme* fallback = RenderThemeQt::create(0).leakRef();
     return fallback;
 }
 
@@ -1034,8 +1034,8 @@ bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInf
                              inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
                              cancelButtonSize, cancelButtonSize);
     IntRect paintingRect = convertToPaintingRect(inputRenderBox, o, cancelButtonRect, r);
-    static Image* cancelImage = Image::loadPlatformResource("searchCancelButton").releaseRef();
-    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelButtonPressed").releaseRef();
+    static Image* cancelImage = Image::loadPlatformResource("searchCancelButton").leakRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelButtonPressed").leakRef();
     pi.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage,
                                  o->style()->colorSpace(), paintingRect);
     return false;

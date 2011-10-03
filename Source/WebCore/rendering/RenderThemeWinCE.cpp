@@ -91,7 +91,7 @@ PassRefPtr<RenderTheme> RenderThemeWinCE::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* winceTheme = RenderThemeWinCE::create().releaseRef();
+    static RenderTheme* winceTheme = RenderThemeWinCE::create().leakRef();
     return winceTheme;
 }
 

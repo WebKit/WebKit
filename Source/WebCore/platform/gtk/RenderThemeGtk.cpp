@@ -112,7 +112,7 @@ PassRefPtr<RenderTheme> RenderThemeGtk::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* rt = RenderThemeGtk::create().releaseRef();
+    static RenderTheme* rt = RenderThemeGtk::create().leakRef();
     return rt;
 }
 

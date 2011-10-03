@@ -236,21 +236,21 @@ void CSSPrimitiveValue::init(PassRefPtr<Counter> c)
 {
     m_type = CSS_COUNTER;
     m_hasCachedCSSText = false;
-    m_value.counter = c.releaseRef();
+    m_value.counter = c.leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<Rect> r)
 {
     m_type = CSS_RECT;
     m_hasCachedCSSText = false;
-    m_value.rect = r.releaseRef();
+    m_value.rect = r.leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<Quad> quad)
 {
     m_type = CSS_QUAD;
     m_hasCachedCSSText = false;
-    m_value.quad = quad.releaseRef();
+    m_value.quad = quad.leakRef();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -258,7 +258,7 @@ void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 {
     m_type = CSS_DASHBOARD_REGION;
     m_hasCachedCSSText = false;
-    m_value.region = r.releaseRef();
+    m_value.region = r.leakRef();
 }
 #endif
 
@@ -266,14 +266,14 @@ void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
 {
     m_type = CSS_PAIR;
     m_hasCachedCSSText = false;
-    m_value.pair = p.releaseRef();
+    m_value.pair = p.leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<CSSWrapShape> shape)
 {
     m_type = CSS_SHAPE;
     m_hasCachedCSSText = false;
-    m_value.shape = shape.releaseRef();
+    m_value.shape = shape.leakRef();
 }
 
 CSSPrimitiveValue::~CSSPrimitiveValue()

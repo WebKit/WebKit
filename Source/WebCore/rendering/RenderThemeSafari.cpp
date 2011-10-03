@@ -75,8 +75,8 @@ PassRefPtr<RenderTheme> RenderThemeSafari::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* safariTheme = RenderThemeSafari::create().releaseRef();
-    static RenderTheme* windowsTheme = RenderThemeWin::create().releaseRef();
+    static RenderTheme* safariTheme = RenderThemeSafari::create().leakRef();
+    static RenderTheme* windowsTheme = RenderThemeWin::create().leakRef();
 
     // FIXME: This is called before Settings has been initialized by WebKit, so will return a
     // potentially wrong answer the very first time it's called (see

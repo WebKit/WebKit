@@ -239,7 +239,7 @@ PassRefPtr<RenderTheme> RenderThemeChromiumWin::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* rt = RenderThemeChromiumWin::create().releaseRef();
+    static RenderTheme* rt = RenderThemeChromiumWin::create().leakRef();
     return rt;
 }
 

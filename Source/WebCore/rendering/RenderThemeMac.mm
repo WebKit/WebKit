@@ -124,7 +124,7 @@ enum {
 #if PLATFORM(MAC)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
-    static RenderTheme* rt = RenderThemeMac::create().releaseRef();
+    static RenderTheme* rt = RenderThemeMac::create().leakRef();
     return rt;
 }
 #endif

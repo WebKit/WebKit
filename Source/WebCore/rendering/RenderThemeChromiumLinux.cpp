@@ -70,7 +70,7 @@ PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* rt = RenderThemeChromiumLinux::create().releaseRef();
+    static RenderTheme* rt = RenderThemeChromiumLinux::create().leakRef();
     return rt;
 }
 

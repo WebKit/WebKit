@@ -291,8 +291,8 @@ bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* cancelB
                              cancelButtonSize, cancelButtonSize);
     IntRect paintingRect = convertToPaintingRect(inputRenderBox, cancelButtonObject, cancelButtonRect, r);
 
-    static Image* cancelImage = Image::loadPlatformResource("searchCancel").releaseRef();
-    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").releaseRef();
+    static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
     paintInfo.context->drawImage(isPressed(cancelButtonObject) ? cancelPressedImage : cancelImage,
                                  cancelButtonObject->style()->colorSpace(), paintingRect);
     return false;
@@ -334,7 +334,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* ma
                           magnifierSize, magnifierSize);
     IntRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
 
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").releaseRef();
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
     paintInfo.context->drawImage(magnifierImage, magnifierObject->style()->colorSpace(), paintingRect);
     return false;
 }
@@ -367,7 +367,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* magnif
                           magnifierWidth, magnifierHeight);
     IntRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
 
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").releaseRef();
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
     paintInfo.context->drawImage(magnifierImage, magnifierObject->style()->colorSpace(), paintingRect);
     return false;
 }

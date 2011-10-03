@@ -42,20 +42,20 @@ PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direc
     ASSERT(level <= 1);
     if (!level) {
         if (!override) {
-            static BidiContext* ltrContext = createUncached(0, LeftToRight, false, FromStyleOrDOM, 0).releaseRef();
+            static BidiContext* ltrContext = createUncached(0, LeftToRight, false, FromStyleOrDOM, 0).leakRef();
             return ltrContext;
         }
 
-        static BidiContext* ltrOverrideContext = createUncached(0, LeftToRight, true, FromStyleOrDOM, 0).releaseRef();
+        static BidiContext* ltrOverrideContext = createUncached(0, LeftToRight, true, FromStyleOrDOM, 0).leakRef();
         return ltrOverrideContext;
     }
 
     if (!override) {
-        static BidiContext* rtlContext = createUncached(1, RightToLeft, false, FromStyleOrDOM, 0).releaseRef();
+        static BidiContext* rtlContext = createUncached(1, RightToLeft, false, FromStyleOrDOM, 0).leakRef();
         return rtlContext;
     }
 
-    static BidiContext* rtlOverrideContext = createUncached(1, RightToLeft, true, FromStyleOrDOM, 0).releaseRef();
+    static BidiContext* rtlOverrideContext = createUncached(1, RightToLeft, true, FromStyleOrDOM, 0).leakRef();
     return rtlOverrideContext;
 }
 

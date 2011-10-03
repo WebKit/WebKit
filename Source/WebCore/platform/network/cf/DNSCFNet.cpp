@@ -187,16 +187,16 @@ void DNSResolveQueue::resolve(const String& hostname)
         return;
     }
     CFHostClientContext context = { 0, 0, 0, 0, 0 };
-    Boolean result = CFHostSetClient(host.get(), clientCallback, &context);
+    CFHostRef leakedHost = host.leakRef(); // The host will be released from clientCallback().
+    Boolean result = CFHostSetClient(leakedHost, clientCallback, &context);
     ASSERT_UNUSED(result, result);
 #if !PLATFORM(WIN)
-    CFHostScheduleWithRunLoop(host.get(), CFRunLoopGetMain(), kCFRunLoopCommonModes);
+    CFHostScheduleWithRunLoop(leakedHost, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 #else
     // On Windows, we run a separate thread with CFRunLoop, which is where clientCallback will be called.
-    CFHostScheduleWithRunLoop(host.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFHostScheduleWithRunLoop(leakedHost, loaderRunLoop(), kCFRunLoopDefaultMode);
 #endif
-    CFHostStartInfoResolution(host.get(), kCFHostAddresses, 0);
-    host.releaseRef(); // The host will be released from clientCallback().
+    CFHostStartInfoResolution(leakedHost, kCFHostAddresses, 0);
 }
 
 void prefetchDNS(const String& hostname)

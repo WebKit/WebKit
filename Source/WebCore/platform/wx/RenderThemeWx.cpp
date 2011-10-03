@@ -137,7 +137,7 @@ PassRefPtr<RenderTheme> RenderThemeWx::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* rt = RenderThemeWx::create().releaseRef();
+    static RenderTheme* rt = RenderThemeWx::create().leakRef();
     return rt;
 }
 

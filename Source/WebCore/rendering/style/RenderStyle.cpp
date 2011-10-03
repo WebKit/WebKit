@@ -46,7 +46,7 @@ namespace WebCore {
 
 inline RenderStyle* defaultStyle()
 {
-    static RenderStyle* s_defaultStyle = RenderStyle::createDefaultStyle().releaseRef();
+    static RenderStyle* s_defaultStyle = RenderStyle::createDefaultStyle().leakRef();
     return s_defaultStyle;
 }
 
