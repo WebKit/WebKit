@@ -27,6 +27,22 @@
 
 module("base");
 
+test("bind", 3, function() {
+    function func(a, b) {
+        equals(this.prop, 5);
+        equals(a, "banana");
+        deepEqual(b, [2, 3, 4]);
+    }
+
+    var thisObject = {
+        "prop": 5
+    };
+
+    var bound = func.bind(thisObject, "banana");
+    bound([2, 3, 4]);
+});
+
+
 test("joinPath", 1, function() {
     var value = base.joinPath("path/to", "test.html");
     equals(value, "path/to/test.html");

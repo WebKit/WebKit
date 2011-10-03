@@ -31,9 +31,19 @@ var base = base || {};
 if (!('bind' in Function.prototype)) {
     Function.prototype.bind = function(thisObject) {
         var method = this;
-        var boundArguments = [].concat(arguments).slice(1);
+        var boundArguments = [];
+        for (var i = 1; i < arguments.length; ++i) {
+            boundArguments.push(arguments[i]);
+        }
         return function() {
-            return method.apply(thisObject, boundArguments.concat(arguments));
+            var actualParameters = [];
+            for (var i = 0; i < boundArguments.length; ++i) {
+                actualParameters.push(boundArguments[i]);
+            }
+            for (var i = 0; i < arguments.length; ++i) {
+                actualParameters.push(arguments[i]);
+            }
+            return method.apply(thisObject, actualParameters);
         }
     }
 }

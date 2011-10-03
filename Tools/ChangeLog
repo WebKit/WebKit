@@ -1,3 +1,16 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should work in Safari 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=69290
+
+        Reviewed by Sam Weinig.
+
+        My old implementation of bind was too clever by half.  This one seems
+        to work better, at least according to this test.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+
 2011-09-29  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Unreviewed: change my e-mail in commiters.py
