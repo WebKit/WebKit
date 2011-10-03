@@ -1,5 +1,11 @@
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
+        Unbork the test_expectations file.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
         Update expectations for tables tests after http://trac.webkit.org/changeset/96509.
 
         * platform/chromium-cg-mac/tables/mozilla/bugs/bug113235-2-expected.png: Added.

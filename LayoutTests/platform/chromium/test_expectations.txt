@@ -2771,7 +2771,7 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
-BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
+BUGCR76979 WIN RELEASE : inspector/console/console-dirxml.html = PASS TEXT
 BUGCR76979 SLOW LINUX WIN DEBUG : inspector/console/console-dirxml.html = PASS
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
