@@ -29,6 +29,10 @@
 
 const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.ConsoleView = function()
 {
     WebInspector.View.call(this);
@@ -100,13 +104,6 @@ WebInspector.ConsoleView = function()
     this._registerShortcuts();
 
     this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
-
-    this._customFormatters = {
-        "object": this._formatobject,
-        "array":  this._formatarray,
-        "node":   this._formatnode,
-        "string": this._formatstring
-    };
 
     WebInspector.settings.monitoringXHREnabled.addChangeListener(this._monitoringXHREnabledSettingChanged.bind(this));
 
@@ -637,108 +634,6 @@ WebInspector.ConsoleView.prototype = {
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },
 
-    _format: function(output, forceObjectFormat)
-    {
-        var type;
-        if (forceObjectFormat)
-            type = "object";
-        else if (output instanceof WebInspector.RemoteObject)
-            type = output.subtype || output.type;
-        else
-            type = typeof output;
-
-        var formatter = this._customFormatters[type];
-        if (!formatter) {
-            formatter = this._formatvalue;
-            output = output.description;
-        }
-
-        var span = document.createElement("span");
-        span.className = "console-formatted-" + type + " source-code";
-        formatter.call(this, output, span);
-        return span;
-    },
-
-    _formatvalue: function(val, elem)
-    {
-        elem.appendChild(document.createTextNode(val));
-    },
-
-    _formatobject: function(obj, elem)
-    {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description).element);
-    },
-
-    _formatnode: function(object, elem)
-    {
-        function printNode(nodeId)
-        {
-            if (!nodeId) {
-                // Sometimes DOM is loaded after the sync message is being formatted, so we get no
-                // nodeId here. So we fall back to object formatting here.
-                this._formatobject(object, elem);
-                return;
-            }
-            var treeOutline = new WebInspector.ElementsTreeOutline();
-            treeOutline.showInElementsPanelEnabled = true;
-            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
-            treeOutline.element.addStyleClass("outline-disclosure");
-            if (!treeOutline.children[0].hasChildren)
-                treeOutline.element.addStyleClass("single-node");
-            elem.appendChild(treeOutline.element);
-        }
-        object.pushNodeToFrontend(printNode.bind(this));
-    },
-
-    _formatarray: function(arr, elem)
-    {
-        arr.getOwnProperties(this._printArray.bind(this, elem));
-    },
-
-    _formatstring: function(output, elem)
-    {
-        var span = document.createElement("span");
-        span.className = "console-formatted-string source-code";
-        span.appendChild(WebInspector.linkifyStringAsFragment(output.description));
-
-        // Make black quotes.
-        elem.removeStyleClass("console-formatted-string");
-        elem.appendChild(document.createTextNode("\""));
-        elem.appendChild(span);
-        elem.appendChild(document.createTextNode("\""));
-    },
-
-    _printArray: function(elem, properties)
-    {
-        if (!properties)
-            return;
-
-        var elements = [];
-        for (var i = 0; i < properties.length; ++i) {
-            var name = properties[i].name;
-            if (name == parseInt(name))
-                elements[name] = this._formatAsArrayEntry(properties[i].value);
-        }
-
-        elem.appendChild(document.createTextNode("["));
-        for (var i = 0; i < elements.length; ++i) {
-            var element = elements[i];
-            if (element)
-                elem.appendChild(element);
-            else
-                elem.appendChild(document.createTextNode("undefined"))
-            if (i < elements.length - 1)
-                elem.appendChild(document.createTextNode(", "));
-        }
-        elem.appendChild(document.createTextNode("]"));
-    },
-
-    _formatAsArrayEntry: function(output)
-    {
-        // Prevent infinite expansion of cross-referencing arrays.
-        return this._format(output, output.subtype && output.subtype === "array");
-    },
-
     elementsToRestoreScrollPositionsFor: function()
     {
         return [this.messagesElement];
@@ -876,3 +771,8 @@ WebInspector.ConsoleGroup.prototype = {
         event.preventDefault();
     }
 }
+
+/**
+ * @type {?WebInspector.ConsoleView}
+ */
+WebInspector.consoleView = null;

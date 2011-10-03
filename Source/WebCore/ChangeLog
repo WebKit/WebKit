@@ -1,3 +1,26 @@
+2011-10-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move console message formatting from ConsoleView.js into ConsoleMessage.js
+        https://bugs.webkit.org/show_bug.cgi?id=69244
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype._formatMessage.else.else.linkifier):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype._format):
+        (WebInspector.ConsoleMessage.prototype._formatParameter):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsValue):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessage.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessage.prototype._printArray):
+        (WebInspector.ConsoleMessage.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString):
+        * inspector/front-end/ConsoleView.js:
+
 2011-10-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: restore partial front-end compilability
