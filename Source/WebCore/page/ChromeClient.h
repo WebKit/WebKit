@@ -217,11 +217,6 @@ namespace WebCore {
         virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
         virtual String generateReplacementFile(const String& path);
 
-        virtual bool paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
-                                          ScrollbarControlState, ScrollbarPart pressedPart, bool vertical,
-                                          float value, float proportion, ScrollbarControlPartMask);
-        virtual bool paintCustomScrollCorner(GraphicsContext*, const FloatRect&);
-
         virtual bool paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&);
 
         // FIXME: Remove once all ports are using client-based geolocation. https://bugs.webkit.org/show_bug.cgi?id=40373

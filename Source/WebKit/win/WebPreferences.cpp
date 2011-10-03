@@ -1318,16 +1318,16 @@ HRESULT WebPreferences::setCacheModel(WebCacheModel cacheModel)
     return S_OK;
 }
 
-HRESULT WebPreferences::setShouldPaintCustomScrollbars(BOOL shouldPaint)
+HRESULT WebPreferences::unused3()
 {
-    setBoolValue(CFSTR(WebKitPaintCustomScrollbarsPreferenceKey), shouldPaint);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT WebPreferences::shouldPaintCustomScrollbars(BOOL* shouldPaint)
+HRESULT WebPreferences::unused4()
 {
-    *shouldPaint = boolValueForKey(CFSTR(WebKitPaintCustomScrollbarsPreferenceKey));
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT WebPreferences::shouldPaintNativeControls(BOOL* shouldPaint)

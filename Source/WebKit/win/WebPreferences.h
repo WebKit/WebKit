@@ -286,11 +286,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCacheModel(
      /* [in] */ WebCacheModel cacheModel);
 
-    virtual HRESULT STDMETHODCALLTYPE setShouldPaintCustomScrollbars( 
-    /* [in] */ BOOL shouldPaint);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldPaintCustomScrollbars( 
-    /* [retval][out] */ BOOL *shouldPaint);
+    virtual HRESULT STDMETHODCALLTYPE unused3();
+    virtual HRESULT STDMETHODCALLTYPE unused4();
 
     virtual HRESULT STDMETHODCALLTYPE setAVFoundationEnabled(
     /* [in] */ BOOL);

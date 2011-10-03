@@ -151,11 +151,6 @@ private:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename) OVERRIDE;
     virtual String generateReplacementFile(const String& path) OVERRIDE;
     
-    virtual bool paintCustomScrollbar(WebCore::GraphicsContext*, const WebCore::FloatRect&, WebCore::ScrollbarControlSize, 
-                                      WebCore::ScrollbarControlState, WebCore::ScrollbarPart pressedPart, bool vertical,
-                                      float value, float proportion, WebCore::ScrollbarControlPartMask) OVERRIDE;
-    virtual bool paintCustomScrollCorner(WebCore::GraphicsContext*, const WebCore::FloatRect&) OVERRIDE;
-
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE;
 
     // This is an asynchronous call. The ChromeClient can display UI asking the user for permission

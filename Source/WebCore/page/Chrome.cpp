@@ -559,18 +559,6 @@ String ChromeClient::generateReplacementFile(const String&)
     return String();
 }
 
-bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize,
-                                        ScrollbarControlState, ScrollbarPart, bool,
-                                        float, float, ScrollbarControlPartMask)
-{
-    return false;
-}
-
-bool ChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
-{
-    return false;
-}
-
 bool ChromeClient::paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&)
 {
     return false;

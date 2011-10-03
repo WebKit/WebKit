@@ -41,18 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-static Page* pageForScrollView(ScrollView* view)
-{
-    if (!view)
-        return 0;
-    if (!view->isFrameView())
-        return 0;
-    FrameView* frameView = static_cast<FrameView*>(view);
-    if (!frameView->frame())
-        return 0;
-    return frameView->frame()->page();
-}
-
 bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     // Create the ScrollbarControlPartMask based on the damageRect
@@ -94,35 +82,6 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
         if (damageRect.intersects(endTrackRect))
             scrollMask |= ForwardTrackPart;
     }
-
-#if PLATFORM(WIN)
-    // FIXME: This API makes the assumption that the custom scrollbar's metrics will match
-    // the theme's metrics.  This is not a valid assumption.  The ability for a client to paint
-    // custom scrollbars should be removed once scrollbars can be styled via CSS.
-    if (Page* page = pageForScrollView(scrollbar->parent())) {
-        if (page->settings()->shouldPaintCustomScrollbars()) {
-            float proportion = static_cast<float>(scrollbar->visibleSize()) / scrollbar->totalSize();
-            float value = scrollbar->currentPos() / static_cast<float>(scrollbar->maximum());
-            ScrollbarControlState s = 0;
-            if (scrollbar->scrollableArea()->isActive())
-                s |= ActiveScrollbarState;
-            if (scrollbar->enabled())
-                s |= EnabledScrollbarState;
-            if (scrollbar->pressedPart() != NoPart)
-                s |= PressedScrollbarState;
-            if (page->chrome()->client()->paintCustomScrollbar(graphicsContext,
-                                                               scrollbar->frameRect(), 
-                                                               scrollbar->controlSize(),
-                                                               s, 
-                                                               scrollbar->pressedPart(), 
-                                                               scrollbar->orientation() == VerticalScrollbar,
-                                                               value,
-                                                               proportion,
-                                                               scrollMask))
-                return true;
-        }
-    }
-#endif
 
     // Paint the scrollbar background (only used by custom CSS scrollbars).
     paintScrollbarBackground(graphicsContext, scrollbar);
@@ -304,11 +263,8 @@ int ScrollbarThemeComposite::trackLength(Scrollbar* scrollbar)
     return (scrollbar->orientation() == HorizontalScrollbar) ? constrainedTrackRect.width() : constrainedTrackRect.height();
 }
 
-void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)
+void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect)
 {
-    Page* page = pageForScrollView(view);
-    if (page && page->settings()->shouldPaintCustomScrollbars() && page->chrome()->client()->paintCustomScrollCorner(context, cornerRect))
-        return;
     context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 

@@ -4705,11 +4705,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setDOMPasteAllowed(!!enabled);
 
-    hr = preferences->shouldPaintCustomScrollbars(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setShouldPaintCustomScrollbars(!!enabled);
-
     hr = preferences->zoomsTextOnly(&enabled);
     if (FAILED(hr))
         return hr;

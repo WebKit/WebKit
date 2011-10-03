@@ -278,9 +278,6 @@ namespace WebCore {
 
         void setOfflineWebApplicationCacheEnabled(bool);
         bool offlineWebApplicationCacheEnabled() const { return m_offlineWebApplicationCacheEnabled; }
-
-        void setShouldPaintCustomScrollbars(bool);
-        bool shouldPaintCustomScrollbars() const { return m_shouldPaintCustomScrollbars; }
         
         void setEnforceCSSMIMETypeInNoQuirksMode(bool);
         bool enforceCSSMIMETypeInNoQuirksMode() { return m_enforceCSSMIMETypeInNoQuirksMode; }
@@ -550,7 +547,6 @@ namespace WebCore {
         bool m_localFileContentSniffingEnabled : 1;
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;
-        bool m_shouldPaintCustomScrollbars : 1;
         bool m_enforceCSSMIMETypeInNoQuirksMode : 1;
         bool m_usesEncodingDetector : 1;
         bool m_allowScriptsToCloseWindows : 1;

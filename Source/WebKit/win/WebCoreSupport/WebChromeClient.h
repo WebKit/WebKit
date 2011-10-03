@@ -126,11 +126,6 @@ public:
 
     virtual void populateVisitedLinks();
 
-    virtual bool paintCustomScrollbar(WebCore::GraphicsContext*, const WebCore::FloatRect&, WebCore::ScrollbarControlSize, 
-                                        WebCore::ScrollbarControlState, WebCore::ScrollbarPart pressedPart, bool vertical,
-                                        float value, float proportion, WebCore::ScrollbarControlPartMask);
-    virtual bool paintCustomScrollCorner(WebCore::GraphicsContext*, const WebCore::FloatRect&);
-
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 

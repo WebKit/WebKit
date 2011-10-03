@@ -188,8 +188,8 @@ interface IWebPreferences : IUnknown
     HRESULT cacheModel([out, retval] WebCacheModel* cacheModel);
     HRESULT setCacheModel([in] WebCacheModel cacheModel);
 
-    HRESULT setShouldPaintCustomScrollbars(BOOL shouldPaint);
-    HRESULT shouldPaintCustomScrollbars(BOOL *shouldPaint);
+    HRESULT unused3();
+    HRESULT unused4();
 
     HRESULT setZoomsTextOnly(BOOL zoomsTextOnly);
     HRESULT zoomsTextOnly(BOOL *zoomsTextOnly);

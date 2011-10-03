@@ -587,20 +587,6 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return m_page->injectedBundleUIClient().generateFileForUpload(m_page, path);
 }
 
-bool WebChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
-                                           ScrollbarControlState, ScrollbarPart pressedPart, bool vertical,
-                                           float value, float proportion, ScrollbarControlPartMask)
-{
-    notImplemented();
-    return false;
-}
-
-bool WebChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
-{
-    notImplemented();
-    return false;
-}
-
 bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
 {
     if (!m_page->injectedBundleUIClient().shouldPaintCustomOverhangArea())

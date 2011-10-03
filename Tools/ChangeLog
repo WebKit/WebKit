@@ -1,3 +1,14 @@
+2011-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove custom scrollbar painting hooks
+        https://bugs.webkit.org/show_bug.cgi?id=69163
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo):
+        No need to enable custom scrollbar painting.
+
 2011-10-03  David Levin  <levin@chromium.org>
 
         watchlist: Make watchlist run on a bot.

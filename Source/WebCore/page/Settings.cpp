@@ -167,7 +167,6 @@ Settings::Settings(Page* page)
     , m_localFileContentSniffingEnabled(false)
     , m_inApplicationChromeMode(false)
     , m_offlineWebApplicationCacheEnabled(false)
-    , m_shouldPaintCustomScrollbars(false)
     , m_enforceCSSMIMETypeInNoQuirksMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
@@ -648,11 +647,6 @@ void Settings::setApplicationChromeMode(bool mode)
 void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
 {
     m_offlineWebApplicationCacheEnabled = enabled;
-}
-
-void Settings::setShouldPaintCustomScrollbars(bool shouldPaintCustomScrollbars)
-{
-    m_shouldPaintCustomScrollbars = shouldPaintCustomScrollbars;
 }
 
 void Settings::setEnforceCSSMIMETypeInNoQuirksMode(bool enforceCSSMIMETypeInNoQuirksMode)

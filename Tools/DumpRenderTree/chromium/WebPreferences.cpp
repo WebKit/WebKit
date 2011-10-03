@@ -170,7 +170,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setHixie76WebSocketProtocolEnabled(hixie76WebSocketProtocolEnabled);
 
     // Fixed values.
-    settings->setShouldPaintCustomScrollbars(true);
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     settings->setDownloadableBinaryFontsEnabled(true);
     settings->setAllowScriptsToCloseWindows(false);

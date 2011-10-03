@@ -247,7 +247,7 @@ void WebSettingsImpl::setFontRenderingModeNormal()
 
 void WebSettingsImpl::setShouldPaintCustomScrollbars(bool enabled)
 {
-    m_settings->setShouldPaintCustomScrollbars(enabled);
+    // FIXME: This should be removed.
 }
 
 void WebSettingsImpl::setAllowUniversalAccessFromFileURLs(bool allow)
