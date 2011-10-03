@@ -119,6 +119,7 @@ contributors_who_are_not_committers = [
     Contributor("Tom Zakrajsek", "tomz@codeaurora.org", "tomz"),
     Contributor("Wyatt Carss", ["wcarss@chromium.org", "wcarss@google.com"], "wcarss"),
     Contributor("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com", "wangxianzhu@google.com"], "wangxianzhu"),
+    Contributor("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
     Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
 
