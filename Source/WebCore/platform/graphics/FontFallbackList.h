@@ -53,7 +53,10 @@ public:
     FontSelector* fontSelector() const { return m_fontSelector.get(); }
     unsigned generation() const { return m_generation; }
 
-    typedef HashMap<int, GlyphPageTreeNode*> GlyphPages;
+    struct GlyphPagesHashTraits : HashTraits<int> {
+        static const int minimumTableSize = 16;
+    };
+    typedef HashMap<int, GlyphPageTreeNode*, DefaultHash<int>::Hash, GlyphPagesHashTraits> GlyphPages;
     GlyphPageTreeNode* glyphPageZero() const { return m_pageZero; }
     const GlyphPages& glyphPages() const { return m_pages; }
 

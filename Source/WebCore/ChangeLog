@@ -1,3 +1,19 @@
+2011-10-03  Andreas Kling  <kling@webkit.org>
+
+        FontFallbackList: Glyph pages waste a lot of memory.
+        https://bugs.webkit.org/show_bug.cgi?id=69260
+
+        Reviewed by Dan Bernstein.
+
+        Use a minimum hash table size of 16 (down from 64) for FontFallbackList's
+        glyph pages. This reduces memory consumption by ~900 kB when loading the
+        full HTML5 spec.
+
+        The cost is two additional rehash()es of FontFallbackList::m_pages when
+        adding the 32nd and 64th pages to the hash map.
+
+        * platform/graphics/FontFallbackList.h:
+
 2011-10-03  Konstantin Scheglov  <scheglov@google.com>
 
         Right border missing from table with colspan and collapsing border
