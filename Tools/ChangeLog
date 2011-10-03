@@ -1,3 +1,17 @@
+2011-10-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] DRT: Add JSStringUtils.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=66397
+
+        Reviewed by Ryosuke Niwa.
+        
+        Adds helper functions to compare the equality of C-style strings and
+        JSStringRef objects.
+
+        * DumpRenderTree/efl/JSStringUtils.cpp: Added.
+        (equals):
+        * DumpRenderTree/efl/JSStringUtils.h: Added.
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should work in Safari 5.1
