@@ -1,3 +1,19 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        Another round of updates after http://trac.webkit.org/changeset/96509.
+
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-cg-mac-leopard/tables/mozilla_expected_failures/bugs/bug220653-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug113235-2-expected.png:
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug23994-expected.png:
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug56405-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3517-expected.png:
+        * platform/chromium-win/fast/invalid/017-expected.png:
+        * platform/chromium-win/fast/invalid/018-expected.png:
+        * platform/chromium-win/fast/invalid/020-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+
 2011-10-03  Chris Rogers  <crogers@google.com>
 
         BiquadFilterNode .type attribute is not handled correctly
