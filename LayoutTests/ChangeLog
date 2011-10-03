@@ -1,3 +1,54 @@
+2011-10-03  Adam Barth  <abarth@webkit.org>
+
+        Update expectations for tables tests after http://trac.webkit.org/changeset/96509.
+
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug113235-2-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug23994-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug56405-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug220653-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+        * platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3517-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/chromium-win-xp/fast/forms/file-input-disabled-expected.txt: Added.
+        * platform/chromium-win/fast/forms/file-input-disabled-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/chromium/fast/invalid: Added.
+        * platform/chromium/fast/invalid/017-expected.txt: Added.
+        * platform/chromium/fast/invalid/018-expected.txt: Added.
+        * platform/chromium/fast/invalid/020-expected.txt: Added.
+        * platform/chromium/fast/invalid/residual-style-expected.txt: Added.
+        * platform/chromium/fast/invalid/table-inside-stray-table-content-expected.txt: Added.
+        * platform/chromium/fast/table: Added.
+        * platform/chromium/fast/table/inline-form-assert-expected.txt: Added.
+        * platform/chromium/tables: Added.
+        * platform/chromium/tables/mozilla: Added.
+        * platform/chromium/tables/mozilla/bugs: Added.
+        * platform/chromium/tables/mozilla/bugs/bug113235-2-expected.txt: Added.
+        * platform/chromium/tables/mozilla/bugs/bug23994-expected.txt: Added.
+        * platform/chromium/tables/mozilla/bugs/bug56405-expected.txt: Added.
+        * platform/chromium/tables/mozilla/bugs/bug56563-expected.txt: Added.
+        * platform/chromium/tables/mozilla_expected_failures: Added.
+        * platform/chromium/tables/mozilla_expected_failures/bugs: Added.
+        * platform/chromium/tables/mozilla_expected_failures/bugs/bug220653-expected.txt: Added.
+        * platform/chromium/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Added.
+        * platform/chromium/tables/mozilla_expected_failures/bugs/bug7121-2-expected.txt: Added.
+        * platform/chromium/tables/mozilla_expected_failures/core: Added.
+        * platform/chromium/tables/mozilla_expected_failures/core/conflicts-expected.txt: Added.
+        * platform/chromium/tables/mozilla_expected_failures/other: Added.
+        * platform/chromium/tables/mozilla_expected_failures/other/empty_cells-expected.txt: Added.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Added.
+
 2011-10-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r95526): It made 3 inspector tests fail
