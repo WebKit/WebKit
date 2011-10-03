@@ -118,7 +118,7 @@ void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, Plu
     }
 }
 
-bool NetscapePluginModule::pluginInfo(PluginModuleInfo& plugin)
+bool NetscapePluginModule::getPluginInfoForLoadedPlugin(PluginModuleInfo& plugin)
 {
     ASSERT(m_isInitialized);
 
@@ -164,7 +164,7 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         return false;
 
     pluginModule->incrementLoadCount();
-    bool returnValue = pluginModule->pluginInfo(plugin);
+    bool returnValue = pluginModule->getPluginInfoForLoadedPlugin(plugin);
     pluginModule->decrementLoadCount();
 
     return returnValue;

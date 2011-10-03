@@ -1,3 +1,15 @@
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Rename NetscapePluginModule::pluginInfo to NetscapePluginModule::getPluginInfoForLoadedPlugin()
+        https://bugs.webkit.org/show_bug.cgi?id=69147
+
+        Reviewed by Martin Robinson.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+
 2011-10-03  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WebKit2][Mac] WebProcess should exit automatically when UIProcess dies.
