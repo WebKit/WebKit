@@ -1,5 +1,18 @@
 2011-10-03  Anders Carlsson  <andersca@apple.com>
 
+        Content area does not return to the correct position after rubberbanding
+        https://bugs.webkit.org/show_bug.cgi?id=69302
+        <rdar://problem/10102886>
+
+        Reviewed by Sam Weinig.
+
+        Make sure to schedule a display after adding to the dirty region.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll):
+
+2011-10-03  Anders Carlsson  <andersca@apple.com>
+
         Remove custom scrollbar painting hooks
         https://bugs.webkit.org/show_bug.cgi?id=69163
 
