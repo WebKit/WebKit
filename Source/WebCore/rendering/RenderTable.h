@@ -151,13 +151,13 @@ public:
     int numEffCols() const { return m_columns.size(); }
     int spanOfEffCol(int effCol) const { return m_columns[effCol].span; }
     
-    int colToEffCol(int col) const
+    int colToEffCol(unsigned col) const
     {
-        int i = 0;
-        int effCol = numEffCols();
-        for (int c = 0; c < col && i < effCol; ++i)
-            c += m_columns[i].span;
-        return i;
+        unsigned effCol = 0;
+        unsigned numCols = numEffCols();
+        for (unsigned c = 0; effCol < numCols && c + m_columns[effCol].span - 1 < col; ++effCol)
+            c += m_columns[effCol].span;
+        return effCol;
     }
     
     int effColToCol(int effCol) const

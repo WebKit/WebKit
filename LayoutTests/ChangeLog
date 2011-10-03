@@ -1,3 +1,40 @@
+2011-10-03  Konstantin Scheglov  <scheglov@google.com>
+
+        Right border missing from table with colspan and collapsing border
+        https://bugs.webkit.org/show_bug.cgi?id=14274
+
+        Reviewed by David Hyatt.
+
+        * fast/table/border-collapsing/bug14274-expected.png: Copied from LayoutTests/platform/chromium-win/fast/invalid/020-expected.png.
+        * fast/table/border-collapsing/bug14274-expected.txt: Added.
+        * fast/table/border-collapsing/bug14274.html: Added.
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.txt:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/chromium-win/fast/invalid/017-expected.png:
+        * platform/chromium-win/fast/invalid/017-expected.txt:
+        * platform/chromium-win/fast/invalid/018-expected.png:
+        * platform/chromium-win/fast/invalid/018-expected.txt:
+        * platform/chromium-win/fast/invalid/020-expected.png:
+        * platform/chromium-win/fast/invalid/020-expected.txt:
+        * platform/chromium-win/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/chromium-win/fast/table/inline-form-assert-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug9024-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug220653-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug3517-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug7121-2-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/conflicts-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+        * platform/gtk/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/mac/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/qt/fast/invalid/table-residual-style-crash-expected.txt:
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         Update baselines after http://trac.webkit.org/changeset/96498.

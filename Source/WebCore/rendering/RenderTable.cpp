@@ -63,8 +63,7 @@ RenderTable::RenderTable(Node* node)
     , m_borderEnd(0)
 {
     setChildrenInline(false);
-    m_columnPos.fill(0, 2);
-    m_columns.fill(ColumnStruct(), 1);
+    m_columnPos.fill(0, 1);
     
 }
 

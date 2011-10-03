@@ -1,3 +1,17 @@
+2011-10-03  Konstantin Scheglov  <scheglov@google.com>
+
+        Right border missing from table with colspan and collapsing border
+        https://bugs.webkit.org/show_bug.cgi?id=14274
+
+        Reviewed by David Hyatt.
+
+        Test: fast/table/border-collapsing/bug14274.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::colToEffCol):
+
 2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix make distcheck build
