@@ -1,3 +1,15 @@
+2011-10-03  Elliot Poger  <epoger@google.com>
+
+        webkit->chromium DEPS roll 103471->103694
+        https://bugs.webkit.org/show_bug.cgi?id=69271
+
+        This brings in a new tools/win/supalink directory from
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=103474
+
+        Reviewed by Adam Barth.
+
+        * DEPS:
+
 2011-10-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebWidget API for accessing the current WebCompositor

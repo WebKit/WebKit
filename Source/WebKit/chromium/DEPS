@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '103471'
+  'chromium_rev': '103694'
 }
 
 deps = {
@@ -115,6 +115,8 @@ deps = {
     Var('chromium_svn')+'/tools/gritsettings@'+Var('chromium_rev'),
   'tools/generate_stubs':
     Var('chromium_svn')+'/tools/generate_stubs@'+Var('chromium_rev'),
+  'tools/win':
+    Var('chromium_svn')+'/tools/win@'+Var('chromium_rev'),
   'ui':
     Var('chromium_svn')+'/ui@'+Var('chromium_rev'), # needed by app
 
