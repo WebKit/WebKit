@@ -35,7 +35,7 @@ WaveShaperNode::WaveShaperNode(AudioContext* context)
     : AudioBasicProcessorNode(context, context->sampleRate())
 {
     m_processor = adoptPtr(new WaveShaperProcessor(context->sampleRate(), 1));
-    setType(NodeTypeWaveShaper);
+    setNodeType(NodeTypeWaveShaper);
 }
 
 void WaveShaperNode::setCurve(Float32Array* curve)

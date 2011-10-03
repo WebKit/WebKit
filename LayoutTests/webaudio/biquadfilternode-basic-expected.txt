@@ -1,0 +1,18 @@
+Basic tests for BiquadFilterNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Biquad filter defaults to low-pass filter.
+PASS Biquad filter type 0 is settable.
+PASS Biquad filter type 1 is settable.
+PASS Biquad filter type 2 is settable.
+PASS Biquad filter type 3 is settable.
+PASS Biquad filter type 4 is settable.
+PASS Biquad filter type 5 is settable.
+PASS Biquad filter type 6 is settable.
+PASS Biquad filter type 7 is settable.
+PASS Illegal filter type correctly throws exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

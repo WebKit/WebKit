@@ -51,7 +51,7 @@ AudioChannelMerger::AudioChannelMerger(AudioContext* context, double sampleRate)
 
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
     
-    setType(NodeTypeChannelMerger);
+    setNodeType(NodeTypeChannelMerger);
     
     initialize();
 }

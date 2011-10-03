@@ -38,7 +38,7 @@ namespace WebCore {
 
 AudioNode::AudioNode(AudioContext* context, double sampleRate)
     : m_isInitialized(false)
-    , m_type(NodeTypeUnknown)
+    , m_nodeType(NodeTypeUnknown)
     , m_context(context)
     , m_sampleRate(sampleRate)
     , m_lastProcessingTime(-1.0)
@@ -59,8 +59,8 @@ AudioNode::AudioNode(AudioContext* context, double sampleRate)
 AudioNode::~AudioNode()
 {
 #if DEBUG_AUDIONODE_REFERENCES
-    --s_nodeCount[type()];
-    printf("%p: %d: AudioNode::~AudioNode() %d %d %d\n", this, type(), m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    --s_nodeCount[nodeType()];
+    printf("%p: %d: AudioNode::~AudioNode() %d %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
 #endif
 }
 
@@ -74,9 +74,9 @@ void AudioNode::uninitialize()
     m_isInitialized = false;
 }
 
-void AudioNode::setType(NodeType type)
+void AudioNode::setNodeType(NodeType type)
 {
-    m_type = type;
+    m_nodeType = type;
 
 #if DEBUG_AUDIONODE_REFERENCES
     ++s_nodeCount[type];
@@ -196,7 +196,7 @@ void AudioNode::ref(RefType refType)
     }
 
 #if DEBUG_AUDIONODE_REFERENCES
-    printf("%p: %d: AudioNode::ref(%d) %d %d %d\n", this, type(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    printf("%p: %d: AudioNode::ref(%d) %d %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
 #endif
 
     // See the disabling code in finishDeref() below. This handles the case where a node
@@ -268,7 +268,7 @@ void AudioNode::finishDeref(RefType refType)
     }
     
 #if DEBUG_AUDIONODE_REFERENCES
-    printf("%p: %d: AudioNode::deref(%d) %d %d %d\n", this, type(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    printf("%p: %d: AudioNode::deref(%d) %d %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
 #endif
 
     if (!m_connectionRefCount) {
@@ -295,7 +295,7 @@ void AudioNode::finishDeref(RefType refType)
                 // because they no longer have any input connections.  This needs to be handled more generally where AudioNodes have
                 // a tailTime attribute.  Then the AudioNode only needs to remain "active" for tailTime seconds after there are no
                 // longer any active connections.
-                if (type() != NodeTypeConvolver && type() != NodeTypeDelay) {
+                if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay) {
                     m_isDisabled = true;
                     for (unsigned i = 0; i < m_outputs.size(); ++i)
                         output(i)->disable();

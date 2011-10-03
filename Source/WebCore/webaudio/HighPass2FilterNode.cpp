@@ -37,7 +37,7 @@ HighPass2FilterNode::HighPass2FilterNode(AudioContext* context, double sampleRat
     biquadProcessor()->parameter1()->setContext(context);
     biquadProcessor()->parameter2()->setContext(context);
     biquadProcessor()->parameter3()->setContext(context);
-    setType(NodeTypeHighPass2Filter);
+    setNodeType(NodeTypeHighPass2Filter);
 }
 
 } // namespace WebCore

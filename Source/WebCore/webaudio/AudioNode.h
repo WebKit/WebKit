@@ -74,8 +74,8 @@ public:
         NodeTypeEnd
     };
 
-    NodeType type() const { return m_type; }
-    void setType(NodeType);
+    NodeType nodeType() const { return m_nodeType; }
+    void setNodeType(NodeType);
 
     // We handle our own ref-counting because of the threading issues and subtle nature of
     // how AudioNodes can continue processing (playing one-shot sound) after there are no more
@@ -148,7 +148,7 @@ protected:
 
 private:
     volatile bool m_isInitialized;
-    NodeType m_type;
+    NodeType m_nodeType;
     RefPtr<AudioContext> m_context;
     double m_sampleRate;
     Vector<OwnPtr<AudioNodeInput> > m_inputs;

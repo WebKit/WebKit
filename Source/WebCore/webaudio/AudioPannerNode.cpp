@@ -62,7 +62,7 @@ AudioPannerNode::AudioPannerNode(AudioContext* context, double sampleRate)
     m_orientation = FloatPoint3D(1, 0, 0);
     m_velocity = FloatPoint3D(0, 0, 0);
     
-    setType(NodeTypePanner);
+    setNodeType(NodeTypePanner);
 
     initialize();
 }
@@ -294,7 +294,7 @@ void AudioPannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node)
         return;
         
     // First check if this node is an AudioBufferSourceNode.  If so, let it know about us so that doppler shift pitch can be taken into account.
-    if (node->type() == NodeTypeAudioBufferSource) {
+    if (node->nodeType() == NodeTypeAudioBufferSource) {
         AudioBufferSourceNode* bufferSourceNode = reinterpret_cast<AudioBufferSourceNode*>(node);
         bufferSourceNode->setPannerNode(this);
     } else {    

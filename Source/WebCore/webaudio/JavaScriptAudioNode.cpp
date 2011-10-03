@@ -81,7 +81,7 @@ JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, double sampleRat
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
 
-    setType(NodeTypeJavaScript);
+    setNodeType(NodeTypeJavaScript);
 
     initialize();
 }

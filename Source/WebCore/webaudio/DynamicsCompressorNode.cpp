@@ -41,7 +41,7 @@ DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, double sam
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
     
-    setType(NodeTypeDynamicsCompressor);
+    setNodeType(NodeTypeDynamicsCompressor);
     
     initialize();
 }

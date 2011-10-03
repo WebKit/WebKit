@@ -52,7 +52,7 @@ public:
     }
     
     unsigned short type() { return biquadProcessor()->type(); }
-    void setType(unsigned short type) { biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type)); }
+    void setType(unsigned short type, ExceptionCode&);
 
     AudioParam* frequency() { return biquadProcessor()->parameter1(); }
     AudioParam* q() { return biquadProcessor()->parameter2(); }

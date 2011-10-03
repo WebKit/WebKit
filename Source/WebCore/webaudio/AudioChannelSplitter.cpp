@@ -46,7 +46,7 @@ AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, double sampleR
     for (unsigned i = 0; i < NumberOfOutputs; ++i)
         addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
     
-    setType(NodeTypeChannelSplitter);
+    setNodeType(NodeTypeChannelSplitter);
     
     initialize();
 }

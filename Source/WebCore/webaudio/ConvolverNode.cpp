@@ -51,7 +51,7 @@ ConvolverNode::ConvolverNode(AudioContext* context, double sampleRate)
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
     
-    setType(NodeTypeConvolver);
+    setNodeType(NodeTypeConvolver);
     
     initialize();
 }

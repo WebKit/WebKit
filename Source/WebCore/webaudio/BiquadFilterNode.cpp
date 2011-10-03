@@ -28,6 +28,8 @@
 
 #include "BiquadFilterNode.h"
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
 BiquadFilterNode::BiquadFilterNode(AudioContext* context, double sampleRate)
@@ -38,7 +40,17 @@ BiquadFilterNode::BiquadFilterNode(AudioContext* context, double sampleRate)
     biquadProcessor()->parameter1()->setContext(context);
     biquadProcessor()->parameter2()->setContext(context);
     biquadProcessor()->parameter3()->setContext(context);
-    setType(NodeTypeBiquadFilter);
+    setNodeType(NodeTypeBiquadFilter);
+}
+
+void BiquadFilterNode::setType(unsigned short type, ExceptionCode& ec)
+{
+    if (type > BiquadProcessor::Allpass) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+    
+    biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type));
 }
 
 } // namespace WebCore

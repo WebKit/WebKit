@@ -42,7 +42,7 @@ AudioDestinationNode::AudioDestinationNode(AudioContext* context, double sampleR
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     
-    setType(NodeTypeDestination);
+    setNodeType(NodeTypeDestination);
 }
 
 AudioDestinationNode::~AudioDestinationNode()

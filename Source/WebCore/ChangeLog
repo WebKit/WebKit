@@ -1,3 +1,61 @@
+2011-10-03  Chris Rogers  <crogers@google.com>
+
+        BiquadFilterNode .type attribute is not handled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=69182
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/biquadfilternode-basic.html
+
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::initialize):
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * webaudio/AudioChannelMerger.cpp:
+        (WebCore::AudioChannelMerger::AudioChannelMerger):
+        * webaudio/AudioChannelSplitter.cpp:
+        (WebCore::AudioChannelSplitter::AudioChannelSplitter):
+        * webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * webaudio/AudioGainNode.cpp:
+        (WebCore::AudioGainNode::AudioGainNode):
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::~AudioNode):
+        (WebCore::AudioNode::setNodeType):
+        (WebCore::AudioNode::ref):
+        (WebCore::AudioNode::finishDeref):
+        * webaudio/AudioNode.h:
+        (WebCore::AudioNode::nodeType):
+        * webaudio/AudioPannerNode.cpp:
+        (WebCore::AudioPannerNode::AudioPannerNode):
+        (WebCore::AudioPannerNode::notifyAudioSourcesConnectedToNode):
+        * webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        (WebCore::BiquadFilterNode::setType):
+        * webaudio/BiquadFilterNode.h:
+        * webaudio/BiquadFilterNode.idl:
+        * webaudio/BiquadProcessor.h:
+        (WebCore::BiquadProcessor::setType):
+        * webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * webaudio/HighPass2FilterNode.cpp:
+        (WebCore::HighPass2FilterNode::HighPass2FilterNode):
+        * webaudio/JavaScriptAudioNode.cpp:
+        (WebCore::JavaScriptAudioNode::JavaScriptAudioNode):
+        * webaudio/LowPass2FilterNode.cpp:
+        (WebCore::LowPass2FilterNode::LowPass2FilterNode):
+        * webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        * webaudio/RealtimeAnalyserNode.cpp:
+        (WebCore::RealtimeAnalyserNode::RealtimeAnalyserNode):
+        * webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+
 2011-10-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: support role mapping for HTML5 section elements

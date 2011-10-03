@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for BiquadFilterNode.");
+
+var context = 0;
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+    var filter = context.createBiquadFilter();
+    
+    // FIXME: we need to expose the actual filter type constants in the IDL
+    
+    // Check the filter type.
+    if (filter.type == 0)
+        testPassed("Biquad filter defaults to low-pass filter.");
+    else
+        testFailed("Biquad filter should default to low-pass filter.");
+
+    // Check that all legal filter types can be set.
+    // FIXME: use last defined filter constant (ALLPASS) instead of hard-coded 7 once it's defined in the IDL.
+    for (var i = 0; i <= 7; ++i) {
+        try {
+            filter.type = i;
+            
+            if (filter.type == i) {
+                var message = "Biquad filter type " + i + " is settable.";
+                testPassed(message);
+            } else {
+                var message = "Biquad filter type " + i + " was not correctly set.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Biquad filter type " + i + " should not throw exception.";
+            testFailed(message);
+        }
+    }
+
+    // Check that illegal filter type throws.
+    try {
+        filter.type = 8;
+        testFailed("Illegal filter type should throw exception.");
+    } catch(e) {
+        testPassed("Illegal filter type correctly throws exception.");
+    }
+
+    finishJSTest();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

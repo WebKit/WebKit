@@ -39,7 +39,7 @@ RealtimeAnalyserNode::RealtimeAnalyserNode(AudioContext* context, double sampleR
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
     
-    setType(NodeTypeAnalyser);
+    setNodeType(NodeTypeAnalyser);
     
     initialize();
 }

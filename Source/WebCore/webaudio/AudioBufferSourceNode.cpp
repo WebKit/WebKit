@@ -68,7 +68,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, double sampl
     , m_lastGain(1.0)
     , m_pannerNode(0)
 {
-    setType(NodeTypeAudioBufferSource);
+    setNodeType(NodeTypeAudioBufferSource);
 
     m_gain = AudioGain::create("gain", 1.0, 0.0, 1.0);
     m_playbackRate = AudioParam::create("playbackRate", 1.0, 0.0, MaxRate);

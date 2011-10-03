@@ -45,7 +45,7 @@ AudioGainNode::AudioGainNode(AudioContext* context, double sampleRate)
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
     
-    setType(NodeTypeGain);
+    setNodeType(NodeTypeGain);
     
     initialize();
 }
