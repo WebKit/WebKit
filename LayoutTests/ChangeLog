@@ -1,3 +1,10 @@
+2011-10-03  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        Unreviewed Qt gardening after r96404
+
+        * platform/qt/fast/text/complex-synthetic-bold-space-width-expected.png: Added.
+        * platform/qt/fast/text/complex-synthetic-bold-space-width-expected.txt: Added.
+
 2011-10-02  Kent Tamura  <tkent@chromium.org>
 
         method/enctype/formMethod/formEnctype properties should be limited to known values.
