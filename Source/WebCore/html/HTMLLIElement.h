@@ -39,8 +39,6 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
-
-    int m_requestedValue;
 };
 
 } //namespace

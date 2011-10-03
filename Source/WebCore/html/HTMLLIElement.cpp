@@ -35,7 +35,6 @@ using namespace HTMLNames;
 
 HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_requestedValue(0)
 {
     ASSERT(hasTagName(liTag));
 }
@@ -63,10 +62,10 @@ bool HTMLLIElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
 void HTMLLIElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == valueAttr) {
-        m_requestedValue = attr->value().toInt();
         if (renderer() && renderer()->isListItem()) {
-            if (m_requestedValue > 0)
-                toRenderListItem(renderer())->setExplicitValue(m_requestedValue);
+            int requestedValue = attr->value().toInt();
+            if (requestedValue > 0)
+                toRenderListItem(renderer())->setExplicitValue(requestedValue);
             else
                 toRenderListItem(renderer())->clearExplicitValue();
         }
@@ -109,10 +108,16 @@ void HTMLLIElement::attach()
         if (!listNode)
             render->setNotInList(true);
 
-        if (m_requestedValue > 0)
-            render->setExplicitValue(m_requestedValue);
-        else
+        const AtomicString& requestedValueString = fastGetAttribute(valueAttr);
+        if (requestedValueString.isNull())
             render->clearExplicitValue();
+        else {
+            int requestedValue = requestedValueString.toInt();
+            if (requestedValue > 0)
+                render->setExplicitValue(requestedValue);
+            else
+                render->clearExplicitValue();
+        }
     }
 }
 

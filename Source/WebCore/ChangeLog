@@ -1,3 +1,20 @@
+2011-10-03  Andreas Kling  <kling@webkit.org>
+
+        Shrink HTMLLIElement.
+        https://bugs.webkit.org/show_bug.cgi?id=69250
+
+        Reviewed by Antti Koivisto.
+
+        Don't cache the explicit "value" attribute on the HTMLLIElement,
+        but fetch it with fastGetAttribute when needed.
+        This shrinks HTMLLIElement by one CPU word.
+
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        (WebCore::HTMLLIElement::parseMappedAttribute):
+        (WebCore::HTMLLIElement::attach):
+        * html/HTMLLIElement.h:
+
 2011-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for backend search in script content.
