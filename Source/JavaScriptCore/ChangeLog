@@ -1,3 +1,23 @@
+2011-10-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        libdispatch based ParallelJobs is not enough parallel
+        https://bugs.webkit.org/show_bug.cgi?id=66378
+
+        Reviewed by Zoltan Herczeg.
+
+        Use the appropriate libdispatch API for our use case.
+        Throw away the hard coded limit of parallel threads
+        and use dispatch_apply with the default priority normal
+        queue istead of using our own custom serial queue (which
+        was a misuse of the API). Enabling PARALLEL_JOBS is now
+        a 60% win (2.63x as fast) on the methanol benchmark
+        (https://gitorious.org/methanol) with an SVG centric test set
+        while the old implementation was almost identical (less than 5% win).
+
+        * wtf/ParallelJobsLibdispatch.h:
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::execute):
+
 2011-10-02  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt]REGRESSION(r95912): It made sputnik tests flakey

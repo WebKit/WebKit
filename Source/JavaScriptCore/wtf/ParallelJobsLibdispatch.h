@@ -34,23 +34,18 @@
 
 namespace WTF {
 
-static const int maxParallelThreads = 2;
-
 class ParallelEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef void (*ThreadFunction)(void*);
 
-    ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber) :
-        m_threadFunction(threadFunction),
-        m_sizeOfParameter(sizeOfParameter)
+    ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber)
+        : m_threadFunction(threadFunction)
+        , m_sizeOfParameter(sizeOfParameter)
+        , m_numberOfJobs(requestedJobNumber)
     {
-        if (!requestedJobNumber || requestedJobNumber > maxParallelThreads)
-            requestedJobNumber = maxParallelThreads;
-
-        ASSERT(requestedJobNumber > 0);
-
-        m_numberOfJobs = requestedJobNumber;
+        // We go with the requested number of jobs. libdispatch will distribute the work optimally.
+        ASSERT_ARG(requestedJobNumber, requestedJobNumber > 0);
     }
 
     int numberOfJobs()
@@ -60,16 +55,9 @@ public:
 
     void execute(unsigned char* parameters)
     {
-        // libdispatch is NOT supported inside a template
-        dispatch_queue_t parallelJobsQueue = dispatch_queue_create("ParallelJobs", 0);
+        static dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
-        for (int i = 0; i < m_numberOfJobs - 1; ++i) {
-            dispatch_async(parallelJobsQueue, ^{(*m_threadFunction)(parameters);});
-            parameters += m_sizeOfParameter;
-        }
-
-        // The work for the main thread. Wait until all jobs are done.
-        dispatch_sync(parallelJobsQueue, ^{(*m_threadFunction)(parameters);});
+        dispatch_apply(m_numberOfJobs, globalQueue, ^(size_t i) { (*m_threadFunction)(parameters + (m_sizeOfParameter * i)); });
     }
 
 private:
