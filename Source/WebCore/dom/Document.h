@@ -65,7 +65,6 @@ class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
 class Comment;
-class ContentSecurityPolicy;
 class DOMImplementation;
 class DOMSelection;
 class DOMWindow;
@@ -1092,8 +1091,6 @@ public:
 
     void initDNSPrefetch();
 
-    ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
-
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
@@ -1406,8 +1403,6 @@ private:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
-
-    RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

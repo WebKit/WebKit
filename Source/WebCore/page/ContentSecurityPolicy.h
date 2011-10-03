@@ -32,14 +32,14 @@
 namespace WebCore {
 
 class CSPDirective;
-class Document;
+class ScriptExecutionContext;
 class KURL;
 
 class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
 public:
-    static PassRefPtr<ContentSecurityPolicy> create(Document* document)
+    static PassRefPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
     {
-        return adoptRef(new ContentSecurityPolicy(document));
+        return adoptRef(new ContentSecurityPolicy(scriptExecutionContext));
     }
     ~ContentSecurityPolicy();
 
@@ -65,7 +65,7 @@ public:
     bool allowMediaFromSource(const KURL&) const;
 
 private:
-    explicit ContentSecurityPolicy(Document*);
+    explicit ContentSecurityPolicy(ScriptExecutionContext*);
 
     void parse(const String&);
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
@@ -85,7 +85,7 @@ private:
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
 
     bool m_havePolicy;
-    Document* m_document;
+    ScriptExecutionContext* m_scriptExecutionContext;
 
     bool m_reportOnly;
     OwnPtr<CSPDirective> m_defaultSrc;

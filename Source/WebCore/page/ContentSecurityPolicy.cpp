@@ -463,9 +463,9 @@ private:
     String m_text;
 };
 
-ContentSecurityPolicy::ContentSecurityPolicy(Document* document)
+ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext* scriptExecutionContext)
     : m_havePolicy(false)
-    , m_document(document)
+    , m_scriptExecutionContext(scriptExecutionContext)
     , m_reportOnly(false)
 {
 }
@@ -492,14 +492,22 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
     }
 
     if (!checkEval(operativeDirective(m_scriptSrc.get()))) {
-        if (Frame* frame = m_document->frame())
-            frame->script()->disableEval();
+        // FIXME: Support disabling eval for Workers.
+        if (m_scriptExecutionContext->isDocument()) {
+            if (Frame* frame = static_cast<Document*>(m_scriptExecutionContext)->frame())
+                frame->script()->disableEval();
+        }
     }
 }
 
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage) const
 {
-    Frame* frame = m_document->frame();
+    // FIXME: Support reporting violations for Workers.
+    if (!m_scriptExecutionContext->isDocument())
+        return;
+
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    Frame* frame = document->frame();
     if (!frame)
         return;
 
@@ -520,7 +528,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     // harmless information.
 
     FormDataList reportList(UTF8Encoding());
-    reportList.appendData("document-url", m_document->url());
+    reportList.appendData("document-url", document->url());
     if (!directiveText.isEmpty())
         reportList.appendData("violated-directive", directiveText);
 
@@ -720,14 +728,14 @@ void ContentSecurityPolicy::parseReportURI(const String& value)
 
         if (urlBegin < position) {
             String url = String(urlBegin, position - urlBegin);
-            m_reportURLs.append(m_document->completeURL(url));
+            m_reportURLs.append(m_scriptExecutionContext->completeURL(url));
         }
     }
 }
 
 PassOwnPtr<CSPDirective> ContentSecurityPolicy::createCSPDirective(const String& name, const String& value)
 {
-    return adoptPtr(new CSPDirective(name, value, m_document->securityOrigin()));
+    return adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext->securityOrigin()));
 }
 
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)

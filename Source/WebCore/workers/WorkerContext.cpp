@@ -33,6 +33,7 @@
 
 #include "AbstractDatabase.h"
 #include "ActiveDOMObject.h"
+#include "ContentSecurityPolicy.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
 #include "DatabaseSync.h"
@@ -114,6 +115,10 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
     , m_closing(false)
 {
     setSecurityOrigin(SecurityOrigin::create(url));
+    
+    // FIXME: This should probably adopt the ContentSecurityPolicy of the document
+    // that created this worker or use the header that came with the worker script.
+    setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 }
 
 WorkerContext::~WorkerContext()

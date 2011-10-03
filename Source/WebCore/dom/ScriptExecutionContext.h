@@ -48,6 +48,7 @@
 namespace WebCore {
 
     class Blob;
+    class ContentSecurityPolicy;
     class DOMTimer;
     class DOMURL;
     class EventListener;
@@ -96,6 +97,7 @@ namespace WebCore {
         virtual String userAgent(const KURL&) const = 0;
 
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+        ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
         bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
         void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
@@ -174,6 +176,8 @@ namespace WebCore {
         //       that already contains content.
         void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
 
+        void setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>);
+
     private:
         virtual const KURL& virtualURL() const = 0;
         virtual KURL virtualCompleteURL(const String&) const = 0;
@@ -185,6 +189,7 @@ namespace WebCore {
         void closeMessagePorts();
 
         RefPtr<SecurityOrigin> m_securityOrigin;
+        RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
         HashSet<MessagePort*> m_messagePorts;
 

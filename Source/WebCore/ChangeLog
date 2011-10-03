@@ -1,3 +1,38 @@
+2011-10-03  Sam Weinig  <sam@webkit.org>
+
+        Move ContentSecurityPolicy to the ScriptExecutionContext to prepare it for working with XHR and workers
+        https://bugs.webkit.org/show_bug.cgi?id=69294
+
+        Reviewed by Darin Adler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        Initialize the ContentSecurityPolicy by calling down to the ScriptExecutionContext.
+
+        * dom/Document.h:
+        Move the ContentSecurityPolicy member and getter from here to ScriptExecutionContext.h.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::setContentSecurityPolicy):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::contentSecurityPolicy):
+        Add ContentSecurityPolicy member and getter/setter.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::parseReportURI):
+        (WebCore::ContentSecurityPolicy::createCSPDirective):
+        * page/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::create):
+        Replace Document with ScriptExecutionContext. Add temporary checked casts to document
+        where necessary.
+
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        Add initialization of the ContentSecurityPolicy.
+
 2011-10-03  Anders Carlsson  <andersca@apple.com>
 
         Remove custom scrollbar painting hooks
