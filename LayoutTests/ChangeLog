@@ -1,3 +1,10 @@
+2011-10-03  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: [chromium] clean up inspector layout test suppressions on chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=69263
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-03  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed gardening after r96404.

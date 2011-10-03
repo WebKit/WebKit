@@ -13,7 +13,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-r
 BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
-BUGCR24182 SLOW WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
@@ -603,7 +602,6 @@ BUGCR89357 SKIP MAC : inspector = PASS
 BUGCR89357 SKIP MAC : http/tests/inspector = PASS
 BUGCR89357 SKIP MAC : http/tests/inspector-enabled = PASS
 
-BUGCR75121 LINUX WIN : inspector/styles/styles-add-blank-property.html = PASS TIMEOUT TEXT
 BUGCR67662 LINUX WIN : http/tests/inspector/console-websocket-error.html = TIMEOUT TEXT
 
 BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
@@ -614,31 +612,19 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 // PageAgent can not getCookies from DumpRenderTree.
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
 
-BUGWK60110 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
-BUGWK60110 SLOW WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
-BUGWK60110 SLOW LINUX : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
-
-BUGJAMESR LINUX WIN : inspector/styles/styles-disable-then-delete.html = PASS TIMEOUT
-
 BUGCR77630 SLOW LINUX WIN DEBUG : inspector/debugger/debugger-activation-crash.html = PASS TEXT
 
-BUGWK60107 LINUX WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
-BUGWK60107 LINUX WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT
-BUGWK60107 LINUX WIN RELEASE : inspector/console/console-tests.html = PASS TEXT
-BUGWK60107 LINUX WIN RELEASE : inspector/console/console-clear.html = PASS TEXT
-BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-object-constructor-name.html = PASS TEXT
-BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector-open.html = PASS TEXT
-BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS TEXT
-BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS TEXT
+BUGWK60107 WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
+BUGWK60107 WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT
+BUGWK60107 WIN RELEASE : inspector/console/console-tests.html = PASS TEXT
+BUGWK60107 WIN RELEASE : inspector/console/console-clear.html = PASS TEXT
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-object-constructor-name.html = PASS
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector-open.html = PASS
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
-BUGWK60109 LINUX WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
-BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
-
-BUGWK62309 WIN DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
-BUGCR89372 DEBUG : inspector/styles/styles-iframe.html = PASS TIMEOUT
-BUGWK62309 LINUX WIN DEBUG : inspector/styles/parse-utf8-bom.html = PASS TIMEOUT
-
-BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TIMEOUT TEXT
+BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS
 
 BUGWK65558 LINUX WIN : http/tests/inspector/network/disabled-cache-crash.html = PASS TIMEOUT MISSING TEXT
 
@@ -2786,7 +2772,7 @@ BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
-BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TIMEOUT TEXT
+BUGCR76979 SLOW LINUX WIN DEBUG : inspector/console/console-dirxml.html = PASS
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 LINUX WIN : fast/text/emphasis-combined-text.html = IMAGE+TEXT
@@ -3122,7 +3108,8 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = MISSING FAIL
 
 // Flakiness around r85622.
-BUGWK65463 WIN : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
+BUGWK65463 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
+BUGWK65463 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
 
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
@@ -3174,9 +3161,6 @@ BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
 
 // Random crashes started between: http://trac.webkit.org/log/?verbose=on&rev=86756&stop_rev=86755
 BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = PASS CRASH
-
-// Crashes after CSP changes landed in WebKit 86837
-BUGCR83268 : inspector/debugger/event-listener-breakpoints.html = PASS CRASH TIMEOUT
 
 // Random timeouts and failures going back a week.
 BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS TIMEOUT TEXT
@@ -3302,7 +3286,6 @@ BUGWK62430 LINUX WIN : fast/dom/HTMLProgressElement/indeterminate-progress-001.h
 
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
-BUGWK62662 : inspector/cookie-parser.html = PASS CRASH TIMEOUT
 
 // These started failing with r88913.  The results are visibly wrong, and the
 // checked-in pixel results for Safari (platform/mac) are wrong too.
@@ -3317,8 +3300,6 @@ BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE T
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
 BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
-
-BUGWK59921 SLOW LINUX WIN : inspector/debugger/debugger-scripts.html = PASS TEXT
 
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = PASS CRASH
@@ -3518,7 +3499,8 @@ BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-re
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 
-BUGWK66569 WIN LINUX : http/tests/inspector/network/network-iframe-load-and-delete.html = TEXT TIMEOUT PASS
+BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-delete.html = TIMEOUT PASS
+BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
 
 BUGWK66577 LEOPARD : fast/events/touch/basic-single-touch-events.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/multi-touch-grouped-targets.html = TIMEOUT
@@ -3534,8 +3516,10 @@ BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/close.html = PASS TEXT
 
 BUGWK66217 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
+BUGWK66217 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS
 
-BUGWK66738 WIN : http/tests/inspector/network/download.html = PASS TIMEOUT
+
+BUGWK66738 WIN LINUX : http/tests/inspector/network/download.html = PASS TEXT TIMEOUT
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
@@ -3624,9 +3608,6 @@ BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TE
 
 // Failing after r95188
 BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
-BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
-BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
-BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
 
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
