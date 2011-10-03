@@ -1,3 +1,21 @@
+2011-10-03  Dirk Schulze  <krit@webkit.org>
+
+        feColorMatrix saturation is not limited to range 0..1 anymore
+        https://bugs.webkit.org/show_bug.cgi?id=69245
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added new test case to test under- or oversaturation of the filter input image if the value
+        is not in the range of 0..1.
+        feColorMatrix-values needed a change, since it relies to the old specification text.
+
+        * platform/mac/svg/filters/feColorMatrix-values-expected.png:
+        * platform/mac/svg/filters/feColorMatrix-values-expected.txt:
+        * svg/filters/feColorMatrix-saturate-expected.png: Added.
+        * svg/filters/feColorMatrix-saturate-expected.txt: Added.
+        * svg/filters/feColorMatrix-saturate.svg: Added.
+        * svg/filters/feColorMatrix-values.svg:
+
 2011-10-03  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed gardening after r96257.

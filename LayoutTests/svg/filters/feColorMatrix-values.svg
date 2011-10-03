@@ -25,7 +25,7 @@
     </filter>
 
     <filter id="satrange">
-        <feColorMatrix type="saturate" values="2" />
+        <feColorMatrix type="saturate" values="1 1" />
     </filter>
     <filter id="huerange">
         <feColorMatrix type="hueRotate" values="720" />
@@ -62,7 +62,7 @@
     <text y="240" x="210" style="filter:url(#satbad)">Invalid hueRotate</text>
     <text y="270" x="210" style="filter:url(#satbad)">values attribute.</text>
     <rect y="302" x="202" width="196" height="96" fill="red" style="filter:url(#satrange)" />
-    <text y="340" x="210" style="filter:url(#satrange)">Saturate must be </text>
-    <text y="370" x="210" style="filter:url(#satrange)">between 0 and 1.</text>
+    <text y="340" x="210" style="filter:url(#satrange)">Saturate must  </text>
+    <text y="370" x="210" style="filter:url(#satrange)">have one value.</text>
 </g>
 </svg>

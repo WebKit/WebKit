@@ -1,3 +1,20 @@
+2011-10-03  Dirk Schulze  <krit@webkit.org>
+
+        feColorMatrix saturation is not limited to range 0..1 anymore
+        https://bugs.webkit.org/show_bug.cgi?id=69245
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Opera doesn't limit the range of values for saturation on feColorMatrix from 0 to 1. The limitation
+        was also removed from the new Filter Effects 1.0 specification. Values outside this range lead to
+        under- or oversaturation of the filter input image.
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/publish/Filters.html#feColorMatrixElement
+
+        Test: svg/filters/feColorMatrix-saturate.svg
+
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build):
+
 2011-10-03  Andreas Kling  <kling@webkit.org>
 
         Shrink HTMLLIElement.

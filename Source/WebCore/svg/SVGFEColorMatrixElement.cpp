@@ -147,13 +147,13 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
         switch (filterType) {
         case FECOLORMATRIX_TYPE_MATRIX:
             for (size_t i = 0; i < 20; i++)
-                filterValues.append((i % 6) ? 0.0f : 1.0f);
+                filterValues.append((i % 6) ? 0 : 1);
             break;
         case FECOLORMATRIX_TYPE_HUEROTATE:
-            filterValues.append(0.0f);
+            filterValues.append(0);
             break;
         case FECOLORMATRIX_TYPE_SATURATE:
-            filterValues.append(1.0f);
+            filterValues.append(1);
             break;
         default:
             break;
@@ -164,8 +164,7 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
 
         if ((filterType == FECOLORMATRIX_TYPE_MATRIX && size != 20)
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
-            || (filterType == FECOLORMATRIX_TYPE_SATURATE && (size != 1
-                || filterValues[0] < 0.0f || filterValues[0] > 1.0f)))
+            || (filterType == FECOLORMATRIX_TYPE_SATURATE && size != 1))
             return 0;
     }
 
