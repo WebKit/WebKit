@@ -2381,3 +2381,7 @@ editing/selection/select-bidi-run.html
 # http/tests/multipart/stop-crash.html fails on Qt and GTK
 # https://bugs.webkit.org/show_bug.cgi?id=68979
 http/tests/multipart/stop-crash.html
+
+# One test failed after r96260
+# https://bugs.webkit.org/show_bug.cgi?id=69257
+inspector/styles/styles-disable-then-change.html

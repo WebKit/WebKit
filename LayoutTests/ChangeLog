@@ -1,3 +1,10 @@
+2011-10-03  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed gardening after r96257.
+        https://bugs.webkit.org/show_bug.cgi?id=69257
+
+        * platform/qt/Skipped:
+
 2011-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for backend search in script content.
