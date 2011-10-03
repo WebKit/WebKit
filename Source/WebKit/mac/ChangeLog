@@ -1,3 +1,18 @@
+2011-10-02  Sam Weinig  <sam@webkit.org>
+
+        Strength reduce Mac only Frame::searchForLabelsBeforeElement and Frame::matchLabelsAgainstElement into callers
+        https://bugs.webkit.org/show_bug.cgi?id=69230
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels):
+        (searchForLabelsBeforeElement):
+        (matchLabelsAgainstString):
+        (matchLabelsAgainstElement):
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:resultDistance:resultIsInCellAbove:]):
+        (-[WebHTMLRepresentation matchLabels:againstElement:]):
+
 2011-10-02  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r95474): Unable to type anywhere in nightly builds in WebKit1 mode

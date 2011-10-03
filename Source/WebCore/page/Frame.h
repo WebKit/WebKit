@@ -195,9 +195,6 @@ namespace WebCore {
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
         
 #if PLATFORM(MAC)
-        NSString* searchForLabelsBeforeElement(NSArray* labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
-        NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
-
         NSImage* selectionImage(bool forceBlackText = false) const;
         NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
         NSImage* imageFromRect(NSRect) const;

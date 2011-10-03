@@ -52,8 +52,11 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLTableCellElement.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Range.h>
+#import <WebCore/RegularExpression.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKit/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>
@@ -352,6 +355,192 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     return results;
 }
 
+// Either get cached regexp or build one that matches any of the labels.
+// The regexp we build is of the form:  (STR1|STR2|STRN)
+static RegularExpression* regExpForLabels(NSArray *labels)
+{
+    // All the ObjC calls in this method are simple array and string
+    // calls which we can assume do not raise exceptions
+
+    // Parallel arrays that we use to cache regExps.  In practice the number of expressions
+    // that the app will use is equal to the number of locales is used in searching.
+    static const unsigned int regExpCacheSize = 4;
+    static NSMutableArray* regExpLabels = nil;
+    DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
+    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
+
+    RegularExpression* result;
+    if (!regExpLabels)
+        regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
+    CFIndex cacheHit = [regExpLabels indexOfObject:labels];
+    if (cacheHit != NSNotFound)
+        result = regExps.at(cacheHit);
+    else {
+        String pattern("(");
+        unsigned int numLabels = [labels count];
+        unsigned int i;
+        for (i = 0; i < numLabels; i++) {
+            String label = [labels objectAtIndex:i];
+
+            bool startsWithWordChar = false;
+            bool endsWithWordChar = false;
+            if (label.length() != 0) {
+                startsWithWordChar = wordRegExp.match(label.substring(0, 1)) >= 0;
+                endsWithWordChar = wordRegExp.match(label.substring(label.length() - 1, 1)) >= 0;
+            }
+            
+            if (i != 0)
+                pattern.append("|");
+            // Search for word boundaries only if label starts/ends with "word characters".
+            // If we always searched for word boundaries, this wouldn't work for languages
+            // such as Japanese.
+            if (startsWithWordChar)
+                pattern.append("\\b");
+            pattern.append(label);
+            if (endsWithWordChar)
+                pattern.append("\\b");
+        }
+        pattern.append(")");
+        result = new RegularExpression(pattern, TextCaseInsensitive);
+    }
+
+    // add regexp to the cache, making sure it is at the front for LRU ordering
+    if (cacheHit != 0) {
+        if (cacheHit != NSNotFound) {
+            // remove from old spot
+            [regExpLabels removeObjectAtIndex:cacheHit];
+            regExps.remove(cacheHit);
+        }
+        // add to start
+        [regExpLabels insertObject:labels atIndex:0];
+        regExps.insert(0, result);
+        // trim if too big
+        if ([regExpLabels count] > regExpCacheSize) {
+            [regExpLabels removeObjectAtIndex:regExpCacheSize];
+            RegularExpression* last = regExps.last();
+            regExps.removeLast();
+            delete last;
+        }
+    }
+    return result;
+}
+
+static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
+{
+    RegularExpression* regExp = regExpForLabels(labels);
+    // We stop searching after we've seen this many chars
+    const unsigned int charsSearchedThreshold = 500;
+    // This is the absolute max we search.  We allow a little more slop than
+    // charsSearchedThreshold, to make it more likely that we'll search whole nodes.
+    const unsigned int maxCharsSearched = 600;
+    // If the starting element is within a table, the cell that contains it
+    HTMLTableCellElement* startingTableCell = 0;
+    bool searchedCellAbove = false;
+    
+    if (resultDistance)
+        *resultDistance = notFound;
+    if (resultIsInCellAbove)
+        *resultIsInCellAbove = false;
+
+    // walk backwards in the node tree, until another element, or form, or end of tree
+    unsigned lengthSearched = 0;
+    Node* n;
+    for (n = element->traversePreviousNode();
+         n && lengthSearched < charsSearchedThreshold;
+         n = n->traversePreviousNode())
+    {
+        if (n->hasTagName(formTag)
+            || (n->isHTMLElement() && static_cast<Element*>(n)->isFormControlElement()))
+        {
+            // We hit another form element or the start of the form - bail out
+            break;
+        } else if (n->hasTagName(tdTag) && !startingTableCell) {
+            startingTableCell = static_cast<HTMLTableCellElement*>(n);
+        } else if (n->hasTagName(trTag) && startingTableCell) {
+            NSString* result = frame->searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
+            if (result && [result length] > 0) {
+                if (resultIsInCellAbove)
+                    *resultIsInCellAbove = true;
+                return result;
+            }
+            searchedCellAbove = true;
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
+            // For each text chunk, run the regexp
+            String nodeString = n->nodeValue();
+            // add 100 for slop, to make it more likely that we'll search whole nodes
+            if (lengthSearched + nodeString.length() > maxCharsSearched)
+                nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
+            int pos = regExp->searchRev(nodeString);
+            if (pos >= 0) {
+                if (resultDistance)
+                    *resultDistance = lengthSearched;
+                return nodeString.substring(pos, regExp->matchedLength());
+            }
+            lengthSearched += nodeString.length();
+        }
+    }
+
+    // If we started in a cell, but bailed because we found the start of the form or the
+    // previous element, we still might need to search the row above us for a label.
+    if (startingTableCell && !searchedCellAbove) {
+        NSString* result = frame->searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
+        if (result && [result length] > 0) {
+            if (resultIsInCellAbove)
+                *resultIsInCellAbove = true;
+            return result;
+        }
+    }
+    
+    return nil;
+}
+
+static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringToMatch)
+{
+    if (stringToMatch.isEmpty())
+        return nil;
+    
+    String mutableStringToMatch = stringToMatch;
+    
+    // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
+    replace(mutableStringToMatch, RegularExpression("\\d", TextCaseSensitive), " ");
+    mutableStringToMatch.replace('_', ' ');
+    
+    RegularExpression* regExp = regExpForLabels(labels);
+    // Use the largest match we can find in the whole string
+    int pos;
+    int length;
+    int bestPos = -1;
+    int bestLength = -1;
+    int start = 0;
+    do {
+        pos = regExp->match(mutableStringToMatch, start);
+        if (pos != -1) {
+            length = regExp->matchedLength();
+            if (length >= bestLength) {
+                bestPos = pos;
+                bestLength = length;
+            }
+            start = pos + 1;
+        }
+    } while (pos != -1);
+    
+    if (bestPos != -1)
+        return mutableStringToMatch.substring(bestPos, bestLength);
+    return nil;
+}
+
+static NSString* matchLabelsAgainstElement(NSArray* labels, Element* element)
+{
+    // Match against the name element, then against the id element if no match is found for the name element.
+    // See 7538330 for one popular site that benefits from the id element check.
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getAttribute(nameAttr));
+    if (!resultFromNameAttribute.isEmpty())
+        return resultFromNameAttribute;
+    
+    return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
+}
+
+
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
     return [self searchForLabels:labels beforeElement:element resultDistance:0 resultIsInCellAbove:0];
@@ -362,7 +551,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     size_t distance;
     bool isInCellAbove;
     
-    NSString *result = core([_private->dataSource webFrame])->searchForLabelsBeforeElement(labels, core(element), &distance, &isInCellAbove);
+    NSString *result = searchForLabelsBeforeElement(core([_private->dataSource webFrame]), labels, core(element), &distance, &isInCellAbove);
     
     if (outDistance) {
         if (distance == notFound)
@@ -379,7 +568,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
-    return core([_private->dataSource webFrame])->matchLabelsAgainstElement(labels, core(element));
+    return matchLabelsAgainstElement(labels, core(element));
 }
 
 @end

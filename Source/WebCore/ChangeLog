@@ -1,3 +1,14 @@
+2011-10-02  Sam Weinig  <sam@webkit.org>
+
+        Strength reduce Mac only Frame::searchForLabelsBeforeElement and Frame::matchLabelsAgainstElement into callers
+        https://bugs.webkit.org/show_bug.cgi?id=69230
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+
 2011-10-02  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2][Mac] WebKit2 does not build on mac after merge of Qt5 refactor branch.
