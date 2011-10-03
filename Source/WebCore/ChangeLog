@@ -1,3 +1,10 @@
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leopard build fix after r96530.
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+
 2011-10-03  Sam Weinig  <sam@webkit.org>
 
         Move ContentSecurityPolicy to the ScriptExecutionContext to prepare it for working with XHR and workers

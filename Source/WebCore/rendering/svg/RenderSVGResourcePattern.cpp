@@ -123,7 +123,8 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         FloatRect clampedAbsoluteTileBoundaries;
 
         // Scale the tile size to match the scale level of the patternTransform.
-        absoluteTileBoundaries.scale(m_attributes.patternTransform().xScale(), m_attributes.patternTransform().yScale());
+        absoluteTileBoundaries.scale(static_cast<float>(m_attributes.patternTransform().xScale()),
+            static_cast<float>(m_attributes.patternTransform().yScale()));
 
         // Build tile image.
         OwnPtr<ImageBuffer> tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries);
