@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<h1 tabindex="0" id="heading1">Small heading</h1>
+<h1 tabindex="0" id="heading2"><a href="#">A heading that is just a little bit wider</a></h1>
+
+<h1 tabindex="0" id="heading3"><a href="#">Small heading</a> <a href="#">Small heading</a></h1>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the click points for headings should use the only child's clickpoint instead of taking the mid point (which may be on nothing).");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("heading1").focus();
+        var heading1 = accessibilityController.focusedElement;
+
+        // Verify that the click point is the same as the child.
+        shouldBe("heading1.clickPointX", "heading1.childAtIndex(0).clickPointX");
+        shouldBe("heading1.clickPointY", "heading1.childAtIndex(0).clickPointY");
+
+        document.getElementById("heading2").focus();
+        var heading2 = accessibilityController.focusedElement;
+
+        shouldBe("heading2.clickPointX", "heading2.childAtIndex(0).clickPointX");
+        shouldBe("heading2.clickPointY", "heading2.childAtIndex(0).clickPointY");
+
+        document.getElementById("heading3").focus();
+        var heading3 = accessibilityController.focusedElement;
+
+        // If there is more than one child, the click point should be the middle again, which means X point will be different.
+        shouldBeFalse("heading3.clickPointX == heading3.childAtIndex(0).clickPointX");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
