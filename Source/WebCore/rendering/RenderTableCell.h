@@ -120,8 +120,6 @@ public:
 
     void setOverrideHeightFromRowHeight(int);
 
-    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
-
     virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged);
 
     bool cellWidthChanged() const { return m_cellWidthChanged; }

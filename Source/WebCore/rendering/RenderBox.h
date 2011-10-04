@@ -273,8 +273,10 @@ public:
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(RenderBlock* containingBlock);
 
-    LayoutRect borderBoxRectInRegion(RenderRegion*) const;
-
+    enum RenderBoxRegionInfoFlags { CacheRenderBoxRegionInfo, DoNotCacheRenderBoxRegionInfo };
+    LayoutRect borderBoxRectInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage = 0, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
+    void clearRenderBoxRegionInfo();
+    
     void positionLineBox(InlineBox*);
 
     virtual InlineBox* createInlineBox();
@@ -293,14 +295,14 @@ public:
     virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
-    LayoutUnit containingBlockLogicalWidthForContentInRegion(RenderRegion*) const;
+    LayoutUnit containingBlockLogicalWidthForContentInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
     
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 
-    RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*) const;
-    void computeLogicalWidthInRegion(RenderRegion*);
+    RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
+    void computeLogicalWidthInRegion(RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0);
 
     bool stretchesToViewport() const
     {
@@ -357,7 +359,7 @@ public:
 
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    virtual LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
+    virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
     LayoutRect clipRect(const LayoutPoint& location);
     virtual bool hasControlClip() const { return false; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const { return LayoutRect(); }
@@ -423,7 +425,8 @@ public:
     LayoutRect logicalLayoutOverflowRectForPropagation(RenderStyle*) const;
     LayoutRect layoutOverflowRectForPropagation(RenderStyle*) const;
 
-    RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }
+    RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }    
+    bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
 
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }

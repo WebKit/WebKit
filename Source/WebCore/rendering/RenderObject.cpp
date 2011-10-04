@@ -582,6 +582,13 @@ RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
 {   
     if (!inRenderFlowThread())
         return 0;
+    
+    // See if we have the thread cached because we're in the middle of layout.
+    RenderFlowThread* flowThread = view()->currentRenderFlowThread();
+    if (flowThread)
+        return flowThread;
+    
+    // Not in the middle of layout so have to find the thread the slow way.
     RenderObject* curr = const_cast<RenderObject*>(this);
     while (curr) {
         if (curr->isRenderFlowThread())

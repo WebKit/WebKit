@@ -1,3 +1,41 @@
+2011-10-03  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69317
+        
+        [CSS3 Regions] Make overflow:hidden/auto/scroll sections behave properly when split across regions. This
+        includes sizing and positioning independently in each region, clipping independently in each region, and
+        shifting to avoid floats in each region.
+
+        Reviewed by Anders Carlsson.
+
+        * fast/regions/floats-basic-in-variable-width-regions.html: Added.
+        * fast/regions/overflow-in-uniform-regions-dynamic.html: Added.
+        * fast/regions/overflow-in-uniform-regions.html: Added.
+        * fast/regions/overflow-in-variable-width-regions.html:
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions.html: Added.
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html: Added.
+        * fast/regions/overflow-rtl-in-variable-width-regions.html:
+        * fast/regions/overflow-size-change-in-variable-width-regions.html: Added.
+        * fast/regions/overflow-size-change-with-stacking-context.html: Added.
+        * platform/mac/fast/regions/floats-basic-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/floats-basic-in-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Added.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-expected.png: Added.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-in-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/overflow-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-rtl-in-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-expected.png: Added.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Added.
+
 2011-10-03  Jon Lee  <jonlee@apple.com>
 
         Extend DOM WheelEvent to differentiate between physical and logical scroll directions

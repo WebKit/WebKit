@@ -1209,7 +1209,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     // Just forward to our children always.
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
-    if (hasOverflowClip() && !overflowClipRect(adjustedLocation).intersects(result.rectForPoint(pointInContainer)))
+    if (hasOverflowClip() && !overflowClipRect(adjustedLocation, result.region()).intersects(result.rectForPoint(pointInContainer)))
         return false;
 
     if (hasOverflowingCell()) {

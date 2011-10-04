@@ -35,6 +35,7 @@
 #include "HitTestResult.h"
 #include "Node.h"
 #include "PaintInfo.h"
+#include "RenderBoxRegionInfo.h"
 #include "RenderLayer.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
@@ -370,8 +371,6 @@ void RenderFlowThread::layout()
 
 void RenderFlowThread::computeLogicalWidth()
 {
-    LayoutUnit oldLogicalWidth = logicalWidth();
-
     LayoutUnit logicalWidth = 0;
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -381,10 +380,7 @@ void RenderFlowThread::computeLogicalWidth()
         logicalWidth = max(isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
-    
-    if (regionsHaveUniformLogicalWidth() || oldLogicalWidth == logicalWidth)
-        return;
-    
+
     // If the regions have non-uniform logical widths, then insert inset information for the RenderFlowThread.
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -448,7 +444,7 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
         context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
         info.rect.moveBy(-renderFlowThreadOffset);
         
-        layer()->paint(context, info.rect, 0, 0, region);
+        layer()->paint(context, info.rect, 0, 0, region, RenderLayer::PaintLayerTemporaryClipRects);
 
         context->restore();
     }
@@ -621,19 +617,44 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 {
     // FIXME: Would be nice if we also cached the box's start and end regions so that we didn't have to
     // walk every single region.
-    if (!hasRegions() || regionsHaveUniformLogicalWidth())
+    if (!hasRegions())
         return;
 
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        delete region->takeRenderBoxRegionInfo(box);
+    }
+}
+
+bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, LayoutUnit offsetFromLogicalTopOfFirstPage)
+{
+    // FIXME: Would be nice if we also cached the box's start and end regions so that we didn't have to
+    // walk every single region.
+    if (!hasRegions() || block == this) // Not necessary, since if any region changes, we do a full pagination relayout anyway.
+        return false;
+
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
         
-        if (!region->isValid() || region->matchesRenderFlowThreadLogicalWidth())
+        if (!region->isValid())
             continue;
 
         ASSERT(!region->needsLayout());
 
-        region->removeRenderBoxRegionInfo(box);
+        RenderBoxRegionInfo* oldInfo = region->takeRenderBoxRegionInfo(block);
+        if (!oldInfo)
+            continue;
+
+        RenderBoxRegionInfo* newInfo = block->renderBoxRegionInfo(region, offsetFromLogicalTopOfFirstPage);
+        if (!newInfo || newInfo->logicalWidth() != oldInfo->logicalWidth()) {
+            delete oldInfo;
+            return true;
+        }
     }
+    
+    return false;
 }
 
 LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstRegion() const

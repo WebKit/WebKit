@@ -1,3 +1,231 @@
+2011-10-03  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69317
+        
+        [CSS3 Regions] Make overflow:hidden/auto/scroll sections behave properly when split across regions. This
+        includes sizing and positioning independently in each region, clipping independently in each region, and
+        shifting to avoid floats in each region.
+
+        Reviewed by Anders Carlsson.
+
+        Added many new tests in fast/regions.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea):
+        Patching a call to overflowClipRect, which now includes a region argument so that clipping can be adjusted
+        per-region.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        Don't clear out the cached region information when the width changes. Instead make a new call to
+        the flow thread to check if widths changed in any region and set relayoutChildren to true if so.
+
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        This is a new function that has been split out from determineLogicalLeftPositionForChild so that it can
+        be called by region code to compute offsets independently in each region without altering the overall object's
+        logical left position.
+        
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild):
+        Patched to call computeStartPositionDeltaForChildAvoidingFloats instead of doing the work of avoiding the floats
+        itself.
+
+        (WebCore::RenderBlock::computeLogicalLocationForFloat):
+        Fix the left clamping code to clamp to the left border in the correct region rather than always just clamping
+        to 0.
+
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Tweaked to handle the new signature of borderBoxRectInRegion.
+
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        Reworked not to return 0 on failure or when done, but to just return the current height. This is a more
+        fitting answer for the function to return when no more floats remain.
+
+        (WebCore::RenderBlock::getClearDelta):
+        Big changes to this function. It was never patched to support writing modes, so the new code is all
+        writing-mode-aware now. Also improved the computeLogicalWidth() call to make sure margins didn't get incorrectly changed.
+        The code computes transient information in each region as the object tries to find a place to fit, so that the
+        old widths are properly retained when layout of that child later checks to see if it needs to relayout children or not.
+
+        (WebCore::RenderBlock::nodeAtPoint):
+        Patched to call overflowClipRect with the region being hit tested.
+
+        (WebCore::inNormalFlow):
+        Tweaked to not need the initialBlock variable.
+
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::pageLogicalHeightForOffset):
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        Tweaked to use inRenderFlowThread() now that it exists. Also removing the regionsHaveUniformLogicalWidth()
+        optimization, since you can't rely on that when objects size differently depending on floats. In other words,
+        the future of pagination is variable width objects even in printing/columns.
+
+        (WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage):
+        Renamed to make it more clear what logicalPageOffset() was. It's your offset from the top of the first page.
+
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        New helper function for accessing the region at a given offset within your block.
+
+        (WebCore::RenderBlock::logicalWidthChangedInRegions):
+        New helper function that computes whether or not your logical width information changed in any regions. If so,
+        relayoutChildren gets set to true (just as it would have when computeLogicalWidth for the overall block changes
+        values).
+
+        (WebCore::RenderBlock::collapsedMarginBeforeForChild):
+        (WebCore::RenderBlock::collapsedMarginAfterForChild):
+        (WebCore::RenderBlock::marginBeforeForChild):
+        (WebCore::RenderBlock::marginAfterForChild):
+        (WebCore::RenderBlock::marginLogicalLeftForChild):
+        (WebCore::RenderBlock::marginLogicalRightForChild):
+        (WebCore::RenderBlock::marginStartForChild):
+        (WebCore::RenderBlock::marginEndForChild):
+        Tweaked because of const to take const arguments.
+        
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::startOffsetForLine):
+        (WebCore::RenderBlock::logicalWidthForChild):
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        (WebCore::RenderBlock::logicalLeftForChild):
+        (WebCore::RenderBlock::availableLogicalWidthForContent):
+        (WebCore::RenderBlock::startOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Reworking these functions so versions exist that take regions and page offsets to avoid having to recalculate
+        where you are over and over again as you walk up a containing block chain.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::fitBelowFloats):
+        Changed to handle the better return value for nextFloatLogicalBottomBelow.
+        
+        (WebCore::RenderBlock::checkPaginationAndFloatsAtEndLine):
+        Removing the uniform logical width optimization.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        Changed to take a region and offset from the first page so that it doesn't have to be recomputed as you recur up
+        the containing block chain.
+
+        (WebCore::RenderBox::clearRenderBoxRegionInfo):
+        Changed to just use inRenderFlowThread().
+
+        (WebCore::RenderBox::pushContentsClip):
+        Changed for the new region-parameterized overflow clip function.
+        
+        (WebCore::RenderBox::overflowClipRect):
+        Now takes a region so that a specific clip rect can be returned sized to the appropriate border box in that
+        region.
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        Objects in flow threads no longer shrink to avoid floats when computing their overall widths. The region-specific
+        check now does the shrinking. It checks at the point where the region slices the object, or the top of the object if
+        it begins in the middle of the region.
+
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        Push all the rest of the computeLogicalWidth code into computeLogicalWidthInRegion.
+        
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        Changed to take the region and the offset from the top of the first page to avoid recomputation.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasRenderOverflow):
+        (WebCore::RenderBox::hasVisualOverflow):
+        New helper used by the RenderLayer code to avoid having to check visual overflow when none exists.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Use the new region-specific overflow clip.
+
+        * rendering/RenderBoxRegionInfo.h:
+        (WebCore::RenderBoxRegionInfo::shiftLogicalLeft):
+        Helper used by the region code to shift a box over when floats cause it to move.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        Remove the optimization to avoid creating box info for uniform widths.
+
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        Make the clip rects used when painting the flow thread's layer tree temporary in each region.
+
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        Removing the uniform logical width optimization
+
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegions):
+        * rendering/RenderFlowThread.h:
+        New helper called to see if a block needs to relayout its children because its width changed in some
+        region.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::parentClipRects):
+        (WebCore::RenderLayer::backgroundClipRect):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        (WebCore::RenderLayer::repaintBlockSelectionGaps):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::clipBox):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        Changing all the layer clipping code to pass regions through to all of the helper functions involved. This is
+        so overflowClipRect can ultimately take a region. Eventually when we get positioned objects moving independently
+        in each region, we'll patch the "clip" property as well, and it will be much easier because all the plumbing has
+        been put in place here for overflow.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingRenderFlowThread):
+        Optimized to not walk up the render tree if we're in layout and a currentRenderFlowThread() exists.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::renderBoxRegionInfo):
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        Removing the optimization for uniform logical width regions. Changed remove to take so that the caller
+        can examine it before deleting.
+
+        (WebCore::RenderRegion::offsetFromLogicalTopOfFirstPage):
+        * rendering/RenderRegion.h:
+        Helper function that computes the region's offset from the top of the first page.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        Changed to pass the region to overflowClipRect.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        Modified because the layer clip functions need regions now.
+
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        Changed to use inRenderFlowThread over view()->hasRenderFlowThread.
+        
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        Patched to use the new overflowClipRect that is region-specific.
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         More work towards making PlatformWheelEvent immutable

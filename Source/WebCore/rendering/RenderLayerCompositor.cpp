@@ -573,7 +573,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer*
         boundsComputed = true;
     }
 
-    LayoutRect clipRect = layer->backgroundClipRect(rootRenderLayer(), true).rect();
+    LayoutRect clipRect = layer->backgroundClipRect(rootRenderLayer(), 0, true).rect(); // FIXME: Incorrect for CSS regions.
     clipRect.intersect(layerBounds);
     overlapMap.add(layer, clipRect);
 }
@@ -1345,7 +1345,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
     if (!computeClipRoot || computeClipRoot == layer)
         return false;
 
-    return layer->backgroundClipRect(computeClipRoot, true).rect() != PaintInfo::infiniteRect();
+    return layer->backgroundClipRect(computeClipRoot, 0, true).rect() != PaintInfo::infiniteRect(); // FIXME: Incorrect for CSS regions.
 }
 
 // Return true if the given layer is a stacking context and has compositing child

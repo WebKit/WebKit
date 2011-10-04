@@ -210,7 +210,7 @@ void RenderLayerBacking::updateCompositedBounds()
         LayoutRect clippingBounds = view->layoutOverflowRect();
 
         if (m_owningLayer != rootLayer)
-            clippingBounds.intersect(m_owningLayer->backgroundClipRect(rootLayer, true).rect());
+            clippingBounds.intersect(m_owningLayer->backgroundClipRect(rootLayer, 0, true).rect()); // FIXME: Incorrect for CSS regions.
 
         LayoutPoint delta;
         m_owningLayer->convertToLayerCoords(rootLayer, delta);
@@ -337,7 +337,7 @@ static LayoutRect clipBox(RenderBox* renderer)
 {
     LayoutRect result = PaintInfo::infiniteRect();
     if (renderer->hasOverflowClip())
-        result = renderer->overflowClipRect(LayoutPoint());
+        result = renderer->overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
 
     if (renderer->hasClip())
         result.intersect(renderer->clipRect(LayoutPoint()));
@@ -395,7 +395,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this
         // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
         // for a compositing layer, rootLayer is the layer itself.
-        LayoutRect parentClipRect = m_owningLayer->backgroundClipRect(compAncestor, true).rect();
+        LayoutRect parentClipRect = m_owningLayer->backgroundClipRect(compAncestor, 0, true).rect(); // FIXME: Incorrect for CSS regions.
         ASSERT(parentClipRect != PaintInfo::infiniteRect());
         m_ancestorClippingLayer->setPosition(FloatPoint() + (parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
@@ -1090,7 +1090,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     // Calculate the clip rects we should use.
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
-    m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+    m_owningLayer->calculateRects(rootLayer, 0, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect); // FIXME: Incorrect for CSS regions.
 
     LayoutPoint paintOffset = toPoint(layerBounds.location() - m_owningLayer->renderBoxLocation());
 

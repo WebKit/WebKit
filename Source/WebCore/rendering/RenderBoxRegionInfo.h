@@ -40,6 +40,8 @@ public:
     LayoutUnit logicalLeft() const { return m_logicalLeft; }
     LayoutUnit logicalWidth() const { return m_logicalWidth; }
     
+    void shiftLogicalLeft(LayoutUnit delta) { m_logicalLeft += delta; m_isShifted = true; }
+
     bool isShifted() const { return m_isShifted; }
 
 private:

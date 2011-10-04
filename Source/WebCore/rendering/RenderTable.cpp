@@ -1167,9 +1167,9 @@ LayoutUnit RenderTable::firstLineBoxBaseline() const
     return topNonEmptySection->logicalTop() + topNonEmptySection->firstLineBoxBaseline();
 }
 
-LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy)
+LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy)
 {
-    LayoutRect rect = RenderBlock::overflowClipRect(location, relevancy);
+    LayoutRect rect = RenderBlock::overflowClipRect(location, region, relevancy);
     
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this
@@ -1195,7 +1195,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
-    if (!hasOverflowClip() || overflowClipRect(adjustedLocation).intersects(result.rectForPoint(pointInContainer))) {
+    if (!hasOverflowClip() || overflowClipRect(adjustedLocation, result.region()).intersects(result.rectForPoint(pointInContainer))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
                 LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);

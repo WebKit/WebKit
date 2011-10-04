@@ -127,7 +127,7 @@ void RenderRegion::detachRegion()
 
 RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) const
 {
-    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
+    if (!m_isValid || !m_flowThread)
         return 0;
     return m_renderBoxRegionInfo.get(box);
 }
@@ -135,8 +135,8 @@ RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) con
 RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
     bool containingBlockChainIsInset)
 {
-    ASSERT(m_isValid && m_flowThread && !matchesRenderFlowThreadLogicalWidth());
-    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
+    ASSERT(m_isValid && m_flowThread);
+    if (!m_isValid || !m_flowThread)
         return 0;
 
     RenderBoxRegionInfo* existingBoxInfo = m_renderBoxRegionInfo.get(box);
@@ -150,13 +150,12 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
     return newBoxInfo;
 }
 
-void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
+RenderBoxRegionInfo* RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
 {
-    ASSERT(m_isValid && m_flowThread && !matchesRenderFlowThreadLogicalWidth());
-    if (!m_isValid || !m_flowThread || matchesRenderFlowThreadLogicalWidth())
-        return;
-    RenderBoxRegionInfo* info = m_renderBoxRegionInfo.take(box);
-    delete info;
+    ASSERT(m_isValid && m_flowThread);
+    if (!m_isValid || !m_flowThread)
+        return 0;
+    return m_renderBoxRegionInfo.take(box);
 }
 
 void RenderRegion::deleteAllRenderBoxRegionInfo()
@@ -165,13 +164,13 @@ void RenderRegion::deleteAllRenderBoxRegionInfo()
     m_renderBoxRegionInfo.clear();
 }
 
-bool RenderRegion::matchesRenderFlowThreadLogicalWidth() const
+LayoutUnit RenderRegion::offsetFromLogicalTopOfFirstPage() const
 {
     if (!m_isValid || !m_flowThread)
-        return true;
+        return 0;
     if (m_flowThread->isHorizontalWritingMode())
-        return m_flowThread->logicalWidth() == regionRect().width();
-    return m_flowThread->logicalWidth() == regionRect().height();
+        return regionRect().y();
+    return regionRect().x();
 }
 
 } // namespace WebCore

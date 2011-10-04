@@ -65,10 +65,10 @@ public:
     RenderBoxRegionInfo* renderBoxRegionInfo(const RenderBox*) const;
     RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
-    void removeRenderBoxRegionInfo(const RenderBox*);
+    RenderBoxRegionInfo* takeRenderBoxRegionInfo(const RenderBox*);
     void deleteAllRenderBoxRegionInfo();
 
-    bool matchesRenderFlowThreadLogicalWidth() const;
+    LayoutUnit offsetFromLogicalTopOfFirstPage() const;
 
 private:
     virtual const char* renderName() const { return "RenderRegion"; }

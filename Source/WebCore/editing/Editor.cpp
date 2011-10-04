@@ -2565,7 +2565,7 @@ bool Editor::insideVisibleArea(const LayoutPoint& point) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    LayoutRect rectInPageCoords = container->overflowClipRect(IntPoint());
+    LayoutRect rectInPageCoords = container->overflowClipRect(IntPoint(), 0); // FIXME: Incorrect for CSS regions.
     LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
                                               rectInPageCoords.width(), rectInPageCoords.height());
 
@@ -2594,7 +2594,7 @@ bool Editor::insideVisibleArea(Range* range) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    LayoutRect rectInPageCoords = container->overflowClipRect(LayoutPoint());
+    LayoutRect rectInPageCoords = container->overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
     LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
     LayoutRect resultRect = range->boundingBox();

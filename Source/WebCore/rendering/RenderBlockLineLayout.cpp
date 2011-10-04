@@ -166,7 +166,7 @@ void LineWidth::fitBelowFloats()
     float newLineRight = m_right;
     while (true) {
         floatLogicalBottom = m_block->nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
-        if (!floatLogicalBottom)
+        if (floatLogicalBottom <= lastFloatLogicalBottom)
             break;
 
         newLineLeft = m_block->logicalLeftOffsetForLine(floatLogicalBottom, m_isFirstLine);
@@ -1693,7 +1693,7 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
     LayoutUnit lineDelta = logicalHeight() - layoutState.endLineLogicalTop();
 
     bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
-    if (paginated && view()->hasRenderFlowThread() && !view()->currentRenderFlowThread()->regionsHaveUniformLogicalWidth()) {
+    if (paginated && inRenderFlowThread()) {
         // Check all lines from here to the end, and see if the hypothetical new position for the lines will result
         // in a different available line width.
         for (RootInlineBox* lineBox = layoutState.endLine(); lineBox; lineBox = lineBox->nextRootBox()) {

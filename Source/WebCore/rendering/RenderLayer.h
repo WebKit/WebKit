@@ -413,26 +413,37 @@ public:
     bool hasAutoZIndex() const { return renderer()->style()->hasAutoZIndex(); }
     int zIndex() const { return renderer()->style()->zIndex(); }
 
+    enum PaintLayerFlag {
+        PaintLayerHaveTransparency = 1,
+        PaintLayerAppliedTransform = 1 << 1,
+        PaintLayerTemporaryClipRects = 1 << 2,
+        PaintLayerPaintingReflection = 1 << 3,
+        PaintLayerPaintingOverlayScrollbars = 1 << 4
+    };
+    
+    typedef unsigned PaintLayerFlags;
+
     // The two main functions that use the layer system.  The paint method
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0, RenderRegion* = 0);
+    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0,
+        RenderRegion* = 0, PaintLayerFlags = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* paintingRoot);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
-    void calculateRects(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
+    void calculateRects(const RenderLayer* rootLayer, RenderRegion*, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
                         ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect,
                         bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     // Compute and cache clip rects computed with the given layer as the root
-    void updateClipRects(const RenderLayer* rootLayer, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
+    void updateClipRects(const RenderLayer* rootLayer, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
     // Compute and return the clip rects. If useCached is true, will used previously computed clip rects on ancestors
     // (rather than computing them all from scratch up the parent chain).
-    void calculateClipRects(const RenderLayer* rootLayer, ClipRects&, bool useCached = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    void calculateClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRects&, bool useCached = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     ClipRects* clipRects() const { return m_clipRects; }
 
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
@@ -536,16 +547,6 @@ private:
 
     void updateLayerListsIfNeeded();
     void updateCompositingAndLayerListsIfNeeded();
-    
-    enum PaintLayerFlag {
-        PaintLayerHaveTransparency = 1,
-        PaintLayerAppliedTransform = 1 << 1,
-        PaintLayerTemporaryClipRects = 1 << 2,
-        PaintLayerPaintingReflection = 1 << 3,
-        PaintLayerPaintingOverlayScrollbars = 1 << 4
-    };
-    
-    typedef unsigned PaintLayerFlags;
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
                     PaintBehavior, RenderObject* paintingRoot, RenderRegion* = 0, OverlapTestRequestMap* = 0,
@@ -648,8 +649,8 @@ private:
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
     
-    void parentClipRects(const RenderLayer* rootLayer, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    ClipRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    void parentClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    ClipRect backgroundClipRect(const RenderLayer* rootLayer, RenderRegion*, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
 
