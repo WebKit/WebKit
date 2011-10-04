@@ -2943,39 +2943,6 @@ BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-001.html = IMAGE
 BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-002.html = IMAGE
 BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 
-// The following are failures due to Skia bugs on Win/Linux
-// http://code.google.com/p/chromium/issues/detail?id=79917
-BUGCR79917 LINUX WIN : fast/borders/border-radius-different-width-001.html = IMAGE
-BUGCR79917 LINUX WIN : fast/borders/borderRadiusDashed01.html = IMAGE
-BUGCR79917 LINUX WIN : fast/borders/borderRadiusDotted02.html = IMAGE
-BUGCR79917 LINUX WIN : fast/borders/borderRadiusDotted03.html = IMAGE
-BUGCR79917 LINUX WIN : fast/borders/webkit-border-radius.html = IMAGE
-BUGCR79917 LINUX WIN : fast/css-generated-content/012.html = IMAGE
-BUGCR79917 LINUX WIN : fast/css/border-height.html = IMAGE
-BUGCR79917 LINUX WIN : fast/css/margin-top-bottom-dynamic.html = IMAGE
-BUGCR79917 LINUX WIN : fast/css/resize-corner-tracking-transformed.html = IMAGE
-BUGCR79917 LINUX WIN : fast/forms/control-clip.html = IMAGE
-BUGCR79917 LINUX WIN : fast/forms/negativeLineHeight.html = IMAGE
-BUGCR79917 LINUX WIN : fast/forms/textAreaLineHeight.html = IMAGE
-BUGCR79917 LINUX WIN : fast/inline-block/inline-block-vertical-align.html = IMAGE
-BUGCR79917 LINUX WIN : fast/layers/opacity-outline.html = IMAGE
-BUGCR79917 LINUX WIN : fast/lists/big-list-marker.html = IMAGE
-BUGCR79917 LINUX WIN : fast/lists/ordered-list-with-no-ol-tag.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/float-overflow-right.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/float-overflow.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/layer-child-outline.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/reflection-repaint-test.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/table-cell-vertical-overflow.html = IMAGE
-BUGCR79917 LINUX WIN : fast/repaint/transform-layout-repaint.html = IMAGE
-BUGCR79917 LINUX WIN : fast/table/border-collapsing/002-vertical.html = IMAGE
-BUGCR79917 LINUX WIN : fast/table/border-collapsing/002.html = IMAGE
-BUGCR79917 LINUX WIN : fast/table/empty-table-percent-height.html = IMAGE
-BUGCR79917 LINUX WIN : fast/table/table-and-parts-outline.html = IMAGE
-BUGCR79917 LINUX WIN : fast/transforms/transformed-caret.html = IMAGE
-BUGCR79917 LINUX WIN : svg/custom/no-inherited-dashed-stroke.xhtml = IMAGE
-BUGCR79917 LINUX WIN : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla/collapsing_borders/bug41262-3.html = IMAGE
-
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = PASS CRASH

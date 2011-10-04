@@ -1,3 +1,20 @@
+2011-10-04  Ben Wells  <benwells@chromium.org>
+
+        Rebaseline for bug 65583 (path based border radius drawing on skia) part 7
+        https://bugs.webkit.org/show_bug.cgi?id=69135
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-linux/fast/: 26 changes.
+        * platform/chromium-linux/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-linux/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium-win/fast/: 27 changes.
+        * platform/chromium-win/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-win/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-04  Scott Graham  <scottmg@chromium.org>
 
         occasional crash in Chromium in dispatching keyEvent
