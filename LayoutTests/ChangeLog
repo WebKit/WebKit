@@ -1,3 +1,12 @@
+2011-10-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Update Qt specific expected results.
+
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+
 2011-09-21  Cris Neckar  <cdn@chromium.org>
 
         Add test for crash when performing rich text mutations with counter nodes.
