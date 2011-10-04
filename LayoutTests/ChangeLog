@@ -1,3 +1,164 @@
+2011-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        Partial unreviewed rebaselines for Lion SVG pixel tests.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-34-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-44-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/filters-light-01-f-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/css: Added.
+        * platform/mac-snowleopard/svg/css/composite-shadow-example-expected.png: Added.
+        * platform/mac-snowleopard/svg/css/composite-shadow-with-opacity-expected.png: Added.
+        * platform/mac-snowleopard/svg/css/stars-with-shadow-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom: Added.
+        * platform/mac-snowleopard/svg/custom/altglyph-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/dynamic-svg-document-creation-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/getscreenctm-in-scrollable-div-area-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/invisible-text-after-scrolling-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/junk-data-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/missing-xlink-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/path-bad-data-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/text-xy-updates-SVGList-expected.png: Added.
+        * platform/mac-snowleopard/svg/custom/use-font-face-crash-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-appendItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-basics-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-initialize-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-insertItemBefore-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-removeItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-replaceItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGLengthList-xml-dom-modifications-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGNumberList-basics-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPathSegList-appendItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPathSegList-clear-and-initialize-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPathSegList-insertItemBefore-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPathSegList-removeItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPathSegList-replaceItem-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGPointList-basics-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGStringList-basics-expected.png: Added.
+        * platform/mac-snowleopard/svg/dom/SVGTransformList-basics-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Added.
+        * platform/mac-snowleopard/svg/hixie: Added.
+        * platform/mac-snowleopard/svg/hixie/error: Added.
+        * platform/mac-snowleopard/svg/hixie/error/012-expected.png: Added.
+        * platform/mac-snowleopard/svg/in-html: Added.
+        * platform/mac-snowleopard/svg/in-html/circle-expected.png: Added.
+        * platform/mac-snowleopard/svg/overflow: Added.
+        * platform/mac-snowleopard/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Added.
+        * platform/mac-snowleopard/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Added.
+        * platform/mac-snowleopard/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Added.
+        * platform/mac-snowleopard/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Added.
+        * platform/mac-snowleopard/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png: Added.
+        * platform/mac-snowleopard/svg/text/kerning-expected.png: Added.
+        * platform/mac-snowleopard/svg/text/multichar-glyph-expected.png: Added.
+        * platform/mac-snowleopard/svg/wicd: Added.
+        * platform/mac-snowleopard/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/mac-snowleopard/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom: Added.
+        * platform/mac-snowleopard/svg/zoom/page: Added.
+        * platform/mac-snowleopard/svg/zoom/page/absolute-sized-document-scrollbars-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-hixie-mixed-008-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/text: Added.
+        * platform/mac-snowleopard/svg/zoom/text/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-34-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-44-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png:
+        * platform/mac/svg/css/composite-shadow-example-expected.png:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac/svg/css/stars-with-shadow-expected.png:
+        * platform/mac/svg/custom/altglyph-expected.png:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.png:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.png:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png:
+        * platform/mac/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/mac/svg/custom/junk-data-expected.png:
+        * platform/mac/svg/custom/missing-xlink-expected.png:
+        * platform/mac/svg/custom/object-sizing-no-width-height-expected.png:
+        * platform/mac/svg/custom/path-bad-data-expected.png:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/mac/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/mac/svg/custom/use-font-face-crash-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-appendItem-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-removeItem-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/mac/svg/dom/SVGLengthList-xml-dom-modifications-expected.png:
+        * platform/mac/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/mac/svg/dom/SVGPathSegList-appendItem-expected.png:
+        * platform/mac/svg/dom/SVGPathSegList-clear-and-initialize-expected.png:
+        * platform/mac/svg/dom/SVGPathSegList-insertItemBefore-expected.png:
+        * platform/mac/svg/dom/SVGPathSegList-removeItem-expected.png:
+        * platform/mac/svg/dom/SVGPathSegList-replaceItem-expected.png:
+        * platform/mac/svg/dom/SVGPointList-basics-expected.png:
+        * platform/mac/svg/dom/SVGStringList-basics-expected.png:
+        * platform/mac/svg/dom/SVGTransformList-basics-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/mac/svg/hixie/error/012-expected.png:
+        * platform/mac/svg/in-html/circle-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png:
+        * platform/mac/svg/text/kerning-expected.png:
+        * platform/mac/svg/text/multichar-glyph-expected.png:
+        * platform/mac/svg/wicd/rightsizing-grid-expected.png:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/mac/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/mac/svg/zoom/page/absolute-sized-document-scrollbars-expected.png:
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/mac/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/mac/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/mac/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+
 2011-10-04  Sam Weinig  <sam@webkit.org>
 
         Add support for the CSP connect-src directive
