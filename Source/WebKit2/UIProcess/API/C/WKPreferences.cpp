@@ -631,3 +631,13 @@ bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->webAudioEnabled();
 }
+
+void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setApplicationChromeModeEnabled(enabled);
+}
+
+bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->applicationChromeMode();
+}

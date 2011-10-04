@@ -1,3 +1,21 @@
+2011-10-04  Jeff Miller  <jeffm@apple.com>
+
+        WKPreferences should allow control of application chrome mode
+        https://bugs.webkit.org/show_bug.cgi?id=69344
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPreferencesStore.h: Add application chrome mode setting to FOR_EACH_WEBKIT_BOOL_PREFERENCE().
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetApplicationChromeModeEnabled): Added.
+        (WKPreferencesGetApplicationChromeModeEnabled): Added.
+
+        * UIProcess/API/C/WKPreferencesPrivate.h: Added WKPreferencesSetApplicationChromeModeEnabled() and WKPreferencesGetApplicationChromeModeEnabled().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Set application chrome mode setting.
+
 2011-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement default error pages in WebKit2 GTK+ API
