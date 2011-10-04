@@ -51,6 +51,7 @@
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
 #include "TextCheckerClient.h"
+#include "TextCheckingHelper.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"

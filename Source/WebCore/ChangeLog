@@ -1,3 +1,11 @@
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r96568.
+
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        * editing/Editor.cpp:
+
 2011-10-03  Shinya Kawanaka  <shinyak@google.com>
 
         Should call checkTextOfParagraph() indirectly to make unifying spell-checking code path easy.

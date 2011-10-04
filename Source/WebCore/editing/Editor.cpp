@@ -79,6 +79,7 @@
 #include "SpellingCorrectionCommand.h"
 #include "Text.h"
 #include "TextCheckerClient.h"
+#include "TextCheckingHelper.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"

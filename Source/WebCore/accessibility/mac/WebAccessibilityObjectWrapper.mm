@@ -61,6 +61,7 @@
 #import "ScrollView.h"
 #import "SimpleFontData.h"
 #import "TextCheckerClient.h"
+#import "TextCheckingHelper.h"
 #import "TextIterator.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
