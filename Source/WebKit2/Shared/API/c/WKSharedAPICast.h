@@ -151,7 +151,7 @@ inline WKStringRef toCopiedAPI(const String& string)
 inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
 {
     if (!string)
-        ProxyingRefPtr<WebURL>(0);
+        return ProxyingRefPtr<WebURL>(0);
     return ProxyingRefPtr<WebURL>(WebURL::create(String(string)));
 }
 

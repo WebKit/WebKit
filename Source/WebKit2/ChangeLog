@@ -1,3 +1,13 @@
+2011-10-04  Ada Chan  <adachan@apple.com>
+
+        toURLRef() in WKSharedAPICast.h should return null for a null string
+        https://bugs.webkit.org/show_bug.cgi?id=69380
+
+        Reviewed by Jon Honeycutt.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toURLRef): Add the missing "return" for the null string case.
+
 2011-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67774
