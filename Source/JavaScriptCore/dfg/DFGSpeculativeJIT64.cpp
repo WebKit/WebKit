@@ -1353,6 +1353,110 @@ void SpeculativeJIT::compile(Node& node)
         noResult(m_compileIndex);
         break;
     }
+        
+    case ArrayPush: {
+        SpeculateCellOperand base(this, node.child1());
+        JSValueOperand value(this, node.child2());
+        GPRTemporary storage(this);
+        GPRTemporary storageLength(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg storageGPR = storage.gpr();
+        GPRReg storageLengthGPR = storageLength.gpr();
+        
+        writeBarrier(baseGPR, valueGPR, node.child2(), WriteBarrierForPropertyAccess, storageGPR, storageLengthGPR);
+
+        if (!isKnownArray(node.child1()))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
+        m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
+        
+        // Refuse to handle bizarre lengths.
+        speculationCheck(m_jit.branch32(MacroAssembler::Above, storageLengthGPR, TrustedImm32(0x7ffffffe)));
+        
+        MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(baseGPR, JSArray::vectorLengthOffset()));
+        
+        m_jit.storePtr(valueGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+        
+        m_jit.add32(Imm32(1), storageLengthGPR);
+        m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+        m_jit.add32(Imm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, storageLengthGPR);
+        
+        MacroAssembler::Jump done = m_jit.jump();
+        
+        slowPath.link(&m_jit);
+        
+        silentSpillAllRegisters(storageLengthGPR);
+        setupStubArguments(baseGPR, valueGPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationArrayPush);
+        m_jit.move(GPRInfo::returnValueGPR, storageLengthGPR);
+        silentFillAllRegisters(storageLengthGPR);
+        
+        done.link(&m_jit);
+        
+        jsValueResult(storageLengthGPR, m_compileIndex);
+        break;
+    }
+        
+    case ArrayPop: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary value(this);
+        GPRTemporary storage(this);
+        GPRTemporary storageLength(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg storageGPR = storage.gpr();
+        GPRReg storageLengthGPR = storageLength.gpr();
+        
+        if (!isKnownArray(node.child1()))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
+        m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
+        
+        MacroAssembler::Jump emptyArrayCase = m_jit.branchTest32(MacroAssembler::Zero, storageLengthGPR);
+        
+        m_jit.sub32(Imm32(1), storageLengthGPR);
+        
+        MacroAssembler::Jump slowCase = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(baseGPR, JSArray::vectorLengthOffset()));
+        
+        m_jit.loadPtr(MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), valueGPR);
+        
+        m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+
+        MacroAssembler::Jump holeCase = m_jit.branchTestPtr(MacroAssembler::Zero, valueGPR);
+        
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+        m_jit.sub32(MacroAssembler::Imm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+        
+        MacroAssembler::JumpList done;
+        
+        done.append(m_jit.jump());
+        
+        holeCase.link(&m_jit);
+        emptyArrayCase.link(&m_jit);
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsUndefined())), valueGPR);
+        done.append(m_jit.jump());
+        
+        slowCase.link(&m_jit);
+        
+        silentSpillAllRegisters(valueGPR);
+        m_jit.move(baseGPR, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationArrayPop);
+        m_jit.move(GPRInfo::returnValueGPR, valueGPR);
+        silentFillAllRegisters(valueGPR);
+        
+        done.link(&m_jit);
+        
+        jsValueResult(valueGPR, m_compileIndex);
+        break;
+    }
 
     case DFG::Jump: {
         BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());

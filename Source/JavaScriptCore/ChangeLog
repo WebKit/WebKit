@@ -1,5 +1,36 @@
 2011-10-03  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should inline Array.push and Array.pop
+        https://bugs.webkit.org/show_bug.cgi?id=69314
+
+        Reviewed by Oliver Hunt.
+        
+        1% speed-up in V8 due to 6% speed-up in V8-deltablue.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtr):
+        * create_hash_table:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGIntrinsic.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::getMethodLoadElimination):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-10-03  Filip Pizlo  <fpizlo@apple.com>
+
         JSC ASSERT Opening the Web Inspector
         https://bugs.webkit.org/show_bug.cgi?id=69293
 

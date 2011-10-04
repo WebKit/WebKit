@@ -342,6 +342,10 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
     \
+    /* Optimizations for array mutation. */\
+    macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ArrayPop, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    \
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
@@ -772,6 +776,8 @@ struct Node {
         case ResolveBase:
         case ResolveBaseStrictPut:
         case ResolveGlobal:
+        case ArrayPop:
+        case ArrayPush:
             return true;
         default:
             return false;

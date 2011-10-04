@@ -97,6 +97,8 @@ void DFG_OPERATION operationThrowHasInstanceError(ExecState*, EncodedJSValue bas
 void DFG_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
+EncodedJSValue DFG_OPERATION operationArrayPush(ExecState*, JSArray*, EncodedJSValue encodedValue);
+EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray*);
 void DFG_OPERATION operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void DFG_OPERATION operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void DFG_OPERATION operationPutByIdDirectStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);

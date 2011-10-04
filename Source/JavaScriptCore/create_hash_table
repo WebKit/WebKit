@@ -321,6 +321,14 @@ sub output() {
                 $thunkGenerator = "logThunkGenerator";
             }
         }
+        if ($name eq "arrayPrototypeTable") {
+            if ($key eq "push") {
+                $intrinsic = "DFG::ArrayPushIntrinsic";
+            }
+            if ($key eq "pop") {
+                $intrinsic = "DFG::ArrayPopIntrinsic";
+            }
+        }
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) INTRINSIC($intrinsic) },\n";
         $i++;
     }

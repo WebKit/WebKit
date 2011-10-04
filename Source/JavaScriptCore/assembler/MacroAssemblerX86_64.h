@@ -298,6 +298,12 @@ public:
         storePtr(scratchRegister, address);
     }
 
+    void storePtr(TrustedImmPtr imm, BaseIndex address)
+    {
+        move(imm, scratchRegister);
+        m_assembler.movq_rm(scratchRegister, address.offset, address.base, address.index, address.scale);
+    }
+    
     DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
     {
         m_assembler.movq_rm_disp32(src, address.offset, address.base);

@@ -335,7 +335,14 @@ private:
             changed |= setPrediction(PredictInt32);
             break;
         }
-
+            
+        case ArrayPop:
+        case ArrayPush: {
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
+            break;
+        }
+            
         case ArithMod: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
@@ -966,6 +973,9 @@ private:
                 // for a structure change or a put to property storage to affect
                 // the GetByVal.
                 break;
+            case ArrayPush:
+                // A push cannot affect previously existing elements in the array.
+                break;
             default:
                 if (clobbersWorld(index))
                     return NoNode;
@@ -997,6 +1007,11 @@ private:
                 // PutByVal currently always speculates that it's accessing an array with an
                 // integer index, which means that it's impossible for it to cause a structure
                 // change.
+                break;
+                
+            case ArrayPush:
+            case ArrayPop:
+                // Pushing and popping cannot despecify a function.
                 break;
                 
             default:

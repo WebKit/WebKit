@@ -70,7 +70,7 @@ private:
     bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
     
     // Handle intrinsic functions.
-    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg);
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg, PredictedType prediction);
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
     // Setup predecessor links in the graph's BasicBlocks.
@@ -681,7 +681,7 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
     return false;
 }
 
-bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg)
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg, PredictedType prediction)
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
@@ -717,6 +717,27 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         }
         
         set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
+        return true;
+    }
+        
+    case ArrayPushIntrinsic: {
+        if (firstArg + 1 != lastArg)
+            return false;
+        
+        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(0), OpInfo(prediction), get(firstArg), get(firstArg + 1));
+        if (usesResult)
+            set(resultOperand, arrayPush);
+        
+        return true;
+    }
+        
+    case ArrayPopIntrinsic: {
+        if (firstArg != lastArg)
+            return false;
+        
+        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(0), OpInfo(prediction), get(firstArg));
+        if (usesResult)
+            set(resultOperand, arrayPop);
         return true;
     }
         
@@ -1531,14 +1552,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 bool usesResult = false;
                 int resultOperand = 0; // make compiler happy
                 Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+                PredictedType prediction = PredictNone;
                 if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
                     resultOperand = putInstruction[1].u.operand;
                     usesResult = true;
+                    prediction = getPrediction(m_graph.size(), m_currentIndex + OPCODE_LENGTH(op_call));
                 }
                 
                 DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget)->executable()->intrinsic();
                 
-                if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg)) {
+                if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
                     // NEXT_OPCODE() has to be inside braces.
                     NEXT_OPCODE(op_call);
                 }

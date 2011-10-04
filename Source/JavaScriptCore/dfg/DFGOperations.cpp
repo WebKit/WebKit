@@ -375,6 +375,17 @@ void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* 
     array->JSArray::put(exec, index, JSValue::decode(encodedValue));
 }
 
+EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, JSArray* array, EncodedJSValue encodedValue)
+{
+    array->push(exec, JSValue::decode(encodedValue));
+    return JSValue::encode(jsNumber(array->length()));
+}
+        
+EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray* array)
+{
+    return JSValue::encode(array->pop());
+}
+        
 void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
