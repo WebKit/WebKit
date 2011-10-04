@@ -191,6 +191,13 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
             'type': 'text/plain',
             'id': 45548
         }],
+        "comments" : [{
+                'comment_date': datetime.datetime(2009, 12, 15, 15, 17, 28),
+                'comment_email': 'eric@webkit.org',
+                'text': """bug to test webkit-patch and commit-queue failures
+
+Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-queue.""",
+        }]
     }
 
     # FIXME: This should move to a central location and be shared by more unit tests.

@@ -1,3 +1,15 @@
+2011-10-03  David Levin  <levin@chromium.org>
+
+        webkitpy: Expose cc_emails and comments from bug.py
+        https://bugs.webkit.org/show_bug.cgi?id=69308
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/net/bugzilla/bug.py: Expose cc_emails and comments .
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py: Add parsing support for comments.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py: Fix the unit test due
+        to comments being exposed.
+
 2011-10-03  James Robinson  <jamesr@chromium.org>
 
         Add myself to the watchlist for platform/graphics/chromium

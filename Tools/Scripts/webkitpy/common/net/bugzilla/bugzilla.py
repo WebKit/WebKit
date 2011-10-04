@@ -346,11 +346,14 @@ class Bugzilla(object):
     # FIXME: Some bugzilla dates seem to have seconds in them?
     # Python does not support timezones out of the box.
     # Assume that bugzilla always uses PST (which is true for bugs.webkit.org)
-    _bugzilla_date_format = "%Y-%m-%d %H:%M"
+    _bugzilla_date_format = "%Y-%m-%d %H:%M:%S"
 
     @classmethod
     def _parse_date(cls, date_string):
         (date, time, time_zone) = date_string.split(" ")
+        if time.count(':') == 1:
+            # Add seconds into the time.
+            time += ':0'
         # Ignore the timezone because python doesn't understand timezones out of the box.
         date_string = "%s %s" % (date, time)
         return datetime.strptime(date_string, cls._bugzilla_date_format)
@@ -376,6 +379,13 @@ class Bugzilla(object):
                 element, 'commit-queue', attachment, 'committer_email')
         return attachment
 
+    def _parse_log_descr_element(self, element):
+        comment = {}
+        comment['comment_email'] = self._string_contents(element.find('who'))
+        comment['comment_date'] = self._date_contents(element.find('bug_when'))
+        comment['text'] = self._string_contents(element.find('thetext'))
+        return comment
+
     def _parse_bugs_from_xml(self, page):
         soup = BeautifulSoup(page)
         # Without the unicode() call, BeautifulSoup occasionally complains of being
@@ -395,6 +405,8 @@ class Bugzilla(object):
         bug["assigned_to_email"] = self._string_contents(soup.find("assigned_to"))
         bug["cc_emails"] = [self._string_contents(element) for element in soup.findAll('cc')]
         bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
+        bug["comments"] = [self._parse_log_descr_element(element) for element in soup.findAll('long_desc')]
+
         return bug
 
     # Makes testing fetch_*_from_bug() possible until we have a better

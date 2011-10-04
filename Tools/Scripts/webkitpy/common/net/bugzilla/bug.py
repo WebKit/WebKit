@@ -53,6 +53,9 @@ class Bug(object):
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 
+    def cc_emails(self):
+        return self.bug_dictionary["cc_emails"]
+
     # FIXME: This information should be stored in some sort of webkit_config.py instead of here.
     unassigned_emails = frozenset([
         "webkit-unassigned@lists.webkit.org",
@@ -110,3 +113,6 @@ class Bug(object):
         # Checking committer() ensures that it was both commit-queue+'d and has
         # a valid committer.
         return filter(lambda patch: patch.committer(), patches)
+
+    def comments(self):
+        return self.bug_dictionary["comments"]
