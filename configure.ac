@@ -438,6 +438,14 @@ AC_ARG_ENABLE(javascript_debugger,
               [],[enable_javascript_debugger="yes"])
 AC_MSG_RESULT([$enable_javascript_debugger])
 
+# check whether to enable Gamepad support
+AC_MSG_CHECKING([whether to enable Gamepad support])
+AC_ARG_ENABLE(gamepad,
+              AC_HELP_STRING([--enable-gamepad],
+                             [enable Gamepad support [default=no]]),
+              [],[enable_gamepad="no"])
+AC_MSG_RESULT([$enable_gamepad])
+
 # check whether to build with datagrid support
 AC_MSG_CHECKING([whether to enable HTML5 datagrid support])
 AC_ARG_ENABLE(datagrid,
@@ -1116,6 +1124,7 @@ AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" 
 AM_CONDITIONAL([ENABLE_PROGRESS_TAG],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
+AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
 AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
 AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
@@ -1230,6 +1239,7 @@ Features:
  Geolocation support                                      : $enable_geolocation
  Client-based geolocation support                         : $enable_client_based_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
+ Gamepad support                                          : $enable_gamepad
  MathML support                                           : $enable_mathml
  Media source                                             : $enable_media_source
  Media statistics                                         : $enable_media_statistics

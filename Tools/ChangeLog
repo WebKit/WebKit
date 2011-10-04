@@ -1,3 +1,12 @@
+2011-10-04  Scott Graham  <scottmg@chromium.org>
+
+        Add GAMEPAD feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=66859
+
+        Reviewed by Darin Fisher.
+
+        * Scripts/build-webkit:
+
 2011-10-04  Jon Lee  <jonlee@apple.com>
 
         REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview

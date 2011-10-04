@@ -85,6 +85,7 @@ my (
     $fileSystemSupport,
     $filtersSupport,
     $fullscreenAPISupport,
+    $gamepadSupport,
     $geolocationSupport,
     $iconDatabaseSupport,
     $imageResizerSupport,
@@ -192,6 +193,9 @@ my @features = (
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },
+
+    { option => "gamepad", desc => "Toggle Gamepad support",
+      define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },

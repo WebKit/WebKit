@@ -173,6 +173,16 @@ webcore_cppflags += -DENABLE_JAVASCRIPT_DEBUGGER=0
 endif # END ENABLE_JAVASCRIPT_DEBUGGER
 
 # ----
+# Gamepad support
+# ---
+if ENABLE_GAMEPAD
+FEATURE_DEFINES += ENABLE_GAMEPAD=1
+webcore_cppflags += -DENABLE_GAMEPAD=1
+else
+webcore_cppflags += -DENABLE_GAMEPAD=0
+endif # END ENABLE_GAMEPAD
+
+# ----
 # Database Support
 # ----
 if ENABLE_SQL_DATABASE
