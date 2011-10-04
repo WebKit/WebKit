@@ -1,3 +1,26 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Add a ScrollElasticityController class and move some members over from ScrollAnimatorMac
+        https://bugs.webkit.org/show_bug.cgi?id=69373
+
+        Reviewed by David Hyatt.
+
+        ScrollElasticityController is a new class that will handle the rubber-banding when handling scroll events.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorMac::snapRubberBand):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        * platform/mac/ScrollElasticityController.h: Added.
+        (WebCore::ScrollElasticityControllerClient::~ScrollElasticityControllerClient):
+        * platform/mac/ScrollElasticityController.mm: Added.
+        (WebCore::ScrollElasticityController::ScrollElasticityController):
+
 2011-10-04  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69372

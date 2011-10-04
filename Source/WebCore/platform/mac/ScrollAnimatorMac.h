@@ -32,6 +32,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
+#include "ScrollElasticityController.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
@@ -49,11 +50,16 @@ class WebScrollbarPainterDelegate;
 typedef id ScrollbarPainterController;
 #endif
 
+#if !ENABLE(RUBBER_BANDING)
+class ScrollElasticityControllerClient { };
+#endif
+
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollAnimatorMac : public ScrollAnimator {
+class ScrollAnimatorMac : public ScrollAnimator, private ScrollElasticityControllerClient {
+
 public:
     ScrollAnimatorMac(ScrollableArea*);
     virtual ~ScrollAnimatorMac();
@@ -141,11 +147,8 @@ private:
     void beginScrollGesture();
     void endScrollGesture();
 
-    bool m_inScrollGesture;
-    bool m_momentumScrollInProgress;
-    bool m_ignoreMomentumScrolls;
-    bool m_scrollerInitiallyPinnedOnLeft;
-    bool m_scrollerInitiallyPinnedOnRight;
+    ScrollElasticityController m_scrollElasticityController;
+
     int m_cumulativeHorizontalScroll;
     bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
     
