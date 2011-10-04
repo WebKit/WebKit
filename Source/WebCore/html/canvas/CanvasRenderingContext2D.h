@@ -29,6 +29,7 @@
 #include "AffineTransform.h"
 #include "CanvasRenderingContext.h"
 #include "Color.h"
+#include "DashArray.h"
 #include "FloatSize.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
@@ -84,6 +85,12 @@ public:
 
     float miterLimit() const;
     void setMiterLimit(float);
+
+    const DashArray* webkitLineDash() const;
+    void setWebkitLineDash(const DashArray&);
+
+    float webkitLineDashOffset() const;
+    void setWebkitLineDashOffset(float);
 
     float shadowOffsetX() const;
     void setShadowOffsetX(float);
@@ -242,6 +249,8 @@ private:
         CompositeOperator m_globalComposite;
         AffineTransform m_transform;
         bool m_invertibleCTM;
+        DashArray m_lineDash;
+        float m_lineDashOffset;
 
         // Text state.
         TextAlign m_textAlign;

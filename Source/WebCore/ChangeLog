@@ -1,3 +1,39 @@
+2011-10-04  Young Han Lee  <joybro201@gmail.com>
+
+        HTML canvas strokes with dash and dashOffset
+        https://bugs.webkit.org/show_bug.cgi?id=63933
+
+        Reviewed by Simon Fraser.
+
+        Add webkitLineDash and webkitLineDashOffset attributes to CanvasRenderingContext2D for JSC.
+        These attributes can be used to determine the dash-style of stroke in HTML Canvas.
+
+        As this kind of attributes are not specified in the HTML Canvas specification yet,
+        the 'webkit' prefix is added to its names.
+
+        Mozilla already implemented these attributes, mozDash and mozDashOffset [1], and this patch
+        is created by referring to the implementation. This patch is basically using the specified
+        behavior of stroke-dasharray and stroke-dashoffset in the SVG specification [2], except
+        that doesn't support units or percentages, just floating point numbers.
+
+        [1] https://bugzilla.mozilla.org/show_bug.cgi?id=662038
+        [2] http://www.w3.org/TR/SVG/painting.html#StrokeProperties
+
+        Tests: fast/canvas/canvas-webkitLineDash-invalid.html
+               fast/canvas/canvas-webkitLineDash.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::webkitLineDash):
+        (WebCore::JSCanvasRenderingContext2D::setWebkitLineDash):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::webkitLineDash):
+        (WebCore::CanvasRenderingContext2D::setWebkitLineDash):
+        (WebCore::CanvasRenderingContext2D::webkitLineDashOffset):
+        (WebCore::CanvasRenderingContext2D::setWebkitLineDashOffset):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2011-10-04  Matthew Delaney  <mdelaney@apple.com>
 
         Allow canvas backing store to be lazily allocated

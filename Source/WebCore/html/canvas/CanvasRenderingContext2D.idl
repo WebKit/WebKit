@@ -60,6 +60,12 @@ module html {
         attribute float shadowBlur;
         attribute [ConvertNullToNullString] DOMString shadowColor;
 
+        // FIXME: These attributes should also be implemented for V8.
+#if !(defined(V8_BINDING) && V8_BINDING)
+        attribute [Custom] Array webkitLineDash;
+        attribute float webkitLineDashOffset;
+#endif
+
         void clearRect(in float x, in float y, in float width, in float height);
         void fillRect(in float x, in float y, in float width, in float height);
 

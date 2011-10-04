@@ -192,6 +192,7 @@ CanvasRenderingContext2D::State::State()
     , m_globalAlpha(1)
     , m_globalComposite(CompositeSourceOver)
     , m_invertibleCTM(true)
+    , m_lineDashOffset(0)
     , m_textAlign(StartTextAlign)
     , m_textBaseline(AlphabeticTextBaseline)
     , m_unparsedFont(defaultFont)
@@ -494,6 +495,39 @@ void CanvasRenderingContext2D::setShadowColor(const String& color)
         return;
 
     applyShadow();
+}
+
+const DashArray* CanvasRenderingContext2D::webkitLineDash() const
+{
+    return &state().m_lineDash;
+}
+
+void CanvasRenderingContext2D::setWebkitLineDash(const DashArray& dash)
+{
+    state().m_lineDash = dash;
+
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+    c->setLineDash(state().m_lineDash, state().m_lineDashOffset);
+}
+
+float CanvasRenderingContext2D::webkitLineDashOffset() const
+{
+    return state().m_lineDashOffset;
+}
+
+void CanvasRenderingContext2D::setWebkitLineDashOffset(float offset)
+{
+    if (!isfinite(offset))
+        return;
+
+    state().m_lineDashOffset = offset;
+
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+    c->setLineDash(state().m_lineDash, state().m_lineDashOffset);
 }
 
 float CanvasRenderingContext2D::globalAlpha() const

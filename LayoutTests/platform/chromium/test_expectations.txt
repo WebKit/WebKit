@@ -97,6 +97,10 @@ BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
 // fails for other platforms...
 BUGCR20404 : editing/execCommand/copy-without-selection.html = TEXT
 
+// This will soon be fixed after implementing webkitLineDash for V8.
+BUGWK63933 : fast/canvas/canvas-webkitLineDash.html = FAIL
+BUGWK63933 : fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

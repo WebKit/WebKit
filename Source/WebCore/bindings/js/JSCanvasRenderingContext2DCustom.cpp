@@ -158,4 +158,35 @@ JSValue JSCanvasRenderingContext2D::putImageData(ExecState* exec)
     return jsUndefined();
 }
 
+JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
+{
+    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    const DashArray* dash = context->webkitLineDash();
+
+    MarkedArgumentBuffer list;
+    DashArray::const_iterator end = dash->end();
+    for (DashArray::const_iterator it = dash->begin(); it != end; ++it)
+        list.append(JSValue(*it));
+    return constructArray(exec, globalObject(), list);
+}
+
+void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue value)
+{
+    if (!isJSArray(&exec->globalData(), value))
+        return;
+
+    DashArray dash;
+    JSArray* valueArray = asArray(value);
+    for (unsigned i = 0; i < valueArray->length(); ++i) {
+        float elem = valueArray->getIndex(i).toFloat(exec);
+        if (elem <= 0 || !isfinite(elem))
+            return;
+
+        dash.append(elem);
+    }
+
+    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    context->setWebkitLineDash(dash);
+}
+
 } // namespace WebCore
