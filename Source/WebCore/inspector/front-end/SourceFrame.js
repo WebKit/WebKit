@@ -163,6 +163,11 @@ WebInspector.SourceFrame.prototype = {
         return this._textModel;
     },
 
+    canHighlightLine: function(line)
+    {
+        return true;
+    },
+
     highlightLine: function(line)
     {
         if (this.loaded)

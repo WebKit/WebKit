@@ -1,3 +1,40 @@
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove dependency from GoToLine dialog from Panel.
+        https://bugs.webkit.org/show_bug.cgi?id=69327
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog.install):
+        (WebInspector.GoToLineDialog._show):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView.prototype._tabSelected):
+        (WebInspector.ResourceContentView.prototype.contentLoaded):
+        (WebInspector.ResourceContentView.prototype.canHighlightLine):
+        (WebInspector.ResourceContentView.prototype.highlightLine):
+        (set WebInspector):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.viewGetter):
+        (WebInspector.NetworkPanel):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.registerShortcut):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.viewGetter):
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.viewGetter):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.canHighlightLine):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype._hideTab):
+        (WebInspector.TabbedPane.prototype.canHighlightLine):
+        (WebInspector.TabbedPane.prototype.highlightLine):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype.canHighlightLine):
+        (WebInspector.View.prototype.highlightLine):
+
 2011-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96491.

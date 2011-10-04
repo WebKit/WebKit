@@ -32,7 +32,11 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this._presentationModel = presentationModel;
 
-    this.registerShortcuts();
+    function viewGetter()
+    {
+        return this.visibleView;
+    }
+    WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
     this.topStatusBar = document.createElement("div");
     this.topStatusBar.className = "status-bar";

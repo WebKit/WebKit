@@ -159,6 +159,15 @@ WebInspector.View.prototype = {
     {
     },
 
+    canHighlightLine: function()
+    {
+        return false;
+    },
+
+    highlightLine: function(line)
+    {
+    },
+
     doResize: function()
     {
         this.dispatchToSelfAndVisibleChildren("onResize");

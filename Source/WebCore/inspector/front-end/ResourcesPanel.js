@@ -75,7 +75,11 @@ WebInspector.ResourcesPanel = function(database)
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
-    this.registerShortcuts();
+    function viewGetter()
+    {
+        return this.visibleView;
+    }
+    WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
 }
@@ -339,7 +343,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (line !== undefined) {
             var view = this._resourceViewForResource(resource);
-            if (view.highlightLine)
+            if (view.canHighlightLine())
                 view.highlightLine(line);
         }
         return true;

@@ -79,15 +79,6 @@ WebInspector.NetworkItemView.prototype = {
     {
         if (event.data.isUserGesture)
             WebInspector.settings.resourceViewTab.set(event.data.tabId);
-        this._installHighlightSupport(event.data.view);
-    },
-
-    _installHighlightSupport: function(view)
-    {
-        if (typeof view.highlightLine === "function")
-            this.highlightLine = view.highlightLine.bind(view);
-        else
-            delete this.highlightLine;
     }
 }
 
@@ -145,6 +136,17 @@ WebInspector.ResourceContentView.prototype = {
     contentLoaded: function()
     {
         // Should be implemented by subclasses.
+    },
+
+    canHighlightLine: function()
+    {
+        return this._innerView && this._innerView.canHighlightLine();
+    },
+
+    highlightLine: function(line)
+    {
+        if (this.canHighlightLine())
+            this._innerView.highlightLine(line);
     }
 }
 

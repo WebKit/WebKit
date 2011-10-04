@@ -407,24 +407,9 @@ WebInspector.Panel.prototype = {
         }
     },
 
-    registerShortcuts: function(shortcuts)
-    {
-        this._shortcuts = shortcuts || {};
-        var goToLineShortcut = WebInspector.GoToLineDialog.createShortcut();
-        this._shortcuts[goToLineShortcut.key] = this._showGoToLineDialog.bind(this);
-    },
-
     registerShortcut: function(key, handler)
     {
         this._shortcuts[key] = handler;
-    },
-
-    _showGoToLineDialog: function(e)
-    {
-         var view = this.visibleView;
-         WebInspector.GoToLineDialog.show(view);
-         if (view)
-             WebInspector.GoToLineDialog.show(view);
     }
 }
 

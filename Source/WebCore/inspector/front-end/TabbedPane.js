@@ -83,6 +83,17 @@ WebInspector.TabbedPane.prototype = {
     {
         tab.tabElement.removeStyleClass("selected");
         tab.view.visible = false;
+    },
+
+    canHighlightLine: function()
+    {
+        return this._currentTab && this._currentTab.view && this._currentTab.view.canHighlightLine();
+    },
+
+    highlightLine: function(line)
+    {
+        if (this.canHighlightLine())
+            this._currentTab.view.highlightLine(line);
     }
 }
 

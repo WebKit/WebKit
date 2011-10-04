@@ -1300,7 +1300,11 @@ WebInspector.NetworkPanel = function()
     this._closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
     this._viewsContainerElement.appendChild(this._closeButtonElement);
 
-    this.registerShortcuts();
+    function viewGetter()
+    {
+        return this.visibleView;
+    }
+    WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 }
 
 WebInspector.NetworkPanel.prototype = {

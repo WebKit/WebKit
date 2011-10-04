@@ -66,9 +66,22 @@ WebInspector.GoToLineDialog = function(view)
     this._input.select();
 }
 
-WebInspector.GoToLineDialog.show = function(sourceView)
+WebInspector.GoToLineDialog.install = function(panel, viewGetter)
 {
-    if (!sourceView || typeof sourceView.highlightLine !== "function")
+    function showGoToLineDialog()
+    {
+         var view = viewGetter();
+         if (view)
+             WebInspector.GoToLineDialog._show(view);
+    }
+
+    var goToLineShortcut = WebInspector.GoToLineDialog.createShortcut();
+    panel.registerShortcut(goToLineShortcut.key, showGoToLineDialog);
+}
+
+WebInspector.GoToLineDialog._show = function(sourceView)
+{
+    if (!sourceView || !sourceView.canHighlightLine())
         return;
     if (this._instance)
         return;
