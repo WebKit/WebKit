@@ -1,3 +1,16 @@
+2011-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC ASSERT Opening the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=69293
+
+        Reviewed by Oliver Hunt.
+        
+        If a polymorphic access structure list has a duplicated structure, then
+        don't crash.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2011-10-03  Gavin Barraclough  <barraclough@apple.com>
 
         On X86, switch bucketCount into a register, timeoutCheck into memory

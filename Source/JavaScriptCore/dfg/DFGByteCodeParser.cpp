@@ -1191,6 +1191,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         }
                         
                         Structure* structure = list->list[i].base.get();
+                        if (structureSet.contains(structure))
+                            continue;
+                        
                         size_t myOffset = structure->get(*m_globalData, identifier);
                     
                         if (myOffset == notFound) {
