@@ -42,18 +42,11 @@ public:
         , m_codeBlock(codeBlock)
         , m_profiledBlock(profiledBlock)
     {
-        // Predictions is a forward flow property that propagates the values seen at
-        // a particular value source to their various uses, ensuring that uses perform
-        // speculation that does not contravene the expected values.
-        m_predictions.resize(m_graph.size());
-        
         // Replacements are used to implement local common subexpression elimination.
         m_replacements.resize(m_graph.size());
         
-        for (unsigned i = 0; i < m_graph.size(); ++i) {
-            m_predictions[i] = PredictNone;
+        for (unsigned i = 0; i < m_graph.size(); ++i)
             m_replacements[i] = NoNode;
-        }
         
         for (unsigned i = 0; i < LastNodeId; ++i)
             m_lastSeen[i] = NoNode;
@@ -285,18 +278,20 @@ private:
     {
         ASSERT(m_graph[m_compileIndex].hasResult());
         
-        if (m_predictions[m_compileIndex] == prediction)
-            return false;
+        // setPrediction() is used when we know that there is no way that we can change
+        // our minds about what the prediction is going to be. There is no semantic
+        // difference between setPrediction() and mergePrediction() other than the
+        // increased checking to validate this property.
+        ASSERT(m_graph[m_compileIndex].prediction() == PredictNone || m_graph[m_compileIndex].prediction() == prediction);
         
-        m_predictions[m_compileIndex] = prediction;
-        return true;
+        return m_graph[m_compileIndex].predict(prediction);
     }
     
     bool mergePrediction(PredictedType prediction)
     {
         ASSERT(m_graph[m_compileIndex].hasResult());
         
-        return JSC::mergePrediction(m_predictions[m_compileIndex], prediction);
+        return m_graph[m_compileIndex].predict(prediction);
     }
     
     void propagateNodePredictions(Node& node)
@@ -326,7 +321,7 @@ private:
         }
             
         case SetLocal: {
-            changed |= node.variableAccessData()->predict(m_predictions[node.child1()]);
+            changed |= node.variableAccessData()->predict(m_graph[node.child1()].prediction());
             break;
         }
             
@@ -342,8 +337,8 @@ private:
         }
 
         case ArithMod: {
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
                 if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
@@ -363,7 +358,7 @@ private:
         }
 
         case ValueToNumber: {
-            PredictedType prediction = m_predictions[node.child1()];
+            PredictedType prediction = m_graph[node.child1()].prediction();
             
             if (prediction) {
                 if (!(prediction & PredictDouble) && nodeCanSpeculateInteger(node.arithNodeFlags()))
@@ -376,8 +371,8 @@ private:
         }
 
         case ValueAdd: {
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
                 if (isNumberPrediction(left) && isNumberPrediction(right)) {
@@ -400,8 +395,8 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithDiv: {
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
                 if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
@@ -418,7 +413,7 @@ private:
         }
             
         case ArithAbs: {
-            PredictedType child = m_predictions[node.child1()];
+            PredictedType child = m_graph[node.child1()].prediction();
             if (child) {
                 if (nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(child);
@@ -443,8 +438,8 @@ private:
         case GetById:
         case GetMethod:
         case GetByVal: {
-            if (node.getPrediction())
-                changed |= mergePrediction(node.getPrediction());
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
@@ -454,8 +449,8 @@ private:
         }
             
         case GetByOffset: {
-            if (node.getPrediction())
-                changed |= mergePrediction(node.getPrediction());
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
@@ -466,17 +461,17 @@ private:
 
         case Call:
         case Construct: {
-            if (node.getPrediction())
-                changed |= mergePrediction(node.getPrediction());
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
         case ConvertThis: {
-            PredictedType prediction = m_predictions[node.child1()];
+            PredictedType prediction = m_graph[node.child1()].prediction();
             if (prediction) {
                 if (prediction & ~PredictObjectMask) {
-                    prediction &= ~PredictObjectMask;
-                    prediction |= PredictObjectUnknown;
+                    prediction &= PredictObjectMask;
+                    prediction = mergePredictions(prediction, PredictObjectUnknown);
                 }
                 changed |= mergePrediction(prediction);
             }
@@ -491,7 +486,7 @@ private:
         }
             
         case PutGlobalVar: {
-            changed |= m_graph.predictGlobalVar(node.varNumber(), m_predictions[node.child1()]);
+            changed |= m_graph.predictGlobalVar(node.varNumber(), m_graph[node.child1()].prediction());
             break;
         }
             
@@ -500,7 +495,7 @@ private:
         case ResolveBase:
         case ResolveBaseStrictPut:
         case ResolveGlobal: {
-            PredictedType prediction = node.getPrediction();
+            PredictedType prediction = node.getHeapPrediction();
             if (prediction)
                 changed |= mergePrediction(prediction);
             break;
@@ -539,7 +534,7 @@ private:
         }
             
         case ToPrimitive: {
-            PredictedType child = m_predictions[node.child1()];
+            PredictedType child = m_graph[node.child1()].prediction();
             if (child) {
                 if (isObjectPrediction(child)) {
                     // I'd love to fold this case into the case below, but I can't, because
@@ -599,7 +594,7 @@ private:
         }
 
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-        printf("%s ", predictionToString(m_predictions[m_compileIndex]));
+        printf("%s ", predictionToString(m_graph[m_compileIndex].prediction()));
 #endif
         
         m_changed |= changed;
@@ -652,8 +647,8 @@ private:
                 break;
             }
             
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right && isNumberPrediction(left) && isNumberPrediction(right)) {
                 if (left & PredictDouble)
@@ -677,8 +672,8 @@ private:
                 break;
             }
             
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
                 if (left & PredictDouble)
@@ -695,7 +690,7 @@ private:
                 break;
             }
             
-            PredictedType prediction = m_predictions[node.child1()];
+            PredictedType prediction = m_graph[node.child1()].prediction();
             if (prediction & PredictDouble)
                 toDouble(node.child1());
             break;
@@ -707,11 +702,11 @@ private:
         }
             
         case GetById: {
-            bool isArray = isArrayPrediction(m_predictions[node.child1()]);
-            bool isString = isStringPrediction(m_predictions[node.child1()]);
+            bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
+            bool isString = isStringPrediction(m_graph[node.child1()].prediction());
             if (!isArray && !isString)
                 break;
-            if (!isInt32Prediction(m_predictions[m_compileIndex]))
+            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
                 break;
             if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
                 break;
@@ -860,14 +855,14 @@ private:
     
     bool isPredictedNumerical(Node& node)
     {
-        PredictedType left = m_predictions[node.child1()];
-        PredictedType right = m_predictions[node.child2()];
+        PredictedType left = m_graph[node.child1()].prediction();
+        PredictedType right = m_graph[node.child2()].prediction();
         return isNumberPrediction(left) && isNumberPrediction(right);
     }
     
     bool logicalNotIsPure(Node& node)
     {
-        PredictedType prediction = m_predictions[node.child1()];
+        PredictedType prediction = m_graph[node.child1()].prediction();
         return isBooleanPrediction(prediction) || !prediction;
     }
     
@@ -1165,7 +1160,7 @@ private:
         
         // Be safe. Don't try to perform replacements if the predictions don't
         // agree.
-        if (m_predictions[m_compileIndex] != m_predictions[replacement])
+        if (m_graph[m_compileIndex].prediction() != m_graph[replacement].prediction())
             return;
         
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
@@ -1388,8 +1383,6 @@ private:
     NodeIndex m_start;
     NodeIndex m_compileIndex;
     
-    Vector<PredictedType, 16> m_predictions;
-
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
     unsigned m_count;
 #endif

@@ -283,7 +283,7 @@ public:
     JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return graph().valueOfFunctionConstant(codeBlock(), nodeIndex); }
     
     // Helper methods to get predictions
-    PredictedType getPrediction(Node& node) { return graph().getPrediction(node, codeBlock()); }
+    PredictedType getPrediction(Node& node) { return node.prediction(); }
     PredictedType getPrediction(NodeIndex nodeIndex) { return getPrediction(graph()[nodeIndex]); }
 
 #if USE(JSVALUE32_64)

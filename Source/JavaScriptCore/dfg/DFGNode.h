@@ -428,6 +428,7 @@ struct Node {
         , codeOrigin(codeOrigin)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
+        , m_prediction(PredictNone)
     {
         ASSERT(!(op & NodeHasVarArgs));
         ASSERT(!hasArithNodeFlags());
@@ -443,6 +444,7 @@ struct Node {
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
+        , m_prediction(PredictNone)
     {
         ASSERT(!(op & NodeHasVarArgs));
         children.fixed.child1 = child1;
@@ -458,6 +460,7 @@ struct Node {
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
+        , m_prediction(PredictNone)
     {
         ASSERT(!(op & NodeHasVarArgs));
         children.fixed.child1 = child1;
@@ -473,6 +476,7 @@ struct Node {
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
+        , m_prediction(PredictNone)
     {
         ASSERT(op & NodeHasVarArgs);
         children.variable.firstChild = firstChild;
@@ -754,7 +758,7 @@ struct Node {
         return m_opInfo2;
     }
     
-    bool hasPrediction()
+    bool hasHeapPrediction()
     {
         switch (op) {
         case GetById:
@@ -774,15 +778,15 @@ struct Node {
         }
     }
     
-    PredictedType getPrediction()
+    PredictedType getHeapPrediction()
     {
-        ASSERT(hasPrediction());
+        ASSERT(hasHeapPrediction());
         return static_cast<PredictedType>(m_opInfo2);
     }
     
-    bool predict(PredictedType prediction)
+    bool predictHeap(PredictedType prediction)
     {
-        ASSERT(hasPrediction());
+        ASSERT(hasHeapPrediction());
         
         return mergePrediction(m_opInfo2, prediction);
     }
@@ -913,6 +917,16 @@ struct Node {
         return children.variable.numChildren;
     }
     
+    PredictedType prediction()
+    {
+        return m_prediction;
+    }
+    
+    bool predict(PredictedType prediction)
+    {
+        return mergePrediction(m_prediction, prediction);
+    }
+    
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
@@ -937,6 +951,8 @@ private:
     // big enough to store a pointer.
     uintptr_t m_opInfo;
     unsigned m_opInfo2;
+    // The prediction ascribed to this node after propagation.
+    PredictedType m_prediction;
 };
 
 } } // namespace JSC::DFG

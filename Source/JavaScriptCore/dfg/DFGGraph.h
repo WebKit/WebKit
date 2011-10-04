@@ -186,33 +186,6 @@ public:
         return m_predictions.predictGlobalVar(varNumber, prediction);
     }
     
-    bool predict(Node& node, PredictedType prediction)
-    {
-        switch (node.op) {
-        case GetLocal:
-        case SetLocal:
-        case Phi:
-        case SetArgument:
-            return node.variableAccessData()->predict(prediction);
-        case GetGlobalVar:
-            return predictGlobalVar(node.varNumber(), prediction);
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-        case GetByOffset:
-        case GetScopedVar:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal:
-            return node.predict(prediction);
-        default:
-            return false;
-        }
-    }
-
     PredictedType getGlobalVarPrediction(unsigned varNumber)
     {
         return m_predictions.getGlobalVarPrediction(varNumber);
@@ -226,40 +199,6 @@ public:
     PredictedType getJSConstantPrediction(Node& node, CodeBlock* codeBlock)
     {
         return predictionFromValue(node.valueOfJSConstantNode(codeBlock));
-    }
-    
-    PredictedType getPrediction(Node& node, CodeBlock* codeBlock)
-    {
-        Node* nodePtr = &node;
-        
-        if (nodePtr->op == ValueToNumber)
-            nodePtr = &(*this)[nodePtr->child1()];
-
-        if (nodePtr->op == ValueToInt32)
-            nodePtr = &(*this)[nodePtr->child1()];
-        
-        switch (nodePtr->op) {
-        case GetLocal:
-        case SetLocal:
-        case SetArgument:
-        case Phi:
-            return nodePtr->variableAccessData()->prediction();
-        case GetGlobalVar:
-            return getGlobalVarPrediction(nodePtr->varNumber());
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-        case GetByOffset:
-            return nodePtr->getPrediction();
-        case CheckMethod:
-            return getMethodCheckPrediction(*nodePtr);
-        case JSConstant:
-            return getJSConstantPrediction(*nodePtr, codeBlock);
-        default:
-            return PredictNone;
-        }
     }
     
     // Helper methods to check nodes for constants.

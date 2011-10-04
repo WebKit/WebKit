@@ -1,3 +1,41 @@
+2011-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG backends don't have access to per-node predictions from the propagator
+        https://bugs.webkit.org/show_bug.cgi?id=69291
+
+        Reviewed by Oliver Hunt.
+        
+        Nodes now have two notion of predictions: the heap prediction, which is
+        what came directly from value profiling, and the propagator's predictions,
+        which arise out of abstract interpretation. Every node has a propagator
+        prediction, but not every node has a heap prediction; and there is no
+        guarantee that a node that has both will keep them consistent as the
+        propagator may have additional information available to it.
+        
+        This is performance neutral.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::getPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::getHeapPrediction):
+        (JSC::DFG::Node::predictHeap):
+        (JSC::DFG::Node::prediction):
+        (JSC::DFG::Node::predict):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::setPrediction):
+        (JSC::DFG::Propagator::mergePrediction):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::isPredictedNumerical):
+        (JSC::DFG::Propagator::logicalNotIsPure):
+        (JSC::DFG::Propagator::setReplacement):
+
 2011-10-03  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, rolling out r96526.

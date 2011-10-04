@@ -204,8 +204,8 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("  predicting %s", predictionToString(node.variableAccessData()->prediction()));
         else if (node.hasVarNumber())
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
-        else if (node.hasPrediction())
-            printf("  predicting %s", predictionToString(node.getPrediction()));
+        else if (node.hasHeapPrediction())
+            printf("  predicting %s", predictionToString(node.getHeapPrediction()));
         else if (node.hasMethodCheckData()) {
             MethodCheckData& methodCheckData = m_methodCheckData[node.methodCheckDataIndex()];
             printf("  predicting function %p", methodCheckData.function);
