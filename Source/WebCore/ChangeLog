@@ -1,3 +1,29 @@
+2011-10-03  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9973489> REGRESSION (r66599): -[DOMNode boundingBox] returns the zero rect for SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=69305
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/custom/boundingBox.html
+
+        Rather than asserting and returning the zero rect, take the transform-aware code path for computing SVG
+        bounding rects.
+
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer): Updated for change to SVGRenderSupport::mapLocalToContainer().
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer): Ditto.
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer): Ditto.
+        (WebCore::RenderSVGModelObject::absoluteRects): Replaced an incorrect assertion with code to approximate the bounding
+        box.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer): Updated for change to SVGRenderSupport::mapLocalToContainer().
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer): Removed the fixed and useTransform boolean parameters.
+        * rendering/svg/SVGRenderSupport.h:
+
 2011-10-03  Michael Nordman  <michaeln@google.com>
 
         A little more WebSQLDatabase thread safety.

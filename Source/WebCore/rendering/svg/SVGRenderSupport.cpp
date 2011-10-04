@@ -70,12 +70,10 @@ void SVGRenderSupport::computeRectForRepaint(const RenderObject* object, RenderB
     object->parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
 {
-    ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
-    ASSERT(useTransforms); // Mapping a point through SVG w/o respecting transforms is useless.
     transformState.applyTransform(object->localToParentTransform());
-    object->parent()->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
+    object->parent()->mapLocalToContainer(repaintContainer, false, true, transformState, wasFixed);
 }
 
 bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)

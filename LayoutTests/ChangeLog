@@ -1,3 +1,13 @@
+2011-10-03  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9973489> REGRESSION (r66599): -[DOMNode boundingBox] returns the zero rect for SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=69305
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/boundingBox-expected.txt: Added.
+        * svg/custom/boundingBox.html: Added.
+
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): cloned text input loses value
