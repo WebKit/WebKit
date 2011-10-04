@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebLoaderClient.h"
 
+#include "WebKitError.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
@@ -158,6 +159,19 @@ static void webkitWebLoaderClientConstructed(GObject* object)
     WKPageSetPageLoaderClient(toAPI(page), &loaderClient);
 }
 
+static gboolean webkitWebLoaderClientLoadFailed(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error)
+{
+    if (g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED)
+        || g_error_matches(error, WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE)
+        || g_error_matches(error, WEBKIT_PLUGIN_ERROR, WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD))
+        return FALSE;
+
+    GOwnPtr<char> htmlString(g_strdup_printf("<html><body>%s</body></html>", error->message));
+    webkit_web_view_load_alternate_html(client->priv->view.get(), htmlString.get(), 0, failingURI);
+
+    return TRUE;
+}
+
 static void webkitWebLoaderClientSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebLoaderClient* client = WEBKIT_WEB_LOADER_CLIENT(object);
@@ -205,6 +219,9 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
     objectClass->get_property = webkitWebLoaderClientGetProperty;
     objectClass->constructed = webkitWebLoaderClientConstructed;
     objectClass->finalize = webkitWebLoaderClientFinalize;
+
+    clientClass->provisional_load_failed = webkitWebLoaderClientLoadFailed;
+    clientClass->load_failed = webkitWebLoaderClientLoadFailed;
 
     /**
      * WebKitWebView:web-view:

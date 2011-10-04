@@ -1,5 +1,22 @@
 2011-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Implement default error pages in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69255
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_policy_error_quark): Add quark for policy errors.
+        (webkit_plugin_error_quark): Add quark for plugin errors.
+        * UIProcess/API/gtk/WebKitError.h: Add policy and plugin errors.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (webkitWebLoaderClientLoadFailed): Load a custom error page when
+        load failed and signal has not been handled.
+        (webkit_web_loader_client_class_init): Add default implementation
+        for provisional_load_failed and load_failed virtual methods.
+
+2011-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add webkit_web_view_load_alternate_html() to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=69254
 

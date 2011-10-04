@@ -24,7 +24,7 @@
 #include "WebKitPrivate.h"
 #include <WebCore/ErrorsGtk.h>
 
-GQuark webkit_network_error_quark(void)
+GQuark webkit_network_error_quark()
 {
     return g_quark_from_static_string(WebCore::errorDomainNetwork);
 }
@@ -34,3 +34,26 @@ COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_TRANSPORT, NetworkErrorTranspo
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL, NetworkErrorUnknownProtocol);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_CANCELLED, NetworkErrorCancelled);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST, NetworkErrorFileDoesNotExist);
+
+GQuark webkit_policy_error_quark()
+{
+    return g_quark_from_static_string(WebCore::errorDomainPolicy);
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_POLICY_ERROR_FAILED, PolicyErrorFailed);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE, PolicyErrorCannotShowMimeType);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL, PolicyErrorCannotShowURL);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE, PolicyErrorFrameLoadInterruptedByPolicyChange);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT, PolicyErrorCannotUseRestrictedPort);
+
+GQuark webkit_plugin_error_quark()
+{
+    return g_quark_from_static_string(WebCore::errorDomainPlugin);
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_FAILED, PluginErrorFailed);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN, PluginErrorCannotFindPlugin);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN, PluginErrorCannotLoadPlugin);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE, PluginErrorJavaUnavailable);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED, PluginErrorConnectionCancelled);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD, PluginErrorWillHandleLoad);

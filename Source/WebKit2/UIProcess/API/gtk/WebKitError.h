@@ -31,6 +31,8 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_NETWORK_ERROR webkit_network_error_quark ()
+#define WEBKIT_POLICY_ERROR  webkit_policy_error_quark ()
+#define WEBKIT_PLUGIN_ERROR  webkit_plugin_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -51,8 +53,31 @@ typedef enum {
     WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303
 } WebKitNetworkError;
 
+typedef enum {
+    WEBKIT_POLICY_ERROR_FAILED = 199,
+    WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE = 100,
+    WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL = 101,
+    WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE = 102,
+    WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT = 103
+} WebKitPolicyError;
+
+typedef enum {
+    WEBKIT_PLUGIN_ERROR_FAILED = 299,
+    WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN = 200,
+    WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN = 201,
+    WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE = 202,
+    WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED = 203,
+    WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD = 204,
+} WebKitPluginError;
+
 WK_EXPORT GQuark
 webkit_network_error_quark (void);
+
+WK_EXPORT GQuark
+webkit_policy_error_quark  (void);
+
+WK_EXPORT GQuark
+webkit_plugin_error_quark  (void);
 
 G_END_DECLS
 
