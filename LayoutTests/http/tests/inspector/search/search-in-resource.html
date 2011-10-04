@@ -1,14 +1,13 @@
 <html>
 <head>
 <script src="../inspector-test.js"></script>
-<script src="../resources-test.js"></script>
 <script src="search-test.js"></script>
 <script>
 function test()
 {
     // This file should not match search query.
     var text = "searchTest" + "UniqueString";
-    InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+    InspectorTest.runAfterResourcesAreCreated(["search.js"], step2);
 
     function step2()
     {

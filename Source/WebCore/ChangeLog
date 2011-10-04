@@ -1,3 +1,22 @@
+2011-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96491.
+        http://trac.webkit.org/changeset/96491
+        https://bugs.webkit.org/show_bug.cgi?id=69326
+
+        Breaks Slow Leopard inspector tests (Requested by pfeldman on
+        #webkit).
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.ScriptContentProvider.prototype.requestContent):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.requestSource.didGetScriptSource):
+        (WebInspector.Script.prototype.requestSource):
+
 2011-10-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add DebuggerPresentationModel and ConsoleView to compilation.

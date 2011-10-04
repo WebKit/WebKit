@@ -31,7 +31,6 @@
 #include "InspectorDebuggerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-#include "ContentSearchUtils.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
@@ -321,15 +320,6 @@ static PassRefPtr<InspectorObject> scriptToInspectorObject(ScriptObject scriptOb
     return value->asObject();
 }
 
-void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& scriptId, const String& query, RefPtr<InspectorArray>* results)
-{
-    ScriptsMap::iterator it = m_scripts.find(scriptId);
-    if (it != m_scripts.end())
-        *results = ContentSearchUtils::searchInTextByLines(query, it->second.source);
-    else
-        *error = "No script for id: " + scriptId;
-}
-
 void InspectorDebuggerAgent::setScriptSource(ErrorString* error, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result)
 {
     bool previewOnly = preview && *preview;
@@ -342,13 +332,9 @@ void InspectorDebuggerAgent::setScriptSource(ErrorString* error, const String& s
         *result = object;
 }
 
-void InspectorDebuggerAgent::getScriptSource(ErrorString* error, const String& scriptId, String* scriptSource)
+void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& scriptId, String* scriptSource)
 {
-    ScriptsMap::iterator it = m_scripts.find(scriptId);
-    if (it != m_scripts.end())
-        *scriptSource = it->second.source;
-    else
-        *error = "No script for id: " + scriptId;
+    *scriptSource = m_scripts.get(scriptId).source;
 }
 
 void InspectorDebuggerAgent::schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data)
