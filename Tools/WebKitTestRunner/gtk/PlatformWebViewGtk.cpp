@@ -97,5 +97,17 @@ void PlatformWebView::setWindowFrame(WKRect frame)
     resizeTo(frame.size.width, frame.size.height);
 }
 
+void PlatformWebView::addChromeInputField()
+{
+}
+
+void PlatformWebView::removeChromeInputField()
+{
+}
+
+void PlatformWebView::makeWebViewFirstResponder()
+{
+}
+
 } // namespace WTR
 

@@ -69,7 +69,8 @@ void WKViewSetIsInWindow(WKViewRef viewRef, bool isInWindow)
 
 void WKViewSetInitialFocus(WKViewRef viewRef, bool forward)
 {
-    toImpl(viewRef)->setInitialFocus(forward);
+    bool isKeyboardEventValid = false;
+    toImpl(viewRef)->setInitialFocus(forward, isKeyboardEventValid, WebKeyboardEvent());
 }
 
 void WKViewSetScrollOffsetOnNextResize(WKViewRef viewRef, WKSize scrollOffset)

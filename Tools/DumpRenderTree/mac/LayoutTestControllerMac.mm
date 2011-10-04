@@ -119,7 +119,7 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
         disallowedURLs = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
 
     // Canonicalize the URL
-    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
     request = [NSURLProtocol canonicalRequestForRequest:request];
 
     CFSetAddValue(disallowedURLs, [request URL]);
@@ -168,7 +168,7 @@ void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
     [origin release];
 }
 
-JSValueRef originsArrayToJS(JSContextRef context, NSArray* origins)
+JSValueRef originsArrayToJS(JSContextRef context, NSArray *origins)
 {
     NSUInteger count = [origins count];
 
@@ -425,7 +425,7 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
     NSString *urlNS = (NSString *)urlCF.get();
 
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
-    NSString* nsurlString = [nsurl absoluteString];
+    NSString *nsurlString = [nsurl absoluteString];
 
     JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString([nsurlString UTF8String]));
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
@@ -508,8 +508,8 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
 {
     // DumpRenderTree configured the WebView to use WebDeviceOrientationProviderMock.
     id<WebDeviceOrientationProvider> provider = [[mainFrame webView] _deviceOrientationProvider];
-    WebDeviceOrientationProviderMock* mockProvider = static_cast<WebDeviceOrientationProviderMock*>(provider);
-    WebDeviceOrientation* orientation = [[WebDeviceOrientation alloc] initWithCanProvideAlpha:canProvideAlpha alpha:alpha canProvideBeta:canProvideBeta beta:beta canProvideGamma:canProvideGamma gamma:gamma];
+    WebDeviceOrientationProviderMock *mockProvider = static_cast<WebDeviceOrientationProviderMock*>(provider);
+    WebDeviceOrientation *orientation = [[WebDeviceOrientation alloc] initWithCanProvideAlpha:canProvideAlpha alpha:alpha canProvideBeta:canProvideBeta beta:beta canProvideGamma:canProvideGamma gamma:gamma];
     [mockProvider setOrientation:orientation];
     [orientation release];
 }
@@ -550,7 +550,7 @@ void LayoutTestController::startSpeechInput(JSContextRef inputElement)
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
     // FIXME: Workaround <rdar://problem/6480108>
-    static WebIconDatabase* sharedWebIconDatabase = NULL;
+    static WebIconDatabase *sharedWebIconDatabase = NULL;
     if (!sharedWebIconDatabase) {
         if (!iconDatabaseEnabled)
             return;
@@ -1151,7 +1151,7 @@ void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef user
 
 void LayoutTestController::setEditingBehavior(const char* editingBehavior)
 {
-    NSString* editingBehaviorNS = [[NSString alloc] initWithUTF8String:editingBehavior];
+    NSString *editingBehaviorNS = [[NSString alloc] initWithUTF8String:editingBehavior];
     if ([editingBehaviorNS isEqualToString:@"mac"])
         [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingMacBehavior];
     else if ([editingBehaviorNS isEqualToString:@"win"])
@@ -1201,4 +1201,29 @@ void LayoutTestController::setTextDirection(JSStringRef directionName)
     else
         ASSERT_NOT_REACHED();
 #endif
+}
+
+void LayoutTestController::addChromeInputField()
+{
+    NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+    textField.tag = 1;
+    [[[[mainFrame webView] window] contentView] addSubview:textField];
+    [textField release];
+    
+    [textField setNextKeyView:[mainFrame webView]];
+    [[mainFrame webView] setNextKeyView:textField];
+}
+
+void LayoutTestController::removeChromeInputField()
+{
+    NSView* textField = [[[[mainFrame webView] window] contentView] viewWithTag:1];
+    if (textField) {
+        [textField removeFromSuperview];
+        focusWebView();
+    }
+}
+
+void LayoutTestController::focusWebView()
+{
+    [[[mainFrame webView] window] makeFirstResponder:[mainFrame webView]];
 }

@@ -1163,8 +1163,11 @@ static void resetWebViewToConsistentStateBeforeTesting()
     
     resetDefaultsToConsistentValues();
 
-    if (gLayoutTestController)
+    if (gLayoutTestController) {
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
+        // in the case that a test using the chrome input field failed, be sure to clean up for the next test
+        gLayoutTestController->removeChromeInputField();
+    }
 
     [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
     [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:NO];

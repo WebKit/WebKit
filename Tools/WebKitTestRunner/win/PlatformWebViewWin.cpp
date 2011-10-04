@@ -97,4 +97,17 @@ void PlatformWebView::setWindowFrame(WKRect)
     // Implement.
 }
 
+
+void PlatformWebView::addChromeInputField()
+{
+}
+
+void PlatformWebView::removeChromeInputField()
+{
+}
+
+void PlatformWebView::makeWebViewFirstResponder()
+{
+}
+
 } // namespace WTR

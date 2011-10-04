@@ -700,11 +700,11 @@ IntSize WebPageProxy::viewSize() const
     return m_pageClient->viewSize();
 }
 
-void WebPageProxy::setInitialFocus(bool forward)
+void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent)
 {
     if (!isValid())
         return;
-    process()->send(Messages::WebPage::SetInitialFocus(forward), m_pageID);
+    process()->send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent), m_pageID);
 }
 
 void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)

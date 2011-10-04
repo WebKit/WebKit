@@ -1,3 +1,21 @@
+2011-10-04  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview
+        https://bugs.webkit.org/show_bug.cgi?id=68412
+        <rdar://problem/9988252>
+
+        Reviewed by Darin Adler.
+
+        The option-key navigation is only relevant to the Mac platform.
+
+        * platform/mac/fast/forms/focus-option-control-on-page-expected.txt: Added.
+        * platform/mac/fast/forms/focus-option-control-on-page.html: Added.
+        * platform/mac/fast/forms/script-tests/focus-option-control-on-page.js: Added.
+        (startTest):
+        (runKeyPresses):
+        (notifyDone):
+        (log):
+
 2011-10-04  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69372

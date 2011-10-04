@@ -1,3 +1,92 @@
+2011-10-04  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview
+        https://bugs.webkit.org/show_bug.cgi?id=68412
+        <rdar://problem/9988252>
+
+        Reviewed by Darin Adler.
+
+        In order to create a test for the bug, I had to update DRT and WKTR to create some
+        widget that allows first responder status to move away from the main web view.
+
+        Three methods were added to layoutTestController: addChromeInputField,
+        removeChromeInputField, and focusWebView. addChromeInputField adds a text field
+        that is a sibling to the web view, and sets up the key event loop between the two.
+        removeChromeInputField removes that field. focusWebView moves first responder
+        status to the web view.
+
+        The test makes the call via layoutTestController and passes a callback that it
+        assumes will be executed once the task is completed. In DRT the callback is called
+        synchronously. In WKTR this is handled with message passing between the two
+        processes.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (addChromeInputFieldCallback):
+        (removeChromeInputFieldCallback):
+        (focusWebViewCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::addChromeInputField):
+        (LayoutTestController::removeChromeInputField):
+        (LayoutTestController::focusWebView):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting): When resetting for the next test,
+        make sure to remove the chrome input field.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::addChromeInputField):
+        (LayoutTestController::removeChromeInputField):
+        (LayoutTestController::focusWebView):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::addChromeInputField):
+        (LayoutTestController::removeChromeInputField):
+        (LayoutTestController::focusWebView):
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::postAddChromeInputField):
+        (WTR::InjectedBundle::postRemoveChromeInputField):
+        (WTR::InjectedBundle::postFocusWebView):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::callbackMap): Create a hash map that keeps track of the callbacks provided
+        through JS.
+        (WTR::cacheLayoutTestControllerCallback):
+        (WTR::callLayoutTestControllerCallback):
+        (WTR::LayoutTestController::addChromeInputField):
+        (WTR::LayoutTestController::removeChromeInputField):
+        (WTR::LayoutTestController::focusWebView):
+        (WTR::LayoutTestController::callAddChromeInputFieldCallback):
+        (WTR::LayoutTestController::callRemoveChromeInputFieldCallback):
+        (WTR::LayoutTestController::callFocusWebViewCallback):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: These functions have nothing to do
+        with the patch-- just cleaning up style.
+        (LayoutTestController::addDisallowedURL):
+        (originsArrayToJS):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::setMockDeviceOrientation):
+        (LayoutTestController::setIconDatabaseEnabled):
+        (LayoutTestController::setEditingBehavior):
+
 2011-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         Move font-fixup code in WebKitTestRunner to a better place

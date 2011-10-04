@@ -1,3 +1,40 @@
+2011-10-04  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview
+        https://bugs.webkit.org/show_bug.cgi?id=68412
+        <rdar://problem/9988252>
+
+        Reviewed by Darin Adler.
+
+        In WK1 setInitialFocus() is called on FocusController with the key event that
+        caused the web view to become first responder. In WK2 no event is sent. So if
+        the key stroke that caused the change in first responder status contains the
+        option modifier key, FocusController did not know that it had to switch behavior.
+
+        Because there are multiple ways that the WKView can becomeFirstResponder, I changed
+        the signature to setInitialFocus to express whether the key event parameter is an
+        actual key event.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetInitialFocus):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]): Take the NSApp currentEvent and pass it along if
+        the event is a keyboard event, otherwise pass an empty event.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setInitialFocus): Change in function signature to confirm that
+        the event that caused the initial focus was a keyboard event, and provide the keyboard
+        event itself.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setInitialFocus):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInitialFocus): If we know that the cause of this was a keyboard
+        event, we pass that event to the FocusController. Otherwise we fall back to the original
+        behavior, which is to pass no event at all.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-10-04  Jeff Miller  <jeffm@apple.com>
 
         WKPreferences should allow control of application chrome mode

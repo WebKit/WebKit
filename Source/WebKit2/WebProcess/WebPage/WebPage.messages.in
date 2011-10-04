@@ -23,7 +23,7 @@
 messages -> WebPage {
     SetActive(bool active)
     SetFocused(bool focused)
-    SetInitialFocus(bool forward)
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
     SetIsInWindow(bool isInWindow)
 
     SetDrawsBackground(bool drawsBackground)

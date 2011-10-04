@@ -158,6 +158,18 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 
         return;
     }
+    if (WKStringIsEqualToUTF8CString(messageName, "CallAddChromeInputFieldCallback")) {
+        m_layoutTestController->callAddChromeInputFieldCallback();
+        return;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "CallRemoveChromeInputFieldCallback")) {
+        m_layoutTestController->callRemoveChromeInputFieldCallback();
+        return;
+    }
+    if (WKStringIsEqualToUTF8CString(messageName, "CallFocusWebViewCallback")) {
+        m_layoutTestController->callFocusWebViewCallback();
+        return;
+    }
 
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
     WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));
@@ -244,6 +256,24 @@ void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BeforeUnloadReturnValue"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+void InjectedBundle::postAddChromeInputField()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("AddChromeInputField"));
+    WKBundlePostMessage(m_bundle, messageName.get(), 0);
+}
+
+void InjectedBundle::postRemoveChromeInputField()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("RemoveChromeInputField"));
+    WKBundlePostMessage(m_bundle, messageName.get(), 0);
+}
+
+void InjectedBundle::postFocusWebView()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("FocusWebView"));
+    WKBundlePostMessage(m_bundle, messageName.get(), 0);
 }
 
 } // namespace WTR

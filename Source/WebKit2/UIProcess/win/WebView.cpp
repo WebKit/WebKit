@@ -1068,9 +1068,9 @@ void WebView::setOverrideCursor(HCURSOR overrideCursor)
     updateNativeCursor();
 }
 
-void WebView::setInitialFocus(bool forward)
+void WebView::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event)
 {
-    m_page->setInitialFocus(forward);
+    m_page->setInitialFocus(forward, isKeyboardEventValid, event);
 }
 
 void WebView::setScrollOffsetOnNextResize(const IntSize& scrollOffset)

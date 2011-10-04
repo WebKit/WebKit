@@ -176,6 +176,13 @@ public:
     
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool value) { m_globalFlag = value; }
+    
+    void addChromeInputField(JSValueRef);
+    void removeChromeInputField(JSValueRef);
+    void focusWebView(JSValueRef);
+    void callAddChromeInputFieldCallback();
+    void callRemoveChromeInputFieldCallback();
+    void callFocusWebViewCallback();
 
 private:
     static const double waitToDumpWatchdogTimerInterval;

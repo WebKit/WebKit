@@ -79,7 +79,7 @@ public:
     void setIsInWindow(bool);
     void setIsVisible(bool);
     void setOverrideCursor(HCURSOR);
-    void setInitialFocus(bool forward);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void setFindIndicatorCallback(WKViewFindIndicatorCallback, void*);
     WKViewFindIndicatorCallback getFindIndicatorCallback(void**);

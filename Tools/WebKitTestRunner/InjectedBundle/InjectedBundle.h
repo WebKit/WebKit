@@ -74,6 +74,9 @@ public:
     bool shouldDumpPixels() const { return m_dumpPixels; }
     
     void postNewBeforeUnloadReturnValue(bool);
+    void postAddChromeInputField();
+    void postRemoveChromeInputField();
+    void postFocusWebView();
 
 private:
     InjectedBundle();

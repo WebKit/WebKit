@@ -1540,3 +1540,15 @@ void LayoutTestController::setTextDirection(JSStringRef direction)
 void LayoutTestController::allowRoundingHacks()
 {
 }
+
+void LayoutTestController::addChromeInputField()
+{
+}
+
+void LayoutTestController::removeChromeInputField()
+{
+}
+
+void LayoutTestController::focusWebView()
+{
+}

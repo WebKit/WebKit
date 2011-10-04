@@ -1365,13 +1365,21 @@ void WebPage::setFocused(bool isFocused)
     m_page->focusController()->setFocused(isFocused);
 }
 
-void WebPage::setInitialFocus(bool forward)
+void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event)
 {
     if (!m_page || !m_page->focusController())
         return;
 
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     frame->document()->setFocusedNode(0);
+
+    if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
+        PlatformKeyboardEvent platformEvent(platform(event));
+        platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+        m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame->document()->defaultView()).get());
+        return;
+    }
+
     m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
 }
 

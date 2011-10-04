@@ -513,4 +513,63 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool sho
     InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
+typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;
+static CallbackMap& callbackMap()
+{
+    static CallbackMap& map = *new CallbackMap;
+    return map;
+}
+
+static void cacheLayoutTestControllerCallback(unsigned index, JSValueRef callback)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    JSValueProtect(context, callback);
+    callbackMap().add(index, callback);
+}
+
+static void callLayoutTestControllerCallback(unsigned index)
+{
+    if (!callbackMap().contains(index))
+        return;
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    JSObjectRef callback = JSValueToObject(context, callbackMap().take(index), 0);
+    JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), 0, 0, 0);
+    JSValueUnprotect(context, callback);
+}
+
+void LayoutTestController::addChromeInputField(JSValueRef callback)
+{
+    cacheLayoutTestControllerCallback(1, callback);
+    InjectedBundle::shared().postAddChromeInputField();
+}
+
+void LayoutTestController::removeChromeInputField(JSValueRef callback)
+{
+    cacheLayoutTestControllerCallback(2, callback);
+    InjectedBundle::shared().postRemoveChromeInputField();
+}
+
+void LayoutTestController::focusWebView(JSValueRef callback)
+{
+    cacheLayoutTestControllerCallback(3, callback);
+    InjectedBundle::shared().postFocusWebView();
+}
+
+void LayoutTestController::callAddChromeInputFieldCallback()
+{
+    callLayoutTestControllerCallback(1);
+}
+
+void LayoutTestController::callRemoveChromeInputFieldCallback()
+{
+    callLayoutTestControllerCallback(2);
+}
+
+void LayoutTestController::callFocusWebViewCallback()
+{
+    callLayoutTestControllerCallback(3);
+}
+
 } // namespace WTR

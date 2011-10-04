@@ -248,6 +248,27 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::shared().setBeforeUnloadReturnValue(WKBooleanGetValue(beforeUnloadReturnValue));
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
+        TestController::shared().mainWebView()->addChromeInputField();
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallAddChromeInputFieldCallback"));
+        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
+        TestController::shared().mainWebView()->removeChromeInputField();
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallRemoveChromeInputFieldCallback"));
+        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        return;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
+        TestController::shared().mainWebView()->makeWebViewFirstResponder();
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallFocusWebViewCallback"));
+        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        return;
+    }
 
     ASSERT_NOT_REACHED();
 }

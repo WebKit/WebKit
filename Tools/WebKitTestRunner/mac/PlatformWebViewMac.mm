@@ -80,4 +80,29 @@ void PlatformWebView::setWindowFrame(WKRect frame)
     [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
 }
 
+void PlatformWebView::addChromeInputField()
+{
+    NSTextField* textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+    textField.tag = 1;
+    [[m_window contentView] addSubview:textField];
+    [textField release];
+
+    [textField setNextKeyView:m_view];
+    [m_view setNextKeyView:textField];
+}
+
+void PlatformWebView::removeChromeInputField()
+{
+    NSView* textField = [[m_window contentView] viewWithTag:1];
+    if (textField) {
+        [textField removeFromSuperview];
+        makeWebViewFirstResponder();
+    }
+}
+
+void PlatformWebView::makeWebViewFirstResponder()
+{
+    [m_window makeFirstResponder:m_view];
+}
+
 } // namespace WTR

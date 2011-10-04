@@ -426,6 +426,8 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
 #endif
 
+    // in the case that a test using the chrome input field failed, be sure to clean up for the next test
+    m_mainWebView->removeChromeInputField();
     m_mainWebView->focus();
 
     // Reset main page back to about:blank

@@ -70,6 +70,10 @@ public:
 
     WKRect windowFrame();
     void setWindowFrame(WKRect);
+    
+    void addChromeInputField();
+    void removeChromeInputField();
+    void makeWebViewFirstResponder();
 
 private:
     PlatformWKView m_view;

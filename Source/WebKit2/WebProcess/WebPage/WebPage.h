@@ -480,7 +480,7 @@ private:
     void tryRestoreScrollPosition();
     void setActive(bool);
     void setFocused(bool);
-    void setInitialFocus(bool);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
     void validateCommand(const String&, uint64_t);

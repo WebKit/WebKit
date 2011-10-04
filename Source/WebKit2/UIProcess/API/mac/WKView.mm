@@ -311,10 +311,14 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
 
     _data->_inBecomeFirstResponder = false;
-
-    if (direction != NSDirectSelection)
-        _data->_page->setInitialFocus(direction == NSSelectingNext);
-
+    
+    if (direction != NSDirectSelection) {
+        NSEvent *event = [NSApp currentEvent];
+        NSEvent *keyboardEvent = nil;
+        if ([event type] == NSKeyDown || [event type] == NSKeyUp)
+            keyboardEvent = event;
+        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, self));
+    }
     return YES;
 }
 
