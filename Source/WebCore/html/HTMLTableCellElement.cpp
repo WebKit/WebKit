@@ -44,14 +44,24 @@ using namespace HTMLNames;
 
 inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document* document)
     : HTMLTablePartElement(tagName, document)
-    , m_rowSpan(1)
-    , m_colSpan(1)
 {
 }
 
 PassRefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new HTMLTableCellElement(tagName, document));
+}
+
+int HTMLTableCellElement::colSpan() const
+{
+    const AtomicString& colSpanValue = fastGetAttribute(colspanAttr);
+    return max(1, colSpanValue.toInt());
+}
+
+int HTMLTableCellElement::rowSpan() const
+{
+    const AtomicString& rowSpanValue = fastGetAttribute(rowspanAttr);
+    return max(1, min(rowSpanValue.toInt(), maxRowspan));
 }
 
 int HTMLTableCellElement::cellIndex() const
@@ -84,11 +94,9 @@ bool HTMLTableCellElement::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
-        m_rowSpan = max(1, min(attr->value().toInt(), maxRowspan));
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->updateFromElement();
     } else if (attr->name() == colspanAttr) {
-        m_colSpan = max(1, attr->value().toInt());
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->updateFromElement();
     } else if (attr->name() == nowrapAttr) {
