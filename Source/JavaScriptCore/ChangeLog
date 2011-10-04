@@ -1,3 +1,15 @@
+2011-10-04  Gavin Peters  <gavinp@chromium.org>
+
+        fix gtk breakage caused by changeset 96595
+        https://bugs.webkit.org/show_bug.cgi?id=69371
+
+        ews did not catch build breakage in the gtk WebKitPluginProcess target; this patch removes
+        the pretty printer on gtk, which should fix the build on that platform.
+
+        Reviewed by NOBODY, this is a build fix.
+
+        * wtf/Assertions.cpp:
+
 2011-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96630.

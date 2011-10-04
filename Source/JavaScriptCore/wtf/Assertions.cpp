@@ -203,7 +203,7 @@ void WTFReportBacktrace()
         const char* mangledName = 0;
         char* cxaDemangled = 0;
 
-#if !PLATFORM(QT) && (OS(DARWIN) || OS(LINUX))
+#if !PLATFORM(GTK) && !PLATFORM(QT) && (OS(DARWIN) || OS(LINUX))
         Dl_info info;
         if (dladdr(samples[i], &info) && info.dli_sname)
             mangledName = info.dli_sname;
