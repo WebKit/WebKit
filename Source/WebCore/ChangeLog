@@ -1,3 +1,18 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        More work towards making PlatformWheelEvent immutable
+        https://bugs.webkit.org/show_bug.cgi?id=69348
+
+        Reviewed by Sam Weinig.
+
+        More work on getting rid of m_isAccepted from PlatformWheelEvent. Add more asserts
+        that the return value of handleWheelEvent is equal to m_isAccepted.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+
 2011-10-04  Cary Clark  <caryclark@google.com>
 
         Inset focus ring (Skia on Mac)

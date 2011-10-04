@@ -2189,16 +2189,19 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         }
     }
 
-    if (e.isAccepted())
-        return true;
+
+    // isAccepted can't be true here, because then we would already have returned from this function.
+    ASSERT(!e.isAccepted());
 
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     view = m_frame->view();
     if (!view)
         return false;
     
-    view->wheelEvent(e);
-    return e.isAccepted();
+    bool handled = view->wheelEvent(e);
+    ASSERT(handled == e.isAccepted());
+
+    return handled;
 }
     
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)

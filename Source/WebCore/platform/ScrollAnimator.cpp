@@ -91,6 +91,8 @@ bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
     float deltaX = horizontalScrollbar ? e.deltaX() : 0;
     float deltaY = verticalScrollbar ? e.deltaY() : 0;
 
+    bool handled = false;
+
     IntSize maxForwardScrollDelta = m_scrollableArea->maximumScrollPosition() - m_scrollableArea->scrollPosition();
     IntSize maxBackwardScrollDelta = m_scrollableArea->scrollPosition() - m_scrollableArea->minimumScrollPosition();
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
@@ -98,6 +100,7 @@ bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
         || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         e.accept();
+        handled = true;
         if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(!e.deltaX());
             bool negative = deltaY < 0;
@@ -112,7 +115,8 @@ bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
             scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX);
     }
 
-    return e.isAccepted();
+    ASSERT(e.isAccepted() == handled);
+    return handled;
 }
 
 #if ENABLE(GESTURE_EVENTS)
