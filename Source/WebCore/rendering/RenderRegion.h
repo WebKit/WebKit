@@ -48,8 +48,9 @@ public:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    void setRegionRect(const IntRect& rect) { m_regionRect = rect; }
-    IntRect regionRect() const { return m_regionRect; }
+    void setRegionRect(const LayoutRect& rect) { m_regionRect = rect; }
+    LayoutRect regionRect() const { return m_regionRect; }
+    LayoutRect regionOverflowRect() const;
 
     void attachRegion();
     void detachRegion();
@@ -70,6 +71,9 @@ public:
 
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;
 
+    bool isFirstRegion() const;
+    bool isLastRegion() const;
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
@@ -79,7 +83,7 @@ private:
     // we need to create a dependency tree, so that layout of the
     // regions is always done before the regions themselves.
     RenderFlowThread* m_parentFlowThread;
-    IntRect m_regionRect;
+    LayoutRect m_regionRect;
 
     // This map holds unique information about a block that is split across regions.
     // A RenderBoxRegionInfo* tells us about any layout information for a RenderBox that

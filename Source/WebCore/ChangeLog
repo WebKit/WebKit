@@ -1,3 +1,29 @@
+2011-10-04  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69372
+        
+        [CSS3 Regions] Make sure overflow:visible lets content spill out of regions.
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, since plenty of results changed.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        (WebCore::RenderFlowThread::hitTestRegion):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::firstRegion):
+        (WebCore::RenderFlowThread::lastRegion):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOverflowRect):
+        (WebCore::RenderRegion::isFirstRegion):
+        (WebCore::RenderRegion::isLastRegion):
+        (WebCore::RenderRegion::layout):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::setRegionRect):
+        (WebCore::RenderRegion::regionRect):
+
 2011-10-04  Chris Rogers  <crogers@google.com>
 
         Avoid unnecessary ASSERT in AudioDSPKernelProcessor::setNumberOfChannels()

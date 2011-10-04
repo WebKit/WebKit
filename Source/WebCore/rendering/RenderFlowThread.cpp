@@ -420,7 +420,8 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     // paintOffset contains the offset where the painting should occur
     // adjusted with the region padding and border.
     LayoutRect regionRect(region->regionRect());
-    LayoutRect regionClippingRect(paintOffset, regionRect.size());
+    LayoutRect regionOverflowRect(region->regionOverflowRect());
+    LayoutRect regionClippingRect(paintOffset, regionOverflowRect.size());
 
     PaintInfo info(paintInfo);
     info.rect.intersect(regionClippingRect);
@@ -452,8 +453,9 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
 
 bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    LayoutRect regionRect = region->regionRect();
-    LayoutRect regionClippingRect(accumulatedOffset, regionRect.size());
+    LayoutRect regionRect(region->regionRect());
+    LayoutRect regionOverflowRect = region->regionOverflowRect();
+    LayoutRect regionClippingRect(accumulatedOffset, regionOverflowRect.size());
     if (!regionClippingRect.contains(pointInContainer))
         return false;
     
@@ -504,9 +506,11 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
 
         // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
         LayoutRect flippedRegionRect(region->regionRect());
-        flipForWritingMode(flippedRegionRect); // Put the region rect into physical coordinates.
-        
-        IntRect clippedRect(flippedRegionRect);
+        LayoutRect flippedRegionOverflowRect(region->regionOverflowRect());
+        flipForWritingMode(flippedRegionRect); // Put the region rects into physical coordinates.
+        flipForWritingMode(flippedRegionOverflowRect);
+
+        IntRect clippedRect(flippedRegionOverflowRect);
         clippedRect.intersect(repaintRect);
         if (clippedRect.isEmpty())
             continue;
@@ -696,6 +700,32 @@ LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
         return isHorizontalWritingMode() ? region->regionRect().x() : region->regionRect().y();
     }
     ASSERT_NOT_REACHED();
+    return 0;
+}
+
+RenderRegion* RenderFlowThread::firstRegion() const
+{
+    if (!hasValidRegions())
+        return 0;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        return region;
+    }
+    return 0;
+}
+
+RenderRegion* RenderFlowThread::lastRegion() const
+{
+    if (!hasValidRegions())
+        return 0;
+    for (RenderRegionList::const_reverse_iterator iter = m_regionList.rbegin(); iter != m_regionList.rend(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        return region;
+    }
     return 0;
 }
 

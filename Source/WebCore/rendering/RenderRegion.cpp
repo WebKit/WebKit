@@ -53,6 +53,40 @@ RenderRegion::~RenderRegion()
     deleteAllRenderBoxRegionInfo();
 }
 
+LayoutRect RenderRegion::regionOverflowRect() const
+{
+    if (hasOverflowClip() || !isValid() || !m_flowThread)
+        return regionRect();
+
+    LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
+
+    // Only clip along the flow thread axis.
+    LayoutRect clipRect;
+    if (m_flowThread->isHorizontalWritingMode()) {
+        LayoutUnit minY = isFirstRegion() ? flowThreadOverflow.y() : regionRect().y();
+        LayoutUnit maxY = isLastRegion() ? flowThreadOverflow.maxY() : regionRect().maxY();
+        clipRect = LayoutRect(flowThreadOverflow.x(), minY, flowThreadOverflow.width(), maxY - minY);
+    } else {
+        LayoutUnit minX = isFirstRegion() ? flowThreadOverflow.x() : regionRect().x();
+        LayoutUnit maxX = isLastRegion() ? flowThreadOverflow.maxX() : regionRect().maxX();
+        clipRect = LayoutRect(minX, flowThreadOverflow.y(), maxX - minX, flowThreadOverflow.height());
+    }
+
+    return clipRect;
+}
+
+bool RenderRegion::isFirstRegion() const
+{
+    ASSERT(isValid() && m_flowThread);
+    return m_flowThread->firstRegion() == this;
+}
+
+bool RenderRegion::isLastRegion() const
+{
+    ASSERT(isValid() && m_flowThread);
+    return m_flowThread->lastRegion() == this;
+}
+
 void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // Delegate painting of content in region to RenderFlowThread.
@@ -91,6 +125,17 @@ void RenderRegion::layout()
         if (regionRect().width() != contentWidth() || regionRect().height() != contentHeight())
             m_flowThread->invalidateRegions();
     }
+    
+    // FIXME: We need to find a way to set up overflow properly. Our flow thread hasn't gotten a layout
+    // yet, so we can't look to it for correct information. It's possible we could wait until after the RenderFlowThread
+    // gets a layout, and then try to propagate overflow information back to the region, and then mark for a second layout.
+    // That second layout would then be able to use the information from the RenderFlowThread to set up overflow.
+    //
+    // The big problem though is that overflow needs to be region-specific. We can't simply use the RenderFlowThread's global
+    // overflow values, since then we'd always think any narrow region had huge overflow (all the way to the width of the
+    // RenderFlowThread itself).
+    //
+    // We'll need to expand RenderBoxRegionInfo to also hold left and right overflow values.
 }
 
 void RenderRegion::attachRegion()

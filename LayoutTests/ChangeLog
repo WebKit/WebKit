@@ -1,3 +1,21 @@
+2011-10-04  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69372
+        
+        [CSS3 Regions] Make sure overflow:visible lets content spill out of regions.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/fast/regions/content-flowed-into-regions-dynamically-removed-expected.png:
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/webkit-flow-double-pagination-float-push-expected.png:
+        * platform/mac/fast/regions/webkit-flow-float-unable-to-push-expected.png:
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-dynamic-expected.png:
+
 2011-10-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Update Qt specific expected results.

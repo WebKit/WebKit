@@ -1,3 +1,40 @@
+2011-10-04  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69372
+        
+        [CSS3 Regions] Make sure overflow:visible lets content spill out of regions.
+        
+        Add support for reverse iteration to ListHashSet to support being able to walk them
+        backwards easily.
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetReverseIterator::ListHashSetReverseIterator):
+        (WTF::ListHashSetReverseIterator::get):
+        (WTF::ListHashSetReverseIterator::operator*):
+        (WTF::ListHashSetReverseIterator::operator->):
+        (WTF::ListHashSetReverseIterator::operator++):
+        (WTF::ListHashSetReverseIterator::operator--):
+        (WTF::ListHashSetReverseIterator::operator==):
+        (WTF::ListHashSetReverseIterator::operator!=):
+        (WTF::ListHashSetReverseIterator::operator const_reverse_iterator):
+        (WTF::ListHashSetReverseIterator::node):
+        (WTF::ListHashSetConstReverseIterator::ListHashSetConstReverseIterator):
+        (WTF::ListHashSetConstReverseIterator::get):
+        (WTF::ListHashSetConstReverseIterator::operator*):
+        (WTF::ListHashSetConstReverseIterator::operator->):
+        (WTF::ListHashSetConstReverseIterator::operator++):
+        (WTF::ListHashSetConstReverseIterator::operator--):
+        (WTF::ListHashSetConstReverseIterator::operator==):
+        (WTF::ListHashSetConstReverseIterator::operator!=):
+        (WTF::ListHashSetConstReverseIterator::node):
+        (WTF::::rbegin):
+        (WTF::::rend):
+        (WTF::::makeReverseIterator):
+        (WTF::::makeConstReverseIterator):
+        (WTF::::makeConstIterator):
+
 2011-10-04  Gavin Peters  <gavinp@chromium.org>
 
         fix gtk breakage caused by changeset 96595

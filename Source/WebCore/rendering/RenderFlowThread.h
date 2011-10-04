@@ -114,6 +114,9 @@ public:
     LayoutUnit contentLogicalHeightOfFirstRegion() const;
     LayoutUnit contentLogicalLeftOfFirstRegion() const;
     
+    RenderRegion* firstRegion() const;
+    RenderRegion* lastRegion() const;
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 
