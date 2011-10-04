@@ -92,6 +92,9 @@ private:
     RefPtr<Range> m_range;
 };
 
+void checkTextOfParagraph(TextCheckerClient*, const UChar* text, int length,
+    TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results);
+
 } // namespace WebCore
 
 #endif // TextCheckingHelper_h

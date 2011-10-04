@@ -2142,10 +2142,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
 
     Vector<TextCheckingResult> results;
     if (shouldMarkGrammar)
-        textChecker()->checkTextOfParagraph(grammarParagraph.textCharacters(), grammarParagraph.textLength(), 
+        checkTextOfParagraph(textChecker(), grammarParagraph.textCharacters(), grammarParagraph.textLength(), 
                                             resolveTextCheckingTypeMask(textCheckingOptions), results);
     else
-        textChecker()->checkTextOfParagraph(spellingParagraph.textCharacters(), spellingParagraph.textLength(), 
+        checkTextOfParagraph(textChecker(), spellingParagraph.textCharacters(), spellingParagraph.textLength(), 
                                             resolveTextCheckingTypeMask(textCheckingOptions), results);
         
 

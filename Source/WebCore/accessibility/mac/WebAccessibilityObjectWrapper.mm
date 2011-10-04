@@ -694,7 +694,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
 
     // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
     Vector<TextCheckingResult> results;
-    checker->checkTextOfParagraph(chars, charLength, TextCheckingTypeSpelling, results);
+    checkTextOfParagraph(checker, chars, charLength, TextCheckingTypeSpelling, results);
     
     size_t size = results.size();
     NSNumber* trueValue = [NSNumber numberWithBool:YES];

@@ -276,7 +276,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 
                 Vector<TextCheckingResult> results;
                 TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-                m_client->textChecker()->checkTextOfParagraph(paragraphString.characters(), paragraphString.length(), checkingTypes, results);
+                checkTextOfParagraph(m_client->textChecker(), paragraphString.characters(), paragraphString.length(), checkingTypes, results);
                 
                 for (unsigned i = 0; i < results.size(); i++) {
                     const TextCheckingResult* result = &results[i];
@@ -526,7 +526,7 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
 
     Vector<TextCheckingResult> results;
     TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-    m_client->textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
+    checkTextOfParagraph(m_client->textChecker(), paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
     
     for (unsigned i = 0; i < results.size(); i++) {
         const TextCheckingResult* result = &results[i];
@@ -588,6 +588,23 @@ void TextCheckingHelper::markAllBadGrammar()
     GrammarDetail ignoredGrammarDetail;
     int ignoredOffset;
     findFirstBadGrammar(ignoredGrammarDetail, ignoredOffset, true);
+}
+
+void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int length,
+                          TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+{
+#if USE(UNIFIED_TEXT_CHECKING)
+    client->checkTextOfParagraph(text, length, checkingTypes, results);
+#else
+    // Should implement later to unify unified spell-checking code path and
+    // legacy spell-checking code path.
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(client);
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(length);
+    UNUSED_PARAM(checkingTypes);
+    UNUSED_PARAM(results);
+#endif
 }
 
 }

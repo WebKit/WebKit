@@ -1,3 +1,33 @@
+2011-10-03  Shinya Kawanaka  <shinyak@google.com>
+
+        Should call checkTextOfParagraph() indirectly to make unifying spell-checking code path easy.
+        https://bugs.webkit.org/show_bug.cgi?id=69241
+
+        Reviewed by Ryosuke Niwa.
+
+        WebCore has two different code paths for spell-checking:
+          1) checkTextOfParagraph() for Snow Leopard or later
+          2) checkSpellingOfString() for checkGrammarOfString() for other platforms.
+
+        At the first step, this patch introduces an indirect wrapper to call
+        checkTextOfParagraph() in Snow Leopard or later. This is intended to make it easy to
+        introduce a function for mimicing checkTextOfParagraph() in Chromium platform or
+        other non-SL or non-Lion platform.
+
+        No new tests because this patch does not change a behavior.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling): Calling checkTextOfParagraph() indirectly.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetSpelling): ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): ditto.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar): ditto.
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange): ditto.
+        (WebCore::checkTextOfParagraph): Added.
+        * editing/TextCheckingHelper.h:
+
 2011-10-03  Darin Adler  <darin@apple.com>
 
         Change cursor to hand over missing plug-in message

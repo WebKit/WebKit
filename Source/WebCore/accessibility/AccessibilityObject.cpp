@@ -291,7 +291,7 @@ bool AccessibilityObject::hasMisspelling() const
     
 #if USE(UNIFIED_TEXT_CHECKING)
     Vector<TextCheckingResult> results;
-    textChecker->checkTextOfParagraph(chars, charsLength, TextCheckingTypeSpelling, results);
+    checkTextOfParagraph(textChecker, chars, charsLength, TextCheckingTypeSpelling, results);
     if (!results.isEmpty())
         isMisspelled = true;
 #else
