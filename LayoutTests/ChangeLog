@@ -1,3 +1,10 @@
+2011-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline after r96510.
+
+        * platform/mac/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png:
+        * svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt:
+
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r96509.

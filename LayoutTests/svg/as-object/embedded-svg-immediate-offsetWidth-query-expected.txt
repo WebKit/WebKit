@@ -10,4 +10,7 @@ PASS newObject.offsetWidth is 302
 PASS newObject.offsetWidth is 302
 FAIL newObject.offsetWidth should be 502. Was 302.
 FAIL newObject.offsetWidth should be 502. Was 302.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
