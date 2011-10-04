@@ -186,7 +186,10 @@ WebInspector.ResourceContentProvider.prototype = {
 
 WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
 
-
+/**
+ * @constructor
+ * @implements {WebInspector.ContentProvider}
+ */
 WebInspector.StaticContentProvider = function(mimeType, content)
 {
     this._mimeType = mimeType;
@@ -197,6 +200,11 @@ WebInspector.StaticContentProvider.prototype = {
     requestContent: function(callback)
     {
         callback(this._mimeType, this._content);
+    },
+
+    searchInContent: function(query, callback)
+    {
+        callback([]);
     }
 }
 

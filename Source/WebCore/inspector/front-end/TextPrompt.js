@@ -28,6 +28,7 @@
 
 /**
  * @constructor
+ * @param {boolean=} omitHistory
  */
 WebInspector.TextPrompt = function(element, completions, stopCharacters, omitHistory)
 {

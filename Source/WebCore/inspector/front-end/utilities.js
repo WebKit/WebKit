@@ -250,6 +250,9 @@ Element.prototype.isInsertionCaretInside = function()
     return selectionRange.startContainer === this || selectionRange.startContainer.isDescendant(this);
 }
 
+/**
+ * @param {string=} className
+ */
 Element.prototype.createChild = function(elementName, className)
 {
     var element = this.ownerDocument.createElement(elementName);

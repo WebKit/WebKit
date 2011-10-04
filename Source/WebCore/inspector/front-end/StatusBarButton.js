@@ -28,6 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.Object}
+ * @constructor
+ * @param {Array.<string>=} states
+ */
 WebInspector.StatusBarButton = function(title, className, states)
 {
     this.element = document.createElement("button");

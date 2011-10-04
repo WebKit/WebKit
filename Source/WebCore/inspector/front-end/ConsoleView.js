@@ -32,12 +32,13 @@ const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
 /**
  * @extends {WebInspector.View}
  * @constructor
+ * @param {boolean} hideContextSelector
  */
-WebInspector.ConsoleView = function()
+WebInspector.ConsoleView = function(hideContextSelector)
 {
     WebInspector.View.call(this);
-    this.element.id = "console-view";
 
+    this.element.id = "console-view";
     this.messages = [];
 
     this._clearConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear console log."), "clear-status-bar-item");
@@ -47,7 +48,7 @@ WebInspector.ConsoleView = function()
     this._contextSelectElement.id = "console-context";
     this._contextSelectElement.className = "status-bar-item";
 
-    if (WebInspector.WorkerManager.isWorkerFrontend())
+    if (hideContextSelector)
         this._contextSelectElement.addStyleClass("hidden");
 
     this.messagesElement = document.createElement("div");
@@ -324,9 +325,6 @@ WebInspector.ConsoleView.prototype = {
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
 
-        delete this.commandSincePreviousMessage;
-        delete this.previousMessage;
-
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
     },
 
@@ -354,7 +352,7 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        if (parseInt(expressionString) == expressionString) {
+        if (parseInt(expressionString, 10) == expressionString) {
             // User is entering float value, do not suggest anything.
             completionsReadyCallback([]);
             return;
@@ -376,11 +374,11 @@ WebInspector.ConsoleView.prototype = {
             {
                 var object;
                 if (primitiveType === "string")
-                    object = new String();
+                    object = new String("");
                 else if (primitiveType === "number")
-                    object = new Number();
+                    object = new Number(0);
                 else if (primitiveType === "boolean")
-                    object = new Boolean();
+                    object = new Boolean(false);
                 else
                     object = this;
 
@@ -499,16 +497,8 @@ WebInspector.ConsoleView.prototype = {
 
     _messagesClicked: function(event)
     {
-        var link = event.target.enclosingNodeOrSelfWithNodeName("a");
-        if (!link || !link.representedNode) {
-            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
-                this.prompt.moveCaretToEndOfPrompt();
-            return;
-        }
-
-        WebInspector.updateFocusedNode(link.representedNode.id);
-        event.stopPropagation();
-        event.preventDefault();
+        if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+            this.prompt.moveCaretToEndOfPrompt();
     },
 
     _registerShortcuts: function()
@@ -572,7 +562,7 @@ WebInspector.ConsoleView.prototype = {
 
     evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, returnByValue, callback)
     {
-        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
+        if (WebInspector.panels.scripts.paused) {
             WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, returnByValue, callback);
             return;
         }
@@ -642,6 +632,9 @@ WebInspector.ConsoleView.prototype = {
 
 WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ConsoleCommand = function(command)
 {
     this.command = command;
@@ -697,6 +690,10 @@ WebInspector.ConsoleCommand.prototype = {
     },
 }
 
+/**
+ * @extends {WebInspector.ConsoleMessageImpl}
+ * @constructor
+ */
 WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand)
 {
     var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
@@ -715,6 +712,9 @@ WebInspector.ConsoleCommandResult.prototype = {
 
 WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessageImpl.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ConsoleGroup = function(parentGroup)
 {
     this.parentGroup = parentGroup;

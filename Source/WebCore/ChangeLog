@@ -1,3 +1,53 @@
+2011-10-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add DebuggerPresentationModel and ConsoleView to compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69269
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.uiSourceCodeAdded):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._consoleCleared):
+        (WebInspector.ConsoleView.prototype._completions.evaluated.getCompletions):
+        (WebInspector.ConsoleView.prototype._completions.evaluated):
+        (WebInspector.ConsoleView.prototype._messagesClicked):
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.StaticContentProvider.prototype.requestContent):
+        (WebInspector.StaticContentProvider.prototype.searchInContent):
+        * inspector/front-end/ContextMenu.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._consoleMessageAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScriptWithURL):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._createRawSourceCodeId):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.canSetContent):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.setContent):
+        * inspector/front-end/HelpScreen.js:
+        * inspector/front-end/JavaScriptContextManager.js:
+        (WebInspector.FrameEvaluationContext.prototype.get displayName):
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.displayName):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype._didFormatContent):
+        * inspector/front-end/ShortcutsScreen.js:
+        * inspector/front-end/StatusBarButton.js:
+        * inspector/front-end/TextPrompt.js:
+        * inspector/front-end/externs.js:
+        (WebInspector.populateHrefContextMenu):
+        (WebInspector.useLowerCaseMenuTitles):
+        (WebInspector.ScriptsPanel.this.evaluateInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.this.getSelectedCallFrameVariables):
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/utilities.js:
+
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac release build fix after r96561, and Leopard build fix after r96568.

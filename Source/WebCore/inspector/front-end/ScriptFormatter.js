@@ -67,7 +67,7 @@ WebInspector.ScriptFormatter.prototype = {
         var task = this._tasks.shift();
         var originalContent = task.data.content;
         var formattedContent = event.data.content;
-        var mapping = event.data.mapping;
+        var mapping = event.data["mapping"];
         var sourceMapping = new WebInspector.FormattedSourceMapping(originalContent.lineEndings(), formattedContent.lineEndings(), mapping);
         task.callback(formattedContent, sourceMapping);
     },

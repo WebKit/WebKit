@@ -111,3 +111,38 @@ WebInspector.ElementsTreeOutline = function()
 WebInspector.networkResourceById = function(requestId)
 {
 }
+
+/**
+ * @param {WebInspector.ContextMenu} contextMenu
+ * @param {Node} contextNode
+ * @param {Event} event
+ */
+WebInspector.populateHrefContextMenu = function(contextMenu, contextNode, event)
+{
+}
+
+/**
+ * @return {boolean}
+ */
+WebInspector.useLowerCaseMenuTitles = function()
+{
+}
+
+WebInspector.panels = {};
+
+/**
+ * @constructor
+ */
+WebInspector.ScriptsPanel = function()
+{
+    /** @param {...*} var_args */     
+    this.evaluateInSelectedCallFrame = function(var_args) {}
+    /** @param {...*} var_args */     
+    this.getSelectedCallFrameVariables = function(var_args) {}
+    this.paused = false;
+}
+
+/**
+ * @type {?WebInspector.ScriptsPanel}
+ */
+WebInspector.panels.scripts = null;

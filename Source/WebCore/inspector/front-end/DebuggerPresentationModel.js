@@ -30,6 +30,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  */
 WebInspector.DebuggerPresentationModel = function()
 {
@@ -104,7 +105,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _addScript: function(script)
     {
-        var rawSourceCodeId = this._createRawSourceCodeId(script.sourceURL, script.scriptId);
+        var rawSourceCodeId = this._createRawSourceCodeId(script);
         var rawSourceCode = this._rawSourceCode[rawSourceCodeId];
         if (rawSourceCode) {
             rawSourceCode.addScript(script);
@@ -249,7 +250,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!message.url || !message.isErrorOrWarning() || !message.message)
             return;
 
-        var rawSourceCode = this._rawSourceCodeForScript(message.url);
+        var rawSourceCode = this._rawSourceCodeForScriptWithURL(message.url);
         if (!rawSourceCode)
             return;
 
@@ -355,7 +356,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             var rawSourceCode;
             var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId);
             if (script)
-                rawSourceCode = this._rawSourceCodeForScript(script.sourceURL, script.scriptId);
+                rawSourceCode = this._rawSourceCodeForScript(script);
             this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this, rawSourceCode));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
@@ -383,29 +384,28 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
-    _rawSourceCodeForScript: function(sourceURL, scriptId)
+    _rawSourceCodeForScriptWithURL: function(sourceURL)
     {
-        if (!sourceURL) {
-            var script = WebInspector.debuggerModel.scriptForSourceID(scriptId);
-            if (!script)
-                return;
-            sourceURL = script.sourceURL;
-        }
-        return this._rawSourceCode[this._createRawSourceCodeId(sourceURL, scriptId)];
+        return this._rawSourceCode[sourceURL];
+    },
+
+    _rawSourceCodeForScript: function(script)
+    {
+        return this._rawSourceCode[this._createRawSourceCodeId(script)];
     },
 
     _scriptForRawSourceCode: function(rawSourceCode)
     {
         function filter(script)
         {
-            return this._createRawSourceCodeId(script.sourceURL, script.scriptId) === rawSourceCode.id;
+            return this._createRawSourceCodeId(script) === rawSourceCode.id;
         }
         return WebInspector.debuggerModel.queryScripts(filter.bind(this))[0];
     },
 
-    _createRawSourceCodeId: function(sourceURL, scriptId)
+    _createRawSourceCodeId: function(script)
     {
-        return sourceURL || scriptId;
+        return script.sourceURL || script.scriptId;
     },
 
     _debuggerReset: function()
@@ -518,7 +518,7 @@ WebInspector.PresentationCallFrame.prototype = {
 
 /**
  * @constructor
- * @extends {WebInspector.ResourceDomainModelBinding}
+ * @implements {WebInspector.ResourceDomainModelBinding}
  */
 WebInspector.DebuggerPresentationModelResourceBinding = function(model)
 {
@@ -529,7 +529,7 @@ WebInspector.DebuggerPresentationModelResourceBinding = function(model)
 WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     canSetContent: function(resource)
     {
-        var rawSourceCode = this._presentationModel._rawSourceCodeForScript(resource.url)
+        var rawSourceCode = this._presentationModel._rawSourceCodeForScriptWithURL(resource.url)
         if (!rawSourceCode)
             return false;
         return this._presentationModel.canEditScriptSource(rawSourceCode.sourceMapping.uiSourceCode);
@@ -540,7 +540,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
         if (!majorChange)
             return;
 
-        var rawSourceCode = this._presentationModel._rawSourceCodeForScript(resource.url);
+        var rawSourceCode = this._presentationModel._rawSourceCodeForScriptWithURL(resource.url);
         if (!rawSourceCode) {
             userCallback("Resource is not editable");
             return;

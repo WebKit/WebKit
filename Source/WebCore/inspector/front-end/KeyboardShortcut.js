@@ -32,7 +32,7 @@
  */
 WebInspector.KeyboardShortcut = function()
 {
-};
+}
 
 /**
  * Constants for encoding modifier key set as a bit mask.
@@ -131,6 +131,9 @@ WebInspector.KeyboardShortcut.makeDescriptor = function(key, optModifiers)
     };
 }
 
+/**
+ * @param {number=} modifiers
+ */
 WebInspector.KeyboardShortcut.shortcutToString = function(key, modifiers)
 {
     return WebInspector.KeyboardShortcut._modifiersToString(modifiers) + WebInspector.KeyboardShortcut._keyName(key);

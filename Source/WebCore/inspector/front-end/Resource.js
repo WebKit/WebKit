@@ -69,7 +69,7 @@ WebInspector.MIMETypes = {
  * @constructor
  * @extends {WebInspector.Object}
  *
- * @param {NetworkAgent.RequestId} requestId
+ * @param {?NetworkAgent.RequestId} requestId
  * @param {string} url
  * @param {?string} frameId
  * @param {?NetworkAgent.LoaderId} loaderId
@@ -91,6 +91,11 @@ WebInspector.Resource = function(requestId, url, frameId, loaderId)
     this.requestMethod = "";
     this.requestTime = 0;
     this.receiveHeadersEnd = 0;
+}
+
+WebInspector.Resource.displayName = function(url)
+{
+    return new WebInspector.Resource(null, url, null, null).displayName;
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -164,7 +169,6 @@ WebInspector.Resource.registerDomainModelBinding = function(type, binding)
 {
     WebInspector.Resource._domainModelBindings[type] = binding;
 }
-
 
 WebInspector.Resource._resourceRevisionRegistry = function()
 {
@@ -836,6 +840,11 @@ WebInspector.Resource.prototype = {
         binding.setContent(this, newContent, majorChange, callback);
     },
 
+    /**
+     * @param {string} newContent
+     * @param {Date=} timestamp
+     * @param {boolean=} restoringHistory
+     */
     addRevision: function(newContent, timestamp, restoringHistory)
     {
         var revision = new WebInspector.ResourceRevision(this, this._content, this._contentTimestamp);

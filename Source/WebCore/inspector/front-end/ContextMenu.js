@@ -50,6 +50,9 @@ WebInspector.ContextMenu.prototype = {
         event.stopPropagation();
     },
 
+    /**
+     * @param {boolean=} disabled
+     */
     appendItem: function(label, handler, disabled)
     {
         var id = this._items.length;
@@ -57,6 +60,9 @@ WebInspector.ContextMenu.prototype = {
         this._handlers[id] = handler;
     },
 
+    /**
+     * @param {boolean=} disabled
+     */
     appendCheckboxItem: function(label, handler, checked, disabled)
     {
         var id = this._items.length;

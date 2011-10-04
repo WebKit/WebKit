@@ -510,7 +510,7 @@ WebInspector.doLoadedDone = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.drawer = new WebInspector.Drawer();
-    this.consoleView = new WebInspector.ConsoleView();
+    this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();

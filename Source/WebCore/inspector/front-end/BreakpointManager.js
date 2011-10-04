@@ -59,7 +59,7 @@ WebInspector.BreakpointManager.prototype = {
             breakpoint.uiSourceCode = uiSourceCode;
             this._materializeBreakpoint(breakpoint);
             if (breakpoint._debuggerLocation)
-                this._breakpointDebuggerLocationChanged(breakpoint, breakpoint._debuggerLocation);
+                this._breakpointDebuggerLocationChanged(breakpoint);
         }
     },
 

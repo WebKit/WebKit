@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.ShortcutsScreen = function()
 {
     this._sections = {};
@@ -90,10 +93,13 @@ WebInspector.ShortcutsScreen.prototype = {
         }
         parent.appendChild(table);
     }
-};
+}
 
 WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
 
+/**
+ * @constructor
+ */
 WebInspector.ShortcutsSection = function(name)
 {
     this.name = name;
@@ -162,4 +168,4 @@ WebInspector.ShortcutsSection.prototype = {
     {
         return this._lines.length + 2; // add some space for header
     }
-};
+}

@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.JavaScriptContextManager = function(resourceTreeModel, consoleView)
 {
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
@@ -68,6 +72,10 @@ WebInspector.JavaScriptContextManager.prototype = {
 
 WebInspector.JavaScriptContextManager.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.FrameEvaluationContext = function(frame)
 {
     this._frame = frame;
@@ -100,7 +108,7 @@ WebInspector.FrameEvaluationContext.prototype =
         if (!this._frame.parentId)
             return "<top frame>";
         var name = this._frame.name || "";
-        var subtitle = new WebInspector.Resource(null, this._frame.url).displayName;
+        var subtitle = WebInspector.Resource.displayName(this._frame.url);
         if (subtitle) {
             if (!name)
                 return subtitle;

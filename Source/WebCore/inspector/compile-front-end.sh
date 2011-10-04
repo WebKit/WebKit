@@ -44,25 +44,37 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:9:jsmodule_common,jsmodule_host \
+    --module jsmodule_sdk:16:jsmodule_common,jsmodule_host \
+        --js Source/WebCore/inspector/front-end/ConsoleModel.js \
+        --js Source/WebCore/inspector/front-end/ContentProviders.js \
+        --js Source/WebCore/inspector/front-end/CookieParser.js \
+        --js Source/WebCore/inspector/front-end/BreakpointManager.js \
         --js Source/WebCore/inspector/front-end/DOMAgent.js \
         --js Source/WebCore/inspector/front-end/DebuggerModel.js \
+        --js Source/WebCore/inspector/front-end/DebuggerPresentationModel.js \
         --js Source/WebCore/inspector/front-end/Script.js \
+        --js Source/WebCore/inspector/front-end/ScriptFormatter.js \
+        --js Source/WebCore/inspector/front-end/RawSourceCode.js \
         --js Source/WebCore/inspector/front-end/RemoteObject.js \
         --js Source/WebCore/inspector/front-end/ResourceCategory.js \
-        --js Source/WebCore/inspector/front-end/CookieParser.js \
-        --js Source/WebCore/inspector/front-end/ConsoleModel.js \
+        --js Source/WebCore/inspector/front-end/ResourceTreeModel.js \
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
-    --module jsmodule_misc:11:jsmodule_sdk \
+        --js Source/WebCore/inspector/front-end/UISourceCode.js \
+    --module jsmodule_misc:16:jsmodule_sdk \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
+        --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/HelpScreen.js \
         --js Source/WebCore/inspector/front-end/KeyboardShortcut.js \
+        --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/Placard.js \
         --js Source/WebCore/inspector/front-end/Popover.js \
         --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
+        --js Source/WebCore/inspector/front-end/ShortcutsScreen.js \
+        --js Source/WebCore/inspector/front-end/StatusBarButton.js \
         --js Source/WebCore/inspector/front-end/TabbedPane.js \
         --js Source/WebCore/inspector/front-end/TextPrompt.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js
