@@ -154,9 +154,11 @@ shouldBe("MyObject()", undefined);
 shouldBe("typeof myObject", "object");
 shouldBe("MyObject ? 1 : 0", true); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
-shouldBe("(MyObject.toString())", "[object MyObject]"); // toString
-shouldBe("String(MyObject)", "MyObjectAsString"); // type conversion to string
+shouldBe("(Object.prototype.toString.call(MyObject))", "[object MyObject]"); // Object.prototype.toString
+shouldBe("(MyObject.toString())", "MyObjectAsString"); // toString
+shouldBe("String(MyObject)", "MyObjectAsString"); // toString
 shouldBe("MyObject - 0", 1); // toNumber
+shouldBe("MyObject.valueOf()", 1); // valueOf
 
 shouldBe("typeof MyConstructor", "object");
 constructedObject = new MyConstructor(1);

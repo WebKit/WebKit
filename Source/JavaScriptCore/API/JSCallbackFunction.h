@@ -55,6 +55,9 @@ public:
         return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
 
+    static JSValueRef toStringCallback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef valueOfCallback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
 private:
     virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);

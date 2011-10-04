@@ -30,6 +30,7 @@
 #include "APICast.h"
 #include "CodeBlock.h"
 #include "ExceptionHelpers.h"
+#include "JSCallbackObject.h"
 #include "JSFunction.h"
 #include "FunctionPrototype.h"
 #include <runtime/JSGlobalObject.h>
@@ -87,5 +88,26 @@ CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
     callData.native.function = call;
     return CallTypeHost;
 }
+
+JSValueRef JSCallbackFunction::toStringCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    JSObject* object = toJS(thisObject);
+    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
+        return static_cast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeString, exception);
+    if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
+        return static_cast<JSCallbackObject<JSGlobalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeString, exception);
+    return 0;
+}
+
+JSValueRef JSCallbackFunction::valueOfCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    JSObject* object = toJS(thisObject);
+    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
+        return static_cast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeNumber, exception);
+    if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
+        return static_cast<JSCallbackObject<JSGlobalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeNumber, exception);
+    return 0;
+}
+
 
 } // namespace JSC
