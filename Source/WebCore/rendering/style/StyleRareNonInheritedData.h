@@ -108,21 +108,6 @@ public:
     OwnPtr<ContentData> m_content;
     OwnPtr<CounterDirectiveMap> m_counterDirectives;
 
-    unsigned userDrag : 2; // EUserDrag
-    unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
-    unsigned marginBeforeCollapse : 2; // EMarginCollapse
-    unsigned marginAfterCollapse : 2; // EMarginCollapse
-    unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
-    unsigned m_appearance : 6; // EAppearance
-    unsigned m_borderFit : 1; // EBorderFit
-    unsigned m_textCombine : 1; // CSS3 text-combine properties
-    
-    short m_counterIncrement;
-    short m_counterReset;
-
-#if USE(ACCELERATED_COMPOSITING)
-    bool m_runningAcceleratedAnimation : 1;
-#endif
     OwnPtr<ShadowData> m_boxShadow;  // For box-shadow decorations.
     
     RefPtr<StyleReflection> m_boxReflect;
@@ -133,25 +118,42 @@ public:
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;
 
-    ETransformStyle3D m_transformStyle3D;
-    EBackfaceVisibility m_backfaceVisibility;
     float m_perspective;
     Length m_perspectiveOriginX;
     Length m_perspectiveOriginY;
 
     LengthSize m_pageSize;
-    PageSizeType m_pageSizeType;
+
+    RefPtr<CSSWrapShape> m_wrapShape;
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;
     int m_regionIndex;
-    RegionOverflow m_regionOverflow;
-
-    RefPtr<CSSWrapShape> m_wrapShape;
+    RegionOverflow m_regionOverflow : 1;
 
     unsigned m_regionBreakAfter : 2; // EPageBreak
     unsigned m_regionBreakBefore : 2; // EPageBreak
     unsigned m_regionBreakInside : 2; // EPageBreak
+
+    PageSizeType m_pageSizeType : 2;
+    ETransformStyle3D m_transformStyle3D : 1;
+    EBackfaceVisibility m_backfaceVisibility : 1;
+
+    unsigned userDrag : 2; // EUserDrag
+    unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
+    unsigned marginBeforeCollapse : 2; // EMarginCollapse
+    unsigned marginAfterCollapse : 2; // EMarginCollapse
+    unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
+    unsigned m_appearance : 6; // EAppearance
+    unsigned m_borderFit : 1; // EBorderFit
+    unsigned m_textCombine : 1; // CSS3 text-combine properties
+
+#if USE(ACCELERATED_COMPOSITING)
+    bool m_runningAcceleratedAnimation : 1;
+#endif
+
+    short m_counterIncrement;
+    short m_counterReset;
 
 private:
     StyleRareNonInheritedData();
