@@ -3,6 +3,23 @@
         Update html5-full-render.html to load the HTML5 spec incrementally, closer to how the browser would
         https://bugs.webkit.org/show_bug.cgi?id=69374
 
+        Unreviewed.
+
+        Per https://bugs.webkit.org/show_bug.cgi?id=69374#c7
+        updating the chunksize to be a bit smaller now that the total
+        size of the html5 spec is smaller than when I wrote the test.
+
+        This should increase the prevalence of style resolution in the
+        sample time, which more closely matches instrument samples
+        taken when loading the full page in Safari.
+
+        * Parser/html5-full-render.html:
+
+2011-10-04  Eric Seidel  <eric@webkit.org>
+
+        Update html5-full-render.html to load the HTML5 spec incrementally, closer to how the browser would
+        https://bugs.webkit.org/show_bug.cgi?id=69374
+
         Reviewed by James Robinson.
 
         This should finally be able to provide us with a repeatable metric

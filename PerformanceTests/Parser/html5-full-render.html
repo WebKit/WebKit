@@ -11,7 +11,7 @@ var chunks = [];
 // Larger chunk sizes will show more samples in line layout.
 // Smaller chunk sizes run slower overall, as the per-chunk overhead is high.
 // Testing on my machine has shown that we need 10-15 chunks before style resolution is always the top sample.
-var chunkSize = 750000; // 8mb / 750k = approx 12 chunks.
+var chunkSize = 500000; // 6.09mb / 500k = approx 13 chunks (thus 13 forced layouts/style resolves).
 var chunkCount = Math.ceil(spec.length / chunkSize);
 for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
     var chunk = spec.substring(chunkIndex * chunkSize, chunkSize);
@@ -36,7 +36,7 @@ function loadChunkedSpecIntoIframe(iframe) {
         // Note that we won't cause a style resolve until we've encountered the <body> element.
         // Thus the number of chunks counted above is not exactly equal to the number of style resolves.
         if (iframe.contentDocument.body)
-            iframe.contentDocument.body.clientHeight; // Force a full style-resolve.
+            iframe.contentDocument.body.clientHeight; // Force a full layout/style-resolve.
     }
 
     iframe.contentDocument.close();
