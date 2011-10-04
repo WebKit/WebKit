@@ -44,7 +44,9 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:16:jsmodule_common \
+    --module jsmodule_sdk:18:jsmodule_common \
+        --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
+        --js Source/WebCore/inspector/front-end/CompilerSourceMappingProvider.js \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
         --js Source/WebCore/inspector/front-end/ContentProviders.js \
         --js Source/WebCore/inspector/front-end/CookieParser.js \

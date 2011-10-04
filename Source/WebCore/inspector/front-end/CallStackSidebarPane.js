@@ -48,28 +48,9 @@ WebInspector.CallStackSidebarPane.prototype = {
 
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
-            var title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
-
-            var subtitle;
-            if (!callFrame.isInternalScript)
-                subtitle = WebInspector.displayNameForURL(callFrame.url);
-            else
-                subtitle = WebInspector.UIString("(internal script)");
-
-            var placard = new WebInspector.Placard(title, subtitle);
+            var placard = this._model.createPlacard(callFrame);
             placard.callFrame = callFrame;
             placard.element.addEventListener("click", this._placardSelected.bind(this, placard), false);
-
-            function didGetSourceLine(placard, uiSourceCode, lineNumber)
-            {
-                if (placard.subtitle)
-                    placard.subtitle += ":" + (lineNumber + 1);
-                else
-                    placard.subtitle = WebInspector.UIString("line %d", lineNumber + 1);
-                placard._text = WebInspector.UIString("%s() at %s", placard.title, placard.subtitle);
-            }
-            callFrame.sourceLine(didGetSourceLine.bind(this, placard));
-
             this.placards.push(placard);
             this.bodyElement.appendChild(placard.element);
         }

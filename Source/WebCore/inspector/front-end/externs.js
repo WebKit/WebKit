@@ -56,6 +56,11 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(url, linkifie
 WebInspector.formatLinkText = function(url, lineNumber) {}
 
 /**
+ * @param {string} url
+ */
+WebInspector.displayNameForURL = function(url) {}
+
+/**
  * @param {string} str
  * @param {...*} varArgs
  */

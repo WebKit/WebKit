@@ -177,6 +177,11 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
             callback(this._mimeType, sourceCode);
         }
         this._compilerSourceMappingProvider.loadSourceCode(this._sourceURL, didLoadSourceCode.bind(this));
+    },
+
+    searchInContent: function(query, callback)
+    {
+        callback([]);
     }
 }
 

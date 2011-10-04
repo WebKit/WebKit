@@ -53,26 +53,36 @@ WebInspector.CompilerSourceMapping.prototype = {
 }
 
 /**
+ * @constructor
+ */
+WebInspector.ClosureCompilerSourceMappingPayload = function()
+{
+    this.mappings = "";
+    this.sources = [];
+}
+
+/**
  * Implements Source Map V3 consumer. See http://code.google.com/p/closure-compiler/wiki/SourceMaps
  * for format description.
  * @extends {WebInspector.CompilerSourceMapping}
  * @constructor
+ * @param {WebInspector.ClosureCompilerSourceMappingPayload} mappingPayload
  */
-WebInspector.ClosureCompilerSourceMapping = function(payload)
+WebInspector.ClosureCompilerSourceMapping = function(mappingPayload)
 {
     if (!WebInspector.ClosureCompilerSourceMapping.prototype._base64Map) {
-        base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        const base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         WebInspector.ClosureCompilerSourceMapping.prototype._base64Map = {};
         for (var i = 0; i < base64Digits.length; ++i)
             WebInspector.ClosureCompilerSourceMapping.prototype._base64Map[base64Digits.charAt(i)] = i;
     }
 
-    this._sources = payload.sources;
+    this._sources = mappingPayload.sources;
     this._mappings = [];
     this._reverseMappingsBySourceURL = {};
     for (var i = 0; i < this._sources.length; ++i)
         this._reverseMappingsBySourceURL[this._sources[i]] = [];
-    this._parseMappings(payload.mappings);
+    this._parseMappings(mappingPayload);
 }
 
 WebInspector.ClosureCompilerSourceMapping.prototype = {
@@ -115,9 +125,9 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         return this._mappings[first];
     },
 
-    _parseMappings: function(mappingsPayload)
+    _parseMappings: function(mappingPayload)
     {
-        var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(mappingsPayload);
+        var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(mappingPayload.mappings);
 
         var lineNumber = 0;
         var columnNumber = 0;

@@ -1,3 +1,46 @@
+2011-10-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: update call frame location when source mapping is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=68997
+
+        Currently we use fake "debugger-paused" event hack to update execution line and call stack placards when source mapping is changed.
+        - add PresentationCallFrame.createPlacard method to create "live" placards that are updated on source mapping changes.
+        - remove PresentationCallFrame functionName, isInternalScript, and url getters.
+        - fire execution-line-changed event when selected call frame or source mapping is changed.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMappingPayload):
+        (WebInspector.ClosureCompilerSourceMapping):
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseMappings):
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.CompilerSourceMappingContentProvider.prototype.requestContent):
+        (WebInspector.CompilerSourceMappingContentProvider.prototype.searchInContent):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.createPlacard.updatePlacard):
+        (WebInspector.DebuggerPresentationModel.prototype.createPlacard):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerResumed):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype.get selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._dispatchExecutionLineChanged):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        (WebInspector.PresentationCallFrame):
+        (WebInspector.PresentationCallFrame.prototype.get rawSourceCode):
+        (WebInspector.PresentationCallFrame.prototype.uiLocation):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetUILocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._executionLineChanged):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        * inspector/front-end/externs.js:
+        (WebInspector.displayNameForURL):
+
 2011-10-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: inspector tests fix.

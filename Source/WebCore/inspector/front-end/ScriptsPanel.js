@@ -174,6 +174,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
 
     var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
@@ -512,14 +513,14 @@ WebInspector.ScriptsPanel.prototype = {
         } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.Exception) {
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", details.auxData.description));
         } else {
-            function didGetSourceLocation(uiSourceCode, lineNumber)
+            function didGetUILocation(uiLocation)
             {
-                if (!uiSourceCode || !this._presentationModel.findBreakpoint(uiSourceCode, lineNumber))
+                if (!this._presentationModel.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber))
                     return;
-                this.sidebarPanes.jsBreakpoints.highlightBreakpoint(uiSourceCode, lineNumber);
+                this.sidebarPanes.jsBreakpoints.highlightBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
                 this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a JavaScript breakpoint."));
             }
-            callFrames[0].sourceLine(didGetSourceLocation.bind(this));
+            callFrames[0].uiLocation(didGetUILocation.bind(this));
         }
 
         window.focus();
@@ -730,11 +731,26 @@ WebInspector.ScriptsPanel.prototype = {
         delete this._executionSourceFrame;
     },
 
+    _executionLineChanged: function(event)
+    {
+        var uiLocation = event.data;
+
+        this._clearCurrentExecutionLine();
+        if (!uiLocation)
+            return;
+
+        if (!uiLocation.uiSourceCode._option) {
+            // Anonymous scripts are not added to files select by default.
+            this._addOptionToFilesSelect(uiLocation.uiSourceCode);
+        }
+        var sourceFrame = this._showSourceFrameAndAddToHistory(uiLocation.uiSourceCode);
+        sourceFrame.setExecutionLine(uiLocation.lineNumber);
+        this._executionSourceFrame = sourceFrame;
+    },
+
     _callFrameSelected: function(event)
     {
         var callFrame = event.data;
-
-        this._clearCurrentExecutionLine();
 
         if (!callFrame)
             return;
@@ -742,21 +758,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
-
-        function didGetSourceLocation(uiSourceCode, lineNumber)
-        {
-            if (!uiSourceCode)
-                return;
-
-            if (!uiSourceCode._option) {
-                // Anonymous scripts are not added to files select by default.
-                this._addOptionToFilesSelect(uiSourceCode);
-            }
-            var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
-            sourceFrame.setExecutionLine(lineNumber);
-            this._executionSourceFrame = sourceFrame;
-        }
-        callFrame.sourceLine(didGetSourceLocation.bind(this));
     },
 
     _filesSelectChanged: function()
