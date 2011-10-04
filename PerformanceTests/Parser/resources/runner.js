@@ -67,29 +67,35 @@ function logStatistics(times) {
     log("max " + computeMax(times));
 }
 
-function run() {
-    var start = new Date();
-    for (var i = 0; i < 10; ++i)
-        window.runFunction();
-    var time = new Date() - start;
-    completedRuns++;
-    if (completedRuns <= 0) {
-        log("Ignoring warm-up run (" + time + ")");
-    } else {
-        times.push(time);
-        log(time);
-    }
-    if (completedRuns < window.runCount) {
+function runLoop()
+{
+    if (window.completedRuns < window.runCount) {
         window.setTimeout(run, 0);
     } else {
         logStatistics(times);
     }
 }
 
-function start(runCount, runFunction) {
+function run() {
+    var start = new Date();
+    for (var i = 0; i < window.loopsPerRun; ++i)
+        window.runFunction();
+    var time = new Date() - start;
+    window.completedRuns++;
+    if (window.completedRuns <= 0) {
+        log("Ignoring warm-up run (" + time + ")");
+    } else {
+        times.push(time);
+        log(time);
+    }
+    runLoop()
+}
+
+function start(runCount, runFunction, loopsPerRun) {
     window.runCount = runCount;
     window.runFunction = runFunction;
+    window.loopsPerRun = loopsPerRun || 10;
 
     log("Running " + runCount + " times");
-    run();
+    runLoop();
 }

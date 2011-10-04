@@ -1,3 +1,18 @@
+2011-10-04  Eric Seidel  <eric@webkit.org>
+
+        Add loopsPerRun option to Parser performance test runner
+        https://bugs.webkit.org/show_bug.cgi?id=69363
+
+        Reviewed by Antti Koivisto.
+
+        Add loopsPerRun option and abstract out runLoop function (to make the UI more responsive).
+        No change in behavior in any of the tests.
+
+        * Parser/resources/runner.js:
+        (runLoop):
+        (run):
+        (start):
+
 2011-10-03  Eric Seidel  <eric@webkit.org>
 
         Add a microbenchmark for a full-page render of the HTML5 spec
