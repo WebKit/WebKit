@@ -55,6 +55,15 @@ Cursor::~Cursor()
 {
 }
 
+Cursor& Cursor::operator=(const Cursor& other)
+{
+    m_type = other.m_type;
+    m_image = other.m_image;
+    m_hotSpot = other.m_hotSpot;
+    m_platformCursor = other.m_platformCursor;
+    return *this;
+}
+
 static const char* cursorString(Cursor::Type type)
 {
     static const char* cursorStrings[] = {

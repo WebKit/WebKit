@@ -545,4 +545,9 @@ String crashedPluginText()
     return String::fromUTF8("plugin crashed");
 }
 
+String localizedString(const char* key)
+{
+    return String::fromUTF8(key, strlen(key));
+}
+
 }

@@ -1,3 +1,15 @@
+2011-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Implement declared but missing functions.
+        https://bugs.webkit.org/show_bug.cgi?id=65368
+
+        Unreviewed build fix for WebKit/Efl builds after r96566.
+
+        * platform/efl/CursorEfl.cpp:
+        (WebCore::Cursor::operator=):
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::localizedString):
+
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move abstract panel search logic into the only view that is using it.
