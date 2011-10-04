@@ -644,6 +644,12 @@ bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
     return checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, type);
 }
 
+bool ContentSecurityPolicy::allowConnectFromSource(const KURL& url) const
+{
+    DEFINE_STATIC_LOCAL(String, type, ("connect"));
+    return checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, type);
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -748,6 +754,7 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
+    DEFINE_STATIC_LOCAL(String, connectSrc, ("connect-src"));
     DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
 
     ASSERT(!name.isEmpty());
@@ -768,6 +775,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_fontSrc = createCSPDirective(name, value);
     else if (!m_mediaSrc && equalIgnoringCase(name, mediaSrc))
         m_mediaSrc = createCSPDirective(name, value);
+    else if (!m_connectSrc && equalIgnoringCase(name, connectSrc))
+        m_connectSrc = createCSPDirective(name, value);
     else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
 }

@@ -34,13 +34,14 @@
 #include "config.h"
 #include "EventSource.h"
 
-#include "MemoryCache.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
+#include "MemoryCache.h"
 #include "MessageEvent.h"
+#include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -83,6 +84,12 @@ PassRefPtr<EventSource> EventSource::create(const String& url, ScriptExecutionCo
 
     // FIXME: Should support at least some cross-origin requests.
     if (!context->securityOrigin()->canRequest(fullURL)) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
+
+    if (!context->contentSecurityPolicy()->allowConnectFromSource(fullURL)) {
+        // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;
     }

@@ -1,3 +1,25 @@
+2011-10-04  Sam Weinig  <sam@webkit.org>
+
+        Add support for the CSP connect-src directive
+        https://bugs.webkit.org/show_bug.cgi?id=69353
+
+        Reviewed by Adam Barth.
+
+        Add CSP support for XMLHttpRequest, WebSockets and EventSource.
+
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-blocked.html: Added.
+
 2011-10-03  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69317

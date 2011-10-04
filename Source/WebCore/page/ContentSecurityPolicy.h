@@ -63,6 +63,7 @@ public:
     bool allowStyleFromSource(const KURL&) const;
     bool allowFontFromSource(const KURL&) const;
     bool allowMediaFromSource(const KURL&) const;
+    bool allowConnectFromSource(const KURL&) const;
 
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
@@ -96,6 +97,7 @@ private:
     OwnPtr<CSPDirective> m_styleSrc;
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
+    OwnPtr<CSPDirective> m_connectSrc;
     Vector<KURL> m_reportURLs;
 };
 

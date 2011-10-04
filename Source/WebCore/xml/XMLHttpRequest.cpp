@@ -24,7 +24,7 @@
 
 #include "ArrayBuffer.h"
 #include "Blob.h"
-#include "MemoryCache.h"
+#include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
 #include "DOMImplementation.h"
@@ -38,6 +38,7 @@
 #include "HTTPParsers.h"
 #include "HTTPValidation.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryCache.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptCallStack.h"
@@ -51,10 +52,10 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
-#include <wtf/text/CString.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 #if USE(JSC)
 #include "JSDOMBinding.h"
@@ -422,6 +423,12 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     }
 
     if (!isAllowedHTTPMethod(method)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectFromSource(url)) {
+        // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return;
     }
