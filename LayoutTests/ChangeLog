@@ -1,5 +1,13 @@
 2011-10-04  Adam Barth  <abarth@webkit.org>
 
+        Update font shaping result after http://trac.webkit.org/changeset/96582.
+        This appears to be a progression, but I'll check with the authors of
+        that patch to be sure.
+
+        * platform/chromium-win/fast/text/international/bidi-neutral-run-expected.txt:
+
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
         Update leopard results.
 
         * platform/chromium-cg-mac-leopard/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Removed.

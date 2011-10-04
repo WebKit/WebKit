@@ -147,9 +147,9 @@ layer at (0,0) size 785x6380
             text run at (7,0) width 13: "\x{202C}(^"
             text run at (20,0) width 13 RTL: "\x{62C}\x{62F}"
         RenderBlock {P} at (0,1152) size 769x20
-          RenderText {#text} at (0,0) size 33x19
-            text run at (0,0) width 26 RTL: "\x{202C}(^\x{62C}\x{62F}"
-            text run at (26,0) width 7 RTL: "\x{202B}?"
+          RenderText {#text} at (0,0) size 28x19
+            text run at (0,0) width 21 RTL: "\x{202C}(^\x{62C}\x{62F}"
+            text run at (21,0) width 7 RTL: "\x{202B}?"
         RenderBlock {P} at (0,1188) size 769x20
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 44: "ab(^34"
@@ -636,13 +636,13 @@ layer at (0,0) size 785x6380
             text run at (26,0) width 16: "\x{661}\x{662}"
             text run at (42,0) width 14 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,1116) size 769x20
-          RenderText {#text} at (0,0) size 33x19
-            text run at (0,0) width 26 RTL: "\x{202C}(^\x{62C}\x{62F}"
-            text run at (26,0) width 7: "\x{202A}?"
+          RenderText {#text} at (0,0) size 28x19
+            text run at (0,0) width 21 RTL: "\x{202C}(^\x{62C}\x{62F}"
+            text run at (21,0) width 7: "\x{202A}?"
         RenderBlock {P} at (0,1152) size 769x20
-          RenderText {#text} at (0,0) size 33x19
-            text run at (0,0) width 26 RTL: "\x{202C}(^\x{62C}\x{62F}"
-            text run at (26,0) width 7 RTL: "\x{202B}?"
+          RenderText {#text} at (0,0) size 28x19
+            text run at (0,0) width 21 RTL: "\x{202C}(^\x{62C}\x{62F}"
+            text run at (21,0) width 7 RTL: "\x{202B}?"
         RenderBlock {P} at (0,1188) size 769x20
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 6: "z"
