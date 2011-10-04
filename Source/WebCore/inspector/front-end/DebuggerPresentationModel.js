@@ -283,7 +283,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     continueToLine: function(uiSourceCode, lineNumber)
     {
-        var rawLocation = uiSourceCode.rawSourceCode.sourceMapping.uiLocationToRawLocation(lineNumber, 0);
+        // FIXME: use RawSourceCode.uiLocationToRawLocation.
+        var rawLocation = uiSourceCode.rawSourceCode.sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 

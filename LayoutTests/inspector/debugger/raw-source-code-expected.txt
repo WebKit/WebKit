@@ -15,3 +15,5 @@ Running: testFormattingWithFinishedResource
 
 Running: testFormattingWithPendingResource
 
+Running: testCompilerSourceMapping
+

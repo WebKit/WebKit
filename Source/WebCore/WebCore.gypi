@@ -6215,6 +6215,7 @@
             'inspector/front-end/Checkbox.js',
             'inspector/front-end/Color.js',
             'inspector/front-end/CompilerSourceMapping.js',
+            'inspector/front-end/CompilerSourceMappingProvider.js',
             'inspector/front-end/ConsoleMessage.js',
             'inspector/front-end/ConsoleModel.js',
             'inspector/front-end/ConsolePanel.js',

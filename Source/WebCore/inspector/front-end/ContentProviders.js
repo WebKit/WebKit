@@ -162,6 +162,30 @@ WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentP
  * @constructor
  * @implements {WebInspector.ContentProvider}
  */
+WebInspector.CompilerSourceMappingContentProvider = function(sourceURL, compilerSourceMappingProvider)
+{
+    this._mimeType = "text/javascript";
+    this._sourceURL = sourceURL;
+    this._compilerSourceMappingProvider = compilerSourceMappingProvider;
+};
+
+WebInspector.CompilerSourceMappingContentProvider.prototype = {
+    requestContent: function(callback)
+    {
+        function didLoadSourceCode(sourceCode)
+        {
+            callback(this._mimeType, sourceCode);
+        }
+        this._compilerSourceMappingProvider.loadSourceCode(this._sourceURL, didLoadSourceCode.bind(this));
+    }
+}
+
+WebInspector.CompilerSourceMappingContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.ContentProvider}
+ */
 WebInspector.StaticContentProvider = function(mimeType, content)
 {
     this._mimeType = mimeType;

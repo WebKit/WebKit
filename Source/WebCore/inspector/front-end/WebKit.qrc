@@ -16,6 +16,7 @@
     <file>Checkbox.js</file>
     <file>Color.js</file>
     <file>CompilerSourceMapping.js</file>
+    <file>CompilerSourceMappingProvider.js</file>
     <file>ConsoleMessage.js</file>
     <file>ConsoleModel.js</file>
     <file>ConsolePanel.js</file>

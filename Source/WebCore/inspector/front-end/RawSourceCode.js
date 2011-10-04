@@ -78,6 +78,14 @@ WebInspector.RawSourceCode.prototype = {
         this._updateSourceMapping();
     },
 
+    setCompilerSourceMappingProvider: function(provider)
+    {
+        if (provider)
+            this._useTemporaryContent = false;
+        this._compilerSourceMappingProvider = provider;
+        this._updateSourceMapping();
+    },
+
     contentEdited: function()
     {
         this._updateSourceMapping();
@@ -85,6 +93,8 @@ WebInspector.RawSourceCode.prototype = {
 
     _resourceFinished: function()
     {
+        if (this._compilerSourceMappingProvider)
+            return;
         this._useTemporaryContent = false;
         this._updateSourceMapping();
     },
@@ -120,14 +130,13 @@ WebInspector.RawSourceCode.prototype = {
         this._updatingSourceMapping = true;
         this._updateNeeded = false;
 
-        var originalContentProvider = this._createContentProvider();
-        this._createSourceMapping(originalContentProvider, didCreateSourceMapping.bind(this));
+        this._createSourceMapping(didCreateSourceMapping.bind(this));
 
-        function didCreateSourceMapping(contentProvider, mapping)
+        function didCreateSourceMapping(sourceMapping)
         {
             this._updatingSourceMapping = false;
             if (!this._updateNeeded)
-                this._saveSourceMapping(contentProvider, mapping);
+                this._saveSourceMapping(sourceMapping);
             else
                 this._updateSourceMapping();
         }
@@ -142,8 +151,27 @@ WebInspector.RawSourceCode.prototype = {
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
     },
 
-    _createSourceMapping: function(originalContentProvider, callback)
+    _createSourceMapping: function(callback)
     {
+        if (this._compilerSourceMappingProvider) {
+            function didLoadSourceMapping(compilerSourceMapping)
+            {
+                var uiSourceCodeList = [];
+                var sourceURLs = compilerSourceMapping.sources();
+                for (var i = 0; i < sourceURLs.length; ++i) {
+                    var sourceURL = sourceURLs[i];
+                    var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, this._compilerSourceMappingProvider);
+                    var uiSourceCode = new WebInspector.UISourceCode(sourceURL, sourceURL, this.isContentScript, this, contentProvider);
+                    uiSourceCodeList.push(uiSourceCode);
+                }
+                var sourceMapping = new WebInspector.RawSourceCode.CompilerSourceMapping(this, uiSourceCodeList, compilerSourceMapping);
+                callback(sourceMapping);
+            }
+            this._compilerSourceMappingProvider.loadSourceMapping(didLoadSourceMapping.bind(this));
+            return;
+        }
+
+        var originalContentProvider = this._createContentProvider();
         if (!this._formatted) {
             var uiSourceCode = new WebInspector.UISourceCode(this.id, this.url, this.isContentScript, this, originalContentProvider);
             var sourceMapping = new WebInspector.RawSourceCode.PlainSourceMapping(this, uiSourceCode);
@@ -193,9 +221,10 @@ WebInspector.RawSourceCode.PlainSourceMapping.prototype = {
         return new WebInspector.UILocation(this._uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
     },
 
-    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber)
     {
-        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        console.assert(uiSourceCode === this._uiSourceCode);
+        var rawLocation = { lineNumber: lineNumber, columnNumber: 0 };
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
@@ -223,9 +252,10 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
         return new WebInspector.UILocation(this._uiSourceCode, location.lineNumber, location.columnNumber);
     },
 
-    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber)
     {
-        var rawLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: columnNumber });
+        console.assert(uiSourceCode === this._uiSourceCode);
+        var rawLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: 0 });
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
@@ -233,6 +263,40 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
     get uiSourceCode()
     {
         return this._uiSourceCode;
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.RawSourceCode.CompilerSourceMapping = function(rawSourceCode, uiSourceCodeList, mapping)
+{
+    this._rawSourceCode = rawSourceCode;
+    this._uiSourceCodeList = uiSourceCodeList;
+    this._mapping = mapping;
+    this._uiSourceCodeByURL = {};
+    for (var i = 0; i < uiSourceCodeList.length; ++i)
+        this._uiSourceCodeByURL[uiSourceCodeList[i].url] = uiSourceCodeList[i];
+}
+
+WebInspector.RawSourceCode.CompilerSourceMapping.prototype = {
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var location = this._mapping.compiledLocationToSourceLocation(rawLocation.lineNumber, rawLocation.columnNumber);
+        var uiSourceCode = this._uiSourceCodeByURL[location.sourceURL];
+        return new WebInspector.UILocation(uiSourceCode, location.lineNumber, location.columnNumber);
+    },
+
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber)
+    {
+        var rawLocation = this._mapping.sourceLocationToCompiledLocation(uiSourceCode.url, lineNumber);
+        rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
+        return rawLocation;
+    },
+
+    get uiSourceCodeList()
+    {
+        return this._uiSourceCodeList;
     }
 }
 

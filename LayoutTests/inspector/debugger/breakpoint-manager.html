@@ -69,10 +69,10 @@ function test()
 
     var uiSourceCodeA = createUISourceCode("a.js", "a.js",
             function(rawLocation) { return rawLocation; },
-            function(lineNumber, columnNumber) { return { scriptId: "a.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
+            function(uiSourceCode, lineNumber) { return { scriptId: "a.js", lineNumber: lineNumber, columnNumber: 0 }; });
     var uiSourceCodeB = createUISourceCode("b.js", "b.js",
             function(rawLocation) { return rawLocation; },
-            function(lineNumber, columnNumber) { return { scriptId: "b.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
+            function(uiSourceCode, lineNumber) { return { scriptId: "b.js", lineNumber: lineNumber, columnNumber: 0 }; });
 
     function createBreakpointManager(breakpoints)
     {
@@ -205,10 +205,10 @@ function test()
             var breakpointManager = createBreakpointManager([createBreakpoint("c.js", 4, "", true)]);
             var uiSourceCodeC = createUISourceCode("c.js", "c.js",
                     function(rawLocation) { return rawLocation; },
-                    function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
+                    function(uiSourceCode, lineNumber) { return { scriptId: "c.js", lineNumber: lineNumber, columnNumber: 0 }; });
             var uiSourceCodeCFormatted = createUISourceCode("deobfuscated:c.js", "c.js",
                     function(rawLocation) { return { lineNumber: rawLocation.lineNumber * 2, columnNumber: rawLocation.columnNumber * 2 }; },
-                    function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: Math.floor(columnNumber / 2) }; });
+                    function(uiSourceCode, lineNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 }; });
 
             breakpointManager.uiSourceCodeAdded(uiSourceCodeC);
             setTimeout(format, 0);
