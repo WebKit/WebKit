@@ -426,7 +426,7 @@ namespace WTF {
         typedef const ValueType* PointerType;
 
         friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
-        friend class ListHashSetConstReverseIterator<ValueArg, inlineCapacity, HashArg>;
+        friend class ListHashSetReverseIterator<ValueArg, inlineCapacity, HashArg>;
 
         ListHashSetConstReverseIterator(const ListHashSetType* set, Node* position)
             : m_set(set)
