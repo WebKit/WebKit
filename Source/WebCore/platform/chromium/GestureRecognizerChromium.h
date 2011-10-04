@@ -75,6 +75,7 @@ private:
     bool isInClickTimeWindow();
     bool isInSecondClickTimeWindow();
     bool isInsideManhattanSquare(const PlatformTouchPoint&);
+    bool isSecondClickInsideManhattanSquare(const PlatformTouchPoint&);
     bool isOverMinFlickSpeed();
     void setState(State value) { m_state = value; }
     void updateValues(double touchTime, const PlatformTouchPoint&);
@@ -93,6 +94,7 @@ private:
     State m_state;
     double m_lastTouchTime;
     double m_lastClickTime;
+    IntPoint m_lastClickPosition;
     IntPoint m_lastTouchPosition;
     IntPoint m_lastTouchScreenPosition;
     float m_xVelocity;

@@ -1,3 +1,19 @@
+2011-10-04  Varun Jain  <varunjain@chromium.org>
+
+        Fix position check for double tap gesture detection. A double tap
+        should not be detected if the two taps are far from each other.
+        https://bugs.webkit.org/show_bug.cgi?id=69270
+
+        Reviewed by Darin Fisher.
+
+        Test: Source/WebKit/chromium/tests/InnerGestureRecognizerTest.cpp
+
+        * platform/chromium/GestureRecognizerChromium.cpp:
+        (WebCore::GestureRecognizerChromium::isSecondClickInsideManhattanSquare):
+        (WebCore::GestureRecognizerChromium::updateValues):
+        (WebCore::GestureRecognizerChromium::click):
+        * platform/chromium/GestureRecognizerChromium.h:
+
 2011-10-04  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Generate gtk-doc for WebKit2-GTK.

@@ -45,6 +45,7 @@ GestureRecognizerChromium::GestureRecognizerChromium()
     , m_state(GestureRecognizerChromium::NoGesture)
     , m_lastTouchTime(0.0)
     , m_lastClickTime(0.0)
+    , m_lastClickPosition()
     , m_lastTouchPosition()
     , m_lastTouchScreenPosition()
     , m_xVelocity(0.0)
@@ -108,6 +109,12 @@ bool GestureRecognizerChromium::isInSecondClickTimeWindow()
 bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint& point)
 {
     int manhattanDistance = abs(point.pos().x() - m_firstTouchPosition.x()) + abs(point.pos().y() - m_firstTouchPosition.y());
+    return manhattanDistance < maximumTouchMoveInPixelsForClick;
+}
+
+bool GestureRecognizerChromium::isSecondClickInsideManhattanSquare(const PlatformTouchPoint& point)
+{
+    int manhattanDistance = abs(point.pos().x() - m_lastClickPosition.x()) + abs(point.pos().y() - m_lastClickPosition.y());
     return manhattanDistance < maximumTouchMoveInPixelsForClick;
 }
 
@@ -175,10 +182,10 @@ void GestureRecognizerChromium::updateValues(const double touchTime, const Platf
         double interval(touchTime - m_lastTouchTime);
         m_xVelocity = (touchPoint.pos().x() - m_lastTouchPosition.x()) / interval;
         m_yVelocity = (touchPoint.pos().y() - m_lastTouchPosition.y()) / interval;
-        m_lastTouchPosition = touchPoint.pos();
-        m_lastTouchScreenPosition = touchPoint.screenPos();
     }
     m_lastTouchTime = touchTime;
+    m_lastTouchPosition = touchPoint.pos();
+    m_lastTouchScreenPosition = touchPoint.screenPos();
     if (state() == NoGesture) {
         m_firstTouchTime = touchTime;
         m_firstTouchPosition = touchPoint.pos();
@@ -230,9 +237,10 @@ bool GestureRecognizerChromium::click(const PlatformTouchPoint& point, Gestures 
     if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
         gestureAdded = true;
         appendClickGestureEvent(point, gestures);
-        if (isInSecondClickTimeWindow())
+        if (isInSecondClickTimeWindow() && isSecondClickInsideManhattanSquare(point))
             appendDoubleClickGestureEvent(point, gestures);
-       m_lastClickTime = m_lastTouchTime;
+        m_lastClickTime = m_lastTouchTime;
+        m_lastClickPosition = m_lastTouchPosition;
     }
     reset();
     return gestureAdded;
