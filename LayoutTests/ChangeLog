@@ -1,5 +1,11 @@
 2011-10-04  Adam Barth  <abarth@webkit.org>
 
+        Update XP results for the font shaping patch.
+
+        * platform/chromium-win-xp/fast/text/international/bidi-neutral-run-expected.txt: Added.
+
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
         Update baselines after http://trac.webkit.org/changeset/96620.  These
         changes match the changes Dave made to other platforms.
 
