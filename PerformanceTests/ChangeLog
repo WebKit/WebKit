@@ -1,5 +1,25 @@
 2011-10-04  Eric Seidel  <eric@webkit.org>
 
+        Update our copy of the HTML5 spec used for performance testing to match the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=69364
+
+        Unreviewed.  The patch is too large to post, so landing this unreviewed. :(
+
+        The copy of the html5 spec we were using for testing was over a year old
+        and didn't have any of the subresources with it (we were only using it
+        as an HTML parsing benchmark).  I'm about to use it for testing
+        the full load/render time of the benchmark, so I've updated to the latest
+        version of the spec (now 8mb instead of 5mb) and inlined two of the
+        CSS files.  (Inlining the CSS was necessary to make my testing consistent
+        as there seems to be a race with some timer fired after CSS load.)
+
+        Increasing from 5mb to 8mb showed a similar 30% slowdown in our parser
+        benchmarks as expected.
+
+        * Parser/resources/html5.html:
+
+2011-10-04  Eric Seidel  <eric@webkit.org>
+
         Add loopsPerRun option to Parser performance test runner
         https://bugs.webkit.org/show_bug.cgi?id=69363
 
