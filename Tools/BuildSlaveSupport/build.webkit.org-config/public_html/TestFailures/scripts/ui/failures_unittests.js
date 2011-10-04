@@ -50,13 +50,14 @@ test('Configuration', 8, function() {
     ok(!configuration.equals({version: 'lucid',is64bit: true}));
 });
 
-test('FailureGrid', 9, function() {
+test('FailureGrid', 10, function() {
     var grid = new ui.failures.FailureGrid();
     deepEqual(Object.getOwnPropertyNames(grid.__proto__).sort(), [
+        "_reset",
         "_rowByResult",
-        "add",
         "init",
-        "removeResultRows",
+        "purge",
+        "update"
     ]);
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
@@ -73,7 +74,7 @@ test('FailureGrid', 9, function() {
         '</tbody>' +
     '</table>');
     equal(row.outerHTML, '<tr class="TEXT"><td>TEXT</td><td></td><td></td></tr>');
-    grid.add({});
+    grid.update({});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
@@ -86,7 +87,7 @@ test('FailureGrid', 9, function() {
     raises(function() {
         grid.update({'Atari': {}})
     });
-    grid.add({'Webkit Linux (dbg)(1)': { actual: 'TEXT'}});
+    grid.update({'Webkit Linux (dbg)(1)': { actual: 'TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
@@ -98,7 +99,7 @@ test('FailureGrid', 9, function() {
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
-    grid.add({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
+    grid.update({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
@@ -115,7 +116,7 @@ test('FailureGrid', 9, function() {
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
-    grid.add({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
+    grid.update({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
@@ -124,6 +125,19 @@ test('FailureGrid', 9, function() {
                 '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
+            '<tr class="TEXT">' +
+                '<td>TEXT</td>' +
+                '<td></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
+            '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
+        '</tbody>' +
+    '</table>');
+    grid.purge();
+    grid.update({'Webkit Linux (dbg)(1)': { actual: 'TEXT'}});
+    equal(grid.outerHTML, '<table class="failures">' +
+        '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+        '<tbody>' +
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +

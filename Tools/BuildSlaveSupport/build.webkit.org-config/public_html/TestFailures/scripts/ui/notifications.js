@@ -204,15 +204,18 @@ ui.notifications.FailingTestsSummary = base.extends(ui.notifications.FailingTest
         this._where = this._how.appendChild(new ui.failures.FailureGrid());
         this._commitDataPinned = false;
     },
+    purge: function() {
+        this._where.purge();
+    },
     updateBuilderResults: function(resultNodesByBuilder)
     {
-        this._where.add(resultNodesByBuilder);
+        this._where.update(resultNodesByBuilder);
     },
     addFailureAnalysis: function(failureAnalysis)
     {
+        this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
         if (!ui.notifications.FailingTests.prototype.addFailureAnalysis.call(this, failureAnalysis))
             return false;
-        this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
     },
     pinToCommitData: function(commitData)
     {

@@ -75,10 +75,7 @@ ui.failures.FailureGrid = base.extends('table', {
         titles.insertCell().textContent = 'release';
         titles.insertCell().textContent = 'type';
         this._body = this.appendChild(document.createElement('tbody'));
-        this._resultRows = {};
-        // Add the BUILDING row eagerly so that it appears last.
-        this._rowByResult(kBuildingResult);
-        $(this._resultRows[kBuildingResult]).hide();
+        this._reset();
     },
     _rowByResult: function(result)
     {
@@ -94,24 +91,37 @@ ui.failures.FailureGrid = base.extends('table', {
         row.insertCell().textContent = result;
         return row;
     },
-    removeResultRows: function()
+    update: function(resultsByBuilder)
     {
-        Object.keys(this._resultRows).forEach(function(result) {
-            var row = this._resultRows[result];
-            row.parentNode.removeChild(row);
-        }, this);
-        this._resultRows = {};
-    },
-    add: function(resultsByBuilder)
-    {
+        if (this._pendingReset)
+            this._reset();
+
+        if (!resultsByBuilder)
+            return;
+
         Object.keys(resultsByBuilder).forEach(function(builderName) {
             var configuration = config.kBuilders[builderName];
+            if (!configuration)
+                throw "Unknown builder name: " + builderName;
             var row = this._rowByResult(resultsByBuilder[builderName].actual);
             var cell = cellByBuildType(row, configuration);
             if (cellContainsConfiguration(cell, configuration))
                 return;
             cell.appendChild(new ui.failures.Configuration(configuration)).href = ui.displayURLForBuilder(builderName);
         }, this);
+    },
+    purge: function()
+    {
+        this._pendingReset = true;
+    },
+    _reset: function()
+    {
+        this._pendingReset = false;
+        this._resultRows = {};
+        $(this._body).empty();
+        // Add the BUILDING row eagerly so that it appears last.
+        this._rowByResult(kBuildingResult);
+        $(this._resultRows[kBuildingResult]).hide();
     }
 });
 

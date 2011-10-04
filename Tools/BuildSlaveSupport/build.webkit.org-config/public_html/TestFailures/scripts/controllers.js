@@ -131,6 +131,9 @@ var FailureStreamController = base.extends(Object, {
         this._testFailures.purge(function(failure) {
             failure.dismiss();
         });
+        this._testFailures.forEach(function(failure) {
+            failure.purge();
+        });
     },
     onExamine: function(failures)
     {
