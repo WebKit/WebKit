@@ -182,6 +182,15 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
 
     ASSERT(documentLoader()->timing()->fetchStart);
     if (!redirectResponse.isNull()) {
+        // If the redirecting url is not allowed to display content from the target origin,
+        // then block the redirect.
+        RefPtr<SecurityOrigin> redirectingOrigin = SecurityOrigin::create(redirectResponse.url());
+        if (!redirectingOrigin->canDisplay(newRequest.url())) {
+            FrameLoader::reportLocalLoadFailed(m_frame.get(), newRequest.url().string());
+            cancel();
+            return;
+        }
+
         DocumentLoadTiming* documentLoadTiming = documentLoader()->timing();
 
         // Check if the redirected url is allowed to access the redirecting url's timing information.

@@ -1125,21 +1125,6 @@ void FrameLoader::setupForReplace()
     detachChildren();
 }
 
-// This is a hack to allow keep navigation to http/https feeds working. To remove this
-// we need to introduce new API akin to registerURLSchemeAsLocal, that registers a
-// protocols navigation policy.
-static bool isFeedWithNestedProtocolInHTTPFamily(const KURL& url)
-{
-    const String& urlString = url.string();
-    if (!urlString.startsWith("feed", false))
-        return false;
-
-    return urlString.startsWith("feed://", false) 
-        || urlString.startsWith("feed:http:", false) || urlString.startsWith("feed:https:", false)
-        || urlString.startsWith("feeds:http:", false) || urlString.startsWith("feeds:https:", false)
-        || urlString.startsWith("feedsearch:http:", false) || urlString.startsWith("feedsearch:https:", false);
-}
-
 void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList,
     PassRefPtr<Event> event, PassRefPtr<FormState> formState, ReferrerPolicy referrerPolicy)
 {    
@@ -1149,8 +1134,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
     KURL url = request.resourceRequest().url();
 
     ASSERT(m_frame->document());
-    // FIXME: Should we move the isFeedWithNestedProtocolInHTTPFamily logic inside SecurityOrigin::canDisplay?
-    if (!isFeedWithNestedProtocolInHTTPFamily(url) && !request.requester()->canDisplay(url)) {
+    if (!request.requester()->canDisplay(url)) {
         reportLocalLoadFailed(m_frame, url.string());
         return;
     }

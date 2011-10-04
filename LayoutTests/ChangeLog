@@ -1,3 +1,16 @@
+2011-10-03 Ken Buchanan <kenrb@chromium.org>
+
+        Resource loader should block HTTP redirects to local resources
+        https://bugs.webkit.org/show_bug.cgi?id=68706
+
+        Reviewed by Adam Barth.
+
+        Adding a test to attempt an HTTP redirect to a file: URL.
+
+        * http/tests/security/redirect-BLOCKED-to-localURL.html: Added.
+        * http/tests/security/redirect-BLOCKED-to-localURL-expected.txt: Added.
+        * http/tests/security/resources/file-redirect-target.html: Added.
+
 2011-10-04  Adam Barth  <abarth@webkit.org>
 
         Restore Linux baseline for this test.  The Linux baseline got clobbered
