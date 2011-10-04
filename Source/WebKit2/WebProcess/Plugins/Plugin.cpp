@@ -98,4 +98,8 @@ void Plugin::destroyPlugin()
     m_pluginController = 0;
 }
 
+void Plugin::updateControlTints(GraphicsContext*)
+{
+}
+
 } // namespace WebKit

@@ -825,6 +825,7 @@
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
+		E199875E142C045400BB2DE7 /* BuiltInPDFView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E199875C142BFC9700BB2DE7 /* BuiltInPDFView.cpp */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
 		E1BB16A413201B9B00F49431 /* WKFullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BB1688132018BA00F49431 /* WKFullKeyboardAccessWatcher.h */; };
@@ -1802,6 +1803,8 @@
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
+		E199875A142BF9B800BB2DE7 /* BuiltInPDFView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BuiltInPDFView.h; path = PDF/BuiltInPDFView.h; sourceTree = "<group>"; };
+		E199875C142BFC9700BB2DE7 /* BuiltInPDFView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BuiltInPDFView.cpp; path = PDF/BuiltInPDFView.cpp; sourceTree = "<group>"; };
 		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		E1BB1688132018BA00F49431 /* WKFullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
@@ -2071,6 +2074,7 @@
 		1A6FB7AA11E64B4900DB1371 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				E199875B142BF9CF00BB2DE7 /* PDF */,
 				1A6FB90811E66FB100DB1371 /* Netscape */,
 				1A6FB7D011E651E200DB1371 /* Plugin.cpp */,
 				1A6FB7D111E651E200DB1371 /* Plugin.h */,
@@ -3436,6 +3440,15 @@
 			path = FullScreen/mac;
 			sourceTree = "<group>";
 		};
+		E199875B142BF9CF00BB2DE7 /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				E199875C142BFC9700BB2DE7 /* BuiltInPDFView.cpp */,
+				E199875A142BF9B800BB2DE7 /* BuiltInPDFView.h */,
+			);
+			name = PDF;
+			sourceTree = "<group>";
+		};
 		F638955A133BF57D008941D5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -4555,6 +4568,7 @@
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 				7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */,
+				E199875E142C045400BB2DE7 /* BuiltInPDFView.cpp in Sources */,
 				0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */,
 				B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */,
 			);

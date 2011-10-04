@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class PluginView : public WebCore::PluginViewBase, WebCore::MediaCanStartListener, PluginController, WebFrame::LoadListener {
+class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener {
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 

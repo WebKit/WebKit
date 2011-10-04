@@ -119,6 +119,10 @@
 #endif
 #endif
 
+#if PLATFORM(MAC)
+#include "BuiltInPDFView.h"
+#endif
+
 #if PLATFORM(QT)
 #include "HitTestResult.h"
 #include <QMimeData>
@@ -328,8 +332,13 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
         return 0;
     }
 
-    if (pluginPath.isNull())
+    if (pluginPath.isNull()) {
+#if PLATFORM(MAC)
+        if (parameters.mimeType == "application/pdf")
+            return BuiltInPDFView::create(m_page.get());
+#endif
         return 0;
+    }
 
 #if ENABLE(PLUGIN_PROCESS)
     return PluginProxy::create(pluginPath);

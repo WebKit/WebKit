@@ -1,3 +1,42 @@
+2011-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67774
+        PDF in a frameset is not displayed, always downloads
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF: Added.
+        Added BuiltInPDFView class. It implements ScrollableArea and Plugin, working with iframes,
+        objects and embeds. The implementation targets Mac port only, fixing a WebKit2 regression.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::getPlugins): Tell WebCore that there is a
+        plug-in for PDF, so that it instantiates it in a regular fashion.
+
+        * UIProcess/WebFrameProxy.cpp: (WebKit::WebFrameProxy::canShowMIMEType): We can now show
+        PDF not only in main frame.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: Added. This is largely an implementation of
+        ScrollableArea now, which can render the first page of a PDF. Further improvements to come.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: Added.
+
+        * WebProcess/Plugins/Plugin.cpp: (WebKit::Plugin::updateControlTints): Give Plugin a chance
+        to invalidate its tintable controls - it's necessary for PDF because scrollbars are tintable. 
+
+        * WebProcess/Plugins/Plugin.h: (WebKit::Plugin::controller): Added a const version, since
+        some ScrollableArea methods are const.
+
+        * WebProcess/Plugins/PluginView.cpp: (WebKit::PluginView::paint): Call updateControlTints
+        at updatingControlTints phase.
+
+        * WebProcess/Plugins/PluginView.h: PDF plug-in needs to tinker with embedding FrameView to
+        use Scrollbar class, so it needs to cast its PluginController up to PluginView. It's unfortunate
+        that PluginView has so much NPAPI specific code, but that's how it is now.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::createPlugin): If there is no real plug-in
+        installed for PDF, instantiate built-in one.
+
 2011-10-04  Jon Lee  <jonlee@apple.com>
 
         REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview

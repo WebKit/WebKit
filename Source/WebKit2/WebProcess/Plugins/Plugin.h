@@ -80,6 +80,7 @@ public:
 
     // Returns the plug-in controller for this plug-in.
     PluginController* controller() { return m_pluginController; }
+    const PluginController* controller() const { return m_pluginController; }
 
     virtual ~Plugin();
 
@@ -97,6 +98,9 @@ public:
     // Tells the plug-in to paint itself into the given graphics context. The passed-in context and
     // dirty rect are in window coordinates. The context is saved/restored by the caller.
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
+
+    // Invalidate native tintable controls. The passed-in context is in window coordinates.
+    virtual void updateControlTints(WebCore::GraphicsContext*);
 
     // Tells the plug-in to draw itself into a bitmap, and return that.
     virtual PassRefPtr<ShareableBitmap> snapshot() = 0;

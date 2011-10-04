@@ -527,6 +527,9 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
+    if (m_plugin && context->updatingControlTints())
+        m_plugin->updateControlTints(context);
+
     if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
         return;
 

@@ -1,3 +1,14 @@
+2011-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67774
+        PDF in a frameset is not displayed, always downloads
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added exports necessary to subclass a ScrollableArea.
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         ScrollElasticityController should keep track of the rubberband timer state

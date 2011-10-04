@@ -5454,7 +5454,7 @@
 		C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F08FC81431000D00685849 /* JSMutationRecord.h */; };
 		C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F41046130C6E8900393DE4 /* EntryBase.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
-		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; };
+		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; settings = {COMPILER_FLAGS = "-Wno-undef"; }; };
 		CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */; settings = {ATTRIBUTES = (Private, ); }; };
