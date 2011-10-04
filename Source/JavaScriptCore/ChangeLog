@@ -1,3 +1,33 @@
+2011-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JITCodeGenerator should no longer have code that tries too hard
+        to be both speculative and non-speculative
+        https://bugs.webkit.org/show_bug.cgi?id=69321
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed m_isSpeculative and speculationCheck() from JITCodeGenerator.
+        This required moving emitBranch() to SpeculativeJIT, since it was
+        the main user of that field and method. Other than trvial clean-ups
+        in emitBranch(), the code is unchanged (and still has some disparity
+        between 64 and 32_64, and still lacks some obvious optimizations).
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::JITCodeGenerator):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2011-10-04  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69372

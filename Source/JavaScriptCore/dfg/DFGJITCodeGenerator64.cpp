@@ -148,7 +148,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
             ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(gpr, m_isSpeculative ? spillFormat : DataFormatJS);
+            info.fillJSValue(gpr, spillFormat);
             unlock(gpr);
         }
     }
@@ -266,7 +266,7 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
             ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(gpr, m_isSpeculative ? spillFormat : DataFormatJS);
+            info.fillJSValue(gpr, spillFormat);
         }
         return gpr;
     }
@@ -1459,70 +1459,6 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
     }
     
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
-}
-
-void JITCodeGenerator::emitBranch(Node& node)
-{
-    JSValueOperand value(this, node.child1());
-    GPRReg valueGPR = value.gpr();
-    
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-    
-    if (isKnownBoolean(node.child1())) {
-        MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
-        
-        if (taken == (m_block + 1)) {
-            condition = MacroAssembler::Zero;
-            BlockIndex tmp = taken;
-            taken = notTaken;
-            notTaken = tmp;
-        }
-        
-        addBranch(m_jit.branchTest32(condition, valueGPR, TrustedImm32(true)), taken);
-        if (notTaken != (m_block + 1))
-            addBranch(m_jit.jump(), notTaken);
-        
-        noResult(m_compileIndex);
-    } else {
-        GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
-        
-        bool predictBoolean = isBooleanPrediction(m_jit.getPrediction(node.child1()));
-    
-        if (predictBoolean) {
-            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
-            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
-        }
-        
-        if (m_isSpeculative && predictBoolean) {
-            speculationCheck(m_jit.jump());
-            value.use();
-        } else {
-            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
-            addBranch(m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister), taken);
-    
-            if (!predictBoolean) {
-                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
-                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
-            }
-    
-            value.use();
-    
-            silentSpillAllRegisters(resultGPR);
-            m_jit.move(valueGPR, GPRInfo::argumentGPR1);
-            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-            appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-            silentFillAllRegisters(resultGPR);
-    
-            addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
-            if (notTaken != (m_block + 1))
-                addBranch(m_jit.jump(), notTaken);
-        }
-        
-        noResult(m_compileIndex, UseChildrenCalledExplicitly);
-    }
 }
 
 void JITCodeGenerator::emitCall(Node& node)

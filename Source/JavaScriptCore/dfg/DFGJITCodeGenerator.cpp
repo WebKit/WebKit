@@ -377,12 +377,6 @@ bool JITCodeGenerator::nonSpeculativeStrictEq(Node& node, bool invert)
     return false;
 }
 
-void JITCodeGenerator::speculationCheck(MacroAssembler::Jump jumpToFail)
-{
-    ASSERT(m_isSpeculative);
-    static_cast<SpeculativeJIT*>(this)->speculationCheck(jumpToFail);
-}
-
 #ifndef NDEBUG
 static const char* dataFormatString(DataFormat format)
 {

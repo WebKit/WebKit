@@ -136,7 +136,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
             m_jit.emitLoad(nodeIndex, tag, payload);
             m_gprs.retain(tag, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payload, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(tag, payload, m_isSpeculative ? spillFormat : DataFormatJS);
+            info.fillJSValue(tag, payload, spillFormat);
             unlock(tag);
             unlock(payload);
         }
@@ -242,7 +242,7 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
             m_jit.emitLoad(nodeIndex, tagGPR, payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(tagGPR, payloadGPR, m_isSpeculative ? spillFormat : DataFormatJS);
+            info.fillJSValue(tagGPR, payloadGPR, spillFormat);
         }
 
         return true;
@@ -1515,45 +1515,6 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
 
     m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
-}
-
-void JITCodeGenerator::emitBranch(Node& node)
-{
-    // FIXME: Add fast cases for known Boolean!
-    JSValueOperand value(this, node.child1());
-    value.fill();
-    GPRReg valueTagGPR = value.tagGPR();
-    GPRReg valuePayloadGPR = value.payloadGPR();
-
-    GPRTemporary result(this);
-    GPRReg resultGPR = result.gpr();
-    
-    use(node.child1());
-    
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-
-    JITCompiler::Jump fastPath = m_jit.branch32(JITCompiler::Equal, valueTagGPR, JITCompiler::TrustedImm32(JSValue::Int32Tag));
-    JITCompiler::Jump slowPath = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::BooleanTag));
-
-    fastPath.link(&m_jit);
-    addBranch(m_jit.branchTest32(JITCompiler::Zero, valuePayloadGPR), notTaken);
-    addBranch(m_jit.jump(), taken);
-
-    slowPath.link(&m_jit);
-    silentSpillAllRegisters(resultGPR);
-    m_jit.push(valueTagGPR);
-    m_jit.push(valuePayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    silentFillAllRegisters(resultGPR);
-    
-    addBranch(m_jit.branchTest8(JITCompiler::NonZero, resultGPR), taken);
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
-    
-    noResult(m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void JITCodeGenerator::emitCall(Node& node)

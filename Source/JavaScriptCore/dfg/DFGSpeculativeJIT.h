@@ -600,6 +600,7 @@ private:
     void compileObjectEquality(Node&, void* vptr);
     void compileValueAdd(Node&);
     void compileLogicalNot(Node&);
+    void emitBranch(Node&);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.
@@ -943,7 +944,7 @@ private:
 };
 
 inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
-    : JITCodeGenerator(jit, true)
+    : JITCodeGenerator(jit)
     , m_compileOkay(true)
     , m_arguments(jit.codeBlock()->m_numParameters)
     , m_variables(jit.graph().m_localVars)

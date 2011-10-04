@@ -232,9 +232,8 @@ public:
     }
 
 protected:
-    JITCodeGenerator(JITCompiler& jit, bool isSpeculative)
+    JITCodeGenerator(JITCompiler& jit)
         : m_jit(jit)
-        , m_isSpeculative(isSpeculative)
         , m_compileIndex(0)
         , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
         , m_blockHeads(jit.graph().m_blocks.size())
@@ -778,8 +777,6 @@ protected:
     void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
     bool nonSpeculativeStrictEq(Node&, bool invert = false);
     
-    void emitBranch(Node&);
-    
     MacroAssembler::Address addressOfCallData(int idx)
     {
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
@@ -799,8 +796,6 @@ protected:
 
     void emitCall(Node&);
     
-    void speculationCheck(MacroAssembler::Jump jumpToFail);
-
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
     // the nodes result, since the node may have the same VirtualRegister as
@@ -1383,17 +1378,6 @@ protected:
 
     // The JIT, while also provides MacroAssembler functionality.
     JITCompiler& m_jit;
-    // This flag is used to distinguish speculative and non-speculative
-    // code generation. This is significant when filling spilled values
-    // from the RegisterFile. When spilling we attempt to store information
-    // as to the type of boxed value being stored (int32, double, cell), and
-    // when filling on the speculative path we will retrieve this type info
-    // where available. On the non-speculative path, however, we cannot rely
-    // on the spill format info, since the a value being loaded might have
-    // been spilled by either the speculative or non-speculative paths (where
-    // we entered the non-speculative path on an intervening bail-out), and
-    // the value may have been boxed differently on the two paths.
-    bool m_isSpeculative;
     // The current node being generated.
     BlockIndex m_block;
     NodeIndex m_compileIndex;
