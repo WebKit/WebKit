@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "ActivateFonts.h"
 
 #import <AppKit/AppKit.h>
 #import <CoreFoundation/CoreFoundation.h>
-#import <Foundation/Foundation.h>
+#import <objc/objc-runtime.h>
+#import <wtf/RetainPtr.h>
 
 @interface WKTRFontActivatorDummyClass : NSObject
 @end
@@ -36,6 +38,186 @@
 @end
 
 namespace WTR {
+
+
+static NSSet *allowedFontFamilySet()
+{
+    static NSSet *fontFamiliySet = [[NSSet setWithObjects:
+        @"Ahem",
+        @"Al Bayan",
+        @"American Typewriter",
+        @"Andale Mono",
+        @"Apple Braille",
+        @"Apple Color Emoji",
+        @"Apple Chancery",
+        @"Apple Garamond BT",
+        @"Apple LiGothic",
+        @"Apple LiSung",
+        @"Apple Symbols",
+        @"AppleGothic",
+        @"AppleMyungjo",
+        @"Arial Black",
+        @"Arial Hebrew",
+        @"Arial Narrow",
+        @"Arial Rounded MT Bold",
+        @"Arial Unicode MS",
+        @"Arial",
+        @"Ayuthaya",
+        @"Baghdad",
+        @"Baskerville",
+        @"BiauKai",
+        @"Big Caslon",
+        @"Brush Script MT",
+        @"Chalkboard",
+        @"Chalkduster",
+        @"Charcoal CY",
+        @"Cochin",
+        @"ColorBits",
+        @"Comic Sans MS",
+        @"Copperplate",
+        @"Corsiva Hebrew",
+        @"Courier New",
+        @"Courier",
+        @"DecoType Naskh",
+        @"Devanagari MT",
+        @"Didot",
+        @"Euphemia UCAS",
+        @"Futura",
+        @"GB18030 Bitmap",
+        @"Geeza Pro",
+        @"Geneva CY",
+        @"Geneva",
+        @"Georgia",
+        @"Gill Sans",
+        @"Gujarati MT",
+        @"GungSeo",
+        @"Gurmukhi MT",
+        @"HeadLineA",
+        @"Hei",
+        @"Heiti SC",
+        @"Heiti TC",
+        @"Helvetica CY",
+        @"Helvetica Neue",
+        @"Helvetica",
+        @"Herculanum",
+        @"Hiragino Kaku Gothic Pro",
+        @"Hiragino Kaku Gothic ProN",
+        @"Hiragino Kaku Gothic Std",
+        @"Hiragino Kaku Gothic StdN",
+        @"Hiragino Maru Gothic Pro",
+        @"Hiragino Maru Gothic ProN",
+        @"Hiragino Mincho Pro",
+        @"Hiragino Mincho ProN",
+        @"Hiragino Sans GB",
+        @"Hoefler Text",
+        @"Impact",
+        @"InaiMathi",
+        @"Kai",
+        @"Kailasa",
+        @"Kokonor",
+        @"Krungthep",
+        @"KufiStandardGK",
+        @"LiHei Pro",
+        @"LiSong Pro",
+        @"Lucida Grande",
+        @"Marker Felt",
+        @"Menlo",
+        @"Microsoft Sans Serif",
+        @"Monaco",
+        @"Mshtakan",
+        @"Nadeem",
+        @"New Peninim MT",
+        @"Optima",
+        @"Osaka",
+        @"Papyrus",
+        @"PCMyungjo",
+        @"PilGi",
+        @"Plantagenet Cherokee",
+        @"Raanana",
+        @"Sathu",
+        @"Silom",
+        @"Skia",
+        @"STFangsong",
+        @"STHeiti",
+        @"STKaiti",
+        @"STSong",
+        @"Symbol",
+        @"Tahoma",
+        @"Thonburi",
+        @"Times New Roman",
+        @"Times",
+        @"Trebuchet MS",
+        @"Verdana",
+        @"Webdings",
+        @"WebKit WeightWatcher",
+        @"Wingdings 2",
+        @"Wingdings 3",
+        @"Wingdings",
+        @"Zapf Dingbats",
+        @"Zapfino",
+        nil] retain];
+    
+    return fontFamiliySet;
+}
+
+static IMP appKitAvailableFontFamiliesIMP;
+static IMP appKitAvailableFontsIMP;
+
+static NSArray *wtr_NSFontManager_availableFontFamilies(id self, SEL _cmd)
+{
+    static NSArray *availableFontFamilies;
+    if (availableFontFamilies)
+        return availableFontFamilies;
+    
+    NSArray *availableFamilies = appKitAvailableFontFamiliesIMP(self, _cmd);
+
+    NSMutableSet *prunedFamiliesSet = [NSMutableSet setWithArray:availableFamilies];
+    [prunedFamiliesSet intersectSet:allowedFontFamilySet()];
+
+    availableFontFamilies = [[prunedFamiliesSet allObjects] retain];
+    return availableFontFamilies;
+}
+
+static NSArray *wtr_NSFontManager_availableFonts(id self, SEL _cmd)
+{
+    static NSArray *availableFonts;
+    if (availableFonts)
+        return availableFonts;
+    
+    NSSet *allowedFamilies = allowedFontFamilySet();
+    NSMutableArray *availableFontList = [[NSMutableArray alloc] initWithCapacity:[allowedFamilies count] * 2];
+    for (NSString *fontFamily in allowedFontFamilySet()) {
+        NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
+        for (NSArray* fontInfo in fontsForFamily) {
+            // Font name is the first entry in the array.
+            [availableFontList addObject:[fontInfo objectAtIndex:0]];
+        }
+    }
+    
+    availableFonts = availableFontList;
+    return availableFonts;
+}
+
+static void swizzleNSFontManagerMethods()
+{
+    Method availableFontFamiliesMethod = class_getInstanceMethod(objc_getClass("NSFontManager"), @selector(availableFontFamilies));
+    ASSERT(availableFontFamiliesMethod);
+    if (!availableFontFamiliesMethod) {
+        NSLog(@"Failed to swizzle the \"availableFontFamilies\" method on NSFontManager");
+        return;
+    }
+    
+    appKitAvailableFontFamiliesIMP = method_setImplementation(availableFontFamiliesMethod, (IMP)wtr_NSFontManager_availableFontFamilies);
+
+    Method availableFontsMethod = class_getInstanceMethod(objc_getClass("NSFontManager"), @selector(availableFonts));
+    ASSERT(availableFontsMethod);
+    if (!availableFontsMethod) {
+        NSLog(@"Failed to swizzle the \"availableFonts\" method on NSFontManager");
+        return;
+    }
+    
+    appKitAvailableFontsIMP = method_setImplementation(availableFontsMethod, (IMP)wtr_NSFontManager_availableFonts);
+}
 
 void activateFonts()
 {
@@ -69,6 +251,8 @@ void activateFonts()
         CFRelease(errors);
         exit(1);
     }
+
+    swizzleNSFontManagerMethods();
 }
 
 }

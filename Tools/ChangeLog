@@ -1,3 +1,24 @@
+2011-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move font-fixup code in WebKitTestRunner to a better place
+        https://bugs.webkit.org/show_bug.cgi?id=69356
+
+        Reviewed by Sam Weinig.
+        
+        Move code that swizzles NSFontManager methods to ActivateFonts.mm, which
+        already contains font-related code.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet):
+        (WTR::drt_NSFontManager_availableFontFamilies):
+        (WTR::drt_NSFontManager_availableFonts):
+        (WTR::swizzleNSFontManagerMethods):
+        (WTR::activateFonts):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2011-10-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Add DumpRenderTree.cpp
