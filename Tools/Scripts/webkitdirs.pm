@@ -2023,7 +2023,7 @@ sub runMacWebKitApp($;$)
     print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-    if ($useOpenCommand == USE_OPEN_COMMAND) {
+    if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
         return system("open", "-W", "-a", $appPath, "--args", @ARGV);
     }
     if (architecture()) {
