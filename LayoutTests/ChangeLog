@@ -1,3 +1,15 @@
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
+        Update leopard results.
+
+        * platform/chromium-cg-mac-leopard/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Removed.
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug23994-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/as-object: Removed.
+        * platform/chromium-mac-leopard/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Removed.
+        * platform/chromium-mac/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png:
+        * platform/chromium/tables/mozilla/bugs/bug23994-expected.txt: Removed.
+        * platform/qt/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Removed.
+
 2011-10-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed; new baselines for GTK after r96257, r96374 and r96404.
