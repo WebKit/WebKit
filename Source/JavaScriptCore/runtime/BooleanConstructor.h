@@ -38,8 +38,6 @@ namespace JSC {
             return constructor;
         }
 
-        static const ClassInfo s_info;
-
     protected:
         void finishCreation(ExecState*, BooleanPrototype*);
 
