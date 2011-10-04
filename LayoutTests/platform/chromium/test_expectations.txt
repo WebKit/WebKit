@@ -2522,7 +2522,7 @@ BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // New pixel tests added for bug 58730, rebaseline when webkit 58730 rolls.
-BUGWK58730 WIN LINUX: fast/css/linear-gradient-currentcolor.html = IMAGE
+BUGWK58730 WIN LINUX : fast/css/linear-gradient-currentcolor.html = IMAGE
 
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
