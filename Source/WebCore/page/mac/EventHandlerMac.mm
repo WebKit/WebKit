@@ -109,7 +109,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
     bool handled = handleWheelEvent(wheelEvent);
 
     ASSERT(handled == wheelEvent.isAccepted());
-    return wheelEvent.isAccepted();
+    return handled;
 }
 
 bool EventHandler::keyEvent(NSEvent *event)

@@ -1,5 +1,14 @@
 2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac release build fix after r96561, and Leopard build fix after r96568.
+
+        * editing/TextCheckingHelper.h:
+        (WebCore::TextCheckingParagraph::textCharAt):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::wheelEvent):
+
+2011-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r96568.
 
         * accessibility/AccessibilityObject.cpp:
