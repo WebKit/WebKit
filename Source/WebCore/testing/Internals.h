@@ -58,7 +58,6 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
-    void disableMemoryCache(bool disabled);
 
 #if ENABLE(INPUT_COLOR)
     bool connectColorChooserClient(Element*);

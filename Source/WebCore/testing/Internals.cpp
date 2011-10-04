@@ -38,7 +38,6 @@
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
 #include "IntRect.h"
-#include "MemoryCache.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "Range.h"
@@ -162,11 +161,6 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
     }
 
     return element->shadowPseudoId().string();
-}
-
-void Internals::disableMemoryCache(bool disabled)
-{
-    WebCore::memoryCache()->setDisabled(disabled);
 }
 
 #if ENABLE(INPUT_COLOR)

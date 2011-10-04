@@ -1,3 +1,13 @@
+2011-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove http/tests/inspector/network/disabled-cache-crash.html.
+        https://bugs.webkit.org/show_bug.cgi?id=69332
+
+        Reviewed by Pavel Feldman.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-10-03  Anders Carlsson  <andersca@apple.com>
 
         Content area does not return to the correct position after rubberbanding

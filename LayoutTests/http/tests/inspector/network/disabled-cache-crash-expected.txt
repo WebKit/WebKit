@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 20: window 1 ok
-CONSOLE MESSAGE: line 26: window 2 ok
-

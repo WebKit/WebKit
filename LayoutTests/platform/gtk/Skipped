@@ -1537,7 +1537,6 @@ http/tests/inspector/network/network-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=64097
 http/tests/inspector/network/network-disable-cache-memory.html
 http/tests/inspector/network/network-disable-cache-xhrs.html
-http/tests/inspector/network/disabled-cache-crash.html
 
 # textInputController.hasGrammarMarker() is not implemented.
 editing/spelling/grammar.html

@@ -1,3 +1,18 @@
+2011-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove http/tests/inspector/network/disabled-cache-crash.html.
+        https://bugs.webkit.org/show_bug.cgi?id=69332
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/disabled-cache-crash-expected.txt: Removed.
+        * http/tests/inspector/network/disabled-cache-crash.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-10-04  Elliot Poger  <epoger@google.com>
 
         allow failure of most Chromium-Mac-Skia tests while we clean up that port
