@@ -72,7 +72,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
         var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
 
-        var rawSourceCode = this._rawSourceCodeForScript(sourceURL);
+        var rawSourceCode = this._rawSourceCodeForScriptWithURL(sourceURL);
         if (!rawSourceCode) {
             anchor.setAttribute("preferred_panel", "resources");
             anchor.setAttribute("line_number", lineNumber);
@@ -384,11 +384,17 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
+    /**
+     * @param {string} sourceURL
+     */
     _rawSourceCodeForScriptWithURL: function(sourceURL)
     {
         return this._rawSourceCode[sourceURL];
     },
 
+    /**
+     * @param {WebInspector.Script} script
+     */
     _rawSourceCodeForScript: function(script)
     {
         return this._rawSourceCode[this._createRawSourceCodeId(script)];

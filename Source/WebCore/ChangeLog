@@ -1,5 +1,15 @@
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fixed poor inspector merge, drive-by front-endcompilation fix.
+
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.ScriptContentProvider.prototype.requestContent):
+        (WebInspector.ScriptContentProvider.prototype.searchInContent):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent):
+        * inspector/front-end/DebuggerPresentationModel.js:
+
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: remove dependency from GoToLine dialog from Panel.
         https://bugs.webkit.org/show_bug.cgi?id=69327
 

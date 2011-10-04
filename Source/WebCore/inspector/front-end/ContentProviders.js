@@ -46,6 +46,11 @@ WebInspector.ScriptContentProvider.prototype = {
             callback(this._mimeType, source);
         }
         this._script.requestSource(didRequestSource.bind(this));
+    },
+
+    searchInContent: function(query, callback)
+    {
+        callback([]);
     }
 }
 
@@ -76,6 +81,11 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
        for (var i = 0; i < scripts.length; ++i)
            scripts[i].requestSource(didRequestSource.bind(this));
    },
+
+    searchInContent: function(query, callback)
+    {
+        callback([]);
+    },
 
    _concatenateScriptsContent: function(scripts, sources)
    {
