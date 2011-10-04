@@ -1,3 +1,10 @@
+2011-10-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
+        https://bugs.webkit.org/show_bug.cgi?id=52810
+
+        * platform/qt/Skipped: Skip one more failing test.
+
 2011-09-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add compiler source mapping support to RawSourceCode.

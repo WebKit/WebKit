@@ -2008,6 +2008,7 @@ svg/custom/use-css-events.svg
 svg/custom/use-detach.svg
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/filters/feColorMatrix-values.svg
+svg/filters/feColorMatrix-saturate.svg
 svg/filters/filteredImage.svg
 svg/hixie/links/001.xml
 svg/hixie/perf/007.xml
