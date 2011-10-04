@@ -1,3 +1,22 @@
+2011-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r94274): setting input.value erroneously triggers focus event
+        https://bugs.webkit.org/show_bug.cgi?id=69315
+
+        Reviewed by Kent Tamura.
+
+        Fixed the bug by adding a new flag to setSelection to avoid calling setFocusedNodeIfNeeded
+        when called by nodeWillBeRemoved and textWillBeReplaced.
+
+        Added a manual test. Unfortunately, the test always passes in DRT.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::respondToNodeModification):
+        (WebCore::FrameSelection::textWillBeReplaced):
+        * editing/FrameSelection.h:
+        * manual-tests/mutate-unfocused-text-with-selection.html: Added.
+
 2011-10-04  Young Han Lee  <joybro201@gmail.com>
 
         HTML canvas strokes with dash and dashOffset

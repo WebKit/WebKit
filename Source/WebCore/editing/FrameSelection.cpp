@@ -274,7 +274,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     m_selection = s;
     setCaretRectNeedsUpdate();
     
-    if (!s.isNone())
+    if (!s.isNone() && !(options & DoNotSetFocus))
         setFocusedNodeIfNeeded();
     
     updateAppearance();
@@ -393,7 +393,7 @@ void FrameSelection::respondToNodeModification(Node* node, bool baseRemoved, boo
         clearRenderViewSelection(m_selection.start());
 
     if (clearDOMTreeSelection)
-        setSelection(VisibleSelection(), 0);
+        setSelection(VisibleSelection(), DoNotSetFocus);
 }
 
 static void updatePositionAfterAdoptingTextReplacement(Position& position, CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
@@ -433,7 +433,7 @@ void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, un
         VisibleSelection newSelection;
         newSelection.setWithoutValidation(base, extent);
         m_frame->document()->updateLayout();
-        setSelection(newSelection, 0);
+        setSelection(newSelection, DoNotSetFocus);
     }
 }
 
