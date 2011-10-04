@@ -1,3 +1,16 @@
+2011-10-04  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Implement font shaping with font-feature-settings on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65904
+
+        Reviewed by Kenneth Russell.
+
+        Adds expectations of css3/font-feature-settings-rendering.html for Chromium win port. Since Uniscirbe OpenType APIs are not available on WinXP by default, the test could fail on WinXP.
+
+        * platform/chromium-win/css3/font-feature-settings-rendering-expected.png: Added.
+        * platform/chromium-win/css3/font-feature-settings-rendering-expected.txt: Added.
+        * platform/chromium/test_expectations.txt: VISTA and WIN7 should pass css3/font-feature-settings-rendering.html.
+
 2011-10-04  Oliver Varga  <voliver@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Update Qt specific expected files after r96498.

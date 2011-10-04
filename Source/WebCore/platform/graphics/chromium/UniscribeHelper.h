@@ -44,10 +44,12 @@ class UniscribeTest_TooBig_Test;  // A gunit test for UniscribeHelper.
 
 namespace WebCore {
 
+class FontFeatureSettings;
 class GraphicsContext;
 
-#define UNISCRIBE_HELPER_STACK_RUNS 8
-#define UNISCRIBE_HELPER_STACK_CHARS 32
+const unsigned cUniscribeHelperStackRuns = 8;
+const unsigned cUniscribeHelperStackChars = 32;
+const unsigned cUniscribeHelperFeatures = 4;
 
 // This object should be safe to create & destroy frequently, as long as the
 // caller preserves the script_cache when possible (this data may be slow to
@@ -157,6 +159,10 @@ public:
     {
         m_disableFontFallback = true;
     }
+
+    // Set TEXTRANGE_PROPERTIES structure which contains
+    // OpenType feature records generated from FontFeatureSettings.
+    void setRangeProperties(const FontFeatureSettings*);
 
     // You must call this after setting any options but before doing any
     // other calls like asking for widths or drawing.
@@ -269,7 +275,7 @@ private:
 
         // Glyph indices in the font used to display this item. These indices
         // are in screen order.
-        Vector<WORD, UNISCRIBE_HELPER_STACK_CHARS> m_glyphs;
+        Vector<WORD, cUniscribeHelperStackChars> m_glyphs;
 
         // For each input character, this tells us the first glyph index it
         // generated. This is the only array with size of the input chars.
@@ -278,20 +284,20 @@ private:
         // can generate one glyph, in which case there will be adjacent
         // duplicates in this list. One character can also generate multiple
         // glyphs, in which case there will be skipped indices in this list.
-        Vector<WORD, UNISCRIBE_HELPER_STACK_CHARS> m_logs;
+        Vector<WORD, cUniscribeHelperStackChars> m_logs;
 
         // Flags and such for each glyph.
-        Vector<SCRIPT_VISATTR, UNISCRIBE_HELPER_STACK_CHARS> m_visualAttributes;
+        Vector<SCRIPT_VISATTR, cUniscribeHelperStackChars> m_visualAttributes;
 
         // Horizontal advances for each glyph listed above, this is basically
         // how wide each glyph is.
-        Vector<int, UNISCRIBE_HELPER_STACK_CHARS> m_advance;
+        Vector<int, cUniscribeHelperStackChars> m_advance;
 
         // This contains glyph offsets, from the nominal position of a glyph.
         // It is used to adjust the positions of multiple combining characters
         // around/above/below base characters in a context-sensitive manner so
         // that they don't bump against each other and the base character.
-        Vector<GOFFSET, UNISCRIBE_HELPER_STACK_CHARS> m_offsets;
+        Vector<GOFFSET, cUniscribeHelperStackChars> m_offsets;
 
         // Filled by a call to Justify, this is empty for nonjustified text.
         // If nonempty, this contains the array of justify characters for each
@@ -300,7 +306,7 @@ private:
         // This is the same as the advance array, but with extra space added
         // for some characters. The difference between a glyph's |justify|
         // width and it's |advance| width is the extra space added.
-        Vector<int, UNISCRIBE_HELPER_STACK_CHARS> m_justify;
+        Vector<int, cUniscribeHelperStackChars> m_justify;
 
         // Sizing information for this run. This treats the entire run as a
         // character with a preceeding advance, width, and ending advance.  The
@@ -358,7 +364,7 @@ private:
     // by |input| comes from ScriptItemize and is supposed to contain
     // characters belonging to a single script aside from characters common to
     // all scripts (e.g. space).
-    bool shape(const UChar* input, int itemLength, int numGlyphs, SCRIPT_ITEM& run, Shaping&);
+    bool shape(const UChar* input, int itemLength, int numGlyphs, SCRIPT_ITEM& run, OPENTYPE_TAG, Shaping&);
 
     // Gets Windows font data for the next best font to try in the list
     // of fonts. When there's no more font available, returns false
@@ -405,9 +411,10 @@ private:
 
     // Uniscribe breaks the text into Runs. These are one length of text that is
     // in one script and one direction. This array is in reading order.
-    Vector<SCRIPT_ITEM, UNISCRIBE_HELPER_STACK_RUNS> m_runs;
+    Vector<SCRIPT_ITEM, cUniscribeHelperStackRuns> m_runs;
 
-    Vector<Shaping, UNISCRIBE_HELPER_STACK_RUNS> m_shapes;
+    Vector<Shaping, cUniscribeHelperStackRuns> m_shapes;
+    Vector<OPENTYPE_TAG, cUniscribeHelperStackRuns> m_scriptTags;
 
     // This is a mapping between reading order and screen order for the items.
     // Uniscribe's items array are in reading order. For right-to-left text,
@@ -416,7 +423,12 @@ private:
     // and positions. This list is in screen order from left to right, and
     // gives the index into the |m_runs| and |m_shapes| arrays of each
     // subsequent item.
-    Vector<int, UNISCRIBE_HELPER_STACK_RUNS> m_screenOrder;
+    Vector<int, cUniscribeHelperStackRuns> m_screenOrder;
+
+    // This contains Uniscribe's OpenType feature settings. This structure
+    // is filled by using WebKit's |FontFeatureSettings|.
+    TEXTRANGE_PROPERTIES m_rangeProperties;
+    Vector<OPENTYPE_FEATURE_RECORD, cUniscribeHelperFeatures> m_featureRecords;
 };
 
 }  // namespace WebCore

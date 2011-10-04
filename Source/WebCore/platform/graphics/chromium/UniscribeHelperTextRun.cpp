@@ -53,6 +53,7 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
     setSpaceWidth(font.spaceWidth());
     setWordSpacing(font.wordSpacing());
     setAscent(font.fontMetrics().ascent());
+    setRangeProperties(font.fontDescription().featureSettings());
 
     init();
 

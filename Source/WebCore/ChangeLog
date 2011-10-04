@@ -1,3 +1,26 @@
+2011-10-04  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Implement font shaping with font-feature-settings on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65904
+
+        Reviewed by Kenneth Russell.
+
+        Use Uniscribe's OpenType APIs to shape complex text to support -webkit-font-feature-settings property.
+
+        No new tests. css3/font-feature-settings-rendering.html should pass by this patch.
+
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::loadOpenTypeFunctions):
+        (WebCore::UniscribeHelper::UniscribeHelper): Calls loadOpenTypeFunctions if needed.
+        (WebCore::UniscribeHelper::fillRuns): Uses ScriptItemizeOpenType() if possible.
+        (WebCore::UniscribeHelper::shape): Uses ScriptShapeOpenType() if possible.
+        (WebCore::UniscribeHelper::fillShapes): Adds OpenType script tag as an argument.
+        (WebCore::convertFeatureTag): Added.
+        (WebCore::UniscribeHelper::setRangeProperties): Added.
+        * platform/graphics/chromium/UniscribeHelper.h:
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp:
+        (WebCore::UniscribeHelperTextRun::UniscribeHelperTextRun): Calls setRangeProperties().
+
 2011-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Implement declared but missing functions.

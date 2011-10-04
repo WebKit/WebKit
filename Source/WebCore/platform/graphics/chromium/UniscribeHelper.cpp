@@ -41,6 +41,44 @@
 
 namespace WebCore {
 
+// The function types for ScriptItemizeOpenType() and ScriptShapeOpenType().
+// We want to use these functions for OpenType feature support, but we can't
+// call them directly because usp10.dll does not always have them.
+// Instead, we use GetProcAddress() to check whether we can actually use these
+// function. If we can't use these functions, we substitute ScriptItemze() and
+// ScriptShape().
+typedef HRESULT (WINAPI *ScriptItemizeOpenTypeFunc)(const WCHAR*, int, int,
+                                                    const SCRIPT_CONTROL*,
+                                                    const SCRIPT_STATE*,
+                                                    SCRIPT_ITEM*,
+                                                    OPENTYPE_TAG*, int*);
+typedef HRESULT (WINAPI *ScriptShapeOpenTypeFunc)(HDC, SCRIPT_CACHE*,
+                                                  SCRIPT_ANALYSIS*,
+                                                  OPENTYPE_TAG, OPENTYPE_TAG,
+                                                  int*, TEXTRANGE_PROPERTIES**,
+                                                  int, const WCHAR*, int, int,
+                                                  WORD*, SCRIPT_CHARPROP*,
+                                                  WORD*, SCRIPT_GLYPHPROP*,
+                                                  int*);
+
+static ScriptItemizeOpenTypeFunc gScriptItemizeOpenTypeFunc = 0;
+static ScriptShapeOpenTypeFunc gScriptShapeOpenTypeFunc = 0;
+static bool gOpenTypeFunctionsLoaded = false;
+
+static void loadOpenTypeFunctions()
+{
+    HMODULE hModule = GetModuleHandle(L"usp10");
+    if (hModule) {
+        gScriptItemizeOpenTypeFunc = reinterpret_cast<ScriptItemizeOpenTypeFunc>(GetProcAddress(hModule, "ScriptItemizeOpenType"));
+        gScriptShapeOpenTypeFunc = reinterpret_cast<ScriptShapeOpenTypeFunc>(GetProcAddress(hModule, "ScriptShapeOpenType"));
+    }
+    if (!gScriptItemizeOpenTypeFunc || !gScriptShapeOpenTypeFunc) {
+        gScriptItemizeOpenTypeFunc = 0;
+        gScriptShapeOpenTypeFunc = 0;
+    }
+    gOpenTypeFunctionsLoaded = true;
+}
+
 // HFONT is the 'incarnation' of 'everything' about font, but it's an opaque
 // handle and we can't directly query it to make a new HFONT sharing
 // its characteristics (height, style, etc) except for family name.
@@ -92,6 +130,8 @@ UniscribeHelper::UniscribeHelper(const UChar* input,
 
 {
     m_logfont.lfFaceName[0] = 0;
+    if (!gOpenTypeFunctionsLoaded)
+        loadOpenTypeFunctions();
 }
 
 UniscribeHelper::~UniscribeHelper()
@@ -418,7 +458,8 @@ WORD UniscribeHelper::firstGlyphForCharacter(int charOffset) const
 void UniscribeHelper::fillRuns()
 {
     HRESULT hr;
-    m_runs.resize(UNISCRIBE_HELPER_STACK_RUNS);
+    m_runs.resize(cUniscribeHelperStackRuns);
+    m_scriptTags.resize(cUniscribeHelperStackRuns);
 
     SCRIPT_STATE inputState;
     inputState.uBidiLevel = m_isRtl;
@@ -473,10 +514,35 @@ void UniscribeHelper::fillRuns()
         // It seems to be doing at least two passes, the first where it puts a
         // lot of intermediate data into our items, and the second where it
         // collates them.
-        hr = ScriptItemize(m_input, m_inputLength,
-                           static_cast<int>(m_runs.size()) - 1, &inputControl,
-                           &inputState,
-                           &m_runs[0], &numberOfItems);
+        if (gScriptItemizeOpenTypeFunc) {
+            hr = gScriptItemizeOpenTypeFunc(m_input, m_inputLength,
+                                            static_cast<int>(m_runs.size()) - 1,
+                                            &inputControl, &inputState,
+                                            &m_runs[0], &m_scriptTags[0],
+                                            &numberOfItems);
+            if (SUCCEEDED(hr)) {
+                // Pack consecutive runs, the script tag of which are
+                // SCRIPT_TAG_UNKNOWN, to reduce the number of runs.
+                for (int i = 0; i < numberOfItems; ++i) {
+                    if (m_scriptTags[i] == SCRIPT_TAG_UNKNOWN) {
+                        int j = 1;
+                        while (i + j < numberOfItems && m_scriptTags[i + j] == SCRIPT_TAG_UNKNOWN)
+                            ++j;
+                        if (--j) {
+                            m_runs.remove(i + 1, j);
+                            m_scriptTags.remove(i + 1, j);
+                            numberOfItems -= j;
+                        }
+                    }
+                }
+                m_scriptTags.resize(numberOfItems);
+            }
+        } else {
+            hr = ScriptItemize(m_input, m_inputLength,
+                               static_cast<int>(m_runs.size()) - 1,
+                               &inputControl, &inputState, &m_runs[0],
+                               &numberOfItems);
+        }
         if (SUCCEEDED(hr)) {
             m_runs.resize(numberOfItems);
             break;
@@ -488,6 +554,7 @@ void UniscribeHelper::fillRuns()
         }
         // There was not enough items for it to write into, expand.
         m_runs.resize(m_runs.size() * 2);
+        m_scriptTags.resize(m_runs.size());
     }
 }
 
@@ -495,11 +562,14 @@ bool UniscribeHelper::shape(const UChar* input,
                             int itemLength,
                             int numGlyphs,
                             SCRIPT_ITEM& run,
+                            OPENTYPE_TAG scriptTag,
                             Shaping& shaping)
 {
     HFONT hfont = m_hfont;
     SCRIPT_CACHE* scriptCache = m_scriptCache;
     SCRIPT_FONTPROPERTIES* fontProperties = m_fontProperties;
+    Vector<SCRIPT_CHARPROP, cUniscribeHelperStackChars> charProps;
+    Vector<SCRIPT_GLYPHPROP, cUniscribeHelperStackChars> glyphProps;
     int ascent = m_ascent;
     WORD spaceGlyph = m_spaceGlyph;
     HDC tempDC = 0;
@@ -522,6 +592,8 @@ bool UniscribeHelper::shape(const UChar* input,
         shaping.m_logs.resize(itemLength);
         shaping.m_glyphs.resize(numGlyphs);
         shaping.m_visualAttributes.resize(numGlyphs);
+        charProps.resize(itemLength);
+        glyphProps.resize(numGlyphs);
 
 #ifdef PURIFY
         // http://code.google.com/p/chromium/issues/detail?id=5309
@@ -542,13 +614,23 @@ bool UniscribeHelper::shape(const UChar* input,
         ZeroMemory(&shaping.m_glyphs[0],
                    sizeof(shaping.m_glyphs[0]) * shaping.m_glyphs.size());
 #endif
-
         // Firefox sets SCRIPT_ANALYSIS.SCRIPT_STATE.fDisplayZWG to true
         // here. Is that what we want? It will display control characters.
-        hr = ScriptShape(tempDC, scriptCache, input, itemLength,
-                         numGlyphs, &run.a,
-                         &shaping.m_glyphs[0], &shaping.m_logs[0],
-                         &shaping.m_visualAttributes[0], &generatedGlyphs);
+        if (gScriptShapeOpenTypeFunc) {
+            TEXTRANGE_PROPERTIES* rangeProps = m_featureRecords.size() ? &m_rangeProperties : 0;
+            hr = gScriptShapeOpenTypeFunc(tempDC, scriptCache, &run.a,
+                                          scriptTag, 0, &itemLength,
+                                          &rangeProps, rangeProps ? 1 : 0,
+                                          input, itemLength, numGlyphs,
+                                          &shaping.m_logs[0], &charProps[0],
+                                          &shaping.m_glyphs[0], &glyphProps[0],
+                                          &generatedGlyphs);
+        } else {
+            hr = ScriptShape(tempDC, scriptCache, input, itemLength,
+                             numGlyphs, &run.a,
+                             &shaping.m_glyphs[0], &shaping.m_logs[0],
+                             &shaping.m_visualAttributes[0], &generatedGlyphs);
+        }
         if (hr == E_PENDING) {
             // Allocate the DC.
             tempDC = GetDC(0);
@@ -645,6 +727,12 @@ bool UniscribeHelper::shape(const UChar* input,
   cleanup:
     shaping.m_glyphs.resize(generatedGlyphs);
     shaping.m_visualAttributes.resize(generatedGlyphs);
+    // If we use ScriptShapeOpenType(), visual attributes information for each
+    // characters are stored in |glyphProps[i].sva|.
+    if (gScriptShapeOpenTypeFunc) {
+        for (int i = 0; i < generatedGlyphs; ++i)
+            memcpy(&shaping.m_visualAttributes[i], &glyphProps[i].sva, sizeof(SCRIPT_VISATTR));
+    }
     shaping.m_advance.resize(generatedGlyphs);
     shaping.m_offsets.resize(generatedGlyphs);
     if (tempDC) {
@@ -668,11 +756,11 @@ void UniscribeHelper::fillShapes()
             itemLength = m_runs[i + 1].iCharPos - startItem;
 
         int numGlyphs;
-        if (itemLength < UNISCRIBE_HELPER_STACK_CHARS) {
+        if (itemLength < cUniscribeHelperStackChars) {
             // We'll start our buffer sizes with the current stack space
             // available in our buffers if the current input fits. As long as
             // it doesn't expand past that we'll save a lot of time mallocing.
-            numGlyphs = UNISCRIBE_HELPER_STACK_CHARS;
+            numGlyphs = cUniscribeHelperStackChars;
         } else {
             // When the input doesn't fit, give up with the stack since it will
             // almost surely not be enough room (unless the input actually
@@ -685,7 +773,7 @@ void UniscribeHelper::fillShapes()
         // Convert a string to a glyph string trying the primary font, fonts in
         // the fallback list and then script-specific last resort font.
         Shaping& shaping = m_shapes[i];
-        if (!shape(&m_input[startItem], itemLength, numGlyphs, m_runs[i], shaping))
+        if (!shape(&m_input[startItem], itemLength, numGlyphs, m_runs[i], m_scriptTags[i], shaping))
             continue;
 
         // At the moment, the only time m_disableFontFallback is set is
@@ -724,6 +812,7 @@ void UniscribeHelper::fillShapes()
             // Some error we don't know how to handle. Nuke all of our data
             // since we can't deal with partially valid data later.
             m_runs.clear();
+            m_scriptTags.clear();
             m_shapes.clear();
             m_screenOrder.clear();
         }
@@ -932,5 +1021,25 @@ bool UniscribeHelper::containsMissingGlyphs(const Shaping& shaping,
     return false;
 }
 
+static OPENTYPE_TAG convertFeatureTag(const String& tag)
+{
+    return ((tag[0] & 0xFF) | ((tag[1] & 0xFF) << 8) | ((tag[2] & 0xFF) << 16) | ((tag[3] & 0xFF) << 24));
+}
+
+void UniscribeHelper::setRangeProperties(const FontFeatureSettings* featureSettings)
+{
+    if (!featureSettings || !featureSettings->size()) {
+        m_featureRecords.resize(0);
+        return;
+    }
+
+    m_featureRecords.resize(featureSettings->size());
+    for (unsigned i = 0; i < featureSettings->size(); ++i) {
+        m_featureRecords[i].lParameter = featureSettings->at(i).value();
+        m_featureRecords[i].tagFeature = convertFeatureTag(featureSettings->at(i).tag());
+    }
+    m_rangeProperties.potfRecords = &m_featureRecords[0];
+    m_rangeProperties.cotfRecords = m_featureRecords.size();
+}
 
 }  // namespace WebCore
