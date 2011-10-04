@@ -30,13 +30,18 @@
 
 WebInspector.ExtensionPanel = function(id, label, iconURL, options)
 {
-    this.toolbarItemLabel = label;
+    this._toolbarItemLabel = label;
     if (iconURL)
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
     WebInspector.Panel.call(this, id);
 }
 
 WebInspector.ExtensionPanel.prototype = {
+    get toolbarItemLabel()
+    {
+        return this._toolbarItemLabel;
+    },
+
     get defaultFocusedElement()
     {
         return this.sidebarTreeElement || this.element;

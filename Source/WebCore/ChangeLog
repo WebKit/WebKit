@@ -1,3 +1,11 @@
+2011-10-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector tests fix.
+
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel):
+        (WebInspector.ExtensionPanel.prototype.get toolbarItemLabel):
+
 2011-09-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add compiler source mapping support to RawSourceCode.
