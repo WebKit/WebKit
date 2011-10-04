@@ -836,7 +836,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     }
 
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
-    if (m_scrollElasticityController.m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberBandTimer.isActive())) {
+    if (m_scrollElasticityController.m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_scrollElasticityController.m_snapRubberbandTimerIsActive)) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
             m_scrollElasticityController.m_ignoreMomentumScrolls = false;
             return true;
@@ -1093,8 +1093,8 @@ void ScrollAnimatorMac::beginScrollGesture()
 
     m_scrollElasticityController.m_overflowScrollDelta = FloatSize();
     
-    if (m_snapRubberBandTimer.isActive())
-        m_snapRubberBandTimer.stop();
+    m_snapRubberBandTimer.stop();
+    m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
 }
 
 void ScrollAnimatorMac::endScrollGesture()
@@ -1112,7 +1112,7 @@ void ScrollAnimatorMac::snapRubberBand()
 
     m_scrollElasticityController.m_inScrollGesture = false;
 
-    if (m_snapRubberBandTimer.isActive())
+    if (m_scrollElasticityController.m_snapRubberbandTimerIsActive)
         return;
 
     m_scrollElasticityController.m_startTime = [NSDate timeIntervalSinceReferenceDate];
@@ -1121,6 +1121,7 @@ void ScrollAnimatorMac::snapRubberBand()
     m_scrollElasticityController.m_origVelocity = FloatSize();
 
     m_snapRubberBandTimer.startRepeating(1.0/60.0);
+    m_scrollElasticityController.m_snapRubberbandTimerIsActive = true;
 }
 
 static inline float roundTowardZero(float num)
@@ -1146,11 +1147,13 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             m_scrollElasticityController.m_startStretch = m_scrollableArea->overhangAmount();
             if (m_scrollElasticityController.m_startStretch == FloatSize()) {    
                 m_snapRubberBandTimer.stop();
+
                 m_scrollElasticityController.m_stretchScrollForce = FloatSize();
                 m_scrollElasticityController.m_startTime = 0;
                 m_scrollElasticityController.m_startStretch = FloatSize();
                 m_scrollElasticityController.m_origOrigin = FloatPoint();
                 m_scrollElasticityController.m_origVelocity = FloatSize();
+                m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
 
                 return;
             }
@@ -1195,12 +1198,13 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             m_scrollableArea->didCompleteRubberBand(roundedIntSize(m_scrollElasticityController.m_startStretch));
 
             m_snapRubberBandTimer.stop();
+
             m_scrollElasticityController.m_stretchScrollForce = FloatSize();
-            
             m_scrollElasticityController.m_startTime = 0;
             m_scrollElasticityController.m_startStretch = FloatSize();
             m_scrollElasticityController.m_origOrigin = FloatPoint();
             m_scrollElasticityController.m_origVelocity = FloatSize();
+            m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
         }
     } else {
         m_scrollElasticityController.m_startTime = [NSDate timeIntervalSinceReferenceDate];

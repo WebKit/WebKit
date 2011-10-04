@@ -1,5 +1,29 @@
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
+        ScrollElasticityController should keep track of the rubberband timer state
+        https://bugs.webkit.org/show_bug.cgi?id=69381
+
+        Reviewed by Sam Weinig.
+
+        Add a m_snapRubberbandTimerIsActive member variable to ScrollElasticityController
+        and use it instead of checking whether the m_snapRubberbandTimer is active.
+
+        Eventually, ScrollElasticityControllerClient will have two member functions for starting
+        and stopping the timer, and the ScrollElasticityController will call them at the appropriate times.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        It's OK to stop the timer unconditionally.
+
+        (WebCore::ScrollAnimatorMac::snapRubberBand):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::ScrollElasticityController):
+
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
         Move all rubber-banding related member variables to ScrollElasticityController
         https://bugs.webkit.org/show_bug.cgi?id=69379
 

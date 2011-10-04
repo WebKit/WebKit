@@ -41,6 +41,7 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
     , m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin(false)
     , m_lastMomentumScrollTimestamp(0)
     , m_startTime(0)
+    , m_snapRubberbandTimerIsActive(false)
 {
 }
 

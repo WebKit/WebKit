@@ -70,6 +70,8 @@ public:
     FloatSize m_startStretch;
     FloatPoint m_origOrigin;
     FloatSize m_origVelocity;
+
+    bool m_snapRubberbandTimerIsActive;
 };
 
 } // namespace WebCore
