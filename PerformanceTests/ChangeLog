@@ -1,5 +1,19 @@
 2011-10-04  Eric Seidel  <eric@webkit.org>
 
+        Update html5-full-render.html to load the HTML5 spec incrementally, closer to how the browser would
+        https://bugs.webkit.org/show_bug.cgi?id=69374
+
+        Reviewed by James Robinson.
+
+        This should finally be able to provide us with a repeatable metric
+        for how fast we're currently able to load the HTML5 spec.
+        There are a variety of interesting functions which show up in this
+        sample, including of course style resolution.
+
+        * Parser/html5-full-render.html:
+
+2011-10-04  Eric Seidel  <eric@webkit.org>
+
         Update our copy of the HTML5 spec used for performance testing to match the latest version
         https://bugs.webkit.org/show_bug.cgi?id=69364
 
