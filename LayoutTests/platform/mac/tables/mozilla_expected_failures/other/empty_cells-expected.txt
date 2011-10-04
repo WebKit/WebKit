@@ -341,15 +341,15 @@ layer at (0,0) size 785x2496
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 430x18
             text run at (0,0) width 430: "this table should be about 38 pixels wide (colspan=4, cellspacing=2)"
-        RenderTable {TABLE} at (0,18) size 29x8 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 27x6
-            RenderTableRow {TR} at (0,2) size 27x2
-              RenderTableCell {TD} at (2,2) size 3x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
-              RenderTableCell {TD} at (7,2) size 2x2 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=4]
-              RenderTableCell {TD} at (11,2) size 2x2 [border: (1px inset #808080)] [r=0 c=8 rs=1 cs=4]
-              RenderTableCell {TD} at (15,2) size 2x2 [border: (1px inset #808080)] [r=0 c=12 rs=1 cs=4]
-              RenderTableCell {TD} at (19,2) size 2x2 [border: (1px inset #808080)] [r=0 c=16 rs=1 cs=4]
-              RenderTableCell {TD} at (23,2) size 2x2 [border: (1px inset #808080)] [r=0 c=20 rs=1 cs=4]
+        RenderTable {TABLE} at (0,18) size 28x8 [bgcolor=#FFA500] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 26x6
+            RenderTableRow {TR} at (0,2) size 26x2
+              RenderTableCell {TD} at (2,2) size 2x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
+              RenderTableCell {TD} at (6,2) size 2x2 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=4]
+              RenderTableCell {TD} at (10,2) size 2x2 [border: (1px inset #808080)] [r=0 c=8 rs=1 cs=4]
+              RenderTableCell {TD} at (14,2) size 2x2 [border: (1px inset #808080)] [r=0 c=12 rs=1 cs=4]
+              RenderTableCell {TD} at (18,2) size 2x2 [border: (1px inset #808080)] [r=0 c=16 rs=1 cs=4]
+              RenderTableCell {TD} at (22,2) size 2x2 [border: (1px inset #808080)] [r=0 c=20 rs=1 cs=4]
         RenderBlock (anonymous) at (0,26) size 769x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,952) size 769x44

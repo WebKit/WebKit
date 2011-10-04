@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 175x18
           text run at (0,0) width 175: "No assert means test PASS."
-      RenderTable {TABLE} at (0,68) size 4x0
-      RenderTable {TABLE} at (0,68) size 4x2
-        RenderTableSection {TBODY} at (0,0) size 4x2
+      RenderTable {TABLE} at (0,68) size 2x0
+      RenderTable {TABLE} at (0,68) size 2x2
+        RenderTableSection {TBODY} at (0,0) size 2x2
       RenderTable {TABLE} at (0,70) size 5x4
         RenderTableSection {THEAD} at (0,0) size 5x4
           RenderTableRow (anonymous) at (0,2) size 5x0
@@ -31,6 +31,6 @@ layer at (0,0) size 800x600
           RenderTableRow (anonymous) at (0,2) size 5x0
             RenderTableCell (anonymous) at (2,2) size 1x0 [r=0 c=0 rs=1 cs=1]
               RenderInline {FORM} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,78) size 4x4
-        RenderTableSection {TBODY} at (0,0) size 4x4
-          RenderTableRow {TR} at (0,2) size 4x0
+      RenderTable {TABLE} at (0,78) size 2x4
+        RenderTableSection {TBODY} at (0,0) size 2x4
+          RenderTableRow {TR} at (0,2) size 2x0
