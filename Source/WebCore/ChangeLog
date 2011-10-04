@@ -1,3 +1,23 @@
+2011-10-04  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Moved files towards GTK removal
+        https://bugs.webkit.org/show_bug.cgi?id=69229
+
+        Reviewed by Tony Chang.
+
+        * WebCore.gypi:
+        * platform/chromium/PlatformThemeChromiumLinux.cpp: Renamed from Source/WebCore/platform/chromium/PlatformThemeChromiumGtk.cpp.
+        (WebCore::PlatformThemeChromiumLinux::setScrollbarColors):
+        (WebCore::clamp):
+        (WebCore::PlatformThemeChromiumLinux::saturateAndBrighten):
+        (WebCore::PlatformThemeChromiumLinux::outlineColor):
+        (WebCore::PlatformThemeChromiumLinux::paintArrowButton):
+        * platform/chromium/PlatformThemeChromiumLinux.h: Renamed from Source/WebCore/platform/chromium/PlatformThemeChromiumGtk.h.
+        (WebCore::PlatformThemeChromiumLinux::thumbInactiveColor):
+        (WebCore::PlatformThemeChromiumLinux::thumbActiveColor):
+        (WebCore::PlatformThemeChromiumLinux::trackColor):
+        (WebCore::PlatformThemeChromiumLinux::PlatformThemeChromiumLinux):
+
 2011-10-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Extract scheduling logic from CCThreadProxy to its own class

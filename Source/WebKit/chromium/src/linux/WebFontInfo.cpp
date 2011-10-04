@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "WebFontInfo.h"
+
 #include "WebFontRenderStyle.h"
 
 #include <fontconfig/fontconfig.h>

@@ -1,3 +1,17 @@
+2011-10-04  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Moved files towards GTK removal
+        https://bugs.webkit.org/show_bug.cgi?id=69229
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setScrollbarColors):
+        * src/linux/WebFontInfo.cpp: Renamed from Source/WebKit/chromium/src/gtk/WebFontInfo.cpp.
+        (WebKit::WebFontInfo::familyForChars):
+        (WebKit::WebFontInfo::renderStyleForStrike):
+
 2011-10-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Extract scheduling logic from CCThreadProxy to its own class

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformThemeChromiumGtk_h
-#define PlatformThemeChromiumGtk_h
+#ifndef PlatformThemeChromiumLinux_h
+#define PlatformThemeChromiumLinux_h
 
 #include "PlatformContextSkia.h"
 #include "SkColor.h"
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class PlatformThemeChromiumGtk {
+class PlatformThemeChromiumLinux {
 public:
     enum ArrowDirection {
         North,
@@ -59,7 +59,7 @@ public:
     static void paintArrowButton(GraphicsContext*, const IntRect&, ArrowDirection, ControlStates);
 
 private:
-    PlatformThemeChromiumGtk() {}
+    PlatformThemeChromiumLinux() { }
 
     static unsigned s_thumbInactiveColor;
     static unsigned s_thumbActiveColor;
@@ -68,4 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PlatformThemeChromiumGtk_h
+#endif // PlatformThemeChromiumLinux_h

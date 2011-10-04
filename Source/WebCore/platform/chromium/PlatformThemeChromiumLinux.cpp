@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,15 +29,15 @@
  */
 
 #include "config.h"
-#include "PlatformThemeChromiumGtk.h"
+#include "PlatformThemeChromiumLinux.h"
 
 namespace WebCore {
 
-unsigned PlatformThemeChromiumGtk::s_thumbInactiveColor = 0xeaeaea;
-unsigned PlatformThemeChromiumGtk::s_thumbActiveColor = 0xf4f4f4;
-unsigned PlatformThemeChromiumGtk::s_trackColor = 0xd3d3d3;
+unsigned PlatformThemeChromiumLinux::s_thumbInactiveColor = 0xeaeaea;
+unsigned PlatformThemeChromiumLinux::s_thumbActiveColor = 0xf4f4f4;
+unsigned PlatformThemeChromiumLinux::s_trackColor = 0xd3d3d3;
 
-void PlatformThemeChromiumGtk::setScrollbarColors(
+void PlatformThemeChromiumLinux::setScrollbarColors(
     SkColor inactiveColor, SkColor activeColor, SkColor trackColor)
 {
     s_thumbInactiveColor = inactiveColor;
@@ -50,7 +50,7 @@ static SkScalar clamp(SkScalar value, SkScalar min, SkScalar max)
     return std::min(std::max(value, min), max);
 }
 
-SkColor PlatformThemeChromiumGtk::saturateAndBrighten(const SkScalar hsv[3], SkScalar saturateAmount, SkScalar brightenAmount)
+SkColor PlatformThemeChromiumLinux::saturateAndBrighten(const SkScalar hsv[3], SkScalar saturateAmount, SkScalar brightenAmount)
 {
     SkScalar color[3];
     color[0] = hsv[0];
@@ -59,7 +59,7 @@ SkColor PlatformThemeChromiumGtk::saturateAndBrighten(const SkScalar hsv[3], SkS
     return SkHSVToColor(color);
 }
 
-SkColor PlatformThemeChromiumGtk::outlineColor(const SkScalar hsv1[3], const SkScalar hsv2[3])
+SkColor PlatformThemeChromiumLinux::outlineColor(const SkScalar hsv1[3], const SkScalar hsv2[3])
 {
     // GTK Theme engines have way too much control over the layout of
     // the scrollbar. We might be able to more closely approximate its
@@ -76,7 +76,7 @@ SkColor PlatformThemeChromiumGtk::outlineColor(const SkScalar hsv1[3], const SkS
     //
     // This works fine for the track color and the overall thumb
     // color. But it fails spectacularly for the outline color used
-    // around the thumb piece.  Not all themes have a clearly defined
+    // around the thumb piece. Not all themes have a clearly defined
     // outline. For some of them it is partially transparent, and for
     // others the thickness is very unpredictable.
     //
@@ -97,7 +97,7 @@ SkColor PlatformThemeChromiumGtk::outlineColor(const SkScalar hsv1[3], const SkS
     return saturateAndBrighten(hsv2, -0.2, diff);
 }
 
-void PlatformThemeChromiumGtk::paintArrowButton(GraphicsContext* gc, const IntRect& rect, ArrowDirection direction, ControlStates states)
+void PlatformThemeChromiumLinux::paintArrowButton(GraphicsContext* gc, const IntRect& rect, ArrowDirection direction, ControlStates states)
 {
     SkCanvas* const canvas = gc->platformContext()->canvas();
     int widthMiddle, lengthMiddle;
