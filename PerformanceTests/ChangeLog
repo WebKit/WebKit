@@ -1,5 +1,22 @@
 2011-10-03  Eric Seidel  <eric@webkit.org>
 
+        Add a microbenchmark for a full-page render of the HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=69285
+
+        Reviewed by Adam Barth.
+
+        This was designed to be a test for https://bugs.webkit.org/show_bug.cgi?id=68944
+        But it seems that by far our dominating cost for the HTML5 benchmark is
+        time spent laying out lines (which isn't actually that surprising).
+
+        I'm adding the performance test for posterity.
+
+        * Parser/html-parser.html:
+         - Removed use of "about:blank" which abarth says is a no-op.  Made comment more accurate.
+        * Parser/html5-full-render.html: Copied from PerformanceTests/Parser/html-parser.html.
+
+2011-10-03  Eric Seidel  <eric@webkit.org>
+
         PerformanceTests/Parser/html-parser is only testing parsing of the head element
         https://bugs.webkit.org/show_bug.cgi?id=69283
 
