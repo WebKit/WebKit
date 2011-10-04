@@ -48,7 +48,7 @@ public:
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsCommit();
-    virtual void setNeedsCommitAndRedraw();
+    virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();
     virtual void start();
     virtual void stop();

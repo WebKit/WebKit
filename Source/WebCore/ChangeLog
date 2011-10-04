@@ -1,3 +1,73 @@
+2011-10-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Extract scheduling logic from CCThreadProxy to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=69049
+
+        Reviewed by Kenneth Russell.
+
+        This partially extracts the commit/draw scheduling from CCThreadProxy to a separate isolated class. This makes
+        the commit/draw logic easier to test, understand and extend.
+
+        There is one subtle behavior change here to the way that the function formerly known as
+        CCLayerTreeHost::setNeedsCommitAndRedraw works. Previously, this would trigger a begin frame message, if one
+        wasn't pending, and then trigger a redraw if one wasn't pending. This was subtly wrong - the intent of that call
+        is that a redraw should happen after the commit. It isn't useful to draw before the commit occurs. This patch
+        changes the name of the function to setNeedsCommitThenRedraw and only requests a redraw after a commit occurs.
+
+        Covered by new CCSchedulerTest unit tests, CCLayerTreeHostTest unit tests, and compositing/ layout tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::setZoomAnimatorTransform):
+        (WebCore::CCLayerTreeHost::setNeedsCommitThenRedraw):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::setVisible):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCScheduler.cpp: Added.
+        (WebCore::CCScheduler::CCScheduler):
+        (WebCore::CCScheduler::requestCommit):
+        (WebCore::CCScheduler::requestCommitThenRedraw):
+        (WebCore::CCScheduler::requestRedraw):
+        (WebCore::CCScheduler::didCommit):
+        (WebCore::CCScheduler::didDraw):
+        * platform/graphics/chromium/cc/CCScheduler.h: Added.
+        (WebCore::CCSchedulerClient::~CCSchedulerClient):
+        (WebCore::CCScheduler::create):
+        (WebCore::CCScheduler::commitPending):
+        (WebCore::CCScheduler::redrawPending):
+        (WebCore::CCScheduler::redrawAfterCommit):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsCommitThenRedraw):
+        (WebCore::CCSingleThreadProxy::setNeedsRedraw):
+        (WebCore::CCSingleThreadProxy::recreateContextIfNeeded):
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxySchedulerClient::create):
+        (WebCore::CCThreadProxySchedulerClient::~CCThreadProxySchedulerClient):
+        (WebCore::CCThreadProxySchedulerClient::scheduleBeginFrameAndCommit):
+        (WebCore::CCThreadProxySchedulerClient::scheduleDrawAndPresent):
+        (WebCore::CCThreadProxySchedulerClient::CCThreadProxySchedulerClient):
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::setNeedsCommitOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsCommitThenRedraw):
+        (WebCore::CCThreadProxy::setNeedsCommitThenRedrawOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnCCThread):
+        (WebCore::CCThreadProxy::finishAllRenderingOnCCThread):
+        (WebCore::CCThreadProxy::obtainBeginFrameAndCommitTaskFromCCThread):
+        (WebCore::CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::commitOnCCThread):
+        (WebCore::CCThreadProxy::drawLayersAndPresentOnCCThread):
+        (WebCore::CCThreadProxy::initializeImplOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67774

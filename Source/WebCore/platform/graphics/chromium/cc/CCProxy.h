@@ -63,7 +63,7 @@ public:
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 
     virtual void setNeedsCommit() = 0;
-    virtual void setNeedsCommitAndRedraw() = 0;
+    virtual void setNeedsCommitThenRedraw() = 0;
     virtual void setNeedsRedraw() = 0;
 
     virtual void start() = 0; // Must be called before using the proxy.

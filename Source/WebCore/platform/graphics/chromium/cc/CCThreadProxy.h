@@ -34,9 +34,12 @@
 namespace WebCore {
 
 class CCLayerTreeHost;
+class CCScheduler;
 class CCThread;
+class CCThreadProxySchedulerClient;
 
 class CCThreadProxy : public CCProxy {
+    friend class CCThreadProxySchedulerClient;
 public:
     static void setThread(CCThread*);
 
@@ -53,7 +56,7 @@ public:
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsCommit();
-    virtual void setNeedsCommitAndRedraw();
+    virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();
     virtual void start();
     virtual void stop();
@@ -75,12 +78,13 @@ private:
     void initializeImplOnCCThread(CCCompletionEvent*);
     void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void setNeedsCommitOnCCThread();
-    void updateSchedulerStateOnCCThread(bool commitRequested, bool redrawRequested);
+    void setNeedsRedrawOnCCThread();
+    void setNeedsCommitThenRedrawOnCCThread();
     void layerTreeHostClosedOnCCThread(CCCompletionEvent*);
-    void scheduleDrawTaskOnCCThread();
 
     // Accessed on main thread only.
     bool m_commitRequested;
+    bool m_redrawAfterCommit;
     CCLayerTreeHost* m_layerTreeHost;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
@@ -89,9 +93,9 @@ private:
     // Used on the CCThread only
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
     int m_numBeginFrameAndCommitsIssuedOnCCThread;
-    bool m_beginFrameAndCommitPendingOnCCThread;
-    bool m_drawTaskPostedOnCCThread;
-    bool m_redrawRequestedOnCCThread;
+
+    OwnPtr<CCScheduler> m_schedulerOnCCThread;
+    OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnCCThread;
 
     static CCThread* s_ccThread;
 };

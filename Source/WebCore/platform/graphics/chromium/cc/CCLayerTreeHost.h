@@ -135,7 +135,7 @@ public:
     // Test-only hook
     void loseCompositorContext(int numTimes);
 
-    void setNeedsCommitAndRedraw();
+    void setNeedsCommitThenRedraw();
     void setNeedsRedraw();
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }

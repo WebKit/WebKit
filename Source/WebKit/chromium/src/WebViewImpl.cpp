@@ -2574,7 +2574,7 @@ void WebViewImpl::setRootLayerNeedsDisplay()
     }
 #if USE(THREADED_COMPOSITING)
     if (m_layerTreeHost)
-        m_layerTreeHost->setNeedsCommitAndRedraw();
+        m_layerTreeHost->setNeedsCommitThenRedraw();
 #else
     m_client->scheduleComposite();
 #endif

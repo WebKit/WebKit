@@ -60,6 +60,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
 
 bool CCLayerTreeHost::initialize()
 {
+    TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
     if (m_settings.enableCompositorThread) {
         // Accelerated Painting is not supported in threaded mode. Turn it off.
         m_settings.acceleratePainting = false;
@@ -78,8 +79,7 @@ bool CCLayerTreeHost::initialize()
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
-    // We changed the root layer. Tell the proxy a commit is needed.
-    m_proxy->setNeedsCommitAndRedraw();
+    setNeedsCommitThenRedraw();
 
     m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
@@ -196,14 +196,14 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
     m_zoomAnimatorTransform = zoom;
 
     if (zoomChanged)
-        setNeedsCommitAndRedraw();
+        setNeedsCommitThenRedraw();
 }
 
-void CCLayerTreeHost::setNeedsCommitAndRedraw()
+void CCLayerTreeHost::setNeedsCommitThenRedraw()
 {
 #if USE(THREADED_COMPOSITING)
-    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
-    m_proxy->setNeedsCommitAndRedraw();
+    TRACE_EVENT("CCLayerTreeHost::setNeedsCommitThenRedraw", this, 0);
+    m_proxy->setNeedsCommitThenRedraw();
 #else
     m_client->scheduleComposite();
 #endif
@@ -221,14 +221,14 @@ void CCLayerTreeHost::setNeedsRedraw()
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
-    setNeedsCommitAndRedraw();
+    setNeedsCommitThenRedraw();
 }
 
 void CCLayerTreeHost::setVisible(bool visible)
 {
     m_visible = visible;
     if (visible)
-        m_proxy->setNeedsCommitAndRedraw();
+        setNeedsCommitThenRedraw();
     else {
         m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes());
         m_contentsTextureManager->unprotectAllTextures();

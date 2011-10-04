@@ -156,7 +156,7 @@ void CCSingleThreadProxy::setNeedsCommit()
     m_layerTreeHost->commitComplete();
 }
 
-void CCSingleThreadProxy::setNeedsCommitAndRedraw()
+void CCSingleThreadProxy::setNeedsCommitThenRedraw()
 {
     ASSERT(CCProxy::isMainThread());
 #if !USE(THREADED_COMPOSITING)
@@ -171,7 +171,7 @@ void CCSingleThreadProxy::setNeedsRedraw()
 {
     // FIXME: Once we move render_widget scheduling into this class, we can
     // treat redraw requests more efficiently than commitAndRedraw requests.
-    setNeedsCommitAndRedraw();
+    setNeedsCommitThenRedraw();
 }
 
 void CCSingleThreadProxy::stop()
@@ -233,7 +233,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
     // in the context-lost machinery.
     m_numFailedRecreateAttempts++;
     if (m_numFailedRecreateAttempts < 5) {
-        setNeedsCommitAndRedraw();
+        setNeedsCommitThenRedraw();
         return false;
     }
 
@@ -276,7 +276,7 @@ bool CCSingleThreadProxy::doComposite()
           // and request a repaint yet again.
           m_graphicsContextLost = true;
           m_numFailedRecreateAttempts = 0;
-          setNeedsCommitAndRedraw();
+          setNeedsCommitThenRedraw();
           return false;
       }
     }
