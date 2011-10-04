@@ -1,5 +1,28 @@
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: move abstract panel search logic into the only view that is using it.
+        https://bugs.webkit.org/show_bug.cgi?id=69328
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.searchCanceled):
+        (WebInspector.Panel.prototype.performSearch):
+        (WebInspector.Panel.prototype.jumpToNextSearchResult):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.performSearch.updateMatchesCount):
+        (WebInspector.ProfilesPanel.prototype.performSearch.updateMatchesCountSoon):
+        (WebInspector.ProfilesPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ProfilesPanel.prototype.performSearch.processChunk):
+        (WebInspector.ProfilesPanel.prototype.performSearch):
+        (WebInspector.ProfilesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ProfilesPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.ProfilesPanel.prototype._searchableViews):
+        (WebInspector.ProfilesPanel.prototype.searchCanceled):
+
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed: fixed poor inspector merge, drive-by front-endcompilation fix.
 
         * inspector/front-end/ContentProviders.js:
