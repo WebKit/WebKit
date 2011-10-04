@@ -1,3 +1,9 @@
+2011-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leopard build fix after r96613.
+
+        * wtf/Platform.h:
+
 2011-10-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implicitly add toString and valueOf to prototype when convertToType callback is provided
