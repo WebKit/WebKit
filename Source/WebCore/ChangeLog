@@ -1,3 +1,44 @@
+2011-10-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: make DataGrid compile
+        https://bugs.webkit.org/show_bug.cgi?id=69334
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype._startEditingColumnOfDataGridNode):
+        (WebInspector.DataGrid.prototype._startEditing):
+        (WebInspector.DataGrid.prototype._startEditingConfig):
+        (WebInspector.DataGrid.prototype._editingCommitted.moveToNextIfNeeded):
+        (WebInspector.DataGrid.prototype._editingCommitted):
+        (WebInspector.DataGrid.prototype._editingCancelled):
+        (WebInspector.DataGrid.prototype.removeChildrenRecursive):
+        (WebInspector.DataGrid.prototype._keyDown):
+        (WebInspector.DataGrid.prototype._startResizerDragging):
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        (WebInspector.DataGrid.prototype._endResizerDragging):
+        (WebInspector.DataGridNode.prototype._attach):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.isBeingEdited):
+        (WebInspector.markBeingEdited):
+        (WebInspector.isEditingAnyField):
+        (WebInspector.EditingConfig):
+        (WebInspector.startEditing.blurEventListener):
+        (WebInspector.startEditing.getContent):
+        (WebInspector.startEditing.cleanUpAfterEditing):
+        (WebInspector.startEditing.editingCancelled):
+        (WebInspector.startEditing.editingCommitted):
+        (WebInspector.startEditing.defaultFinishHandler):
+        (WebInspector.startEditing):
+        (WebInspector.startEditing.pasteEventListener):
+        (WebInspector.startEditing.keyDownEventListener):
+        * inspector/front-end/externs.js:
+        (Array.prototype.remove):
+        (window.getComputedStyle):
+        * inspector/front-end/inspector.js:
+
 2011-10-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] extension panel's toolbar icon is incorrect when inspector window is docked

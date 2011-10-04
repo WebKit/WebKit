@@ -63,9 +63,10 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:21:jsmodule_common \
+    --module jsmodule_ui:22:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
+        --js Source/WebCore/inspector/front-end/DataGrid.js \
         --js Source/WebCore/inspector/front-end/Drawer.js \
         --js Source/WebCore/inspector/front-end/EmptyView.js \
         --js Source/WebCore/inspector/front-end/HelpScreen.js \

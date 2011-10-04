@@ -165,3 +165,234 @@ WebInspector.animateStyle = function(animations, duration, callback)
     };
 }
 
+WebInspector.isBeingEdited = function(element)
+{
+    return element.__editing;
+}
+
+WebInspector.markBeingEdited = function(element, value)
+{
+    if (value) {
+        if (element.__editing)
+            return false;
+        element.__editing = true;
+        WebInspector.__editingCount = (WebInspector.__editingCount || 0) + 1;
+    } else {
+        if (!element.__editing)
+            return false;
+        delete element.__editing;
+        --WebInspector.__editingCount;
+    }
+    return true;
+}
+
+WebInspector.isEditingAnyField = function()
+{
+    return !!WebInspector.__editingCount;
+}
+
+/**
+ * @constructor
+ */
+WebInspector.EditingConfig = function()
+{
+    /**
+     * Handles editing "commit" outcome
+     * @type {function(Element,string,string,*,string)|undefined}
+     */
+    this.commitHandler;
+
+    /**
+     * Handles editing "cancel" outcome
+     * @type {function(Element,*)|undefined}
+     */
+    this.cancelHandler;
+
+    /**
+     * Handles the "paste" event, return values are the same as those for customFinishHandler
+     * @type {function(Element)|undefined}
+     */
+    this.pasteHandler;
+
+    /** 
+     * An arbitrary context object to be passed to the commit and cancel handlers
+     * @type {Object|undefined}
+     */
+    this.context;
+
+    /** 
+     * Whether the edited element is multiline
+     * @type {boolean|undefined}
+     */
+    this.multiline;
+
+    /**
+     * Custom finish handler for the editing session (invoked on keydown)
+     * @type {function(Element,*)|undefined}
+     */
+    this.customFinishHandler;
+}
+
+WebInspector.EditingConfig.prototype = {
+    setCommitHandler: function(commitHandler)
+    {
+        this.commitHandler = commitHandler;
+    },
+
+    setCancelHandler: function(cancelHandler)
+    {
+        this.cancelHandler = cancelHandler;
+    },
+
+    setPasteHandler: function(pasteHandler)
+    {
+        this.pasteHandler = pasteHandler;
+    },
+
+    setContext: function(context)
+    {
+        this.context = context;
+    },
+
+    setMultiline: function(multiline)
+    {
+        this.multiline = multiline;
+    },
+
+    setCustomFinishHandler: function(customFinishHandler)
+    {
+        this.customFinishHandler = customFinishHandler;
+    }
+}
+
+/** 
+ * @param {Element} element
+ * @param {WebInspector.EditingConfig=} config
+ */
+WebInspector.startEditing = function(element, config)
+{
+    if (!WebInspector.markBeingEdited(element, true))
+        return;
+
+    config = config || new WebInspector.EditingConfig();
+    var committedCallback = config.commitHandler;
+    var cancelledCallback = config.cancelHandler;
+    var pasteCallback = config.pasteHandler;
+    var context = config.context;
+    var oldText = getContent(element);
+    var moveDirection = "";
+
+    element.addStyleClass("editing");
+
+    var oldTabIndex = element.tabIndex;
+    if (element.tabIndex < 0)
+        element.tabIndex = 0;
+
+    function blurEventListener() {
+        editingCommitted.call(element);
+    }
+
+    function getContent(element) {
+        if (element.tagName === "INPUT" && element.type === "text")
+            return element.value;
+        else
+            return element.textContent;
+    }
+
+    /** @this {Element} */
+    function cleanUpAfterEditing()
+    {
+        WebInspector.markBeingEdited(element, false);
+
+        this.removeStyleClass("editing");
+        this.tabIndex = oldTabIndex;
+        this.scrollTop = 0;
+        this.scrollLeft = 0;
+
+        element.removeEventListener("blur", blurEventListener, false);
+        element.removeEventListener("keydown", keyDownEventListener, true);
+        if (pasteCallback)
+            element.removeEventListener("paste", pasteEventListener, true);
+
+        if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
+            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
+    }
+
+    /** @this {Element} */
+    function editingCancelled()
+    {
+        if (this.tagName === "INPUT" && this.type === "text")
+            this.value = oldText;
+        else
+            this.textContent = oldText;
+
+        cleanUpAfterEditing.call(this);
+
+        if (cancelledCallback)
+            cancelledCallback(this, context);
+    }
+
+    /** @this {Element} */
+    function editingCommitted()
+    {
+        cleanUpAfterEditing.call(this);
+
+        if (committedCallback)
+            committedCallback(this, getContent(this), oldText, context, moveDirection);
+    }
+
+    function defaultFinishHandler(event)
+    {
+        var isMetaOrCtrl = WebInspector.isMac() ?
+            event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey :
+            event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+        if (isEnterKey(event) && (event.isMetaOrCtrlForTest || !config.multiline || isMetaOrCtrl))
+            return "commit";
+        else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code || event.keyIdentifier === "U+001B")
+            return "cancel";
+        else if (event.keyIdentifier === "U+0009") // Tab key
+            return "move-" + (event.shiftKey ? "backward" : "forward");
+    }
+
+    function handleEditingResult(result, event)
+    {
+        if (result === "commit") {
+            editingCommitted.call(element);
+            event.preventDefault();
+            event.stopPropagation();
+        } else if (result === "cancel") {
+            editingCancelled.call(element);
+            event.preventDefault();
+            event.stopPropagation();
+        } else if (result && result.indexOf("move-") === 0) {
+            moveDirection = result.substring(5);
+            if (event.keyIdentifier !== "U+0009")
+                blurEventListener();
+        }
+    }
+
+    function pasteEventListener(event)
+    {
+        var result = pasteCallback(event);
+        handleEditingResult(result, event);
+    }
+
+    function keyDownEventListener(event)
+    {
+        var handler = config.customFinishHandler || defaultFinishHandler;
+        var result = handler(event);
+        handleEditingResult(result, event);
+    }
+
+    element.addEventListener("blur", blurEventListener, false);
+    element.addEventListener("keydown", keyDownEventListener, true);
+    if (pasteCallback)
+        element.addEventListener("paste", pasteEventListener, true);
+
+    WebInspector.currentFocusElement = element;
+    return {
+        cancel: editingCancelled.bind(element),
+        commit: editingCommitted.bind(element)
+    };
+}
+

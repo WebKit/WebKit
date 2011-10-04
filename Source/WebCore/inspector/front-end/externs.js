@@ -77,7 +77,10 @@ JSON.stringify = function(str) {}
 
 Element.prototype.scrollIntoViewIfNeeded = function() {}
 
-Array.prototype.remove = function(obj) {}
+/**
+ * @param {boolean=} onlyFirst
+ */
+Array.prototype.remove = function(obj, onlyFirst) {}
 
 WebInspector.extensionServer = {}
 WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
@@ -178,3 +181,13 @@ WebInspector.previousFocusElement = null;
  * @type {string}
  */
 WebInspector.platformFlavor = "";
+
+/** @param {Element} element */
+window.getComputedStyle = function(element)
+{
+}
+
+/**
+ * @type {boolean}
+ */
+Event.prototype.isMetaOrCtrlForTest = false;

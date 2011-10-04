@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 {
     this.element = document.createElement("div");
@@ -120,9 +124,9 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     for (var columnIdentifier in columns) {
         var column = columns[columnIdentifier];
-        var cell = document.createElement("td");
-        cell.className = columnIdentifier + "-column";
-        fillerRow.appendChild(cell);
+        var td = document.createElement("td");
+        td.className = columnIdentifier + "-column";
+        fillerRow.appendChild(td);
     }
 
     this._dataTableColumnGroup = columnGroup.cloneNode(true);
@@ -180,11 +184,7 @@ WebInspector.DataGrid.prototype = {
         this._editingNode.select();
 
         var element = this._editingNode._element.children[column];
-        WebInspector.startEditing(element, {
-            context: element.textContent,
-            commitHandler: this._editingCommitted.bind(this),
-            cancelHandler: this._editingCancelled.bind(this)
-        });
+        WebInspector.startEditing(element, this._startEditingConfig(element));
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
@@ -206,12 +206,19 @@ WebInspector.DataGrid.prototype = {
             return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
 
         this._editing = true;
-        WebInspector.startEditing(element, {
-            context: element.textContent,
-            commitHandler: this._editingCommitted.bind(this),
-            cancelHandler: this._editingCancelled.bind(this)
-        });
+        WebInspector.startEditing(element, this._startEditingConfig(element));
+
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
+    },
+
+
+    _startEditingConfig: function(element)
+    {
+        var config = new WebInspector.EditingConfig();
+        config.setContext(element.textContent);
+        config.setCommitHandler(this._editingCommitted.bind(this));
+        config.setCancelHandler(this._editingCancelled.bind(this));
+        return config;
     },
 
     _editingCommitted: function(element, newText, oldText, context, moveDirection)
@@ -220,7 +227,7 @@ WebInspector.DataGrid.prototype = {
         // Not needed yet since only editable DataGrid is DOM Storage, which is Key - Value.
 
         // FIXME: Better way to do this than regular expressions?
-        var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1]);
+        var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1], 10);
 
         var textBeforeEditing = this._editingNode.data[columnIdentifier];
         var currentEditingNode = this._editingNode;
@@ -240,7 +247,7 @@ WebInspector.DataGrid.prototype = {
                 if (nextDataGridNode)
                     return this._startEditingColumnOfDataGridNode(nextDataGridNode, 0);
                 if (currentEditingNode.isCreationNode && wasChange) {
-                    addCreationNode(false);
+                    this.addCreationNode(false);
                     return this._startEditingColumnOfDataGridNode(this.creationNode, 0);
                 }
                 return;
@@ -277,7 +284,7 @@ WebInspector.DataGrid.prototype = {
         moveToNextIfNeeded.call(this, true);
     },
 
-    _editingCancelled: function(element, context)
+    _editingCancelled: function(element)
     {
         delete this._editing;
         this._editingNode = null;
@@ -672,7 +679,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         for (var i = 0; i < childrenToRemove.length; ++i) {
-            var child = childrenToRemove[i];
+            child = childrenToRemove[i];
             child.deselect();
             child._detach();
 
@@ -739,12 +746,12 @@ WebInspector.DataGrid.prototype = {
         if (event.keyIdentifier === "Up" && !event.altKey) {
             nextSelectedNode = this.selectedNode.traversePreviousNode(true);
             while (nextSelectedNode && !nextSelectedNode.selectable)
-                nextSelectedNode = nextSelectedNode.traversePreviousNode(!this.expandTreeNodesWhenArrowing);
+                nextSelectedNode = nextSelectedNode.traversePreviousNode(true);
             handled = nextSelectedNode ? true : false;
         } else if (event.keyIdentifier === "Down" && !event.altKey) {
             nextSelectedNode = this.selectedNode.traverseNextNode(true);
             while (nextSelectedNode && !nextSelectedNode.selectable)
-                nextSelectedNode = nextSelectedNode.traverseNextNode(!this.expandTreeNodesWhenArrowing);
+                nextSelectedNode = nextSelectedNode.traverseNextNode(true);
             handled = nextSelectedNode ? true : false;
         } else if (event.keyIdentifier === "Left") {
             if (this.selectedNode.expanded) {
@@ -950,16 +957,16 @@ WebInspector.DataGrid.prototype = {
 
     _startResizerDragging: function(event)
     {
-        this.currentResizer = event.target;
-        if (!this.currentResizer.rightNeighboringColumnID)
+        this._currentResizer = event.target;
+        if (!this._currentResizer.rightNeighboringColumnID)
             return;
-        WebInspector.elementDragStart(this.lastResizer, this._resizerDragging.bind(this),
+        WebInspector.elementDragStart(this._currentResizer, this._resizerDragging.bind(this),
             this._endResizerDragging.bind(this), event, "col-resize");
     },
 
     _resizerDragging: function(event)
     {
-        var resizer = this.currentResizer;
+        var resizer = this._currentResizer;
         if (!resizer)
             return;
 
@@ -1009,7 +1016,7 @@ WebInspector.DataGrid.prototype = {
     _endResizerDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
-        this.currentResizer = null;
+        this._currentResizer = null;
         this.dispatchEventToListeners("width changed");
     },
 
@@ -1026,6 +1033,10 @@ WebInspector.DataGrid.ResizeMethod = {
 
 WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.DataGridNode = function(data, hasChildren)
 {
     this._expanded = false;
@@ -1342,6 +1353,9 @@ WebInspector.DataGridNode.prototype = {
         this.dispatchEventToListeners("revealed");
     },
 
+    /**
+     * @param {boolean=} supressSelectedEvent
+     */
     select: function(supressSelectedEvent)
     {
         if (!this.dataGrid || !this.selectable || this.selected)
@@ -1366,6 +1380,9 @@ WebInspector.DataGridNode.prototype = {
         this.select();
     },
 
+    /**
+     * @param {boolean=} supressDeselectedEvent
+     */
     deselect: function(supressDeselectedEvent)
     {
         if (!this.dataGrid || this.dataGrid.selectedNode !== this || !this.selected)
@@ -1459,7 +1476,7 @@ WebInspector.DataGridNode.prototype = {
         var nextNode = null;
         var previousNode = this.traversePreviousNode(true, true);
         if (previousNode && previousNode.element.parentNode && previousNode.element.nextSibling)
-            var nextNode = previousNode.element.nextSibling;
+            nextNode = previousNode.element.nextSibling;
         if (!nextNode)
             nextNode = this.dataGrid.dataTableBody.lastChild;
         this.dataGrid.dataTableBody.insertBefore(this.element, nextNode);
@@ -1510,6 +1527,10 @@ WebInspector.DataGridNode.prototype = {
 
 WebInspector.DataGridNode.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.DataGridNode}
+ */
 WebInspector.CreationDataGridNode = function(data, hasChildren)
 {
     WebInspector.DataGridNode.call(this, data, hasChildren);
