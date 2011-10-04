@@ -1,3 +1,10 @@
+2011-10-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed; new baselines for GTK after r96470
+
+        * platform/gtk/svg/custom/grayscale-gradient-mask-2-expected.png: Added.
+        * platform/gtk/svg/custom/grayscale-gradient-mask-2-expected.txt: Added.
+
 2011-10-04  Adam Barth  <abarth@webkit.org>
 
         Update font shaping result after http://trac.webkit.org/changeset/96582.
