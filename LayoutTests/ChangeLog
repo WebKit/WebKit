@@ -1,5 +1,34 @@
 2011-10-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed; rebaselines for GTK after r96509.
+
+        * platform/gtk/fast/forms/file-input-disabled-expected.png:
+        * platform/gtk/fast/forms/file-input-disabled-expected.txt:
+        * platform/gtk/fast/invalid/017-expected.txt:
+        * platform/gtk/fast/invalid/018-expected.txt:
+        * platform/gtk/fast/invalid/020-expected.txt:
+        * platform/gtk/fast/invalid/residual-style-expected.png:
+        * platform/gtk/fast/invalid/residual-style-expected.txt:
+        * platform/gtk/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/gtk/fast/table/inline-form-assert-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug56405-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug9024-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug220653-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug7121-2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/conflicts-expected.png:
+        * platform/gtk/tables/mozilla_expected_failures/core/conflicts-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/gtk/tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+
+2011-10-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed; new baselines for GTK after r96470
 
         * platform/gtk/svg/custom/grayscale-gradient-mask-2-expected.png: Added.
