@@ -32,6 +32,17 @@ G_BEGIN_DECLS
 
 #define WEBKIT_NETWORK_ERROR webkit_network_error_quark ()
 
+/**
+ * WebKitNetworkError:
+ * @WEBKIT_NETWORK_ERROR_FAILED: Generic load failure
+ * @WEBKIT_NETWORK_ERROR_TRANSPORT: Load failure due to transport error
+ * @WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL: Load failure due to unknown protocol
+ * @WEBKIT_NETWORK_ERROR_CANCELLED: Load failure due to cancellation
+ * @WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST: Load failure due to missing file
+ *
+ * Enum values used to denote the various network errors.
+ *
+ **/
 typedef enum {
     WEBKIT_NETWORK_ERROR_FAILED = 399,
     WEBKIT_NETWORK_ERROR_TRANSPORT = 300,

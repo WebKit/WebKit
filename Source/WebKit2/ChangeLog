@@ -1,3 +1,18 @@
+2011-10-04  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Fix warnings while generating documentation using gtk-doc.
+        https://bugs.webkit.org/show_bug.cgi?id=69329
+
+        Reviewed by Martin Robinson.
+
+        Added documentation for WebKitNetworkError enum and corrected few other
+        minor issues in WebKit2-GTK+ API documentation.
+
+        * UIProcess/API/gtk/WebKitError.h: Added documentation for WebKitNetworkError.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (webkit_web_loader_client_class_init): Corrected parameter name.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Corrected annotation.
+
 2011-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove http/tests/inspector/network/disabled-cache-crash.html.

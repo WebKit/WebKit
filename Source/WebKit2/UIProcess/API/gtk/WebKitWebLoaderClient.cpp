@@ -221,7 +221,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
 
     /**
      * WebKitWebLoaderClient::provisional-load-started:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      *
      * This signal is emitted when new load request is made.
      * No data has been received yet, empty structures have
@@ -244,7 +244,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
 
     /**
      * WebKitWebLoaderClient::provisional-load-received-server-redirect:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      *
      * This signal is emitted when a provisional data source
      * receives a server redirect.
@@ -266,7 +266,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
 
     /**
      * WebKitWebLoaderClient::provisional-load-failed:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      * @error: the #GError that was triggered
      *
      * This signal is emitted when an error occurs when starting to
@@ -293,7 +293,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
 
     /**
      * WebKitWebLoaderClient::load-committed:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      *
      * This signal is emitted when content starts arriving for a page load.
      * The necessary transport requirements are stabilished, and the
@@ -315,7 +315,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                      G_TYPE_NONE);
     /**
      * WebKitWebLoaderClient::load-finished:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      *
      * This signal is emitted when a page load completes, that is, when all
      * the resources are done loading with no error. In case of errors
@@ -340,7 +340,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
 
     /**
      * WebKitWebLoaderClient::load-failed:
-     * @loader_client: the #WebKitWebLoader
+     * @loader_client: the #WebKitWebLoaderClient
      * @error: the #GError that was triggered
      *
      * This signal is emitted when an error occurs loading a committed data source.

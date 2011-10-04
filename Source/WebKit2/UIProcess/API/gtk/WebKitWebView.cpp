@@ -157,7 +157,7 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
  *
  * Gets the web context of @web_view.
  *
- * Returns: (transfer-none): the #WebKitWebContext of the view
+ * Returns: (transfer none): the #WebKitWebContext of the view
  */
 WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
 {
@@ -173,7 +173,7 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
  * Returns the #WebKitWebLoaderClient of @web_view. You can use it
  * to monitor the status of load operations happening on @web_view.
  *
- * Returns: (trasnfer-none): the #WebKitWebLoaderClient of @web_view.
+ * Returns: (transfer none): the #WebKitWebLoaderClient of @web_view.
  */
 WebKitWebLoaderClient* webkit_web_view_get_loader_client(WebKitWebView* webView)
 {
