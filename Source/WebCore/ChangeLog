@@ -1,3 +1,12 @@
+2011-10-04  Rémi Duraffort  <remi.duraffort@st.com>
+
+        [EFL] Fix compilation when SQLite and/or libxslt are not installed in /usr/include
+        https://bugs.webkit.org/show_bug.cgi?id=69338
+
+        Unreviewed build fix
+
+        * CMakeListsEfl.txt:
+
 2011-10-03 Ken Buchanan <kenrb@chromium.org>
 
         Resource loader should block HTTP redirects to local resources
