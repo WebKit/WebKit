@@ -1181,6 +1181,8 @@ AC_CONFIG_FILES([
 Source/WebKit/gtk/webkit/webkitversion.h
 Source/WebKit/gtk/docs/GNUmakefile
 Source/WebKit/gtk/docs/version.xml
+Source/WebKit2/UIProcess/API/gtk/docs/GNUmakefile
+Source/WebKit2/UIProcess/API/gtk/docs/version.xml
 ])
 
 AC_CONFIG_FILES([

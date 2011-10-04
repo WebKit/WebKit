@@ -1,5 +1,22 @@
 2011-10-04  Nayan Kumar K  <nayankk@motorola.com>
 
+        [WebKit2][gtk] Generate gtk-doc for WebKit2-GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=69325
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Documentation generation for WebKit2-GTK+ APIs
+        using gtk-doc.
+
+        * GNUmakefile.am: Added doc generation files to EXTRA_DIST.
+        * UIProcess/API/gtk/docs/GNUmakefile.am: Makefile for doc generation.
+        * UIProcess/API/gtk/docs/version.xml.in: Version information.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Document template.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Document sections added.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Added GObjects types.
+
+2011-10-04  Nayan Kumar K  <nayankk@motorola.com>
+
         [WebKit2][gtk] Fix warnings while generating documentation using gtk-doc.
         https://bugs.webkit.org/show_bug.cgi?id=69329
 

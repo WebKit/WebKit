@@ -1,0 +1,84 @@
+<SECTION>
+<FILE>WebKitWebViewBase</FILE>
+<TITLE>WebKitWebViewBase</TITLE>
+WebKitWebViewBase
+<SUBSECTION Standard>
+WebKitWebViewBaseClass
+WEBKIT_WEB_VIEW_BASE
+WEBKIT_IS_WEB_VIEW_BASE
+WEBKIT_TYPE_WEB_VIEW_BASE
+WEBKIT_WEB_VIEW_BASE_CLASS
+WEBKIT_IS_WEB_VIEW_BASE_CLASS
+WEBKIT_WEB_VIEW_BASE_GET_CLASS
+<SUBSECTION Private>
+webkit_web_view_base_get_type
+WebKitWebViewBasePrivate
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebContext</FILE>
+<TITLE>WebKitWebContext</TITLE>
+WebKitWebContext
+webkit_web_context_get_default
+<SUBSECTION Standard>
+WebKitWebContextClass
+WEBKIT_WEB_CONTEXT
+WEBKIT_IS_WEB_CONTEXT
+WEBKIT_TYPE_WEB_CONTEXT
+WEBKIT_WEB_CONTEXT_CLASS
+WEBKIT_IS_WEB_CONTEXT_CLASS
+WEBKIT_WEB_CONTEXT_GET_CLASS
+<SUBSECTION Private>
+WebKitWebContextPrivate
+webkit_web_context_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebView</FILE>
+<TITLE>WebKitWebView</TITLE>
+WebKitWebView
+webkit_web_view_new
+webkit_web_view_new_with_context
+webkit_web_view_get_context
+webkit_web_view_get_loader_client
+webkit_web_view_set_loader_client
+webkit_web_view_load_uri
+webkit_web_view_go_back
+webkit_web_view_go_forward
+<SUBSECTION Standard>
+WebKitWebViewClass
+WEBKIT_WEB_VIEW
+WEBKIT_IS_WEB_VIEW
+WEBKIT_TYPE_WEB_VIEW
+WEBKIT_WEB_VIEW_CLASS
+WEBKIT_IS_WEB_VIEW_CLASS
+WEBKIT_WEB_VIEW_GET_CLASS
+<SUBSECTION Private>
+webkit_web_view_get_type
+WebKitWebViewPrivate
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebLoaderClient</FILE>
+<TITLE>WebKitWebLoaderClient</TITLE>
+WebKitWebLoaderClient
+<SUBSECTION Standard>
+WebKitWebLoaderClientClass
+WEBKIT_WEB_LOADER_CLIENT
+WEBKIT_IS_WEB_LOADER_CLIENT
+WEBKIT_TYPE_WEB_LOADER_CLIENT
+WEBKIT_WEB_LOADER_CLIENT_CLASS
+WEBKIT_IS_WEB_LOADER_CLIENT_CLASS
+WEBKIT_WEB_LOADER_CLIENT_GET_CLASS
+<SUBSECTION Private>
+WebKitWebLoaderClientPrivate
+webkit_web_loader_client_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitError</FILE>
+WEBKIT_NETWORK_ERROR
+WebKitNetworkError
+webkit_network_error_quark
+</SECTION>
+

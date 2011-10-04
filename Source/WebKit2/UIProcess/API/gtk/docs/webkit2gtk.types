@@ -1,0 +1,5 @@
+#include <webkit2/webkit2.h>
+webkit_web_view_get_type
+webkit_web_view_base_get_type
+webkit_web_loader_client_get_type
+webkit_web_context_get_type
