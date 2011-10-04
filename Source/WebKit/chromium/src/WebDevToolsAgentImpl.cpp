@@ -207,6 +207,12 @@ void WebDevToolsAgentImpl::attach()
     m_attached = true;
 }
 
+void WebDevToolsAgentImpl::reattach(const WebString& savedState)
+{
+    attach();
+    inspectorController()->restoreInspectorStateFromCookie(savedState);
+}
+
 void WebDevToolsAgentImpl::detach()
 {
     // Prevent controller from sending messages to the frontend.
@@ -306,6 +312,7 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)
 void WebDevToolsAgentImpl::updateInspectorStateCookie(const String& state)
 {
     m_client->runtimePropertyChanged(kInspectorStateFeatureName, state);
+    m_client->saveAgentRuntimeState(state);
 }
 
 void WebDevToolsAgentImpl::clearBrowserCache()

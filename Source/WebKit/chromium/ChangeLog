@@ -1,3 +1,20 @@
+2011-10-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: save inspector state into single string instead of string map
+        https://bugs.webkit.org/show_bug.cgi?id=69335
+
+        Added explicit methods for saving and restoring agent runtime state.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        (WebKit::WebDevToolsAgentClient::saveAgentRuntimeState):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::reattach):
+        (WebKit::WebDevToolsAgentImpl::updateInspectorStateCookie):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-10-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Tweak WebCompositor API for input event handling to express three possible states

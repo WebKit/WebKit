@@ -56,6 +56,7 @@ public:
     WEBKIT_EXPORT static bool supportsInspectorProtocolVersion(const WebString& version);
 
     virtual void attach() = 0;
+    virtual void reattach(const WebString& savedState) = 0;
     virtual void detach() = 0;
     virtual void frontendLoaded() = 0;
 
@@ -64,6 +65,7 @@ public:
     virtual void dispatchOnInspectorBackend(const WebString& message) = 0;
 
     virtual void inspectElementAt(const WebPoint&) = 0;
+    // Deprecated. Will be removed shortly.
     virtual void setRuntimeProperty(const WebString& name, const WebString& value) = 0;
     virtual void setProcessId(long) = 0;
 

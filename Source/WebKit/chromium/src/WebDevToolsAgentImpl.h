@@ -73,6 +73,7 @@ public:
 
     // WebDevToolsAgent implementation.
     virtual void attach();
+    virtual void reattach(const WebString& savedState);
     virtual void detach();
     virtual void frontendLoaded();
     virtual void didNavigate();
