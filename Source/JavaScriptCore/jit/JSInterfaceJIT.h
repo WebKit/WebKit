@@ -80,7 +80,7 @@ namespace JSC {
         // OS X if might make more sense to just use regparm.
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
         
-        static const RegisterID timeoutCheckRegister = X86Registers::esi;
+        static const RegisterID bucketCounterRegister = X86Registers::esi;
         static const RegisterID callFrameRegister = X86Registers::edi;
         
         static const RegisterID regT0 = X86Registers::eax;

@@ -108,7 +108,18 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 }
 #endif
 
-#if USE(JSVALUE32_64)
+#if CPU(X86)
+void JIT::emitTimeoutCheck()
+{
+    Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), AbsoluteAddress(&m_globalData->m_timeoutCount));
+    JITStubCall stubCall(this, cti_timeout_check);
+    stubCall.addArgument(regT1, regT0); // save last result registers.
+    stubCall.call(regT0);
+    store32(regT0, &m_globalData->m_timeoutCount);
+    stubCall.getArgument(0, regT1, regT0); // reload last result registers.
+    skipTimeout.link(this);
+}
+#elif USE(JSVALUE32_64)
 void JIT::emitTimeoutCheck()
 {
     Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), timeoutCheckRegister);
@@ -721,10 +732,6 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
     ASSERT(kind == CodeForConstruct);
     repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualConstruct());
 }
-
-#if CPU(X86) && ENABLE(VALUE_PROFILER)
-int bucketCounter = 0;
-#endif
 
 } // namespace JSC
 

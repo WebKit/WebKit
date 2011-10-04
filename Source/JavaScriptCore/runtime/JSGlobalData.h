@@ -305,6 +305,10 @@ namespace JSC {
         void setInitializingObject(bool);
 #endif
 
+#if CPU(X86) && ENABLE(JIT)
+        unsigned m_timeoutCount;
+#endif
+
     private:
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();

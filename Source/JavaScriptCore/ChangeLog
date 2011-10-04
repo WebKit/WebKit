@@ -1,3 +1,35 @@
+2011-10-03  Gavin Barraclough  <barraclough@apple.com>
+
+        On X86, switch bucketCount into a register, timeoutCheck into memory
+        https://bugs.webkit.org/show_bug.cgi?id=69299
+
+        Reviewed by Geoff Garen.
+
+        We don't have sufficient registers to keep both in registers, and DFG JIT will trample esi;
+        it doesn't matter if the bucketCount gets stomped on (in fact it may add to randomness!),
+        but it if the timeoutCheck gets trashed we may make calls out to the timout_check stub
+        function too frequently (regressing performance). This patch has no perf impact on sunspider.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branchAdd32):
+        (JSC::MacroAssemblerX86::branchSub32):
+            - Added branchSub32 with AbsoluteAddress.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitTimeoutCheck):
+            - Keep timeout count in memory on X86.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+            - remove X86 specific code, switch bucket count back into a register.
+        * jit/JITStubs.cpp:
+            - Stop initializing esi (it is no longer the timeoutCheck!)
+        * jit/JSInterfaceJIT.h:
+            - change definition of esi to be the bucketCountRegister.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+            - Add timeoutCount as a property to global data (the counter should be per-thread).
+
 2011-10-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG backends don't have access to per-node predictions from the propagator

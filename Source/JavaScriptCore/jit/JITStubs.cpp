@@ -131,7 +131,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %edi" "\n"
     "pushl %ebx" "\n"
     "subl $0x3c, %esp" "\n"
-    "movl $512, %esi" "\n"
     "movl 0x58(%esp), %edi" "\n"
     "call *0x50(%esp)" "\n"
     "addl $0x3c, %esp" "\n"
@@ -261,7 +260,6 @@ extern "C" {
             push edi;
             push ebx;
             sub esp, 0x3c;
-            mov esi, 512;
             mov ecx, esp;
             mov edi, [esp + 0x58];
             call [esp + 0x50];

@@ -44,6 +44,7 @@ public:
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
     using MacroAssemblerX86Common::branchAdd32;
+    using MacroAssemblerX86Common::branchSub32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
@@ -122,9 +123,15 @@ public:
         m_assembler.movl_rm(src, address);
     }
 
-    Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
-        m_assembler.addl_im(src.m_value, dest.m_ptr);
+        m_assembler.addl_im(imm.m_value, dest.m_ptr);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        m_assembler.subl_im(imm.m_value, dest.m_ptr);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 

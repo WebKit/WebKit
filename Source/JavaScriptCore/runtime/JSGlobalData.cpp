@@ -199,6 +199,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #ifndef NDEBUG
     , exclusiveThread(0)
 #endif
+#if CPU(X86) && ENABLE(JIT)
+    , m_timeoutCount(512)
+#endif
 #if ENABLE(GC_VALIDATION)
     , m_isInitializingObject(false)
 #endif

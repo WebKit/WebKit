@@ -1052,6 +1052,7 @@
 		860161E00F3A83C100F84710 /* MacroAssemblerX86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerX86.h; sourceTree = "<group>"; };
 		860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerX86_64.h; sourceTree = "<group>"; };
 		860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerX86Common.h; sourceTree = "<group>"; };
+		8604F4F2143A6C4400B295F5 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		8626BECE11928E3900782FAB /* StringStatics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringStatics.cpp; path = text/StringStatics.cpp; sourceTree = "<group>"; };
 		8627E5EA11F1281900A313B5 /* PageAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAllocation.h; sourceTree = "<group>"; };
 		863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerCodeRef.h; sourceTree = "<group>"; };
@@ -1549,6 +1550,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				8604F4F2143A6C4400B295F5 /* ChangeLog */,
 				651122E5140469BA002B101D /* testRegExp.cpp */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
