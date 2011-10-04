@@ -303,13 +303,15 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
     // we are trying to find a place for. This is the next renderer to be checked.
     RenderObject* currentRenderer = previousInPreOrder(counterOwner);
     previousSibling = 0;
+    RefPtr<CounterNode> previousSiblingProtector = 0;
+
     while (currentRenderer) {
         CounterNode* currentCounter = makeCounterNode(currentRenderer, identifier, false);
         if (searchEndRenderer == currentRenderer) {
             // We may be at the end of our search.
             if (currentCounter) {
                 // We have a suitable counter on the EndSearchRenderer.
-                if (previousSibling) { // But we already found another counter that we come after.
+                if (previousSiblingProtector) { // But we already found another counter that we come after.
                     if (currentCounter->actsAsReset()) {
                         // We found a reset counter that is on a renderer that is a sibling of ours or a parent.
                         if (isReset && areRenderersElementsSiblings(currentRenderer, counterOwner)) {
@@ -326,16 +328,19 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                         // In some cases renders can be reparented (ex. nodes inside a table but not in a column or row).
                         // In these cases the identified previousSibling will be invalid as its parent is different from
                         // our identified parent.
-                        if (previousSibling->parent() != currentCounter)
-                            previousSibling = 0;
+                        if (previousSiblingProtector->parent() != currentCounter)
+                            previousSiblingProtector = 0;
+
+                        previousSibling = previousSiblingProtector.get();
                         return true;
                     }
                     // CurrentCounter, the counter at the EndSearchRenderer, is not reset.
                     if (!isReset || !areRenderersElementsSiblings(currentRenderer, counterOwner)) {
                         // If the node we are placing is not reset or we have found a counter that is attached
                         // to an ancestor of the placed counter's owner renderer we know we are a sibling of that node.
-                        ASSERT(currentCounter->parent() == previousSibling->parent());
+                        ASSERT(currentCounter->parent() == previousSiblingProtector->parent());
                         parent = currentCounter->parent();
+                        previousSibling = previousSiblingProtector.get();
                         return true;
                     }
                 } else { 
@@ -350,6 +355,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                             return parent;
                         }
                         parent = currentCounter;
+                        previousSibling = previousSiblingProtector.get();
                         return true;
                     }
                     if (!isReset || !areRenderersElementsSiblings(currentRenderer, counterOwner)) {
@@ -357,7 +363,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                         previousSibling = currentCounter;
                         return true;
                     }
-                    previousSibling = currentCounter;
+                    previousSiblingProtector = currentCounter;
                 }
             }
             // We come here if the previous sibling or parent of our owner renderer had no
@@ -370,18 +376,18 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
             // counter being placed is attached to.
             if (currentCounter) {
                 // We found a suitable counter.
-                if (previousSibling) {
+                if (previousSiblingProtector) {
                     // Since we had a suitable previous counter before, we should only consider this one as our 
                     // previousSibling if it is a reset counter and hence the current previousSibling is its child.
                     if (currentCounter->actsAsReset()) {
-                        previousSibling = currentCounter;
+                        previousSiblingProtector = currentCounter;
                         // We are no longer interested in previous siblings of the currentRenderer or their children
                         // as counters they may have attached cannot be the previous sibling of the counter we are placing.
                         currentRenderer = parentElement(currentRenderer)->renderer();
                         continue;
                     }
                 } else
-                    previousSibling = currentCounter;
+                    previousSiblingProtector = currentCounter;
                 currentRenderer = previousSiblingOrParent(currentRenderer);
                 continue;
             }
@@ -390,7 +396,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
         // which may be done twice in some cases. Rearranging the decision points though, to accommodate this 
         // performance improvement would create more code duplication than is worthwhile in my oppinion and may further
         // impede the readability of this already complex algorithm.
-        if (previousSibling)
+        if (previousSiblingProtector)
             currentRenderer = previousSiblingOrParent(currentRenderer);
         else
             currentRenderer = previousInPreOrder(currentRenderer);
