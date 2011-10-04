@@ -1,3 +1,31 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Use const PlatformWheelEvent references where possible
+        https://bugs.webkit.org/show_bug.cgi?id=69367
+
+        Reviewed by Sam Weinig.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEvent):
+        * platform/ScrollableArea.h:
+        * platform/chromium/ScrollAnimatorChromiumMac.h:
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::handleWheelEvent):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::isScrollingLeftAndShouldNotRubberBand):
+        (WebCore::isScrollingRightAndShouldNotRubberBand):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+
 2011-10-04  Andreas Kling  <kling@webkit.org>
 
         Shrink HTMLTableCellElement.

@@ -123,7 +123,7 @@ void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
     scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), y));
 }
 
-bool ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     return scrollAnimator()->handleWheelEvent(wheelEvent);
 }

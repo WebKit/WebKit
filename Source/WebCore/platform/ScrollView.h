@@ -234,7 +234,7 @@ public:
     // This function exists for scrollviews that need to handle wheel events manually.
     // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
     // (like Windows), we need this function in order to do the scroll ourselves.
-    bool wheelEvent(PlatformWheelEvent&);
+    bool wheelEvent(const PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     void gestureEvent(const PlatformGestureEvent&);
 #endif

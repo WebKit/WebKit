@@ -781,7 +781,7 @@ static inline bool isScrollingRightAndShouldNotRubberBand(PlatformWheelEvent& wh
     return wheelEvent.deltaX() < 0 && !scrollableArea->shouldRubberBandInDirection(ScrollRight);
 }
 
-bool ScrollAnimatorChromiumMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorChromiumMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
 

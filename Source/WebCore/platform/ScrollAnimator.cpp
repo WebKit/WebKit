@@ -81,7 +81,7 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     }
 }
 
-bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
+bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
     Scrollbar* horizontalScrollbar = m_scrollableArea->horizontalScrollbar();
     Scrollbar* verticalScrollbar = m_scrollableArea->verticalScrollbar();

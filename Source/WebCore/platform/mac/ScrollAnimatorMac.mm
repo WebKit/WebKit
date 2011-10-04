@@ -782,17 +782,17 @@ static float scrollWheelMultiplier()
     return multiplier;
 }
 
-static inline bool isScrollingLeftAndShouldNotRubberBand(PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
+static inline bool isScrollingLeftAndShouldNotRubberBand(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
 {
     return wheelEvent.deltaX() > 0 && !scrollableArea->shouldRubberBandInDirection(ScrollLeft);
 }
 
-static inline bool isScrollingRightAndShouldNotRubberBand(PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
+static inline bool isScrollingRightAndShouldNotRubberBand(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
 {
     return wheelEvent.deltaX() < 0 && !scrollableArea->shouldRubberBandInDirection(ScrollRight);
 }
 
-bool ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
 
@@ -923,7 +923,7 @@ bool ScrollAnimatorMac::allowsHorizontalStretching() const
     return false;
 }
 
-void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
+void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
 

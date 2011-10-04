@@ -62,7 +62,7 @@ public:
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
 #if ENABLE(RUBBER_BANDING)
-    virtual bool handleWheelEvent(PlatformWheelEvent&) OVERRIDE;
+    virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
 #if ENABLE(GESTURE_EVENTS)
     virtual void handleGestureEvent(const PlatformGestureEvent&);
 #endif
@@ -137,7 +137,7 @@ private:
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBand();
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
-    void smoothScrollWithEvent(PlatformWheelEvent&);
+    void smoothScrollWithEvent(const PlatformWheelEvent&);
     void beginScrollGesture();
     void endScrollGesture();
 

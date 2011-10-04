@@ -2167,6 +2167,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         isOverWidget = result.isOverWidget();
     }
 
+    // FIXME: This should not mutate the event.
     if (shouldTurnVerticalTicksIntoHorizontal(result))
         e.turnVerticalTicksIntoHorizontal();
 
