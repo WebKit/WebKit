@@ -1,3 +1,23 @@
+2011-10-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static ClassInfo structs to classes that override JSCell::getCallData
+        https://bugs.webkit.org/show_bug.cgi?id=69311
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Added ClassInfo structs to each class that defined its own getCallData 
+        function but did not already have its own ClassInfo struct.  This is a 
+        necessary addition for when we switch over to looking up getCallData from 
+        the MethodTable in ClassInfo rather than doing the virtual call (which we 
+        are removing).  These new ClassInfo structs are public because we often 
+        use these structs in other areas of the code to uniquely identify JSC classes and 
+        to enforce runtime invariants based on those class identities using ASSERTs.
+
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/qt/qt_runtime.h:
+
 2011-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): setting input.value erroneously triggers focus event

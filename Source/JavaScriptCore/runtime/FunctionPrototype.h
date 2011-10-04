@@ -43,6 +43,8 @@ namespace JSC {
             return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
+        static const ClassInfo s_info;
+
     protected:
         void finishCreation(ExecState*, const Identifier& name);
 

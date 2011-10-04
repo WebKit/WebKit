@@ -38,6 +38,8 @@ namespace JSC {
             return constructor;
         }
 
+        static const ClassInfo s_info;
+
     private:
         FunctionConstructor(JSGlobalObject*, Structure*);
         void finishCreation(ExecState*, FunctionPrototype*);

@@ -201,22 +201,26 @@ public:
         return JSValue::encode(jsNull());
     }
 
-    CallType getCallDataVirtual(CallData& callData)
+    virtual CallType getCallDataVirtual(CallData& callData)
     {
         return getCallData(this, callData);
     }
 
-    CallType getCallData(JSCell*, CallData& callData)
+    static CallType getCallData(JSCell*, CallData& callData)
     {
         callData.native.function = callThrowTypeError;
         return CallTypeHost;
     }
+
+    static const ClassInfo s_info;
 
 private:
     UString m_message;
 };
 
 ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
+
+const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {
