@@ -93,8 +93,11 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Toolbar.js \
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
-    --module jsmodule_inspector:4:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_inspector:7:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
+        --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
+        --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
+        --js Source/WebCore/inspector/front-end/SourceFrame.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js

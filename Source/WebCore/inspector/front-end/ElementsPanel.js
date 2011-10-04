@@ -446,8 +446,9 @@ WebInspector.ElementsPanel.prototype = {
             treeElement.hasChildren = event.data.hasChildNodes();
     },
 
-    _inspectElementRequested: function(node)
+    _inspectElementRequested: function(event)
     {
+        var node = event.data;
         WebInspector.updateFocusedNode(node.id);
     },
 

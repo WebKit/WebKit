@@ -1,3 +1,50 @@
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make SourceFrame compile.
+        https://bugs.webkit.org/show_bug.cgi?id=69345
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.inspectElement):
+        (WebInspector.DOMDispatcher.prototype.inspectElementRequested):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._inspectElementRequested):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype._contextMenuEventFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype.startEditing):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._applyDiffMarkup):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._onShowPopover.showObjectPopover):
+        (WebInspector.SourceFrame.prototype._onShowPopover):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype.startEditing):
+        (WebInspector.SourceFrame.prototype.commitEditing.didEditContent):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        (WebInspector.SourceFrameDelegate.prototype.requestContent):
+        (WebInspector.SourceFrameDelegate.prototype.debuggingSupported):
+        (WebInspector.SourceFrameDelegate.prototype.setBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.removeBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.updateBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.findBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.continueToLine):
+        (WebInspector.SourceFrameDelegate.prototype.canEditScriptSource):
+        (WebInspector.SourceFrameDelegate.prototype.setScriptSource):
+        (WebInspector.SourceFrameDelegate.prototype.setScriptSourceIsBeingEdited):
+        (WebInspector.SourceFrameDelegate.prototype.debuggerPaused):
+        (WebInspector.SourceFrameDelegate.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.SourceFrameDelegate.prototype.releaseEvaluationResult):
+        (WebInspector.SourceFrameDelegate.prototype.suggestedFileName):
+        * inspector/front-end/externs.js:
+        (WebInspector.log):
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-10-04  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: Factor out object properties popup.

@@ -969,6 +969,9 @@ function revertDomChanges(domChanges)
     }
 }
 
+/**
+ * @param {string=} extraFlags
+ */
 function createSearchRegex(query, extraFlags)
 {
     // This should be kept the same as the one in ContentSearchUtils.cpp.
@@ -994,4 +997,44 @@ function countRegexMatches(regex, content)
         text = text.substring(match.index + 1);
     }
     return result;
+}
+
+/**
+ * @constructor
+ */
+function TextDiff()
+{
+    this.added = [];
+    this.removed = [];
+    this.changed = [];
+} 
+
+/**
+ * @param {string} baseContent
+ * @param {string} newContent
+ * @return {TextDiff}
+ */
+TextDiff.compute = function(baseContent, newContent)
+{
+    var oldLines = baseContent.split(/\r?\n/);
+    var newLines = newContent.split(/\r?\n/);
+
+    var diff = Array.diff(oldLines, newLines);
+
+    var diffData = new TextDiff();
+
+    var offset = 0;
+    var right = diff.right;
+    for (var i = 0; i < right.length; ++i) {
+        if (typeof right[i] === "string") {
+            if (right.length > i + 1 && right[i + 1].row === i + 1 - offset)
+                diffData.changed.push(i);
+            else {
+                diffData.added.push(i);
+                offset++;
+            }
+        } else
+            offset = i - right[i].row;
+    }
+    return diffData;
 }

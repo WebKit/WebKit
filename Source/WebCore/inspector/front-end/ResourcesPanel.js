@@ -407,30 +407,9 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    _applyDiffMarkup: function(view, baseContent, newContent) {
-        var oldLines = baseContent.split(/\r?\n/);
-        var newLines = newContent.split(/\r?\n/);
-
-        var diff = Array.diff(oldLines, newLines);
-
-        var diffData = {};
-        diffData.added = [];
-        diffData.removed = [];
-        diffData.changed = [];
-
-        var offset = 0;
-        var right = diff.right;
-        for (var i = 0; i < right.length; ++i) {
-            if (typeof right[i] === "string") {
-                if (right.length > i + 1 && right[i + 1].row === i + 1 - offset)
-                    diffData.changed.push(i);
-                else {
-                    diffData.added.push(i);
-                    offset++;
-                }
-            } else
-                offset = i - right[i].row;
-        }
+    _applyDiffMarkup: function(view, baseContent, newContent)
+    {
+        var diffData = TextDiff.compute(baseContent, newContent);
         view.markDiff(diffData);
     },
 

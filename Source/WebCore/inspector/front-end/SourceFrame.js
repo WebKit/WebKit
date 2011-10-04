@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.SourceFrame = function(delegate, url)
 {
     WebInspector.View.call(this);
@@ -127,6 +131,9 @@ WebInspector.SourceFrame.prototype = {
         this._delegate.requestContent(callback);
     },
 
+    /**
+     * @param {TextDiff} diffData
+     */
     markDiff: function(diffData)
     {
         if (this._diffLines && this.loaded)
@@ -441,6 +448,9 @@ WebInspector.SourceFrame.prototype = {
         return ranges;
     },
 
+    /**
+     * @param {boolean=} skipRevealLine
+     */
     setExecutionLine: function(lineNumber, skipRevealLine)
     {
         this._executionLineNumber = lineNumber;
@@ -760,11 +770,10 @@ WebInspector.SourceFrame.prototype = {
             callback(committed, newText);
         }
 
-        WebInspector.startEditing(this._conditionEditorElement, {
-            context: null,
-            commitHandler: finishEditing.bind(this, true),
-            cancelHandler: finishEditing.bind(this, false)
-        });
+        var config = new WebInspector.EditingConfig();
+        config.setCommitHandler(finishEditing.bind(this, true));
+        config.setCancelHandler(finishEditing.bind(this, false));
+        WebInspector.startEditing(this._conditionEditorElement, config);
         this._conditionEditorElement.value = condition;
         this._conditionEditorElement.select();
     },
@@ -812,7 +821,7 @@ WebInspector.SourceFrame.prototype = {
         return this._delegate.canEditScriptSource();
     },
 
-    startEditing: function(lineNumber)
+    startEditing: function()
     {
         if (!this.canEditSource())
             return false;
@@ -838,10 +847,8 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.readOnly = false;
 
             if (error) {
-                if (error.message) {
-                    WebInspector.log(error.message, WebInspector.ConsoleMessage.MessageLevel.Error);
-                    WebInspector.showConsole();
-                }
+                if (error.message)
+                    WebInspector.log(error.message, WebInspector.ConsoleMessage.MessageLevel.Error, true);
                 return;
             }
 
@@ -895,6 +902,10 @@ WebInspector.SourceFrame.prototype = {
 WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
 
 
+/**
+ * @implements {WebInspector.TextViewerDelegate}
+ * @constructor
+ */
 WebInspector.TextViewerDelegateForSourceFrame = function(sourceFrame)
 {
     this._sourceFrame = sourceFrame;
@@ -940,83 +951,44 @@ WebInspector.TextViewerDelegateForSourceFrame.prototype = {
     {
         return this._sourceFrame.suggestedFileName();
     }
-};
+}
 
 WebInspector.TextViewerDelegateForSourceFrame.prototype.__proto__ = WebInspector.TextViewerDelegate.prototype;
 
 
+/**
+ * @interface
+ */
 WebInspector.SourceFrameDelegate = function()
 {
 }
 
 WebInspector.SourceFrameDelegate.prototype = {
-    requestContent: function(callback)
-    {
-        // Should be implemented by subclasses.
-    },
+    requestContent: function(callback) { },
 
-    debuggingSupported: function()
-    {
-        return false;
-    },
+    debuggingSupported: function() { return false; },
 
-    setBreakpoint: function(lineNumber, condition, enabled)
-    {
-        // Should be implemented by subclasses.
-    },
+    setBreakpoint: function(lineNumber, condition, enabled) { },
 
-    removeBreakpoint: function(lineNumber)
-    {
-        // Should be implemented by subclasses.
-    },
+    removeBreakpoint: function(lineNumber) { },
 
-    updateBreakpoint: function(lineNumber, condition, enabled)
-    {
-        // Should be implemented by subclasses.
-    },
+    updateBreakpoint: function(lineNumber, condition, enabled) { },
 
-    findBreakpoint: function(lineNumber)
-    {
-        // Should be implemented by subclasses.
-    },
+    findBreakpoint: function(lineNumber) { },
 
-    continueToLine: function(lineNumber)
-    {
-        // Should be implemented by subclasses.
-    },
+    continueToLine: function(lineNumber) { },
 
-    canEditScriptSource: function()
-    {
-        return false;
-    },
+    canEditScriptSource: function() { return false; },
 
-    setScriptSource: function(text, callback)
-    {
-        // Should be implemented by subclasses.
-    },
+    setScriptSource: function(text, callback) { },
 
-    setScriptSourceIsBeingEdited: function(inEditMode)
-    {
-        // Should be implemented by subclasses.
-    },
+    setScriptSourceIsBeingEdited: function(inEditMode) { },
 
-    debuggerPaused: function()
-    {
-        // Should be implemented by subclasses.
-    },
+    debuggerPaused: function() { },
 
-    evaluateInSelectedCallFrame: function(string)
-    {
-        // Should be implemented by subclasses.
-    },
+    evaluateInSelectedCallFrame: function(string) { },
 
-    releaseEvaluationResult: function()
-    {
-        // Should be implemented by subclasses.
-    },
+    releaseEvaluationResult: function() { },
 
-    suggestedFileName: function()
-    {
-        // Should be implemented by subclasses.
-    }
+    suggestedFileName: function() { }
 }

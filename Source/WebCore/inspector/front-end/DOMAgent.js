@@ -617,7 +617,7 @@ WebInspector.DOMAgent.prototype = {
         delete this._idToDOMNode[nodeId];
     },
 
-    _inspectElementRequested: function(nodeId)
+    inspectElement: function(nodeId)
     {
         var node = this._idToDOMNode[nodeId];
         if (node)
@@ -702,11 +702,6 @@ WebInspector.DOMDispatcher.prototype = {
     childNodeRemoved: function(parentId, nodeId)
     {
         this._domAgent._childNodeRemoved(parentId, nodeId);
-    },
-
-    inspectElementRequested: function(nodeId)
-    {
-        this._domAgent._inspectElementRequested(nodeId);
     },
 
     searchResults: function(nodeIds)

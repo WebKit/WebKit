@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.PopoverHelper}
+ */
 WebInspector.ObjectPopoverHelper = function(panelElement, getAnchor, queryObject, onHide, disableOnClick)
 {
     WebInspector.PopoverHelper.call(this, panelElement, getAnchor, this._showObjectPopover.bind(this), onHide, disableOnClick);

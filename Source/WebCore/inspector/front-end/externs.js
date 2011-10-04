@@ -105,14 +105,6 @@ WebInspector.debuggerPresentationModel = {
 
 /**
  * @constructor
- */
-WebInspector.ObjectPropertiesSection = function(obj, title)
-{
-    this.element = null;
-}
-
-/**
- * @constructor
  * @extends {TreeOutline}
  */
 WebInspector.ElementsTreeOutline = function()
@@ -200,3 +192,9 @@ Event.prototype.isMetaOrCtrlForTest = false;
  * @param {...*} vararg
  */
 Event.prototype.initWebKitWheelEvent = function(vararg) {}
+
+/**
+ * @param {string=} messageLevel
+ * @param {boolean=} showConsole
+ */
+WebInspector.log = function(message, messageLevel, showConsole) {}

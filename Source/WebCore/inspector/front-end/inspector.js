@@ -957,7 +957,11 @@ WebInspector.didDestroyWorker = function()
         workersPane.removeWorker.apply(workersPane, arguments);
 }
 
-WebInspector.log = function(message, messageLevel)
+/**
+ * @param {string=} messageLevel
+ * @param {boolean=} showConsole
+ */
+WebInspector.log = function(message, messageLevel, showConsole)
 {
     // remember 'this' for setInterval() callback
     var self = this;
@@ -1020,6 +1024,8 @@ WebInspector.log = function(message, messageLevel)
             null);
 
         self.console.addMessage(msg);
+        if (showConsole)
+            WebInspector.showConsole();
     }
 
     // if we can't log the message, queue it

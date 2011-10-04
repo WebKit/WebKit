@@ -24,6 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.PropertiesSection}
+ * @param {string=} title
+ * @param {string=} subtitle
+ * @param {string=} emptyPlaceholder
+ * @param {string=} ignoreHasOwnProperty
+ * @param {Array.<WebInspector.RemoteObjectProperty>=} extraProperties
+ * @param {function()=} treeElementConstructor
+ */
 WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties, treeElementConstructor)
 {
     this.emptyPlaceholder = (emptyPlaceholder || WebInspector.UIString("No Properties"));
@@ -135,6 +145,10 @@ WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, pro
     return diff;
 }
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ */
 WebInspector.ObjectPropertyTreeElement = function(property)
 {
     this.property = property;
@@ -220,13 +234,12 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.hasChildren = this.property.value.hasChildren && !this.property.wasThrown;
     },
 
-    _contextMenuEventFired: function()
+    _contextMenuEventFired: function(event)
     {
         function selectNode(nodeId)
         {
-            if (nodeId) {
-                WebInspector.panels.elements.switchToAndFocus(WebInspector.domAgent.nodeForId(nodeId));
-            }
+            if (nodeId)
+                WebInspector.domAgent.inspectElement(nodeId);
         }
 
         function revealElement()
@@ -263,11 +276,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (typeof this.valueElement._originalTextContent === "string")
             this.valueElement.textContent = this.valueElement._originalTextContent;
 
-        WebInspector.startEditing(this.valueElement, {
-            context: context,
-            commitHandler: this.editingCommitted.bind(this),
-            cancelHandler: this.editingCancelled.bind(this)
-        });
+        var config = new WebInspector.EditingConfig();
+        config.setContext(context);
+        config.setCommitHandler(this.editingCommitted.bind(this));
+        config.setCancelHandler(this.editingCancelled.bind(this));
+        WebInspector.startEditing(this.valueElement, config);
     },
 
     editingEnded: function(context)
