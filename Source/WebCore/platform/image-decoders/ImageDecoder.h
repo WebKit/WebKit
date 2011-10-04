@@ -188,6 +188,9 @@ namespace WebCore {
 
 #if USE(SKIA)
         NativeImageSkia m_bitmap;
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        ColorProfile m_colorProfile;
+#endif
 #elif PLATFORM(QT)
         mutable QPixmap m_pixmap;
         mutable QImage m_image;

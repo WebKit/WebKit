@@ -1,3 +1,29 @@
+2011-10-04  Cary Clark  <caryclark@google.com>
+
+        Apply color profile found to decoded bitmap (Skia on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=69144
+        This fixes http://code.google.com/p/chromium/issues/detail?id=97830
+
+        Reviewed by Stephen White.
+
+        No new tests. This platform is not enabled.
+
+        * platform/image-decoders/ImageDecoder.h:
+        Add color profile slot to Skia variation.
+
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::resolveColorSpace):
+        Adjust the bitmap in place to use the supplied color space.
+
+        (WebCore::createColorSpace):
+        Create a CGColorSpace from a color profile.
+
+        (WebCore::ImageFrame::setColorProfile):
+        Save the image's color profile until the image is complete.
+
+        (WebCore::ImageFrame::setStatus):
+        Apply the color profile, if any, to the image.
+
 2011-10-04  Leandro Pereira  <leandro@profusion.mobi>
 
         [CMake] Unreviewed: pass feature definitions in the right format for the CSS scripts.

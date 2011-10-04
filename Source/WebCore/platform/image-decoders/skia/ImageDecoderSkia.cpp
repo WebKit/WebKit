@@ -29,6 +29,11 @@
 
 #include "NotImplemented.h"
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+#include "GraphicsContextCG.h"
+#include "SkCGUtils.h"
+#endif
+
 namespace WebCore {
 
 ImageFrame::ImageFrame()
@@ -110,16 +115,56 @@ void ImageFrame::setHasAlpha(bool alpha)
     m_bitmap.bitmap().setIsOpaque(!alpha);
 }
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+static void resolveColorSpace(const SkBitmap& bitmap, CGColorSpaceRef colorSpace)
+{
+    int width = bitmap.width();
+    int height = bitmap.height();
+    CGImageRef srcImage = SkCreateCGImageRefWithColorspace(bitmap, colorSpace);
+    SkAutoLockPixels lock(bitmap);
+    void* pixels = bitmap.getPixels();
+    RetainPtr<CGContextRef> cgBitmap(AdoptCF, CGBitmapContextCreate(pixels, width, height, 8, width * 4, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst));
+    if (!cgBitmap)
+        return;
+    CGContextSetBlendMode(cgBitmap.get(), kCGBlendModeCopy);
+    CGRect bounds = { {0, 0}, {width, height} };
+    CGContextDrawImage(cgBitmap.get(), bounds, srcImage);
+}
+
+static CGColorSpaceRef createColorSpace(const ColorProfile& colorProfile)
+{
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(colorProfile.data()), colorProfile.size()));
+#ifndef TARGETING_LEOPARD
+    return CGColorSpaceCreateWithICCProfile(data.get());
+#else
+    RetainPtr<CGDataProviderRef> profileDataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+    CGFloat ranges[] = {0.0, 255.0, 0.0, 255.0, 0.0, 255.0};
+    return CGColorSpaceCreateICCBased(3, ranges, profileDataProvider.get(), deviceRGBColorSpaceRef());
+#endif
+}
+#endif
+
 void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
 {
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    m_colorProfile = colorProfile;
+#else
     notImplemented();
+#endif
 }
 
 void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
-    if (m_status == FrameComplete)
+    if (m_status == FrameComplete) {
         m_bitmap.setDataComplete();  // Tell the bitmap it's done.
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        if (m_colorProfile.isEmpty())
+            return;
+        RetainPtr<CGColorSpaceRef> cgColorSpace(AdoptCF, createColorSpace(m_colorProfile));
+        resolveColorSpace(m_bitmap.bitmap(), cgColorSpace.get());
+#endif
+    }
 }
 
 int ImageFrame::width() const
