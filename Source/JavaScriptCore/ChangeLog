@@ -1,3 +1,15 @@
+2011-10-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        MinGW warning fix after r96286.
+
+        Avoid redefining STDCALL, because STDCALL is also defined in mingw32/include/windef.h:
+        #define __stdcall __attribute__((stdcall))
+        #define STDCALL __stdcall
+
+        Reviewed by Tor Arne Vestbø.
+
+        * assembler/MacroAssemblerCodeRef.h:
+
 2011-10-04  Gavin Peters  <gavinp@chromium.org>
 
        add more stack dumping methods

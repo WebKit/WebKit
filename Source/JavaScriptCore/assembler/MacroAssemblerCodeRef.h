@@ -107,7 +107,9 @@ public:
     }
 
 #if CALLING_CONVENTION_IS_CDECL
+#ifndef STDCALL
 #define STDCALL __attribute__ ((stdcall))
+#endif
     template<typename returnType>
     FunctionPtr(returnType (STDCALL *value)())
         : m_value((void*)value)
