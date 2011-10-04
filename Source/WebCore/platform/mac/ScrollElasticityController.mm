@@ -37,6 +37,10 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
     , m_ignoreMomentumScrolls(false)
     , m_scrollerInitiallyPinnedOnLeft(false)
     , m_scrollerInitiallyPinnedOnRight(false)
+    , m_cumulativeHorizontalScroll(0)
+    , m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin(false)
+    , m_lastMomentumScrollTimestamp(0)
+    , m_startTime(0)
 {
 }
 

@@ -148,22 +148,9 @@ private:
     void endScrollGesture();
 
     ScrollElasticityController m_scrollElasticityController;
-
-    int m_cumulativeHorizontalScroll;
-    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
-    
-    CFTimeInterval m_lastMomentumScrollTimestamp;
-    FloatSize m_overflowScrollDelta;
-    FloatSize m_stretchScrollForce;
-    FloatSize m_momentumVelocity;
-
-    // Rubber band state.
-    CFTimeInterval m_startTime;
-    FloatSize m_startStretch;
-    FloatPoint m_origOrigin;
-    FloatSize m_origVelocity;
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
 #endif
+
     bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
     bool m_needsScrollerStyleUpdate;

@@ -28,6 +28,8 @@
 
 #if ENABLE(RUBBER_BANDING)
 
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -54,7 +56,20 @@ public:
     bool m_ignoreMomentumScrolls;
     bool m_scrollerInitiallyPinnedOnLeft;
     bool m_scrollerInitiallyPinnedOnRight;
+    
+    int m_cumulativeHorizontalScroll;
+    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
 
+    CFTimeInterval m_lastMomentumScrollTimestamp;
+    FloatSize m_overflowScrollDelta;
+    FloatSize m_stretchScrollForce;
+    FloatSize m_momentumVelocity;
+
+    // Rubber band state.
+    CFTimeInterval m_startTime;
+    FloatSize m_startStretch;
+    FloatPoint m_origOrigin;
+    FloatSize m_origVelocity;
 };
 
 } // namespace WebCore
