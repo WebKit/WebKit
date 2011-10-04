@@ -1,3 +1,19 @@
+2011-10-04  Leandro Pereira  <leandro@profusion.mobi>
+
+        [CMake] Unreviewed: pass feature definitions in the right format for the CSS scripts.
+
+        The Perl scripts in the css/ directory expect the definitions passed via
+        --defines to be a string of space-separated entries, however we were passing a
+        list of semicolon-separated strings, thus making all feature defines actually
+        be ignored.
+
+        Detected after r96433, which checked for some definitions in
+        CSSPropertyNames.in.
+
+        No new tests, this is a build fix.
+
+        * CMakeLists.txt:
+
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make SourceFrame compile.
