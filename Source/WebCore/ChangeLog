@@ -1,3 +1,13 @@
+2011-10-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] extension panel's toolbar icon is incorrect when inspector window is docked
+        https://bugs.webkit.org/show_bug.cgi?id=69336
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel):
+
 2011-10-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: update call frame location when source mapping is changed.

@@ -28,11 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ExtensionPanel = function(id, label, iconURL, options)
+WebInspector.ExtensionPanel = function(id, label, iconURL)
 {
     this._toolbarItemLabel = label;
-    if (iconURL)
+    if (iconURL) {
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
+        this._addStyleRule(".toolbar-small .toolbar-item." + id + " .toolbar-icon", "background-position-x: -32px;");
+    }
     WebInspector.Panel.call(this, id);
 }
 
