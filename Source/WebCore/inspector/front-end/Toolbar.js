@@ -29,6 +29,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Toolbar = function()
 {
     this.element = document.getElementById("toolbar");
@@ -142,7 +145,7 @@ WebInspector.Toolbar.prototype = {
         else
             this._dropdownButton.addStyleClass("hidden");
     }
-};
+}
 
 WebInspector.Toolbar.createPanelToolbarItem = function(panel)
 {
@@ -155,7 +158,7 @@ WebInspector.Toolbar.createPanelToolbarItem = function(panel)
         WebInspector.toolbar._updateDropdownButtonAndHideDropdown();
         WebInspector.setCurrentPanel(panel);
     }
-    toolbarItem.addEventListener("click", onToolbarItemClicked);
+    toolbarItem.addEventListener("click", onToolbarItemClicked, false);
 
     var iconElement = toolbarItem.createChild("div", "toolbar-icon");
 
@@ -168,6 +171,9 @@ WebInspector.Toolbar.createPanelToolbarItem = function(panel)
     return toolbarItem;
 }
 
+/**
+ * @constructor
+ */
 WebInspector.ToolbarDropdown = function()
 {
     this._toolbar = document.getElementById("toolbar");
@@ -193,7 +199,6 @@ WebInspector.ToolbarDropdown.prototype = {
         this.element.style.left = this._arrow.totalOffsetLeft() + "px";
         this._contentElement.style.maxHeight = window.innerHeight - top - 20 + "px";
         this._toolbar.appendChild(this.element);
-        WebInspector.currentFocusElement = this.contentElement;
     },
 
     hide: function()
@@ -227,4 +232,9 @@ WebInspector.ToolbarDropdown.prototype = {
         event.stopPropagation();
         this.hide();
     }
-};
+}
+
+/**
+ * @type {?WebInspector.Toolbar}
+ */
+WebInspector.toolbar = null;

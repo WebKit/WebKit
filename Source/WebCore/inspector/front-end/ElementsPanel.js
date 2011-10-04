@@ -140,7 +140,7 @@ WebInspector.ElementsPanel.prototype = {
         return this.treeOutline.element;
     },
 
-    updateStatusBarItems: function()
+    statusBarResized: function()
     {
         this.updateBreadcrumbSizes();
     },

@@ -1,3 +1,51 @@
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: start adding UI components to the compilation process.
+        https://bugs.webkit.org/show_bug.cgi?id=69319
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.resize):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.statusBarResized):
+        * inspector/front-end/EmptyView.js:
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.set get toolbarItemLabel):
+        (WebInspector.Panel.prototype.get statusBarItems):
+        (WebInspector.Panel.prototype.updateMainViewWidth):
+        (WebInspector.Panel.prototype.statusBarResized):
+        * inspector/front-end/PropertiesSection.js:
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype._onKeyDown):
+        * inspector/front-end/Section.js:
+        (WebInspector.Section.prototype.set populated):
+        (WebInspector.Section.prototype.onpopulate):
+        (WebInspector.Section.prototype.expand):
+        * inspector/front-end/SidebarPane.js:
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.createPanelToolbarItem):
+        (WebInspector.ToolbarDropdown.prototype.show):
+        * inspector/front-end/UIUtils.js: Added.
+        (WebInspector.elementDragStart):
+        (WebInspector.elementDragEnd):
+        (WebInspector.animateStyle):
+        (WebInspector.animateStyle.forceComplete):
+        (WebInspector.animateStyle.cancel):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (WebInspector.extensionServer.notifyPanelShown):
+        (WebInspector.extensionServer.notifyPanelHidden):
+        (WebInspector.currentPanel):
+        (WebInspector.setCurrentPanel):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2011-10-04  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Implement font shaping with font-feature-settings on Windows

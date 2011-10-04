@@ -27,6 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Drawer = function()
 {
     this.element = document.getElementById("drawer");
@@ -100,8 +103,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            if ("updateStatusBarItems" in WebInspector.currentPanel())
-                WebInspector.currentPanel().updateStatusBarItems();
+            WebInspector.currentPanel().statusBarResized();
             if (this._view && this._view.afterShow)
                 this._view.afterShow();
             delete this._currentAnimation;
@@ -131,8 +133,7 @@ WebInspector.Drawer.prototype = {
         // like Elements in their updateStatusBarItems call will size things to fit the final location.
         this._mainStatusBar.style.setProperty("padding-left", (anchoredItems.offsetWidth - 1) + "px");
         document.body.removeStyleClass("drawer-visible");
-        if ("updateStatusBarItems" in WebInspector.currentPanel())
-            WebInspector.currentPanel().updateStatusBarItems();
+        WebInspector.currentPanel().statusBarResized();
         document.body.addStyleClass("drawer-visible");
 
         var animations = [
@@ -178,7 +179,7 @@ WebInspector.Drawer.prototype = {
             return;
 
         this._view.storeScrollPositions();
-        var height = this._constrainHeight(parseInt(this.element.style.height));
+        var height = this._constrainHeight(parseInt(this.element.style.height, 10));
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
         this._view.doResize();

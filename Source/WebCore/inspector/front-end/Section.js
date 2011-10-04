@@ -27,6 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Section = function(title, subtitle)
 {
     this.element = document.createElement("div");
@@ -118,10 +121,15 @@ WebInspector.Section.prototype = {
     set populated(x)
     {
         this._populated = x;
-        if (!x && this.onpopulate && this._expanded) {
-            this.onpopulate(this);
+        if (!x && this._expanded) {
+            this.onpopulate();
             this._populated = true;
         }
+    },
+
+    onpopulate: function()
+    {
+        // Overriden by subclasses.
     },
 
     get firstSibling()
@@ -183,8 +191,8 @@ WebInspector.Section.prototype = {
         this._expanded = true;
         this.element.addStyleClass("expanded");
 
-        if (!this._populated && this.onpopulate) {
-            this.onpopulate(this);
+        if (!this._populated) {
+            this.onpopulate();
             this._populated = true;
         }
     },

@@ -44,7 +44,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:16:jsmodule_common,jsmodule_host \
+    --module jsmodule_sdk:16:jsmodule_common \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
         --js Source/WebCore/inspector/front-end/ContentProviders.js \
         --js Source/WebCore/inspector/front-end/CookieParser.js \
@@ -61,20 +61,30 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_misc:16:jsmodule_sdk \
+    --module jsmodule_ui:21:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
-        --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
-        --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/Drawer.js \
+        --js Source/WebCore/inspector/front-end/EmptyView.js \
         --js Source/WebCore/inspector/front-end/HelpScreen.js \
         --js Source/WebCore/inspector/front-end/KeyboardShortcut.js \
-        --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
-        --js Source/WebCore/inspector/front-end/View.js \
+        --js Source/WebCore/inspector/front-end/Panel.js \
         --js Source/WebCore/inspector/front-end/Placard.js \
         --js Source/WebCore/inspector/front-end/Popover.js \
-        --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
+        --js Source/WebCore/inspector/front-end/PropertiesSection.js \
+        --js Source/WebCore/inspector/front-end/SearchController.js \
+        --js Source/WebCore/inspector/front-end/Section.js \
+        --js Source/WebCore/inspector/front-end/SidebarPane.js \
         --js Source/WebCore/inspector/front-end/ShortcutsScreen.js \
+        --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
         --js Source/WebCore/inspector/front-end/StatusBarButton.js \
         --js Source/WebCore/inspector/front-end/TabbedPane.js \
         --js Source/WebCore/inspector/front-end/TextPrompt.js \
+        --js Source/WebCore/inspector/front-end/Toolbar.js \
+        --js Source/WebCore/inspector/front-end/UIUtils.js \
+        --js Source/WebCore/inspector/front-end/View.js \
+    --module jsmodule_inspector:4:jsmodule_sdk,jsmodule_ui \
+        --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
+        --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js

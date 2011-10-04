@@ -76,6 +76,8 @@ Array.prototype.remove = function(obj) {}
 
 WebInspector.extensionServer = {}
 WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
+WebInspector.extensionServer.notifyPanelShown = function(panel) {}
+WebInspector.extensionServer.notifyPanelHidden = function(panel) {}
 
 /**
  * @param {string} url
@@ -146,3 +148,28 @@ WebInspector.ScriptsPanel = function()
  * @type {?WebInspector.ScriptsPanel}
  */
 WebInspector.panels.scripts = null;
+
+/**
+ * @return {WebInspector.Panel} 
+ */
+WebInspector.currentPanel = function() {}
+
+/**
+ * @param {WebInspector.Panel} panel
+ */
+WebInspector.setCurrentPanel = function(panel) {}
+
+/**
+ * @type {?Element}
+ */
+WebInspector.currentFocusElement = null;
+
+/**
+ * @type {?Element}
+ */
+WebInspector.previousFocusElement = null;
+
+/**
+ * @type {string}
+ */
+WebInspector.platformFlavor = "";

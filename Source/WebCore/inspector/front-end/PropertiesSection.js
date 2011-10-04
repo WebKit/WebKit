@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Section}
+ */
 WebInspector.PropertiesSection = function(title, subtitle)
 {
     WebInspector.Section.call(this, title, subtitle);

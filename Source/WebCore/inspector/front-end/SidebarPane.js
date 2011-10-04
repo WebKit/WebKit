@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.SidebarPane = function(title)
 {
     this.element = document.createElement("div");

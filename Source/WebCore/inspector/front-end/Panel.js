@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.Panel = function(name)
 {
     WebInspector.View.call(this);
@@ -227,9 +231,22 @@ WebInspector.Panel.prototype = {
         WebInspector.settings[this._sidebarWidthSettingName()].set(this.sidebarElement.offsetWidth);
     },
 
+    // Should be implemented by ancestors.
+
+    get toolbarItemLabel()
+    {
+    },
+
+    get statusBarItems()
+    {
+    },
+
     updateMainViewWidth: function(width)
     {
-        // Should be implemented by ancestors.
+    },
+
+    statusBarResized: function()
+    {
     },
 
     canShowAnchorLocation: function(anchor)
