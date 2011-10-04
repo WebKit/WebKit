@@ -138,6 +138,13 @@ private:
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
 #if ENABLE(RUBBER_BANDING)
+    /// ScrollElasticityControllerClient member functions.
+    virtual bool isHorizontalScrollerPinnedToMinimumPosition() OVERRIDE;
+    virtual bool isHorizontalScrollerPinnedToMaximumPosition() OVERRIDE;
+    virtual IntSize stretchAmount() OVERRIDE;
+    virtual void startSnapRubberbandTimer() OVERRIDE;
+    virtual void stopSnapRubberbandTimer() OVERRIDE;
+
     bool allowsVerticalStretching() const;
     bool allowsHorizontalStretching() const;
     bool pinnedInDirection(float deltaX, float deltaY);

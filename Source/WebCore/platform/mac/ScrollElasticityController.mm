@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+static const float rubberbandStiffness = 20;
+
+static float reboundDeltaForElasticDelta(float delta)
+{
+    return delta * rubberbandStiffness;
+}
+
 ScrollElasticityController::ScrollElasticityController(ScrollElasticityControllerClient* client)
     : m_client(client)
     , m_inScrollGesture(false)
@@ -43,6 +50,33 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
     , m_startTime(0)
     , m_snapRubberbandTimerIsActive(false)
 {
+}
+
+void ScrollElasticityController::beginScrollGesture()
+{
+    m_inScrollGesture = true;
+    m_momentumScrollInProgress = false;
+    m_ignoreMomentumScrolls = false;
+    m_lastMomentumScrollTimestamp = 0;
+    m_momentumVelocity = FloatSize();
+    m_scrollerInitiallyPinnedOnLeft = m_client->isHorizontalScrollerPinnedToMinimumPosition();
+    m_scrollerInitiallyPinnedOnRight = m_client->isHorizontalScrollerPinnedToMaximumPosition();
+    m_cumulativeHorizontalScroll = 0;
+    m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = false;
+    
+    IntSize stretchAmount = m_client->stretchAmount();
+    m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
+    m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
+    
+    m_overflowScrollDelta = FloatSize();
+
+    stopSnapRubberbandTimer();
+}
+
+void ScrollElasticityController::stopSnapRubberbandTimer()
+{
+    m_client->stopSnapRubberbandTimer();
+    m_snapRubberbandTimerIsActive = false;
 }
 
 } // namespace WebCore

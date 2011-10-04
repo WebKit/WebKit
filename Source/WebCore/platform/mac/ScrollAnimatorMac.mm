@@ -882,6 +882,31 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
     return false;
 }
 
+bool ScrollAnimatorMac::isHorizontalScrollerPinnedToMinimumPosition()
+{
+    return m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition();
+}
+
+bool ScrollAnimatorMac::isHorizontalScrollerPinnedToMaximumPosition()
+{
+    return m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition();
+}
+
+IntSize ScrollAnimatorMac::stretchAmount()
+{
+    return m_scrollableArea->overhangAmount();
+}
+
+void ScrollAnimatorMac::startSnapRubberbandTimer()
+{
+    m_snapRubberBandTimer.startRepeating(1.0 / 60.0);
+}
+
+void ScrollAnimatorMac::stopSnapRubberbandTimer()
+{
+    m_snapRubberBandTimer.stop();
+}
+
 bool ScrollAnimatorMac::allowsVerticalStretching() const
 {
     switch (m_scrollableArea->verticalScrollElasticity()) {
@@ -1075,26 +1100,9 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
 void ScrollAnimatorMac::beginScrollGesture()
 {
     didBeginScrollGesture();
-
     m_haveScrolledSincePageLoad = true;
-    m_scrollElasticityController.m_inScrollGesture = true;
-    m_scrollElasticityController.m_momentumScrollInProgress = false;
-    m_scrollElasticityController.m_ignoreMomentumScrolls = false;
-    m_scrollElasticityController.m_lastMomentumScrollTimestamp = 0;
-    m_scrollElasticityController.m_momentumVelocity = FloatSize();
-    m_scrollElasticityController.m_scrollerInitiallyPinnedOnLeft = m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition();
-    m_scrollElasticityController.m_scrollerInitiallyPinnedOnRight = m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition();
-    m_scrollElasticityController.m_cumulativeHorizontalScroll = 0;
-    m_scrollElasticityController.m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = false;
-    
-    IntSize stretchAmount = m_scrollableArea->overhangAmount();
-    m_scrollElasticityController.m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
-    m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
 
-    m_scrollElasticityController.m_overflowScrollDelta = FloatSize();
-    
-    m_snapRubberBandTimer.stop();
-    m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
+    m_scrollElasticityController.beginScrollGesture();
 }
 
 void ScrollAnimatorMac::endScrollGesture()

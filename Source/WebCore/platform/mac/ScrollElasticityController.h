@@ -35,8 +35,17 @@
 namespace WebCore {
 
 class ScrollElasticityControllerClient {
-public:
+protected:
     virtual ~ScrollElasticityControllerClient() { } 
+
+public:
+    virtual bool isHorizontalScrollerPinnedToMinimumPosition() = 0;
+    virtual bool isHorizontalScrollerPinnedToMaximumPosition() = 0;
+
+    virtual IntSize stretchAmount() = 0;
+
+    virtual void startSnapRubberbandTimer() = 0;
+    virtual void stopSnapRubberbandTimer() = 0;
 };
 
 class ScrollElasticityController {
@@ -45,8 +54,12 @@ class ScrollElasticityController {
 public:
     explicit ScrollElasticityController(ScrollElasticityControllerClient*);
 
+    void beginScrollGesture();
+
 private:
     ScrollElasticityControllerClient* m_client;
+
+    void stopSnapRubberbandTimer();
 
     // FIXME: These member variables should be private. They are currently public as a stop-gap measure, while
     // the rubber-band related code from ScrollAnimatorMac is being moved over.

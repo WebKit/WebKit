@@ -1,3 +1,35 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Move code into ScrollElasticityController::beginScrollGesture()
+        https://bugs.webkit.org/show_bug.cgi?id=69383
+
+        Reviewed by John Sullivan.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        Add new ScrollElasticityControllerClient member functions.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::isHorizontalScrollerPinnedToMinimumPosition):
+        (WebCore::ScrollAnimatorMac::isHorizontalScrollerPinnedToMaximumPosition):
+        (WebCore::ScrollAnimatorMac::stretchAmount):
+        (WebCore::ScrollAnimatorMac::startSnapRubberbandTimer):
+        (WebCore::ScrollAnimatorMac::stopSnapRubberbandTimer):
+        Implement the new ScrollElasticityControllerClient member functions.
+
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        Move code into ScrollElasticityController::beginScrollGesture and call it directly.
+
+        * platform/mac/ScrollElasticityController.h:
+        Add new ScrollElasticityControllerClient member functions.
+
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::reboundDeltaForElasticDelta):
+        (WebCore::ScrollElasticityController::beginScrollGesture):
+        Set up the scroll gesture state.
+
+        (WebCore::ScrollElasticityController::stopSnapRubberbandTimer):
+        New helper function.
+
 2011-10-04  Scott Graham  <scottmg@chromium.org>
 
         Add GAMEPAD feature flag
