@@ -1,3 +1,14 @@
+2011-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Timeline panel shortcut for filtering short records should have shorter description.
+        https://bugs.webkit.org/show_bug.cgi?id=69333
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._registerShortcuts):
+
 2011-10-04  Andreas Kling  <kling@webkit.org>
 
         Shrink StyleRareNonInheritedData.
