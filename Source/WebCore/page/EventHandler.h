@@ -50,7 +50,6 @@ class NSView;
 namespace WebCore {
 
 class Clipboard;
-class Cursor;
 class Event;
 class EventTarget;
 class FloatPoint;
@@ -62,6 +61,7 @@ class HitTestResult;
 class KeyboardEvent;
 class MouseEventWithHitTestResults;
 class Node;
+class OptionalCursor;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
@@ -238,7 +238,7 @@ private:
 #endif
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
-    Cursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
+    OptionalCursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
 #if ENABLE(PAN_SCROLLING)
     void updatePanScrollState();
 #endif

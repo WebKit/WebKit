@@ -46,6 +46,7 @@ namespace WebCore {
 
 class AffineTransform;
 class AnimationController;
+class Cursor;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
@@ -65,6 +66,12 @@ class RenderSVGResourceContainer;
 #endif
 
 struct PaintInfo;
+
+enum CursorDirective {
+    SetCursorBasedOnStyle,
+    SetCursor,
+    DoNotSetCursor
+};
 
 enum HitTestFilter {
     HitTestAll,
@@ -658,8 +665,9 @@ public:
     // This is typically only relevant when repainting.
     virtual RenderStyle* outlineStyleForRepaint() const { return style(); }
     
-    void getTextDecorationColors(int decorations, Color& underline, Color& overline,
-                                 Color& linethrough, bool quirksMode = false);
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
+
+    void getTextDecorationColors(int decorations, Color& underline, Color& overline, Color& linethrough, bool quirksMode = false);
 
     // Return the RenderBox in the container chain which is responsible for painting this object, or 0
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint'

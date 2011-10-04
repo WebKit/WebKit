@@ -59,6 +59,7 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
 private:
     virtual bool isWidget() const { return true; }

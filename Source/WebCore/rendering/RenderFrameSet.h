@@ -68,8 +68,8 @@ public:
     bool isResizingRow() const;
     bool isResizingColumn() const;
 
-    bool canResizeRow(const IntPoint&) const;
-    bool canResizeColumn(const IntPoint&) const;
+    bool canResizeRow(const LayoutPoint&) const;
+    bool canResizeColumn(const LayoutPoint&) const;
 
     void notifyFrameEdgeInfoChanged();
 
@@ -99,6 +99,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
     inline HTMLFrameSetElement* frameSet() const;
 

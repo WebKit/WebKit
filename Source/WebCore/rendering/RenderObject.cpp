@@ -2690,7 +2690,13 @@ VisiblePosition RenderObject::createVisiblePosition(const Position& position)
     return createVisiblePosition(0, DOWNSTREAM);
 }
 
+CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
+{
+    return SetCursorBasedOnStyle;
+}
+
 #if ENABLE(SVG)
+
 RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()
 {
     ASSERT_NOT_REACHED();

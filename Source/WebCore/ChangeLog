@@ -1,3 +1,64 @@
+2011-10-03  Darin Adler  <darin@apple.com>
+
+        Change cursor to hand over missing plug-in message
+        https://bugs.webkit.org/show_bug.cgi?id=69312
+
+        Reviewed by Sam Weinig.
+
+        No tests because we currently don't have any test machinery for cursors.
+
+        * page/EventHandler.cpp:
+        (WebCore::OptionalCursor::OptionalCursor): Added. Construct an object
+        to represent either a cursor, or no cursor change.
+        (WebCore::OptionalCursor::isCursorChange): Added.
+        (WebCore::OptionalCursor::cursor): Added.
+        (WebCore::EventHandler::selectCursor): Changed return type to OptionalCursor,
+        moved some special cases from handleMouseMoveEvent in here. Moved the logic
+        for plug-ins and framesets into the specific renderer classes for those.
+        Added a call to the new getCursor virtual function.
+        (WebCore::EventHandler::handleMouseMoveEvent): Changed cursor setting code to
+        just be a call to selectCursor and then setCursor. Plug-in-specific code is now
+        in RenderWidget.
+
+        * page/EventHandler.h: Changed return type of selectCursor.
+
+        * page/MouseEventWithHitTestResults.cpp: Made some functions be inline.
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::localPoint): Made this inline.
+        (WebCore::MouseEventWithHitTestResults::scrollbar): Made this inline.
+        Yes, this has nothing to do with the rest of the patch, but it's good.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry): Made const.
+        (WebCore::RenderEmbeddedObject::isInMissingPluginIndicator): Made const.
+        Overloaded so it can be called with a point rather than an event.
+        (WebCore::shouldMissingPluginMessageBeButton): Added. Helps streamline
+        the logic below.
+        (WebCore::RenderEmbeddedObject::handleMissingPluginIndicatorEvent):
+        Changed to use shouldMissingPluginMessageBeButton.
+        (WebCore::RenderEmbeddedObject::getCursor): Added. Sets the cursor to
+        a hand when over the missing plug-in message.
+        * rendering/RenderEmbeddedObject.h: Added getCursor override. Also updated
+        for other changes above.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::getCursor): Added. Contains the logic that used
+        to be hardcoded in EventHandler::selectCursor about cursors when over
+        resizable frame borders.
+        * rendering/RenderFrameSet.h: Added getCursor.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getCursor): Added. Returns SetCursorBasedOnStyle.
+        * rendering/RenderObject.h: Added getCursor.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::getCursor): Added. Contains the logic that used
+        to be hardcoded in EventHandler::handleMouseMoveEvent to prevent setting
+        the cursor when the pointer is over a plug-in. This new code is much better,
+        because it only kicks in when there is actually a plug-in present. The old
+        was based on the HTML tag!
+        * rendering/RenderWidget.h: Added getCursor.
+
 2011-10-03  Anders Carlsson  <andersca@apple.com>
 
         Work towards making PlatformWheelEvent immutable

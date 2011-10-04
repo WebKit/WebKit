@@ -33,16 +33,6 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
 {
 }
 
-const LayoutPoint MouseEventWithHitTestResults::localPoint() const
-{
-    return m_hitTestResult.localPoint();
-}
-
-Scrollbar* MouseEventWithHitTestResults::scrollbar() const
-{
-    return m_hitTestResult.scrollbar();
-}
-
 bool MouseEventWithHitTestResults::isOverLink() const
 {
     return m_hitTestResult.URLElement() && m_hitTestResult.URLElement()->isLink();

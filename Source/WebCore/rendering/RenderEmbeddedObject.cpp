@@ -26,6 +26,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Cursor.h"
 #include "CSSValueKeywords.h"
 #include "Font.h"
 #include "FontSelector.h"
@@ -180,7 +181,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
 }
 
-bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
+bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth) const
 {
     contentRect = contentBoxRect();
     contentRect.moveBy(accumulatedOffset);
@@ -249,7 +250,7 @@ void RenderEmbeddedObject::viewCleared()
     }
 }
  
-bool RenderEmbeddedObject::isInMissingPluginIndicator(MouseEvent* event)
+bool RenderEmbeddedObject::isInMissingPluginIndicator(const LayoutPoint& point) const
 {
     FloatRect contentRect;
     Path path;
@@ -257,18 +258,25 @@ bool RenderEmbeddedObject::isInMissingPluginIndicator(MouseEvent* event)
     Font font;
     TextRun run("");
     float textWidth;
-    if (!getReplacementTextGeometry(IntPoint(), contentRect, path, replacementTextRect, font, run, textWidth))
-        return false;
-    
-    return path.contains(absoluteToLocal(event->absoluteLocation(), false, true));
+    return getReplacementTextGeometry(IntPoint(), contentRect, path, replacementTextRect, font, run, textWidth)
+        && path.contains(point);
+}
+
+bool RenderEmbeddedObject::isInMissingPluginIndicator(MouseEvent* event) const
+{
+    return isInMissingPluginIndicator(roundedLayoutPoint(absoluteToLocal(event->absoluteLocation(), false, true)));
+}
+
+static bool shouldMissingPluginMessageBeButton(Document* document)
+{
+    Page* page = document->page();
+    return page && page->chrome()->client()->shouldMissingPluginMessageBeButton();
 }
 
 void RenderEmbeddedObject::handleMissingPluginIndicatorEvent(Event* event)
 {
-    if (Page* page = document()->page()) {
-        if (!page->chrome()->client()->shouldMissingPluginMessageBeButton())
-            return;
-    }
+    if (!shouldMissingPluginMessageBeButton(document()))
+        return;
     
     if (!event->isMouseEvent())
         return;
@@ -305,6 +313,15 @@ void RenderEmbeddedObject::handleMissingPluginIndicatorEvent(Event* event)
         setMissingPluginIndicatorIsPressed(m_mouseDownWasInMissingPluginIndicator && isInMissingPluginIndicator(mouseEvent));
         event->setDefaultHandled();
     }
+}
+
+CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor& cursor) const
+{
+    if (m_showsMissingPluginIndicator && shouldMissingPluginMessageBeButton(document()) && isInMissingPluginIndicator(point)) {
+        cursor = handCursor();
+        return SetCursor;
+    }
+    return RenderPart::getCursor(point, cursor);
 }
 
 }

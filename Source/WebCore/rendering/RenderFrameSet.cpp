@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderFrameSet.h"
 
+#include "Cursor.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -797,6 +798,19 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
 bool RenderFrameSet::isChildAllowed(RenderObject* child, RenderStyle*) const
 {
     return child->isFrame() || child->isFrameSet();
+}
+
+CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& cursor) const
+{
+    if (canResizeRow(point)) {
+        cursor = rowResizeCursor();
+        return SetCursor;
+    }
+    if (canResizeColumn(point)) {
+        cursor = columnResizeCursor();
+        return SetCursor;
+    }
+    return RenderBox::getCursor(point, cursor);
 }
 
 } // namespace WebCore

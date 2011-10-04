@@ -58,6 +58,7 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
     virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;
@@ -67,8 +68,9 @@ private:
     virtual void viewCleared();
     
     void setMissingPluginIndicatorIsPressed(bool);
-    bool isInMissingPluginIndicator(MouseEvent*);
-    bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth);
+    bool isInMissingPluginIndicator(MouseEvent*) const;
+    bool isInMissingPluginIndicator(const LayoutPoint&) const;
+    bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth) const;
 
     String m_replacementText;
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.

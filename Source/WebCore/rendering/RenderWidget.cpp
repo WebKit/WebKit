@@ -385,4 +385,13 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return inside;
 }
 
+CursorDirective RenderWidget::getCursor(const LayoutPoint& point, Cursor& cursor) const
+{
+    if (widget() && widget()->isPluginViewBase()) {
+        // A plug-in is responsible for setting the cursor when the pointer is over it.
+        return DoNotSetCursor;
+    }
+    return RenderReplaced::getCursor(point, cursor);
+}
+
 } // namespace WebCore
