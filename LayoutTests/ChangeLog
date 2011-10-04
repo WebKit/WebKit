@@ -1,5 +1,53 @@
 2011-10-04  Tim Horton  <timothy_horton@apple.com>
 
+        Additional unreviewed Lion SVG pixel test rebaselining.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/coords-units-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/filters-image-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/carto.net: Added.
+        * platform/mac-snowleopard/svg/carto.net/selectionlist-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png: Added.
+        * platform/mac-snowleopard/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png:
+        * platform/mac/svg/carto.net/selectionlist-expected.png:
+        * platform/mac/svg/custom/external-paintserver-reference-expected.png: Added.
+        * platform/mac/svg/custom/linking-base-external-reference-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+
+2011-10-04  Tim Horton  <timothy_horton@apple.com>
+
         Partial unreviewed rebaselines for Lion SVG pixel tests.
 
         * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Added.
