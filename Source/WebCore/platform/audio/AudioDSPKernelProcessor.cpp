@@ -107,6 +107,9 @@ void AudioDSPKernelProcessor::reset()
 
 void AudioDSPKernelProcessor::setNumberOfChannels(unsigned numberOfChannels)
 {
+    if (numberOfChannels == m_numberOfChannels)
+        return;
+        
     ASSERT(!isInitialized());
     if (!isInitialized())
         m_numberOfChannels = numberOfChannels;

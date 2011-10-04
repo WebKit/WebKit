@@ -1,3 +1,15 @@
+2011-10-04  Chris Rogers  <crogers@google.com>
+
+        Avoid unnecessary ASSERT in AudioDSPKernelProcessor::setNumberOfChannels()
+        https://bugs.webkit.org/show_bug.cgi?id=69361
+
+        Reviewed by James Robinson.
+
+        No new tests.  This changes no JavaScript API.
+
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::setNumberOfChannels):
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         Use const PlatformWheelEvent references where possible
