@@ -1,11 +1,11 @@
-layer at (0,0) size 785x643
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x600
-  RenderBlock {HTML} at (0,0) size 785x600
-    RenderBody {BODY} at (8,8) size 769x584
+layer at (0,0) size 837x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 837x585
+  RenderBlock {HTML} at (0,0) size 837x585
+    RenderBody {BODY} at (8,8) size 821x569
       RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#00FF00]
-layer at (8,208) size 152x435
-  RenderBlock {DIV} at (0,200) size 152x435 [border: (10px solid #000000)]
+layer at (108,8) size 152x435
+  RenderBlock {DIV} at (100,0) size 152x435 [border: (10px solid #000000)]
     RenderBlock {P} at (26,10) size 100x415
       RenderText {#text} at (0,0) size 99x415
         text run at (0,0) width 415: "This technology preview of our award winning next generation"

@@ -1,3 +1,17 @@
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
+        Update baselines after http://trac.webkit.org/changeset/96620.  These
+        changes match the changes Dave made to other platforms.
+
+        * platform/chromium-cg-mac/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-cg-mac/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+
 2011-10-04  Jon Lee  <jonlee@apple.com>
 
         REGRESSION (WK2): (Shift-)option-tabbing skips over elements when transitioning from chrome to webview
