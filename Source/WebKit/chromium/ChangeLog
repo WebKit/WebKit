@@ -1,3 +1,16 @@
+2011-10-04  Scott Graham  <scottmg@chromium.org>
+
+        occasional crash in Chromium in dispatching keyEvent
+        https://bugs.webkit.org/show_bug.cgi?id=67941
+
+        Reviewed by Tony Chang.
+
+        Guard Frame while handling keyEvent, as it can lose last reference due
+        to actions of handler.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEvent):
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         Remove PlatformWheelEvent::m_isAccepted

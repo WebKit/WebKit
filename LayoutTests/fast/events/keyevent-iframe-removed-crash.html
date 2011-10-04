@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    function go() {
+        var fr = document.createElement('iframe');
+        fr.id = "blorp";
+        document.body.appendChild(fr);
+        fr.contentDocument.body.innerHTML = '<p id="a">move mouse out of the window, and press a key</p>';
+        fr.contentDocument.body.onkeydown = function(e) {
+            e.preventDefault();
+            document.body.removeChild(fr);
+        };
+
+        fr.focus();
+
+        if (window.layoutTestController)
+        {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            setTimeout(nuke, 0);
+        }
+    }
+
+    function nuke() {
+        eventSender.keyDown("x")
+        layoutTestController.notifyDone();
+    }
+</script>
+</head>
+
+<body onload="go()">
+    <p>
+        This test passes if it does not crash. Move the mouse out
+        of the window, and then press any key.
+    </p>
+
+    <p>
+        PASS
+    </p>
+</body>
+</html>

@@ -1,3 +1,13 @@
+2011-10-04  Scott Graham  <scottmg@chromium.org>
+
+        occasional crash in Chromium in dispatching keyEvent
+        https://bugs.webkit.org/show_bug.cgi?id=67941
+
+        Reviewed by Tony Chang.
+
+        * fast/events/keyevent-iframe-removed-crash-expected.txt: Added.
+        * fast/events/keyevent-iframe-removed-crash.html: Added.
+
 2011-10-04  Adam Barth  <abarth@webkit.org>
 
         Update XP results for the font shaping patch.

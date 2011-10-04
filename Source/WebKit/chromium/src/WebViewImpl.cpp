@@ -624,7 +624,7 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     if (autocompleteHandleKeyEvent(event))
         return true;
 
-    Frame* frame = focusedWebCoreFrame();
+    RefPtr<Frame> frame = focusedWebCoreFrame();
     if (!frame)
         return false;
 
