@@ -1,3 +1,55 @@
+2011-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Work towards making PlatformWheelEvent immutable
+        https://bugs.webkit.org/show_bug.cgi?id=69306
+
+        Reviewed by Sam Weinig.
+
+        Currently, PlatformWheelEvent has an m_isAccepted flag that tracks whether
+        the event has been handled or not. For all other event types, that state is instead
+        tracked by the return value of the various event handlers.
+
+        As a first step, add return values to the various handleWheelEvent functions and
+        add an assertion in EventHandler::wheelEvent that the return value is the same as
+        the state of PlatformWheelEvent::isAccepted.
+
+        * Configurations/Base.xcconfig:
+        Don't warn when using C++11 extensions.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::wheelEvent):
+        Assert that isAccepted matches the return value.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        Return isAccepted.
+
+        * platform/ScrollAnimator.h:
+        HandleWheelEvent now returns a boolean.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        Return whether the event was handled or not.
+
+        * platform/ScrollView.h:
+        ScrollView::wheelEvent now returns a bool.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEvent):
+        * platform/ScrollableArea.h:
+        ScrollableArea::handleWheelEvent now returns a bool.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.h:
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::handleWheelEvent):
+        Add return values, based on either the base class calls or the state of
+        PlatformWheelEvent::isAccepted().
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        Ditto.
+
 2011-10-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9973489> REGRESSION (r66599): -[DOMNode boundingBox] returns the zero rect for SVG elements

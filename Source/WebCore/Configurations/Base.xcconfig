@@ -23,6 +23,7 @@
 
 #include "CompilerVersion.xcconfig"
 
+CLANG_WARN_CXX0X_EXTENSIONS = NO;
 DEBUG_INFORMATION_FORMAT = dwarf;
 GCC_C_LANGUAGE_STANDARD = gnu99;
 GCC_DEBUGGING_SYMBOLS = default;

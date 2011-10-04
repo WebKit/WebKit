@@ -123,9 +123,9 @@ void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
     scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), y));
 }
 
-void ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+bool ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
-    scrollAnimator()->handleWheelEvent(wheelEvent);
+    return scrollAnimator()->handleWheelEvent(wheelEvent);
 }
 
 #if ENABLE(GESTURE_EVENTS)

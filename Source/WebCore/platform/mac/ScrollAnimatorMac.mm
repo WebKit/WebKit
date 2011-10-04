@@ -792,29 +792,24 @@ static inline bool isScrollingRightAndShouldNotRubberBand(PlatformWheelEvent& wh
     return wheelEvent.deltaX() < 0 && !scrollableArea->shouldRubberBandInDirection(ScrollRight);
 }
 
-void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
 
     if (!wheelEvent.hasPreciseScrollingDeltas()) {
-        ScrollAnimator::handleWheelEvent(wheelEvent);
-        return;
+        return ScrollAnimator::handleWheelEvent(wheelEvent);
     }
 
     // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
     // up to the parent scrollable area. It takes advantage of the fact that
-    // the base class implemenatation of handleWheelEvent will not accept the
+    // the base class implementation of handleWheelEvent will not accept the
     // wheel event if there is nowhere to scroll.
     if (fabsf(wheelEvent.deltaY()) >= fabsf(wheelEvent.deltaX())) {
-        if (!allowsVerticalStretching()) {
-            ScrollAnimator::handleWheelEvent(wheelEvent);
-            return;
-        }
+        if (!allowsVerticalStretching())
+            return ScrollAnimator::handleWheelEvent(wheelEvent);
     } else {
-        if (!allowsHorizontalStretching()) {
-            ScrollAnimator::handleWheelEvent(wheelEvent);
-            return;
-        }
+        if (!allowsHorizontalStretching())
+            return ScrollAnimator::handleWheelEvent(wheelEvent);
         
         if (m_scrollableArea->horizontalScrollbar()) {
             // If there is a scrollbar, we aggregate the wheel events to get an
@@ -840,8 +835,7 @@ void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
                 (isScrollingRightAndShouldNotRubberBand(wheelEvent, m_scrollableArea) &&
                 m_scrollerInitiallyPinnedOnRight &&
                 m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition())) {
-                ScrollAnimator::handleWheelEvent(wheelEvent);
-                return;
+                return ScrollAnimator::handleWheelEvent(wheelEvent);
             }
         }
     }
@@ -851,12 +845,14 @@ void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
             m_ignoreMomentumScrolls = false;
             wheelEvent.accept();
+            return true;
         }
-        return;
+        return false;
     }
 
     wheelEvent.accept();
     smoothScrollWithEvent(wheelEvent);
+    return true;
 }
 
 void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEvent)

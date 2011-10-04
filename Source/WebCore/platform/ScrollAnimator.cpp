@@ -81,7 +81,7 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     }
 }
 
-void ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
+bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
 {
     Scrollbar* horizontalScrollbar = m_scrollableArea->horizontalScrollbar();
     Scrollbar* verticalScrollbar = m_scrollableArea->verticalScrollbar();
@@ -111,6 +111,8 @@ void ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
         if (deltaX)
             scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX);
     }
+
+    return e.isAccepted();
 }
 
 #if ENABLE(GESTURE_EVENTS)

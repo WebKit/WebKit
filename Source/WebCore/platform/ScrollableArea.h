@@ -52,7 +52,7 @@ public:
     void scrollToXOffsetWithoutAnimation(float x);
     void scrollToYOffsetWithoutAnimation(float x);
 
-    void handleWheelEvent(PlatformWheelEvent&);
+    bool handleWheelEvent(PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     void handleGestureEvent(const PlatformGestureEvent&);
 #endif

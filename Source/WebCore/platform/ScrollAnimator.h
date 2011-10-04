@@ -63,7 +63,7 @@ public:
 
     virtual void setIsActive() { }
 
-    virtual void handleWheelEvent(PlatformWheelEvent&);
+    virtual bool handleWheelEvent(PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     virtual void handleGestureEvent(const PlatformGestureEvent&);
 #endif

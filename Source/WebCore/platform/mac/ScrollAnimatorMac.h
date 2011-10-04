@@ -62,7 +62,7 @@ public:
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
 #if ENABLE(RUBBER_BANDING)
-    virtual void handleWheelEvent(PlatformWheelEvent&);
+    virtual bool handleWheelEvent(PlatformWheelEvent&) OVERRIDE;
 #if ENABLE(GESTURE_EVENTS)
     virtual void handleGestureEvent(const PlatformGestureEvent&);
 #endif
