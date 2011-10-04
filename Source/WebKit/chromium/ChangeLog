@@ -1,3 +1,18 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Remove PlatformWheelEvent::m_isAccepted
+        https://bugs.webkit.org/show_bug.cgi?id=69357
+
+        Reviewed by Darin Adler.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        m_isAccepted has been removed.
+
+        * src/WebScrollbarImpl.cpp:
+        (WebKit::WebScrollbarImpl::onMouseWheel):
+        Just return the value of handleWheelEvent.
+
 2011-10-04  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: save inspector state into single string instead of string map

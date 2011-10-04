@@ -249,8 +249,7 @@ bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
 {
     WebMouseWheelEvent mousewheel = *static_cast<const WebMouseWheelEvent*>(&event);
     PlatformWheelEventBuilder platformEvent(m_scrollbar.get(), mousewheel);
-    m_group->handleWheelEvent(platformEvent);
-    return platformEvent.isAccepted();
+    return m_group->handleWheelEvent(platformEvent);
 }
 
 bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)

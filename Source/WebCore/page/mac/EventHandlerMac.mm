@@ -106,10 +106,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
     CurrentEventScope scope(event);
 
     PlatformWheelEvent wheelEvent(event, page->chrome()->platformPageClient());
-    bool handled = handleWheelEvent(wheelEvent);
-
-    ASSERT(handled == wheelEvent.isAccepted());
-    return handled;
+    return handleWheelEvent(wheelEvent);
 }
 
 bool EventHandler::keyEvent(NSEvent *event)

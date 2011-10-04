@@ -98,7 +98,6 @@ PlatformWheelEventBuilder::PlatformWheelEventBuilder(Widget* widget, const WebMo
     m_deltaY = e.deltaY;
     m_wheelTicksX = e.wheelTicksX;
     m_wheelTicksY = e.wheelTicksY;
-    m_isAccepted = false;
     m_granularity = e.scrollByPage ?
         ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
     m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);

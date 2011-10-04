@@ -44,7 +44,6 @@ PlatformWheelEvent::PlatformWheelEvent(const wxMouseEvent& event, const wxPoint&
     , m_deltaY(event.GetWheelRotation() / event.GetWheelDelta())
     , m_wheelTicksX(m_deltaX)
     , m_wheelTicksY(m_deltaY)
-    , m_isAccepted(false)
     , m_directionInvertedFromDevice(false)
 {
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event

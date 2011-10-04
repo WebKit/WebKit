@@ -2176,32 +2176,22 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         
         if (isOverWidget && target && target->isWidget()) {
             Widget* widget = toRenderWidget(target)->widget();
-            if (widget && passWheelEventToWidget(e, widget)) {
-                e.accept();
+            if (widget && passWheelEventToWidget(e, widget))
                 return true;
-            }
         }
 
         node = node->shadowAncestorNode();
-        if (node && !node->dispatchWheelEvent(e)) {
-            e.accept();
+        if (node && !node->dispatchWheelEvent(e))
             return true;
-        }
     }
 
-
-    // isAccepted can't be true here, because then we would already have returned from this function.
-    ASSERT(!e.isAccepted());
 
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     view = m_frame->view();
     if (!view)
         return false;
     
-    bool handled = view->wheelEvent(e);
-    ASSERT(handled == e.isAccepted());
-
-    return handled;
+    return view->wheelEvent(e);
 }
     
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)
@@ -2251,7 +2241,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         // FIXME: Replace this interim implementation once the above fixme has been addressed.
         IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
         IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
-        PlatformWheelEvent syntheticWheelEvent(point, globalPoint, gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, /* isAccepted */ false, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+        PlatformWheelEvent syntheticWheelEvent(point, globalPoint, gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
         handleWheelEvent(syntheticWheelEvent);
         return true;
     }

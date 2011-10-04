@@ -99,7 +99,6 @@ bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
         || (deltaX > 0 && maxBackwardScrollDelta.width() > 0)
         || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
-        e.accept();
         handled = true;
         if (e.granularity() == ScrollByPageWheelEvent) {
             ASSERT(!e.deltaX());
@@ -115,7 +114,6 @@ bool ScrollAnimator::handleWheelEvent(PlatformWheelEvent& e)
             scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX);
     }
 
-    ASSERT(e.isAccepted() == handled);
     return handled;
 }
 

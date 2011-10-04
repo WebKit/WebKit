@@ -844,13 +844,11 @@ bool ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
     if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberBandTimer.isActive())) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
             m_ignoreMomentumScrolls = false;
-            wheelEvent.accept();
             return true;
         }
         return false;
     }
 
-    wheelEvent.accept();
     smoothScrollWithEvent(wheelEvent);
     return true;
 }

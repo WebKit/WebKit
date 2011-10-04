@@ -92,7 +92,6 @@ namespace WebCore {
             , m_wheelTicksX(0)
             , m_wheelTicksY(0)
             , m_granularity(ScrollByPixelWheelEvent)
-            , m_isAccepted(false)
             , m_shiftKey(false)
             , m_ctrlKey(false)
             , m_altKey(false)
@@ -107,7 +106,7 @@ namespace WebCore {
         {
         }
 
-        PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool isAccepted, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+        PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
             : m_position(position)
             , m_globalPosition(globalPosition)
             , m_deltaX(deltaX)
@@ -115,7 +114,6 @@ namespace WebCore {
             , m_wheelTicksX(wheelTicksX)
             , m_wheelTicksY(wheelTicksY)
             , m_granularity(granularity)
-            , m_isAccepted(isAccepted)
             , m_shiftKey(shiftKey)
             , m_ctrlKey(ctrlKey)
             , m_altKey(altKey)
@@ -141,7 +139,6 @@ namespace WebCore {
 
         PlatformWheelEventGranularity granularity() const { return m_granularity; }
 
-        bool isAccepted() const { return m_isAccepted; }
         bool shiftKey() const { return m_shiftKey; }
         bool ctrlKey() const { return m_ctrlKey; }
         bool altKey() const { return m_altKey; }
@@ -153,9 +150,6 @@ namespace WebCore {
         int globalY() const { return m_globalPosition.y(); }
 
         bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
-
-        void accept() { m_isAccepted = true; }
-        void ignore() { m_isAccepted = false; }
 
         void turnVerticalTicksIntoHorizontal()
         {
@@ -214,7 +208,6 @@ namespace WebCore {
         float m_wheelTicksX;
         float m_wheelTicksY;
         PlatformWheelEventGranularity m_granularity;
-        bool m_isAccepted;
         bool m_shiftKey;
         bool m_ctrlKey;
         bool m_altKey;
