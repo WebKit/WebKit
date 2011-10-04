@@ -3,6 +3,18 @@
         DFG should inline Array.push and Array.pop
         https://bugs.webkit.org/show_bug.cgi?id=69314
 
+        Reviewed by Geoff Garen.
+        
+        Fix 32-bit.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline Array.push and Array.pop
+        https://bugs.webkit.org/show_bug.cgi?id=69314
+
         Reviewed by Oliver Hunt.
         
         1% speed-up in V8 due to 6% speed-up in V8-deltablue.

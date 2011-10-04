@@ -1342,13 +1342,11 @@ void SpeculativeJIT::compile(Node& node)
         
         m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
 
-        MacroAssembler::Jump notHole = m_jit.branchTestPtr(MacroAssembler::NonZero, valueTagGPR);
-        MacroAssembler::Jump holeCase = m_jit.branchTestPtr(MacroAssembler::Zero, valuePayloadGPR);
-        notHole.link(&m_jit);
+        MacroAssembler::Jump holeCase = m_jit.branch32(MacroAssembler::Equal, Imm32(JSValue::EmptyValueTag), valueTagGPR);
         
-        m_jit.move(Imm32(0), storageLengthGPR);
+        m_jit.move(Imm32(JSValue::EmptyValueTag), storageLengthGPR);
         m_jit.store32(storageLengthGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        m_jit.store32(storageLengthGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+
         m_jit.sub32(MacroAssembler::Imm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
         
         MacroAssembler::JumpList done;
