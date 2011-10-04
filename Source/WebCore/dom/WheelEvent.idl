@@ -39,6 +39,7 @@ module events {
         readonly attribute long    offsetY;
         readonly attribute long    x;
         readonly attribute long    y;
+        readonly attribute boolean webkitDirectionInvertedFromDevice;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute boolean isHorizontal;

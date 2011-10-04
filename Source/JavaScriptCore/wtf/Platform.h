@@ -1104,4 +1104,8 @@
 #define WTF_USE_REQUEST_ANIMATION_FRAME_TIMER 1
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define HAVE_INVERTED_WHEEL_EVENTS 1
+#endif
+
 #endif /* WTF_Platform_h */

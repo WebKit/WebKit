@@ -51,6 +51,7 @@ PlatformWheelEvent::PlatformWheelEvent(const Evas_Event_Mouse_Wheel* ev)
     , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
     , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
     , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_directionInvertedFromDevice(false)
 {
     // A negative z value means (in EFL) that we are scrolling down, so we need
     // to invert the value.

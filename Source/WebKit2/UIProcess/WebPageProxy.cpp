@@ -2670,7 +2670,7 @@ static WebWheelEvent coalesce(const WebWheelEvent& a, const WebWheelEvent& b)
     FloatSize mergedWheelTicks = a.wheelTicks() + b.wheelTicks();
 
 #if PLATFORM(MAC)
-    return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.modifiers(), b.timestamp());
+    return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.modifiers(), b.timestamp(), b.directionInvertedFromDevice());
 #else
     return WebWheelEvent(WebEvent::Wheel, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.modifiers(), b.timestamp());
 #endif

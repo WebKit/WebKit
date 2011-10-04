@@ -40,6 +40,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
+    , m_directionInvertedFromDevice(false)
 #if PLATFORM(MAC)
     , m_phase(PhaseNone)
     , m_hasPreciseScrollingDeltas(false)
@@ -49,13 +50,14 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 }
 
 #if PLATFORM(MAC)
-WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Modifiers modifiers, double timestamp)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Modifiers modifiers, double timestamp, bool directionInvertedFromDevice)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
+    , m_directionInvertedFromDevice(directionInvertedFromDevice)
     , m_phase(phase)
     , m_momentumPhase(momentumPhase)
     , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
@@ -73,6 +75,7 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(m_delta);
     encoder->encode(m_wheelTicks);
     encoder->encode(m_granularity);
+    encoder->encode(m_directionInvertedFromDevice);
 #if PLATFORM(MAC)
     encoder->encode(m_phase);
     encoder->encode(m_momentumPhase);
@@ -93,6 +96,8 @@ bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
     if (!decoder->decode(t.m_wheelTicks))
         return false;
     if (!decoder->decode(t.m_granularity))
+        return false;
+    if (!decoder->decode(t.m_directionInvertedFromDevice))
         return false;
 #if PLATFORM(MAC)
     if (!decoder->decode(t.m_phase))

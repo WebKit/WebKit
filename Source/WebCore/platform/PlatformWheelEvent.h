@@ -97,6 +97,7 @@ namespace WebCore {
             , m_ctrlKey(false)
             , m_altKey(false)
             , m_metaKey(false)
+            , m_directionInvertedFromDevice(false)
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
@@ -119,6 +120,7 @@ namespace WebCore {
             , m_ctrlKey(ctrlKey)
             , m_altKey(altKey)
             , m_metaKey(metaKey)
+            , m_directionInvertedFromDevice(false)
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
@@ -149,6 +151,8 @@ namespace WebCore {
         int y() const { return m_position.y(); }
         int globalX() const { return m_globalPosition.x(); } // Screen coordinates.
         int globalY() const { return m_globalPosition.y(); }
+
+        bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
 
         void accept() { m_isAccepted = true; }
         void ignore() { m_isAccepted = false; }
@@ -215,6 +219,7 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
+        bool m_directionInvertedFromDevice;
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;

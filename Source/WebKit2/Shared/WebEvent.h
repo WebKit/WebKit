@@ -179,7 +179,7 @@ public:
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Modifiers, double timestamp);
 #if PLATFORM(MAC)
-    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase phase, Phase momentumPhase,bool hasPreciseScrollingDeltas, Modifiers, double timestamp);
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Modifiers, double timestamp, bool directionInvertedFromDevice);
 #endif
 
     const WebCore::IntPoint position() const { return m_position; }
@@ -187,6 +187,7 @@ public:
     const WebCore::FloatSize delta() const { return m_delta; }
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
+    bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
 #if PLATFORM(MAC)
     Phase phase() const { return static_cast<Phase>(m_phase); }
     Phase momentumPhase() const { return static_cast<Phase>(m_momentumPhase); }
@@ -204,6 +205,7 @@ private:
     WebCore::FloatSize m_delta;
     WebCore::FloatSize m_wheelTicks;
     uint32_t m_granularity; // Granularity
+    bool m_directionInvertedFromDevice;
 #if PLATFORM(MAC)
     uint32_t m_phase; // Phase
     uint32_t m_momentumPhase; // Phase

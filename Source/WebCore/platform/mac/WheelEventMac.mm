@@ -115,6 +115,12 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
         m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
         m_hasPreciseScrollingDeltas = false;
     }
+
+#if HAVE(INVERTED_WHEEL_EVENTS)
+    m_directionInvertedFromDevice = [event isDirectionInvertedFromDevice];
+#else
+    m_directionInvertedFromDevice = false;
+#endif
 }
 
 } // namespace WebCore

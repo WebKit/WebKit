@@ -157,6 +157,7 @@ fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
+fast/events/wheelevent-direction-inverted-from-device.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
 fast/files/read-blob-async.html

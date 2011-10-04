@@ -1096,8 +1096,12 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     bool hasPreciseScrollingDeltas          = continuous;
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
-    
-    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, phase, momentumPhase, hasPreciseScrollingDeltas, modifiers, timestamp);
+#if HAVE(INVERTED_WHEEL_EVENTS)
+    bool directionInvertedFromDevice        = [event isDirectionInvertedFromDevice];
+#else
+    bool directionInvertedFromDevice        = false;
+#endif
+    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, phase, momentumPhase, hasPreciseScrollingDeltas, modifiers, timestamp, directionInvertedFromDevice);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView *)

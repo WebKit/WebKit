@@ -110,6 +110,7 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+        m_directionInvertedFromDevice = webEvent.directionInvertedFromDevice();
 #if PLATFORM(MAC)
         m_phase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.phase());
         m_momentumPhase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.momentumPhase());

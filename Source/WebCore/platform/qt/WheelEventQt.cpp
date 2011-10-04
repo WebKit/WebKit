@@ -67,6 +67,7 @@ PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
     , m_altKey(e->modifiers() & Qt::AltModifier)
     , m_metaKey(e->modifiers() & Qt::MetaModifier)
+    , m_directionInvertedFromDevice(false)
 #endif
 {
 #ifndef QT_NO_WHEELEVENT
@@ -86,6 +87,7 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
     , m_altKey(e->modifiers() & Qt::AltModifier)
     , m_metaKey(e->modifiers() & Qt::MetaModifier)
+    , m_directionInvertedFromDevice(false)
 #endif
 {
 #ifndef QT_NO_WHEELEVENT

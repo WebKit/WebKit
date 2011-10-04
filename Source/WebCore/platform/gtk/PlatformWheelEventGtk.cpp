@@ -67,6 +67,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_ctrlKey = event->state & GDK_CONTROL_MASK;
     m_altKey = event->state & GDK_MOD1_MASK;
     m_metaKey = event->state & GDK_META_MASK;
+    m_directionInvertedFromDevice = false;
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
     m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());

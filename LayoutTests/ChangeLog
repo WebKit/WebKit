@@ -1,3 +1,15 @@
+2011-10-03  Jon Lee  <jonlee@apple.com>
+
+        Extend DOM WheelEvent to differentiate between physical and logical scroll directions
+        https://bugs.webkit.org/show_bug.cgi?id=68959
+        <rdar://problem/10036688>
+
+        Reviewed by Sam Weinig.
+
+        * fast/events/wheelevent-direction-inverted-from-device-expected.txt: Added.
+        * fast/events/wheelevent-direction-inverted-from-device.html: Added.
+        * platform/mac-wk2/Skipped: WKTR does not support mouse scroll events yet.
+
 2011-10-03 Ken Buchanan <kenrb@chromium.org>
 
         Resource loader should block HTTP redirects to local resources

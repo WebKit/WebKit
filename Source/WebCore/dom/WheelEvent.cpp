@@ -39,13 +39,15 @@ WheelEvent::WheelEvent()
 WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                        Granularity granularity, PassRefPtr<AbstractView> view,
                        const IntPoint& screenLocation, const IntPoint& pageLocation,
-                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+                       bool directionInvertedFromDevice)
     : MouseRelatedEvent(eventNames().mousewheelEvent,
                         true, true, view, 0, screenLocation, pageLocation,
                         ctrlKey, altKey, shiftKey, metaKey)
     , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * tickMultiplier), static_cast<int>(wheelTicks.y() * tickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
+    , m_directionInvertedFromDevice(directionInvertedFromDevice)
 {
 }
 
@@ -69,7 +71,8 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     
     m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
     m_granularity = Pixel;
-    
+    m_directionInvertedFromDevice = false;
+
     initCoordinates(IntPoint(pageX, pageY));
 }
 
@@ -101,9 +104,9 @@ WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent&
     if (!(event.deltaX() || event.deltaY()))
         return;
 
-    setEvent(WheelEvent::create(FloatPoint(event.wheelTicksX(), event.wheelTicksY()), FloatPoint(event.deltaX(), event.deltaY()), granularity(event),
-        view, IntPoint(event.globalX(), event.globalY()), IntPoint(event.x(), event.y()), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey()));
-
+    setEvent(WheelEvent::create(FloatPoint(event.wheelTicksX(), event.wheelTicksY()), FloatPoint(event.deltaX(), event.deltaY()),
+                                granularity(event), view, IntPoint(event.globalX(), event.globalY()), IntPoint(event.x(), event.y()),
+                                event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.webkitDirectionInvertedFromDevice()));
 }
 
 WheelEvent* WheelEventDispatchMediator::event() const
