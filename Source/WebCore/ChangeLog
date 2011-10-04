@@ -1,3 +1,23 @@
+2011-10-04  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: Factor out object properties popup.
+        https://bugs.webkit.org/show_bug.cgi?id=69234
+
+        Also, for HTML elements, show a non-empty id value in the element name.
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ObjectPopoverHelper.js: Added.
+        * inspector/front-end/SourceFrame.js: Extracted from here.
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._onShowPopover.showObjectPopover):
+        (WebInspector.SourceFrame.prototype._onShowPopover):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: compile text editor.

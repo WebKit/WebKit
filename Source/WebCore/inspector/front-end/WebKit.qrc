@@ -76,6 +76,7 @@
     <file>NetworkManager.js</file>
     <file>NetworkPanel.js</file>
     <file>Object.js</file>
+    <file>ObjectPopoverHelper.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
     <file>PanelEnablerView.js</file>

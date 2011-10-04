@@ -294,10 +294,9 @@ WebInspector.SourceFrame.prototype = {
 
         var element = this._textViewer.element;
         if (this._delegate.debuggingSupported()) {
-            this._popoverHelper = new WebInspector.PopoverHelper(element,
+            this._popoverHelper = new WebInspector.ObjectPopoverHelper(element,
                 this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
-            element.addEventListener("scroll", this._scroll.bind(this), true);
         }
 
         this._textViewer.beginUpdates();
@@ -647,16 +646,8 @@ WebInspector.SourceFrame.prototype = {
         return this._delegate.suggestedFileName();
     },
 
-    _scroll: function(event)
-    {
-        if (this._popoverHelper)
-            this._popoverHelper.hidePopover();
-    },
-
     _mouseDown: function(event)
     {
-        if (this._popoverHelper)
-            this._popoverHelper.hidePopover();
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
             return;
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
@@ -735,7 +726,7 @@ WebInspector.SourceFrame.prototype = {
         return container;
     },
 
-    _onShowPopover: function(element, popover)
+    _onShowPopover: function(element, showCallback)
     {
         if (!this._textViewer.readOnly) {
             this._popoverHelper.hidePopover();
@@ -745,39 +736,11 @@ WebInspector.SourceFrame.prototype = {
 
         function showObjectPopover(result, wasThrown)
         {
-            if (popover.disposed)
-                return;
-            if (wasThrown || !this._delegate.debuggerPaused()) {
+            if (!this._delegate.debuggerPaused()) {
                 this._popoverHelper.hidePopover();
                 return;
             }
-            var popoverContentElement = null;
-            if (result.type !== "object") {
-                popoverContentElement = document.createElement("span");
-                popoverContentElement.className = "monospace console-formatted-" + result.type;
-                popoverContentElement.style.whiteSpace = "pre";
-                popoverContentElement.textContent = result.description;
-                if (result.type === "string")
-                    popoverContentElement.textContent = "\"" + popoverContentElement.textContent + "\"";
-                popover.show(popoverContentElement, element);
-            } else {
-                var popoverContentElement = document.createElement("div");
-
-                var titleElement = document.createElement("div");
-                titleElement.className = "source-frame-popover-title monospace";
-                titleElement.textContent = result.description;
-                popoverContentElement.appendChild(titleElement);
-
-                var section = new WebInspector.ObjectPropertiesSection(result);
-                section.expanded = true;
-                section.element.addStyleClass("source-frame-popover-tree");
-                section.headerElement.addStyleClass("hidden");
-                popoverContentElement.appendChild(section.element);
-
-                const popoverWidth = 300;
-                const popoverHeight = 250;
-                popover.show(popoverContentElement, element, popoverWidth, popoverHeight);
-            }
+            showCallback(result, wasThrown);
             this._highlightElement.addStyleClass("source-frame-eval-expression");
         }
 

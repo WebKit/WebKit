@@ -69385,6 +69385,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ObjectPopoverHelper.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ObjectPropertiesSection.js"
 					>
 				</File>

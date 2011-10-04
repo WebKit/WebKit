@@ -6274,6 +6274,7 @@
             'inspector/front-end/NetworkLog.js',
             'inspector/front-end/NetworkPanel.js',
             'inspector/front-end/Object.js',
+            'inspector/front-end/ObjectPopoverHelper.js',
             'inspector/front-end/ObjectPropertiesSection.js',
             'inspector/front-end/Panel.js',
             'inspector/front-end/PanelEnablerView.js',
