@@ -42,7 +42,7 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
 {
     if (value->IsNull())
         return IDBKey::createNull();
-    if (value->IsNumber())
+    if (value->IsNumber() && !isnan(value->NumberValue()))
         return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
         return IDBKey::createString(v8ValueToWebCoreString(value));

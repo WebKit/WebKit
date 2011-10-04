@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB invalid keys");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = testGroup1;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function testGroup1()
+{
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("db.createObjectStore('foo');");
+    testInvalidKeys();
+}
+
+function testInvalidKeys()
+{
+    var invalidKeys = [
+        "void 0", // Undefined
+        "null", // Null
+        "(function() { return arguments; }())", // Arguments
+        "true", // Boolean
+        "false", // Boolean
+        "new Error", // Error
+        "function () {}", // Function
+        "JSON", // JSON
+        "Math", // Math
+        "NaN", // Number (special case)
+        "{}", // Object
+        "/regex/", // RegExp
+        "window", // global
+        "window.document", // HTMLDocument
+        "window.document.body" // HTMLBodyElement
+    ];
+
+    invalidKeys.forEach(function(key) {
+        evalAndExpectException("request = objectStore.put('value', " + key + ")", "IDBDatabaseException.DATA_ERR");
+    });
+    
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+Test IndexedDB invalid keys
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+indexedDB.open(name, description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+db.createObjectStore('foo');
+Expecting exception from request = objectStore.put('value', void 0)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', null)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from request = objectStore.put('value', (function() { return arguments; }()))
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', true)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', false)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', new Error)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', function () {})
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', JSON)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', Math)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', NaN)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', {})
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', /regex/)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', window)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', window.document)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+Expecting exception from request = objectStore.put('value', window.document.body)
+PASS Exception was thrown.
+FAIL code should be 5. Was 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

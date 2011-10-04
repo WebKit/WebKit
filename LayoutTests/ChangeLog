@@ -1,3 +1,15 @@
+2011-10-04  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB add() should fail if key is NaN
+        https://bugs.webkit.org/show_bug.cgi?id=62286
+
+        Reviewed by Tony Chang.
+
+        Tests for NaN and other invalid IndexedDB keys.
+
+        * storage/indexeddb/invalid-keys-expected.txt: Added.
+        * storage/indexeddb/invalid-keys.html: Added.
+
 2011-10-04  Young Han Lee  <joybro201@gmail.com>
 
         HTML canvas strokes with dash and dashOffset
