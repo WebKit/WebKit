@@ -49,7 +49,7 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(MAC)
+#if OS(DARWIN) || OS(LINUX)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
@@ -166,32 +166,56 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
     printCallSite(file, line, function);
 }
 
+void WTFGetBacktrace(void** stack, int* size)
+{
+#if OS(DARWIN) || OS(LINUX)
+    *size = backtrace(stack, *size);
+#elif OS(WINDOWS)
+    // The CaptureStackBackTrace function is available in XP, but it is not defined
+    // in the Windows Server 2003 R2 Platform SDK. So, we'll grab the function
+    // through GetProcAddress.
+    typedef WORD (NTAPI* RtlCaptureStackBackTraceFunc)(DWORD, DWORD, PVOID*, PDWORD);
+    HMODULE kernel32 = ::GetModuleHandleW(L"Kernel32.dll");
+    if (!kernel32) {
+        *size = 0;
+        return;
+    }
+    RtlCaptureStackBackTraceFunc captureStackBackTraceFunc = reinterpret_cast<RtlCaptureStackBackTraceFunc>(
+        ::GetProcAddress(kernel32, "RtlCaptureStackBackTrace"));
+    if (captureStackBackTraceFunc)
+        *size = captureStackBackTraceFunc(1, *size, stack, 0);
+    else
+        *size = 0;
+#else
+    *size = 0;
+#endif
+}
+
 void WTFReportBacktrace()
 {
-#if PLATFORM(MAC)
     static const int maxFrames = 32;
     void* samples[maxFrames];
-    int frames = backtrace(samples, maxFrames);
+    int frames = maxFrames;
+
+    WTFGetBacktrace(samples, &frames);
 
     for (int i = 1; i < frames; ++i) {
-        void* pointer = samples[i];
+        const char* mangledName = 0;
+        char* cxaDemangled = 0;
 
-        // Try to get a symbol name from the dynamic linker.
+#if !PLATFORM(QT) && (OS(DARWIN) || OS(LINUX))
         Dl_info info;
-        if (dladdr(pointer, &info) && info.dli_sname) {
-            const char* mangledName = info.dli_sname;
-
-            // Assume c++ & try to demangle the name.
-            char* demangledName = abi::__cxa_demangle(mangledName, 0, 0, 0);
-            if (demangledName) {
-                fprintf(stderr, "%-3d %s\n", i, demangledName);
-                free(demangledName);
-            } else
-                fprintf(stderr, "%-3d %s\n", i, mangledName);
-        } else
-            fprintf(stderr, "%-3d %p\n", i, pointer);
-    }
+        if (dladdr(samples[i], &info) && info.dli_sname)
+            mangledName = info.dli_sname;
+        if (mangledName)
+            cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
 #endif
+        if (mangledName || cxaDemangled)
+            fprintf(stderr, "%-3d %p %s\n", i, samples[i], cxaDemangled ? cxaDemangled : mangledName);
+        else
+            fprintf(stderr, "%-3d %p\n", i, samples[i]);
+        free(cxaDemangled);
+    }
 }
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)

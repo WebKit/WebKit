@@ -1,3 +1,18 @@
+2011-10-04  Gavin Peters  <gavinp@chromium.org>
+
+       add more stack dumping methods
+       https://bugs.webkit.org/show_bug.cgi?id=69018
+
+       In addition to WTFReportBacktrace, this adds the cross-platform WTFGetBacktrace, which lets
+       WebKit programmatically retrieve the current stack.  This is useful if you need to add more
+       reporting to field crash report uploads, if you're tracking down an irreproducable bug,
+       for instance.
+
+       Reviewed by Darin Adler.
+
+       * wtf/Assertions.cpp:
+       * wtf/Assertions.h:
+
 2011-10-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline Array.push and Array.pop
