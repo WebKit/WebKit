@@ -44,14 +44,16 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:18:jsmodule_common \
+    --module jsmodule_sdk:20:jsmodule_common \
         --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
         --js Source/WebCore/inspector/front-end/CompilerSourceMappingProvider.js \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
         --js Source/WebCore/inspector/front-end/ContentProviders.js \
         --js Source/WebCore/inspector/front-end/CookieParser.js \
         --js Source/WebCore/inspector/front-end/BreakpointManager.js \
+        --js Source/WebCore/inspector/front-end/Database.js \
         --js Source/WebCore/inspector/front-end/DOMAgent.js \
+        --js Source/WebCore/inspector/front-end/DOMStorage.js \
         --js Source/WebCore/inspector/front-end/DebuggerModel.js \
         --js Source/WebCore/inspector/front-end/DebuggerPresentationModel.js \
         --js Source/WebCore/inspector/front-end/Script.js \
@@ -63,8 +65,9 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:22:jsmodule_common \
+    --module jsmodule_ui:27:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
+        --js Source/WebCore/inspector/front-end/Color.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
         --js Source/WebCore/inspector/front-end/DataGrid.js \
         --js Source/WebCore/inspector/front-end/Drawer.js \
@@ -80,9 +83,13 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/SidebarPane.js \
         --js Source/WebCore/inspector/front-end/ShortcutsScreen.js \
         --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
+        --js Source/WebCore/inspector/front-end/SourceTokenizer.js \
         --js Source/WebCore/inspector/front-end/StatusBarButton.js \
         --js Source/WebCore/inspector/front-end/TabbedPane.js \
+        --js Source/WebCore/inspector/front-end/TextEditorModel.js \
+        --js Source/WebCore/inspector/front-end/TextEditorHighlighter.js \
         --js Source/WebCore/inspector/front-end/TextPrompt.js \
+        --js Source/WebCore/inspector/front-end/TextViewer.js \
         --js Source/WebCore/inspector/front-end/Toolbar.js \
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \

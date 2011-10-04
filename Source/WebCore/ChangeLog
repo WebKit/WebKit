@@ -1,3 +1,53 @@
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: compile text editor.
+        https://bugs.webkit.org/show_bug.cgi?id=69339
+
+        Drive-by compilation for color, database and dom storage entities.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Color.js:
+        (WebInspector.Color.prototype._individualRGBValueToFloatValue):
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut.makeKey):
+        (WebInspector.KeyboardShortcut.makeKeyFromEvent):
+        (WebInspector.KeyboardShortcut.makeDescriptor):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        * inspector/front-end/SourceTokenizer.js:
+        (WebInspector.SourceTokenizer.prototype._charAt):
+        (WebInspector.SourceTokenizer.prototype.createInitialCondition):
+        (WebInspector.SourceTokenizer.prototype.nextToken):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype.highlight):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+        * inspector/front-end/TextEditorModel.js:
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewerDelegate.prototype.doubleClick):
+        (WebInspector.TextViewerDelegate.prototype.beforeTextChanged):
+        (WebInspector.TextViewerDelegate.prototype.afterTextChanged):
+        (WebInspector.TextViewerDelegate.prototype.commitEditing):
+        (WebInspector.TextViewerDelegate.prototype.cancelEditing):
+        (WebInspector.TextViewerDelegate.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegate.prototype.populateTextAreaContextMenu):
+        (WebInspector.TextViewerDelegate.prototype.suggestedFileName):
+        (WebInspector.TextEditorMainPanel.prototype._enclosingLineRowOrSelf):
+        (WebInspector.TextEditorMainPanel.prototype._createLink):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        * inspector/front-end/externs.js:
+        (WebInspector.completeURL):
+        (window.getComputedStyle):
+        (Event.prototype.initWebKitWheelEvent):
+        * inspector/front-end/utilities.js:
+
 2011-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Timeline panel shortcut for filtering short records should have shorter description.

@@ -61,6 +61,12 @@ WebInspector.formatLinkText = function(url, lineNumber) {}
 WebInspector.displayNameForURL = function(url) {}
 
 /**
+ * @param {string} url
+ * @param {string} href
+ */
+WebInspector.completeURL = function(url, href) {}
+
+/**
  * @param {string} str
  * @param {...*} varArgs
  */
@@ -183,11 +189,14 @@ WebInspector.previousFocusElement = null;
 WebInspector.platformFlavor = "";
 
 /** @param {Element} element */
-window.getComputedStyle = function(element)
-{
-}
+window.getComputedStyle = function(element) {}
 
 /**
  * @type {boolean}
  */
 Event.prototype.isMetaOrCtrlForTest = false;
+
+/**
+ * @param {...*} vararg
+ */
+Event.prototype.initWebKitWheelEvent = function(vararg) {}

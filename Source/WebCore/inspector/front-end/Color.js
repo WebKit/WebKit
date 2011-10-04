@@ -27,12 +27,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Color = function(str)
 {
     this.value = str;
     this._parse();
 }
 
+/**
+ * @param {number=} a
+ */
 WebInspector.Color.fromRGBA = function(r, g, b, a)
 {
     return new WebInspector.Color("rgba(" + r + "," + g + "," + b + "," + (typeof a === "undefined" ? 1 : a) + ")");
@@ -201,7 +207,7 @@ WebInspector.Color.prototype = {
             return this._clamp(rgbValue, 0, 255);
 
         if (rgbValue.indexOf("%") === -1) {
-            var intValue = parseInt(rgbValue);
+            var intValue = parseInt(rgbValue, 10);
             return this._clamp(rgbValue, 0, 255);
         }
 

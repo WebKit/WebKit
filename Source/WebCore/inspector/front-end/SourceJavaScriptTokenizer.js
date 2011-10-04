@@ -42,6 +42,10 @@
 // | sed 's|unsigned\ int|var|' \
 // | sed 's|var\ yych|case 1: case 1: var yych|'
 
+/**
+ * @constructor
+ * @extends {WebInspector.SourceTokenizer}
+ */
 WebInspector.SourceJavaScriptTokenizer = function()
 {
     WebInspector.SourceTokenizer.call(this);

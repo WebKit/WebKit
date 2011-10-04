@@ -763,7 +763,14 @@
             {
                 "id": "Database",
                 "type": "object",
-                "description": "Database object."
+                "description": "Database object.",
+                "hidden": true,
+                "properties": [
+                    { "name": "id", "type": "string", "description": "Database ID." },
+                    { "name": "domain", "type": "string", "description": "Database domain." },
+                    { "name": "name", "type": "string", "description": "Database name." },
+                    { "name": "version", "type": "string", "description": "Database version." }
+                ]
             },
             {
                 "id": "Error",

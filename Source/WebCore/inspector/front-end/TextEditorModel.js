@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.TextRange = function(startLine, startColumn, endLine, endColumn)
 {
     this.startLine = startLine;
@@ -53,6 +56,9 @@ WebInspector.TextRange.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.TextEditorModel = function()
 {
     this._lines = [""];

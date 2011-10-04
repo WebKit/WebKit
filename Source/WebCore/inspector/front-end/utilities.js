@@ -838,6 +838,9 @@ function isEnterKey(event) {
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
+/**
+ * @param {Array.<Object>=} domChanges
+ */
 function highlightSearchResult(element, offset, length, domChanges)
 {
     var result = highlightSearchResults(element, [{offset: offset, length: length }], domChanges);

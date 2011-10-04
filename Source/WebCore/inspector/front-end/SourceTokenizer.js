@@ -29,6 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.SourceTokenizer = function()
 {
 }
@@ -61,10 +64,20 @@ WebInspector.SourceTokenizer.prototype = {
     _charAt: function(cursor)
     {
         return cursor < this._line.length ? this._line.charAt(cursor) : "\n";
+    },
+
+    createInitialCondition: function()
+    {
+    },
+
+    nextToken: function(cursor)
+    {
     }
 }
 
-
+/**
+ * @constructor
+ */
 WebInspector.SourceTokenizer.Registry = function() {
     this._tokenizers = {};
     this._tokenizerConstructors = {
