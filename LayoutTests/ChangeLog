@@ -1,3 +1,40 @@
+2011-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Update Qt specific expected files after r96509.
+
+        * platform/qt/fast/invalid/017-expected.png: Copied from LayoutTests/platform/qt/tables/mozilla_expected_failures/bugs/bug220653-expected.png.
+        * platform/qt/fast/invalid/017-expected.txt:
+        * platform/qt/fast/invalid/018-expected.png: Added.
+        * platform/qt/fast/invalid/018-expected.txt:
+        * platform/qt/fast/invalid/020-expected.png: Copied from LayoutTests/platform/qt/tables/mozilla/bugs/bug23994-expected.png.
+        * platform/qt/fast/invalid/020-expected.txt:
+        * platform/qt/fast/invalid/table-inside-stray-table-content-expected.png: Added.
+        * platform/qt/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/qt/fast/table/inline-form-assert-expected.png:
+        * platform/qt/fast/table/inline-form-assert-expected.txt:
+        * platform/qt/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png: Added.
+        * platform/qt/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Added.
+        * platform/qt/tables/mozilla/bugs/bug113235-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23994-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56405-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug9024-expected.png: Added.
+        * platform/qt/tables/mozilla/bugs/bug9024-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug220653-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug3517-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Copied from LayoutTests/platform/qt/tables/mozilla/bugs/bug9024-expected.txt.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug7121-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/conflicts-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/core/conflicts-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+
 2011-10-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9973489> REGRESSION (r66599): -[DOMNode boundingBox] returns the zero rect for SVG elements
