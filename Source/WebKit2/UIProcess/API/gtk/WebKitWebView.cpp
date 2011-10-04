@@ -223,6 +223,39 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
 }
 
 /**
+ * webkit_web_view_load_alternate_html:
+ * @web_view: a #WebKitWebView
+ * @content: the alternate content to display as the main page of the @web_view
+ * @base_uri: the base URI for relative locations
+ * @unreachable_uri: the URI for the alternate page content
+ *
+ * Request loading of an alternate content for a URI that is unreachable. This allows clients
+ * to display page-loading errors in the #WebKitWebView itself. This is typically called from
+ * #WebKitWebLoaderClient::provisional-load-failed or #WebKitWebLoaderClient::load-failed
+ * signals.
+ * When called from those signals this method will preserve the back-forward list. The URI passed in
+ * @base_uri has to be an absolute URI.
+ * You can monitor the status of the load operation using the
+ * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ */
+void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI, const gchar* unreachableURI)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
+
+    WKStringRef htmlString = WKStringCreateWithUTF8CString(content);
+    WKURLRef baseURL = baseURI ? WKURLCreateWithUTF8CString(baseURI) : 0;
+    WKURLRef unreachableURL = unreachableURI ? WKURLCreateWithUTF8CString(unreachableURI) : 0;
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKPageLoadAlternateHTMLString(toAPI(page), htmlString, baseURL, unreachableURL);
+    WKRelease(htmlString);
+    if (baseURL)
+        WKRelease(baseURL);
+    if (unreachableURL)
+        WKRelease(unreachableURL);
+}
+
+/**
  * webkit_web_view_go_back:
  * @web_view: a #WebKitWebView
  *

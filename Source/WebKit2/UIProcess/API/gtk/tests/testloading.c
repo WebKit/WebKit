@@ -223,6 +223,35 @@ static void testLoadingError(WebLoadingFixture *fixture, gconstpointer data)
     g_assert(fixture->hasBeenFailed);
 }
 
+static gboolean loadAlternateContentLoadFinished(WebKitWebLoaderClient *client, WebLoadingFixture *fixture)
+{
+    g_main_loop_quit(fixture->loop);
+
+    return TRUE;
+}
+
+static gboolean loadAlternateContentLoadFailed(WebKitWebLoaderClient *client, const gchar *failingURI, GError *error, WebLoadingFixture *fixture)
+{
+    g_assert_not_reached();
+    return TRUE;
+}
+
+static void testLoadAlternateContent(WebLoadingFixture *fixture, gconstpointer data)
+{
+    char *uriString;
+    WebKitWebLoaderClient *client = webkit_web_view_get_loader_client(fixture->webView);
+
+    g_signal_connect(client, "load-finished", G_CALLBACK(loadAlternateContentLoadFinished), fixture);
+    g_signal_connect(client, "provisional-load-failed", G_CALLBACK(loadAlternateContentLoadFailed), fixture);
+    g_signal_connect(client, "load-failed", G_CALLBACK(loadAlternateContentLoadFailed), fixture);
+
+    uriString = getURIForPath("/alternate");
+    webkit_web_view_load_alternate_html(fixture->webView, "<html><body>Alternate Content</body></html>", NULL, uriString);
+    g_free(uriString);
+
+    g_main_loop_run(fixture->loop);
+}
+
 int main(int argc, char **argv)
 {
     SoupServer *server;
@@ -250,6 +279,11 @@ int main(int argc, char **argv)
                WebLoadingFixture, NULL,
                webLoadingFixtureSetup,
                testLoadingError,
+               webLoadingFixtureTeardown);
+    g_test_add("/webkit2/loading/alternate_content",
+               WebLoadingFixture, NULL,
+               webLoadingFixtureSetup,
+               testLoadAlternateContent,
                webLoadingFixtureTeardown);
 
     return g_test_run();

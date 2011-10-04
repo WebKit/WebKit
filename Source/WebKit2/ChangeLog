@@ -1,3 +1,19 @@
+2011-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_load_alternate_html() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69254
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_alternate_html):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/testloading.c:
+        (loadAlternateContentLoadFinished):
+        (loadAlternateContentLoadFailed):
+        (testLoadAlternateContent):
+        (main):
+
 2011-10-03  Jon Lee  <jonlee@apple.com>
 
         Extend DOM WheelEvent to differentiate between physical and logical scroll directions
