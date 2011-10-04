@@ -1,3 +1,40 @@
+2011-10-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Add DumpRenderTree.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62034
+
+        Reviewed by Antonio Gomes.
+
+        This is the main implementation file for EFL's DumpRenderTree.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp: Added.
+        (dumpFramesAsText):
+        (dumpFrameScrollPosition):
+        (shouldLogFrameLoadDelegates):
+        (shouldDumpAsText):
+        (sendPixelResultsEOF):
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+        (onEcoreEvasResize):
+        (onCloseWindow):
+        (useLongRunningServerMode):
+        (parseCommandLineOptions):
+        (getFinalTestURL):
+        (getExpectedPixelHash):
+        (createLayoutTestController):
+        (runTest):
+        (runTestingServerLoop):
+        (adjustOutputTypeByMimeType):
+        (dumpFrameContentsAsText):
+        (shouldDumpFrameScrollPosition):
+        (shouldDumpPixelsAndCompareWithExpected):
+        (shouldDumpBackForwardList):
+        (initEfl):
+        (shutdownEfl):
+        (displayWebView):
+        (dump):
+        (initEcoreEvas):
+        (main):
+
 2011-10-03  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should remove builders from the failure grid once they start to pass
