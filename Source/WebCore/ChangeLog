@@ -1,3 +1,20 @@
+2011-10-04  Cary Clark  <caryclark@google.com>
+
+        Enable sub pixel text (Skia on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=69354
+        http://code.google.com/p/chromium/issues/detail?id=98165
+
+        Reviewed by Eric Seidel.
+
+        No new tests. Layout test pixel results have been
+        disabled and will be rebaselined once all Skia on Mac
+        changes are in.
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::setupPaint):
+        Enable sub pixel text. This is set by default to enabled
+        by CoreGraphics, but by default disabled on Skia.
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         Remove PlatformWheelEvent::m_isAccepted

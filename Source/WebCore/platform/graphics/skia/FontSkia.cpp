@@ -89,6 +89,7 @@ static void setupPaint(SkPaint* paint, const SimpleFontData* fontData, const Fon
     paint->setTextSkewX(platformData.m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
     paint->setAutohinted(false); // freetype specific
     paint->setLCDRenderText(shouldSmoothFonts);
+    paint->setSubpixelText(true);
 }
 
 // TODO: This needs to be split into helper functions to better scope the
