@@ -122,10 +122,6 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
 #endif
-
-    // Make sure that even if the drawingContext() has a different default
-    // thickness, it is in sync with the canvas thickness.
-    setLineWidth(lineWidth());
 }
 
 void CanvasRenderingContext2D::unwindStateStack()

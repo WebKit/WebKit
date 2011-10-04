@@ -458,6 +458,7 @@ void HTMLCanvasElement::createImageBuffer() const
     m_imageBuffer->context()->scale(FloatSize(bufferSize.width() / logicalSize.width(), bufferSize.height() / logicalSize.height()));
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
     m_imageBuffer->context()->setImageInterpolationQuality(DefaultInterpolationQuality);
+    m_imageBuffer->context()->setStrokeThickness(1);
 
 #if USE(JSC)
     JSC::JSLock lock(JSC::SilenceAssertionsOnly);

@@ -1,3 +1,19 @@
+2011-10-04  Matthew Delaney  <mdelaney@apple.com>
+
+        Allow canvas backing store to be lazily allocated
+        https://bugs.webkit.org/show_bug.cgi?id=67054
+
+        Reviewed by Darin Adler.
+
+        No new tests; doesn't affect behavior.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer): Removed the setting of lineWidth
+        that caused the eager creation of ImageBuffer to use its GraphicsContext.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D): Added in default
+        line width setting along with other default context settings.
+
 2011-10-04  Sam Weinig  <sam@webkit.org>
 
         Add support for the CSP connect-src directive
