@@ -1,3 +1,10 @@
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
+        Restore Linux baseline for this test.  The Linux baseline got clobbered
+        when I updated the Windows baseline.
+
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.txt: Added.
+
 2011-10-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed; rebaselines for GTK after r96509.
