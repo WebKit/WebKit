@@ -1,5 +1,20 @@
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
+        Build fixes for everyone.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.h:
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::isScrollingLeftAndShouldNotRubberBand):
+        (WebCore::isScrollingRightAndShouldNotRubberBand):
+        (WebCore::ScrollAnimatorChromiumMac::smoothScrollWithEvent):
+        Fix Chromium build.
+
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        Fix GTK+ build.
+
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
         Add a ScrollElasticityController class and move some members over from ScrollAnimatorMac
         https://bugs.webkit.org/show_bug.cgi?id=69373
 
