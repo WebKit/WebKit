@@ -1,5 +1,22 @@
 2011-10-05  Adam Barth  <abarth@webkit.org>
 
+        Mark as Expected in garden-o-matic is confusing
+        https://bugs.webkit.org/show_bug.cgi?id=69452
+
+        Reviewed by David Levin.
+
+        krit didn't understand the difference between this button and the
+        Rebaseline button because both of them seem to indicate that the new
+        behavior is expected.  This patch renames "Mark as Expected" to "Expect
+        Failure" to make it clear that we're just expecting the test to fail
+        rather than accepting the new results as passing.  We might need to
+        iterate on these names a bit more if folks continue to find them
+        confusing.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js:
+
+2011-10-05  Adam Barth  <abarth@webkit.org>
+
         Add watchlist entries for abarth
         https://bugs.webkit.org/show_bug.cgi?id=69461
 
