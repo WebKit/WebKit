@@ -88,7 +88,7 @@ void CueParser::didReceiveData(const char* data, int length)
         m_private->parseBytes(data, length);
 }
 
-void CueParser::didFinishLoading(unsigned long)
+void CueParser::didFinishLoading(unsigned long, double)
 {
     m_client->trackLoadCompleted();
 }

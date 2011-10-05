@@ -58,10 +58,10 @@ public:
     CueParser();
     virtual ~CueParser();
 
-    void didReceiveResponse(unsigned long, const ResourceResponse&);
-    void didReceiveData(const char*, int);
-    void didFinishLoading(unsigned long);
-    void didFail(const ResourceError&);
+    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
+    virtual void didReceiveData(const char*, int);
+    virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/);
+    virtual void didFail(const ResourceError&);
 
     void load(const String&, ScriptExecutionContext*, CueParserClient*);
     bool supportsType(const String&);

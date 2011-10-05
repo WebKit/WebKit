@@ -1,3 +1,16 @@
+2011-10-05  Anna Cavender  <annacc@chromium.org>
+
+        Fix CueParser::didFinishLoading to match changes in ThreadableLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=69456
+
+        Reviewed by David Levin.
+
+        No new tests. No new functionality.
+
+        * html/track/CueParser.cpp:
+        (WebCore::CueParser::didFinishLoading):
+        * html/track/CueParser.h:
+
 2011-10-05  Alexey Proskuryakov  <ap@apple.com>
 
         32-bit build fix.
