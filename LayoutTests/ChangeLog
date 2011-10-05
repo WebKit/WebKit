@@ -1,3 +1,11 @@
+2011-10-05  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+
+        Temporarily disable Skia on Mac on Leopard and Snow Leopard.
+
+        * LayoutTests/platform/chromium/test_expectations.txt:
+
 2011-10-05  Sachin Puranik  <jcqt43@motorola.com>
 
         Spec change - option.label should be reflected like option.value
