@@ -447,6 +447,7 @@ SOURCES += \
     css/StyleMedia.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
+    css/WebKitCSSFilterValue.cpp \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSMatrix.cpp \
@@ -1466,6 +1467,7 @@ HEADERS += \
     css/StyleMedia.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \
+    css/WebKitCSSFilterValue.h \
     css/WebKitCSSKeyframeRule.h \
     css/WebKitCSSKeyframesRule.h \
     css/WebKitCSSMatrix.h \

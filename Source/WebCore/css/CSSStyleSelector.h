@@ -196,6 +196,10 @@ public:
 
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
 
+#if ENABLE(CSS_FILTERS)
+    bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
+#endif
+
     struct Features {
         Features();
         ~Features();

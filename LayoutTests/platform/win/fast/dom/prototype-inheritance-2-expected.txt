@@ -1,0 +1,456 @@
+Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array from inner.document.forms.testForm.0.ownerDocument.defaultView.console.profiles
+PASS Attr from inner.document.forms.testForm.0.attributes.0
+PASS AttrConstructor from inner.document.forms.testForm.0.attributes.0.constructor
+PASS AttrPrototype from inner.document.forms.testForm.0.attributes.0.__proto__
+PASS BarInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.menubar
+PASS BarInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.menubar.__proto__
+PASS CSSCharsetRule from inner.document.getElementById("dummyStyle").sheet.cssRules.0
+PASS CSSCharsetRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.0.constructor
+PASS CSSCharsetRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__
+PASS CSSFontFaceRule from inner.document.getElementById("dummyStyle").sheet.cssRules.4
+PASS CSSFontFaceRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.4.constructor
+PASS CSSFontFaceRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.4.__proto__
+PASS CSSImportRule from inner.document.getElementById("dummyStyle").sheet.cssRules.1
+PASS CSSImportRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.1.constructor
+PASS CSSImportRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.1.__proto__
+PASS CSSMediaRule from inner.document.getElementById("dummyStyle").sheet.cssRules.3
+PASS CSSMediaRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.3.constructor
+PASS CSSMediaRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.3.__proto__
+PASS CSSPageRule from inner.document.getElementById("dummyStyle").sheet.cssRules.2
+PASS CSSPageRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.2.constructor
+PASS CSSPageRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.2.__proto__
+PASS CSSPrimitiveValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip)
+PASS CSSPrimitiveValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).constructor
+PASS CSSPrimitiveValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__
+PASS CSSRuleList from inner.document.getElementById("dummyStyle").sheet.cssRules
+PASS CSSRuleListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.rules.constructor
+PASS CSSRuleListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.cssRules.__proto__
+PASS CSSRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__.__proto__
+PASS CSSStyleDeclaration from inner.document.getElementById("styledSpan").style
+PASS CSSStyleDeclarationConstructor from inner.document.forms.testForm.0.style.constructor
+PASS CSSStyleDeclarationPrototype from inner.document.forms.testForm.0.0.style.__proto__
+PASS CSSStyleRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5
+PASS CSSStyleRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.constructor
+PASS CSSStyleRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
+PASS CSSStyleSheet from inner.document.forms.testForm.0.ownerDocument.styleSheets.0
+PASS CSSStyleSheetConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.constructor
+PASS CSSStyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.__proto__
+PASS CSSValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(border-image-slice)
+PASS CSSValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(border-image-slice).constructor
+PASS CSSValueList from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function)
+PASS CSSValueListConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-position).constructor
+PASS CSSValueListPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function).__proto__
+PASS CSSValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(border-image-slice).__proto__
+PASS CanvasPattern from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")
+PASS CanvasPatternConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").constructor
+PASS CanvasPatternPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").__proto__
+PASS CanvasRenderingContext2D from inner.document.getElementsByTagName("canvas")[0].getContext("2d")
+PASS CanvasRenderingContext2DConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").constructor
+PASS CanvasRenderingContext2DPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__
+PASS CanvasRenderingContextPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__.__proto__
+PASS CharacterDataPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__.__proto__
+PASS ClientRect from inner.document.body.getBoundingClientRect()
+PASS ClientRectConstructor from inner.document.body.getBoundingClientRect().constructor
+PASS ClientRectList from inner.document.body.getClientRects()
+PASS ClientRectListConstructor from inner.document.body.getClientRects().constructor
+PASS ClientRectListPrototype from inner.document.body.getClientRects().__proto__
+PASS ClientRectPrototype from inner.document.body.getBoundingClientRect().__proto__
+PASS Comment from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling
+PASS CommentConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling.constructor
+PASS CommentPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling.__proto__
+PASS Console from inner.document.forms.testForm.0.ownerDocument.defaultView.console
+PASS ConsolePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.console.__proto__
+PASS Counter from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue()
+PASS CounterConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().constructor
+PASS CounterPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().__proto__
+PASS Crypto from inner.document.forms.testForm.0.ownerDocument.defaultView.crypto
+PASS CryptoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.crypto.__proto__
+PASS DOMApplicationCache from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache
+PASS DOMApplicationCachePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache.__proto__
+PASS DOMImplementation from inner.document.forms.testForm.0.ownerDocument.implementation
+PASS DOMImplementationConstructor from inner.document.forms.testForm.0.ownerDocument.implementation.constructor
+PASS DOMImplementationPrototype from inner.document.forms.testForm.0.ownerDocument.implementation.__proto__
+PASS DOMStringMap from inner.document.forms.testForm.0.dataset
+PASS DOMStringMapConstructor from inner.document.forms.testForm.0.dataset.constructor
+PASS DOMStringMapPrototype from inner.document.forms.testForm.0.dataset.__proto__
+PASS DOMTokenList from inner.document.forms.testForm.0.0.classList
+PASS DOMTokenListConstructor from inner.document.forms.testForm.0.classList.constructor
+PASS DOMTokenListPrototype from inner.document.forms.testForm.0.0.classList.__proto__
+PASS DOMWindow from inner
+PASS DOMWindowConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.constructor
+PASS DOMWindowPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.__proto__
+PASS DocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__
+PASS ElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__.__proto__
+PASS Function from inner.document.createElement
+PASS HTMLAnchorElement from inner.document.forms.testForm.0.parentNode.firstElementChild
+PASS HTMLAnchorElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.constructor
+PASS HTMLAnchorElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.__proto__
+PASS HTMLAppletElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling
+PASS HTMLAppletElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.constructor
+PASS HTMLAppletElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.__proto__
+PASS HTMLAreaElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling
+PASS HTMLAreaElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.constructor
+PASS HTMLAreaElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLAudioElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling
+PASS HTMLAudioElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.constructor
+PASS HTMLAudioElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBRElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
+PASS HTMLBRElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.constructor
+PASS HTMLBRElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBaseElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLBaseElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLBaseFontElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling
+PASS HTMLBaseFontElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseFontElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLBodyElement from inner.document.forms.testForm.0.parentNode
+PASS HTMLBodyElementConstructor from inner.document.forms.testForm.0.parentNode.constructor
+PASS HTMLBodyElementPrototype from inner.document.forms.testForm.0.parentNode.__proto__
+PASS HTMLButtonElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling
+PASS HTMLButtonElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.constructor
+PASS HTMLButtonElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.__proto__
+PASS HTMLCanvasElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas
+PASS HTMLCanvasElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.constructor
+PASS HTMLCanvasElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.__proto__
+PASS HTMLCollection from inner.document.testForm
+PASS HTMLDListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling
+PASS HTMLDListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.constructor
+PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.__proto__
+PASS HTMLDocument from inner.document.forms.testForm.0.ownerDocument
+PASS HTMLDocumentConstructor from inner.document.forms.testForm.0.ownerDocument.constructor
+PASS HTMLDocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__
+PASS HTMLElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__
+PASS HTMLFormElement from inner.document.forms.testForm.0
+PASS HTMLFormElementConstructor from inner.document.forms.testForm.0.constructor
+PASS HTMLFormElementPrototype from inner.document.forms.testForm.0.__proto__
+PASS HTMLHeadElement from inner.document.forms.testForm.0.parentNode.previousElementSibling
+PASS HTMLHeadElementConstructor from inner.document.forms.testForm.0.parentNode.previousElementSibling.constructor
+PASS HTMLHeadElementPrototype from inner.document.forms.testForm.0.parentNode.previousElementSibling.__proto__
+PASS HTMLHtmlElement from inner.document.forms.testForm.0.parentNode.parentNode
+PASS HTMLHtmlElementConstructor from inner.document.forms.testForm.0.parentNode.parentNode.constructor
+PASS HTMLHtmlElementPrototype from inner.document.forms.testForm.0.parentNode.parentNode.__proto__
+PASS HTMLInputElement from inner.document.forms.testForm.0.0
+PASS HTMLInputElementConstructor from inner.document.forms.testForm.0.0.constructor
+PASS HTMLInputElementPrototype from inner.document.forms.testForm.0.0.__proto__
+PASS HTMLMediaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__.__proto__
+PASS HTMLSpanElement from inner.document.forms.testForm.0.parentNode.lastElementChild
+PASS HTMLSpanElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.constructor
+PASS HTMLSpanElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.__proto__
+PASS HTMLStyleElement from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling
+PASS HTMLStyleElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.constructor
+PASS HTMLStyleElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.__proto__
+PASS HTMLTextAreaElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTextAreaElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTextAreaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLTitleElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTitleElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTitleElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLUListElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLUListElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLUListElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLUnknownElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling
+PASS HTMLUnknownElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.constructor
+PASS HTMLUnknownElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLVideoElement from inner.document.forms.testForm.0.previousElementSibling
+PASS HTMLVideoElementConstructor from inner.document.forms.testForm.0.previousElementSibling.constructor
+PASS HTMLVideoElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__
+PASS History from inner.document.forms.testForm.0.ownerDocument.defaultView.history
+PASS HistoryPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.history.__proto__
+PASS Location from inner.document.location
+PASS LocationPrototype from inner.document.location.__proto__
+PASS MediaList from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media
+PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.constructor
+PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
+PASS MemoryInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory
+PASS MemoryInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory.__proto__
+PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
+PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
+PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor
+PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.__proto__
+PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.constructor
+PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.__proto__
+PASS NamedNodeMap from inner.document.forms.testForm.0.parentNode.attributes
+PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation
+PASS NavigatorPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.__proto__
+PASS NodeList from inner.document.forms.testForm
+PASS NodeListConstructor from inner.document.forms.testForm.constructor
+PASS NodeListPrototype from inner.document.forms.testForm.__proto__
+PASS NodePrototype from inner.document.forms.testForm.0.attributes.0.__proto__.__proto__
+PASS Object from inner.document.location.__proto__.__proto__
+PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin
+PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins
+PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.constructor
+PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.__proto__
+PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.0.constructor
+PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin.__proto__
+PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
+PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
+PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
+PASS Rect from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue()
+PASS RectConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue().constructor
+PASS RectPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue().__proto__
+PASS SVGColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__.__proto__
+PASS SVGPaint from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill)
+PASS SVGPaintConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).constructor
+PASS SVGPaintPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__
+PASS Screen from inner.document.forms.testForm.0.ownerDocument.defaultView.screen
+PASS ScreenPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.screen.__proto__
+PASS Storage from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage
+PASS StorageConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.constructor
+PASS StoragePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.__proto__
+PASS StyleMedia from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia
+PASS StyleMediaConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.constructor
+PASS StyleMediaPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.__proto__
+PASS StyleSheetList from inner.document.forms.testForm.0.ownerDocument.styleSheets
+PASS StyleSheetListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.constructor
+PASS StyleSheetListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.__proto__
+PASS StyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.__proto__.__proto__
+PASS Text from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.firstChild
+PASS TextConstructor from inner.document.forms.testForm.0.attributes.0.lastChild.constructor
+PASS TextPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__
+PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.played
+PASS TimeRangesConstructor from inner.document.forms.testForm.0.previousElementSibling.played.constructor
+PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.played.__proto__
+PASS ValidityState from inner.document.forms.testForm.0.0.validity
+PASS ValidityStatePrototype from inner.document.forms.testForm.0.0.validity.__proto__
+PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0
+PASS WebKitCSSKeyframeRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0.constructor
+PASS WebKitCSSKeyframeRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0.__proto__
+PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").sheet.cssRules.6
+PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.6.constructor
+PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.6.__proto__
+Never found Audio
+Never found Blob
+Never found CDATASection
+Never found CSSRule
+Never found CanvasGradient
+Never found CharacterData
+Never found Clipboard
+Never found DOMParser
+Never found DOMSettableTokenList
+Never found DOMStringList
+Never found Document
+Never found DocumentFragment
+Never found DocumentType
+Never found Element
+Never found Entity
+Never found EntityReference
+Never found EventSource
+Never found File
+Never found FileList
+Never found FormData
+Never found HTMLAllCollection
+Never found HTMLDirectoryElement
+Never found HTMLDivElement
+Never found HTMLElement
+Never found HTMLEmbedElement
+Never found HTMLFieldSetElement
+Never found HTMLFontElement
+Never found HTMLFrameElement
+Never found HTMLFrameSetElement
+Never found HTMLHRElement
+Never found HTMLHeadingElement
+Never found HTMLIFrameElement
+Never found HTMLImageElement
+Never found HTMLIsIndexElement
+Never found HTMLKeygenElement
+Never found HTMLLIElement
+Never found HTMLLabelElement
+Never found HTMLLegendElement
+Never found HTMLLinkElement
+Never found HTMLMapElement
+Never found HTMLMarqueeElement
+Never found HTMLMediaElement
+Never found HTMLMenuElement
+Never found HTMLMetaElement
+Never found HTMLMeterElement
+Never found HTMLModElement
+Never found HTMLOListElement
+Never found HTMLObjectElement
+Never found HTMLOptGroupElement
+Never found HTMLOptionElement
+Never found HTMLOutputElement
+Never found HTMLParagraphElement
+Never found HTMLParamElement
+Never found HTMLPreElement
+Never found HTMLQuoteElement
+Never found HTMLScriptElement
+Never found HTMLSelectElement
+Never found HTMLSourceElement
+Never found HTMLTableCaptionElement
+Never found HTMLTableCellElement
+Never found HTMLTableColElement
+Never found HTMLTableElement
+Never found HTMLTableRowElement
+Never found HTMLTableSectionElement
+Never found Image
+Never found ImageData
+Never found MessageChannel
+Never found MessagePort
+Never found Node
+Never found NodeFilter
+Never found Notation
+Never found Option
+Never found ProcessingInstruction
+Never found Range
+Never found SVGAElement
+Never found SVGAltGlyphDefElement
+Never found SVGAltGlyphElement
+Never found SVGAltGlyphItemElement
+Never found SVGAngle
+Never found SVGAnimateColorElement
+Never found SVGAnimateElement
+Never found SVGAnimateMotionElement
+Never found SVGAnimateTransformElement
+Never found SVGAnimatedAngle
+Never found SVGAnimatedBoolean
+Never found SVGAnimatedEnumeration
+Never found SVGAnimatedInteger
+Never found SVGAnimatedLength
+Never found SVGAnimatedLengthList
+Never found SVGAnimatedNumber
+Never found SVGAnimatedNumberList
+Never found SVGAnimatedPreserveAspectRatio
+Never found SVGAnimatedRect
+Never found SVGAnimatedString
+Never found SVGAnimatedTransformList
+Never found SVGCircleElement
+Never found SVGClipPathElement
+Never found SVGColor
+Never found SVGComponentTransferFunctionElement
+Never found SVGCursorElement
+Never found SVGDefsElement
+Never found SVGDescElement
+Never found SVGDocument
+Never found SVGElement
+Never found SVGElementInstance
+Never found SVGElementInstanceList
+Never found SVGEllipseElement
+Never found SVGFEBlendElement
+Never found SVGFEColorMatrixElement
+Never found SVGFEComponentTransferElement
+Never found SVGFECompositeElement
+Never found SVGFEConvolveMatrixElement
+Never found SVGFEDiffuseLightingElement
+Never found SVGFEDisplacementMapElement
+Never found SVGFEDistantLightElement
+Never found SVGFEDropShadowElement
+Never found SVGFEFloodElement
+Never found SVGFEFuncAElement
+Never found SVGFEFuncBElement
+Never found SVGFEFuncGElement
+Never found SVGFEFuncRElement
+Never found SVGFEGaussianBlurElement
+Never found SVGFEImageElement
+Never found SVGFEMergeElement
+Never found SVGFEMergeNodeElement
+Never found SVGFEMorphologyElement
+Never found SVGFEOffsetElement
+Never found SVGFEPointLightElement
+Never found SVGFESpecularLightingElement
+Never found SVGFESpotLightElement
+Never found SVGFETileElement
+Never found SVGFETurbulenceElement
+Never found SVGFilterElement
+Never found SVGFontElement
+Never found SVGFontFaceElement
+Never found SVGFontFaceFormatElement
+Never found SVGFontFaceNameElement
+Never found SVGFontFaceSrcElement
+Never found SVGFontFaceUriElement
+Never found SVGForeignObjectElement
+Never found SVGGElement
+Never found SVGGlyphElement
+Never found SVGGlyphRefElement
+Never found SVGGradientElement
+Never found SVGHKernElement
+Never found SVGImageElement
+Never found SVGLength
+Never found SVGLengthList
+Never found SVGLineElement
+Never found SVGLinearGradientElement
+Never found SVGMPathElement
+Never found SVGMarkerElement
+Never found SVGMaskElement
+Never found SVGMatrix
+Never found SVGMetadataElement
+Never found SVGMissingGlyphElement
+Never found SVGNumber
+Never found SVGNumberList
+Never found SVGPathElement
+Never found SVGPathSegArcAbs
+Never found SVGPathSegArcRel
+Never found SVGPathSegClosePath
+Never found SVGPathSeg
+Never found SVGPathSegCurvetoCubicAbs
+Never found SVGPathSegCurvetoCubicRel
+Never found SVGPathSegCurvetoCubicSmoothAbs
+Never found SVGPathSegCurvetoCubicSmoothRel
+Never found SVGPathSegCurvetoQuadraticAbs
+Never found SVGPathSegCurvetoQuadraticRel
+Never found SVGPathSegCurvetoQuadraticSmoothAbs
+Never found SVGPathSegCurvetoQuadraticSmoothRel
+Never found SVGPathSegLinetoAbs
+Never found SVGPathSegLinetoHorizontalAbs
+Never found SVGPathSegLinetoHorizontalRel
+Never found SVGPathSegLinetoRel
+Never found SVGPathSegLinetoVerticalAbs
+Never found SVGPathSegLinetoVerticalRel
+Never found SVGPathSegList
+Never found SVGPathSegMovetoAbs
+Never found SVGPathSegMovetoRel
+Never found SVGPatternElement
+Never found SVGPoint
+Never found SVGPointList
+Never found SVGPolygonElement
+Never found SVGPolylineElement
+Never found SVGPreserveAspectRatio
+Never found SVGRadialGradientElement
+Never found SVGRect
+Never found SVGRectElement
+Never found SVGRenderingIntent
+Never found SVGSVGElement
+Never found SVGScriptElement
+Never found SVGSetElement
+Never found SVGStopElement
+Never found SVGStringList
+Never found SVGStyleElement
+Never found SVGSwitchElement
+Never found SVGSymbolElement
+Never found SVGTRefElement
+Never found SVGTSpanElement
+Never found SVGTextContentElement
+Never found SVGTextElement
+Never found SVGTextPathElement
+Never found SVGTextPositioningElement
+Never found SVGTitleElement
+Never found SVGTransform
+Never found SVGTransformList
+Never found SVGUnitTypes
+Never found SVGUseElement
+Never found SVGVKernElement
+Never found SVGViewElement
+Never found SharedWorker
+Never found StyleSheet
+Never found TextMetrics
+Never found WebKitCSSFilterValue
+Never found WebKitCSSMatrix
+Never found WebKitCSSTransformValue
+Never found WebKitPoint
+Never found WebSocket
+Never found Worker
+Never found XMLHttpRequest
+Never found XMLHttpRequestUpload
+Never found XMLSerializer
+Never found XPathEvaluator
+Never found XPathResult
+Never found XSLTProcessor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

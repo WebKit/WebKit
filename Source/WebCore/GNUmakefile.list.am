@@ -539,6 +539,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
 	DerivedSources/WebCore/JSWebKitBlobBuilder.cpp \
 	DerivedSources/WebCore/JSWebKitBlobBuilder.h \
+	DerivedSources/WebCore/JSWebKitCSSFilterValue.cpp \
+	DerivedSources/WebCore/JSWebKitCSSFilterValue.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp \
@@ -1062,6 +1064,8 @@ webcore_sources += \
 	Source/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	Source/WebCore/css/SVGCSSParser.cpp \
 	Source/WebCore/css/SVGCSSStyleSelector.cpp \
+	Source/WebCore/css/WebKitCSSFilterValue.cpp \
+	Source/WebCore/css/WebKitCSSFilterValue.h \
 	Source/WebCore/css/WebKitCSSKeyframeRule.cpp \
 	Source/WebCore/css/WebKitCSSKeyframeRule.h \
 	Source/WebCore/css/WebKitCSSKeyframesRule.cpp \

@@ -1,3 +1,41 @@
+2011-10-05  Dean Jackson  <dino@apple.com>
+
+        Parse '-webkit-filter' property syntax
+        https://bugs.webkit.org/show_bug.cgi?id=68473
+
+        Reviewed by Nikolas Zimmermann.
+
+        New tests that exercise the -webkit-filter syntax, with
+        (nearly) all the function shorthands. Since this patch also
+        added a global WebKitCSSFilterValue interface, the window
+        tests needed update, but only on the platforms that have
+        ENABLE(CSS_FILTERS).
+
+        * css3/filters/filter-property-expected.txt:
+        * css3/filters/filter-property-parsing-expected.txt: Added.
+        * css3/filters/filter-property-parsing-invalid-expected.txt: Added.
+        * css3/filters/filter-property-parsing-invalid.html: Added.
+        * css3/filters/filter-property-parsing.html: Added.
+        * css3/filters/script-tests/filter-property-parsing-invalid.js: Added.
+        (testInvalidFilterRule):
+        * css3/filters/script-tests/filter-property-parsing.js: Added.
+        (jsWrapperClass):
+        (shouldBeType):
+        (testFilterRule):
+        * css3/filters/script-tests/filter-property.js:
+            Updated old test which was missing quotes, plus new tests that
+            exercise the shorthand feature.
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/mac/fast/dom/prototype-inheritance-2-expected.txt: Added.
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        * platform/win/fast/dom/Window/window-properties-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/Window/window-properties-expected.txt.
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt: Added.
+        * platform/win/fast/js/global-constructors-expected.txt:
+            Updated isAppleWebkit() platform files for the new WebKitCSSFilterValue
+            API exposed on Window.
+
 2011-10-05  Chris Rogers  <crogers@google.com>
 
         Rebaseline webaudio/audiobuffersource-playbackrate.html due to http://trac.webkit.org/changeset/96745

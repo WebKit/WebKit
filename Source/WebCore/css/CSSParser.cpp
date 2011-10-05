@@ -32,6 +32,7 @@
 #include "CSSFlexValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageValue.h"
 #include "CSSImportRule.h"
@@ -72,6 +73,9 @@
 #include "Rect.h"
 #include "RenderTheme.h"
 #include "ShadowValue.h"
+#if ENABLE(CSS_FILTERS)
+#include "WebKitCSSFilterValue.h"
+#endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
@@ -6301,21 +6305,6 @@ private:
     CSSParser::Units m_unit;
 };
 
-#if ENABLE(CSS_FILTERS)
-PassRefPtr<CSSValueList> CSSParser::parseFilter()
-{
-    if (!m_valueList)
-        return 0;
-    
-    // The filter is a list of functional primitives that specify individual operations.
-    // Eventually, we will collect a list of WebKitCSSFilterValues, where each value specifies
-    // a single operation. For now, just use the generic CSSValueList constructor to
-    // parse the input.
-    RefPtr<CSSValueList> list = CSSValueList::createFromParserValueList(m_valueList);
-    return list.release();
-}
-#endif
-
 PassRefPtr<CSSValueList> CSSParser::parseTransform()
 {
     if (!m_valueList)
@@ -6386,6 +6375,139 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
 
     return list.release();
 }
+
+#if ENABLE(CSS_FILTERS)
+
+static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned& maximumArgumentCount)
+{
+    if (equalIgnoringCase(name, "grayscale("))
+        filterType = WebKitCSSFilterValue::GrayscaleFilterOperation;
+    else if (equalIgnoringCase(name, "sepia("))
+        filterType = WebKitCSSFilterValue::SepiaFilterOperation;
+    else if (equalIgnoringCase(name, "saturate("))
+       filterType = WebKitCSSFilterValue::SaturateFilterOperation;
+    else if (equalIgnoringCase(name, "hue-rotate("))
+        filterType = WebKitCSSFilterValue::HueRotateFilterOperation;
+    else if (equalIgnoringCase(name, "invert("))
+        filterType = WebKitCSSFilterValue::InvertFilterOperation;
+    else if (equalIgnoringCase(name, "opacity("))
+        filterType = WebKitCSSFilterValue::OpacityFilterOperation;
+    else if (equalIgnoringCase(name, "gamma(")) {
+        filterType = WebKitCSSFilterValue::GammaFilterOperation;
+        maximumArgumentCount = 3;
+    } else if (equalIgnoringCase(name, "blur(")) {
+        filterType = WebKitCSSFilterValue::BlurFilterOperation;
+        maximumArgumentCount = 2;
+    } else if (equalIgnoringCase(name, "sharpen(")) {
+        filterType = WebKitCSSFilterValue::SharpenFilterOperation;
+        maximumArgumentCount = 3;
+    }
+}
+
+bool CSSParser::isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned argumentCount)
+{
+    // Check parameter types.
+    if (filterType == WebKitCSSFilterValue::HueRotateFilterOperation && !argumentCount) {
+        // 1st parameter of hue-rotate() is an angle.
+        if (!validUnit(argument, FAngle, true))
+            return false;
+    } else if (filterType == WebKitCSSFilterValue::BlurFilterOperation) {
+        // parameters of blur() are lengths.
+        if (!validUnit(argument, FLength | FPercent, true))
+            return false;
+    } else if (filterType == WebKitCSSFilterValue::SharpenFilterOperation && argumentCount == 1) {
+        // 2nd parameter of sharpen() is a length.
+        if (!validUnit(argument, FLength | FPercent, true))
+            return false;
+    } else if (!validUnit(argument, FNumber, true))
+        return false;
+    
+    // Check parameter values.
+    if (filterType == WebKitCSSFilterValue::GrayscaleFilterOperation
+        || filterType == WebKitCSSFilterValue::SepiaFilterOperation
+        || filterType == WebKitCSSFilterValue::SaturateFilterOperation
+        || filterType == WebKitCSSFilterValue::InvertFilterOperation
+        || filterType == WebKitCSSFilterValue::OpacityFilterOperation) {
+        // Arguments must be within [0,1].
+        double amount = argument->fValue;
+        if (amount < 0 || amount > 1)
+            return false;
+    } else if (filterType == WebKitCSSFilterValue::GammaFilterOperation
+               || filterType == WebKitCSSFilterValue::BlurFilterOperation) {
+        // Arguments must be positive
+        double amount = argument->fValue;
+        if (amount < 0)
+            return false;
+    } else if (filterType == WebKitCSSFilterValue::SharpenFilterOperation) {
+        // Arguments must be positive
+        double amount = argument->fValue;
+        if (!argumentCount) {
+            if (amount < 0 || amount > 1)
+                return false;
+        } else {
+            if (amount < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+PassRefPtr<CSSValueList> CSSParser::parseFilter()
+{
+    if (!m_valueList)
+        return 0;
+
+    // The filter is a list of functional primitives that specify individual operations.
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_URI && (value->unit != CSSParserValue::Function || !value->function))
+            return 0;
+
+        WebKitCSSFilterValue::FilterOperationType filterType = WebKitCSSFilterValue::UnknownFilterOperation;
+
+        // See if the specified primitive is one we understand.
+        if (value->unit == CSSPrimitiveValue::CSS_URI) {
+            RefPtr<WebKitCSSFilterValue> referenceFilterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
+            list->append(referenceFilterValue);
+            referenceFilterValue->append(primitiveValueCache()->createValue(value->string, CSSPrimitiveValue::CSS_STRING));
+        } else {        
+            const CSSParserString name = value->function->name;
+            unsigned maximumArgumentCount = 1;
+
+            filterInfoForName(name, filterType, maximumArgumentCount);
+            
+            if (filterType == WebKitCSSFilterValue::UnknownFilterOperation)
+                return 0;
+
+            CSSParserValueList* args = value->function->args.get();
+            if (!args || args->size() > maximumArgumentCount)
+                return 0;
+
+            // Create the new WebKitCSSFilterValue for this operation and add it to our list.
+            RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(filterType);
+            list->append(filterValue);
+            
+            CSSParserValue* argument = args->current();
+            unsigned argumentCount = 0;
+
+            while (argument) {
+                if (!isValidFilterArgument(argument, filterType, argumentCount))
+                    return 0;
+
+                filterValue->append(createPrimitiveNumericValue(argument));
+
+                argument = args->next();
+                if (!argument)
+                    break;
+
+                ++argumentCount;
+            }
+        }
+    }
+
+    return list.release();
+}
+#endif
 
 // auto | <flow_name>
 bool CSSParser::parseFlowThread(int propId, bool important)

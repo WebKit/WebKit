@@ -363,6 +363,10 @@ module window {
         attribute CSSValueListConstructor CSSValueList;
         attribute WebKitCSSTransformValueConstructor WebKitCSSTransformValue;
 
+#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
+        attribute WebKitCSSFilterValueConstructor WebKitCSSFilterValue;
+#endif
+
         attribute CSSRuleConstructor CSSRule;
         attribute CSSCharsetRuleConstructor CSSCharsetRule;
         attribute CSSFontFaceRuleConstructor CSSFontFaceRule;

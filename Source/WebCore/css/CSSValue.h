@@ -71,7 +71,9 @@ public:
     virtual bool isValueList() const { return false; }
     virtual bool isWebKitCSSTransformValue() const { return false; }
     virtual bool isCSSLineBoxContainValue() const { return false; }
-    
+#if ENABLE(CSS_FILTERS)
+    virtual bool isWebKitCSSFilterValue() const { return false; }
+#endif
 #if ENABLE(SVG)
     virtual bool isSVGColor() const { return false; }
     virtual bool isSVGPaint() const { return false; }

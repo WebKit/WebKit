@@ -546,6 +546,7 @@ DOM_CLASSES = \
     WebKitAnimationEvent \
     WebKitAnimationList \
     WebKitBlobBuilder \
+    WebKitCSSFilterValue \
     WebKitCSSKeyframeRule \
     WebKitCSSKeyframesRule \
     WebKitCSSMatrix \

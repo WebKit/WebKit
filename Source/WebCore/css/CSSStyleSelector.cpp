@@ -54,6 +54,9 @@
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "Counter.h"
+#if ENABLE(CSS_FILTERS)
+#include "FilterOperation.h"
+#endif
 #include "FontFamilyValue.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
@@ -99,6 +102,9 @@
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include "UserAgentStyleSheets.h"
+#if ENABLE(CSS_FILTERS)
+#include "WebKitCSSFilterValue.h"
+#endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
@@ -3789,8 +3795,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
 #if ENABLE(CSS_FILTERS)
-    case CSSPropertyWebkitFilter:
+    case CSSPropertyWebkitFilter: {
+        HANDLE_INHERIT_AND_INITIAL(filter, Filter);
+        FilterOperations operations;
+        createFilterOperations(value, style(), m_rootElementStyle, operations);
+        m_style->setFilter(operations);
         return;
+    }
 #endif
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
@@ -5293,6 +5304,171 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
     outOperations = operations;
     return true;
 }
+
+#if ENABLE(CSS_FILTERS)
+static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValue::FilterOperationType type)
+{
+    switch (type) {
+    case WebKitCSSFilterValue::ReferenceFilterOperation:
+        return FilterOperation::REFERENCE;
+    case WebKitCSSFilterValue::GrayscaleFilterOperation:
+        return FilterOperation::GRAYSCALE;
+    case WebKitCSSFilterValue::SepiaFilterOperation:
+        return FilterOperation::SEPIA;
+    case WebKitCSSFilterValue::SaturateFilterOperation:
+        return FilterOperation::SATURATE;
+    case WebKitCSSFilterValue::HueRotateFilterOperation:
+        return FilterOperation::HUE_ROTATE;
+    case WebKitCSSFilterValue::InvertFilterOperation:
+        return FilterOperation::INVERT;
+    case WebKitCSSFilterValue::OpacityFilterOperation:
+        return FilterOperation::OPACITY;
+    case WebKitCSSFilterValue::GammaFilterOperation:
+        return FilterOperation::GAMMA;
+    case WebKitCSSFilterValue::BlurFilterOperation:
+        return FilterOperation::BLUR;
+    case WebKitCSSFilterValue::SharpenFilterOperation:
+        return FilterOperation::SHARPEN;
+    case WebKitCSSFilterValue::DropShadowFilterOperation:
+        return FilterOperation::DROP_SHADOW;
+    case WebKitCSSFilterValue::UnknownFilterOperation:
+        return FilterOperation::NONE;
+    }
+    return FilterOperation::NONE;
+}
+
+bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* style, RenderStyle* rootStyle, FilterOperations& outOperations)
+{
+    if (!inValue || !inValue->isValueList()) {
+        outOperations.clear();
+        return false;
+    }
+    
+    float zoomFactor = style ? style->effectiveZoom() : 1;
+    FilterOperations operations;
+    for (CSSValueListIterator i = inValue; i.hasMore(); i.advance()) {
+        CSSValue* currValue = i.value();
+        if (!currValue->isWebKitCSSFilterValue())
+            continue;
+
+        WebKitCSSFilterValue* filterValue = static_cast<WebKitCSSFilterValue*>(i.value());
+        if (!filterValue->length())
+            continue;
+
+        FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
+
+        bool haveNonPrimitiveValue = false;
+        for (unsigned j = 0; j < filterValue->length(); ++j) {
+            if (!filterValue->itemWithoutBoundsCheck(j)->isPrimitiveValue()) {
+                haveNonPrimitiveValue = true;
+                break;
+            }
+        }
+        if (haveNonPrimitiveValue)
+            continue;
+
+        CSSPrimitiveValue* firstValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(0));
+        switch (filterValue->operationType()) {
+        case WebKitCSSFilterValue::ReferenceFilterOperation: {
+            operations.operations().append(ReferenceFilterOperation::create(firstValue->getStringValue(), operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::GrayscaleFilterOperation:
+        case WebKitCSSFilterValue::SepiaFilterOperation:
+        case WebKitCSSFilterValue::SaturateFilterOperation: {
+            double amount = 1;
+            if (filterValue->length() == 1)
+                amount = firstValue->getDoubleValue();
+
+            operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::HueRotateFilterOperation: {
+            double angle = firstValue->getDoubleValue();
+            if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
+                angle = rad2deg(angle);
+            else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
+                angle = grad2deg(angle);
+            else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
+                angle = turn2deg(angle);
+
+            operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::InvertFilterOperation:
+        case WebKitCSSFilterValue::OpacityFilterOperation: {
+            double amount = 1;
+            if (filterValue->length() == 1)
+                amount = firstValue->getDoubleValue();
+
+            operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::GammaFilterOperation: {
+            double amplitude = 1;
+            double exponent = 1;
+            double offset = 0;
+            if (filterValue->length() >= 1)
+                amplitude = firstValue->getDoubleValue();
+            if (filterValue->length() >= 2)
+                exponent = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1))->getDoubleValue();
+            if (filterValue->length() == 3)
+                offset = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(2))->getDoubleValue();
+
+            operations.operations().append(GammaFilterOperation::create(amplitude, exponent, offset, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::BlurFilterOperation: {
+            bool ok = true;
+            Length stdDeviationX = Length(0, Fixed);
+            Length stdDeviationY = Length(0, Fixed);
+            if (filterValue->length() >= 1) {
+                stdDeviationX = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                stdDeviationY = stdDeviationX;
+            }
+            if (!ok)
+                return false;
+            if (filterValue->length() == 2) {
+                CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1));
+                stdDeviationY = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
+            }
+            if (!ok)
+                return false;
+
+            operations.operations().append(BlurFilterOperation::create(stdDeviationX, stdDeviationY, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::SharpenFilterOperation: {
+            bool ok = true;
+            double amount = 0;
+            Length radius = Length(0, Fixed);
+            double threshold = 1;
+            if (filterValue->length() >= 1)
+                amount = firstValue->getDoubleValue();
+            if (filterValue->length() >= 2) {
+                CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1));
+                radius = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
+            }
+            if (!ok)
+                return false;
+            if (filterValue->length() == 3)
+                threshold = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(2))->getDoubleValue();
+
+            operations.operations().append(SharpenFilterOperation::create(amount, radius, threshold, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::UnknownFilterOperation:
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    outOperations = operations;
+    return true;
+}
+
+#endif
 
 void CSSStyleSelector::loadPendingImages()
 {

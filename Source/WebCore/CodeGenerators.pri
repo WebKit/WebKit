@@ -100,6 +100,7 @@ IDL_BINDINGS += \
     css/StyleMedia.idl \
     css/StyleSheet.idl \
     css/StyleSheetList.idl \
+    css/WebKitCSSFilterValue.idl \
     css/WebKitCSSKeyframeRule.idl \
     css/WebKitCSSKeyframesRule.idl \
     css/WebKitCSSMatrix.idl \

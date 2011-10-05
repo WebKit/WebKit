@@ -29,6 +29,9 @@
 #include "CSSSelector.h"
 #include "Color.h"
 #include "MediaQuery.h"
+#if ENABLE(CSS_FILTERS)
+#include "WebKitCSSFilterValue.h"
+#endif
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -182,6 +185,7 @@ public:
     bool parseGradientColorStops(CSSParserValueList*, CSSGradientValue*, bool expectComma);
 
 #if ENABLE(CSS_FILTERS)
+    bool isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType&, unsigned argumentCount);
     PassRefPtr<CSSValueList> parseFilter();
 #endif
 
@@ -380,6 +384,9 @@ private:
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
 
     friend class TransformOperationInfo;
+#if ENABLE(CSS_FILTERS)
+    friend class FilterOperationInfo;
+#endif
 };
 
 int cssPropertyID(const CSSParserString&);

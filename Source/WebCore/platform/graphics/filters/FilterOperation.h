@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#include "Length.h"
 #include "ShadowData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -201,13 +202,13 @@ private:
 
 class BlurFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<BlurFilterOperation> create(double stdDeviationX, double stdDeviationY, OperationType type)
+    static PassRefPtr<BlurFilterOperation> create(Length stdDeviationX, Length stdDeviationY, OperationType type)
     {
         return adoptRef(new BlurFilterOperation(stdDeviationX, stdDeviationY, type));
     }
 
-    double stdDeviationX() const { return m_stdDeviationX; }
-    double stdDeviationY() const { return m_stdDeviationY; }
+    Length stdDeviationX() const { return m_stdDeviationX; }
+    Length stdDeviationY() const { return m_stdDeviationY; }
 
 private:
 
@@ -219,27 +220,27 @@ private:
         return m_stdDeviationX == other->m_stdDeviationX && m_stdDeviationY == other->m_stdDeviationY;
     }
 
-    BlurFilterOperation(double stdDeviationX, double stdDeviationY, OperationType type)
+    BlurFilterOperation(Length stdDeviationX, Length stdDeviationY, OperationType type)
         : FilterOperation(type)
         , m_stdDeviationX(stdDeviationX)
         , m_stdDeviationY(stdDeviationY)
     {
     }
 
-    double m_stdDeviationX;
-    double m_stdDeviationY;
+    Length m_stdDeviationX;
+    Length m_stdDeviationY;
 };
 
 class SharpenFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<SharpenFilterOperation> create(double radius, double threshold, double amount, OperationType type)
+    static PassRefPtr<SharpenFilterOperation> create(double amount, Length radius, double threshold, OperationType type)
     {
-        return adoptRef(new SharpenFilterOperation(radius, threshold, amount, type));
+        return adoptRef(new SharpenFilterOperation(amount, radius, threshold, type));
     }
 
-    double radius() const { return m_radius; }
-    double threshold() const { return m_threshold; }
     double amount() const { return m_amount; }
+    Length radius() const { return m_radius; }
+    double threshold() const { return m_threshold; }
 
 private:
 
@@ -251,17 +252,17 @@ private:
         return m_radius == other->m_radius && m_threshold == other->m_threshold && m_amount == other->m_amount;
     }
 
-    SharpenFilterOperation(double radius, double threshold, double amount, OperationType type)
+    SharpenFilterOperation(double amount, Length radius, double threshold, OperationType type)
         : FilterOperation(type)
+        , m_amount(amount)
         , m_radius(radius)
         , m_threshold(threshold)
-        , m_amount(amount)
     {
     }
 
-    double m_radius;
-    double m_threshold;
     double m_amount;
+    Length m_radius;
+    double m_threshold;
 };
 
 class DropShadowFilterOperation : public FilterOperation {
