@@ -43,15 +43,24 @@ class ApplyWatchList(AbstractStep):
 
     def run(self, state):
         diff = self.cached_lookup(state, 'diff')
-        bug_id = state.get("bug_id")
+        bug_id = state.get('bug_id')
 
         cc_and_messages = self._tool.watch_list().determine_cc_and_messages(diff)
-        cc_list = cc_and_messages['cc_list']
-        comment_text = '\n\n'.join(cc_and_messages['messages'])
+        cc_emails = cc_and_messages['cc_list']
+        messages = cc_and_messages['messages']
         if bug_id:
-            self._tool.bugs.post_comment_to_bug(bug_id, comment_text, cc_list)
+            # Remove emails and cc's which are already in the bug.
+            bug = self._tool.bugs.fetch_bug(bug_id)
+
+            messages = filter(lambda message: not bug.is_in_comments(message), messages)
+            cc_emails = set(cc_emails).difference(bug.cc_emails())
+
+        comment_text = '\n\n'.join(messages)
+        if bug_id:
+            if cc_emails or comment_text:
+                self._tool.bugs.post_comment_to_bug(bug_id, comment_text, cc_emails)
             log_result = _log.debug
         else:
             _log.info('No bug was updated because no id was given.')
             log_result = _log.info
-        log_result('Result of watchlist: cc "%s" messages "%s"' % (', '.join(cc_list), comment_text))
+        log_result('Result of watchlist: cc "%s" messages "%s"' % (', '.join(cc_emails), comment_text))

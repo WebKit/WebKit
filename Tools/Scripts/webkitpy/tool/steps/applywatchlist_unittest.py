@@ -38,14 +38,12 @@ class ApplyWatchListTest(unittest.TestCase):
         capture = OutputCapture()
         step = ApplyWatchList(MockTool(log_executive=True), MockOptions())
         state = {
-            'bug_id': '14397',
+            'bug_id': '50001',
             'diff': 'The diff',
         }
         expected_stderr = """MockWatchList: determine_cc_and_messages
-MOCK bug comment: bug_id=14397, cc=['levin@chromium.org']
+MOCK bug comment: bug_id=50001, cc=set(['levin@chromium.org'])
 --- Begin comment ---
-Message1.
-
 Message2.
 --- End comment ---
 

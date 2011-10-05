@@ -116,3 +116,10 @@ class Bug(object):
 
     def comments(self):
         return self.bug_dictionary["comments"]
+
+    def is_in_comments(self, message):
+        for comment in self.comments():
+            if message in comment["text"]:
+                return True
+        return False
+

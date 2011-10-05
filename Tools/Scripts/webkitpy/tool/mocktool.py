@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
 import os
 import StringIO
 import threading
@@ -156,8 +157,10 @@ _bug1 = {
              "invalid commit-queue setter.",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": _unassigned_email,
+    "cc_emails": [],
     "attachments": [_patch1, _patch2],
     "bug_status": "UNCONFIRMED",
+    "comments": [],
 }
 
 
@@ -166,8 +169,14 @@ _bug2 = {
     "title": "Bug with a patch needing review.",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
+    "cc_emails": ["abarth@webkit.org", ],
     "attachments": [_patch3],
     "bug_status": "ASSIGNED",
+    "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Message1.",
+        },
+    ],
 }
 
 
@@ -176,8 +185,10 @@ _bug3 = {
     "title": "The third bug",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": _unassigned_email,
+    "cc_emails": [],
     "attachments": [_patch7],
     "bug_status": "NEW",
+    "comments": [],
 }
 
 
@@ -186,8 +197,10 @@ _bug4 = {
     "title": "The fourth bug",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
+    "cc_emails": [],
     "attachments": [_patch4, _patch5, _patch6],
     "bug_status": "REOPENED",
+    "comments": [],
 }
 
 
@@ -196,9 +209,11 @@ _bug5 = {
     "title": "The fifth bug",
     "reporter_email": _commit_queue_email,
     "assigned_to_email": "foo@foo.com",
+    "cc_emails": [],
     "attachments": [],
     "bug_status": "RESOLVED",
     "dup_id": 50002,
+    "comments": [],
 }
 
 
@@ -293,7 +308,7 @@ class MockBugzilla(object):
         return ["Good artists copy. Great artists steal. - Pablo Picasso"]
 
     def fetch_bug(self, bug_id):
-        return Bug(self.bug_cache.get(bug_id), self)
+        return Bug(self.bug_cache.get(int(bug_id)), self)
 
     def set_override_patch(self, patch):
         self._override_patch = patch
@@ -808,7 +823,7 @@ class MockPlatformInfo(object):
 class MockWatchList(object):
     def determine_cc_and_messages(self, diff):
         log("MockWatchList: determine_cc_and_messages")
-        return {'cc_list': ['levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }
+        return {'cc_list': ['abarth@webkit.org', 'levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }
 
 
 class MockWorkspace(object):

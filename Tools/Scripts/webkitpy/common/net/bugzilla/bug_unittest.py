@@ -38,3 +38,10 @@ class BugTest(unittest.TestCase):
             self.assertTrue(bug.is_unassigned())
         bug = Bug({"assigned_to_email": "test@test.com"}, bugzilla=None)
         self.assertFalse(bug.is_unassigned())
+
+    def test_is_in_comments(self):
+        bug = Bug({"comments": [{"text": "Message1."},
+                                {"text": "Message2. Message3. Message4."}, ], },
+                  bugzilla=None)
+        self.assertTrue(bug.is_in_comments("Message3."))
+        self.assertFalse(bug.is_in_comments("Message."))

@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 
@@ -36,8 +37,14 @@ class ApplyWatchListLocalTest(CommandsTest):
         self.assert_execute_outputs(ApplyWatchListLocal(), [''], expected_stderr=expected_stderr)
 
     def test_args_parsing_with_bug(self):
-        expected_stderr = "MockWatchList: determine_cc_and_messages\nMOCK bug comment: bug_id=1234, cc=['levin@chromium.org']\n--- Begin comment ---\nMessage1.\n\nMessage2.\n--- End comment ---\n\n"
-        self.assert_execute_outputs(ApplyWatchListLocal(), ['1234'], expected_stderr=expected_stderr)
+        expected_stderr = """MockWatchList: determine_cc_and_messages
+MOCK bug comment: bug_id=50002, cc=set(['levin@chromium.org', 'abarth@webkit.org'])
+--- Begin comment ---
+Message1.
+
+Message2.
+--- End comment ---\n\n"""
+        self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_stderr=expected_stderr)
 
     def test_args_parsing_with_two_bugs(self):
         self._assertRaisesRegexp('Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])
