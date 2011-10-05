@@ -1,3 +1,12 @@
+2011-10-05  Hans Wennborg  <hans@chromium.org>
+
+        Rebaseline fast/repaint/japanese-rl-selection-repaint-in-regions.html
+        for chromium-cg-mac after r96675. (By Garden-o-Matic.)
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+
 2011-10-05  Kent Tamura  <tkent@chromium.org>
 
         Input styles are unexpectedly shared regardless of required status difference.
