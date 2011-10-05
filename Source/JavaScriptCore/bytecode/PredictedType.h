@@ -67,6 +67,11 @@ inline bool isFinalObjectPrediction(PredictedType value)
     return value == PredictFinalObject;
 }
 
+inline bool isFinalObjectOrOtherPrediction(PredictedType value)
+{
+    return !!(value & (PredictFinalObject | PredictOther)) && !(value & ~(PredictFinalObject | PredictOther));
+}
+
 inline bool isStringPrediction(PredictedType value)
 {
     return value == PredictString;
@@ -75,6 +80,11 @@ inline bool isStringPrediction(PredictedType value)
 inline bool isArrayPrediction(PredictedType value)
 {
     return value == PredictArray;
+}
+
+inline bool isArrayOrOtherPrediction(PredictedType value)
+{
+    return !!(value & (PredictArray | PredictOther)) && !(value & ~(PredictArray | PredictOther));
 }
 
 inline bool isInt32Prediction(PredictedType value)

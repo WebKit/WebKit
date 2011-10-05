@@ -1,3 +1,35 @@
+2011-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be capable of a broader range of speculations on branch and not
+        https://bugs.webkit.org/show_bug.cgi?id=69322
+
+        Reviewed by Oliver Hunt.
+        
+        * bytecode/PredictedType.h:
+        (JSC::isFinalObjectOrOtherPrediction):
+        (JSC::isArrayOrOtherPrediction):
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::JITCodeGenerator):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateFinalObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateArrayOrOther):
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2011-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96733.

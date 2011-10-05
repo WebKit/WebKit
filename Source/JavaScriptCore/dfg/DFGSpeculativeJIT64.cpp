@@ -529,6 +529,30 @@ void SpeculativeJIT::compileValueAdd(Node& node)
     jsValueResult(result.gpr(), m_compileIndex);
 }
 
+void SpeculativeJIT::compileObjectOrOtherLogicalNot(NodeIndex nodeIndex, void *vptr)
+{
+    JSValueOperand value(this, nodeIndex);
+    GPRTemporary result(this);
+    GPRReg valueGPR = value.gpr();
+    GPRReg resultGPR = result.gpr();
+    
+    MacroAssembler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valueGPR), MacroAssembler::TrustedImmPtr(vptr)));
+    m_jit.move(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
+    MacroAssembler::Jump done = m_jit.jump();
+    
+    notCell.link(&m_jit);
+    
+    m_jit.move(valueGPR, resultGPR);
+    m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), resultGPR);
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, resultGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+    m_jit.move(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
+    
+    done.link(&m_jit);
+    
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
+}
+
 void SpeculativeJIT::compileLogicalNot(Node& node)
 {
     if (isKnownBoolean(node.child1())) {
@@ -538,6 +562,33 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
         m_jit.move(value.gpr(), result.gpr());
         m_jit.xorPtr(TrustedImm32(true), result.gpr());
         
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+        return;
+    }
+    if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+        compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsFinalObjectVPtr);
+        return;
+    }
+    if (shouldSpeculateArrayOrOther(node.child1())) {
+        compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsArrayVPtr);
+        return;
+    }
+    if (shouldSpeculateInteger(node.child1())) {
+        SpeculateIntegerOperand value(this, node.child1());
+        GPRTemporary result(this, value);
+        m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+        return;
+    }
+    if (shouldSpeculateNumber(node.child1())) {
+        SpeculateDoubleOperand value(this, node.child1());
+        FPRTemporary scratch(this);
+        GPRTemporary result(this);
+        m_jit.move(TrustedImm32(ValueFalse), result.gpr());
+        MacroAssembler::Jump nonZero = m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr());
+        m_jit.xor32(Imm32(true), result.gpr());
+        nonZero.link(&m_jit);
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
         return;
     }
@@ -582,6 +633,25 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr)
+{
+    JSValueOperand value(this, nodeIndex);
+    GPRReg valueGPR = value.gpr();
+    
+    MacroAssembler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valueGPR), MacroAssembler::TrustedImmPtr(vptr)));
+    addBranch(m_jit.jump(), taken);
+    
+    notCell.link(&m_jit);
+    
+    m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), valueGPR);
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, valueGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+    
+    noResult(m_compileIndex);
+}
+
 void SpeculativeJIT::emitBranch(Node& node)
 {
     JSValueOperand value(this, node.child1());
@@ -605,6 +675,33 @@ void SpeculativeJIT::emitBranch(Node& node)
             addBranch(m_jit.jump(), notTaken);
         
         noResult(m_compileIndex);
+    } else if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+        emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsFinalObjectVPtr);
+    } else if (shouldSpeculateArrayOrOther(node.child1())) {
+        emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsArrayVPtr);
+    } else if (shouldSpeculateNumber(node.child1())) {
+        if (shouldSpeculateInteger(node.child1())) {
+            bool invert = false;
+            
+            if (taken == (m_block + 1)) {
+                invert = true;
+                BlockIndex tmp = taken;
+                taken = notTaken;
+                notTaken = tmp;
+            }
+
+            SpeculateIntegerOperand value(this, node.child1());
+            addBranch(m_jit.branchTest32(invert ? MacroAssembler::Zero : MacroAssembler::NonZero, value.gpr()), taken);
+        } else {
+            SpeculateDoubleOperand value(this, node.child1());
+            FPRTemporary scratch(this);
+            addBranch(m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr()), taken);
+        }
+        
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+        
+        noResult(m_compileIndex);
     } else {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
@@ -614,15 +711,19 @@ void SpeculativeJIT::emitBranch(Node& node)
         if (predictBoolean) {
             addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
             addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
-
+        }
+        
+        if (predictBoolean) {
             speculationCheck(m_jit.jump());
             value.use();
         } else {
             addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
             addBranch(m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister), taken);
     
-            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
-            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
+            if (!predictBoolean) {
+                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
+                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
+            }
     
             value.use();
     

@@ -500,6 +500,11 @@ private:
         return isFinalObjectPrediction(prediction);
     }
     
+    bool shouldSpeculateFinalObjectOrOther(NodeIndex nodeIndex)
+    {
+        return isFinalObjectOrOtherPrediction(m_jit.getPrediction(nodeIndex));
+    }
+    
     bool shouldSpeculateArray(NodeIndex nodeIndex)
     {
         PredictedType prediction;
@@ -508,6 +513,11 @@ private:
         else
             prediction = m_jit.getPrediction(nodeIndex);
         return isArrayPrediction(prediction);
+    }
+    
+    bool shouldSpeculateArrayOrOther(NodeIndex nodeIndex)
+    {
+        return isArrayOrOtherPrediction(m_jit.getPrediction(nodeIndex));
     }
     
     bool shouldSpeculateObject(NodeIndex nodeIndex)
@@ -599,7 +609,9 @@ private:
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
     void compileObjectEquality(Node&, void* vptr);
     void compileValueAdd(Node&);
+    void compileObjectOrOtherLogicalNot(NodeIndex value, void* vptr);
     void compileLogicalNot(Node&);
+    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr);
     void emitBranch(Node&);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine

@@ -435,9 +435,70 @@ void SpeculativeJIT::compileValueAdd(Node& node)
     jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
 }
 
+void SpeculativeJIT::compileObjectOrOtherLogicalNot(NodeIndex nodeIndex, void* vptr)
+{
+    JSValueOperand value(this, nodeIndex);
+    GPRTemporary resultTag(this);
+    GPRTemporary resultPayload(this);
+    GPRReg valueTagGPR = value.tagGPR();
+    GPRReg valuePayloadGPR = value.payloadGPR();
+    GPRReg resultTagGPR = resultTag.gpr();
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+    
+    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTag.gpr());
+    
+    MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valuePayloadGPR), MacroAssembler::TrustedImmPtr(vptr)));
+    m_jit.move(TrustedImm32(1), resultPayloadGPR);
+    MacroAssembler::Jump done = m_jit.jump();
+    
+    notCell.link(&m_jit);
+    
+    m_jit.move(valueTagGPR, resultPayloadGPR);
+    m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), resultPayloadGPR);
+    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, resultPayloadGPR, TrustedImm32(JSValue::UndefinedTag)));
+    m_jit.move(TrustedImm32(0), resultPayloadGPR);
+    
+    done.link(&m_jit);
+    
+    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean);
+}
+
 void SpeculativeJIT::compileLogicalNot(Node& node)
 {
     // FIXME: Need to add fast paths for known booleans.
+
+    if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+        compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsFinalObjectVPtr);
+        return;
+    }
+    if (shouldSpeculateArrayOrOther(node.child1())) {
+        compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsArrayVPtr);
+        return;
+    }
+    if (shouldSpeculateInteger(node.child1())) {
+        SpeculateIntegerOperand value(this, node.child1());
+        GPRTemporary resultPayload(this, value);
+        GPRTemporary resultTag(this);
+        m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), resultPayload.gpr());
+        m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTag.gpr());
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex, DataFormatJSBoolean);
+        return;
+    }
+    if (shouldSpeculateNumber(node.child1())) {
+        SpeculateDoubleOperand value(this, node.child1());
+        FPRTemporary scratch(this);
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
+        m_jit.move(TrustedImm32(0), resultPayload.gpr());
+        MacroAssembler::Jump nonZero = m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr());
+        m_jit.move(TrustedImm32(1), resultPayload.gpr());
+        nonZero.link(&m_jit);
+        m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTag.gpr());
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex, DataFormatJSBoolean);
+        return;
+    }
+    
     JSValueOperand value(this, node.child1());
     GPRTemporary resultTag(this, value);
     GPRTemporary resultPayload(this, value, false);
@@ -482,43 +543,93 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
 #endif
 }
 
-void SpeculativeJIT::emitBranch(Node& node)
+void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr)
 {
-    // FIXME: Add fast cases for known Boolean!
-    JSValueOperand value(this, node.child1());
-    value.fill();
+    JSValueOperand value(this, nodeIndex);
     GPRReg valueTagGPR = value.tagGPR();
     GPRReg valuePayloadGPR = value.payloadGPR();
-
-    GPRTemporary result(this);
-    GPRReg resultGPR = result.gpr();
     
-    use(node.child1());
-    
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-
-    JITCompiler::Jump fastPath = m_jit.branch32(JITCompiler::Equal, valueTagGPR, JITCompiler::TrustedImm32(JSValue::Int32Tag));
-    JITCompiler::Jump slowPath = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::BooleanTag));
-
-    fastPath.link(&m_jit);
-    addBranch(m_jit.branchTest32(JITCompiler::Zero, valuePayloadGPR), notTaken);
+    MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valuePayloadGPR), MacroAssembler::TrustedImmPtr(vptr)));
     addBranch(m_jit.jump(), taken);
-
-    slowPath.link(&m_jit);
-    silentSpillAllRegisters(resultGPR);
-    m_jit.push(valueTagGPR);
-    m_jit.push(valuePayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    silentFillAllRegisters(resultGPR);
     
-    addBranch(m_jit.branchTest8(JITCompiler::NonZero, resultGPR), taken);
+    notCell.link(&m_jit);
+    
+    m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), valueTagGPR);
+    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::UndefinedTag)));
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
     
-    noResult(m_compileIndex, UseChildrenCalledExplicitly);
+    noResult(m_compileIndex);
+}
+
+void SpeculativeJIT::emitBranch(Node& node)
+{
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
+
+    // FIXME: Add fast cases for known Boolean!
+
+    if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+        emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsFinalObjectVPtr);
+    } else if (shouldSpeculateArrayOrOther(node.child1())) {
+        emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsArrayVPtr);
+    } else if (shouldSpeculateNumber(node.child1())) {
+        if (shouldSpeculateInteger(node.child1())) {
+            bool invert = false;
+            
+            if (taken == (m_block + 1)) {
+                invert = true;
+                BlockIndex tmp = taken;
+                taken = notTaken;
+                notTaken = tmp;
+            }
+
+            SpeculateIntegerOperand value(this, node.child1());
+            addBranch(m_jit.branchTest32(invert ? MacroAssembler::Zero : MacroAssembler::NonZero, value.gpr()), taken);
+        } else {
+            SpeculateDoubleOperand value(this, node.child1());
+            FPRTemporary scratch(this);
+            addBranch(m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr()), taken);
+        }
+        
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+        
+        noResult(m_compileIndex);
+    } else {
+        JSValueOperand value(this, node.child1());
+        value.fill();
+        GPRReg valueTagGPR = value.tagGPR();
+        GPRReg valuePayloadGPR = value.payloadGPR();
+
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+    
+        use(node.child1());
+    
+        JITCompiler::Jump fastPath = m_jit.branch32(JITCompiler::Equal, valueTagGPR, JITCompiler::TrustedImm32(JSValue::Int32Tag));
+        JITCompiler::Jump slowPath = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::BooleanTag));
+
+        fastPath.link(&m_jit);
+        addBranch(m_jit.branchTest32(JITCompiler::Zero, valuePayloadGPR), notTaken);
+        addBranch(m_jit.jump(), taken);
+
+        slowPath.link(&m_jit);
+        silentSpillAllRegisters(resultGPR);
+        m_jit.push(valueTagGPR);
+        m_jit.push(valuePayloadGPR);
+        m_jit.push(GPRInfo::callFrameRegister);
+        appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+    
+        addBranch(m_jit.branchTest8(JITCompiler::NonZero, resultGPR), taken);
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+    
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
+    }
 }
 
 void SpeculativeJIT::compile(Node& node)

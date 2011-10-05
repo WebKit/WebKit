@@ -874,7 +874,8 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void* debug
 {
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
-    printf("Speculation failure in %p at 0x%x with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->debugOffset, codeBlock->alternative()->executeCounter(), codeBlock->alternative()->reoptimizationRetryCounter(), codeBlock->alternative()->optimizationDelayCounter(), codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
+    CodeBlock* alternative = codeBlock->alternative();
+    printf("Speculation failure in %p at 0x%x with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->debugOffset, alternative ? alternative->executeCounter() : 0, alternative ? alternative->reoptimizationRetryCounter() : 0, alternative ? alternative->optimizationDelayCounter() : 0, codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
 }
 #endif
 
