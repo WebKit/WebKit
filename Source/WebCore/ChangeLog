@@ -1,5 +1,12 @@
 2011-10-04  Sam Weinig  <sam@webkit.org>
 
+        OVERRIDE seems to not be working for Windows. Remove it for now.
+
+        * dom/Document.h:
+        * workers/WorkerContext.h:
+
+2011-10-04  Sam Weinig  <sam@webkit.org>
+
         Wean ContentSecurityPolicy from the Document
         https://bugs.webkit.org/show_bug.cgi?id=69387
 

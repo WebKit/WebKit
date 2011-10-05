@@ -612,7 +612,7 @@ public:
 
     virtual String userAgent(const KURL&) const;
 
-    virtual void disableEval() OVERRIDE;
+    virtual void disableEval();
 
     CSSStyleSheet* pageUserSheet();
     void clearPageUserSheet();
