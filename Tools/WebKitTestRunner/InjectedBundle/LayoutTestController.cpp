@@ -513,6 +513,11 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool sho
     InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
+void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
+{
+    InjectedBundle::shared().os() << toSTD(adoptWK(WKBundlePageViewportConfigurationAsText(InjectedBundle::shared().page()->page(), deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight)));
+}
+
 typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;
 static CallbackMap& callbackMap()
 {

@@ -1,3 +1,14 @@
+2011-10-05  Chang Shu  <cshu@webkit.org>
+
+        [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport
+        https://bugs.webkit.org/show_bug.cgi?id=69365
+
+        Reviewed by Darin Adler.
+
+        Expose computeViewportAttributes for mac build.
+
+        * WebCore.exp.in:
+
 2011-10-05  Anna Cavender  <annacc@chromium.org>
 
         Functions to make <track> enabled at runtime, including changes to

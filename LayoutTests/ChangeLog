@@ -1,3 +1,15 @@
+2011-10-05  Chang Shu  <cshu@webkit.org>
+
+        [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport
+        https://bugs.webkit.org/show_bug.cgi?id=69365
+
+        Reviewed by Darin Adler.
+
+        Unskip passed tests on Qt. The tests work on Mac, too. But they are skipped by
+        platform/mac/Skipped.
+
+        * platform/qt-wk2/Skipped:
+
 2011-10-05  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Add baselines for new SVG tests from r96712.

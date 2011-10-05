@@ -60,6 +60,7 @@ WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);
 WK_EXPORT WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef page);
 
+WK_EXPORT WKStringRef WKBundlePageViewportConfigurationAsText(WKBundlePageRef, int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
 #ifdef __cplusplus
 }

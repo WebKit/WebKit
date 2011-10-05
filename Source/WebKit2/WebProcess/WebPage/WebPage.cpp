@@ -2540,6 +2540,13 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
     mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, position, position, 0, 0, 0, 0, WebMouseEvent::Modifiers(), time));
 }
 
+String WebPage::viewportConfigurationAsText(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
+{
+    ViewportArguments arguments = mainFrame()->document()->viewportArguments();
+    ViewportAttributes attrs = WebCore::computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
+    return String::format("viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale, attrs.userScalable);
+}
+
 Frame* WebPage::mainFrame() const
 {
     return m_page ? m_page->mainFrame() : 0;

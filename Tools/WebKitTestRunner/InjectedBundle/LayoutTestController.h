@@ -72,6 +72,7 @@ public:
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
+    void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
     // Special options.
     void keepWebHistory();

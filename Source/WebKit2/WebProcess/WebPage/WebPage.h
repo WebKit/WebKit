@@ -434,9 +434,11 @@ public:
     void handleCorrectionPanelResult(const String&);
 #endif
 
+    // For testing purpose.
     void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
     void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
     void simulateMouseMotion(WebCore::IntPoint, double time);
+    String viewportConfigurationAsText(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 

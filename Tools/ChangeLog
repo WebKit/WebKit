@@ -1,3 +1,17 @@
+2011-10-05  Chang Shu  <cshu@webkit.org>
+
+        [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport
+        https://bugs.webkit.org/show_bug.cgi?id=69365
+
+        Reviewed by Darin Adler.
+
+        Added js API in WTR LayoutTestController.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::dumpConfigurationForViewport):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-10-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] ImageDiff: Do not clear the image before it is processed and compared
