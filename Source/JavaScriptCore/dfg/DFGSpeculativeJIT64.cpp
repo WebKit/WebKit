@@ -806,27 +806,16 @@ void SpeculativeJIT::compile(Node& node)
         ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex());
         Node& nextNode = m_jit.graph()[m_compileIndex+1];
         
-        // This assertion will fail if we ever emit multiple SetLocal's for
-        // a single bytecode instruction. That's unlikely to happen. But if
-        // it does, the solution is to to have this perform a search until
-        // it finds a Node with a different bytecode index from the one we've
-        // got, and to abstractly execute the SetLocal's along the way. Or,
-        // better yet, handle all of the SetLocal's at once: abstract interpret
-        // all of them, then emit code for all of them, with OSR exiting to
-        // the next non-SetLocal instruction. Note the special case for when
-        // both this SetLocal and the next op have a bytecode index of 0; this
-        // occurs for SetLocal's generated at the top of the code block to
-        // initialize locals to undefined. Ideally, we'd have a way of marking
-        // in the CodeOrigin that a SetLocal is synthetic. This will make the
-        // assertion more sensible-looking. We should then also assert that
-        // synthetic SetLocal's don't have speculation checks, since they
-        // should only be dropping values that we statically know we are
-        // allowed to drop into the variables. DFGPropagator will guarantee
-        // this, since it should have at least an approximation (if not
-        // exact knowledge) of the type of the SetLocal's child node, and
-        // should merge that information into the local that is being set.
-        ASSERT(m_bytecodeIndexForOSR != nextNode.codeOrigin.bytecodeIndex()
-               || (!m_bytecodeIndexForOSR && !nextNode.codeOrigin.bytecodeIndex()));
+        // Oddly, it's possible for the bytecode index for the next node to be
+        // equal to ours. This will happen for op_post_inc. And, even more oddly,
+        // this is just fine. Ordinarily, this wouldn't be fine, since if the
+        // next node failed OSR then we'd be OSR-ing with this SetLocal's local
+        // variable already set even though from the standpoint of the old JIT,
+        // this SetLocal should not have executed. But for op_post_inc, it's just
+        // fine, because this SetLocal's local (i.e. the LHS in a x = y++
+        // statement) would be dead anyway - so the fact that DFG would have
+        // already made the assignment, and baked it into the register file during
+        // OSR exit, would not be visible to the old JIT in any way.
         m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex();
         
         PredictedType predictedType = node.variableAccessData()->prediction();

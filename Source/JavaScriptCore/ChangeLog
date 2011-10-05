@@ -1,3 +1,22 @@
+2011-10-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Assertion hit in JSC::DFG::SpeculativeJIT::compile on SL bots
+        https://bugs.webkit.org/show_bug.cgi?id=69346
+
+        Reviewed by Oliver Hunt.
+        
+        Removed the assertion, since it was completely wrong for op_post_inc.
+        Short of having specialized PostInc nodes in the DFG, there is no
+        robust way of asserting what this assertion was trying to assert while
+        also supporting op_post_inc.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         Added a simpler mechanism for registering one-off finalizers

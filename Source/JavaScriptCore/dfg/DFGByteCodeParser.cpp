@@ -922,6 +922,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_post_inc: {
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
+            ASSERT(result != srcDst); // Required for assumptions we make during OSR.
             NodeIndex op = getToNumber(srcDst);
             set(result, op);
             set(srcDst, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op, one())));
