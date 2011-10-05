@@ -1,3 +1,20 @@
+2011-10-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed JSValue::toJSNumber
+        https://bugs.webkit.org/show_bug.cgi?id=69399
+
+        No perf. change.
+
+        toJSNumber() used to provide an implicit fast path for immediate numbers,
+        but those fast paths are all explicit now, so it's just cruft.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+
 2011-10-05  Gavin Peters  <gavinp@chromium.org>
 
         REGRESSION (r96595): WTFReportBacktrace listed as the top frame in all assertion backtraces

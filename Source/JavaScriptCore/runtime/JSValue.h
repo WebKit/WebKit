@@ -189,7 +189,6 @@ namespace JSC {
         // toNumber conversion is expected to be side effect free if an exception has
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
-        JSValue toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
         UString toString(ExecState*) const;
         UString toPrimitiveString(ExecState*) const;
         JSObject* toObject(ExecState*) const;

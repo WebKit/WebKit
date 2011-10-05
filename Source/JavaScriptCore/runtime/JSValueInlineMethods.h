@@ -60,11 +60,6 @@ namespace JSC {
         return isInt32() ? asInt32() : asDouble();
     }
 
-    ALWAYS_INLINE JSValue JSValue::toJSNumber(ExecState* exec) const
-    {
-        return isNumber() ? asValue() : jsNumber(this->toNumber(exec));
-    }
-
     inline JSValue jsNaN()
     {
         return JSValue(std::numeric_limits<double>::quiet_NaN());

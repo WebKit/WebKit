@@ -1974,10 +1974,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             callFrame->uncheckedR(srcDst) = jsNumber(v.asInt32() + 1);
             callFrame->uncheckedR(dst) = v;
         } else {
-            JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
+            double number = callFrame->r(srcDst).jsValue().toNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(srcDst) = jsNumber(number.asNumber() + 1);
-            callFrame->uncheckedR(dst) = number;
+            callFrame->uncheckedR(srcDst) = jsNumber(number + 1);
+            callFrame->uncheckedR(dst) = jsNumber(number);
         }
 
         vPC += OPCODE_LENGTH(op_post_inc);
@@ -1997,10 +1997,10 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             callFrame->uncheckedR(srcDst) = jsNumber(v.asInt32() - 1);
             callFrame->uncheckedR(dst) = v;
         } else {
-            JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
+            double number = callFrame->r(srcDst).jsValue().toNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(srcDst) = jsNumber(number.asNumber() - 1);
-            callFrame->uncheckedR(dst) = number;
+            callFrame->uncheckedR(srcDst) = jsNumber(number - 1);
+            callFrame->uncheckedR(dst) = jsNumber(number);
         }
 
         vPC += OPCODE_LENGTH(op_post_dec);
@@ -2020,9 +2020,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         if (LIKELY(srcVal.isNumber()))
             callFrame->uncheckedR(dst) = callFrame->r(src);
         else {
-            JSValue result = srcVal.toJSNumber(callFrame);
+            double number = srcVal.toNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(dst) = result;
+            callFrame->uncheckedR(dst) = jsNumber(number);
         }
 
         vPC += OPCODE_LENGTH(op_to_jsnumber);

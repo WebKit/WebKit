@@ -3049,11 +3049,11 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_inc)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue number = v.toJSNumber(callFrame);
+    double number = v.toNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.asNumber() + 1);
-    return JSValue::encode(number);
+    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number + 1);
+    return JSValue::encode(jsNumber(number));
 }
 
 DEFINE_STUB_FUNCTION(int, op_eq)
@@ -3348,11 +3348,11 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_dec)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue number = v.toJSNumber(callFrame);
+    double number = v.toNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.asNumber() - 1);
-    return JSValue::encode(number);
+    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number - 1);
+    return JSValue::encode(jsNumber(number));
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_urshift)
@@ -3582,9 +3582,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_to_jsnumber)
     JSValue src = stackFrame.args[0].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue result = src.toJSNumber(callFrame);
+    double number = src.toNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
+    return JSValue::encode(jsNumber(number));
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_in)
