@@ -1,3 +1,9 @@
+2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for windows bots after r96679.
+
+        * html/NumberInputType.h:
+
 2011-10-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make ResourceView(s) compile
