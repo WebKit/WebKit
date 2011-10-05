@@ -57,11 +57,6 @@ namespace JSC {
     private:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
-        class WeakMapsFinalizer : public WeakHandleOwner {
-        public:
-            virtual void finalize(Handle<Unknown>, void* context);
-        };
-
         struct JSGlobalObjectRareData {
             JSGlobalObjectRareData()
                 : profileGroup(0)
@@ -70,7 +65,6 @@ namespace JSC {
 
             WeakMapSet weakMaps;
             unsigned profileGroup;
-            Weak<JSGlobalObject> weakMapsFinalizer;
         };
 
     protected:
@@ -128,7 +122,6 @@ namespace JSC {
         Debugger* m_debugger;
 
         OwnPtr<JSGlobalObjectRareData> m_rareData;
-        static WeakMapsFinalizer* weakMapsFinalizer();
 
         WeakRandom m_weakRandom;
 
@@ -138,8 +131,10 @@ namespace JSC {
 
         void createRareDataIfNeeded()
         {
-            if (!m_rareData)
-                m_rareData = adoptPtr(new JSGlobalObjectRareData);
+            if (m_rareData)
+                return;
+            m_rareData = adoptPtr(new JSGlobalObjectRareData);
+            Heap::heap(this)->addFinalizer(this, clearRareData);
         }
         
     public:
@@ -280,8 +275,6 @@ namespace JSC {
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
         {
             createRareDataIfNeeded();
-            if (!m_rareData->weakMapsFinalizer)
-                m_rareData->weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
             m_rareData->weakMaps.add(map);
         }
 
@@ -316,6 +309,7 @@ namespace JSC {
         void reset(JSValue prototype);
 
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
+        static void clearRareData(JSCell*);
     };
 
     JSGlobalObject* asGlobalObject(JSValue);

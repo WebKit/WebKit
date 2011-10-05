@@ -38,7 +38,12 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0, CREATE_METHOD_TABLE(ExecutableBase) };
 
-void ExecutableBase::clearCode()
+void ExecutableBase::clearCode(JSCell* cell)
+{
+    static_cast<ExecutableBase*>(cell)->clearCodeVirtual();
+}
+
+void ExecutableBase::clearCodeVirtual()
 {
 #if ENABLE(JIT)
     m_jitCodeForCall.clear();
@@ -56,20 +61,6 @@ DFG::Intrinsic ExecutableBase::intrinsic() const
     return DFG::NoIntrinsic;
 }
 #endif
-
-class ExecutableFinalizer : public WeakHandleOwner {
-    virtual void finalize(Handle<Unknown> handle, void*)
-    {
-        Weak<ExecutableBase> executable(Weak<ExecutableBase>::Adopt, handle);
-        executable->clearCode();
-    }
-};
-
-WeakHandleOwner* ExecutableBase::executableFinalizer()
-{
-    DEFINE_STATIC_LOCAL(ExecutableFinalizer, finalizer, ());
-    return &finalizer;
-}
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
@@ -255,13 +246,13 @@ void EvalExecutable::unlinkCalls()
 #endif
 }
 
-void EvalExecutable::clearCode()
+void EvalExecutable::clearCodeVirtual()
 {
     if (m_evalCodeBlock) {
         m_evalCodeBlock->clearEvalCache();
         m_evalCodeBlock.clear();
     }
-    Base::clearCode();
+    Base::clearCodeVirtual();
 }
 
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
@@ -384,13 +375,13 @@ void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_programCodeBlock->visitAggregate(visitor);
 }
 
-void ProgramExecutable::clearCode()
+void ProgramExecutable::clearCodeVirtual()
 {
     if (m_programCodeBlock) {
         m_programCodeBlock->clearEvalCache();
         m_programCodeBlock.clear();
     }
-    Base::clearCode();
+    Base::clearCodeVirtual();
 }
 
 JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
@@ -612,10 +603,10 @@ void FunctionExecutable::discardCode()
     if (!m_jitCodeForConstruct && m_codeBlockForConstruct)
         return;
 #endif
-    clearCode();
+    clearCodeVirtual();
 }
 
-void FunctionExecutable::clearCode()
+void FunctionExecutable::clearCodeVirtual()
 {
     if (m_codeBlockForCall) {
         m_codeBlockForCall->clearEvalCache();
@@ -625,7 +616,7 @@ void FunctionExecutable::clearCode()
         m_codeBlockForConstruct->clearEvalCache();
         m_codeBlockForConstruct.clear();
     }
-    Base::clearCode();
+    Base::clearCodeVirtual();
 }
 
 void FunctionExecutable::unlinkCalls()

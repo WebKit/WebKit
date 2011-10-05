@@ -92,6 +92,9 @@ namespace JSC {
         MarkedSpace::SizeClass& sizeClassForObject(size_t bytes) { return m_objectSpace.sizeClassFor(bytes); }
         void* allocate(size_t);
 
+        typedef void (*Finalizer)(JSCell*);
+        void addFinalizer(JSCell*, Finalizer);
+
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
 
@@ -130,6 +133,10 @@ namespace JSC {
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
+        
+        class FinalizerOwner : public WeakHandleOwner {
+            virtual void finalize(Handle<Unknown>, void* context);
+        };
 
         bool isValidAllocation(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
@@ -193,6 +200,7 @@ namespace JSC {
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
         JettisonedCodeBlocks m_jettisonedCodeBlocks;
+        FinalizerOwner m_finalizerOwner;
         
         bool m_isSafeToCollect;
 

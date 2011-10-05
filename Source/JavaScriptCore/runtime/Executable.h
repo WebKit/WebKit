@@ -63,10 +63,9 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-            Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
-            finalizer.leakHandle();
+            globalData.heap.addFinalizer(this, clearCode);
         }
-        
+
     public:
         typedef JSCell Base;
 
@@ -87,7 +86,7 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
-        virtual void clearCode();
+        virtual void clearCodeVirtual();
 
     protected:
         static const unsigned StructureFlags = 0;
@@ -168,7 +167,7 @@ namespace JSC {
 #endif
         
     private:
-        static WeakHandleOwner* executableFinalizer();
+        static void clearCode(JSCell*);
     };
 
     class NativeExecutable : public ExecutableBase {
@@ -349,7 +348,7 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        virtual void clearCode();
+        virtual void clearCodeVirtual();
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
@@ -414,7 +413,7 @@ namespace JSC {
         static const ClassInfo s_info;
         
     protected:
-        virtual void clearCode();
+        virtual void clearCodeVirtual();
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
@@ -590,7 +589,7 @@ namespace JSC {
         static const ClassInfo s_info;
         
     protected:
-        virtual void clearCode();
+        virtual void clearCodeVirtual();
 
         void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {

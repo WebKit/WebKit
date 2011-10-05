@@ -428,16 +428,9 @@ bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&
     return symbolTableGet(propertyName, descriptor);
 }
 
-void JSGlobalObject::WeakMapsFinalizer::finalize(Handle<Unknown> handle, void*)
+void JSGlobalObject::clearRareData(JSCell* cell)
 {
-    JSGlobalObject* globalObject = asGlobalObject(handle.get());
-    globalObject->m_rareData.clear();
-}
-
-JSGlobalObject::WeakMapsFinalizer* JSGlobalObject::weakMapsFinalizer()
-{
-    static WeakMapsFinalizer* finalizer = new WeakMapsFinalizer();
-    return finalizer;
+    static_cast<JSGlobalObject*>(cell)->m_rareData.clear();
 }
 
 DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSGlobalObject* dynamicGlobalObject)

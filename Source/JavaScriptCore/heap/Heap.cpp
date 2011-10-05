@@ -808,4 +808,17 @@ void Heap::releaseFreeBlocks()
     }
 }
 
+void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
+{
+    Weak<JSCell> weak(*globalData(), cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer));
+    weak.leakHandle(); // Balanced by FinalizerOwner::finalize().
+}
+
+void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+{
+    Weak<JSCell> weak(Weak<JSCell>::Adopt, handle);
+    Finalizer finalizer = reinterpret_cast<Finalizer>(context);
+    finalizer(weak.get());
+}
+
 } // namespace JSC
