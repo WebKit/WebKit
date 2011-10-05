@@ -1,3 +1,9 @@
+2011-10-05  Yury Semikhatsky  <yurys@chromium.org>
+        
+        Unreviewed. Build fix: make InspectorStateClient.h Private in XCode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-10-05  Martin Robinson  <mrobinson@igalia.com>
 
         libsoup-CRITICAL **: soup_message_io_pause: assertion `io != NULL' failed
