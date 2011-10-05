@@ -1,3 +1,13 @@
+2011-10-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] First test always fails because of useless xcb dump
+        https://bugs.webkit.org/show_bug.cgi?id=69132
+
+        Unskip the first test because the failure always affects the first test we run
+        so skipping makes no sense.
+
+        * platform/qt-wk2/Skipped:
+
 2011-10-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for search in script content.

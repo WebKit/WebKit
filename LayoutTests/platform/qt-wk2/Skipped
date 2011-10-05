@@ -216,10 +216,6 @@ fast/loader/onload-willSendRequest-null-for-script.html
 # https://bugs.webkit.org/show_bug.cgi?id=69419
 fast/text/regional-indicator-symobls.html
 
-# [Qt][WK2] Layout test failure because of screen info printed to stdout
-# https://bugs.webkit.org/show_bug.cgi?id=69420
-http/tests/cache/post-redirect-get.php
-
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
