@@ -320,7 +320,7 @@ InspectorTest.dumpElementsTree = function(rootNode)
             print(children[children.length - 1], prefix);
     }
 
-    WebInspector.panels.elements.updateModifiedNodes();
+    WebInspector.panels.elements.treeOutline._updateModifiedNodes();
     var treeOutline = WebInspector.panels.elements.treeOutline;
     print(rootNode ? treeOutline.findTreeElement(rootNode) : treeOutline, "");
 };
@@ -340,7 +340,7 @@ InspectorTest.expandElementsTree = function(callback)
 
     function onAllNodesAvailable()
     {
-        WebInspector.panels.elements.updateModifiedNodes();
+        WebInspector.panels.elements.treeOutline._updateModifiedNodes();
         expand(WebInspector.panels.elements.treeOutline);
         callback();
     }

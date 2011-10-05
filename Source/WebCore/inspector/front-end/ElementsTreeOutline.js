@@ -28,7 +28,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ElementsTreeOutline = function() {
+/**
+ * @constructor
+ * @extends {TreeOutline}
+ * @param {boolean=} omitRootDOMNode
+ * @param {boolean=} selectEnabled
+ * @param {boolean=} showInElementsPanelEnabled
+ */
+WebInspector.ElementsTreeOutline = function(omitRootDOMNode, selectEnabled, showInElementsPanelEnabled)
+{
     this.element = document.createElement("ol");
     this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
     this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
@@ -41,15 +49,53 @@ WebInspector.ElementsTreeOutline = function() {
 
     TreeOutline.call(this, this.element);
 
-    this.includeRootDOMNode = true;
-    this.selectEnabled = false;
-    this.showInElementsPanelEnabled = false;
-    this.rootDOMNode = null;
+    this._includeRootDOMNode = !omitRootDOMNode;
+    this._selectEnabled = selectEnabled;
+    this._showInElementsPanelEnabled = showInElementsPanelEnabled;
+    this._rootDOMNode = null;
     this._selectDOMNode = null;
+    this._eventSupport = new WebInspector.Object();
+    this._editing = false;
+
+    this._visible = false;
+
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
+WebInspector.ElementsTreeOutline.Events = {
+    SelectedNodeChanged: "SelectedNodeChanged"
+}
+
 WebInspector.ElementsTreeOutline.prototype = {
+    wireToDomAgent: function()
+    {
+        this._elementsTreeUpdater = new WebInspector.ElementsTreeUpdater(this);
+    },
+
+    setVisible: function(visible)
+    {
+        this._visible = visible;
+        if (!this._visible)
+            return;
+
+        if (!this.rootDOMNode) {
+            WebInspector.domAgent.requestDocument();
+            return;
+        }
+
+        this._updateModifiedNodes();
+    },
+
+    addEventListener: function(eventType, listener, thisObject)
+    {
+        this._eventSupport.addEventListener(eventType, listener, thisObject);
+    },
+
+    removeEventListener: function(eventType, listener, thisObject)
+    {
+        this._eventSupport.removeEventListener(eventType, listener, thisObject);
+    },
+
     get rootDOMNode()
     {
         return this._rootDOMNode;
@@ -94,10 +140,10 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         // The _revealAndSelectNode() method might find a different element if there is inlined text,
         // and the select() call would change the selectedDOMNode and reenter this setter. So to
-        // avoid calling selectedNodeChanged() twice, first check if _selectedDOMNode is the same
+        // avoid calling _selectedNodeChanged() twice, first check if _selectedDOMNode is the same
         // node as the one passed in.
         if (this._selectedDOMNode === node)
-            this.selectedNodeChanged();
+            this._selectedNodeChanged();
     },
 
     get editing()
@@ -115,16 +161,16 @@ WebInspector.ElementsTreeOutline.prototype = {
             return;
 
         var treeElement;
-        if (this.includeRootDOMNode) {
+        if (this._includeRootDOMNode) {
             treeElement = new WebInspector.ElementsTreeElement(this.rootDOMNode);
-            treeElement.selectable = this.selectEnabled;
+            treeElement.selectable = this._selectEnabled;
             this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
             var node = this.rootDOMNode.firstChild;
             while (node) {
                 treeElement = new WebInspector.ElementsTreeElement(node);
-                treeElement.selectable = this.selectEnabled;
+                treeElement.selectable = this._selectEnabled;
                 this.appendChild(treeElement);
                 node = node.nextSibling;
             }
@@ -142,7 +188,10 @@ WebInspector.ElementsTreeOutline.prototype = {
         element.updateSelection();
     },
 
-    selectedNodeChanged: function(forceUpdate) {},
+    _selectedNodeChanged: function()
+    {
+        this._eventSupport.dispatchEventToListeners(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged);
+    },
 
     findTreeElement: function(node)
     {
@@ -150,6 +199,12 @@ WebInspector.ElementsTreeOutline.prototype = {
         {
             return ancestor.isAncestor(node);
         }
+
+        function parentNode(node)
+        {
+            return node.parentNode;
+        }
+
         var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestorNode, parentNode);
         if (!treeElement && node.nodeType() === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
@@ -167,7 +222,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!node.parentNode)
             return null;
 
-        var treeElement = this.createTreeElementFor(node.parentNode);
+        treeElement = this.createTreeElementFor(node.parentNode);
         if (treeElement && treeElement.showChild(node.index))
             return treeElement.children[node.index];
 
@@ -355,7 +410,7 @@ WebInspector.ElementsTreeOutline.prototype = {
                 if (error)
                     return;
 
-                WebInspector.panels.elements.updateModifiedNodes();
+                this._updateModifiedNodes();
                 var newNode = WebInspector.domAgent.nodeForId(newNodeId);
                 if (newNode)
                     this.selectDOMNode(newNode, true);
@@ -384,7 +439,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _contextMenuEventFired: function(event)
     {
-        if (!this.showInElementsPanelEnabled)
+        if (!this._showInElementsPanelEnabled)
             return;
 
         var treeElement = this._treeElementFromEvent(event);
@@ -426,11 +481,22 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     adjustCollapsedRange: function()
     {
+    },
+
+    _updateModifiedNodes: function()
+    {
+        if (this._elementsTreeUpdater)
+            this._elementsTreeUpdater._updateModifiedNodes();
     }
 }
 
 WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ * @param {boolean=} elementCloseTag
+ */
 WebInspector.ElementsTreeElement = function(node, elementCloseTag)
 {
     this._elementCloseTag = elementCloseTag;
@@ -679,7 +745,7 @@ WebInspector.ElementsTreeElement.prototype = {
     insertChildElement: function(child, index, closingTag)
     {
         var newElement = new WebInspector.ElementsTreeElement(child, closingTag);
-        newElement.selectable = this.treeOutline.selectEnabled;
+        newElement.selectable = this.treeOutline._selectEnabled;
         this.insertChild(newElement, index);
         return newElement;
     },
@@ -889,9 +955,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
-        if (this.treeOutline.showInElementsPanelEnabled) {
+        if (this.treeOutline._showInElementsPanelEnabled) {
             WebInspector.showPanel("elements");
-            WebInspector.panels.elements.selectDOMNode(this.representedObject, true);
+            this.treeOutline.selectDOMNode(this.representedObject, true);
         }
 
         // Prevent selecting the nearest word on double click.
@@ -1168,7 +1234,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function dispose()
         {
-            delete this._editing;
+            this._editing = false;
 
             // Remove editor.
             this.listItemElement.removeChild(this._htmlEditElement);
@@ -1196,8 +1262,9 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
     {
-        delete this._editing;
+        this._editing = false;
 
+        var treeOutline = this.treeOutline;
         function moveToNextAttributeIfNeeded(error)
         {
             if (error)
@@ -1206,7 +1273,7 @@ WebInspector.ElementsTreeElement.prototype = {
             if (!moveDirection)
                 return;
 
-            WebInspector.panels.elements.updateModifiedNodes();
+            treeOutline._updateModifiedNodes();
 
             // Search for the attribute's position, and then decide where to move to.
             var attributes = this.representedObject.attributes();
@@ -1252,7 +1319,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _tagNameEditingCommitted: function(element, newText, oldText, tagName, moveDirection)
     {
-        delete this._editing;
+        this._editing = false;
         var self = this;
 
         function cancel()
@@ -1296,7 +1363,7 @@ WebInspector.ElementsTreeElement.prototype = {
             }
 
             // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
-            WebInspector.panels.elements.updateModifiedNodes();
+            treeOutline._updateModifiedNodes();
 
             WebInspector.updateFocusedNode(nodeId);
             var newTreeItem = treeOutline.findTreeElement(WebInspector.domAgent.nodeForId(nodeId));
@@ -1311,7 +1378,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _textNodeEditingCommitted: function(element, newText)
     {
-        delete this._editing;
+        this._editing = false;
 
         var textNode;
         if (this.representedObject.nodeType() === Node.ELEMENT_NODE) {
@@ -1326,7 +1393,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _editingCancelled: function(element, context)
     {
-        delete this._editing;
+        this._editing = false;
 
         // Need to restore attributes structure.
         this.updateTitle();
@@ -1580,7 +1647,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 return;
 
             // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
-            WebInspector.panels.elements.updateModifiedNodes();
+            treeOutline._updateModifiedNodes();
 
             WebInspector.updateFocusedNode(nodeId);
             if (wasExpanded) {
@@ -1633,3 +1700,128 @@ WebInspector.ElementsTreeElement.prototype = {
 }
 
 WebInspector.ElementsTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+/**
+ * @constructor
+ */
+WebInspector.ElementsTreeUpdater = function(treeOutline)
+{
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, this._nodeInserted, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._characterDataModified, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.InspectElementRequested, this._inspectElementRequested, this);
+
+    this._treeOutline = treeOutline;
+    this._recentlyModifiedNodes = [];
+}
+
+WebInspector.ElementsTreeUpdater.prototype = {
+    _documentUpdated: function(event)
+    {
+        var inspectedRootDocument = event.data;
+
+        this._reset();
+
+        if (!inspectedRootDocument)
+            return;
+
+        this._treeOutline.rootDOMNode = inspectedRootDocument;
+    },
+
+    _attributesUpdated: function(event)
+    {
+        this._recentlyModifiedNodes.push({node: event.data.node, updated: true});
+        if (this._treeOutline._visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _characterDataModified: function(event)
+    {
+        this._recentlyModifiedNodes.push({node: event.data, updated: true});
+        if (this._treeOutline._visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _nodeInserted: function(event)
+    {
+        this._recentlyModifiedNodes.push({node: event.data, parent: event.data.parentNode, inserted: true});
+        if (this._treeOutline._visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _nodeRemoved: function(event)
+    {
+        this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
+        if (this._treeOutline._visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _childNodeCountUpdated: function(event)
+    {
+        var treeElement = this._treeOutline.findTreeElement(event.data);
+        if (treeElement)
+            treeElement.hasChildren = event.data.hasChildNodes();
+    },
+
+    _inspectElementRequested: function(event)
+    {
+        var node = event.data;
+        WebInspector.updateFocusedNode(node.id);
+    },
+
+    _updateModifiedNodesSoon: function()
+    {
+        if (this._updateModifiedNodesTimeout)
+            return;
+        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 0);
+    },
+
+    _updateModifiedNodes: function()
+    {
+        if (this._updateModifiedNodesTimeout) {
+            clearTimeout(this._updateModifiedNodesTimeout);
+            delete this._updateModifiedNodesTimeout;
+        }
+
+        var updatedParentTreeElements = [];
+
+        for (var i = 0; i < this._recentlyModifiedNodes.length; ++i) {
+            var parent = this._recentlyModifiedNodes[i].parent;
+            var node = this._recentlyModifiedNodes[i].node;
+
+            if (this._recentlyModifiedNodes[i].updated) {
+                var nodeItem = this._treeOutline.findTreeElement(node);
+                if (nodeItem)
+                    nodeItem.updateTitle();
+                continue;
+            }
+
+            if (!parent)
+                continue;
+
+            var parentNodeItem = this._treeOutline.findTreeElement(parent);
+            if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
+                parentNodeItem.updateChildren();
+                parentNodeItem.alreadyUpdatedChildren = true;
+                updatedParentTreeElements.push(parentNodeItem);
+            }
+        }
+
+        for (var i = 0; i < updatedParentTreeElements.length; ++i)
+            delete updatedParentTreeElements[i].alreadyUpdatedChildren;
+
+        this._recentlyModifiedNodes = [];
+    },
+
+    _reset: function()
+    {
+        this._treeOutline.rootDOMNode = null;
+        this._treeOutline.selectDOMNode(null, false);
+        WebInspector.highlightDOMNode(0);
+        this._recentlyModifiedNodes = [];
+    }
+}

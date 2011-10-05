@@ -41,28 +41,10 @@ WebInspector.ElementsPanel = function()
 
     this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
-    this.treeOutline = new WebInspector.ElementsTreeOutline();
-    this.treeOutline.panel = this;
-    this.treeOutline.includeRootDOMNode = false;
-    this.treeOutline.selectEnabled = true;
+    this.treeOutline = new WebInspector.ElementsTreeOutline(true, true);
+    this.treeOutline.wireToDomAgent();
 
-    this.treeOutline.selectedNodeChanged = function(forceUpdate)
-    {
-        this.panel.updateBreadcrumb(forceUpdate);
-
-        for (var pane in this.panel.sidebarPanes)
-           this.panel.sidebarPanes[pane].needsUpdate = true;
-
-        this.panel.updateStyles(true);
-        this.panel.updateMetrics();
-        this.panel.updateProperties();
-        this.panel.updateEventListeners();
-
-        if (this._selectedDOMNode) {
-            ConsoleAgent.addInspectedNode(this._selectedDOMNode.id);
-            WebInspector.extensionServer.notifyObjectSelected(this.panel.name);
-        }
-    };
+    this.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
 
     this.contentElement.appendChild(this.treeOutline.element);
 
@@ -113,15 +95,8 @@ WebInspector.ElementsPanel = function()
 
     this._registerShortcuts();
 
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, this._nodeInserted, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesUpdated, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._characterDataModified, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.InspectElementRequested, this._inspectElementRequested, this);
-    this.recentlyModifiedNodes = [];
 }
 
 WebInspector.ElementsPanel.prototype = {
@@ -151,14 +126,10 @@ WebInspector.ElementsPanel.prototype = {
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         this.updateBreadcrumb();
         this.treeOutline.updateSelection();
-        if (this.recentlyModifiedNodes.length)
-            this.updateModifiedNodes();
+        this.treeOutline.setVisible(true);
 
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
-
-        if (!this.rootDOMNode)
-            WebInspector.domAgent.requestDocument();
     },
 
     hide: function()
@@ -167,6 +138,7 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.highlightDOMNode(0);
         this.setSearchingForNode(false);
+        this.treeOutline.setVisible(false);
     },
 
     onResize: function()
@@ -175,28 +147,38 @@ WebInspector.ElementsPanel.prototype = {
         this.updateBreadcrumbSizes();
     },
 
+    _selectedNodeChanged: function()
+    {
+        var selectedNode = this.selectedDOMNode();
+        if (!selectedNode && this._lastValidSelectedNode)
+            this._selectedPathOnReset = this._lastValidSelectedNode.path();
+
+        this.updateBreadcrumb(false);
+
+        for (var pane in this.sidebarPanes)
+           this.sidebarPanes[pane].needsUpdate = true;
+
+        this.updateStyles(true);
+        this.updateMetrics();
+        this.updateProperties();
+        this.updateEventListeners();
+
+        if (selectedNode) {
+            ConsoleAgent.addInspectedNode(selectedNode.id);
+            WebInspector.extensionServer.notifyObjectSelected(this.name);
+            this._lastValidSelectedNode = selectedNode;
+        }
+    },
+
     _reset: function()
     {
-        if (this.selectedDOMNode())
-            this._selectedPathOnReset = this.selectedDOMNode().path();
-
-        this.rootDOMNode = null;
-        this.selectDOMNode(null);
-
-        WebInspector.highlightDOMNode(0);
-
-        this.recentlyModifiedNodes = [];
-
         delete this.currentQuery;
     },
 
     _documentUpdated: function(event)
     {
-        this._setDocument(event.data);
-    },
+        var inspectedRootDocument = event.data;
 
-    _setDocument: function(inspectedRootDocument)
-    {
         this._reset();
         this.searchCanceled();
 
@@ -205,8 +187,6 @@ WebInspector.ElementsPanel.prototype = {
 
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarPanes.domBreakpoints.restoreBreakpoints();
-
-        this.rootDOMNode = inspectedRootDocument;
 
         function selectNode(candidateFocusNode)
         {
@@ -391,16 +371,6 @@ WebInspector.ElementsPanel.prototype = {
         // TODO: Implement Shifting the oldSelector, and its contents to a newSelector
     },
 
-    get rootDOMNode()
-    {
-        return this.treeOutline.rootDOMNode;
-    },
-
-    set rootDOMNode(x)
-    {
-        this.treeOutline.rootDOMNode = x;
-    },
-
     selectedDOMNode: function()
     {
         return this.treeOutline.selectedDOMNode();
@@ -411,96 +381,18 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.selectDOMNode(node, focus);
     },
 
-    _attributesUpdated: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.data.node, updated: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
-    _characterDataModified: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.data, updated: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
-    _nodeInserted: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.data, parent: event.data.parentNode, inserted: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
     _nodeRemoved: function(event)
     {
-        this.recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
-    },
-
-    _childNodeCountUpdated: function(event)
-    {
-        var treeElement = this.treeOutline.findTreeElement(event.data);
-        if (treeElement)
-            treeElement.hasChildren = event.data.hasChildNodes();
-    },
-
-    _inspectElementRequested: function(event)
-    {
-        var node = event.data;
-        WebInspector.updateFocusedNode(node.id);
-    },
-
-    _updateModifiedNodesSoon: function()
-    {
-        if ("_updateModifiedNodesTimeout" in this)
+        if (!this.visible)
             return;
-        this._updateModifiedNodesTimeout = setTimeout(this.updateModifiedNodes.bind(this), 0);
-    },
 
-    updateModifiedNodes: function()
-    {
-        if ("_updateModifiedNodesTimeout" in this) {
-            clearTimeout(this._updateModifiedNodesTimeout);
-            delete this._updateModifiedNodesTimeout;
-        }
-
-        var updatedParentTreeElements = [];
-        var updateBreadcrumbs = false;
-
-        for (var i = 0; i < this.recentlyModifiedNodes.length; ++i) {
-            var parent = this.recentlyModifiedNodes[i].parent;
-            var node = this.recentlyModifiedNodes[i].node;
-
-            if (this.recentlyModifiedNodes[i].updated) {
-                var nodeItem = this.treeOutline.findTreeElement(node);
-                if (nodeItem)
-                    nodeItem.updateTitle();
-                continue;
+        var crumbs = this.crumbsElement;
+        for (var crumb = crumbs.firstChild; crumb; crumb = crumb.nextSibling) {
+            if (crumb.representedObject === event.data.node) {
+                this.updateBreadcrumb(true);
+                return;
             }
-
-            if (!parent)
-                continue;
-
-            var parentNodeItem = this.treeOutline.findTreeElement(parent);
-            if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
-                parentNodeItem.updateChildren();
-                parentNodeItem.alreadyUpdatedChildren = true;
-                updatedParentTreeElements.push(parentNodeItem);
-            }
-
-            if (!updateBreadcrumbs && (this.selectedDOMNode() === parent || (this.selectedDOMNode() && this.selectedDOMNode().isAncestor(parent))))
-                updateBreadcrumbs = true;
         }
-
-        for (var i = 0; i < updatedParentTreeElements.length; ++i)
-            delete updatedParentTreeElements[i].alreadyUpdatedChildren;
-
-        this.recentlyModifiedNodes = [];
-
-        if (updateBreadcrumbs)
-            this.updateBreadcrumb(true);
     },
 
     _stylesPaneEdited: function()
@@ -552,7 +444,7 @@ WebInspector.ElementsPanel.prototype = {
         var foundRoot = false;
         var crumb = crumbs.firstChild;
         while (crumb) {
-            if (crumb.representedObject === this.rootDOMNode)
+            if (crumb.representedObject === this.treeOutline.rootDOMNode)
                 foundRoot = true;
 
             if (foundRoot)
@@ -601,13 +493,8 @@ WebInspector.ElementsPanel.prototype = {
                 }
 
                 panel.updateBreadcrumbSizes(crumb);
-            } else {
-                // Clicking a dimmed crumb or double clicking (event.detail >= 2)
-                // will change the root node in addition to the focused node.
-                if (event.detail >= 2 || crumb.hasStyleClass("dimmed"))
-                    panel.rootDOMNode = crumb.representedObject.parentNode;
+            } else
                 panel.selectDOMNode(crumb.representedObject, true);
-            }
 
             event.preventDefault();
         }
@@ -617,7 +504,7 @@ WebInspector.ElementsPanel.prototype = {
             if (current.nodeType() === Node.DOCUMENT_NODE)
                 continue;
 
-            if (current === this.rootDOMNode)
+            if (current === this.treeOutline.rootDOMNode)
                 foundRoot = true;
 
             var crumb = document.createElement("span");

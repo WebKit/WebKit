@@ -524,11 +524,6 @@ Node.prototype.traversePreviousNode = function(stayWithin)
     return this.parentNode;
 }
 
-window.parentNode = function(node)
-{
-    return node.parentNode;
-}
-
 Number.constrain = function(num, min, max)
 {
     if (num < min)

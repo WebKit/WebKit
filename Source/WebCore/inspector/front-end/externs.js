@@ -108,10 +108,12 @@ WebInspector.debuggerPresentationModel = {
 /**
  * @constructor
  * @extends {TreeOutline}
+ * @param {boolean=} omitRootDOMNode
+ * @param {boolean=} selectEnabled
+ * @param {boolean=} showInElementsPanelEnabled
  */
-WebInspector.ElementsTreeOutline = function()
+WebInspector.ElementsTreeOutline = function(omitRootDOMNode, selectEnabled, showInElementsPanelEnabled)
 {
-    this.element = null;
 }
 
 /**

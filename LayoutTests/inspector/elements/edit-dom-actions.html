@@ -94,7 +94,7 @@ function test()
                     var editorElement = window.getSelection().anchorNode.parentElement;
                     editorElement.textContent = "newattr=\"new-value\"";
                     editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-                    InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "updateModifiedNodes", done);
+                    InspectorTest.addSniffer(WebInspector.ElementsTreeUpdater.prototype, "_updateModifiedNodes", done);
                 }
             }
         },
@@ -162,7 +162,7 @@ function test()
         editorElement.textContent = newValue;
         editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
         if (useSniffer)
-            InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "updateModifiedNodes", step2);
+            InspectorTest.addSniffer(WebInspector.ElementsTreeUpdater.prototype, "_updateModifiedNodes", step2);
         else
             InspectorTest.runAfterPendingDispatches(step2);
     }

@@ -70,7 +70,7 @@ function test()
 
     function findNodeTreeElement()
     {
-        WebInspector.panels.elements.updateModifiedNodes();
+        WebInspector.panels.elements.treeOutline._updateModifiedNodes();
         var expandedNode = InspectorTest.expandedNodeWithId("container");
         if (!expandedNode) {
             InspectorTest.addResult("'container' node not found");

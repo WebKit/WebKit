@@ -1,3 +1,53 @@
+2011-10-05  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move elements panel update semantics from ElementsPanel to ElementsTreeOutline.
+        https://bugs.webkit.org/show_bug.cgi?id=69431
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsNode):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.get this):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.show):
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype._selectedNodeChanged):
+        (WebInspector.ElementsPanel.prototype._reset):
+        (WebInspector.ElementsPanel.prototype._nodeRemoved):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb.selectCrumbFunction):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype.wireToDomAgent):
+        (WebInspector.ElementsTreeOutline.prototype.setVisible):
+        (WebInspector.ElementsTreeOutline.prototype.addEventListener):
+        (WebInspector.ElementsTreeOutline.prototype.removeEventListener):
+        (WebInspector.ElementsTreeOutline.prototype.selectDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype.update):
+        (WebInspector.ElementsTreeOutline.prototype._selectedNodeChanged):
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement.parentNode):
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement):
+        (WebInspector.ElementsTreeOutline.prototype.createTreeElementFor):
+        (WebInspector.ElementsTreeOutline.prototype._ondrop.callback):
+        (WebInspector.ElementsTreeOutline.prototype._ondrop):
+        (WebInspector.ElementsTreeOutline.prototype.adjustCollapsedRange):
+        (WebInspector.ElementsTreeOutline.prototype._updateModifiedNodes):
+        (WebInspector.ElementsTreeElement.prototype.insertChildElement):
+        (WebInspector.ElementsTreeElement.prototype.selectOnMouseDown):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML.dispose):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted.moveToNextAttributeIfNeeded):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.changeTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._editingCancelled):
+        ():
+        * inspector/front-end/externs.js:
+        (WebInspector.ElementsTreeOutline):
+        * inspector/front-end/utilities.js:
+
 2011-10-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide a way for persisting worker inspector state
