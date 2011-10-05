@@ -1,3 +1,19 @@
+2011-10-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Default directories and paths are missing for LocalStorage, Database and IconDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=69111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide default path for LocalStorage, Database and IconDatabase using QDesktopServices.
+
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::defaultDataLocation):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+
 2011-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use WKRetainPtr for WK types in WebKit2 GTK+

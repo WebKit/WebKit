@@ -42,7 +42,6 @@
 #include "qwebpage.h"
 #include "qwebsettings.h"
 #include <QDateTime>
-#include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
 #include <QSqlQuery>
@@ -227,8 +226,7 @@ SharedCookieJarQt::SharedCookieJarQt(const String& cookieStorageDirectory)
 {
     m_database = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
     const QString cookieStoragePath = cookieStorageDirectory;
-    QDir().mkpath(cookieStoragePath + QLatin1String(".QtWebKit/"));
-    const QString dataBaseName = cookieStoragePath + QLatin1String(".QtWebKit/cookies.db");
+    const QString dataBaseName = cookieStoragePath + QLatin1String("cookies.db");
     m_database.setDatabaseName(dataBaseName);
     ensureDatabaseTable();
     loadCookies();

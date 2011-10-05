@@ -28,11 +28,32 @@
 #include "WebContext.h"
 
 #include "ApplicationCacheStorage.h"
+#include "FileSystem.h"
 #include "WebProcessCreationParameters.h"
+#include <QCoreApplication>
 #include <QDesktopServices>
+#include <QDir>
 #include <QProcess>
 
 namespace WebKit {
+
+static QString defaultDataLocation()
+{
+    static QString s_dataLocation;
+
+    if (!s_dataLocation.isEmpty())
+        return s_dataLocation;
+
+    QString dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    if (dataLocation.isEmpty())
+        dataLocation = WebCore::pathByAppendingComponent(QDir::homePath(), QCoreApplication::applicationName());
+    s_dataLocation = WebCore::pathByAppendingComponent(dataLocation, ".QtWebKit/");
+    WebCore::makeAllDirectories(s_dataLocation);
+    return s_dataLocation;
+}
+
+static QString s_defaultDatabaseDirectory;
+static QString s_defaultLocalStorageDirectory;
 
 String WebContext::applicationCacheDirectory()
 {
@@ -42,7 +63,7 @@ String WebContext::applicationCacheDirectory()
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
-    parameters.cookieStorageDirectory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    parameters.cookieStorageDirectory = defaultDataLocation();
 }
 
 void WebContext::platformInvalidateContext()
@@ -51,20 +72,27 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    // FIXME: Implement.
-    return "";
+    if (!s_defaultDatabaseDirectory.isEmpty())
+        return s_defaultDatabaseDirectory;
+
+    s_defaultDatabaseDirectory = defaultDataLocation() + QLatin1String("Databases");
+    QDir().mkpath(s_defaultDatabaseDirectory);
+    return s_defaultDatabaseDirectory;
 }
 
 String WebContext::platformDefaultIconDatabasePath() const
 {
-    // FIXME: Implement.
-    return "";
+    return defaultDataLocation();
 }
 
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
-    // FIXME: Implement.
-    return "";
+    if (!s_defaultLocalStorageDirectory.isEmpty())
+        return s_defaultLocalStorageDirectory;
+
+    s_defaultLocalStorageDirectory = defaultDataLocation() + QLatin1String("LocalStorage");
+    QDir().mkpath(s_defaultLocalStorageDirectory);
+    return s_defaultLocalStorageDirectory;
 }
 
 } // namespace WebKit

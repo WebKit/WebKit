@@ -1,3 +1,17 @@
+2011-10-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Default directories and paths are missing for LocalStorage, Database and IconDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=69111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide default path for LocalStorage, Database and IconDatabase using QDesktopServices.
+
+        No new tests : existing ones should cover.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::SharedCookieJarQt::SharedCookieJarQt):
+
 2011-10-05  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(FILTERS) after r96203.
