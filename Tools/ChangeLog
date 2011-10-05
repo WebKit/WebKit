@@ -1,3 +1,16 @@
+2011-10-04  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic doesn't launch it's UI on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=69349
+
+        Reviewed by Darin Adler.
+
+        It turns out that Lion is a bit more picky about file URLs.  This patch
+        switches us from using a path to using an actual file URL, silencing
+        the warning and making the tool actually launch on Lion.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2011-10-04  Daniel Bates  <dbates@rim.com>
 
         Fix Perl undefined variable warning when using run-safari after

@@ -89,7 +89,7 @@ class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
         BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), GardeningHTTPRequestHandler)
 
     def url(self):
-        return os.path.join(GardeningHTTPRequestHandler.STATIC_FILE_DIRECTORY, 'garden-o-matic.html')
+        return 'file://' + os.path.join(GardeningHTTPRequestHandler.STATIC_FILE_DIRECTORY, 'garden-o-matic.html')
 
 
 class GardeningHTTPRequestHandler(ReflectionHandler):
