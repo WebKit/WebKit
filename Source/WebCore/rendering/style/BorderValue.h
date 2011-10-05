@@ -36,6 +36,7 @@ public:
     BorderValue()
         : m_width(3)
         , m_style(BNONE)
+        , m_isAuto(AUTO_OFF)
     {
     }
 
@@ -71,7 +72,10 @@ public:
 protected:
     Color m_color;
     unsigned m_width : 12;
-    unsigned m_style : 4; // EBorderStyle 
+    unsigned m_style : 4; // EBorderStyle
+
+    // This is only used by OutlineValue but moved here to keep the bits packed.
+    unsigned m_isAuto : 1; // OutlineIsAuto
 };
 
 } // namespace WebCore

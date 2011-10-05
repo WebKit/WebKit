@@ -1,3 +1,23 @@
+2011-10-05  Andreas Kling  <kling@webkit.org>
+
+        Shrink OutlineValue.
+        https://bugs.webkit.org/show_bug.cgi?id=69436
+
+        Reviewed by Darin Adler.
+
+        Move OutlineValue::m_isAuto up into the base class (BorderValue.)
+        This shrinks OutlineValue by 32 bit, which in turn shrinks
+        StyleBackgroundData by one CPU word.
+
+        This reduces memory consumption by 250 kB (on 64-bit) when loading
+        the full HTML5 spec.
+
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        * rendering/style/OutlineValue.h:
+        (WebCore::OutlineValue::OutlineValue):
+        (WebCore::OutlineValue::isAuto):
+
 2011-10-05  Chang Shu  <cshu@webkit.org>
 
         [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport
