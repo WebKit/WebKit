@@ -1,3 +1,20 @@
+2011-10-05  Adam Roben  <aroben@apple.com>
+
+        Add tests for using RetainPtrs inside HashMap and HashSet
+
+        Fixes <http://webkit.org/b/69414> <rdar://problem/10236833> Using RetainPtr as the key type
+        in HashMap/HashSet fails to compile
+
+        Reviewed by John Sullivan.
+
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtrHashing.cpp: Added.
+        (TestWebKitAPI::TEST): Show that RetainPtr can be used inside HashSet and as both the key
+        and value type of HashMap.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Added new file.
+
 2011-10-05  Adam Barth  <abarth@webkit.org>
 
         Mark as Expected in garden-o-matic is confusing

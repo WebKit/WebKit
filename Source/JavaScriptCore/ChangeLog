@@ -1,3 +1,22 @@
+2011-10-05  Adam Roben  <aroben@apple.com>
+
+        Ensure RetainPtr::hashTableDeletedValue returns a pointer, not a pointer to a pointer
+
+        RetainPtr's behavior of allowing the template parameter to be either a pointer type or a
+        pointed-to type confused us when we implemented hashTableDeletedValue.
+
+        Fixes <http://webkit.org/b/69414> <rdar://problem/10236833> Using RetainPtr as the key type
+        in HashMap/HashSet fails to compile
+
+        Reviewed by John Sullivan.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::hashTableDeletedValue): Changed to use the PtrType typedef rather than T*,
+        since T might itself be a pointer.
+
+        (WTF::PtrHash<RetainPtr<P> >): Updated this to use PtrType everywhere, even though T* didn't
+        seem to be causing a problem.
+
 2011-10-05  Oliver Hunt  <oliver@apple.com>
 
         Remove last vestiges of anonymous storage.
