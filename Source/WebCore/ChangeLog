@@ -1,3 +1,25 @@
+2011-10-05  Martin Robinson  <mrobinson@igalia.com>
+
+        libsoup-CRITICAL **: soup_message_io_pause: assertion `io != NULL' failed
+        https://bugs.webkit.org/show_bug.cgi?id=64263
+
+        Reviewed by Xan Lopez.
+
+        No new tests. This is difficult to test because it relies on network
+        timing and to catch and parse stdout.
+
+        Instead of allowing messages to pause and unpause after receiving headers,
+        we wait until the completion of the sendRequestCallback. This will ensure
+        that the SoupSession is in the correct state to allow for pausing and unpausing.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading): Don't pause and unpause
+        until the sendRequestCallback is called. We detect this situation by
+        checking whether or not we have an input stream yet. Previously the code
+        was only pausing until after soupMessage->status_code was not equal to
+        SOUP_STATUS_NONE. This means that the message was pausable right after
+        headers are received. sendRequestCallback happens some time after that.
+
 2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for Debug builders.

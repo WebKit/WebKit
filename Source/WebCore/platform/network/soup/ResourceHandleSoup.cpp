@@ -703,9 +703,10 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     if (!d->m_soupMessage)
         return;
 
-    // Avoid any operation on not yet started messages and completed messages.
+    // Do not pause or unpause operations that are completed or have not reached
+    // sendRequestCallback yet. If m_defersLoading is true at that point, we'll pause.
     SoupMessage* soupMessage = d->m_soupMessage.get();
-    if (d->m_finished || soupMessage->status_code == SOUP_STATUS_NONE)
+    if (d->m_finished || !d->m_inputStream)
         return;
 
     if (defersLoading)
