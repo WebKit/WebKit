@@ -1,5 +1,14 @@
 2011-10-05  David Levin  <levin@chromium.org>
 
+        watchlist: Add more rules for chromium public api and sort the file.
+        https://bugs.webkit.org/show_bug.cgi?id=69323
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2011-10-05  David Levin  <levin@chromium.org>
+
         watchlist: Don't add the same message to a bug more than once.
         https://bugs.webkit.org/show_bug.cgi?id=69303
 

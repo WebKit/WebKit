@@ -1,8 +1,11 @@
 #  -*- mode: Python;-*-
 {
     "DEFINITIONS": {
-        "WatchListScript": {
-            "filename": r"Tools/Scripts/webkitpy/common/watchlist/.*",
+        "ChromiumGraphics": {
+            "filename": r"Source/WebCore/platform/graphics/chromium/.*",
+        },
+        "ChromiumPublicApi": {
+            "filename": r"Source/WebKit/chromium/public/.*"
         },
         "ThreadingFiles": {
             "filename": r"Source/JavaScriptCore/wtf/ThreadSafeRefCounted\.h"
@@ -11,16 +14,21 @@
         "ThreadingUsage": {
             "more": r"deprecatedTurnOffVerifier|crossThreadString|threadsafeCopy|ThreadSafeRefCounted|CrossThreadRefCounted",
         },
-        "ChromiumGraphics": {
-            "filename": r"Source/WebCore/platform/graphics/chromium/.*",
+        "WatchListScript": {
+            "filename": r"Tools/Scripts/webkitpy/common/watchlist/.*",
         },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
-        "WatchListScript": [ "levin+watchlist@chromium.org", ],
-        "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
+        "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
+        "WatchListScript": [ "levin+watchlist@chromium.org", ],
+    },
+    "MESSAGE_RULES": {
+        "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
+                               "because this patch contains changes to the Chromium public API.", ],
     },
 }
