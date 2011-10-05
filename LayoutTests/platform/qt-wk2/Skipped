@@ -212,6 +212,14 @@ fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42690>
 fast/loader/onload-willSendRequest-null-for-script.html
 
+# [Qt][WK2] Crash in fast/text/regional-indicator-symobls.html
+# https://bugs.webkit.org/show_bug.cgi?id=69419
+fast/text/regional-indicator-symobls.html
+
+# [Qt][WK2] Layout test failure because of screen info printed to stdout
+# https://bugs.webkit.org/show_bug.cgi?id=69420
+http/tests/cache/post-redirect-get.php
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
@@ -248,6 +256,7 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 plugins/embed-prefers-plugins-for-images.html
 plugins/npp-set-window-called-during-destruction.html
 plugins/reloadplugins-and-pages.html
+plugins/mouse-click-iframe-to-plugin.html
 
 # Unexplained failures
 fast/dom/frame-loading-via-document-write.html
@@ -268,6 +277,10 @@ storage/statement-success-callback-isolated-world.html
 storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
 storage/transaction-success-callback-isolated-world.html
+editing/pasteboard/paste-plaintext-user-select-none.html
+fast/css-generated-content/first-letter-in-nested-before.html
+fast/frames/set-parent-src-synchronously.html
+fast/text/complex-synthetic-bold-space-width.html
 
 ########################################
 
