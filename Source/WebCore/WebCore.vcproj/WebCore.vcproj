@@ -32255,7 +32255,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								DisableSpecificWarnings="4611"
+								DisableSpecificWarnings="4481;4611"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -32263,7 +32263,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								DisableSpecificWarnings="4611"
+								DisableSpecificWarnings="4481;4611"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -32347,7 +32347,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								DisableSpecificWarnings="4611"
+								DisableSpecificWarnings="4481;4611"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -32355,7 +32355,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								DisableSpecificWarnings="4611"
+								DisableSpecificWarnings="4481;4611"
 							/>
 						</FileConfiguration>
 						<FileConfiguration

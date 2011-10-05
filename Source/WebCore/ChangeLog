@@ -1,3 +1,9 @@
+2011-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Ignore the warning about using 'override'.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-10-04  Sam Weinig  <sam@webkit.org>
 
         Stub out WorkerScriptController::disableEval for v8 to fix the build.
