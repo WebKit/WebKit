@@ -1,3 +1,22 @@
+2011-10-03  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r82611) InlineBox has 33 bits of bitset, causing alignment issues and extra memory use.
+        https://bugs.webkit.org/show_bug.cgi?id=64914
+
+        Reviewed by Antti Koivisto.
+
+        Remove InlineBox::prevOnLineExists() and its two accompanying bitfields
+        since nobody is using them anymore. nextOnLineExists() is still used by
+        GTK+ accessibility code.
+
+        Also added a compile-time assertion to guard against future bloating of
+        the InlineBox class.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::SameSizeAsInlineBox::~SameSizeAsInlineBox):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2011-10-05  Andreas Kling  <kling@webkit.org>
 
         Shrink FontFallbackList.
