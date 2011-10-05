@@ -40,6 +40,11 @@ class WebString : public APIObject {
 public:
     static const Type APIType = TypeString;
 
+    static PassRefPtr<WebString> createNull()
+    {
+        return adoptRef(new WebString());
+    }
+
     static PassRefPtr<WebString> create(const String& string)
     {
         return adoptRef(new WebString(string));
@@ -91,6 +96,11 @@ public:
     JSStringRef createJSString() const { return JSStringCreateWithCharacters(m_string.characters(), m_string.length()); }
 
 private:
+    WebString()
+        : m_string()
+    {
+    }
+
     WebString(const String& string)
         : m_string(!string.impl() ? String(StringImpl::empty()) : string)
     {

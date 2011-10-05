@@ -142,6 +142,9 @@ void QtWebPageProxy::init()
     memset(&uiClient, 0, sizeof(WKPageUIClient));
     uiClient.version = kWKPageUIClientCurrentVersion;
     uiClient.clientInfo = m_viewInterface;
+    uiClient.runJavaScriptAlert = qt_wk_runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm = qt_wk_runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = qt_wk_runJavaScriptPrompt;
     uiClient.setStatusText = qt_wk_setStatusText;
     uiClient.runOpenPanel = qt_wk_runOpenPanel;
     uiClient.mouseDidMoveOverElement = qt_wk_mouseDidMoveOverElement;

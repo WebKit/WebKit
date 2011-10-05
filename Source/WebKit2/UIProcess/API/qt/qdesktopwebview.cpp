@@ -20,9 +20,10 @@
 
 #include "config.h"
 #include "qdesktopwebview.h"
+
+#include "UtilsQt.h"
 #include "qdesktopwebview_p.h"
 #include "qweberror.h"
-
 #include <QFileDialog>
 #include <QGraphicsSceneEvent>
 #include <QGraphicsSceneResizeEvent>
@@ -40,6 +41,8 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QWheelEvent>
+#include <QtWidgets/QInputDialog>
+#include <QtWidgets/QMessageBox>
 #include <WKOpenPanelResultListener.h>
 
 QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -48,6 +51,18 @@ QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef 
     , isCrashed(false)
     , navigationController(0)
 {
+}
+
+void QDesktopWebViewPrivate::enableMouseEvents()
+{
+    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
+    q->setAcceptHoverEvents(true);
+}
+
+void QDesktopWebViewPrivate::disableMouseEvents()
+{
+    q->setAcceptedMouseButtons(Qt::NoButton);
+    q->setAcceptHoverEvents(false);
 }
 
 void QDesktopWebViewPrivate::setViewNeedsDisplay(const QRect& invalidatedArea)
@@ -186,6 +201,46 @@ void QDesktopWebViewPrivate::hideContextMenu()
         activeMenu->hide();
 }
 
+void QDesktopWebViewPrivate::runJavaScriptAlert(const QString& alertText)
+{
+#ifndef QT_NO_MESSAGEBOX
+    const QString title = tr("JavaScript Alert - %1").arg(q->url().host());
+    disableMouseEvents();
+    QMessageBox::information(0, title, escapeHtml(alertText), QMessageBox::Ok);
+    enableMouseEvents();
+#else
+    Q_UNUSED(alertText);
+#endif
+}
+
+bool QDesktopWebViewPrivate::runJavaScriptConfirm(const QString& message)
+{
+    bool result = true;
+#ifndef QT_NO_MESSAGEBOX
+    const QString title = tr("JavaScript Confirm - %1").arg(q->url().host());
+    disableMouseEvents();
+    result = QMessageBox::Yes == QMessageBox::information(0, title, escapeHtml(message), QMessageBox::Yes, QMessageBox::No);
+    enableMouseEvents();
+#else
+    Q_UNUSED(message);
+#endif
+    return result;
+}
+
+QString QDesktopWebViewPrivate::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
+{
+#ifndef QT_NO_INPUTDIALOG
+    const QString title = tr("JavaScript Prompt - %1").arg(q->url().host());
+    disableMouseEvents();
+    QString result = QInputDialog::getText(0, title, escapeHtml(message), QLineEdit::Normal, defaultValue, &ok);
+    enableMouseEvents();
+    return result;
+#else
+    Q_UNUSED(message);
+    return defaultValue;
+#endif
+}
+
 QDesktopWebView::QDesktopWebView(QSGItem* parent)
     : QSGPaintedItem(parent)
     , d(new QDesktopWebViewPrivate(this))
@@ -202,8 +257,7 @@ QDesktopWebView::QDesktopWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 
 void QDesktopWebView::init()
 {
-    setAcceptedMouseButtons(Qt::MouseButtonMask);
-    setAcceptHoverEvents(true);
+    d->enableMouseEvents();
 }
 
 QDesktopWebView::~QDesktopWebView()

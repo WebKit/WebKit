@@ -39,6 +39,9 @@ void qt_wk_didFinishProgress(WKPageRef, const void* clientInfo);
 void qt_wk_didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo);
 
 // ui client
+void qt_wk_runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo);
+bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo);
+WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo);
 void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
 void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void* clientInfo);
 void qt_wk_mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifiers, WKTypeRef, const void* clientInfo);

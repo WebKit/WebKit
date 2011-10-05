@@ -72,6 +72,10 @@ private:
     virtual void showContextMenu(QSharedPointer<QMenu>);
     virtual void hideContextMenu();
 
+    virtual void runJavaScriptAlert(const QString&);
+    virtual bool runJavaScriptConfirm(const QString&);
+    virtual QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
+
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
 

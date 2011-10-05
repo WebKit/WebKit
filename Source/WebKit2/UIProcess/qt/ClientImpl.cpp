@@ -145,6 +145,35 @@ void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(100);
 }
 
+void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+{
+    QString qAlertText = WKStringCopyQString(alertText);
+    toViewInterface(clientInfo)->runJavaScriptAlert(qAlertText);
+}
+
+bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
+{
+    QString qMessage = WKStringCopyQString(message);
+    return toViewInterface(clientInfo)->runJavaScriptConfirm(qMessage);
+}
+
+static inline WKStringRef createNullWKString()
+{
+    RefPtr<WebString> webString = WebString::createNull();
+    return toAPI(webString.release().leakRef());
+}
+
+WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
+{
+    QString qMessage = WKStringCopyQString(message);
+    QString qDefaultValue = WKStringCopyQString(defaultValue);
+    bool ok = false;
+    QString result = toViewInterface(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
+    if (!ok)
+        return createNullWKString();
+    return WKStringCreateWithQString(result);
+}
+
 void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);

@@ -1,3 +1,46 @@
+2011-10-05  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Support JS alert/confirm/prompt in QDesktopWebView
+        https://bugs.webkit.org/show_bug.cgi?id=69274
+
+        Reviewed by Andreas Kling.
+
+        Use currently existing QtWidgets to provide an implementation of
+        window.alert(), window.confirm() and window.prompt().
+
+        * Shared/WebString.h:
+        (WebKit::WebString::createNull):
+        (WebKit::WebString::WebString):
+        Add a way to create a Null WebString. RunJavaScriptPrompt will differentiate
+        between empty and null strings.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::enableMouseEvents):
+        (QDesktopWebViewPrivate::disableMouseEvents):
+        Create helper functions to enable and disable mouse events. This is useful for
+        disabling mouse events in the WebView when we show QtWidget dialogs to avoid
+        unwanted interaction with the page.
+
+        (QDesktopWebViewPrivate::runJavaScriptAlert):
+        (QDesktopWebViewPrivate::runJavaScriptConfirm):
+        (QDesktopWebViewPrivate::runJavaScriptPrompt):
+        (QDesktopWebView::init):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_runJavaScriptAlert):
+        (qt_wk_runJavaScriptConfirm):
+        (createNullWKString):
+        (qt_wk_runJavaScriptPrompt):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::runJavaScriptAlert):
+        (WebKit::TouchViewInterface::runJavaScriptConfirm):
+        (WebKit::TouchViewInterface::runJavaScriptPrompt):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+
 2011-10-05  Chang Shu  <cshu@webkit.org>
 
         [WK2] Support setMarkedText/hasMarkedText/unmarkText/insertText for WTR TextInputController

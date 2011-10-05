@@ -152,6 +152,23 @@ void TouchViewInterface::hideContextMenu()
     // FIXME
 }
 
+void TouchViewInterface::runJavaScriptAlert(const QString&)
+{
+    // FIXME.
+}
+
+bool TouchViewInterface::runJavaScriptConfirm(const QString&)
+{
+    // FIXME.
+    return true;
+}
+
+QString TouchViewInterface::runJavaScriptPrompt(const QString&, const QString& defaultValue, bool&)
+{
+    // FIXME.
+    return defaultValue;
+}
+
 void TouchViewInterface::processDidCrash()
 {
     // FIXME
