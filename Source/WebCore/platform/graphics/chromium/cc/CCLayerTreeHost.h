@@ -102,9 +102,6 @@ public:
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
     void didRecreateGraphicsContext(bool success);
-#if !USE(THREADED_COMPOSITING)
-    void scheduleComposite();
-#endif
     void deleteContentsTexturesOnCCThread(TextureAllocator*);
 
     // CCLayerTreeHost interface to WebView.
@@ -115,9 +112,8 @@ public:
 
     int compositorIdentifier() const { return m_compositorIdentifier; }
 
-#if !USE(THREADED_COMPOSITING)
+    // Only used when compositing on the main thread.
     void composite();
-#endif
 
     GraphicsContext3D* context();
 

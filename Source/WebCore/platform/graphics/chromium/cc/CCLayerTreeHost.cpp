@@ -163,13 +163,6 @@ void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
     m_client->didRecreateGraphicsContext(success);
 }
 
-#if !USE(THREADED_COMPOSITING)
-void CCLayerTreeHost::scheduleComposite()
-{
-    m_client->scheduleComposite();
-}
-#endif
-
 // Temporary hack until WebViewImpl context creation gets simplified
 GraphicsContext3D* CCLayerTreeHost::context()
 {
@@ -204,21 +197,19 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 
 void CCLayerTreeHost::setNeedsCommitThenRedraw()
 {
-#if USE(THREADED_COMPOSITING)
-    TRACE_EVENT("CCLayerTreeHost::setNeedsCommitThenRedraw", this, 0);
-    m_proxy->setNeedsCommitThenRedraw();
-#else
-    m_client->scheduleComposite();
-#endif
+    if (m_settings.enableCompositorThread) {
+        TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
+        m_proxy->setNeedsCommitThenRedraw();
+    } else
+        m_client->scheduleComposite();
 }
 
 void CCLayerTreeHost::setNeedsRedraw()
 {
-#if USE(THREADED_COMPOSITING)
-    m_proxy->setNeedsRedraw();
-#else
-    m_client->scheduleComposite();
-#endif
+    if (m_settings.enableCompositorThread)
+        m_proxy->setNeedsRedraw();
+    else
+        m_client->scheduleComposite();
 }
 
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
@@ -249,13 +240,11 @@ TextureManager* CCLayerTreeHost::contentsTextureManager() const
     return m_contentsTextureManager.get();
 }
 
-#if !USE(THREADED_COMPOSITING)
 void CCLayerTreeHost::composite()
 {
     ASSERT(!m_settings.enableCompositorThread);
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
-#endif // !USE(THREADED_COMPOSITING)
 
 void CCLayerTreeHost::updateLayers()
 {

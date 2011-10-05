@@ -1,3 +1,27 @@
+2011-10-05  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Switching threaded compositor from a compile time option to a
+        run time one.
+        https://bugs.webkit.org/show_bug.cgi?id=69391
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setMinimumAccelerated2dCanvasSize):
+        (WebKit::WebSettingsImpl::setUseThreadedCompositor):
+        * src/WebSettingsImpl.h:
+        (WebKit::WebSettingsImpl::useThreadedCompositor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::scheduleComposite):
+        (WebKit::WebViewImpl::graphicsContext3D):
+
 2011-10-05  Jer Noble  <jer.noble@apple.com>
 
         WEB_AUDIO does not compile on Leopard 32-bit.

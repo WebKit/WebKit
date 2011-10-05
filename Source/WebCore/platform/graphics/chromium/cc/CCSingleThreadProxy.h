@@ -54,10 +54,8 @@ public:
     virtual void start();
     virtual void stop();
 
-    // Special case functions.
-#if !USE(THREADED_COMPOSITING)
+    // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();
-#endif
 
 private:
     explicit CCSingleThreadProxy(CCLayerTreeHost*);

@@ -161,12 +161,7 @@ void CCSingleThreadProxy::setNeedsCommit()
 void CCSingleThreadProxy::setNeedsCommitThenRedraw()
 {
     ASSERT(CCProxy::isMainThread());
-#if !USE(THREADED_COMPOSITING)
-    m_layerTreeHost->scheduleComposite();
-#else
-    // Single threaded only works with THREADED_COMPOSITING.
-    CRASH();
-#endif
+    m_layerTreeHost->setNeedsCommitThenRedraw();
 }
 
 void CCSingleThreadProxy::setNeedsRedraw()
@@ -188,7 +183,6 @@ void CCSingleThreadProxy::stop()
     m_layerTreeHost = 0;
 }
 
-#if !USE(THREADED_COMPOSITING)
 // Called by the legacy scheduling path (e.g. where render_widget does the scheduling)
 void CCSingleThreadProxy::compositeImmediately()
 {
@@ -200,8 +194,6 @@ void CCSingleThreadProxy::compositeImmediately()
     if (doComposite())
         m_layerTreeHostImpl->present();
 }
-#endif
-
 
 bool CCSingleThreadProxy::recreateContextIfNeeded()
 {

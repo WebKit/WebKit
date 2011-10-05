@@ -1,3 +1,27 @@
+2011-10-05  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Switching threaded compositor from a compile time option to a
+        run time one.
+        https://bugs.webkit.org/show_bug.cgi?id=69391
+
+        Reviewed by Darin Fisher.
+
+        Mostly converted #if USE(THREADED_COMPOSITING) to a regular if statements.
+        In addition, CCLayerTreeHost::scheduleComposite() is removed as it wasn't being
+        called from anywhere, 
+
+        No new tests as it doesn't add new functionality.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setNeedsCommitThenRedraw):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::composite):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsCommitThenRedraw):
+        (WebCore::CCSingleThreadProxy::compositeImmediately):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+
 2011-10-05  Dean Jackson  <dino@apple.com>
 
         Parse '-webkit-filter' property syntax

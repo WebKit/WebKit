@@ -1051,15 +1051,13 @@ void WebViewImpl::animate(double frameBeginTime)
     if (webframe) {
         FrameView* view = webframe->frameView();
         if (view) {
-#if !USE(THREADED_COMPOSITING)
-            if (m_layerTreeHost)
+            if (!settings()->useThreadedCompositor() && m_layerTreeHost)
                 m_layerTreeHost->setAnimating(true);
-#endif
+
             view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
-#if !USE(THREADED_COMPOSITING)
-            if (m_layerTreeHost)
+
+            if (!settings()->useThreadedCompositor() && m_layerTreeHost)
                 m_layerTreeHost->setAnimating(false);
-#endif
         }
     }
 #endif
@@ -1160,18 +1158,18 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(THREADED_COMPOSITING)
-    m_layerTreeHost->setNeedsRedraw();
-#else
-    ASSERT(isAcceleratedCompositingActive());
-    if (!page())
-        return;
+    if (settings()->useThreadedCompositor())
+        m_layerTreeHost->setNeedsRedraw();
+    else {
+        ASSERT(isAcceleratedCompositingActive());
+        if (!page())
+            return;
 
-    if (m_pageOverlay)
-        m_pageOverlay->update();
+        if (m_pageOverlay)
+            m_pageOverlay->update();
 
-    m_layerTreeHost->composite();
-#endif
+        m_layerTreeHost->composite();
+    }
 #endif
 }
 
@@ -2570,12 +2568,8 @@ void WebViewImpl::setRootLayerNeedsDisplay()
         zoomMatrix.scale(m_page->settings()->zoomAnimatorScale());
         m_layerTreeHost->setZoomAnimatorTransform(zoomMatrix);
     }
-#if USE(THREADED_COMPOSITING)
     if (m_layerTreeHost)
         m_layerTreeHost->setNeedsCommitThenRedraw();
-#else
-    m_client->scheduleComposite();
-#endif
 }
 
 void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)
@@ -2657,11 +2651,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         WebCore::CCSettings ccSettings;
         ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
         ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
-#if USE(THREADED_COMPOSITING)
-        ccSettings.enableCompositorThread = true;
-#else
-        ccSettings.enableCompositorThread = false;
-#endif
+        ccSettings.enableCompositorThread = settings()->useThreadedCompositor();
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
@@ -2692,11 +2682,10 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
 {
     RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
-#if USE(THREADED_COMPOSITING)
-        context = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-#else
-        context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-#endif
+        if (settings()->useThreadedCompositor())
+            context = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        else
+            context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
     return context;
 }
@@ -2734,12 +2723,11 @@ void WebViewImpl::didRecreateGraphicsContext(bool success)
         m_pageOverlay->update();
 }
 
-#if !USE(THREADED_COMPOSITING)
 void WebViewImpl::scheduleComposite()
 {
+    ASSERT(!settings()->useThreadedCompositor());
     m_client->scheduleComposite();
 }
-#endif
 
 void WebViewImpl::updateLayerTreeViewport()
 {
@@ -2768,11 +2756,11 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
-#if USE(THREADED_COMPOSITING)
-        m_temporaryOnscreenGraphicsContext3D = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-#else
-        m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-#endif
+        if (settings()->useThreadedCompositor())
+            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        else
+            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+
         return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
     }
 #endif

@@ -107,6 +107,8 @@ public:
     virtual void setLegacyAccelerated2dCanvasEnabled(bool);
     virtual void setMinimumAccelerated2dCanvasSize(int);
     virtual void setAcceleratedDrawingEnabled(bool);
+    virtual void setUseThreadedCompositor(bool);
+    virtual bool useThreadedCompositor() const { return m_useThreadedCompositor; }
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
     virtual void setAsynchronousSpellCheckingEnabled(bool);
@@ -126,6 +128,7 @@ private:
     bool m_compositeToTextureEnabled;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
+    bool m_useThreadedCompositor;
 };
 
 } // namespace WebKit

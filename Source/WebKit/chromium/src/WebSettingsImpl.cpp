@@ -50,6 +50,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_compositeToTextureEnabled(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
+    , m_useThreadedCompositor(false)
 {
     ASSERT(settings);
 }
@@ -366,6 +367,11 @@ void WebSettingsImpl::setLegacyAccelerated2dCanvasEnabled(bool enabled)
 void WebSettingsImpl::setMinimumAccelerated2dCanvasSize(int numPixels)
 {
     m_settings->setMinimumAccelerated2dCanvasSize(numPixels);
+}
+
+void WebSettingsImpl::setUseThreadedCompositor(bool useThreadedCompositor)
+{
+    m_useThreadedCompositor = useThreadedCompositor;
 }
 
 void WebSettingsImpl::setMemoryInfoEnabled(bool enabled)
