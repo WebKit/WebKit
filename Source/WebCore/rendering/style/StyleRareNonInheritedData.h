@@ -129,15 +129,15 @@ public:
     AtomicString m_flowThread;
     AtomicString m_regionThread;
     int m_regionIndex;
-    RegionOverflow m_regionOverflow : 1;
+    unsigned m_regionOverflow : 1; // RegionOverflow
 
     unsigned m_regionBreakAfter : 2; // EPageBreak
     unsigned m_regionBreakBefore : 2; // EPageBreak
     unsigned m_regionBreakInside : 2; // EPageBreak
 
-    PageSizeType m_pageSizeType : 2;
-    ETransformStyle3D m_transformStyle3D : 1;
-    EBackfaceVisibility m_backfaceVisibility : 1;
+    unsigned m_pageSizeType : 2; // PageSizeType
+    unsigned m_transformStyle3D : 1; // ETransformStyle3D
+    unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
 
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."

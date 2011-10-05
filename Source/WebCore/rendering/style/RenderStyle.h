@@ -802,7 +802,7 @@ public:
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
     int regionIndex() const { return rareNonInheritedData->m_regionIndex; }
-    RegionOverflow regionOverflow() const { return rareNonInheritedData->m_regionOverflow; }
+    RegionOverflow regionOverflow() const { return static_cast<RegionOverflow>(rareNonInheritedData->m_regionOverflow); }
 
     // Apple-specific property getter methods
     EPointerEvents pointerEvents() const { return static_cast<EPointerEvents>(inherited_flags._pointerEvents); }
@@ -818,16 +818,16 @@ public:
     // return the first found Animation (including 'all' transitions)
     const Animation* transitionForProperty(int property) const;
 
-    ETransformStyle3D transformStyle3D() const { return rareNonInheritedData->m_transformStyle3D; }
+    ETransformStyle3D transformStyle3D() const { return static_cast<ETransformStyle3D>(rareNonInheritedData->m_transformStyle3D); }
     bool preserves3D() const { return rareNonInheritedData->m_transformStyle3D == TransformStyle3DPreserve3D; }
 
-    EBackfaceVisibility backfaceVisibility() const { return rareNonInheritedData->m_backfaceVisibility; }
+    EBackfaceVisibility backfaceVisibility() const { return static_cast<EBackfaceVisibility>(rareNonInheritedData->m_backfaceVisibility); }
     float perspective() const { return rareNonInheritedData->m_perspective; }
     bool hasPerspective() const { return rareNonInheritedData->m_perspective > 0; }
     Length perspectiveOriginX() const { return rareNonInheritedData->m_perspectiveOriginX; }
     Length perspectiveOriginY() const { return rareNonInheritedData->m_perspectiveOriginY; }
     LengthSize pageSize() const { return rareNonInheritedData->m_pageSize; }
-    PageSizeType pageSizeType() const { return rareNonInheritedData->m_pageSizeType; }
+    PageSizeType pageSizeType() const { return static_cast<PageSizeType>(rareNonInheritedData->m_pageSizeType); }
     
 #if USE(ACCELERATED_COMPOSITING)
     // When set, this ensures that styles compare as different. Used during accelerated animations.
