@@ -249,6 +249,8 @@ if (isAppleMacWebKit()) {
     $platform = "gtk";
 } elsif (isWx()) {
     $platform = "wx";
+} elsif (isWinCairo()) {
+    $platform = "wincairo";
 } elsif (isCygwin() || isWindows()) {
     if (isWindowsXP()) {
         $platform = "win-xp";
@@ -2180,6 +2182,10 @@ sub buildPlatformResultHierarchy()
         for (; $i < @platformList; $i++) {
             push @platforms, $platformList[$i];
         }
+
+        if ($platform eq "wincairo") {
+            @platforms = $platform;
+        }
     } elsif ($platform =~ /^qt-/) {
         push @platforms, $platform;
         push @platforms, "qt";
@@ -2470,7 +2476,6 @@ sub readSkippedFiles($)
     # cross-platform issues, the Windows and Qt ports use the Mac skipped list
     # additionally to their own to avoid maintaining separate lists.
     push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "qt-wk2" || $platform eq "mac-wk2");
-
     foreach my $level (@skippedFileDirectories) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose) {

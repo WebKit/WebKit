@@ -1,3 +1,16 @@
+2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Teach old-run-webkit-tests about wincairo.
+        https://bugs.webkit.org/show_bug.cgi?id=69280
+
+        Reviewed by Adam Roben.
+
+        * Scripts/old-run-webkit-tests: Handle wincairo case.
+        (buildPlatformResultHierarchy):
+        (readSkippedFiles): Ditto
+        * Scripts/webkitdirs.pm: Deal with wincairo build case.
+        (determineConfiguration):
+
 2011-10-05  Chang Shu  <cshu@webkit.org>
 
         [WK2] Support setMarkedText/hasMarkedText/unmarkText/insertText for WTR TextInputController

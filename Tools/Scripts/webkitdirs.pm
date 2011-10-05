@@ -232,7 +232,9 @@ sub determineConfiguration
     }
 
     if ($configuration && isWinCairo()) {
-        $configuration .= "_Cairo_CFLite";
+        unless ($configuration =~ /_Cairo_CFLite$/) {
+            $configuration .= "_Cairo_CFLite";
+        }
     }
 }
 
