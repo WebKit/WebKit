@@ -38,6 +38,7 @@ private:
     friend class SubtreeModificationEventListener;
 
     SVGTRefElement(const QualifiedName&, Document*);
+    virtual ~SVGTRefElement();
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
@@ -49,6 +50,8 @@ private:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+
+    void clearEventListener();
 
     void updateReferencedText();
 

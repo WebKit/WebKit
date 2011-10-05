@@ -145,7 +145,12 @@ void SVGTextPathElement::insertedIntoDocument()
     String id;
     Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!targetElement) {
+        if (hasPendingResources() || id.isEmpty())
+            return;
+
+        ASSERT(!hasPendingResources());
         document()->accessSVGExtensions()->addPendingResource(id, this);
+        ASSERT(hasPendingResources());
         return;
     }
 }

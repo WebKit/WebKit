@@ -73,11 +73,14 @@ public:
 
     virtual bool operator==(const EventListener&);
 
-    void removeFromTarget()
+    void clear()
     {
         Element* target = m_trefElement->treeScope()->getElementById(m_targetId);
         if (target && target->parentNode())
             target->parentNode()->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
+        
+        m_trefElement = 0;
+        m_targetId = String();
     }
 
 private:
@@ -103,7 +106,7 @@ bool SubtreeModificationEventListener::operator==(const EventListener& listener)
 
 void SubtreeModificationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    if (event->type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement != event->target())
+    if (m_trefElement && event->type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement != event->target())
         m_trefElement->updateReferencedText();
 }
 
@@ -134,6 +137,11 @@ void SVGShadowText::willRecalcTextStyle(StyleChange change)
         if (renderer())
             renderer()->setStyle(parentNode()->shadowHost()->renderer()->style());
     }
+}
+
+SVGTRefElement::~SVGTRefElement()
+{
+    clearEventListener();
 }
 
 void SVGTRefElement::updateReferencedText()
@@ -182,22 +190,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        if (m_eventListener) {
-            m_eventListener->removeFromTarget();
-            m_eventListener = 0;
-        }
-        String id;
-        Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
-        if (!target) {
-            document()->accessSVGExtensions()->addPendingResource(id, this);
-            return;
-        }
-        updateReferencedText();
-        if (inDocument()) {
-            m_eventListener = SubtreeModificationEventListener::create(this, id);
-            ASSERT(target->parentNode());
-            target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
-        }
+        buildPendingResource();
         if (RenderObject* renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
@@ -233,39 +226,50 @@ bool SVGTRefElement::rendererIsNeeded(const NodeRenderingContext& context)
 
 void SVGTRefElement::buildPendingResource()
 {
-    updateReferencedText();
-    if (Element* target = SVGURIReference::targetElementFromIRIString(href(), document())) {
-        ASSERT(!m_eventListener);
-        m_eventListener = SubtreeModificationEventListener::create(this, target->getIdAttribute());
-        ASSERT(target->parentNode());
-        target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
-    }
-}
+    // Remove any existing event listener.
+    clearEventListener();
 
-void SVGTRefElement::insertedIntoDocument()
-{
-    SVGStyledElement::insertedIntoDocument();
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target) {
+        if (hasPendingResources() || id.isEmpty())
+            return;
+
+        ASSERT(!hasPendingResources());
         document()->accessSVGExtensions()->addPendingResource(id, this);
+        ASSERT(hasPendingResources());
         return;
     }
+
     updateReferencedText();
+
+    // We should not add the event listener if we are not in document yet.
+    if (!inDocument())
+        return;
+
     m_eventListener = SubtreeModificationEventListener::create(this, id);
     ASSERT(target->parentNode());
     target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
 }
 
+void SVGTRefElement::insertedIntoDocument()
+{
+    SVGStyledElement::insertedIntoDocument();
+    buildPendingResource();
+}
+
 void SVGTRefElement::removedFromDocument()
 {
     SVGStyledElement::removedFromDocument();
+    clearEventListener();
+}
 
-    if (!m_eventListener)
-        return;
-
-    m_eventListener->removeFromTarget();
-    m_eventListener = 0;
+void SVGTRefElement::clearEventListener()
+{
+    if (m_eventListener) {
+        m_eventListener->clear();
+        m_eventListener = 0;
+    }
 }
 
 }

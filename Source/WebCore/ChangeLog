@@ -1,3 +1,39 @@
+2011-10-05  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in SVGTRefElement::updateReferencedText.
+        https://bugs.webkit.org/show_bug.cgi?id=67555
+
+        Reviewed by Rob Buis.
+
+        Test: svg/text/tref-event-listener-crash.svg
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SubtreeModificationEventListener::clear): This fixes the
+        crash. there can be cases when our target is removed, but our event
+        listener is alive. when our tref is going away, we need to disable
+        those event listeners by nulling out our tref element.
+        (WebCore::SubtreeModificationEventListener::handleEvent): Adding
+        null check for tref element, which can happen in cases where
+        event listener's clear is called, but we could not remove it from
+        the target.
+        (WebCore::SVGTRefElement::~SVGTRefElement): There are always
+        cases when removedFromDocument is not called. So, important to
+        clear event listener in those cases.
+        (WebCore::SVGTRefElement::svgAttributeChanged): Use common
+        function buildPendingResource.
+        (WebCore::SVGTRefElement::buildPendingResource): Common function
+        to prevent triple duplication of same code. made it more readable.
+        (WebCore::SVGTRefElement::insertedIntoDocument): Use common
+        function buildPendingResource.
+        (WebCore::SVGTRefElement::removedFromDocument): Use new helper
+        removeEventListener.
+        (WebCore::SVGTRefElement::clearEventListener): Helper to clear
+        event listener. Name chosen to not collide with Node::removeEventListener.
+        * svg/SVGTRefElement.h: definition of new helpers.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedIntoDocument): Copy same
+        logic as tref and use element. more asserts and easy bailouts.
+
 2011-10-05  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: restoring : shortcut in inspector.
