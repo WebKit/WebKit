@@ -256,6 +256,7 @@ WONTFIX SKIP CPU CPU-CG : animations/3d = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : animations/3d = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU GPU-CG LEOPARD : media = PASS TIMEOUT FAIL
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
@@ -2616,9 +2617,6 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 //
 // GPU
 //
-
-// We only maintain pixel GPU baselines for Snow Leopard
-WONTFIX GPU GPU-CG LEOPARD : media = IMAGE PASS
 
 // Will need windows and linux baselines
 

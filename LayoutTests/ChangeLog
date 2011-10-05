@@ -1,3 +1,11 @@
+2011-10-05  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed. Skipping media layout tests for Mac Leopard GPU.
+
+        They're a maintenance burden and we don't run the GPU compositor on Leopard.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-05  Kenneth Russell  <kbr@google.com>
 
         Mask underlying RENDERER and VENDOR strings
