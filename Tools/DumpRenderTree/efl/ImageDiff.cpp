@@ -82,6 +82,8 @@ static Evas_Object* differenceImageFromDifferenceBuffer(Evas* evas, unsigned cha
         }
     }
 
+    evas_object_image_data_set(image, diffPixels);
+
     return image;
 }
 
@@ -104,7 +106,7 @@ static float calculatePixelDifference(unsigned char* basePixel, unsigned char* a
     return sqrtf(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
 }
 
-static float calculateDifference(const Evas_Object* baselineImage, const Evas_Object* actualImage, OwnPtr<Evas_Object>& differenceImage)
+static float calculateDifference(Evas_Object* baselineImage, Evas_Object* actualImage, OwnPtr<Evas_Object>& differenceImage)
 {
     int width, height, baselineWidth, baselineHeight;
     evas_object_image_size_get(actualImage, &width, &height);
@@ -143,6 +145,11 @@ static float calculateDifference(const Evas_Object* baselineImage, const Evas_Ob
             }
         }
     }
+
+    // When using evas_object_image_data_get(), a complementary evas_object_data_set() must be
+    // issued to balance the reference count, even if the image hasn't been changed.
+    evas_object_image_data_set(baselineImage, basePixels);
+    evas_object_image_data_set(actualImage, actualPixels);
 
     // Compute the difference as a percentage combining both the number of
     // different pixels and their difference amount i.e. the average distance
@@ -192,6 +199,8 @@ static void printImage(Evas_Object* image)
     if (tempImageFd == -1)
         abortWithErrorMessage("could not create temporary file");
 
+    evas_render(evas_object_evas_get(image));
+
     if (evas_object_image_save(image, fileName, 0, 0)) {
         struct stat fileInfo;
         if (!stat(fileName, &fileInfo)) {
@@ -208,7 +217,7 @@ static void printImage(Evas_Object* image)
     unlink(fileName);
 }
 
-static void printImageDifferences(const Evas_Object* baselineImage, Evas_Object* actualImage)
+static void printImageDifferences(Evas_Object* baselineImage, Evas_Object* actualImage)
 {
     OwnPtr<Evas_Object> differenceImage;
     const float difference = calculateDifference(baselineImage, actualImage, differenceImage);

@@ -1,3 +1,20 @@
+2011-10-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Fix Evas_Object_Image reference counts and file descriptor leakage in ImageDiff.
+        https://bugs.webkit.org/show_bug.cgi?id=68449
+
+        Reviewed by Antonio Gomes.
+
+        evas_render() must be called to close up temporary files and unmap unused
+        resources. evas_object_image_data_set() must be called after an
+        evas_object_image_data_get() to balance an internal reference count.
+
+        * DumpRenderTree/efl/ImageDiff.cpp:
+        (differenceImageFromDifferenceBuffer):
+        (calculateDifference):
+        (printImage):
+        (printImageDifferences):
+
 2011-10-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Unreviewed build fix.
