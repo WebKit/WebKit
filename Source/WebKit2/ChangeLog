@@ -1,3 +1,18 @@
+2011-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use WKRetainPtr for WK types in WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=69404
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextFinalize):
+        (createDefaultWebContext):
+        (webkitWebContextGetWKContext):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_uri):
+        (webkit_web_view_load_alternate_html):
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types

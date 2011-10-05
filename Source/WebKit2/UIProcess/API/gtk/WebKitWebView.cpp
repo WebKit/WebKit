@@ -26,6 +26,7 @@
 #include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKURL.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -216,10 +217,9 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    WKURLRef url = WKURLCreateWithUTF8CString(uri);
+    WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageLoadURL(toAPI(page), url);
-    WKRelease(url);
+    WKPageLoadURL(toAPI(page), url.get());
 }
 
 /**
@@ -243,16 +243,11 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-    WKStringRef htmlString = WKStringCreateWithUTF8CString(content);
-    WKURLRef baseURL = baseURI ? WKURLCreateWithUTF8CString(baseURI) : 0;
-    WKURLRef unreachableURL = unreachableURI ? WKURLCreateWithUTF8CString(unreachableURI) : 0;
+    WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
+    WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
+    WKRetainPtr<WKURLRef> unreachableURL = unreachableURI ? adoptWK(WKURLCreateWithUTF8CString(unreachableURI)) : 0;
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageLoadAlternateHTMLString(toAPI(page), htmlString, baseURL, unreachableURL);
-    WKRelease(htmlString);
-    if (baseURL)
-        WKRelease(baseURL);
-    if (unreachableURL)
-        WKRelease(unreachableURL);
+    WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), unreachableURL.get());
 }
 
 /**

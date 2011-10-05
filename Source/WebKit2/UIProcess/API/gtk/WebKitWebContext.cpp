@@ -22,23 +22,18 @@
 
 #include "WebKitWebContextPrivate.h"
 #include <WebKit2/WKContext.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKType.h>
 
 struct _WebKitWebContextPrivate {
-    WKContextRef context;
+    WKRetainPtr<WKContextRef> context;
 };
 
 G_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 static void webkitWebContextFinalize(GObject* object)
 {
-    WebKitWebContext* context = WEBKIT_WEB_CONTEXT(object);
-
-    WKRelease(context->priv->context);
-    context->priv->context = 0;
-
-    context->priv->~WebKitWebContextPrivate();
-
+    WEBKIT_WEB_CONTEXT(object)->priv->~WebKitWebContextPrivate();
     G_OBJECT_CLASS(webkit_web_context_parent_class)->finalize(object);
 }
 
@@ -62,7 +57,7 @@ static gpointer createDefaultWebContext(gpointer)
 {
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL));
     webContext->priv->context = WKContextGetSharedProcessContext();
-    WKContextSetCacheModel(webContext->priv->context, kWKCacheModelPrimaryWebBrowser);
+    WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
     return webContext;
 }
 
@@ -83,6 +78,6 @@ WKContextRef webkitWebContextGetWKContext(WebKitWebContext* context)
 {
     g_assert(WEBKIT_IS_WEB_CONTEXT(context));
 
-    return context->priv->context;
+    return context->priv->context.get();
 }
 
