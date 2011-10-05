@@ -1,3 +1,27 @@
+2011-10-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: add CSS model classes to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69376
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CSSCompletions.js:
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.canSetContent):
+        * inspector/front-end/ResourceTreeModel.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._containsInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        * inspector/front-end/externs.js:
+        (Array.prototype.keySet):
+
 2011-10-05  Kent Tamura  <tkent@chromium.org>
 
         Input styles are unexpectedly shared regardless of required status difference.

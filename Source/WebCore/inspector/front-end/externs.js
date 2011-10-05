@@ -88,6 +88,8 @@ Element.prototype.scrollIntoViewIfNeeded = function() {}
  */
 Array.prototype.remove = function(obj, onlyFirst) {}
 
+Array.prototype.keySet = function() {}
+
 WebInspector.extensionServer = {}
 WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
 WebInspector.extensionServer.notifyPanelShown = function(panel) {}

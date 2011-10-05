@@ -191,6 +191,9 @@ WebInspector.CSSStyleModel.prototype = {
         return node.ownerDocumentElement().id;
     },
 
+    /**
+     * @param {function()=} callback
+     */
     _fireStyleSheetChanged: function(styleSheetId, majorChange, callback)
     {
         callback = callback || function() {};
@@ -242,7 +245,7 @@ WebInspector.CSSStyleDeclaration = function(payload)
 
     var propertyIndex = 0;
     for (var i = 0; i < payloadPropertyCount; ++i) {
-        var property = new WebInspector.CSSProperty.parsePayload(this, i, payload.cssProperties[i]);
+        var property = WebInspector.CSSProperty.parsePayload(this, i, payload.cssProperties[i]);
         this._allProperties.push(property);
         if (property.disabled)
             this.__disabledProperties[i] = property;
@@ -657,10 +660,15 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
     setContent: function(resource, content, majorChange, userCallback)
     {
         if (this._urlToStyleSheetId[resource.url]) {
-            this._innerSetContent(resource.url, content, majorChange, userCallback);
+            this._innerSetContent(resource.url, content, majorChange, userCallback, null);
             return;
         }
         this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource.url, content, majorChange, userCallback));
+    },
+
+    canSetContent: function()
+    {
+        return true;
     },
 
     _inspectedURLChanged: function(event)
@@ -732,3 +740,8 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
 }
 
 WebInspector.CSSStyleModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
+
+/**
+ * @type {WebInspector.CSSStyleModel}
+ */
+WebInspector.cssModel = null;

@@ -44,12 +44,15 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
-    --module jsmodule_sdk:20:jsmodule_common \
+    --module jsmodule_sdk:23:jsmodule_common \
         --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
         --js Source/WebCore/inspector/front-end/CompilerSourceMappingProvider.js \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
         --js Source/WebCore/inspector/front-end/ContentProviders.js \
         --js Source/WebCore/inspector/front-end/CookieParser.js \
+        --js Source/WebCore/inspector/front-end/CSSCompletions.js \
+        --js Source/WebCore/inspector/front-end/CSSKeywordCompletions.js \
+        --js Source/WebCore/inspector/front-end/CSSStyleModel.js \
         --js Source/WebCore/inspector/front-end/BreakpointManager.js \
         --js Source/WebCore/inspector/front-end/Database.js \
         --js Source/WebCore/inspector/front-end/DOMAgent.js \

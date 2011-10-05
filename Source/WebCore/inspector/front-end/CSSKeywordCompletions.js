@@ -28,15 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.CSSKeywordCompletions = {
     forProperty: function(propertyName)
     {
         var acceptedKeywords = ["initial"];
-        if (propertyName in this._propertyKeywordMap)
-            acceptedKeywords = acceptedKeywords.concat(this._propertyKeywordMap[propertyName]);
-        if (propertyName in this._colorAwareProperties)
+        if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
+            acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
+        if (propertyName in WebInspector.CSSKeywordCompletions._colorAwareProperties)
             acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
-        if (propertyName in WebInspector.StylesSidebarPane.InheritedProperties)
+        if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
             acceptedKeywords.push("inherit");
         return new WebInspector.CSSCompletions(acceptedKeywords, true);
     },
@@ -46,6 +49,15 @@ WebInspector.CSSKeywordCompletions = {
         return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
     }
 };
+
+// Taken from http://www.w3.org/TR/CSS21/propidx.html.
+WebInspector.CSSKeywordCompletions.InheritedProperties = [
+    "azimuth", "border-collapse", "border-spacing", "caption-side", "color", "cursor", "direction", "elevation",
+    "empty-cells", "font-family", "font-size", "font-style", "font-variant", "font-weight", "font", "letter-spacing",
+    "line-height", "list-style-image", "list-style-position", "list-style-type", "list-style", "orphans", "pitch-range",
+    "pitch", "quotes", "richness", "speak-header", "speak-numeral", "speak-punctuation", "speak", "speech-rate", "stress",
+    "text-align", "text-indent", "text-transform", "text-shadow", "visibility", "voice-family", "volume", "white-space", "widows", "word-spacing"
+].keySet();
 
 WebInspector.CSSKeywordCompletions._colors = [
     "aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red",
@@ -66,7 +78,7 @@ WebInspector.CSSKeywordCompletions._colors = [
     "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "skyblue", "slateblue",
     "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "thistle", "tomato", "turquoise", "violet",
     "wheat", "whitesmoke", "yellowgreen"
-],
+];
 
 WebInspector.CSSKeywordCompletions._colorAwareProperties = [
     "background", "background-color", "border", "border-color", "border-top", "border-right", "border-bottom",

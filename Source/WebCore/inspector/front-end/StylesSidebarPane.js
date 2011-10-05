@@ -105,14 +105,6 @@ WebInspector.StylesSidebarPane.ColorFormat = {
 
 WebInspector.StylesSidebarPane.StyleValueDelimiters = " \t\n\"':;,/()";
 
-// Taken from http://www.w3.org/TR/CSS21/propidx.html.
-WebInspector.StylesSidebarPane.InheritedProperties = [
-    "azimuth", "border-collapse", "border-spacing", "caption-side", "color", "cursor", "direction", "elevation",
-    "empty-cells", "font-family", "font-size", "font-style", "font-variant", "font-weight", "font", "letter-spacing",
-    "line-height", "list-style-image", "list-style-position", "list-style-type", "list-style", "orphans", "pitch-range",
-    "pitch", "quotes", "richness", "speak-header", "speak-numeral", "speak-punctuation", "speak", "speech-rate", "stress",
-    "text-align", "text-indent", "text-transform", "text-shadow", "visibility", "voice-family", "volume", "white-space", "widows", "word-spacing"
-].keySet();
 
 // Keep in sync with RenderStyleConstants.h PseudoId enum. Array below contains pseudo id names for corresponding enum indexes.
 // First item is empty due to its artificial NOPSEUDO nature in the enum.
@@ -630,7 +622,7 @@ WebInspector.StylesSidebarPane.prototype = {
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
             // Does this style contain non-overridden inherited property?
-            if (property.isLive && property.name in WebInspector.StylesSidebarPane.InheritedProperties)
+            if (property.isLive && property.name in WebInspector.CSSKeywordCompletions.InheritedProperties)
                 return true;
         }
         return false;
@@ -924,7 +916,7 @@ WebInspector.StylePropertiesSection.prototype = {
         if (this.isInherited) {
             // While rendering inherited stylesheet, reverse meaning of this property.
             // Render truly inherited properties with black, i.e. return them as non-inherited.
-            return !(propertyName in WebInspector.StylesSidebarPane.InheritedProperties);
+            return !(propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties);
         }
         return false;
     },
@@ -934,7 +926,7 @@ WebInspector.StylePropertiesSection.prototype = {
         if (!this._usedProperties || this.noAffect)
             return false;
 
-        if (this.isInherited && !(propertyName in WebInspector.StylesSidebarPane.InheritedProperties)) {
+        if (this.isInherited && !(propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)) {
             // In the inherited sections, only show overrides for the potentially inherited properties.
             return false;
         }
@@ -1304,7 +1296,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                 var property = section.uniqueProperties[j];
                 if (property.disabled)
                     continue;
-                if (section.isInherited && !(property.name in WebInspector.StylesSidebarPane.InheritedProperties))
+                if (section.isInherited && !(property.name in WebInspector.CSSKeywordCompletions.InheritedProperties))
                     continue;
 
                 var treeElement = this._propertyTreeElements[property.name];

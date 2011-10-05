@@ -438,3 +438,8 @@ WebInspector.PageDispatcher.prototype = {
         this._resourceTreeModel._frameDetached(frameId);
     }
 }
+
+/**
+ * @type {WebInspector.ResourceTreeModel}
+ */
+WebInspector.resourceTreeModel = null;
