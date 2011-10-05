@@ -27,4 +27,50 @@ InspectorTest.resourceURLComparer = function(r1, r2)
     return r1.request.url.localeCompare(r2.request.url);
 }
 
+InspectorTest.runAfterResourcesAreFinished = function(resourceURLs, callback)
+{
+    InspectorTest._runAfterResourcesAreFinished(resourceURLs.keySet(), callback);
+}
+
+InspectorTest._runAfterResourcesAreFinished = function(resourceURLs, callback)
+{
+    function checkResource(resource)
+    {
+        for (var url in resourceURLs) {
+            if (resource.url.indexOf(url) !== -1)
+                delete resourceURLs[url];
+        }
+    }
+
+    function maybeCallback()
+    {
+        if (!Object.keys(resourceURLs).length) {
+            callback();
+            return true;
+        }
+    }
+
+    function addSniffer(resource)
+    {
+        InspectorTest.addSniffer(WebInspector.ResourceTreeModel.prototype, "_addResourceToFrame", resourceAddedToFrame.bind(this));
+    }
+
+    function resourceAddedToFrame(resource)
+    {
+        checkResource(resource);
+        if (!maybeCallback())
+            addSniffer();
+    }
+
+    function visit(resource)
+    {
+        checkResource(resource);
+        return maybeCallback();
+    }
+
+    var succeeded = WebInspector.resourceTreeModel.forAllResources(visit);
+    if (!succeeded)
+        addSniffer();
+}
+
 }

@@ -1,0 +1,17 @@
+Tests concatenated script search in inspector debugger agent.
+
+Bug 69015  
+Debugger was enabled.
+http://127.0.0.1:8000/inspector/search/resources/search-concatenated.html
+Search matches: 
+lineNumber: 3, line: 'function searchTestUniqueString()'
+lineNumber: 6, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 12, line: '    searchTestUniqueString();'
+lineNumber: 13, line: '    // SEARCHTestUniqueString();'
+lineNumber: 18, line: 'function searchTestUniqueString2()'
+lineNumber: 21, line: '    /* searchTestUniqueString two occurences on the same line searchTestUniqueString */ } '
+lineNumber: 21, line: ' function doSomething2() { searchTestUniqueString();'
+lineNumber: 22, line: '    // SEARCHTestUniqueString();'
+
+Debugger was disabled.
+

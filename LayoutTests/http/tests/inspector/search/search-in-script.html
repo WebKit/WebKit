@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="../debugger-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    // This file should not match search query.
+    var text = "searchTest" + "UniqueString";
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.showScriptSource("search.js", step3);
+    }
+
+    function step3()
+    {
+        var scripts = WebInspector.debuggerModel.scriptsForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        var script = scripts[0];
+        InspectorTest.addResult(script.sourceURL);
+        script.searchInContent(text, step4);
+    }
+
+    function step4(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests script search in inspector debugger agent.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=69015">Bug 69015</a>
+
+<iframe src="resources/search.html" onload="runTest()">
+</body>
+</html>

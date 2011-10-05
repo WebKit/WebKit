@@ -86,32 +86,4 @@ InspectorTest.dumpResourceTreeEverything = function()
     InspectorTest.dumpResourcesTree();
 }
 
-InspectorTest.runAfterResourcesAreFinished = function(resourceURLs, callback)
-{
-    InspectorTest._runAfterResourcesAreFinished(resourceURLs.keySet(), callback);
-}
-
-InspectorTest._runAfterResourcesAreFinished = function(resourceURLs, callback)
-{
-    function visit(resource)
-    {
-        if (!resource.finished)
-            return true;
-
-        for (var url in resourceURLs) {
-            if (resource.url.indexOf(url) !== -1)
-                delete resourceURLs[url];
-        }
-
-        if (!Object.keys(resourceURLs).length) {
-            callback();
-            return true;
-        }
-    }
-
-    var succeeded = WebInspector.resourceTreeModel.forAllResources(visit);
-    if (!succeeded)
-        setTimeout(InspectorTest._runAfterResourcesAreFinished.bind(InspectorTest, resourceURLs, callback), 0);
-}
-
 };

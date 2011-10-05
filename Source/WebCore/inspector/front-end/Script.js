@@ -49,12 +49,24 @@ WebInspector.Script.prototype = {
 
         function didGetScriptSource(error, source)
         {
-            this._source = source;
+            this._source = error ? "" : source;
             callback(this._source);
         }
         DebuggerAgent.getScriptSource(this.scriptId, didGetScriptSource.bind(this));
     },
 
+    searchInContent: function(query, callback)
+    {
+        function innerCallback(error, searchMatches)
+        {
+            if (error)
+                console.error(error);
+            callback(searchMatches || []);
+        }
+        
+        DebuggerAgent.searchInContent(this.scriptId, query, innerCallback.bind(this));
+    },
+    
     editSource: function(newSource, callback)
     {
         function didEditScriptSource(error, callFrames)

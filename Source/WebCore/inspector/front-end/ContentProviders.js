@@ -50,7 +50,7 @@ WebInspector.ScriptContentProvider.prototype = {
 
     searchInContent: function(query, callback)
     {
-        callback([]);
+        this._script.searchInContent(query, callback);
     }
 }
 
@@ -66,66 +66,112 @@ WebInspector.ConcatenatedScriptsContentProvider = function(scripts)
     this._scripts = scripts;
 };
 
+WebInspector.ConcatenatedScriptsContentProvider.scriptOpenTag = "<script>";
+WebInspector.ConcatenatedScriptsContentProvider.scriptCloseTag = "</script>";
+
 WebInspector.ConcatenatedScriptsContentProvider.prototype = {
-   requestContent: function(callback)
-   {
-       var scripts = this._scripts.slice();
-       scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
-       var sources = [];
-       function didRequestSource(source)
-       {
-           sources.push(source);
-           if (sources.length == scripts.length)
-               callback(this._mimeType, this._concatenateScriptsContent(scripts, sources));
-       }
-       for (var i = 0; i < scripts.length; ++i)
-           scripts[i].requestSource(didRequestSource.bind(this));
-   },
+    _sortedScripts: function()
+    {
+        if (this._sortedScriptsArray)
+            return this._sortedScriptsArray;
+
+        this._sortedScriptsArray = [];
+        
+        var scripts = this._scripts.slice();
+        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
+        
+        var scriptOpenTagLength = WebInspector.ConcatenatedScriptsContentProvider.scriptOpenTag.length;
+        var scriptCloseTagLength = WebInspector.ConcatenatedScriptsContentProvider.scriptCloseTag.length;
+        
+        this._sortedScriptsArray.push(scripts[0]);
+        for (var i = 1; i < scripts.length; ++i) {
+            var previousScript = this._sortedScriptsArray[this._sortedScriptsArray.length - 1];
+            
+            var lineNumber = previousScript.endLine;
+            var columnNumber = previousScript.endColumn + scriptCloseTagLength + scriptOpenTagLength;
+            
+            if (lineNumber < scripts[i].lineOffset || (lineNumber === scripts[i].lineOffset && columnNumber <= scripts[i].columnOffset))
+                this._sortedScriptsArray.push(scripts[i]);
+        }
+        return this._sortedScriptsArray;
+    },
+
+    requestContent: function(callback)
+    {
+        var scripts = this._sortedScripts();
+        var sources = [];
+        function didRequestSource(source)
+        {
+            sources.push(source);
+            if (sources.length == scripts.length)
+                callback(this._mimeType, this._concatenateScriptsContent(scripts, sources));
+        }
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].requestSource(didRequestSource.bind(this));
+    },
 
     searchInContent: function(query, callback)
     {
-        callback([]);
+        var results = {};
+        var scripts = this._sortedScripts();
+        var scriptsLeft = scripts.length;
+
+        function maybeCallback()
+        {
+            if (scriptsLeft)
+                return;
+
+            var result = [];
+            for (var i = 0; i < scripts.length; ++i)
+                result = result.concat(results[scripts[i].scriptId]);
+            callback(result);
+        }
+
+        function searchCallback(script, searchMatches)
+        {
+            results[script.scriptId] = [];
+            for (var i = 0; i < searchMatches.length; ++i) {
+                var searchMatch = {};
+                searchMatch.lineNumber = searchMatches[i].lineNumber + script.lineOffset;
+                searchMatch.lineContent = searchMatches[i].lineContent;
+                results[script.scriptId].push(searchMatch);
+            }
+            scriptsLeft--;
+            maybeCallback.call(this);
+        }
+
+        maybeCallback();
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].searchInContent(query, searchCallback.bind(this, scripts[i]));
     },
 
-   _concatenateScriptsContent: function(scripts, sources)
-   {
-       var content = "";
-       var lineNumber = 0;
-       var columnNumber = 0;
+    _concatenateScriptsContent: function(scripts, sources)
+    {
+        var content = "";
+        var lineNumber = 0;
+        var columnNumber = 0;
 
-       function appendChunk(chunk)
-       {
-           content += chunk;
-           var lineEndings = chunk.lineEndings();
-           var lineCount = lineEndings.length;
-           if (lineCount === 1)
-               columnNumber += chunk.length;
-           else {
-               lineNumber += lineCount - 1;
-               columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
-           }
-       }
+        var scriptOpenTag = WebInspector.ConcatenatedScriptsContentProvider.scriptOpenTag;
+        var scriptCloseTag = WebInspector.ConcatenatedScriptsContentProvider.scriptCloseTag;
+        for (var i = 0; i < scripts.length; ++i) {
+            // Fill the gap with whitespace characters.
+            for (var newLinesCount = scripts[i].lineOffset - lineNumber; newLinesCount > 0; --newLinesCount) {
+                columnNumber = 0;
+                content += "\n";
+            }
+            for (var spacesCount = scripts[i].columnOffset - columnNumber - scriptOpenTag.length; spacesCount > 0; --spacesCount)
+                content += " ";
 
-       var scriptOpenTag = "<script>";
-       var scriptCloseTag = "</script>";
-       for (var i = 0; i < scripts.length; ++i) {
-           if (lineNumber > scripts[i].lineOffset || (lineNumber === scripts[i].lineOffset && columnNumber > scripts[i].columnOffset - scriptOpenTag.length))
-               continue;
+            // Add script tag.
+            content += scriptOpenTag;
+            content += sources[i];
+            content += scriptCloseTag;
+            lineNumber = scripts[i].endLine;
+            columnNumber = scripts[i].endColumn + scriptCloseTag.length;
+        }
 
-           // Fill the gap with whitespace characters.
-           while (lineNumber < scripts[i].lineOffset)
-               appendChunk("\n");
-           while (columnNumber < scripts[i].columnOffset - scriptOpenTag.length)
-               appendChunk(" ");
-
-           // Add script tag.
-           appendChunk(scriptOpenTag);
-           appendChunk(sources[i]);
-           appendChunk(scriptCloseTag);
-       }
-
-       return content;
-   }
+        return content;
+    }
 }
 
 WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;

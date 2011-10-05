@@ -2397,9 +2397,3 @@ http/tests/multipart/stop-crash.html
 # One test failed after r96260
 # https://bugs.webkit.org/show_bug.cgi?id=69257
 inspector/styles/styles-disable-then-change.html
-
-# [Qt] REGRESSION(r95526): It made 3 inspector tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=69265
-http/tests/inspector/search/search-in-concatenated-script.html
-http/tests/inspector/search/search-in-script.html
-inspector/debugger/script-formatter.html

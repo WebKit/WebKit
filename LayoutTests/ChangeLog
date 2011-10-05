@@ -1,3 +1,31 @@
+2011-10-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for search in script content.
+        https://bugs.webkit.org/show_bug.cgi?id=69015
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest):
+        * http/tests/inspector/resources-test.js:
+        (initialize_ResourceTest.InspectorTest.runAfterResourcesAreFinished):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.maybeCallback):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.addSniffer):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.resourceAddedToFrame):
+        (initialize_ResourceTest.InspectorTest._runAfterResourcesAreFinished.visit):
+        (initialize_ResourceTest):
+        * http/tests/inspector/search/resources/search-concatenated.html: Added.
+        * http/tests/inspector/search/search-in-concatenated-script-expected.txt: Added.
+        * http/tests/inspector/search/search-in-concatenated-script.html: Added.
+        * http/tests/inspector/search/search-in-resource.html:
+        * http/tests/inspector/search/search-in-script-expected.txt: Added.
+        * http/tests/inspector/search/search-in-script.html: Added.
+        * http/tests/inspector/search/search-test.js:
+        (initialize_SearchTest):
+        * inspector/debugger/content-providers.html:
+        * platform/qt/Skipped:
+
 2011-10-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Try to paint the bot green.
