@@ -269,18 +269,19 @@ bool CCSingleThreadProxy::doComposite()
     {
       DebugScopedSetImplThread impl;
       m_layerTreeHostImpl->drawLayers();
-      if (m_layerTreeHostImpl->isContextLost()) {
-          // Trying to recover the context right here will not work if GPU process
-          // died. This is because GpuChannelHost::OnErrorMessage will only be
-          // called at the next iteration of the message loop, reverting our
-          // recovery attempts here. Instead, we detach the root layer from the
-          // renderer, recreate the renderer at the next message loop iteration
-          // and request a repaint yet again.
-          m_graphicsContextLost = true;
-          m_numFailedRecreateAttempts = 0;
-          setNeedsCommitThenRedraw();
-          return false;
-      }
+    }
+
+    if (m_layerTreeHostImpl->isContextLost()) {
+        // Trying to recover the context right here will not work if GPU process
+        // died. This is because GpuChannelHost::OnErrorMessage will only be
+        // called at the next iteration of the message loop, reverting our
+        // recovery attempts here. Instead, we detach the root layer from the
+        // renderer, recreate the renderer at the next message loop iteration
+        // and request a repaint yet again.
+        m_graphicsContextLost = true;
+        m_numFailedRecreateAttempts = 0;
+        setNeedsCommitThenRedraw();
+        return false;
     }
 
     return true;
