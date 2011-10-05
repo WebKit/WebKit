@@ -1,3 +1,9 @@
+2011-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        More build fix.
+
+        * WebCore.exp.in: Made a typo in a last minute change for my 32-bit build fix.
+
 2011-10-05  Anna Cavender  <annacc@chromium.org>
 
         Fix CueParser::didFinishLoading to match changes in ThreadableLoaderClient
