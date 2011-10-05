@@ -46,7 +46,7 @@ public:
         ALLPASS = 7
     };
 
-    static PassRefPtr<BiquadFilterNode> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<BiquadFilterNode> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new BiquadFilterNode(context, sampleRate));      
     }
@@ -59,7 +59,7 @@ public:
     AudioParam* gain() { return biquadProcessor()->parameter3(); }
     
 private:
-    BiquadFilterNode(AudioContext*, double sampleRate);
+    BiquadFilterNode(AudioContext*, float sampleRate);
 
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
 };

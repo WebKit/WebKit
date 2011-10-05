@@ -42,14 +42,14 @@ namespace WebCore {
 
 class AudioDestinationChromium : public AudioDestination, public WebKit::WebAudioDevice::RenderCallback {
 public:
-    AudioDestinationChromium(AudioSourceProvider&, double sampleRate);
+    AudioDestinationChromium(AudioSourceProvider&, float sampleRate);
     virtual ~AudioDestinationChromium();
 
     virtual void start();
     virtual void stop();
     bool isPlaying() { return m_isPlaying; }
 
-    double sampleRate() const { return m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
 
     // WebKit::WebAudioDevice::RenderCallback
     virtual void render(const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
@@ -57,7 +57,7 @@ public:
 private:
     AudioSourceProvider& m_provider;
     AudioBus m_renderBus;
-    double m_sampleRate;
+    float m_sampleRate;
     bool m_isPlaying;
     OwnPtr<WebKit::WebAudioDevice> m_audioDevice;
     size_t m_callbackBufferSize;

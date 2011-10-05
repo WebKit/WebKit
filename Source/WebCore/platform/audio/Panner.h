@@ -47,7 +47,7 @@ public:
     
     typedef unsigned PanningModel;
 
-    static PassOwnPtr<Panner> create(PanningModel model, double sampleRate);
+    static PassOwnPtr<Panner> create(PanningModel, float sampleRate);
 
     virtual ~Panner() { };
 

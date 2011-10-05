@@ -45,13 +45,13 @@ const unsigned HRTFDatabase::NumberOfRawElevations = 10; // -45 -> +90 (each 15 
 const unsigned HRTFDatabase::InterpolationFactor = 1;
 const unsigned HRTFDatabase::NumberOfTotalElevations = NumberOfRawElevations * InterpolationFactor;
 
-PassOwnPtr<HRTFDatabase> HRTFDatabase::create(double sampleRate)
+PassOwnPtr<HRTFDatabase> HRTFDatabase::create(float sampleRate)
 {
     OwnPtr<HRTFDatabase> hrtfDatabase = adoptPtr(new HRTFDatabase(sampleRate));
     return hrtfDatabase.release();
 }
 
-HRTFDatabase::HRTFDatabase(double sampleRate)
+HRTFDatabase::HRTFDatabase(float sampleRate)
     : m_elevations(NumberOfTotalElevations)
     , m_sampleRate(sampleRate)
 {
@@ -75,7 +75,7 @@ HRTFDatabase::HRTFDatabase(double sampleRate)
 
             // Create the interpolated convolution kernels and delays.
             for (unsigned jj = 1; jj < InterpolationFactor; ++jj) {
-                double x = static_cast<double>(jj) / static_cast<double>(InterpolationFactor);
+                float x = static_cast<float>(jj) / static_cast<float>(InterpolationFactor);
                 m_elevations[i + jj] = HRTFElevation::createByInterpolatingSlices(m_elevations[i].get(), m_elevations[j].get(), x, sampleRate);
                 ASSERT(m_elevations[i + jj].get());
             }

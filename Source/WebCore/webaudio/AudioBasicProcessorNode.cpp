@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext* context, double sampleRate)
+AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));

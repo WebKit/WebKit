@@ -1,3 +1,20 @@
+2011-10-05  Jer Noble  <jer.noble@apple.com>
+
+        WEB_AUDIO does not compile on Leopard 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=69292
+
+        Reviewed by Simon Fraser.
+
+        Platform-independent portions of WEB_AUDIO have changed from double -> float, and 
+        platform-specific subclasses must change as well.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        * src/AudioDestinationChromium.h:
+        (WebCore::AudioDestinationChromium::sampleRate):
+
 2011-10-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Hook WebCompositor interface for input events up to the compositor proper

@@ -33,6 +33,7 @@
 #include "AudioDestinationMac.h"
 
 #include "AudioSourceProvider.h"
+#include "FloatConversion.h"
 #include <CoreAudio/AudioHardware.h>
 
 namespace WebCore {
@@ -40,12 +41,12 @@ namespace WebCore {
 const int kBufferSize = 128;
 
 // Factory method: Mac-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provider, double sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provider, float sampleRate)
 {
     return adoptPtr(new AudioDestinationMac(provider, sampleRate));
 }
 
-double AudioDestination::hardwareSampleRate()
+float AudioDestination::hardwareSampleRate()
 {
     // Determine the default output device's sample-rate.
     AudioDeviceID deviceID = kAudioDeviceUnknown;
@@ -54,7 +55,7 @@ double AudioDestination::hardwareSampleRate()
     AudioObjectPropertyAddress defaultOutputDeviceAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
     OSStatus result = AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceAddress, 0, 0, &infoSize, (void*)&deviceID);
     if (result)
-        return 0.0; // error
+        return 0; // error
 
     Float64 nominalSampleRate;
     infoSize = sizeof(Float64);
@@ -62,12 +63,12 @@ double AudioDestination::hardwareSampleRate()
     AudioObjectPropertyAddress nominalSampleRateAddress = { kAudioDevicePropertyNominalSampleRate, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
     result = AudioObjectGetPropertyData(deviceID, &nominalSampleRateAddress, 0, 0, &infoSize, (void*)&nominalSampleRate);
     if (result)
-        return 0.0; // error
+        return 0; // error
 
-    return nominalSampleRate;
+    return narrowPrecisionToFloat(nominalSampleRate);
 }
 
-AudioDestinationMac::AudioDestinationMac(AudioSourceProvider& provider, double sampleRate)
+AudioDestinationMac::AudioDestinationMac(AudioSourceProvider& provider, float sampleRate)
     : m_outputUnit(0)
     , m_provider(provider)
     , m_renderBus(2, kBufferSize, false)

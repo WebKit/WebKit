@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sampleRate)
+PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     // This method can be called from other than the main thread, so we need an auto-release pool.
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];

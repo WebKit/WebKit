@@ -50,12 +50,12 @@ const size_t maximumCallbackBufferSize = 16384;
 const unsigned numberOfChannels = 2;
 
 // Factory method: Chromium-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provider, double sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provider, float sampleRate)
 {
     return adoptPtr(new AudioDestinationChromium(provider, sampleRate));
 }
 
-AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider, double sampleRate)
+AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider, float sampleRate)
     : m_provider(provider)
     , m_renderBus(numberOfChannels, renderBufferSize, false)
     , m_sampleRate(sampleRate)
@@ -101,9 +101,9 @@ void AudioDestinationChromium::stop()
     }
 }
 
-double AudioDestination::hardwareSampleRate()
+float AudioDestination::hardwareSampleRate()
 {
-    return webKitPlatformSupport()->audioHardwareSampleRate();
+    return static_cast<float>(webKitPlatformSupport()->audioHardwareSampleRate());
 }
 
 // Pulls on our provider to get the rendered audio stream.

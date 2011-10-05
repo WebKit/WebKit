@@ -48,7 +48,7 @@ class AudioNode {
 public:
     enum { ProcessingSizeInFrames = 128 };
 
-    AudioNode(AudioContext*, double sampleRate);
+    AudioNode(AudioContext*, float sampleRate);
     virtual ~AudioNode();
 
     AudioContext* context() { return m_context.get(); }
@@ -117,7 +117,7 @@ public:
     bool connect(AudioNode* destination, unsigned outputIndex = 0, unsigned inputIndex = 0);
     bool disconnect(unsigned outputIndex = 0);
 
-    double sampleRate() const { return m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
 
     // processIfNecessary() is called by our output(s) when the rendering graph needs this AudioNode to process.
     // This method ensures that the AudioNode will only process once per rendering time quantum even if it's called repeatedly.
@@ -150,7 +150,7 @@ private:
     volatile bool m_isInitialized;
     NodeType m_nodeType;
     RefPtr<AudioContext> m_context;
-    double m_sampleRate;
+    float m_sampleRate;
     Vector<OwnPtr<AudioNodeInput> > m_inputs;
     Vector<OwnPtr<AudioNodeOutput> > m_outputs;
 

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-AudioGainNode::AudioGainNode(AudioContext* context, double sampleRate)
+AudioGainNode::AudioGainNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_lastGain(1.0)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context

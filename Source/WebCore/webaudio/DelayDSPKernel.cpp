@@ -33,8 +33,8 @@
 
 using namespace std;
   
-const double DefaultMaxDelayTime = 1.0;
-const double SmoothingTimeConstant = 0.020; // 20ms
+const float DefaultMaxDelayTime = 1;
+const float SmoothingTimeConstant = 0.020f; // 20ms
   
 namespace WebCore {
 
@@ -54,7 +54,7 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, processor->sampleRate());
 }
 
-DelayDSPKernel::DelayDSPKernel(double maxDelayTime, double sampleRate)
+DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
     : AudioDSPKernel(sampleRate)
     , m_maxDelayTime(maxDelayTime)
     , m_writeIndex(0)
@@ -88,7 +88,7 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
     if (!source || !destination)
         return;
         
-    double sampleRate = this->sampleRate();
+    float sampleRate = this->sampleRate();
     double delayTime = delayProcessor() ? delayProcessor()->delayTime()->value() : m_desiredDelayFrames / sampleRate;
 
     // Make sure the delay time is in a valid range.

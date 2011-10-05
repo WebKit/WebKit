@@ -52,7 +52,7 @@ const unsigned HRTFElevation::NumberOfTotalAzimuths = NumberOfRawAzimuths * Inte
 
 // Takes advantage of the symmetry and creates a composite version of the two measured versions.  For example, we have both azimuth 30 and -30 degrees
 // where the roles of left and right ears are reversed with respect to each other.
-bool HRTFElevation::calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, double sampleRate, const String& subjectName,
+bool HRTFElevation::calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                                  RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR)
 {
     RefPtr<HRTFKernel> kernelL1;
@@ -71,13 +71,13 @@ bool HRTFElevation::calculateSymmetricKernelsForAzimuthElevation(int azimuth, in
         return false;
         
     // Notice L/R reversal in symmetric version.
-    kernelL = HRTFKernel::createInterpolatedKernel(kernelL1.get(), kernelR2.get(), 0.5);
-    kernelR = HRTFKernel::createInterpolatedKernel(kernelR1.get(), kernelL2.get(), 0.5);
+    kernelL = HRTFKernel::createInterpolatedKernel(kernelL1.get(), kernelR2.get(), 0.5f);
+    kernelR = HRTFKernel::createInterpolatedKernel(kernelR1.get(), kernelL2.get(), 0.5f);
     
     return true;
 }
 
-bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevation, double sampleRate, const String& subjectName,
+bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                         RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR)
 {
     // Valid values for azimuth are 0 -> 345 in 15 degree increments.
@@ -158,7 +158,7 @@ static int maxElevations[] = {
     45 //  345 
 };
 
-PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectName, int elevation, double sampleRate)
+PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectName, int elevation, float sampleRate)
 {
     bool isElevationGood = elevation >= -45 && elevation <= 90 && (elevation / 15) * 15 == elevation;
     ASSERT(isElevationGood);
@@ -188,7 +188,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectN
 
         // Create the interpolated convolution kernels and delays.
         for (unsigned jj = 1; jj < InterpolationFactor; ++jj) {
-            double x = double(jj) / double(InterpolationFactor); // interpolate from 0 -> 1
+            float x = float(jj) / float(InterpolationFactor); // interpolate from 0 -> 1
 
             (*kernelListL)[i + jj] = HRTFKernel::createInterpolatedKernel(kernelListL->at(i).get(), kernelListL->at(j).get(), x);
             (*kernelListR)[i + jj] = HRTFKernel::createInterpolatedKernel(kernelListR->at(i).get(), kernelListR->at(j).get(), x);
@@ -199,7 +199,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectN
     return hrtfElevation.release();
 }
 
-PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, double x, double sampleRate)
+PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate)
 {
     ASSERT(hrtfElevation1 && hrtfElevation2);
     if (!hrtfElevation1 || !hrtfElevation2)

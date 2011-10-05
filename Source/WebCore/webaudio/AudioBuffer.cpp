@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-PassRefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
+PassRefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
     return adoptRef(new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate));
 }
 
-PassRefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
+PassRefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     OwnPtr<AudioBus> bus = createBusFromInMemoryAudioFile(data, dataSize, mixToMono, sampleRate);
     if (bus.get())
@@ -53,7 +53,7 @@ PassRefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, s
     return 0;
 }
 
-AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
+AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : m_gain(1.0)
     , m_sampleRate(sampleRate)
     , m_length(numberOfFrames)

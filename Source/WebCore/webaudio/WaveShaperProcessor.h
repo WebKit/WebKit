@@ -38,7 +38,7 @@ namespace WebCore {
 
 class WaveShaperProcessor : public AudioDSPKernelProcessor {
 public:
-    WaveShaperProcessor(double sampleRate, size_t numberOfChannels);
+    WaveShaperProcessor(float sampleRate, size_t numberOfChannels);
 
     virtual ~WaveShaperProcessor();
 

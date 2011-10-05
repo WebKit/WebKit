@@ -45,12 +45,12 @@ public:
     }
 
     // Position
-    void setPosition(double x, double y, double z) { setPosition(FloatPoint3D(x, y, z)); }
+    void setPosition(float x, float y, float z) { setPosition(FloatPoint3D(x, y, z)); }
     void setPosition(const FloatPoint3D &position) { m_position = position; }
     const FloatPoint3D& position() const { return m_position; }
 
     // Orientation
-    void setOrientation(double x, double y, double z, double upX, double upY, double upZ)
+    void setOrientation(float x, float y, float z, float upX, float upY, float upZ)
     {
         setOrientation(FloatPoint3D(x, y, z));
         setUpVector(FloatPoint3D(upX, upY, upZ));
@@ -63,7 +63,7 @@ public:
     const FloatPoint3D& upVector() const { return m_upVector; }
 
     // Velocity
-    void setVelocity(double x, double y, double z) { setVelocity(FloatPoint3D(x, y, z)); }
+    void setVelocity(float x, float y, float z) { setVelocity(FloatPoint3D(x, y, z)); }
     void setVelocity(const FloatPoint3D &velocity) { m_velocity = velocity; }
     const FloatPoint3D& velocity() const { return m_velocity; }
 

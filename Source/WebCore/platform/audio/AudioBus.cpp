@@ -48,9 +48,9 @@ using namespace VectorMath;
     
 AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
-    , m_busGain(1.0)
+    , m_busGain(1)
     , m_isFirstTime(true)
-    , m_sampleRate(0.0)
+    , m_sampleRate(0)
 {
     m_channels.reserveInitialCapacity(numberOfChannels);
 
@@ -466,7 +466,7 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
         
             // Do the mono mixdown.
             for (unsigned i = 0; i < n; ++i)
-                destination[i] = 0.5 * (sourceL[i] + sourceR[i]);
+                destination[i] = (sourceL[i] + sourceR[i]) / 2;
 
             destinationBus->setSampleRate(sourceBus->sampleRate());    
             return destinationBus.release();

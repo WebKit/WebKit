@@ -34,7 +34,7 @@ class AudioContext;
     
 class AudioChannelSplitter : public AudioNode {
 public:
-    static PassRefPtr<AudioChannelSplitter> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<AudioChannelSplitter> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new AudioChannelSplitter(context, sampleRate));      
     }
@@ -44,7 +44,7 @@ public:
     virtual void reset();
 
 private:
-    AudioChannelSplitter(AudioContext*, double sampleRate);
+    AudioChannelSplitter(AudioContext*, float sampleRate);
 };
 
 } // namespace WebCore

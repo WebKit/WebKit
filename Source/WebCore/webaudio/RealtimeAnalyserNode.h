@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RealtimeAnalyserNode : public AudioNode {
 public:
-    static PassRefPtr<RealtimeAnalyserNode> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<RealtimeAnalyserNode> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new RealtimeAnalyserNode(context, sampleRate));      
     }
@@ -64,7 +64,7 @@ public:
     void getByteTimeDomainData(Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
 
 private:
-    RealtimeAnalyserNode(AudioContext*, double sampleRate);
+    RealtimeAnalyserNode(AudioContext*, float sampleRate);
 
     RealtimeAnalyser m_analyser;
 };

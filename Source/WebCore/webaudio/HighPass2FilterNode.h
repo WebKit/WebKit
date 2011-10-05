@@ -34,7 +34,7 @@ class AudioParam;
     
 class HighPass2FilterNode : public AudioBasicProcessorNode {
 public:
-    static PassRefPtr<HighPass2FilterNode> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<HighPass2FilterNode> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new HighPass2FilterNode(context, sampleRate));      
     }
@@ -43,7 +43,7 @@ public:
     AudioParam* resonance() { return biquadProcessor()->parameter2(); }
     
 private:
-    HighPass2FilterNode(AudioContext*, double sampleRate);
+    HighPass2FilterNode(AudioContext*, float sampleRate);
 
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
 };

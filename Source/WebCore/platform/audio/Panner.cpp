@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<Panner> Panner::create(PanningModel model, double sampleRate)
+PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate)
 {
     OwnPtr<Panner> panner;
 

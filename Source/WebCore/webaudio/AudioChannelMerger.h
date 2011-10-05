@@ -38,7 +38,7 @@ class AudioContext;
     
 class AudioChannelMerger : public AudioNode {
 public:
-    static PassRefPtr<AudioChannelMerger> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<AudioChannelMerger> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new AudioChannelMerger(context, sampleRate));      
     }
@@ -51,7 +51,7 @@ public:
     virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
 
 private:
-    AudioChannelMerger(AudioContext*, double sampleRate);
+    AudioChannelMerger(AudioContext*, float sampleRate);
 };
 
 } // namespace WebCore

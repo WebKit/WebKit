@@ -53,7 +53,7 @@ public:
         SOUNDFIELD = 2,
     };
 
-    static PassRefPtr<AudioPannerNode> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<AudioPannerNode> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new AudioPannerNode(context, sampleRate));
     }
@@ -117,7 +117,7 @@ public:
     AudioGain* coneGain() { return m_coneGain.get(); }                                        
 
 private:
-    AudioPannerNode(AudioContext*, double sampleRate);
+    AudioPannerNode(AudioContext*, float sampleRate);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();

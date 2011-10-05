@@ -36,7 +36,7 @@ class DelayProcessor;
 class DelayDSPKernel : public AudioDSPKernel {
 public:  
     DelayDSPKernel(DelayProcessor*);
-    DelayDSPKernel(double maxDelayTime, double sampleRate);
+    DelayDSPKernel(double maxDelayTime, float sampleRate);
     
     virtual void process(const float* source, float* destination, size_t framesToProcess);
     virtual void reset();

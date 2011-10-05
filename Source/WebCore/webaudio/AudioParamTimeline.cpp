@@ -30,6 +30,7 @@
 #include "AudioParamTimeline.h"
 
 #include "AudioUtilities.h"
+#include "FloatConversion.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -124,8 +125,8 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
     // Ask for just a single value.
     float value;
     float sampleRate = context->sampleRate();
-    float startTime = context->currentTime();
-    float endTime = startTime + 1.1 / sampleRate; // time just beyond one sample-frame
+    float startTime = narrowPrecisionToFloat(context->currentTime());
+    float endTime = startTime + 1.1f / sampleRate; // time just beyond one sample-frame
     float controlRate = sampleRate / AudioNode::ProcessingSizeInFrames; // one parameter change per render quantum
     value = valuesForTimeRange(startTime, endTime, defaultValue, &value, 1, sampleRate, controlRate);
 
@@ -157,7 +158,7 @@ float AudioParamTimeline::valuesForTimeRange(float startTime,
 }
 
 // Returns the rounded down integer sample-frame for the time and sample-rate.
-static unsigned timeToSampleFrame(double time, double sampleRate)
+static unsigned timeToSampleFrame(double time, float sampleRate)
 {
     double k = 0.5 / sampleRate;
     return static_cast<unsigned>((time + k) * sampleRate);
@@ -184,7 +185,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
     }
 
     // Maintain a running time and index for writing the values buffer.
-    double currentTime = startTime;
+    float currentTime = startTime;
     unsigned writeIndex = 0;
 
     // If first event is after startTime then fill initial part of values buffer with defaultValue
@@ -245,8 +246,8 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     values[writeIndex] = value;
             } else {
                 // Interpolate in log space.
-                value1 = log2(value1);
-                value2 = log2(value2);
+                value1 = log2f(value1);
+                value2 = log2f(value2);
 
                 // FIXME: optimize to not use pow() in inner loop, this is just a simple exponential ramp.
                 for (; writeIndex < fillToFrame; ++writeIndex) {

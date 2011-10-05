@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sampleRate)
+PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
     OwnPtr<AudioBus> audioBus = PlatformSupport::loadPlatformAudioResource(name, sampleRate);
@@ -48,7 +48,7 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sam
     return AudioBus::createBySampleRateConverting(audioBus.get(), false, sampleRate);
 }
 
-PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
+PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
     OwnPtr<AudioBus> audioBus = PlatformSupport::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);

@@ -41,7 +41,7 @@ class AudioBus;
 
 class AudioProcessor {
 public:
-    AudioProcessor(double sampleRate)
+    AudioProcessor(float sampleRate)
         : m_initialized(false)
         , m_sampleRate(sampleRate)
     {
@@ -63,11 +63,11 @@ public:
 
     bool isInitialized() const { return m_initialized; }
 
-    double sampleRate() const { return m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
 
 protected:
     bool m_initialized;
-    double m_sampleRate;
+    float m_sampleRate;
 };
 
 } // namespace WebCore

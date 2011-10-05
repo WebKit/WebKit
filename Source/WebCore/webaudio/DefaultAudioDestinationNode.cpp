@@ -50,7 +50,7 @@ void DefaultAudioDestinationNode::initialize()
     if (isInitialized())
         return;
 
-    double hardwareSampleRate = AudioDestination::hardwareSampleRate();
+    float hardwareSampleRate = AudioDestination::hardwareSampleRate();
 #ifndef NDEBUG    
     fprintf(stderr, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
 #endif

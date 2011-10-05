@@ -38,10 +38,10 @@ namespace WebCore {
 
 AudioListener::AudioListener()
     : m_position(0, 0, 0)
-    , m_orientation(0.0, 0.0, -1.0)
-    , m_upVector(0.0, 1.0, 0.0)
+    , m_orientation(0, 0, -1)
+    , m_upVector(0, 1, 0)
     , m_velocity(0, 0, 0)
-    , m_dopplerFactor(1.0)
+    , m_dopplerFactor(1)
     , m_speedOfSound(343.3)
 {
 }

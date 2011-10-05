@@ -51,25 +51,25 @@ class HRTFKernel : public RefCounted<HRTFKernel> {
 public:
     // Note: this is destructive on the passed in AudioChannel.
     // The length of channel must be a power of two.
-    static PassRefPtr<HRTFKernel> create(AudioChannel* channel, size_t fftSize, double sampleRate, bool bassBoost)
+    static PassRefPtr<HRTFKernel> create(AudioChannel* channel, size_t fftSize, float sampleRate, bool bassBoost)
     {
         return adoptRef(new HRTFKernel(channel, fftSize, sampleRate, bassBoost));
     }
 
-    static PassRefPtr<HRTFKernel> create(PassOwnPtr<FFTFrame> fftFrame, double frameDelay, double sampleRate)
+    static PassRefPtr<HRTFKernel> create(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
     {
         return adoptRef(new HRTFKernel(fftFrame, frameDelay, sampleRate));
     }
 
     // Given two HRTFKernels, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFKernel.
-    static PassRefPtr<HRTFKernel> createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, double x);
+    static PassRefPtr<HRTFKernel> createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, float x);
   
     FFTFrame* fftFrame() { return m_fftFrame.get(); }
     
     size_t fftSize() const { return m_fftFrame->fftSize(); }
-    double frameDelay() const { return m_frameDelay; }
+    float frameDelay() const { return m_frameDelay; }
 
-    double sampleRate() const { return m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
     double nyquist() const { return 0.5 * sampleRate(); }
 
     // Converts back into impulse-response form.
@@ -77,9 +77,9 @@ public:
 
 private:
     // Note: this is destructive on the passed in AudioChannel.
-    HRTFKernel(AudioChannel* channel, size_t fftSize, double sampleRate, bool bassBoost);
+    HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate, bool bassBoost);
     
-    HRTFKernel(PassOwnPtr<FFTFrame> fftFrame, double frameDelay, double sampleRate)
+    HRTFKernel(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
         : m_fftFrame(fftFrame)
         , m_frameDelay(frameDelay)
         , m_sampleRate(sampleRate)
@@ -87,8 +87,8 @@ private:
     }
     
     OwnPtr<FFTFrame> m_fftFrame;
-    double m_frameDelay;
-    double m_sampleRate;
+    float m_frameDelay;
+    float m_sampleRate;
 };
 
 typedef Vector<RefPtr<HRTFKernel> > HRTFKernelList;

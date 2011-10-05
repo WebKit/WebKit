@@ -36,7 +36,7 @@ class AudioContext;
     
 class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
 public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
+    AudioDestinationNode(AudioContext*, float sampleRate);
     virtual ~AudioDestinationNode();
     
     // AudioNode   
@@ -48,7 +48,7 @@ public:
 
     double currentTime() { return m_currentTime; }
 
-    virtual double sampleRate() const = 0;
+    virtual float sampleRate() const = 0;
 
     virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
 

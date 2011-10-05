@@ -50,10 +50,10 @@ public:
     // Normally, there will only be a single HRTF database set, but this API supports the possibility of multiple ones with different names.
     // Interpolated azimuths will be generated based on InterpolationFactor.
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
-    static PassOwnPtr<HRTFElevation> createForSubject(const String& subjectName, int elevation, double sampleRate);
+    static PassOwnPtr<HRTFElevation> createForSubject(const String& subjectName, int elevation, float sampleRate);
 
     // Given two HRTFElevations, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFElevation.
-    static PassOwnPtr<HRTFElevation> createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, double x, double sampleRate);
+    static PassOwnPtr<HRTFElevation> createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate);
 
     // Returns the list of left or right ear HRTFKernels for all the azimuths going from 0 to 360 degrees.
     HRTFKernelList* kernelListL() { return m_kernelListL.get(); }
@@ -61,7 +61,7 @@ public:
 
     double elevationAngle() const { return m_elevationAngle; }
     unsigned numberOfAzimuths() { return NumberOfTotalAzimuths; }
-    double sampleRate() const { return m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
     
     // Returns the left and right kernels for the given azimuth index.
     // The interpolated delays based on azimuthBlend: 0 -> 1 are returned in frameDelayL and frameDelayR.
@@ -83,16 +83,16 @@ public:
     // Valid values for azimuth are 0 -> 345 in 15 degree increments.
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
     // Returns true on success.
-    static bool calculateKernelsForAzimuthElevation(int azimuth, int elevation, double sampleRate, const String& subjectName,
+    static bool calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                     RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
 
     // Given a specific azimuth and elevation angle, returns the left and right HRTFKernel in kernelL and kernelR.
     // This method averages the measured response using symmetry of azimuth (for example by averaging the -30.0 and +30.0 azimuth responses).
     // Returns true on success.
-    static bool calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, double sampleRate, const String& subjectName,
+    static bool calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                              RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
 private:
-    HRTFElevation(PassOwnPtr<HRTFKernelList> kernelListL, PassOwnPtr<HRTFKernelList> kernelListR, int elevation, double sampleRate)
+    HRTFElevation(PassOwnPtr<HRTFKernelList> kernelListL, PassOwnPtr<HRTFKernelList> kernelListR, int elevation, float sampleRate)
         : m_kernelListL(kernelListL)
         , m_kernelListR(kernelListR)
         , m_elevationAngle(elevation)
@@ -103,7 +103,7 @@ private:
     OwnPtr<HRTFKernelList> m_kernelListL;
     OwnPtr<HRTFKernelList> m_kernelListR;
     double m_elevationAngle;
-    double m_sampleRate;
+    float m_sampleRate;
 };
 
 } // namespace WebCore

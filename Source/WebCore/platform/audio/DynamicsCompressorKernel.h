@@ -35,7 +35,7 @@ namespace WebCore {
 
 class DynamicsCompressorKernel {
 public:
-    DynamicsCompressorKernel(double sampleRate);
+    DynamicsCompressorKernel(float sampleRate);
 
     // Performs stereo-linked compression.
     void process(float *sourceL,

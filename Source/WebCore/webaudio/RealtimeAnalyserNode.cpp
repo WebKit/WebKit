@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-RealtimeAnalyserNode::RealtimeAnalyserNode(AudioContext* context, double sampleRate)
+RealtimeAnalyserNode::RealtimeAnalyserNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));

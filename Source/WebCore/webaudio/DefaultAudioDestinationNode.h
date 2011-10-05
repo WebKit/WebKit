@@ -46,7 +46,7 @@ public:
     virtual void initialize();
     virtual void uninitialize();
     
-    double sampleRate() const { return m_destination->sampleRate(); }
+    float sampleRate() const { return m_destination->sampleRate(); }
 
     virtual void startRendering();
     

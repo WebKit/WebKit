@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-AudioNode::AudioNode(AudioContext* context, double sampleRate)
+AudioNode::AudioNode(AudioContext* context, float sampleRate)
     : m_isInitialized(false)
     , m_nodeType(NodeTypeUnknown)
     , m_context(context)

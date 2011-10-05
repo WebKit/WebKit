@@ -31,6 +31,7 @@
 
 #include "AudioNode.h"
 #include "AudioUtilities.h"
+#include "FloatConversion.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -43,13 +44,13 @@ float AudioParam::value()
     // Update value for timeline.
     if (context() && context()->isAudioThread()) {
         bool hasValue;
-        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
+        float timelineValue = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), hasValue);
 
         if (hasValue)
             m_value = timelineValue;
     }
 
-    return static_cast<float>(m_value);
+    return narrowPrecisionToFloat(m_value);
 }
 
 void AudioParam::setValue(float value)
@@ -62,7 +63,7 @@ void AudioParam::setValue(float value)
 
 float AudioParam::smoothedValue()
 {
-    return static_cast<float>(m_smoothedValue);
+    return narrowPrecisionToFloat(m_smoothedValue);
 }
 
 bool AudioParam::smooth()
@@ -71,7 +72,7 @@ bool AudioParam::smooth()
     // Smoothing effectively is performed by the timeline.
     bool useTimelineValue = false;
     if (context())
-        m_value = m_timeline.valueForContextTime(context(), m_value, useTimelineValue);
+        m_value = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), useTimelineValue);
     
     if (m_smoothedValue == m_value) {
         // Smoothed value has already approached and snapped to value.
@@ -102,12 +103,12 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
     float sampleRate = context()->sampleRate();
-    float startTime = context()->currentTime();
+    float startTime = narrowPrecisionToFloat(context()->currentTime());
     float endTime = startTime + numberOfValues / sampleRate;
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForTimeRange(startTime, endTime, narrowPrecisionToFloat(m_value), values, numberOfValues, sampleRate, sampleRate);
 }
 
 } // namespace WebCore

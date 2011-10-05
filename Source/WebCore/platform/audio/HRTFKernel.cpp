@@ -35,6 +35,7 @@
 #include "AudioChannel.h"
 #include "Biquad.h"
 #include "FFTFrame.h"
+#include "FloatConversion.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -45,7 +46,7 @@ namespace WebCore {
 // This represents the initial delay before the most energetic part of the impulse response.
 // The sample-frame delay is removed from the impulseP impulse response, and this value  is returned.
 // the length of the passed in AudioChannel must be a power of 2.
-static double extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTSize)
+static float extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTSize)
 {
     ASSERT(channel);
         
@@ -59,14 +60,14 @@ static double extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFT
     FFTFrame estimationFrame(analysisFFTSize);
     estimationFrame.doFFT(impulseP);
 
-    double frameDelay = estimationFrame.extractAverageGroupDelay();
+    float frameDelay = narrowPrecisionToFloat(estimationFrame.extractAverageGroupDelay());
     estimationFrame.doInverseFFT(impulseP);
 
     return frameDelay;
 }
 
-HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, double sampleRate, bool bassBoost)
-    : m_frameDelay(0.0)
+HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate, bool bassBoost)
+    : m_frameDelay(0)
     , m_sampleRate(sampleRate)
 {
     ASSERT(channel);
@@ -116,22 +117,22 @@ PassOwnPtr<AudioChannel> HRTFKernel::createImpulseResponse()
 }
 
 // Interpolates two kernels with x: 0 -> 1 and returns the result.
-PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, double x)
+PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, float x)
 {
     ASSERT(kernel1 && kernel2);
     if (!kernel1 || !kernel2)
         return 0;
  
     ASSERT(x >= 0.0 && x < 1.0);
-    x = min(1.0, max(0.0, x));
+    x = min(1.0f, max(0.0f, x));
     
-    double sampleRate1 = kernel1->sampleRate();
-    double sampleRate2 = kernel2->sampleRate();
+    float sampleRate1 = kernel1->sampleRate();
+    float sampleRate2 = kernel2->sampleRate();
     ASSERT(sampleRate1 == sampleRate2);
     if (sampleRate1 != sampleRate2)
         return 0;
     
-    double frameDelay = (1.0 - x) * kernel1->frameDelay() + x * kernel2->frameDelay();
+    float frameDelay = (1 - x) * kernel1->frameDelay() + x * kernel2->frameDelay();
     
     OwnPtr<FFTFrame> interpolatedFrame = FFTFrame::createInterpolatedFrame(*kernel1->fftFrame(), *kernel2->fftFrame(), x);
     return HRTFKernel::create(interpolatedFrame.release(), frameDelay, sampleRate1);

@@ -43,7 +43,7 @@ class AudioContext;
 
 class AudioBufferSourceNode : public AudioSourceNode {
 public:
-    static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, double sampleRate);
+    static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
     
@@ -83,7 +83,7 @@ public:
     void setPannerNode(PassRefPtr<AudioPannerNode> pannerNode) { m_pannerNode = pannerNode; }
 
 private:
-    AudioBufferSourceNode(AudioContext*, double sampleRate);
+    AudioBufferSourceNode(AudioContext*, float sampleRate);
 
     void renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames);
 

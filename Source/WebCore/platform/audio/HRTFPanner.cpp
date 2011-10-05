@@ -44,7 +44,7 @@ namespace WebCore {
 // We ASSERT the delay values used in process() with this value.
 const double MaxDelayTimeSeconds = 0.002;
 
-HRTFPanner::HRTFPanner(double sampleRate)
+HRTFPanner::HRTFPanner(float sampleRate)
     : Panner(PanningModelHRTF)
     , m_sampleRate(sampleRate)
     , m_isFirstRender(true)
@@ -60,7 +60,7 @@ HRTFPanner::~HRTFPanner()
 {
 }
 
-size_t HRTFPanner::fftSizeForSampleRate(double sampleRate)
+size_t HRTFPanner::fftSizeForSampleRate(float sampleRate)
 {
     // The HRTF impulse responses (loaded as audio resources) are 512 sample-frames @44.1KHz.
     // Currently, we truncate the impulse responses to half this size, but an FFT-size of twice impulse response size is needed (for convolution).

@@ -52,7 +52,7 @@ public:
     // This value controls how frequently the onaudioprocess event handler is called and how many sample-frames need to be processed each call.
     // Lower numbers for bufferSize will result in a lower (better) latency. Higher numbers will be necessary to avoid audio breakup and glitches.
     // The value chosen must carefully balance between latency and audio quality.
-    static PassRefPtr<JavaScriptAudioNode> create(AudioContext*, double sampleRate, size_t bufferSize, unsigned numberOfInputs = 1, unsigned numberOfOutputs = 1);
+    static PassRefPtr<JavaScriptAudioNode> create(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputs = 1, unsigned numberOfOutputs = 1);
 
     virtual ~JavaScriptAudioNode();
 
@@ -77,7 +77,7 @@ public:
     using AudioNode::deref;
     
 private:
-    JavaScriptAudioNode(AudioContext*, double sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs);
+    JavaScriptAudioNode(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs);
 
     static void fireProcessEventDispatch(void* userData);
     void fireProcessEvent();

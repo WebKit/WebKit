@@ -34,7 +34,7 @@ class DynamicsCompressor;
     
 class DynamicsCompressorNode : public AudioNode {
 public:
-    static PassRefPtr<DynamicsCompressorNode> create(AudioContext* context, double sampleRate)
+    static PassRefPtr<DynamicsCompressorNode> create(AudioContext* context, float sampleRate)
     {
         return adoptRef(new DynamicsCompressorNode(context, sampleRate));      
     }
@@ -48,7 +48,7 @@ public:
     virtual void uninitialize();
 
 private:
-    DynamicsCompressorNode(AudioContext*, double sampleRate);
+    DynamicsCompressorNode(AudioContext*, float sampleRate);
 
     OwnPtr<DynamicsCompressor> m_dynamicsCompressor;
 };

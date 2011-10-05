@@ -49,7 +49,7 @@ public:
     virtual void initialize();
     virtual void uninitialize();
     
-    double sampleRate() const { return m_renderTarget->sampleRate(); }
+    float sampleRate() const { return m_renderTarget->sampleRate(); }
 
     void startRendering();
     

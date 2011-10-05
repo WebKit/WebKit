@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include "Document.h"
+#include "FloatConversion.h"
 #include "ScriptCallStack.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
@@ -48,12 +49,12 @@ const double UnknownTime = -1;
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
-PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, double sampleRate)
+PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, float sampleRate)
 {
     return adoptRef(new AudioBufferSourceNode(context, sampleRate));
 }
 
-AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, double sampleRate)
+AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sampleRate)
     : AudioSourceNode(context, sampleRate)
     , m_buffer(0)
     , m_isPlaying(false)
@@ -100,7 +101,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     // Careful - this is a tryLock() and not an autolocker, so we must unlock() before every return.
     if (m_processLock.tryLock()) {
         // Check if it's time to start playing.
-        double sampleRate = this->sampleRate();
+        float sampleRate = this->sampleRate();
         double quantumStartTime = context()->currentTime();
         double quantumEndTime = quantumStartTime + framesToProcess / sampleRate;
 
@@ -133,8 +134,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         // If the end time is somewhere in the middle of this time quantum, then simply zero out the
         // frames starting at the end time.
         if (m_endTime != UnknownTime && m_endTime >= quantumStartTime && m_endTime < quantumEndTime) {
-            unsigned zeroStartFrame = (m_endTime - quantumStartTime) * sampleRate;
-            unsigned framesToZero = framesToProcess - zeroStartFrame;
+            size_t zeroStartFrame = narrowPrecisionToFloat((m_endTime - quantumStartTime) * sampleRate);
+            size_t framesToZero = framesToProcess - zeroStartFrame;
 
             bool isSafe = zeroStartFrame < framesToProcess && framesToZero <= framesToProcess && zeroStartFrame + framesToZero <= framesToProcess;
             ASSERT(isSafe);
@@ -272,13 +273,13 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         double sampleL1 = sourceL[readIndex];
         double sampleL2 = sourceL[readIndex2];
         double sampleL = (1.0 - interpolationFactor) * sampleL1 + interpolationFactor * sampleL2;
-        *destinationL++ = sampleL;
+        *destinationL++ = narrowPrecisionToFloat(sampleL);
 
         if (isStereo) {
             double sampleR1 = sourceR[readIndex];
             double sampleR2 = sourceR[readIndex2];
             double sampleR = (1.0 - interpolationFactor) * sampleR1 + interpolationFactor * sampleR2;
-            *destinationR++ = sampleR;
+            *destinationR++ = narrowPrecisionToFloat(sampleR);
         }
 
         virtualReadIndex += pitchRate;

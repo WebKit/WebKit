@@ -76,8 +76,8 @@ public:
     size_t length() const { return m_length; }
 
     // Sample-rate : 0.0 if unknown or "don't care"
-    double sampleRate() const { return m_sampleRate; }
-    void setSampleRate(double sampleRate) { m_sampleRate = sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
+    void setSampleRate(float sampleRate) { m_sampleRate = sampleRate; }
 
     // Zeroes all channels.
     void zero();
@@ -133,7 +133,7 @@ public:
     // Makes maximum absolute value == 1.0 (if possible).
     void normalize();
 
-    static PassOwnPtr<AudioBus> loadPlatformResource(const char* name, double sampleRate);
+    static PassOwnPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
 
 protected:
     AudioBus() { };
@@ -149,7 +149,7 @@ protected:
 
     double m_busGain;
     bool m_isFirstTime;
-    double m_sampleRate; // 0.0 if unknown or N/A
+    float m_sampleRate; // 0.0 if unknown or N/A
 };
 
 } // WebCore

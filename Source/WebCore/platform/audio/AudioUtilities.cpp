@@ -33,27 +33,27 @@ namespace WebCore {
 
 namespace AudioUtilities {
 
-double decibelsToLinear(double decibels)
+float decibelsToLinear(float decibels)
 {
-    return pow(10.0, 0.05 * decibels);
+    return powf(10, 0.05f * decibels);
 }
 
-double linearToDecibels(double linear)
+float linearToDecibels(float linear)
 {
     // It's not possible to calculate decibels for a zero linear value since it would be -Inf.
     // -1000.0 dB represents a very tiny linear value in case we ever reach this case.
     ASSERT(linear);
     if (!linear)
-        return -1000.0;
+        return -1000;
         
-    return 20.0 * log10(linear);
+    return 20 * log10f(linear);
 }
 
-double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate)
+float discreteTimeConstantForSampleRate(float timeConstant, float sampleRate)
 {
     // hardcoded value is temporary build fix for Windows.
     // FIXME: replace hardcode 2.718282 with M_E until the correct MathExtras.h solution is determined.
-    return 1.0 - pow(1.0 / 2.718282, 1.0 / (sampleRate * timeConstant));
+    return 1 - powf(1 / 2.718282f, 1 / (sampleRate * timeConstant));
 }
     
 } // AudioUtilites

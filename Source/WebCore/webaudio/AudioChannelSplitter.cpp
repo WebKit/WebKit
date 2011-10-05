@@ -37,7 +37,7 @@ namespace WebCore {
 // It can easily be increased to support more if the web audio specification is updated.
 const unsigned NumberOfOutputs = 6;
 
-AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, double sampleRate)
+AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));

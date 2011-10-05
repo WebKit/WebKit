@@ -47,21 +47,21 @@ public:
     ~AsyncAudioDecoder();
 
     // Must be called on the main thread.
-    void decodeAsync(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+    void decodeAsync(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
 
 private:
     class DecodingTask {
         WTF_MAKE_NONCOPYABLE(DecodingTask);
     public:
-        static PassOwnPtr<DecodingTask> create(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+        static PassOwnPtr<DecodingTask> create(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
 
         void decode();
         
     private:
-        DecodingTask(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+        DecodingTask(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
 
         ArrayBuffer* audioData() { return m_audioData.get(); }
-        double sampleRate() const { return m_sampleRate; }
+        float sampleRate() const { return m_sampleRate; }
         AudioBufferCallback* successCallback() { return m_successCallback.get(); }
         AudioBufferCallback* errorCallback() { return m_errorCallback.get(); }
         AudioBuffer* audioBuffer() { return m_audioBuffer.get(); }
@@ -70,7 +70,7 @@ private:
         void notifyComplete();
 
         RefPtr<ArrayBuffer> m_audioData;
-        double m_sampleRate;
+        float m_sampleRate;
         RefPtr<AudioBufferCallback> m_successCallback;
         RefPtr<AudioBufferCallback> m_errorCallback;
         RefPtr<AudioBuffer> m_audioBuffer;

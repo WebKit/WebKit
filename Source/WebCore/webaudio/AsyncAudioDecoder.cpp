@@ -54,7 +54,7 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
     m_threadID = 0;
 }
 
-void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
+void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
 {
     ASSERT(isMainThread());
     ASSERT(audioData);
@@ -91,12 +91,12 @@ void AsyncAudioDecoder::runLoop()
     }
 }
 
-PassOwnPtr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
+PassOwnPtr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
 {
     return adoptPtr(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
 }
 
-AsyncAudioDecoder::DecodingTask::DecodingTask(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
+AsyncAudioDecoder::DecodingTask::DecodingTask(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
     : m_audioData(audioData)
     , m_sampleRate(sampleRate)
     , m_successCallback(successCallback)

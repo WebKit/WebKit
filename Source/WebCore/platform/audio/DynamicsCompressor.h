@@ -62,26 +62,26 @@ public:
         ParamLast
     };
 
-    DynamicsCompressor(bool isStereo, double sampleRate);
+    DynamicsCompressor(bool isStereo, float sampleRate);
 
     void process(AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess);
     void reset();
 
-    double parameterValue(unsigned parameterID);
+    float parameterValue(unsigned parameterID);
 
     bool isStereo() const { return m_isStereo; }
-    double sampleRate() const { return m_sampleRate; }
-    double nyquist() const { return 0.5 * m_sampleRate; }
+    float sampleRate() const { return m_sampleRate; }
+    float nyquist() const { return m_sampleRate / 2; }
 
 protected:
     // m_parameters holds the tweakable compressor parameters.
     // FIXME: expose some of the most important ones (such as threshold, attack, release)
     // as DynamicsCompressorNode attributes.
-    double m_parameters[ParamLast];
+    float m_parameters[ParamLast];
     void initializeParameters();
 
     bool m_isStereo;
-    double m_sampleRate;
+    float m_sampleRate;
 
     // Emphasis filter controls.
     float m_lastFilterStageRatio;

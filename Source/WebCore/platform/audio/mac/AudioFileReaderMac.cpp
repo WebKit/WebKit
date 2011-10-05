@@ -34,6 +34,7 @@
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
+#include "FloatConversion.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 
@@ -135,7 +136,7 @@ SInt64 AudioFileReader::getSizeProc(void* clientData)
     return audioFileReader->dataSize();
 }
 
-PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMono)
+PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 {
     if (!m_extAudioFileRef)
         return nullptr;
@@ -187,7 +188,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
 
     // Create AudioBus where we'll put the PCM audio data
     OwnPtr<AudioBus> audioBus = adoptPtr(new AudioBus(busChannelCount, numberOfFrames));
-    audioBus->setSampleRate(m_clientDataFormat.mSampleRate); // save for later
+    audioBus->setSampleRate(narrowPrecisionToFloat(m_clientDataFormat.mSampleRate)); // save for later
 
     // Only allocated in the mixToMono case
     AudioFloatArray bufL;
@@ -241,13 +242,13 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
     return audioBus.release();
 }
 
-PassOwnPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, double sampleRate)
+PassOwnPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
 {
     AudioFileReader reader(filePath);
     return reader.createBus(sampleRate, mixToMono);
 }
 
-PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
+PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     AudioFileReader reader(data, dataSize);
     return reader.createBus(sampleRate, mixToMono);

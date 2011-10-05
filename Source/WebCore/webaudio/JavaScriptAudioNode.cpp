@@ -42,12 +42,12 @@ namespace WebCore {
 
 const size_t DefaultBufferSize = 4096;
 
-PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* context, double sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
+PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
 {
     return adoptRef(new JavaScriptAudioNode(context, sampleRate, bufferSize, numberOfInputs, numberOfOutputs));
 }
 
-JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, double sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
+JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs)
     : AudioNode(context, sampleRate)
     , m_doubleBufferIndex(0)
     , m_doubleBufferIndexForEvent(0)
@@ -96,7 +96,7 @@ void JavaScriptAudioNode::initialize()
     if (isInitialized())
         return;
 
-    double sampleRate = context()->sampleRate();
+    float sampleRate = context()->sampleRate();
 
     // Create double buffers on both the input and output sides.
     // These AudioBuffers will be directly accessed in the main thread by JavaScript.

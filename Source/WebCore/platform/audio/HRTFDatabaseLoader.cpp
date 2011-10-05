@@ -40,7 +40,7 @@ namespace WebCore {
 // Singleton
 HRTFDatabaseLoader* HRTFDatabaseLoader::s_loader = 0;
 
-PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(double sampleRate)
+PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(float sampleRate)
 {
     ASSERT(isMainThread());
 
@@ -59,7 +59,7 @@ PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIf
     return loader;
 }
 
-HRTFDatabaseLoader::HRTFDatabaseLoader(double sampleRate)
+HRTFDatabaseLoader::HRTFDatabaseLoader(float sampleRate)
     : m_databaseLoaderThread(0)
     , m_databaseSampleRate(sampleRate)
 {

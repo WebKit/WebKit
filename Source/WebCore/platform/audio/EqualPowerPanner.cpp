@@ -34,13 +34,13 @@
 #include <wtf/MathExtras.h>
 
 // Use a 50ms smoothing / de-zippering time-constant.
-const double SmoothingTimeConstant = 0.050;
+const float SmoothingTimeConstant = 0.050f;
 
 using namespace std;
 
 namespace WebCore {
 
-EqualPowerPanner::EqualPowerPanner(double sampleRate)
+EqualPowerPanner::EqualPowerPanner(float sampleRate)
     : Panner(PanningModelEqualPower)
     , m_isFirstRender(true)
     , m_gainL(0.0)

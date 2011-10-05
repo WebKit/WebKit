@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace AudioUtilities;
     
-DynamicsCompressor::DynamicsCompressor(bool isStereo, double sampleRate)
+DynamicsCompressor::DynamicsCompressor(bool isStereo, float sampleRate)
     : m_isStereo(isStereo)
     , m_sampleRate(sampleRate)
     , m_compressor(sampleRate)
@@ -59,17 +59,17 @@ void DynamicsCompressor::initializeParameters()
     
     m_parameters[ParamThreshold] = -24; // dB
     m_parameters[ParamHeadroom] = 21; // dB
-    m_parameters[ParamAttack] = 0.003; // seconds
-    m_parameters[ParamRelease] = 0.250; // seconds
-    m_parameters[ParamPreDelay] = 0.006; // seconds
+    m_parameters[ParamAttack] = 0.003f; // seconds
+    m_parameters[ParamRelease] = 0.250f; // seconds
+    m_parameters[ParamPreDelay] = 0.006f; // seconds
 
     // Release zone values 0 -> 1.
-    m_parameters[ParamReleaseZone1] = 0.09;
-    m_parameters[ParamReleaseZone2] = 0.16;
-    m_parameters[ParamReleaseZone3] = 0.42;
-    m_parameters[ParamReleaseZone4] = 0.98;
+    m_parameters[ParamReleaseZone1] = 0.09f;
+    m_parameters[ParamReleaseZone2] = 0.16f;
+    m_parameters[ParamReleaseZone3] = 0.42f;
+    m_parameters[ParamReleaseZone4] = 0.98f;
 
-    m_parameters[ParamFilterStageGain] = 4.4; // dB
+    m_parameters[ParamFilterStageGain] = 4.4f; // dB
     m_parameters[ParamFilterStageRatio] = 2;
     m_parameters[ParamFilterAnchor] = 15000 / nyquist();
     
@@ -79,7 +79,7 @@ void DynamicsCompressor::initializeParameters()
     m_parameters[ParamEffectBlend] = 1;
 }
 
-double DynamicsCompressor::parameterValue(unsigned parameterID)
+float DynamicsCompressor::parameterValue(unsigned parameterID)
 {
     ASSERT(parameterID < ParamLast);
     return m_parameters[parameterID];
@@ -90,8 +90,8 @@ void DynamicsCompressor::setEmphasisStageParameters(unsigned stageIndex, float g
     float gk = 1 - gain / 20;
     float f1 = normalizedFrequency * gk;
     float f2 = normalizedFrequency / gk;
-    float r1 = exp(-f1 * piDouble);
-    float r2 = exp(-f2 * piDouble);
+    float r1 = expf(-f1 * piFloat);
+    float r2 = expf(-f2 * piFloat);
 
     // Set pre-filter zero and pole to create an emphasis filter.
     m_preFilter[stageIndex].setZero(r1);
@@ -170,10 +170,10 @@ void DynamicsCompressor::process(AudioBus* sourceBus, AudioBus* destinationBus, 
     // 1 mixes in only the compressed signal.
     float effectBlend = parameterValue(ParamEffectBlend);
 
-    double releaseZone1 = parameterValue(ParamReleaseZone1);
-    double releaseZone2 = parameterValue(ParamReleaseZone2);
-    double releaseZone3 = parameterValue(ParamReleaseZone3);
-    double releaseZone4 = parameterValue(ParamReleaseZone4);
+    float releaseZone1 = parameterValue(ParamReleaseZone1);
+    float releaseZone2 = parameterValue(ParamReleaseZone2);
+    float releaseZone3 = parameterValue(ParamReleaseZone3);
+    float releaseZone4 = parameterValue(ParamReleaseZone4);
 
     // Apply compression to the pre-filtered signal.
     // The processing is performed in place.

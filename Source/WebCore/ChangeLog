@@ -1,3 +1,228 @@
+2011-10-05  Jer Noble  <jer.noble@apple.com>
+
+        WEB_AUDIO does not compile on Leopard 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=69292
+
+        Reviewed by Simon Fraser.
+
+        No new tests; covered by all existing audio tests.
+
+        Use of float and double within the WEB_AUDIO implementation have been harmonized, with most
+        calculations done using floats, with narrowPrecisionToFloat() added when necessary to
+        narrow double results down to floats, and with float constants initialized with float values:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::AudioBus):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::sampleRate):
+        (WebCore::AudioBus::setSampleRate):
+        * platform/audio/AudioDSPKernel.h:
+        (WebCore::AudioDSPKernel::AudioDSPKernel):
+        (WebCore::AudioDSPKernel::sampleRate):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::AudioDSPKernelProcessor):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioDestination.h:
+        * platform/audio/AudioFileReader.h:
+        * platform/audio/AudioProcessor.h:
+        (WebCore::AudioProcessor::AudioProcessor):
+        (WebCore::AudioProcessor::sampleRate):
+        * platform/audio/AudioUtilities.cpp:
+        (WebCore::AudioUtilities::decibelsToLinear):
+        (WebCore::AudioUtilities::linearToDecibels):
+        (WebCore::AudioUtilities::discreteTimeConstantForSampleRate):
+        * platform/audio/AudioUtilities.h:
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::DynamicsCompressor):
+        (WebCore::DynamicsCompressor::initializeParameters):
+        (WebCore::DynamicsCompressor::parameterValue):
+        (WebCore::DynamicsCompressor::setEmphasisStageParameters):
+        (WebCore::DynamicsCompressor::process):
+        * platform/audio/DynamicsCompressor.h:
+        (WebCore::DynamicsCompressor::sampleRate):
+        (WebCore::DynamicsCompressor::nyquist):
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::saturate):
+        (WebCore::DynamicsCompressorKernel::DynamicsCompressorKernel):
+        (WebCore::DynamicsCompressorKernel::process):
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::EqualPowerPanner):
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/HRTFDatabase.cpp:
+        (WebCore::HRTFDatabase::create):
+        (WebCore::HRTFDatabase::HRTFDatabase):
+        * platform/audio/HRTFDatabase.h:
+        (WebCore::HRTFDatabase::sampleRate):
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary):
+        (WebCore::HRTFDatabaseLoader::HRTFDatabaseLoader):
+        * platform/audio/HRTFDatabaseLoader.h:
+        (WebCore::HRTFDatabaseLoader::databaseSampleRate):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateSymmetricKernelsForAzimuthElevation):
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        (WebCore::HRTFElevation::createForSubject):
+        (WebCore::HRTFElevation::createByInterpolatingSlices):
+        * platform/audio/HRTFElevation.h:
+        (WebCore::HRTFElevation::sampleRate):
+        (WebCore::HRTFElevation::HRTFElevation):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::extractAverageGroupDelay):
+        (WebCore::HRTFKernel::HRTFKernel):
+        (WebCore::HRTFKernel::createInterpolatedKernel):
+        * platform/audio/HRTFKernel.h:
+        (WebCore::HRTFKernel::create):
+        (WebCore::HRTFKernel::frameDelay):
+        (WebCore::HRTFKernel::sampleRate):
+        (WebCore::HRTFKernel::HRTFKernel):
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::HRTFPanner):
+        (WebCore::HRTFPanner::fftSizeForSampleRate):
+        * platform/audio/HRTFPanner.h:
+        (WebCore::HRTFPanner::sampleRate):
+        * platform/audio/Panner.cpp:
+        (WebCore::Panner::create):
+        * platform/audio/Panner.h:
+        * platform/audio/chromium/AudioBusChromium.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestinationMac::AudioDestinationMac):
+        * platform/audio/mac/AudioDestinationMac.h:
+        (WebCore::AudioDestinationMac::sampleRate):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/mac/AudioFileReaderMac.h:
+        * webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::decodeAsync):
+        (WebCore::AsyncAudioDecoder::DecodingTask::create):
+        (WebCore::AsyncAudioDecoder::DecodingTask::DecodingTask):
+        * webaudio/AsyncAudioDecoder.h:
+        (WebCore::AsyncAudioDecoder::DecodingTask::sampleRate):
+        * webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        * webaudio/AudioBasicProcessorNode.h:
+        * webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::create):
+        (WebCore::AudioBuffer::createFromAudioFileData):
+        (WebCore::AudioBuffer::AudioBuffer):
+        * webaudio/AudioBuffer.h:
+        (WebCore::AudioBuffer::sampleRate):
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        * webaudio/AudioBufferSourceNode.h:
+        * webaudio/AudioChannelMerger.cpp:
+        (WebCore::AudioChannelMerger::AudioChannelMerger):
+        * webaudio/AudioChannelMerger.h:
+        (WebCore::AudioChannelMerger::create):
+        * webaudio/AudioChannelSplitter.cpp:
+        (WebCore::AudioChannelSplitter::AudioChannelSplitter):
+        * webaudio/AudioChannelSplitter.h:
+        (WebCore::AudioChannelSplitter::create):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::createBuffer):
+        * webaudio/AudioContext.h:
+        (WebCore::AudioContext::sampleRate):
+        * webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * webaudio/AudioDestinationNode.h:
+        * webaudio/AudioGainNode.cpp:
+        (WebCore::AudioGainNode::AudioGainNode):
+        * webaudio/AudioGainNode.h:
+        (WebCore::AudioGainNode::create):
+        * webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        * webaudio/AudioListener.h:
+        (WebCore::AudioListener::setPosition):
+        (WebCore::AudioListener::setOrientation):
+        (WebCore::AudioListener::setVelocity):
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        * webaudio/AudioNode.h:
+        (WebCore::AudioNode::sampleRate):
+        * webaudio/AudioPannerNode.cpp:
+        (WebCore::AudioPannerNode::AudioPannerNode):
+        (WebCore::AudioPannerNode::getAzimuthElevation):
+        * webaudio/AudioPannerNode.h:
+        (WebCore::AudioPannerNode::create):
+        * webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::value):
+        (WebCore::AudioParam::smoothedValue):
+        (WebCore::AudioParam::smooth):
+        (WebCore::AudioParam::calculateSampleAccurateValues):
+        * webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::timeToSampleFrame):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        * webaudio/AudioSourceNode.h:
+        (WebCore::AudioSourceNode::AudioSourceNode):
+        * webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * webaudio/BiquadFilterNode.h:
+        (WebCore::BiquadFilterNode::create):
+        * webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * webaudio/BiquadProcessor.h:
+        * webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * webaudio/ConvolverNode.h:
+        (WebCore::ConvolverNode::create):
+        * webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::initialize):
+        * webaudio/DefaultAudioDestinationNode.h:
+        (WebCore::DefaultAudioDestinationNode::sampleRate):
+        * webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::DelayDSPKernel):
+        (WebCore::DelayDSPKernel::process):
+        * webaudio/DelayDSPKernel.h:
+        * webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * webaudio/DelayNode.h:
+        (WebCore::DelayNode::create):
+        * webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * webaudio/DelayProcessor.h:
+        * webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * webaudio/DynamicsCompressorNode.h:
+        (WebCore::DynamicsCompressorNode::create):
+        * webaudio/HighPass2FilterNode.cpp:
+        (WebCore::HighPass2FilterNode::HighPass2FilterNode):
+        * webaudio/HighPass2FilterNode.h:
+        (WebCore::HighPass2FilterNode::create):
+        * webaudio/JavaScriptAudioNode.cpp:
+        (WebCore::JavaScriptAudioNode::create):
+        (WebCore::JavaScriptAudioNode::JavaScriptAudioNode):
+        (WebCore::JavaScriptAudioNode::initialize):
+        * webaudio/JavaScriptAudioNode.h:
+        * webaudio/LowPass2FilterNode.cpp:
+        (WebCore::LowPass2FilterNode::LowPass2FilterNode):
+        * webaudio/LowPass2FilterNode.h:
+        (WebCore::LowPass2FilterNode::create):
+        * webaudio/OfflineAudioDestinationNode.h:
+        (WebCore::OfflineAudioDestinationNode::sampleRate):
+        * webaudio/RealtimeAnalyserNode.cpp:
+        (WebCore::RealtimeAnalyserNode::RealtimeAnalyserNode):
+        * webaudio/RealtimeAnalyserNode.h:
+        (WebCore::RealtimeAnalyserNode::create):
+        * webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::process):
+        * webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::WaveShaperProcessor):
+        * webaudio/WaveShaperProcessor.h:
+
+
 2011-10-05  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Make built-in PDF description localizable
