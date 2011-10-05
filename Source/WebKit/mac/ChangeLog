@@ -1,3 +1,15 @@
+2011-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/69386> REGRESSION: Curious Location of StorageTracker.db
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Storage/WebStorageManager.mm:
+        (+[WebStorageManager _storageDirectoryPath]): Restore call to
+        -[NSString stringByStandardizingPath].  Also fix over-release of
+        sLocalStoragePath if the initial -objectForKey: call returned an
+        NSString object.  Use pthread_once to be thread-safe.
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types

@@ -32,11 +32,16 @@
 
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/StorageTracker.h>
+#import <pthread.h>
 
 using namespace WebCore;
 
 NSString * const WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOriginNotification";
+
+static NSString *sLocalStoragePath;
+static void initializeLocalStoragePath();
+static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 @implementation WebStorageManager
 
@@ -90,21 +95,20 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 + (NSString *)_storageDirectoryPath
 {
-    static NSString *sLocalStoragePath;
-    
-    if (sLocalStoragePath)
-        return sLocalStoragePath;
-    
+    pthread_once(&registerLocalStoragePath, initializeLocalStoragePath);
+    return sLocalStoragePath;
+}
+
+static void initializeLocalStoragePath() 
+{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     sLocalStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
     if (!sLocalStoragePath || ![sLocalStoragePath isKindOfClass:[NSString class]]) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString *libraryDirectory = [paths objectAtIndex:0];
         sLocalStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
-        [sLocalStoragePath retain];
     }
-
-    return sLocalStoragePath;
+    sLocalStoragePath = [[sLocalStoragePath stringByStandardizingPath] retain];
 }
 
 void WebKitInitializeStorageIfNecessary()
