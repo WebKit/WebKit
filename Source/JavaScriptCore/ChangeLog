@@ -1,3 +1,28 @@
+2011-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Add rudimentary filtering to write barriers
+        https://bugs.webkit.org/show_bug.cgi?id=69392
+
+        Reviewed by Filip Pizlo.
+
+        Add approximate filtering for write barriers based on the
+        target's mark bit.  Also add some macros to support dumping
+        GC phase timings.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::markCellCard):
+        * heap/Heap.cpp:
+        (JSC::GCTimer::GCTimerScope::GCTimerScope):
+        (JSC::GCTimer::GCTimerScope::~GCTimerScope):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+           Add phase timing information.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::offsetOfMarks):
+        (JSC::MarkedBlock::gatherDirtyCells):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
 2011-10-05  Anders Carlsson  <andersca@apple.com>
 
         Use std::reverse_iterator for ListHashSet reverse iterators

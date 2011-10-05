@@ -219,9 +219,15 @@ void JITCodeGenerator::markCellCard(MacroAssembler& jit, GPRReg owner, GPRReg sc
     jit.move(owner, scratch1);
     jit.andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch1);
     jit.move(owner, scratch2);
+    // consume additional 8 bits as we're using an approximate filter
+    jit.rshift32(TrustedImm32(MarkedBlock::atomShift + 8), scratch2);
+    jit.andPtr(TrustedImm32(MarkedBlock::atomMask >> 8), scratch2);
+    MacroAssembler::Jump filter = jit.branchTest8(MacroAssembler::Zero, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfMarks()));
+    jit.move(owner, scratch2);
     jit.rshift32(TrustedImm32(MarkedBlock::cardShift), scratch2);
     jit.andPtr(TrustedImm32(MarkedBlock::cardMask), scratch2);
     jit.store8(TrustedImm32(1), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfCards()));
+    filter.link(&jit);
 #endif
 }
 

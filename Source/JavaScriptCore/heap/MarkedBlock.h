@@ -69,10 +69,12 @@ namespace JSC {
         // Ensure natural alignment for native types whilst recognizing that the smallest
         // object the heap will commonly allocate is four words.
         static const size_t atomSize = 4 * sizeof(void*);
+        static const size_t atomShift = 5;
         static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
+        static const size_t atomMask = atomsPerBlock - 1;
         static const int cardShift = 10; // This is log2 of bytes per card.
         static const size_t bytesPerCard = 1 << cardShift;
         static const int cardCount = blockSize / bytesPerCard;
@@ -139,6 +141,11 @@ namespace JSC {
         static inline size_t offsetOfCards()
         {
             return OBJECT_OFFSETOF(MarkedBlock, m_cards);
+        }
+
+        static inline size_t offsetOfMarks()
+        {
+            return OBJECT_OFFSETOF(MarkedBlock, m_marks);
         }
 
         typedef Vector<JSCell*, 32> DirtyCellVector;
@@ -311,7 +318,7 @@ namespace JSC {
 #if ENABLE(GGC)
 void MarkedBlock::gatherDirtyCells(DirtyCellVector& dirtyCells)
 {
-    COMPILE_ASSERT(m_cards.cardCount == cardCount, MarkedBlockCardCountsMatch);
+    COMPILE_ASSERT((int)m_cards.cardCount == (int)cardCount, MarkedBlockCardCountsMatch);
 
     ASSERT(m_state != New && m_state != FreeListed);
     

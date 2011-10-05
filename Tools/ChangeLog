@@ -1,3 +1,16 @@
+2011-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Add rudimentary filtering to write barriers
+        https://bugs.webkit.org/show_bug.cgi?id=69392
+
+        Reviewed by Filip Pizlo.
+
+        When we're recording gc phase times Heap.o picks up
+        some exit time destructors, so we'll just ignore Heap.o
+        in this check.
+
+        * Scripts/check-for-exit-time-destructors:
+
 2011-10-05  Chang Shu  <cshu@webkit.org>
 
         [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport

@@ -44,6 +44,58 @@ namespace {
 static const size_t largeHeapSize = 16 * 1024 * 1024;
 static const size_t smallHeapSize = 512 * 1024;
 
+#if ENABLE(GC_LOGGING)
+    
+struct GCTimer {
+    GCTimer(const char* name)
+        : m_time(0)
+        , m_min(100000000)
+        , m_max(0)
+        , m_count(0)
+        , m_name(name)
+    {
+    }
+    ~GCTimer()
+    {
+        printf("%s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf)\n", m_name, m_time * 1000, m_time * 1000 / m_count, m_min*1000, m_max*1000);
+    }
+    double m_time;
+    double m_min;
+    double m_max;
+    size_t m_count;
+    const char* m_name;
+};
+
+struct GCTimerScope {
+    GCTimerScope(GCTimer* timer)
+        : m_timer(timer)
+        , m_start(WTF::currentTime())
+    {
+    }
+    ~GCTimerScope()
+    {
+        double delta = WTF::currentTime() - m_start;
+        if (delta < m_timer->m_min)
+            m_timer->m_min = delta;
+        if (delta > m_timer->m_max)
+            m_timer->m_max = delta;
+        m_timer->m_count++;
+        m_timer->m_time += delta;
+    }
+    GCTimer* m_timer;
+    double m_start;
+};
+
+#define GCPHASE(name) static GCTimer name##Timer(#name); GCTimerScope name##TimerScope(&name##Timer)
+#define COND_GCPHASE(cond, name1, name2) static GCTimer name1##Timer(#name1); static GCTimer name2##Timer(#name2); GCTimerScope name1##CondTimerScope(cond ? &name1##Timer : &name2##Timer)
+
+#else
+
+#define GCPHASE(name) do { } while (false)
+#define COND_GCPHASE(cond, name1, name2) do { } while (false)
+
+#endif
+
 static size_t heapSizeForHint(HeapSize heapSize)
 {
 #if ENABLE(LARGE_HEAP)
@@ -456,6 +508,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
 
 void Heap::markRoots(bool fullGC)
 {
+    COND_GCPHASE(fullGC, MarkFullRoots, MarkYoungRoots);
     UNUSED_PARAM(fullGC);
     ASSERT(isValidThreadState(m_globalData));
     if (m_operationInProgress != NoOperation)
@@ -467,69 +520,107 @@ void Heap::markRoots(bool fullGC)
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots machineThreadRoots(&m_objectSpace.blocks());
-    m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
+    {
+        GCPHASE(GatherConservativeRoots);
+        m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
+    }
 
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
     m_jettisonedCodeBlocks.clearMarks();
-    registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
+    {
+        GCPHASE(GatherRegisterFileRoots);
+        registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
+    }
     m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;
-    if (!fullGC)
+    if (!fullGC) {
+        GCPHASE(GatheringDirtyCells);
         m_objectSpace.gatherDirtyCells(dirtyCells);
-    else
+    } else
 #endif
+    {
+        GCPHASE(clearMarks);
         clearMarks();
-
+    }
 
     SlotVisitor& visitor = m_slotVisitor;
     HeapRootVisitor heapRootVisitor(visitor);
 
 #if ENABLE(GGC)
-    size_t dirtyCellCount = dirtyCells.size();
-    for (size_t i = 0; i < dirtyCellCount; i++) {
-        heapRootVisitor.visitChildren(dirtyCells[i]);
-        visitor.drain();
+    if (size_t dirtyCellCount = dirtyCells.size()) {
+        GCPHASE(VisitDirtyCells);
+        for (size_t i = 0; i < dirtyCellCount; i++) {
+            heapRootVisitor.visitChildren(dirtyCells[i]);
+            visitor.drain();
+        }
     }
 #endif
 
-    visitor.append(machineThreadRoots);
-    visitor.drain();
+    {
+        GCPHASE(VisitMachineRoots);
+        visitor.append(machineThreadRoots);
+        visitor.drain();
+    }
+    {
+        GCPHASE(VisitRegisterFileRoots);
+        visitor.append(registerFileRoots);
+        visitor.drain();
+    }
+    {
+        GCPHASE(VisitProtectedObjects);
+        markProtectedObjects(heapRootVisitor);
+        visitor.drain();
+    }
+    {
+        GCPHASE(VisitTempSortVectors);
+        markTempSortVectors(heapRootVisitor);
+        visitor.drain();
+    }
 
-    visitor.append(registerFileRoots);
-    visitor.drain();
-
-    markProtectedObjects(heapRootVisitor);
-    visitor.drain();
-    
-    markTempSortVectors(heapRootVisitor);
-    visitor.drain();
-
-    if (m_markListSet && m_markListSet->size())
-        MarkedArgumentBuffer::markLists(heapRootVisitor, *m_markListSet);
-    if (m_globalData->exception)
+    {
+        GCPHASE(MarkingArgumentBuffers);
+        if (m_markListSet && m_markListSet->size()) {
+            MarkedArgumentBuffer::markLists(heapRootVisitor, *m_markListSet);
+            visitor.drain();
+        }
+    }
+    if (m_globalData->exception) {
+        GCPHASE(MarkingException);
         heapRootVisitor.visit(&m_globalData->exception);
-    visitor.drain();
-
-    m_handleHeap.visitStrongHandles(heapRootVisitor);
-    visitor.drain();
-
-    m_handleStack.visit(heapRootVisitor);
-    visitor.drain();
+        visitor.drain();
+    }
     
-    m_jettisonedCodeBlocks.traceCodeBlocks(visitor);
-    visitor.drain();
+    {
+        GCPHASE(VisitStrongHandles);
+        m_handleHeap.visitStrongHandles(heapRootVisitor);
+        visitor.drain();
+    }
+    
+    {
+        GCPHASE(HandleStack);
+        m_handleStack.visit(heapRootVisitor);
+        visitor.drain();
+    }
+    
+    {
+        GCPHASE(TraceCodeBlocks);
+        m_jettisonedCodeBlocks.traceCodeBlocks(visitor);
+        visitor.drain();
+    }
 
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.
-    int lastOpaqueRootCount;
-    do {
-        lastOpaqueRootCount = visitor.opaqueRootCount();
-        m_handleHeap.visitWeakHandles(heapRootVisitor);
-        visitor.drain();
-    // If the set of opaque roots has grown, more weak handles may have become reachable.
-    } while (lastOpaqueRootCount != visitor.opaqueRootCount());
-
+    {
+        GCPHASE(VisitingWeakHandles);
+        int lastOpaqueRootCount;
+        do {
+            lastOpaqueRootCount = visitor.opaqueRootCount();
+            m_handleHeap.visitWeakHandles(heapRootVisitor);
+            visitor.drain();
+            // If the set of opaque roots has grown, more weak handles may have become reachable.
+        } while (lastOpaqueRootCount != visitor.opaqueRootCount());
+    }
     visitor.reset();
 
     m_operationInProgress = NoOperation;
@@ -597,25 +688,40 @@ void Heap::collectAllGarbage()
 
 void Heap::collect(SweepToggle sweepToggle)
 {
+    GCPHASE(Collect);
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
+#if ENABLE(GGC)
     bool fullGC = sweepToggle == DoSweep;
     if (!fullGC)
         fullGC = (capacity() > 4 * m_lastFullGCSize);  
-    canonicalizeCellLivenessData();
+#else
+    bool fullGC = true;
+#endif
+    {
+        GCPHASE(Canonicalize);
+        canonicalizeCellLivenessData();
+    }
 
     markRoots(fullGC);
 
-    harvestWeakReferences();
-    m_handleHeap.finalizeWeakHandles();
-    m_globalData->smallStrings.finalizeSmallStrings();
+    {
+        GCPHASE(HarvestWeakReferences);
+        harvestWeakReferences();
+        m_handleHeap.finalizeWeakHandles();
+        m_globalData->smallStrings.finalizeSmallStrings();
+    }
 
     JAVASCRIPTCORE_GC_MARKED();
-    
-    resetAllocator();
+
+    {
+        GCPHASE(ResetAllocator);
+        resetAllocator();
+    }
 
     if (sweepToggle == DoSweep) {
+        GCPHASE(Sweeping);
         sweep();
         shrink();
     }
@@ -624,11 +730,12 @@ void Heap::collect(SweepToggle sweepToggle)
     // water mark to be proportional to the current size of the heap. The exact
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t proportionalBytes = 2 * size();
-    if (fullGC)
-        m_lastFullGCSize = proportionalBytes / 2;
-    
-    m_objectSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
+    size_t newSize = size();
+    size_t proportionalBytes = 2 * newSize;
+    if (fullGC) {
+        m_lastFullGCSize = newSize;
+        m_objectSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
+    }
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();

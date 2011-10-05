@@ -1053,9 +1053,15 @@ void JIT::emitWriteBarrier(RegisterID owner, RegisterID value, RegisterID scratc
     move(owner, scratch);
     andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch);
     move(owner, scratch2);
+    // consume additional 8 bits as we're using an approximate filter
+    rshift32(TrustedImm32(MarkedBlock::atomShift + 8), scratch2);
+    andPtr(TrustedImm32(MarkedBlock::atomMask >> 8), scratch2);
+    Jump filter = branchTest8(Zero, BaseIndex(scratch, scratch2, TimesOne, MarkedBlock::offsetOfMarks()));
+    move(owner, scratch2);
     rshift32(TrustedImm32(MarkedBlock::cardShift), scratch2);
     andPtr(TrustedImm32(MarkedBlock::cardMask), scratch2);
     store8(TrustedImm32(1), BaseIndex(scratch, scratch2, TimesOne, MarkedBlock::offsetOfCards()));
+    filter.link(this);
     if (mode == ShouldFilterImmediates)
         filterCells.link(this);
 #endif

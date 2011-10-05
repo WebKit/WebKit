@@ -79,18 +79,19 @@ for my $file (sort @files) {
         next;
     }
     my $sawAtExit = 0;
+    my $shortName = $file;
+    $shortName =~ s/.*\///;
+
     while (<NM>) {
         if (/^STDOUT:/) {
-            $sawAtExit = 1 if /___cxa_atexit/;
+            # With GC logging enabled Heap.o may contain finalizers, so we ignore them.
+            $sawAtExit = 1 if (/___cxa_atexit/ && ($shortName ne "Heap.o"));
         } else {
             print STDERR if $_ ne "nm: no name list\n";
         }
     }
     close NM;
     next unless $sawAtExit;
-
-    my $shortName = $file;
-    $shortName =~ s/.*\///;
 
     $sawError = 1 if printFunctions($shortName, $file);
 }
