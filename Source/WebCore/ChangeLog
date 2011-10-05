@@ -1,3 +1,17 @@
+2011-10-05  David Levin  <levin@chromium.org>
+
+        Attempt to fix the bindings test (broken by r96727).
+        Reviewed by Adam Barth.
+
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::ConfigureV8TestMediaQueryListListenerTemplate):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::ConfigureV8TestObjTemplate):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::ConfigureV8TestSerializedScriptValueInterfaceTemplate):
+
 2011-10-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Hook WebCompositor interface for input events up to the compositor proper

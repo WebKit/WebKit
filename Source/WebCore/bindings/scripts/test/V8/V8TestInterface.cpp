@@ -77,7 +77,8 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 {
     desc->ReadOnlyPrototype();
 
-    v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
+    v8::Local<v8::Signature> defaultSignature;
+    defaultSignature = configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
         0, 0,
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

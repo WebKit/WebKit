@@ -46,7 +46,8 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
 {
     desc->ReadOnlyPrototype();
 
-    v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
+    v8::Local<v8::Signature> defaultSignature;
+    defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
         0, 0,
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
