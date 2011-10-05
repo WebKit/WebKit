@@ -338,8 +338,14 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
     // sendDidUpdateBackingStoreState; otherwise we shouldn't do one right now.
     m_isWaitingForDidUpdate = false;
 
-    if (respondImmediately)
+    if (respondImmediately) {
+        // Make sure to resume painting if we're supposed to respond immediately, otherwise we'll just
+        // send back an empty UpdateInfo struct.
+        if (m_isPaintingSuspended)
+            resumePainting();
+
         sendDidUpdateBackingStoreState();
+    }
 
     m_inUpdateBackingStoreState = false;
 }
