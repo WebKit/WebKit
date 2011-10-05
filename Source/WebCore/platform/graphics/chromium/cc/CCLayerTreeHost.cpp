@@ -48,7 +48,8 @@ PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 }
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
-    : m_animating(false)
+    : m_compositorIdentifier(-1)
+    , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
     , m_rootLayer(rootLayer)
@@ -75,6 +76,8 @@ bool CCLayerTreeHost::initialize()
 
     if (!m_proxy->initializeLayerRenderer())
         return false;
+
+    m_compositorIdentifier = m_proxy->compositorIdentifier();
 
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;

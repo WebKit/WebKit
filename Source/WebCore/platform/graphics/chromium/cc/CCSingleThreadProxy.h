@@ -45,6 +45,7 @@ public:
     virtual void finishAllRendering();
     virtual bool isStarted() const;
     virtual bool initializeLayerRenderer();
+    virtual int compositorIdentifier() const { return m_compositorIdentifier; }
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsCommit();
@@ -66,6 +67,7 @@ private:
 
     // Accessed on main thread only.
     CCLayerTreeHost* m_layerTreeHost;
+    int m_compositorIdentifier;
 
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;

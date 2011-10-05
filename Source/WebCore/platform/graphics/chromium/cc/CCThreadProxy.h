@@ -33,13 +33,16 @@
 
 namespace WebCore {
 
+class CCInputHandler;
 class CCLayerTreeHost;
 class CCScheduler;
 class CCThread;
 class CCThreadProxySchedulerClient;
+class CCThreadProxyScrollControllerAdapter;
 
 class CCThreadProxy : public CCProxy {
     friend class CCThreadProxySchedulerClient;
+    friend class CCThreadProxyScrollControllerAdapter;
 public:
     static void setThread(CCThread*);
 
@@ -53,6 +56,7 @@ public:
     virtual void finishAllRendering();
     virtual bool isStarted() const;
     virtual bool initializeLayerRenderer();
+    virtual int compositorIdentifier() const;
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsCommit();
@@ -76,7 +80,7 @@ private:
     void drawLayersAndReadbackOnCCThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
     void finishAllRenderingOnCCThread(CCCompletionEvent*);
     void initializeImplOnCCThread(CCCompletionEvent*);
-    void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
+    void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
     void setNeedsCommitOnCCThread();
     void setNeedsRedrawOnCCThread();
     void setNeedsCommitThenRedrawOnCCThread();
@@ -86,6 +90,7 @@ private:
     bool m_commitRequested;
     bool m_redrawAfterCommit;
     CCLayerTreeHost* m_layerTreeHost;
+    int m_compositorIdentifier;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
     int m_lastExecutedBeginFrameAndCommitSequenceNumber;
@@ -93,6 +98,9 @@ private:
     // Used on the CCThread only
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
     int m_numBeginFrameAndCommitsIssuedOnCCThread;
+
+    OwnPtr<CCInputHandler> m_inputHandlerOnCCThread;
+    OwnPtr<CCThreadProxyScrollControllerAdapter> m_scrollControllerAdapterOnCCThread;
 
     OwnPtr<CCScheduler> m_schedulerOnCCThread;
     OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnCCThread;

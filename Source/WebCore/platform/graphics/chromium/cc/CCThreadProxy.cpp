@@ -28,9 +28,11 @@
 
 #include "GraphicsContext3D.h"
 #include "TraceEvent.h"
+#include "cc/CCInputHandler.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCScheduler.h"
+#include "cc/CCScrollController.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -76,6 +78,30 @@ private:
     CCThreadProxy* m_proxy;
 };
 
+class CCThreadProxyScrollControllerAdapter : public CCScrollController {
+public:
+    static PassOwnPtr<CCThreadProxyScrollControllerAdapter> create(CCThreadProxy* proxy)
+    {
+        return adoptPtr(new CCThreadProxyScrollControllerAdapter(proxy));
+    }
+    virtual ~CCThreadProxyScrollControllerAdapter() { }
+
+    virtual void scrollRootLayer(const IntSize& offset)
+    {
+        m_proxy->m_layerTreeHostImpl->scrollRootLayer(offset);
+        m_proxy->setNeedsRedrawOnCCThread();
+        m_proxy->setNeedsCommitOnCCThread();
+    }
+
+private:
+    explicit CCThreadProxyScrollControllerAdapter(CCThreadProxy* proxy)
+    {
+        m_proxy = proxy;
+    }
+
+    CCThreadProxy* m_proxy;
+};
+
 PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCThreadProxy(layerTreeHost));
@@ -84,6 +110,7 @@ PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_commitRequested(false)
     , m_layerTreeHost(layerTreeHost)
+    , m_compositorIdentifier(-1)
     , m_started(false)
     , m_lastExecutedBeginFrameAndCommitSequenceNumber(-1)
     , m_numBeginFrameAndCommitsIssuedOnCCThread(0)
@@ -184,12 +211,20 @@ bool CCThreadProxy::initializeLayerRenderer()
     bool initializeSucceeded = false;
     LayerRendererCapabilities capabilities;
     s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnCCThread,
-                                          AllowCrossThreadAccess(contextPtr), AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities)));
+                                          AllowCrossThreadAccess(contextPtr), AllowCrossThreadAccess(&completion),
+                                          AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities),
+                                          AllowCrossThreadAccess(&m_compositorIdentifier)));
     completion.wait();
 
     if (initializeSucceeded)
         m_layerRendererCapabilitiesMainThreadCopy = capabilities;
     return initializeSucceeded;
+}
+
+int CCThreadProxy::compositorIdentifier() const
+{
+    ASSERT(isMainThread());
+    return m_compositorIdentifier;
 }
 
 const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() const
@@ -328,8 +363,6 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
     }
     m_lastExecutedBeginFrameAndCommitSequenceNumber = sequenceNumber;
 
-    ASSERT(m_commitRequested);
-
     // FIXME: recreate the context if it was requested by the impl thread
     {
         TRACE_EVENT("CCLayerTreeHost::animateAndLayout", this, 0);
@@ -412,7 +445,7 @@ void CCThreadProxy::initializeImplOnCCThread(CCCompletionEvent* completion)
     completion->signal();
 }
 
-void CCThreadProxy::initializeLayerRendererOnCCThread(GraphicsContext3D* contextPtr, CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities)
+void CCThreadProxy::initializeLayerRendererOnCCThread(GraphicsContext3D* contextPtr, CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities, int* compositorIdentifier)
 {
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnCCThread", this, 0);
     ASSERT(isImplThread());
@@ -420,6 +453,11 @@ void CCThreadProxy::initializeLayerRendererOnCCThread(GraphicsContext3D* context
     *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(context);
     if (*initializeSucceeded)
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
+
+    m_scrollControllerAdapterOnCCThread = CCThreadProxyScrollControllerAdapter::create(this);
+    m_inputHandlerOnCCThread = CCInputHandler::create(m_scrollControllerAdapterOnCCThread.get());
+    *compositorIdentifier = m_inputHandlerOnCCThread->identifier();
+
     completion->signal();
 }
 
@@ -429,6 +467,8 @@ void CCThreadProxy::layerTreeHostClosedOnCCThread(CCCompletionEvent* completion)
     ASSERT(isImplThread());
     m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
     m_layerTreeHostImpl.clear();
+    m_inputHandlerOnCCThread.clear();
+    m_scrollControllerAdapterOnCCThread.clear();
     completion->signal();
 }
 

@@ -31,6 +31,7 @@
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
+#include "cc/CCScrollController.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WTF;
@@ -44,6 +45,7 @@ PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 
 CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_layerTreeHost(layerTreeHost)
+    , m_compositorIdentifier(-1)
     , m_numFailedRecreateAttempts(0)
     , m_graphicsContextLost(false)
     , m_timesRecreateShouldFail(0)

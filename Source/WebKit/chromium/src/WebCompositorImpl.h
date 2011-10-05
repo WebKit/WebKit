@@ -28,6 +28,7 @@
 
 #include "WebCompositor.h"
 
+#include "cc/CCInputHandler.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -36,37 +37,42 @@ namespace WTF {
 class Mutex;
 }
 
+namespace WebCore {
+class CCScrollController;
+}
+
 namespace WebKit {
 
 class WebCompositorClient;
 
-class WebCompositorImpl : public WebCompositor {
+class WebCompositorImpl : public WebCompositor, public WebCore::CCInputHandler {
     WTF_MAKE_NONCOPYABLE(WebCompositorImpl);
 public:
     static WebCompositor* fromIdentifier(int identifier);
 
-    static PassOwnPtr<WebCompositorImpl> create()
+    static PassOwnPtr<WebCompositorImpl> create(WebCore::CCScrollController* scrollController)
     {
-        return adoptPtr(new WebCompositorImpl);
+        return adoptPtr(new WebCompositorImpl(scrollController));
     }
 
     virtual ~WebCompositorImpl();
 
+    // WebCompositor implementation
     virtual void setClient(WebCompositorClient*);
     virtual void handleInputEvent(const WebInputEvent&);
 
-    int identifier() const { return m_identifier; }
+    // WebCore::CCInputHandler implementation
+    virtual int identifier() const;
 
 private:
-    WebCompositorImpl();
+    explicit WebCompositorImpl(WebCore::CCScrollController*);
 
     WebCompositorClient* m_client;
     int m_identifier;
-
-    static HashSet<WebCompositorImpl*>* s_compositors;
-    static Mutex* s_compositorsLock;
+    WebCore::CCScrollController* m_scrollController;
 
     static int s_nextAvailableIdentifier;
+    static HashSet<WebCompositorImpl*>* s_compositors;
 };
 
 }

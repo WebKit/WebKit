@@ -60,6 +60,8 @@ public:
 
     virtual bool initializeLayerRenderer() = 0;
 
+    virtual int compositorIdentifier() const = 0;
+
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 
     virtual void setNeedsCommit() = 0;

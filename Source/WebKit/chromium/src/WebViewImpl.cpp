@@ -2650,7 +2650,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         updateLayerTreeViewport();
 
         m_client->didActivateAcceleratedCompositing(true);
-        m_client->didActivateCompositor(m_webCompositorImpl->identifier());
+        m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
 
@@ -2668,11 +2668,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_layerTreeHost = CCLayerTreeHost::create(this, m_nonCompositedContentHost->topLevelRootLayer()->platformLayer(), ccSettings);
         if (m_layerTreeHost) {
-            m_webCompositorImpl = WebCompositorImpl::create();
-            // FIXME: Hook the m_webCompositorImpl up with the CCLayerTreeHost somehow.
             updateLayerTreeViewport();
             m_client->didActivateAcceleratedCompositing(true);
-            m_client->didActivateCompositor(m_webCompositorImpl->identifier());
+            m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
             if (m_pageOverlay)

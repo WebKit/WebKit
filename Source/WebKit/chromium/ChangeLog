@@ -1,3 +1,33 @@
+2011-10-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Hook WebCompositor interface for input events up to the compositor proper
+        https://bugs.webkit.org/show_bug.cgi?id=69394
+
+        Reviewed by Darin Fisher.
+
+        This teaches WebCompositorImpl about WebCore::CCInputHandler, which WebCompositorImpl implements, and
+        CCScrollController, which WebCompositorImpl will use in the future to do actual scrolling. One thing that is a
+        bit unusual here is WebCore::CCInputHandler::create() which is defined in WebCompositorImpl.cpp.  This is
+        because we need a WebKit object (WebKit::WebCompositorImpl) to be owned by a WebCore object (WebCore::CCThreadProxy).
+        The WebCore side only needs to know about the interface, CCInputHandler, but the actual implementation has to
+        live in WebKit in order to know about the concrete type.
+
+        * src/WebCompositorImpl.cpp:
+        (WebCore::CCInputHandler::create):
+        (WebKit::WebCompositor::fromIdentifier):
+        (WebKit::WebCompositorImpl::fromIdentifier):
+        (WebKit::WebCompositorImpl::WebCompositorImpl):
+        (WebKit::WebCompositorImpl::~WebCompositorImpl):
+        (WebKit::WebCompositorImpl::setClient):
+        (WebKit::WebCompositorImpl::handleInputEvent):
+        (WebKit::WebCompositorImpl::identifier):
+        * src/WebCompositorImpl.h:
+        (WebKit::WebCompositorImpl::create):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+        * tests/WebCompositorImplTest.cpp:
+
 2011-10-05  Anna Cavender  <annacc@chromium.org>
 
         Functions to make <track> enabled at runtime.

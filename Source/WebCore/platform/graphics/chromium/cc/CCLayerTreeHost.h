@@ -113,6 +113,8 @@ public:
 
     CCLayerTreeHostClient* client() { return m_client; }
 
+    int compositorIdentifier() const { return m_compositorIdentifier; }
+
 #if !USE(THREADED_COMPOSITING)
     void composite();
 #endif
@@ -165,6 +167,8 @@ private:
     void updateCompositorResources(const LayerList&, GraphicsContext3D*, TextureAllocator*);
     void updateCompositorResources(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
     void clearPendingUpdate();
+
+    int m_compositorIdentifier;
 
     bool m_animating;
 

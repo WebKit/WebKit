@@ -1,3 +1,56 @@
+2011-10-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Hook WebCompositor interface for input events up to the compositor proper
+        https://bugs.webkit.org/show_bug.cgi?id=69394
+
+        Reviewed by Darin Fisher.
+
+        This wires up WebCompositorImpl to the compositor itself so we can handle input events as scrolls on the
+        compositor thread, although it doesn't actually wire up any input events to actual scrolling. The way this
+        works:
+
+        - CCThreadProxy owns an adapter that implements the CCScrollController interface
+        - CCThreadProxy owns a CCInputHandler, which is implemented by WebKit::WebCompositorImpl, that has a pointer to
+        the adapter
+        - CCLayerTreeHost has an identifier (an int) for its WebKit::WebCompositorImpl that's initialized in
+        initializeLayerRenderer. This identifier is exposed to its owner (WebKit::WebViewImpl) so the embedder can wire
+        up the threading logic behind the scenes.
+
+        This is just plumbing, no change in behavior.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCInputHandler.h: Added.
+        (WebCore::CCInputHandler::~CCInputHandler):
+        (WebCore::CCInputHandler::CCInputHandler):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::compositorIdentifier):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::scrollRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCScrollController.h: Added.
+        (WebCore::CCScrollController::CCScrollController):
+        (WebCore::CCScrollController::~CCScrollController):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::CCSingleThreadProxy::compositorIdentifier):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxyScrollControllerAdapter::create):
+        (WebCore::CCThreadProxyScrollControllerAdapter::~CCThreadProxyScrollControllerAdapter):
+        (WebCore::CCThreadProxyScrollControllerAdapter::scrollRootLayer):
+        (WebCore::CCThreadProxyScrollControllerAdapter::CCThreadProxyScrollControllerAdapter):
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::compositorIdentifier):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::initializeLayerRendererOnCCThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-05  Andreas Kling  <kling@webkit.org>
 
         Shrink OutlineValue.

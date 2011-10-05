@@ -161,6 +161,7 @@ void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& z
 
 void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
 {
+    TRACE_EVENT("CCLayerTreeHostImpl::scrollRootLayer", this, 0);
     if (!m_rootLayerImpl || !m_rootLayerImpl->scrollable())
         return;
 

@@ -27,7 +27,7 @@
 
 #include "WebCompositorImpl.h"
 
-#include "cc/CCProxy.h"
+#include "cc/CCSingleThreadProxy.h"
 
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
@@ -41,7 +41,7 @@ TEST(WebCompositorImpl, fromIdentifier)
 {
 #ifndef NDEBUG
     // WebCompositor APIs can only be called from the compositor thread.
-    WebCore::CCProxy::setImplThread(true);
+    WebCore::DebugScopedSetImplThread alwaysImplThread;
 #endif
 
     // Before creating any WebCompositors, lookups for any value should fail and not crash.
@@ -51,13 +51,7 @@ TEST(WebCompositorImpl, fromIdentifier)
 
     int compositorIdentifier = -1;
     {
-#ifndef NDEBUG
-        WebCore::CCProxy::setImplThread(false);
-#endif
-        OwnPtr<WebCompositorImpl> comp = WebCompositorImpl::create();
-#ifndef NDEBUG
-        WebCore::CCProxy::setImplThread(true);
-#endif
+        OwnPtr<WebCompositorImpl> comp = WebCompositorImpl::create(0);
         compositorIdentifier = comp->identifier();
         // The compositor we just created should be locatable.
         EXPECT_EQ(comp.get(), WebCompositor::fromIdentifier(compositorIdentifier));

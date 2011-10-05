@@ -30,10 +30,20 @@
 #include "CCThreadImpl.h"
 #include "WebCompositorClient.h"
 #include "WebInputEvent.h"
+#include "cc/CCScrollController.h"
 #include "cc/CCThreadProxy.h"
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
+
+namespace WebCore {
+
+PassOwnPtr<CCInputHandler> CCInputHandler::create(CCScrollController* scrollController)
+{
+    return WebKit::WebCompositorImpl::create(scrollController);
+}
+
+}
 
 namespace WebKit {
 
@@ -43,27 +53,21 @@ void WebCompositor::setThread(WebThread* compositorThread)
     CCThreadProxy::setThread(CCThreadImpl::create(compositorThread).leakPtr());
 }
 
-int WebCompositorImpl::s_nextAvailableIdentifier = 1;
 
-// These data structures are always allocated from the main thread, but may
-// be accessed and mutated on the main or compositor thread.
-// s_compositors is deleted when it has no elements. s_compositorsLock is never
-// deleted.
+// These statics may only be accessed from the compositor thread.
+int WebCompositorImpl::s_nextAvailableIdentifier = 1;
 HashSet<WebCompositorImpl*>* WebCompositorImpl::s_compositors = 0;
-Mutex* WebCompositorImpl::s_compositorsLock = 0;
 
 WebCompositor* WebCompositor::fromIdentifier(int identifier)
 {
+    ASSERT(CCProxy::isImplThread());
     return WebCompositorImpl::fromIdentifier(identifier);
 }
 
 WebCompositor* WebCompositorImpl::fromIdentifier(int identifier)
 {
     ASSERT(CCProxy::isImplThread());
-    if (!s_compositorsLock)
-        return 0;
 
-    MutexLocker lock(*s_compositorsLock);
     if (!s_compositors)
         return 0;
 
@@ -74,14 +78,13 @@ WebCompositor* WebCompositorImpl::fromIdentifier(int identifier)
     return 0;
 }
 
-WebCompositorImpl::WebCompositorImpl()
+WebCompositorImpl::WebCompositorImpl(CCScrollController* scrollController)
     : m_client(0)
     , m_identifier(s_nextAvailableIdentifier++)
+    , m_scrollController(scrollController)
 {
-    ASSERT(CCProxy::isMainThread());
-    if (!s_compositorsLock)
-        s_compositorsLock = new Mutex;
-    MutexLocker lock(*s_compositorsLock);
+    ASSERT(CCProxy::isImplThread());
+
     if (!s_compositors)
         s_compositors = new HashSet<WebCompositorImpl*>;
     s_compositors->add(this);
@@ -89,11 +92,10 @@ WebCompositorImpl::WebCompositorImpl()
 
 WebCompositorImpl::~WebCompositorImpl()
 {
+    ASSERT(CCProxy::isImplThread());
     if (m_client)
         m_client->willShutdown();
 
-    ASSERT(s_compositorsLock);
-    MutexLocker lock(*s_compositorsLock);
     ASSERT(s_compositors);
     s_compositors->remove(this);
     if (!s_compositors->size()) {
@@ -105,15 +107,23 @@ WebCompositorImpl::~WebCompositorImpl()
 void WebCompositorImpl::setClient(WebCompositorClient* client)
 {
     ASSERT(CCProxy::isImplThread());
-    ASSERT(client);
+    // It's valid to set a new client if we've never had one or to clear the client, but it's not valid to change from having one client to a different one.
+    ASSERT(!m_client || !client);
     m_client = client;
 }
 
 void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
 {
     ASSERT(CCProxy::isImplThread());
-    // FIXME: Do something interesting with the event here.
+    ASSERT(m_client);
+    // FIXME: Do something interesting with this input event like inform our m_scrollController.
     m_client->didNotHandleInputEvent(true /* sendToWidget */);
+}
+
+int WebCompositorImpl::identifier() const
+{
+    ASSERT(CCProxy::isImplThread());
+    return m_identifier;
 }
 
 }
