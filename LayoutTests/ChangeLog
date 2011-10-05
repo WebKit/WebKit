@@ -1,3 +1,18 @@
+2011-10-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: debuggerPresentatioModel.linkifyLocation leaks updateAnchor closure instances.
+        https://bugs.webkit.org/show_bug.cgi?id=69146
+
+        In many places we use linkifyLocation function to produce a link node which updates automatically when the source file is changed on the fly.
+        Such changes happen when we use pretty print or another operation that changes the source code somehow.
+        linkifyLocation associates a new instance of updateAnchor closure with the each link node and add the closure to the SourceMappingUpdated event's list.
+        As the result the node<->closure pairs wouldn't be collected until reset the UI and DebuggerPresentationModel.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/linkifier-expected.txt: Added.
+        * inspector/debugger/linkifier.html: Added.
+
 2011-10-05  Hans Wennborg  <hans@chromium.org>
 
         Rebaseline fast/repaint/japanese-rl-selection-repaint-in-regions.html

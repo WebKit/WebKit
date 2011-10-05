@@ -1,0 +1,28 @@
+Tests that Linkifier works correctly.
+
+Two addEventListener calls expected. The first for 'fakeUrl-1' the second for 'fakeUrl-2'.
+Two removeEventListener calls expected. The first for 'fakeUrl-1' the second for 'fakeUrl-2'.
+Debugger was enabled.
+--- linkify fakeURL-1 first time ---
+DummyPresentationModel._rawSourceCodeForScriptWithURL was called with arguments = ['fakeUrl-1']
+DummyRawSourceCode.addEventListener was called for source with URL = 'fakeUrl-1' with arguments = ['source-mapping-updated', function, object]
+
+--- linkify fakeURL-2 first time ---
+DummyPresentationModel._rawSourceCodeForScriptWithURL was called with arguments = ['fakeUrl-2']
+DummyRawSourceCode.addEventListener was called for source with URL = 'fakeUrl-2' with arguments = ['source-mapping-updated', function, object]
+
+--- linkify fakeURL-1 second time ---
+DummyPresentationModel._rawSourceCodeForScriptWithURL was called with arguments = ['fakeUrl-1']
+
+--- linkify fakeURL-2 second time ---
+DummyPresentationModel._rawSourceCodeForScriptWithURL was called with arguments = ['fakeUrl-2']
+
+--- reset ---
+DummyRawSourceCode.removeEventListener was called for source with id = 'fakeUrl-1' with arguments = ['source-mapping-updated', function, object]
+DummyRawSourceCode.removeEventListener was called for source with id = 'fakeUrl-2' with arguments = ['source-mapping-updated', function, object]
+
+--- location update ---
+original location: linkifier.html:93
+pretty printed location: linkifier.html:99
+reverted location: linkifier.html:93
+

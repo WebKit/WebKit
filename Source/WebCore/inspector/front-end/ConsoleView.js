@@ -110,6 +110,8 @@ WebInspector.ConsoleView = function(hideContextSelector)
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
+
+    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
 }
 
 WebInspector.ConsoleView.Events = {
@@ -326,6 +328,8 @@ WebInspector.ConsoleView.prototype = {
         this.topGroup.messagesElement.removeChildren();
 
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
+
+        this._linkifier.reset();
     },
 
     completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
@@ -617,7 +621,7 @@ WebInspector.ConsoleView.prototype = {
 
             WebInspector.settings.consoleHistory.set(this.prompt.history.slice(-30));
 
-            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
+            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }
         this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult.bind(this));
 
@@ -694,11 +698,11 @@ WebInspector.ConsoleCommand.prototype = {
  * @extends {WebInspector.ConsoleMessageImpl}
  * @constructor
  */
-WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand)
+WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand, linkifier)
 {
     var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
-    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, [result]);
+    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, linkifier, [result]);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {
@@ -776,3 +780,14 @@ WebInspector.ConsoleGroup.prototype = {
  * @type {?WebInspector.ConsoleView}
  */
 WebInspector.consoleView = null;
+
+WebInspector.ConsoleMessage.create = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
+{
+    return new WebInspector.ConsoleMessageImpl(source, type, level, line, url, repeatCount, message, WebInspector.consoleView._linkifier, parameters, stackTrace, request);
+}
+
+WebInspector.ConsoleMessage.createTextMessage = function(text, level)
+{
+    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
+    return new WebInspector.ConsoleMessageImpl(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, WebInspector.consoleView._linkifier, [text], null);
+}

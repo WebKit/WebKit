@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.startDebuggerTest(debuggerTest);
+
+    function debuggerTest()
+    {
+        if (!WebInspector.debuggerPresentationModel._rawSourceCode[WebInspector.mainResource._documentURL]) {
+            InspectorTest.addSniffer(WebInspector.debuggerPresentationModel, "_addScript", debuggerTest);
+            return;
+        }
+
+        var fakeURL1 = "fakeUrl-1";
+        var fakeURL2 = "fakeUrl-2";
+
+        DummyRawSourceCode = function(url)
+        {
+            this.url = url;
+            this.id = url;
+        }
+
+        DummyRawSourceCode.prototype = {
+            addEventListener: function(eventName, callback, object)
+            {
+                InspectorTest.addResult("DummyRawSourceCode.addEventListener was called for source with URL = '" + this.url + "' with arguments = ['" + eventName + "', " + (typeof callback) + ", " + (typeof object) + "]");
+            },
+
+            removeEventListener: function(eventName, callback, object)
+            {
+                InspectorTest.addResult("DummyRawSourceCode.removeEventListener was called for source with id = '" + this.url + "' with arguments = ['" + eventName + "', " + (typeof callback) + ", " + (typeof object) + "]");
+            }
+        }
+
+        DummyPresentationModel = function()
+        {
+            this._rawSourceCode = [];
+        }
+
+        DummyPresentationModel.prototype = {
+            _rawSourceCodeForScriptWithURL: function(sourceURL)
+            {
+                InspectorTest.addResult("DummyPresentationModel._rawSourceCodeForScriptWithURL was called with arguments = ['" + sourceURL + "']");
+                var rawSourceCode = this._rawSourceCode[sourceURL];
+                if (rawSourceCode)
+                    return rawSourceCode;
+                rawSourceCode = new DummyRawSourceCode(sourceURL);
+                this._rawSourceCode[sourceURL] = rawSourceCode;
+                return rawSourceCode;
+            }
+        }
+
+        var dummyPresentationModel = new DummyPresentationModel();
+
+        var linkifier = new WebInspector.DebuggerPresentationModel.Linkifier(dummyPresentationModel);
+
+        InspectorTest.addResult("--- linkify fakeURL-1 first time ---");
+        linkifier.linkifyLocation(fakeURL1, 42, 26, "fake-class-name");
+        InspectorTest.addResult("");
+
+        InspectorTest.addResult("--- linkify fakeURL-2 first time ---");
+        linkifier.linkifyLocation(fakeURL2, 42, 26, "fake-class-name");
+        InspectorTest.addResult("");
+
+        InspectorTest.addResult("--- linkify fakeURL-1 second time ---");
+        linkifier.linkifyLocation(fakeURL1, 97, 23, "fake-class-name");
+        InspectorTest.addResult("");
+
+        InspectorTest.addResult("--- linkify fakeURL-2 second time ---");
+        linkifier.linkifyLocation(fakeURL2, 4, 2, "fake-class-name");
+        InspectorTest.addResult("");
+
+        InspectorTest.addResult("--- reset ---");
+        linkifier.reset();
+        InspectorTest.addResult("");
+
+        InspectorTest.addResult("--- location update ---");
+
+        function dummyFunctionToBePrettyPrinted() { InspectorTest.addResult(""); console.error(""); }
+
+        linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+        var link = linkifier.linkifyLocation(WebInspector.mainResource._documentURL, 92, 0, "dummy-class");
+        InspectorTest.addResult("original location: " + link.textContent);
+
+        InspectorTest.addSniffer(linkifier, "_updateAnchor", linkUpdated);
+        WebInspector.debuggerPresentationModel.setFormatSource(true);
+
+        function linkUpdated()
+        {
+            InspectorTest.addResult("pretty printed location: " + link.textContent);
+            InspectorTest.addSniffer(linkifier, "_updateAnchor", linkReverted);
+            WebInspector.debuggerPresentationModel.setFormatSource(false);
+        }
+
+        function linkReverted()
+        {
+            InspectorTest.addResult("reverted location: " + link.textContent);
+            InspectorTest.completeTest();
+        }
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that Linkifier works correctly.
+<p>
+Two addEventListener calls expected. The first for 'fakeUrl-1' the second for 'fakeUrl-2'.<br>
+Two removeEventListener calls expected. The first for 'fakeUrl-1' the second for 'fakeUrl-2'.<br>
+
+</body>
+</html>

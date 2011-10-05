@@ -28,28 +28,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleMessage.create = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
-{
-    return new WebInspector.ConsoleMessageImpl(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request);
-}
-
-WebInspector.ConsoleMessage.createTextMessage = function(text, level)
-{
-    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
-    return new WebInspector.ConsoleMessageImpl(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
-}
-
 /**
  * @constructor
  * @extends {WebInspector.ConsoleMessage}
+ * @param {WebInspector.DebuggerPresentationModel.Linkifier} linkifier
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
  * @param {WebInspector.Resource=} request
  */
-WebInspector.ConsoleMessageImpl = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
+WebInspector.ConsoleMessageImpl = function(source, type, level, line, url, repeatCount, message, linkifier, parameters, stackTrace, request)
 {
     WebInspector.ConsoleMessage.call();
 
+    this._linkifier = linkifier;
     this.source = source;
     this.type = type;
     this.level = level;
@@ -194,7 +185,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // FIXME(62725): stack trace line/column numbers are one-based.
         lineNumber = lineNumber ? lineNumber - 1 : undefined;
         columnNumber = columnNumber ? columnNumber - 1 : 0;
-        return WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+        return this._linkifier.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
     },
 
     _linkifyCallFrame: function(callFrame)

@@ -109,6 +109,7 @@ WebInspector.TimelinePanel = function()
 
     this._registerShortcuts();
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
+    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -116,6 +117,19 @@ WebInspector.TimelinePanel.rowHeight = 18;
 WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePanel.prototype = {
+    _linkifyLocation: function(url, lineNumber, columnNumber)
+    {
+        // FIXME(62725): stack trace line/column numbers are one-based.
+        lineNumber = lineNumber ? lineNumber - 1 : lineNumber;
+        columnNumber = columnNumber ? columnNumber - 1 : 0;
+        return this._linkifier.linkifyLocation(url, lineNumber, columnNumber, "timeline-details");
+    },
+
+    _linkifyCallFrame: function(callFrame)
+    {
+        return this._linkifyLocation(callFrame.url, callFrame.lineNumber, callFrame.columnNumber);
+    },
+
     _createTopPane: function() {
         var topPaneElement = document.createElement("div");
         topPaneElement.id = "timeline-overview-panel";
@@ -528,6 +542,7 @@ WebInspector.TimelinePanel.prototype = {
         this._refresh();
         this._closeRecordDetails();
         this._model._reset();
+        this._linkifier.reset();
     },
 
     elementsToRestoreScrollPositionsFor: function()
@@ -961,6 +976,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
 
 WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, panel, scriptDetails)
 {
+    this._panel = panel;
     var recordTypes = WebInspector.TimelineAgent.RecordType;
     var style = panel._recordStyles[record.type];
     this.parent = parentRecord;
@@ -1051,7 +1067,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
 
     _generatePopupContent: function(calculator, categories)
     {
-        var contentHelper = new WebInspector.TimelinePanel.PopupContentHelper(this.title);
+        var contentHelper = new WebInspector.TimelinePanel.PopupContentHelper(this.title, this._panel);
 
         if (this._children && this._children.length) {
             contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime + 0.0001));
@@ -1136,26 +1152,26 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.GCEvent:
                 return WebInspector.UIString("%s collected", Number.bytesToString(this.data.usedHeapSizeDelta));
             case WebInspector.TimelineAgent.RecordType.TimerFire:
-                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.timerId;
+                return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
-                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : null;
+                return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : null;
             case WebInspector.TimelineAgent.RecordType.FireAnimationFrameEvent:
-                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.id;
+                return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.id;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return this.data ? this.data.type : null;
             case WebInspector.TimelineAgent.RecordType.Paint:
                 return this.data.width + "\u2009\u00d7\u2009" + this.data.height;
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
-                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : this.data.timerId;
+                return this.stackTrace ? this._panel._linkifyCallFrame(this.stackTrace[0]) : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.RegisterAnimationFrameCallback:
             case WebInspector.TimelineAgent.RecordType.CancelAnimationFrameCallback:
-                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : this.data.id;
+                return this.stackTrace ? this._panel._linkifyCallFrame(this.stackTrace[0]) : this.data.id;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
-                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : null;
+                return this.stackTrace ? this._panel._linkifyCallFrame(this.stackTrace[0]) : null;
             case WebInspector.TimelineAgent.RecordType.EvaluateScript:
-                return this.url ? this._linkifyLocation(this.url, this.data.lineNumber, 0) : null;
+                return this.url ? this._panel._linkifyLocation(this.url, this.data.lineNumber, 0) : null;
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
             case WebInspector.TimelineAgent.RecordType.ScheduleResourceRequest:
@@ -1169,19 +1185,6 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             default:
                 return null;
         }
-    },
-
-    _linkifyLocation: function(url, lineNumber, columnNumber)
-    {
-        // FIXME(62725): stack trace line/column numbers are one-based.
-        lineNumber = lineNumber ? lineNumber - 1 : lineNumber;
-        columnNumber = columnNumber ? columnNumber - 1 : 0;
-        return WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber, "timeline-details");
-    },
-
-    _linkifyCallFrame: function(callFrame)
-    {
-        return this._linkifyLocation(callFrame.url, callFrame.lineNumber, callFrame.columnNumber);
     },
 
     _calculateAggregatedStats: function(categories)
@@ -1204,8 +1207,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     }
 }
 
-WebInspector.TimelinePanel.PopupContentHelper = function(title)
+WebInspector.TimelinePanel.PopupContentHelper = function(title, panel)
 {
+    this._panel = panel;
     this._contentTable = document.createElement("table");;
     var titleCell = this._createCell(WebInspector.UIString("%s - Details", title), "timeline-details-title");
     titleCell.colSpan = 2;
@@ -1251,7 +1255,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
 
     _appendLinkRow: function(title, scriptName, scriptLine)
     {
-        var link = WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyLocation(scriptName, scriptLine, 0, "timeline-details");
+        var link = this._panel._linkifyLocation(scriptName, scriptLine, 0, "timeline-details");
         this._appendElementRow(title, link);
     },
 
@@ -1266,7 +1270,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
             row.appendChild(this._createCell(stackFrame.functionName ? stackFrame.functionName : WebInspector.UIString("(anonymous function)"), "timeline-function-name"));
             row.appendChild(this._createCell(" @ "));
             var linkCell = document.createElement("td");
-            var urlElement = WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyCallFrame(stackFrame);
+            var urlElement = this._panel._linkifyCallFrame(stackFrame);
             linkCell.appendChild(urlElement);
             row.appendChild(linkCell);
             framesTable.appendChild(row);

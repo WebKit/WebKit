@@ -67,30 +67,9 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
+    createLinkifier: function()
     {
-        var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
-        var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
-
-        var rawSourceCode = this._rawSourceCodeForScriptWithURL(sourceURL);
-        if (!rawSourceCode) {
-            anchor.setAttribute("preferred_panel", "resources");
-            anchor.setAttribute("line_number", lineNumber);
-            return anchor;
-        }
-
-        function updateAnchor()
-        {
-            var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation({ lineNumber: lineNumber, columnNumber: columnNumber });
-            anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
-            anchor.setAttribute("preferred_panel", "scripts");
-            anchor.uiSourceCode = uiLocation.uiSourceCode;
-            anchor.lineNumber = uiLocation.lineNumber;
-        }
-        if (rawSourceCode.sourceMapping)
-            updateAnchor.call(this);
-        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, updateAnchor, this);
-        return anchor;
+        return new WebInspector.DebuggerPresentationModel.Linkifier(this);
     },
 
     createPlacard: function(callFrame)
@@ -574,6 +553,67 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
                 this._presentationModel._updateBreakpointsAfterLiveEdit(uiSourceCode, oldContent, content);
         }
         this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.DebuggerPresentationModel.Linkifier = function(model)
+{
+    this._model = model;
+    this._anchorsForRawSourceCode = {};
+}
+
+WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
+    linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
+    {
+        var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
+        var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
+        anchor.rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+
+        var rawSourceCode = this._model._rawSourceCodeForScriptWithURL(sourceURL);
+        if (!rawSourceCode) {
+            anchor.setAttribute("preferred_panel", "resources");
+            anchor.setAttribute("line_number", lineNumber);
+            return anchor;
+        }
+
+        var anchors = this._anchorsForRawSourceCode[rawSourceCode.id];
+        if (!anchors) {
+            anchors = [];
+            this._anchorsForRawSourceCode[rawSourceCode.id] = anchors;
+            rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._updateSourceAnchors, this);
+        }
+
+        if (rawSourceCode.sourceMapping)
+            this._updateAnchor(rawSourceCode, anchor);
+        anchors.push(anchor);
+        return anchor;
+    },
+
+    reset: function()
+    {
+        for (var id in this._anchorsForRawSourceCode)
+            this._model._rawSourceCode[id].removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._updateSourceAnchors, this);
+        this._anchorsForRawSourceCode = {};
+    },
+
+    _updateSourceAnchors: function(event)
+    {
+        var rawSourceCode = event.target;
+        var anchors = this._anchorsForRawSourceCode[rawSourceCode.id];
+        for (var i = 0; i < anchors.length; ++i)
+            this._updateAnchor(rawSourceCode, anchors[i]);
+    },
+
+    _updateAnchor: function(rawSourceCode, anchor)
+    {
+        var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(anchor.rawLocation);
+        anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
+        anchor.setAttribute("preferred_panel", "scripts");
+        anchor.uiSourceCode = uiLocation.uiSourceCode;
+        anchor.lineNumber = uiLocation.lineNumber;
     }
 }
 
