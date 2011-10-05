@@ -3841,3 +3841,6 @@ BUGWK48544 MAC LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
 
 // New test in http://trac.webkit.org/changeset/96470
 BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
+
+// Broken with Skia roll: 2394 to 2412
+BUGWK69465 LINUX : fast/forms/select-background-none.html = IMAGE

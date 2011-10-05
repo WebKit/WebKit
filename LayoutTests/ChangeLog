@@ -1,3 +1,11 @@
+2011-10-05  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Update test expectations after Skia roll.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt: Added select-background-none.html on Linux.
+
 2011-10-05  Dean Jackson  <dino@apple.com>
 
         Parse '-webkit-filter' property syntax
