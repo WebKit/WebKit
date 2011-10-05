@@ -17,6 +17,26 @@
         "WatchListScript": {
             "filename": r"Tools/Scripts/webkitpy/common/watchlist/.*",
         },
+        "webkitpy": {
+            "filename": r"Tools/Scripts/webkitpy/.*",
+        },
+        "TestFailures": {
+            "filename": r"Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/.*",
+        },
+        "SecurityCritical": {
+            "more": r"[Ss]ecurityOrigin(?!\.(h|cpp)",
+            "less": r"[Ss]ecurityOrigin(?!\.(h|cpp)",
+            "filename": r"XSS|[Ss]ecurity",
+        },
+        "V8Bindings": {
+            "filename": r"Source/WebCore/bindings/v8/.*",
+        },
+        "BindingsScripts": {
+            "filename": r"Source/WebCore/bindings/scripts/.*",
+        },
+        "FrameLoader": {
+            "more": r"FrameLoader\.(cpp|h)",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -26,6 +46,7 @@
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
+        "webkitpy|TestFailures|SecurityCritical|V8Bindings|BindingsScripts|FrameLoader": [ "abarth@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "

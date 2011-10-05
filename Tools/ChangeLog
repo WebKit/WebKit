@@ -1,3 +1,15 @@
+2011-10-05  Adam Barth  <abarth@webkit.org>
+
+        Add watchlist entries for abarth
+        https://bugs.webkit.org/show_bug.cgi?id=69461
+
+        Reviewed by David Levin.
+
+        I might have gone a bit overboard.  We'll see if this is too much spam
+        for me.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Teach old-run-webkit-tests about wincairo.
