@@ -1,3 +1,18 @@
+2011-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96756.
+        http://trac.webkit.org/changeset/96756
+        https://bugs.webkit.org/show_bug.cgi?id=69472
+
+        Many builds broken due to WTFGetBacktrace not being exported
+        from JavaScriptCore (Requested by aroben on #webkit).
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::stopLoadRequest):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptElement.h:
+
 2011-10-05  Gavin Peters  <gavinp@chromium.org>
 
         save resource zeroing stacks in ScriptElement for debugging
