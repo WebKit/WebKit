@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS o1.value is "text"
-PASS o1.label is ""
+PASS o1.label is "text"
 PASS o2.value is "value"
-PASS o2.label is ""
+PASS o2.label is "text"
 PASS o3.value is "text"
 PASS o3.label is "label"
 PASS o4.value is "value"

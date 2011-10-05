@@ -5,6 +5,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +32,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
@@ -216,7 +218,19 @@ void HTMLOptionElement::setDefaultSelected(bool b)
 
 String HTMLOptionElement::label() const
 {
-    return m_data.label();
+    String label = m_data.label();
+    if (!label.isNull())
+        return label;
+ 
+    label = collectOptionInnerText(this).stripWhiteSpace(isHTMLSpace);
+    label = label.simplifyWhiteSpace(isHTMLSpace);
+
+    return label;
+}
+
+void HTMLOptionElement::setLabel(const String& label)
+{
+    setAttribute(labelAttr, label);
 }
 
 void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)

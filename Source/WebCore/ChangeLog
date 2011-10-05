@@ -1,3 +1,27 @@
+2011-10-05  Sachin Puranik  <jcqt43@motorola.com>
+
+        Spec change - option.label should be reflected like option.value
+        https://bugs.webkit.org/show_bug.cgi?id=68684
+
+        Reviewed by Darin Adler.
+
+        Incorporating the recent change in spec for label attribute of 
+        option element. While retrieving the "Label" IDL attribute return
+        the "Label" content attribute if present , else return the 
+        value of textContent attribute.
+
+        Tests: fast/forms/option-label-trim-html-spaces.html
+               fast/forms/option-value-and-label-changed-by-js.html
+
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::normalizeText):style fixes
+        * dom/OptionElement.h: make collectOptionInnerText() protected.
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::label): return innerText if label attribute un-available.
+        (WebCore::HTMLOptionElement::setLabel):setLabel() implementation.
+        * html/HTMLOptionElement.h: add setLabel declaration.
+        * html/HTMLOptionElement.idl: Change reflect to ConvertNullToNullString in idl
+
 2011-10-05  Rémi Duraffort  <remi.duraffort@st.com>
 
         [GTK] Fix compilation with gtk v2.20.1

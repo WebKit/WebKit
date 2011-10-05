@@ -48,8 +48,8 @@ protected:
     static String collectOptionLabelOrText(const OptionElementData&, const Element*);
     static String collectOptionTextRespectingGroupLabel(const OptionElementData&, const Element*);
     static String collectOptionValue(const OptionElementData&, const Element*);
-private:
     static String collectOptionInnerText(const Element*);
+private:
     static String normalizeText(const Document*, const String&);
 };
 

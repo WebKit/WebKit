@@ -58,6 +58,7 @@ public:
     void setDefaultSelected(bool);
 
     String label() const;
+    void setLabel(const String&);
 
     bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
 
@@ -92,6 +93,6 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-} //namespace
+} // namespace
 
 #endif

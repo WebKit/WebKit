@@ -32,7 +32,7 @@ module html {
 #endif
         readonly attribute long index;
         attribute [Reflect] boolean disabled;
-        attribute [Reflect] DOMString label;
+        attribute [ConvertNullToNullString] DOMString label;
         attribute boolean selected;
         attribute [ConvertNullToNullString] DOMString value;
     };
