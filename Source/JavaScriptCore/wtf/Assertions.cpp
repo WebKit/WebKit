@@ -183,7 +183,7 @@ void WTFGetBacktrace(void** stack, int* size)
     RtlCaptureStackBackTraceFunc captureStackBackTraceFunc = reinterpret_cast<RtlCaptureStackBackTraceFunc>(
         ::GetProcAddress(kernel32, "RtlCaptureStackBackTrace"));
     if (captureStackBackTraceFunc)
-        *size = captureStackBackTraceFunc(1, *size, stack, 0);
+        *size = captureStackBackTraceFunc(0, *size, stack, 0);
     else
         *size = 0;
 #else
@@ -193,13 +193,14 @@ void WTFGetBacktrace(void** stack, int* size)
 
 void WTFReportBacktrace()
 {
-    static const int maxFrames = 32;
-    void* samples[maxFrames];
-    int frames = maxFrames;
+    static const int framesToShow = 31;
+    static const int framesToSkip = 2;
+    void* samples[framesToShow + framesToSkip];
+    int frames = framesToShow + framesToSkip;
 
     WTFGetBacktrace(samples, &frames);
 
-    for (int i = 1; i < frames; ++i) {
+    for (int i = framesToSkip; i < frames; ++i) {
         const char* mangledName = 0;
         char* cxaDemangled = 0;
 
