@@ -65,17 +65,20 @@ LayoutRect RenderRegion::regionOverflowRect() const
     LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
 
     // Only clip along the flow thread axis.
+    LayoutUnit outlineSize = maximalOutlineSize(PaintPhaseOutline);
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
-        LayoutUnit minY = isFirstRegion() ? flowThreadOverflow.y() : regionRect().y();
-        LayoutUnit maxY = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? flowThreadOverflow.maxY() : regionRect().maxY();
-        clipRect = LayoutRect(clipX ? regionRect().x() : flowThreadOverflow.x(), minY,
-                              clipX ? regionRect().width() : flowThreadOverflow.width(), maxY - minY);
+        LayoutUnit minY = isFirstRegion() ? (flowThreadOverflow.y() - outlineSize) : regionRect().y();
+        LayoutUnit maxY = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? (flowThreadOverflow.maxY() + outlineSize) : regionRect().maxY();
+        LayoutUnit minX = clipX ? regionRect().x() : (flowThreadOverflow.x() - outlineSize);
+        LayoutUnit maxX = clipX ? regionRect().maxX() : (flowThreadOverflow.maxX() + outlineSize);
+        clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
-        LayoutUnit minX = isFirstRegion() ? flowThreadOverflow.x() : regionRect().x();
-        LayoutUnit maxX = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? flowThreadOverflow.maxX() : regionRect().maxX();
-        clipRect = LayoutRect(minX, clipY ? regionRect().y() : flowThreadOverflow.y(),
-                              maxX - minX, clipY ? regionRect().height() : flowThreadOverflow.height());
+        LayoutUnit minX = isFirstRegion() ? (flowThreadOverflow.x() - outlineSize) : regionRect().x();
+        LayoutUnit maxX = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? (flowThreadOverflow.maxX() + outlineSize) : regionRect().maxX();
+        LayoutUnit minY = clipY ? regionRect().y() : (flowThreadOverflow.y() - outlineSize);
+        LayoutUnit maxY = clipY ? regionRect().maxY() : (flowThreadOverflow.maxY() + outlineSize);
+        clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     }
 
     return clipRect;

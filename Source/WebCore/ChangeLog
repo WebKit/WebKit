@@ -1,3 +1,21 @@
+2011-10-05  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68731
+        
+        Outline sides not painted for region. Fix the painting and hit testing code for regions to add in
+        the maximalOutlineSize on unclipped sides. Also fix some math errors with the computation of the
+        translation offset and clip rects when overflow or outlines spill out.
+
+        Reviewed by Darin Adler.
+
+        Added new test in fast/regions.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        (WebCore::RenderFlowThread::hitTestRegion):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOverflowRect):
+
 2011-10-05  Yury Semikhatsky  <yurys@chromium.org>
         
         Unreviewed. Build fix: make InspectorStateClient.h Private in XCode project.

@@ -421,7 +421,7 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     // adjusted with the region padding and border.
     LayoutRect regionRect(region->regionRect());
     LayoutRect regionOverflowRect(region->regionOverflowRect());
-    LayoutRect regionClippingRect(paintOffset, regionOverflowRect.size());
+    LayoutRect regionClippingRect(paintOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
 
     PaintInfo info(paintInfo);
     info.rect.intersect(regionClippingRect);
@@ -438,9 +438,9 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
         if (style()->isFlippedBlocksWritingMode()) {
             LayoutRect flippedRegionRect(regionRect);
             flipForWritingMode(flippedRegionRect);
-            renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - flippedRegionRect.location());
+            renderFlowThreadOffset = LayoutPoint(paintOffset - flippedRegionRect.location());
         } else
-            renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - regionRect.location());
+            renderFlowThreadOffset = LayoutPoint(paintOffset - regionRect.location());
 
         context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
         info.rect.moveBy(-renderFlowThreadOffset);
@@ -455,7 +455,7 @@ bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest&
 {
     LayoutRect regionRect(region->regionRect());
     LayoutRect regionOverflowRect = region->regionOverflowRect();
-    LayoutRect regionClippingRect(accumulatedOffset, regionOverflowRect.size());
+    LayoutRect regionClippingRect(accumulatedOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
     if (!regionClippingRect.contains(pointInContainer))
         return false;
     
@@ -463,9 +463,9 @@ bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest&
     if (style()->isFlippedBlocksWritingMode()) {
         LayoutRect flippedRegionRect(regionRect);
         flipForWritingMode(flippedRegionRect);
-        renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - flippedRegionRect.location());
+        renderFlowThreadOffset = LayoutPoint(accumulatedOffset - flippedRegionRect.location());
     } else
-        renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - regionRect.location());
+        renderFlowThreadOffset = LayoutPoint(accumulatedOffset - regionRect.location());
 
     LayoutPoint transformedPoint(pointInContainer.x() - renderFlowThreadOffset.x(), pointInContainer.y() - renderFlowThreadOffset.y());
     

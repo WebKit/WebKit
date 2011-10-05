@@ -1,0 +1,29 @@
+<!-- this test should display two identical yellow squares -->
+<style type="text/css">
+	
+	h1{
+		outline: 5px solid yellow;
+	}
+	
+	#source{
+		-webkit-flow: "body";
+	}
+	
+	#region{
+		content:-webkit-from-flow("body");
+	}
+	div{
+		width:200px;
+		height:200px;			
+	}
+</style>
+<body>
+	<div id="source">
+		<h1>&nbsp;</h1>
+	</div>
+	
+	<div id="region"></div>
+	<div>
+		<h1>&nbsp;</h1>
+	</div>
+</body>

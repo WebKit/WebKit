@@ -1,3 +1,17 @@
+2011-10-05  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68731
+        
+        Outline sides not painted for region. Fix the painting and hit testing code for regions to add in
+        the maximalOutlineSize on unclipped sides. Also fix some math errors with the computation of the
+        translation offset and clip rects when overflow or outlines spill out.
+
+        Reviewed by Darin Adler.
+
+        * fast/regions/outline-sides-in-region.html: Added.
+        * platform/mac/fast/regions/outline-sides-in-region-expected.png: Added.
+        * platform/mac/fast/regions/outline-sides-in-region-expected.txt: Added.
+
 2011-10-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening.
