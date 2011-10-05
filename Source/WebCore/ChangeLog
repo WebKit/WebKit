@@ -1,3 +1,10 @@
+2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Debug builders.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::restoreInspectorStateFromCookie):
+
 2011-10-05  Dirk Schulze  <krit@webkit.org>
 
         SVG 1.1: ineffectual transform attribute for ClipPath

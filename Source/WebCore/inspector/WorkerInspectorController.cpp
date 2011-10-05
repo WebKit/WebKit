@@ -194,7 +194,7 @@ void WorkerInspectorController::disconnectFrontend()
 
 void WorkerInspectorController::restoreInspectorStateFromCookie(const String& inspectorCookie)
 {
-    ASSERT(!m_inspectorFrontend);
+    ASSERT(!m_frontend);
     connectFrontend();
     m_state->loadFromCookie(inspectorCookie);
 
