@@ -109,6 +109,10 @@ bool WorkerScriptController::isExecutionForbidden() const
     return m_executionForbidden;
 }
 
+void WorkerScriptController::disableEval()
+{
+}
+
 void WorkerScriptController::setException(ScriptValue exception)
 {
     throwError(*exception.v8Value());

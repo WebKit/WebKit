@@ -1,5 +1,13 @@
 2011-10-04  Sam Weinig  <sam@webkit.org>
 
+        Stub out WorkerScriptController::disableEval for v8 to fix the build.
+
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::disableEval):
+        * bindings/v8/WorkerScriptController.h:
+
+2011-10-04  Sam Weinig  <sam@webkit.org>
+
         OVERRIDE seems to not be working for Windows. Remove it for now.
 
         * dom/Document.h:
