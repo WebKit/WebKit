@@ -1,3 +1,16 @@
+2011-10-05  Kenneth Russell  <kbr@google.com>
+
+        Mask underlying RENDERER and VENDOR strings
+        https://bugs.webkit.org/show_bug.cgi?id=69389
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/canvas/webgl/renderer-and-vendor-strings.html
+
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getParameter):
+
 2011-10-05  Sachin Puranik  <jcqt43@motorola.com>
 
         Spec change - option.label should be reflected like option.value

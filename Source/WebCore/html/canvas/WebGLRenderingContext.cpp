@@ -2171,7 +2171,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::RENDERBUFFER_BINDING:
         return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(m_renderbufferBinding));
     case GraphicsContext3D::RENDERER:
-        return WebGLGetInfo(m_context->getString(GraphicsContext3D::RENDERER));
+        return WebGLGetInfo(String("WebKit WebGL"));
     case GraphicsContext3D::SAMPLE_BUFFERS:
         return getIntParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
@@ -2235,7 +2235,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
         return WebGLGetInfo(m_unpackColorspaceConversion);
     case GraphicsContext3D::VENDOR:
-        return WebGLGetInfo("Webkit (" + m_context->getString(GraphicsContext3D::VENDOR) + ")");
+        return WebGLGetInfo(String("WebKit"));
     case GraphicsContext3D::VERSION:
         return WebGLGetInfo("WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")");
     case GraphicsContext3D::VIEWPORT:
