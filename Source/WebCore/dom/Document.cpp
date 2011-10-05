@@ -2438,6 +2438,14 @@ String Document::userAgent(const KURL& url) const
     return frame() ? frame()->loader()->userAgent(url) : String();
 }
 
+void Document::disableEval()
+{
+    if (!frame())
+        return;
+
+    frame()->script()->disableEval();
+}
+
 CSSStyleSheet* Document::pageUserSheet()
 {
     if (m_pageUserSheet)

@@ -96,6 +96,8 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&) const = 0;
 
+        virtual void disableEval() = 0;
+
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
         ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 

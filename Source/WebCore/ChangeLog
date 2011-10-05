@@ -1,3 +1,30 @@
+2011-10-04  Sam Weinig  <sam@webkit.org>
+
+        Wean ContentSecurityPolicy from the Document
+        https://bugs.webkit.org/show_bug.cgi?id=69387
+
+        Reviewed by Adam Barth.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::disableEval):
+        * bindings/js/WorkerScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::disableEval):
+        * dom/Document.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::disableEval):
+        * workers/WorkerContext.h:
+        * dom/ScriptExecutionContext.h:
+        Add pure virtual disableEval to ScriptExecutionContext, so that ContentSecurityPolicy
+        can call it for both Documents and WorkerContexts.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        Call the new ScriptExecutionContext::disableEval() function.
+
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        Use ScriptExecutionContext::addMessage() instead of going directly to the DOMWindow.
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         Move code into ScrollElasticityController::beginScrollGesture()

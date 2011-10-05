@@ -27,12 +27,12 @@
 #include "ContentSecurityPolicy.h"
 
 #include "Console.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "PingLoader.h"
+#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
 #include <wtf/text/WTFString.h>
@@ -491,30 +491,25 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
         break;
     }
 
-    if (!checkEval(operativeDirective(m_scriptSrc.get()))) {
-        // FIXME: Support disabling eval for Workers.
-        if (m_scriptExecutionContext->isDocument()) {
-            if (Frame* frame = static_cast<Document*>(m_scriptExecutionContext)->frame())
-                frame->script()->disableEval();
-        }
-    }
+    if (!checkEval(operativeDirective(m_scriptSrc.get())))
+        m_scriptExecutionContext->disableEval();
 }
 
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage) const
 {
-    // FIXME: Support reporting violations for Workers.
+    String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
+    m_scriptExecutionContext->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+
+    if (m_reportURLs.isEmpty())
+        return;
+
+    // FIXME: Support sending reports from worker.
     if (!m_scriptExecutionContext->isDocument())
         return;
 
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
     Frame* frame = document->frame();
     if (!frame)
-        return;
-
-    String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
-    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
-
-    if (m_reportURLs.isEmpty())
         return;
 
     // We need to be careful here when deciding what information to send to the

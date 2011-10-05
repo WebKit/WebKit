@@ -77,6 +77,8 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&) const;
 
+        virtual void disableEval() OVERRIDE;
+
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script.clear(); }
 #if ENABLE(INSPECTOR)

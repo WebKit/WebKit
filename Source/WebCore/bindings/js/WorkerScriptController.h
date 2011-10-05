@@ -73,6 +73,8 @@ namespace WebCore {
         void forbidExecution();
         bool isExecutionForbidden() const;
 
+        void disableEval();
+
         JSC::JSGlobalData* globalData() { return m_globalData.get(); }
 
     private:

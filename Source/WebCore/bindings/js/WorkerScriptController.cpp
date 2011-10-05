@@ -181,6 +181,14 @@ bool WorkerScriptController::isExecutionForbidden() const
     return m_executionForbidden;
 }
 
+void WorkerScriptController::disableEval()
+{
+    initScriptIfNeeded();
+    JSLock lock(SilenceAssertionsOnly);
+
+    m_workerContextWrapper->setEvalEnabled(false);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

@@ -165,6 +165,11 @@ String WorkerContext::userAgent(const KURL&) const
     return m_userAgent;
 }
 
+void WorkerContext::disableEval()
+{
+    m_script->disableEval();
+}
+
 WorkerLocation* WorkerContext::location() const
 {
     if (!m_location)
