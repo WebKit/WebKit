@@ -1,5 +1,16 @@
 2011-10-05  Andreas Kling  <kling@webkit.org>
 
+        Shrink FontFallbackList.
+        https://bugs.webkit.org/show_bug.cgi?id=69093
+
+        Rubber-stamped by Antti Koivisto.
+
+        Workaround MSVC quirk by making enum bitfield "unsigned".
+
+        * platform/graphics/FontFallbackList.h:
+
+2011-10-05  Andreas Kling  <kling@webkit.org>
+
         Shrink StyleRareNonInheritedData.
         https://bugs.webkit.org/show_bug.cgi?id=69331
 

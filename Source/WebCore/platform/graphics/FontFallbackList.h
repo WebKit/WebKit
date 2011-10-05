@@ -89,7 +89,7 @@ private:
     RefPtr<FontSelector> m_fontSelector;
     mutable int m_familyIndex;
     unsigned short m_generation;
-    mutable Pitch m_pitch : 3;
+    mutable unsigned m_pitch : 3; // Pitch
     mutable bool m_loadingCustomFonts : 1;
 
     friend class Font;
