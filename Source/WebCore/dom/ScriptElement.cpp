@@ -66,6 +66,7 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
     , m_forceAsync(!parserInserted)
     , m_willExecuteInOrder(false)
     , m_cachedScriptState(NeverSet)
+    , m_backtraceSize(0)
 {
     ASSERT(m_element);
 }
@@ -302,7 +303,10 @@ void ScriptElement::stopLoadRequest()
         if (!m_willBeParserExecuted)
             m_cachedScript->removeClient(this);
         ASSERT(m_cachedScriptState == Set);
+
         m_cachedScriptState = ZeroedInStopLoadRequest;
+        m_backtraceSize = MaxBacktraceSize;
+        WTFGetBacktrace(m_backtrace, &m_backtraceSize);
         m_cachedScript = 0;
     }
 }
@@ -331,6 +335,8 @@ void ScriptElement::notifyFinished(CachedResource* o)
 
     ASSERT(m_cachedScriptState == Set);
     m_cachedScriptState = ZeroedInNotifyFinished;
+    m_backtraceSize = MaxBacktraceSize;
+    WTFGetBacktrace(m_backtrace, &m_backtraceSize);
     m_cachedScript = 0;
 }
 

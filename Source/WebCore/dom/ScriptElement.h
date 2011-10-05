@@ -113,6 +113,14 @@ private:
       ZeroedInStopLoadRequest,
       ZeroedInNotifyFinished,
     } m_cachedScriptState;
+
+    // We grab a backtrace when we zero m_cachedScript, so that at later crashes
+    // we'll have a debuggable stack.
+    enum {
+        MaxBacktraceSize = 32
+    };
+    int m_backtraceSize;
+    void* m_backtrace[MaxBacktraceSize];
 };
 
 ScriptElement* toScriptElement(Element*);
