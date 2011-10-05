@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(INPUT_TYPE_WEEK)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -103,3 +105,5 @@ bool WeekInputType::setMillisecondToDateComponents(double value, DateComponents*
 }
 
 } // namespace WebCore
+
+#endif

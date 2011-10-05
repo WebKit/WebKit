@@ -33,6 +33,8 @@
 
 #include "BaseDateAndTimeInputType.h"
 
+#if ENABLE(INPUT_TYPE_MONTH)
+
 namespace WebCore {
 
 class MonthInputType : public BaseDateAndTimeInputType {
@@ -58,4 +60,5 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // MonthInputType_h

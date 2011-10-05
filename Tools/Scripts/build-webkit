@@ -92,6 +92,12 @@ my (
     $indexedDatabaseSupport,
     $inputColorSupport,
     $inputSpeechSupport,
+    $inputTypeDateSupport,
+    $inputTypeDatetimeSupport,
+    $inputTypeDatetimelocalSupport,
+    $inputTypeMonthSupport,
+    $inputTypeTimeSupport,
+    $inputTypeWeekSupport,
     $javaScriptDebuggerSupport,
     $linkPrefetchSupport,
     $mathmlSupport,
@@ -211,6 +217,24 @@ my @features = (
 
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
+
+    { option => "input-type-date", desc => "Toggle date type <input> support",
+      define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },
+
+    { option => "input-type-datetime", desc => "Toggle datetime type <input> support",
+      define => "ENABLE_INPUT_TYPE_DATETIME", default => 0, value => \$inputTypeDatetimeSupport },
+
+    { option => "input-type-datetimelocal", desc => "Toggle datetime-local type <input> support",
+      define => "ENABLE_INPUT_TYPE_DATETIMELOCAL", default => 0, value => \$inputTypeDatetimelocalSupport },
+
+    { option => "input-type-month", desc => "Toggle month type <input> support",
+      define => "ENABLE_INPUT_TYPE_MONTH", default => 0, value => \$inputTypeMonthSupport },
+
+    { option => "input-type-time", desc => "Toggle time type <input> support",
+      define => "ENABLE_INPUT_TYPE_TIME", default => 0, value => \$inputTypeTimeSupport },
+
+    { option => "input-type-week", desc => "Toggle week type <input> support",
+      define => "ENABLE_INPUT_TYPE_WEEK", default => 0, value => \$inputTypeWeekSupport },
 
     { option => "inspector", desc => "Toggle Web Inspector support",
       define => "ENABLE_INSPECTOR", default => 1, value => \$webInspectorSupport },

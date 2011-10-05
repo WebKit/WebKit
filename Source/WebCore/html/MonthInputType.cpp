@@ -39,6 +39,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(INPUT_TYPE_MONTH)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -143,3 +145,5 @@ bool MonthInputType::setMillisecondToDateComponents(double value, DateComponents
 }
 
 } // namespace WebCore
+
+#endif

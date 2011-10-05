@@ -33,6 +33,8 @@
 
 #include "BaseDateAndTimeInputType.h"
 
+#if ENABLE(INPUT_TYPE_DATE)
+
 namespace WebCore {
 
 class DateInputType : public BaseDateAndTimeInputType {
@@ -54,4 +56,5 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // DateInputType_h

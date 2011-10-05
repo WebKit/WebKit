@@ -1,3 +1,28 @@
+2011-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Introduce feature flags for incomplete input types
+        https://bugs.webkit.org/show_bug.cgi?id=68971
+
+        Reviewed by Hajime Morita.
+
+        * Configurations/FeatureDefines.xcconfig:
+         Add ENABLE_INPUT_TYPE_* flags. They are enabled only for iOS.
+        * html/DateInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_DATE)
+        * html/DateInputType.h: ditto.
+        * html/DateTimeInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_DATETIME)
+        * html/DateTimeInputType.h: ditto.
+        * html/DateTimeLocalInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_DATETIMELOCAL)
+        * html/DateTimeLocalInputType.h: ditto.
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap):
+         Recognizes type attribute value only if it is enabled by ENABLE(INPUT_TYPE_*).
+        * html/MonthInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_MONTH)
+        * html/MonthInputType.h: ditto.
+        * html/TimeInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_TIME)
+        * html/TimeInputType.h: ditto.
+        * html/WeekInputType.cpp: Wrapped with ENABLE(INPUT_TYPE_WEEK)
+        * html/WeekInputType.h: ditto.
+
 2011-10-04  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69398

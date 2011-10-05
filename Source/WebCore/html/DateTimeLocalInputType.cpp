@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -109,3 +111,5 @@ bool DateTimeLocalInputType::setMillisecondToDateComponents(double value, DateCo
 }
 
 } // namespace WebCore
+
+#endif

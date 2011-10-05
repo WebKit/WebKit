@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(INPUT_TYPE_DATE)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -97,3 +99,5 @@ bool DateInputType::setMillisecondToDateComponents(double value, DateComponents*
 }
 
 } // namespace WebCore
+
+#endif

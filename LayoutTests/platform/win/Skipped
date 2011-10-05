@@ -1107,6 +1107,18 @@ fast/forms/spin-button-gets-disabled-or-readonly.html
 # Color input is not yet enabled.
 fast/forms/color
 
+# ENABLE_INPUT_TYPE_* are not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=29359
+fast/forms/date
+fast/css/pseudo-in-range.html
+fast/css/pseudo-out-of-range.html
+fast/css/pseudo-in-range-invalid-value.html
+fast/forms/datetime
+fast/forms/datetimelocal
+fast/forms/month
+fast/forms/time
+fast/forms/week
+
 # Speech input is not yet enabled.
 fast/speech
 

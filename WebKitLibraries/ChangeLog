@@ -1,3 +1,14 @@
+2011-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Introduce feature flags for incomplete input types
+        https://bugs.webkit.org/show_bug.cgi?id=68971
+
+        Reviewed by Hajime Morita.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        Add ENABLE_INPUT_TYPE_* flags. They are disabled by default.
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: ditto.
+
 2011-10-04  Scott Graham  <scottmg@chromium.org>
 
         Add GAMEPAD feature flag

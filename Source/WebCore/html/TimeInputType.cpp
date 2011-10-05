@@ -39,6 +39,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(INPUT_TYPE_TIME)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -115,3 +117,5 @@ bool TimeInputType::setMillisecondToDateComponents(double value, DateComponents*
 }
 
 } // namespace WebCore
+
+#endif
