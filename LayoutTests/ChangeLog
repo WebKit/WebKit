@@ -1,3 +1,12 @@
+2011-10-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        WTR needs an implementation for eventSender.continuousMouseScrollBy
+        https://bugs.webkit.org/show_bug.cgi?id=69417
+
+        Unreviewed gardening: skip dependent test.
+
+        * platform/wk2/Skipped:
+
 2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed rebaseline for test.

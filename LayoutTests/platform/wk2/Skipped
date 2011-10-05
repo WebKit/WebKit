@@ -1117,6 +1117,10 @@ editing/input/password-echo-passnode2.html
 editing/input/password-echo-passnode3.html
 editing/input/password-echo-textnode.html
 
+# WTR needs an implementation for eventSender.continuousMouseScrollBy
+# https://bugs.webkit.org/show_bug.cgi?id=69417
+fast/events/wheelevent-direction-inverted-from-device.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
