@@ -170,7 +170,7 @@ void WTFGetBacktrace(void** stack, int* size)
 {
 #if OS(DARWIN) || OS(LINUX)
     *size = backtrace(stack, *size);
-#elif OS(WINDOWS)
+#elif OS(WINDOWS) && !OS(WINCE)
     // The CaptureStackBackTrace function is available in XP, but it is not defined
     // in the Windows Server 2003 R2 Platform SDK. So, we'll grab the function
     // through GetProcAddress.

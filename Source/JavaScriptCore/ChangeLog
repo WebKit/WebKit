@@ -1,3 +1,10 @@
+2011-10-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r96595.
+
+        * wtf/Assertions.cpp:
+        RtlCaptureStackBackTrace() isn't available on WinCE.
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types
