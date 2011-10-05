@@ -22,6 +22,7 @@
 #include "ClipboardUtilitiesGtk.h"
 #include "DragData.h"
 #include "GtkUtilities.h"
+#include "GtkVersioning.h"
 #include "PasteboardHelper.h"
 #include <gtk/gtk.h>
 #include <wtf/PassOwnPtr.h>
