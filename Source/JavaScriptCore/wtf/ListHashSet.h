@@ -27,7 +27,6 @@
 #include "OwnPtr.h"
 #include "PassOwnPtr.h"
 #include "StdLibExtras.h"
-#include <iterator>
 
 namespace WTF {
 
@@ -50,6 +49,8 @@ namespace WTF {
 
     template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetIterator;
     template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstIterator;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetReverseIterator;
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstReverseIterator;
 
     template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNode;
     template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator;
@@ -77,8 +78,9 @@ namespace WTF {
         typedef ListHashSetConstIterator<ValueType, inlineCapacity, HashArg> const_iterator;
         friend class ListHashSetConstIterator<ValueType, inlineCapacity, HashArg>;
 
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-        typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef ListHashSetReverseIterator<ValueType, inlineCapacity, HashArg> reverse_iterator;
+        typedef ListHashSetConstReverseIterator<ValueType, inlineCapacity, HashArg> const_reverse_iterator;
+        friend class ListHashSetConstReverseIterator<ValueType, inlineCapacity, HashArg>;
 
         ListHashSet();
         ListHashSet(const ListHashSet&);
@@ -138,6 +140,8 @@ namespace WTF {
         
         iterator makeIterator(Node*);
         const_iterator makeConstIterator(Node*) const;
+        reverse_iterator makeReverseIterator(Node*);
+        const_reverse_iterator makeConstReverseIterator(Node*) const;
 
         friend void deleteAllValues<>(const ListHashSet&);
 
@@ -267,16 +271,10 @@ namespace WTF {
         typedef ValueType* PointerType;
 
         friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
-        
+
         ListHashSetIterator(const ListHashSetType* set, Node* position) : m_iterator(set, position) { }
 
     public:
-        typedef std::bidirectional_iterator_tag iterator_category;
-        typedef ValueType value_type;
-        typedef ReferenceType reference;
-        typedef PointerType pointer;
-        typedef int difference_type;
-
         ListHashSetIterator() { }
 
         // default copy, assignment and destructor are OK
@@ -325,12 +323,6 @@ namespace WTF {
         }
 
     public:
-        typedef std::bidirectional_iterator_tag iterator_category;
-        typedef ValueType value_type;
-        typedef ReferenceType reference;
-        typedef PointerType pointer;
-        typedef int difference_type;
-
         ListHashSetConstIterator()
         {
         }
@@ -369,6 +361,118 @@ namespace WTF {
             return m_position == other.m_position;
         }
         bool operator!=(const const_iterator& other) const
+        {
+            return m_position != other.m_position;
+        }
+
+    private:
+        Node* node() { return m_position; }
+
+        const ListHashSetType* m_set;
+        Node* m_position;
+    };
+
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetReverseIterator {
+    private:
+        typedef ListHashSet<ValueArg, inlineCapacity, HashArg> ListHashSetType;
+        typedef ListHashSetReverseIterator<ValueArg, inlineCapacity, HashArg> reverse_iterator;
+        typedef ListHashSetConstIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
+        typedef ValueArg ValueType;
+        typedef ValueType& ReferenceType;
+        typedef ValueType* PointerType;
+
+        friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
+
+        ListHashSetReverseIterator(const ListHashSetType* set, Node* position) : m_iterator(set, position) { }
+
+    public:
+        ListHashSetReverseIterator() { }
+
+        // default copy, assignment and destructor are OK
+
+        PointerType get() const { return const_cast<PointerType>(m_iterator.get()); }
+        ReferenceType operator*() const { return *get(); }
+        PointerType operator->() const { return get(); }
+
+        reverse_iterator& operator++() { ++m_iterator; return *this; }
+
+        // postfix ++ intentionally omitted
+
+        reverse_iterator& operator--() { --m_iterator; return *this; }
+
+        // postfix -- intentionally omitted
+
+        // Comparison.
+        bool operator==(const reverse_iterator& other) const { return m_iterator == other.m_iterator; }
+        bool operator!=(const reverse_iterator& other) const { return m_iterator != other.m_iterator; }
+
+        operator const_reverse_iterator() const { return m_iterator; }
+
+    private:
+        Node* node() { return m_iterator.node(); }
+
+        const_reverse_iterator m_iterator;
+    };
+
+    template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstReverseIterator {
+    private:
+        typedef ListHashSet<ValueArg, inlineCapacity, HashArg> ListHashSetType;
+        typedef ListHashSetReverseIterator<ValueArg, inlineCapacity, HashArg> reverse_iterator;
+        typedef ListHashSetConstReverseIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
+        typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
+        typedef ValueArg ValueType;
+        typedef const ValueType& ReferenceType;
+        typedef const ValueType* PointerType;
+
+        friend class ListHashSet<ValueArg, inlineCapacity, HashArg>;
+        friend class ListHashSetReverseIterator<ValueArg, inlineCapacity, HashArg>;
+
+        ListHashSetConstReverseIterator(const ListHashSetType* set, Node* position)
+            : m_set(set)
+            , m_position(position)
+        {
+        }
+
+    public:
+        ListHashSetConstReverseIterator()
+        {
+        }
+
+        PointerType get() const
+        {
+            return &m_position->m_value;
+        }
+        ReferenceType operator*() const { return *get(); }
+        PointerType operator->() const { return get(); }
+
+        const_reverse_iterator& operator++()
+        {
+            ASSERT(m_position != 0);
+            m_position = m_position->m_prev;
+            return *this;
+        }
+
+        // postfix ++ intentionally omitted
+
+        const_reverse_iterator& operator--()
+        {
+            ASSERT(m_position != m_set->m_tail);
+            if (!m_position)
+                m_position = m_set->m_head;
+            else
+                m_position = m_position->m_next;
+            return *this;
+        }
+
+        // postfix -- intentionally omitted
+
+        // Comparison.
+        bool operator==(const const_reverse_iterator& other) const
+        {
+            return m_position == other.m_position;
+        }
+        bool operator!=(const const_reverse_iterator& other) const
         {
             return m_position != other.m_position;
         }
@@ -481,25 +585,25 @@ namespace WTF {
     template<typename T, size_t inlineCapacity, typename U>
     inline typename ListHashSet<T, inlineCapacity, U>::reverse_iterator ListHashSet<T, inlineCapacity, U>::rbegin()
     {
-        return reverse_iterator(end());
+        return makeReverseIterator(m_tail); 
     }
 
     template<typename T, size_t inlineCapacity, typename U>
     inline typename ListHashSet<T, inlineCapacity, U>::reverse_iterator ListHashSet<T, inlineCapacity, U>::rend()
     {
-        return reverse_iterator(begin());
+        return makeReverseIterator(0);
     }
 
     template<typename T, size_t inlineCapacity, typename U>
     inline typename ListHashSet<T, inlineCapacity, U>::const_reverse_iterator ListHashSet<T, inlineCapacity, U>::rbegin() const
     {
-        return const_reverse_iterator(end());
+        return makeConstReverseIterator(m_tail); 
     }
 
     template<typename T, size_t inlineCapacity, typename U>
     inline typename ListHashSet<T, inlineCapacity, U>::const_reverse_iterator ListHashSet<T, inlineCapacity, U>::rend() const
     {
-        return const_reverse_iterator(begin());
+        return makeConstReverseIterator(0); 
     }
 
     template<typename T, size_t inlineCapacity, typename U>
@@ -720,6 +824,18 @@ namespace WTF {
             node->destroy(m_allocator.get());
     }
 
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSetReverseIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeReverseIterator(Node* position) 
+    {
+        return ListHashSetReverseIterator<T, inlineCapacity, U>(this, position); 
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
+    inline ListHashSetConstReverseIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeConstReverseIterator(Node* position) const
+    { 
+        return ListHashSetConstReverseIterator<T, inlineCapacity, U>(this, position); 
+    }
+    
     template<typename T, size_t inlineCapacity, typename U>
     inline ListHashSetIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeIterator(Node* position) 
     {

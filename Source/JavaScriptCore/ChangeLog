@@ -1,3 +1,36 @@
+2011-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96733.
+        http://trac.webkit.org/changeset/96733
+        https://bugs.webkit.org/show_bug.cgi?id=69454
+
+        Broke GCC for some reason (Requested by andersca on #webkit).
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetReverseIterator::ListHashSetReverseIterator):
+        (WTF::ListHashSetReverseIterator::get):
+        (WTF::ListHashSetReverseIterator::operator*):
+        (WTF::ListHashSetReverseIterator::operator->):
+        (WTF::ListHashSetReverseIterator::operator++):
+        (WTF::ListHashSetReverseIterator::operator--):
+        (WTF::ListHashSetReverseIterator::operator==):
+        (WTF::ListHashSetReverseIterator::operator!=):
+        (WTF::ListHashSetReverseIterator::operator const_reverse_iterator):
+        (WTF::ListHashSetReverseIterator::node):
+        (WTF::ListHashSetConstReverseIterator::ListHashSetConstReverseIterator):
+        (WTF::ListHashSetConstReverseIterator::get):
+        (WTF::ListHashSetConstReverseIterator::operator*):
+        (WTF::ListHashSetConstReverseIterator::operator->):
+        (WTF::ListHashSetConstReverseIterator::operator++):
+        (WTF::ListHashSetConstReverseIterator::operator--):
+        (WTF::ListHashSetConstReverseIterator::operator==):
+        (WTF::ListHashSetConstReverseIterator::operator!=):
+        (WTF::ListHashSetConstReverseIterator::node):
+        (WTF::::rbegin):
+        (WTF::::rend):
+        (WTF::::makeReverseIterator):
+        (WTF::::makeConstReverseIterator):
+
 2011-10-04  Oliver Hunt  <oliver@apple.com>
 
         Add rudimentary filtering to write barriers
