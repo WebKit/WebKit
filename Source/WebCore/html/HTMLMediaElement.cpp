@@ -88,6 +88,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
+#include "RuntimeEnabledFeatures.h"
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -837,6 +838,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 #if ENABLE(VIDEO_TRACK)
 void HTMLMediaElement::loadTextTracks()
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(trackTag)) {
             HTMLTrackElement* track = static_cast<HTMLTrackElement*>(node);

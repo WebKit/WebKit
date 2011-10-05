@@ -172,6 +172,11 @@ public:
     static void setWebkitMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    static bool webkitVideoTrackEnabled() { return isVideoTrackEnabled; }
+    static void setWebkitVideoTrackEnabled(bool isEnabled) { isVideoTrackEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -215,6 +220,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     static bool isMediaSourceEnabled;
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    static bool isVideoTrackEnabled;
 #endif
 };
 

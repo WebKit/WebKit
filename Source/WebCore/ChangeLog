@@ -1,3 +1,23 @@
+2011-10-05  Anna Cavender  <annacc@chromium.org>
+
+        Functions to make <track> enabled at runtime, including changes to
+        CodeGeneratorvV8 to allow entire interfaces (not just attributes) to
+        be runtime-enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=69352
+
+        Reviewed by Adam Barth.
+
+        No new tests. No new functionality.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitVideoTrackEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitVideoTrackEnabled):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTextTracks):
+        * html/HTMLTrackElement.idl:
+
 2011-10-05  Kenneth Russell  <kbr@google.com>
 
         Mask underlying RENDERER and VENDOR strings

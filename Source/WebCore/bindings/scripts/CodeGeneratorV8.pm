@@ -2180,7 +2180,18 @@ static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Pe
 {
     desc->ReadOnlyPrototype();
 
-    v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, \"${visibleInterfaceName}\", $parentClassTemplate, V8${interfaceName}::internalFieldCount,
+    v8::Local<v8::Signature> defaultSignature;
+END
+    if ($dataNode->extendedAttributes->{"EnabledAtRuntime"}) {
+        my $enable_function = GetRuntimeEnableFunctionName($dataNode);
+        push(@implContent, <<END);
+    if (!${enable_function}())
+        defaultSignature = configureTemplate(desc, \"${parentClass}\", $parentClassTemplate, ${parentClass}::internalFieldCount, 0, 0, 0, 0);
+    else
+END
+    }
+    push(@implContent,  <<END);
+    defaultSignature = configureTemplate(desc, \"${visibleInterfaceName}\", $parentClassTemplate, V8${interfaceName}::internalFieldCount,
 END
     # Set up our attributes if we have them
     if ($has_attributes) {

@@ -159,4 +159,8 @@ bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+bool RuntimeEnabledFeatures::isVideoTrackEnabled = false;
+#endif
+
 } // namespace WebCore
