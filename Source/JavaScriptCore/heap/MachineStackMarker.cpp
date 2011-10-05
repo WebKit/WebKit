@@ -111,9 +111,8 @@ static void pthreadSignalHandlerSuspendResume(int signo)
 
 class MachineThreads::Thread {
 public:
-    Thread(pthread_t pthread, const PlatformThread& platThread, void* base) 
-        : posixThread(pthread)
-        , platformThread(platThread)
+    Thread(const PlatformThread& platThread, void* base)
+        : platformThread(platThread)
         , stackBase(base)
     {
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
@@ -132,7 +131,6 @@ public:
     }
 
     Thread* next;
-    pthread_t posixThread;
     PlatformThread platformThread;
     void* stackBase;
 };
@@ -164,9 +162,20 @@ static inline PlatformThread getCurrentPlatformThread()
 #if OS(DARWIN)
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
-    return pthread_getw32threadhandle_np(pthread_self());
+    return GetCurrentThread();
 #elif USE(PTHREADS)
     return pthread_self();
+#endif
+}
+
+static inline bool equalThread(const PlatformThread& first, const PlatformThread& second)
+{
+#if OS(DARWIN) || OS(WINDOWS)
+    return first == second;
+#elif USE(PTHREADS)
+    return !!pthread_equal(first, second);
+#else
+#error Need a way to compare threads on this platform
 #endif
 }
 
@@ -188,7 +197,7 @@ void MachineThreads::addCurrentThread()
         return;
 
     pthread_setspecific(m_threadSpecific, this);
-    Thread* thread = new Thread(pthread_self(), getCurrentPlatformThread(), m_heap->globalData()->stack().origin());
+    Thread* thread = new Thread(getCurrentPlatformThread(), m_heap->globalData()->stack().origin());
 
     MutexLocker lock(m_registeredThreadsMutex);
 
@@ -204,11 +213,11 @@ void MachineThreads::removeThread(void* p)
 
 void MachineThreads::removeCurrentThread()
 {
-    pthread_t currentPosixThread = pthread_self();
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
 
     MutexLocker lock(m_registeredThreadsMutex);
 
-    if (pthread_equal(currentPosixThread, m_registeredThreads->posixThread)) {
+    if (equalThread(currentPlatformThread, m_registeredThreads->platformThread)) {
         Thread* t = m_registeredThreads;
         m_registeredThreads = m_registeredThreads->next;
         delete t;
@@ -216,7 +225,7 @@ void MachineThreads::removeCurrentThread()
         Thread* last = m_registeredThreads;
         Thread* t;
         for (t = m_registeredThreads->next; t; t = t->next) {
-            if (pthread_equal(t->posixThread, currentPosixThread)) {
+            if (equalThread(t->platformThread, currentPlatformThread)) {
                 last->next = t->next;
                 break;
             }
@@ -467,6 +476,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
     gatherFromCurrentThread(conservativeRoots, stackCurrent);
 
     if (m_threadSpecific) {
+        PlatformThread currentPlatformThread = getCurrentPlatformThread();
 
         MutexLocker lock(m_registeredThreadsMutex);
 
@@ -479,7 +489,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         // It is safe to access the registeredThreads list, because we earlier asserted that locks are being held,
         // and since this is a shared heap, they are real locks.
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-            if (!pthread_equal(thread->posixThread, pthread_self()))
+            if (!equalThread(thread->platformThread, currentPlatformThread))
                 gatherFromOtherThread(conservativeRoots, thread);
         }
 #ifndef NDEBUG

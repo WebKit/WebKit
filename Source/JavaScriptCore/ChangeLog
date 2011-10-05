@@ -1,3 +1,18 @@
+2011-10-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Get rid of posixThread in MachineStackMarker::Thread
+        https://bugs.webkit.org/show_bug.cgi?id=54836
+
+        Reviewed by Oliver Hunt.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::getCurrentPlatformThread):
+        (JSC::equalThread):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeCurrentThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+
 2011-10-04  Geoffrey Garen  <ggaren@apple.com>
 
         Removed JSValue::toJSNumber
