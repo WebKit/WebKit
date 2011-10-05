@@ -1,3 +1,13 @@
+2011-10-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Fix FrameView::scrollElementToRect to take already scrolled amount into consideration.
+        https://bugs.webkit.org/show_bug.cgi?id=69220
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollElementToRect):
+
 2011-10-04  Anders Carlsson  <andersca@apple.com>
 
         Ignore the warning about using 'override'.

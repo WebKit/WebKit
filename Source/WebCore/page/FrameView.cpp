@@ -1641,7 +1641,7 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
     LayoutRect bounds = element->getRect();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
-    scrollBy(IntSize(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
+    setScrollPosition(LayoutPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
 void FrameView::setScrollPosition(const LayoutPoint& scrollPoint)

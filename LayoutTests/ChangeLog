@@ -1,3 +1,12 @@
+2011-10-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Fix FrameView::scrollElementToRect to take already scrolled amount into consideration.
+        https://bugs.webkit.org/show_bug.cgi?id=69220
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/scroll-element-to-rect.html:
+
 2011-10-04  David Barr  <davidbarr@chromium.org>
 
         Update test expectations after http://trac.webkit.org/changeset/96449
