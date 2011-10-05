@@ -790,13 +790,15 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
         return false;
     if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
         return false;
+    if (thisInputElement->required() != otherInputElement->required())
+        return false;
     
     if (element->isEnabledFormControl() != m_element->isEnabledFormControl())
         return false;
     
     if (element->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
         return false;
-    
+
     if (!m_element->document()->containsValidityStyleRules())
         return false;
     

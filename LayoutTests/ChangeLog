@@ -1,3 +1,13 @@
+2011-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Input styles are unexpectedly shared regardless of required status difference.
+        https://bugs.webkit.org/show_bug.cgi?id=69402
+
+        Reviewed by Daniel Bates.
+
+        * fast/css/pseudo-required-shared-expected.html: Added.
+        * fast/css/pseudo-required-shared.html: Added.
+
 2011-10-05  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] Unreviewed gardening, update expected file after r96509.
