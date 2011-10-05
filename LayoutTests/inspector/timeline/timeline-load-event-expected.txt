@@ -1,5 +1,6 @@
 Tests the load event.
 
+Page reloaded.
 MarkLoad Properties:
 {
     startTime : <number>
@@ -9,5 +10,4 @@ MarkLoad Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-Page reloaded.
 
