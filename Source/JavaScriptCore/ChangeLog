@@ -1,3 +1,76 @@
+2011-10-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Some JSValue cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=69320
+
+        Reviewed by Darin Adler.
+        
+        No measurable performance change.
+
+        Removed some JSValue::get* functions. get* used to be an optimization
+        when every value operation was a virtual function call: get* would combine
+        two virtual calls into one. Now, with non-virtual, inlined functions, get*
+        isn't faster, and may be slightly slower.
+
+        Merged getBoolean(bool&) and getBoolean() into asBoolean().
+
+        Merged uncheckedGetNumber(), getJSNumber() and getNumber() into
+        asNumber().
+
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+        (JSC::JSValue::asNumber):
+        (JSC::JSValue::asBoolean): As promised!
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::toThisNumber):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf): Removed a bunch of uses of getJSNumber()
+        by switching to toThisNumber().
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::toNumber):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueOfNumberConstant):
+        (JSC::DFG::Graph::valueOfBooleanConstant):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::internalNumber):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/JSArray.cpp:
+        (JSC::compareNumbersForQSort): Replaced getNumber() => isNumber() / asNumber().
+        getBoolean() => isBoolean() / asBoolean(), uncheckedGetNumber() => asNumber().
+
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h: Nixed getJSNumber().
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+        * runtime/JSONObject.cpp:
+        (JSC::gap):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/NumberObject.cpp:
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/Operations.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqual):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAdd): Replaced getNumber() => isNumber() / asNumber().
+        getBoolean() => isBoolean() / asBoolean(), uncheckedGetNumber() => asNumber().
+
 2011-10-04  Scott Graham  <scottmg@chromium.org>
 
         Add GAMEPAD feature flag

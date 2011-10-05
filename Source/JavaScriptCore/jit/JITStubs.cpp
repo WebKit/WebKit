@@ -1312,9 +1312,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
         return JSValue::encode(result);
     }
 
-    double left = 0.0, right;
-    if (v1.getNumber(left) && v2.getNumber(right))
-        return JSValue::encode(jsNumber(left + right));
+    if (v1.isNumber() && v2.isNumber())
+        return JSValue::encode(jsNumber(v1.asNumber() + v2.asNumber()));
 
     // All other cases are pretty uncommon
     JSValue result = jsAddSlowCase(callFrame, v1, v2);
@@ -2117,10 +2116,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_mul)
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
 
-    double left;
-    double right;
-    if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(left * right));
+    if (src1.isNumber() && src2.isNumber())
+        return JSValue::encode(jsNumber(src1.asNumber() * src2.asNumber()));
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(src1.toNumber(callFrame) * src2.toNumber(callFrame));
@@ -2587,10 +2584,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_sub)
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
 
-    double left;
-    double right;
-    if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(left - right));
+    if (src1.isNumber() && src2.isNumber())
+        return JSValue::encode(jsNumber(src1.asNumber() - src2.asNumber()));
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(src1.toNumber(callFrame) - src2.toNumber(callFrame));
@@ -2625,9 +2620,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
                 jsByteArray->setIndex(i, value.asInt32());
                 return;
             } else {
-                double dValue = 0;
-                if (value.getNumber(dValue)) {
-                    jsByteArray->setIndex(i, dValue);
+                if (value.isNumber()) {
+                    jsByteArray->setIndex(i, value.asNumber());
                     return;
                 }
             }
@@ -2667,9 +2661,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val_byte_array)
                 jsByteArray->setIndex(i, value.asInt32());
                 return;
             } else {
-                double dValue = 0;                
-                if (value.getNumber(dValue)) {
-                    jsByteArray->setIndex(i, dValue);
+                if (value.isNumber()) {
+                    jsByteArray->setIndex(i, value.asNumber());
                     return;
                 }
             }
@@ -2833,9 +2826,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_negate)
 
     JSValue src = stackFrame.args[0].jsValue();
 
-    double v;
-    if (src.getNumber(v))
-        return JSValue::encode(jsNumber(-v));
+    if (src.isNumber())
+        return JSValue::encode(jsNumber(-src.asNumber()));
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(-src.toNumber(callFrame));
@@ -2950,10 +2942,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
 
-    double left;
-    double right;
-    if (src1.getNumber(left) && src2.getNumber(right))
-        return JSValue::encode(jsNumber(left / right));
+    if (src1.isNumber() && src2.isNumber())
+        return JSValue::encode(jsNumber(src1.asNumber() / src2.asNumber()));
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(src1.toNumber(callFrame) / src2.toNumber(callFrame));
@@ -3062,7 +3052,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_inc)
     JSValue number = v.toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.uncheckedGetNumber() + 1);
+    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.asNumber() + 1);
     return JSValue::encode(number);
 }
 
@@ -3361,7 +3351,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_dec)
     JSValue number = v.toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.uncheckedGetNumber() - 1);
+    callFrame->registers()[stackFrame.args[1].int32()] = jsNumber(number.asNumber() - 1);
     return JSValue::encode(number);
 }
 
@@ -3666,14 +3656,13 @@ DEFINE_STUB_FUNCTION(void*, op_switch_imm)
 
     if (scrutinee.isInt32())
         return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.asInt32()).executableAddress();
-    else {
-        double value;
-        int32_t intValue;
-        if (scrutinee.getNumber(value) && ((intValue = static_cast<int32_t>(value)) == value))
-            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(intValue).executableAddress();
-        else
-            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault.executableAddress();
+    if (scrutinee.isDouble()) {
+        double value = scrutinee.asDouble();
+        int32_t int32Value = value;
+        if (int32Value == value)
+            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(int32Value).executableAddress();
     }
+    return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault.executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(void*, op_switch_char)

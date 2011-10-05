@@ -147,8 +147,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             if (!retval.isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(ustringToString(retval.toString(exec)));
             if (m_isAttribute) {
-                bool retvalbool;
-                if (retval.getBoolean(retvalbool) && !retvalbool)
+                if (retval.isFalse())
                     event->preventDefault();
             }
         }

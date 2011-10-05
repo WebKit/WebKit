@@ -163,7 +163,7 @@ JSValue jsDateOrNull(ExecState* exec, double value)
 double valueToDate(ExecState* exec, JSValue value)
 {
     if (value.isNumber())
-        return value.uncheckedGetNumber();
+        return value.asNumber();
     if (!value.inherits(&DateInstance::s_info))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();

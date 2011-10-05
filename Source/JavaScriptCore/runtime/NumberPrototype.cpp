@@ -95,13 +95,24 @@ bool NumberPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double &x)
+static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
 {
-    JSValue v = thisValue.getJSNumber();
-    if (UNLIKELY(!v))
-        return false;
-    x = v.uncheckedGetNumber();
-    return true;
+    if (thisValue.isInt32()) {
+        x = thisValue.asInt32();
+        return true;
+    }
+
+    if (thisValue.isDouble()) {
+        x = thisValue.asDouble();
+        return true;
+    }
+    
+    if (thisValue.isCell() && thisValue.asCell()->structure()->typeInfo().isNumberObject()) {
+        x = static_cast<const NumberObject*>(thisValue.asCell())->internalValue().asNumber();
+        return true;
+    }
+
+    return false;
 }
 
 static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, int high, int& result, bool& isUndefined)
@@ -333,7 +344,6 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
 // to argument-plus-one significant figures).
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
     double x;
     if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
@@ -365,12 +375,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 // method will instead fallback to calling ToString. 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-    double x = v.uncheckedGetNumber();
 
     // Get the argument. 
     int decimalPlaces;
@@ -405,12 +412,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 // with smaller values converted to exponential representation.
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-    double x = v.uncheckedGetNumber();
 
     // Get the argument. 
     int significantFigures;
@@ -436,9 +440,8 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
 
     JSValue radixValue = exec->argument(0);
@@ -451,23 +454,20 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
 
     if (radix == 10)
-        return JSValue::encode(jsString(exec, v.toString(exec)));
+        return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
 
     // Fast path for number to character conversion.
     if (radix == 36) {
-        if (v.isInt32()) {
-            int x = v.asInt32();
-            if (static_cast<unsigned>(x) < 36) { // Exclude negatives
-                JSGlobalData* globalData = &exec->globalData();
-                return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[x]));
-            }
+        unsigned c = static_cast<unsigned>(x);
+        if (c == x && c < 36) {
+            JSGlobalData* globalData = &exec->globalData();
+            return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[c]));
         }
     }
 
     if (radix < 2 || radix > 36)
         return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
 
-    double x = v.uncheckedGetNumber();
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
@@ -477,24 +477,19 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    // FIXME: Not implemented yet.
-
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
 
-    return JSValue::encode(jsString(exec, v.toString(exec)));
+    return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-
-    return JSValue::encode(v);
+    return JSValue::encode(jsNumber(x));
 }
 
 } // namespace JSC

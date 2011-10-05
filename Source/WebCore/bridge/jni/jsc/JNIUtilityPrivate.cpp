@@ -224,14 +224,14 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
                     jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.characters(), stringValue.length());
                     result.l = javaString;
                 } else if (value.isNumber()) {
-                    double doubleValue = value.uncheckedGetNumber();
+                    double doubleValue = value.asNumber();
                     JNIEnv* env = getJNIEnv();
                     jclass clazz = env->FindClass("java/lang/Double");
                     jmethodID constructor = env->GetMethodID(clazz, "<init>", "(D)V");
                     jobject javaDouble = env->functions->NewObject(env, clazz, constructor, doubleValue);
                     result.l = javaDouble;
                 } else if (value.isBoolean()) {
-                    bool boolValue = value.getBoolean();
+                    bool boolValue = value.asBoolean();
                     JNIEnv* env = getJNIEnv();
                     jclass clazz = env->FindClass("java/lang/Boolean");
                     jmethodID constructor = env->GetMethodID(clazz, "<init>", "(Z)V");

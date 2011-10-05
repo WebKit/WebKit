@@ -1,3 +1,13 @@
+2011-10-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Some JSValue cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=69320
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (aeDescFromJSValue): Updated for JSC changes.
+
 2011-10-04  Scott Graham  <scottmg@chromium.org>
 
         Add GAMEPAD feature flag

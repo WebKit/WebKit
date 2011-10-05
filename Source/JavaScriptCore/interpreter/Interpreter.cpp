@@ -1976,7 +1976,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         } else {
             JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(srcDst) = jsNumber(number.uncheckedGetNumber() + 1);
+            callFrame->uncheckedR(srcDst) = jsNumber(number.asNumber() + 1);
             callFrame->uncheckedR(dst) = number;
         }
 
@@ -1999,7 +1999,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         } else {
             JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(srcDst) = jsNumber(number.uncheckedGetNumber() - 1);
+            callFrame->uncheckedR(srcDst) = jsNumber(number.asNumber() - 1);
             callFrame->uncheckedR(dst) = number;
         }
 
@@ -3506,12 +3506,11 @@ skip_id_custom_self:
                     jsArray->JSArray::put(callFrame, i, callFrame->r(value).jsValue());
             } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
                 JSByteArray* jsByteArray = asByteArray(baseValue);
-                double dValue = 0;
                 JSValue jsValue = callFrame->r(value).jsValue();
                 if (jsValue.isInt32())
                     jsByteArray->setIndex(i, jsValue.asInt32());
-                else if (jsValue.getNumber(dValue))
-                    jsByteArray->setIndex(i, dValue);
+                else if (jsValue.isDouble())
+                    jsByteArray->setIndex(i, jsValue.asDouble());
                 else
                     baseValue.put(callFrame, i, jsValue);
             } else
@@ -4049,14 +4048,10 @@ skip_id_custom_self:
         JSValue scrutinee = callFrame->r(vPC[3].u.operand).jsValue();
         if (scrutinee.isInt32())
             vPC += codeBlock->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee.asInt32(), defaultOffset);
-        else {
-            double value;
-            int32_t intValue;
-            if (scrutinee.getNumber(value) && ((intValue = static_cast<int32_t>(value)) == value))
-                vPC += codeBlock->immediateSwitchJumpTable(tableIndex).offsetForValue(intValue, defaultOffset);
-            else
-                vPC += defaultOffset;
-        }
+        else if (scrutinee.isDouble() && scrutinee.asDouble() == static_cast<int32_t>(scrutinee.asDouble()))
+            vPC += codeBlock->immediateSwitchJumpTable(tableIndex).offsetForValue(static_cast<int32_t>(scrutinee.asDouble()), defaultOffset);
+        else
+            vPC += defaultOffset;
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_switch_char) {

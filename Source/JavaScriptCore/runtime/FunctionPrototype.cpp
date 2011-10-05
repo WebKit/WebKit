@@ -194,7 +194,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
         ASSERT(target.get(exec, exec->propertyNames().length).isNumber());
         // a. Let L be the length property of Target minus the length of A.
         // b. Set the length own property of F to either 0 or L, whichever is larger.
-        unsigned targetLength = (unsigned)target.get(exec, exec->propertyNames().length).uncheckedGetNumber();
+        unsigned targetLength = (unsigned)target.get(exec, exec->propertyNames().length).asNumber();
         if (targetLength > numBoundArgs)
             length = targetLength - numBoundArgs;
     }

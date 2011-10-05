@@ -96,7 +96,6 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
-        JSValue getJSNumber() const;
 
         void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
         void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
@@ -300,15 +299,6 @@ namespace JSC {
         if (isDouble())
             return asDouble();
         return toNumberSlowCase(exec);
-    }
-
-    inline JSValue JSValue::getJSNumber() const
-    {
-        if (isInt32() || isDouble())
-            return *this;
-        if (isCell())
-            return asCell()->getJSNumber();
-        return JSValue();
     }
 
     inline JSObject* JSValue::toObject(ExecState* exec) const

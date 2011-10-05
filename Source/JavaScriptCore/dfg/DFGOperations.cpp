@@ -88,9 +88,8 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
             return;
         }
 
-        double dValue = 0;
-        if (value.getNumber(dValue)) {
-            byteArray->setIndex(index, dValue);
+        if (value.isNumber()) {
+            byteArray->setIndex(index, value.asNumber());
             return;
         }
     }
@@ -188,36 +187,36 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
 
 EncodedJSValue DFG_OPERATION operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
-    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    double num1 = JSValue::decode(encodedOp1).asNumber();
+    double num2 = JSValue::decode(encodedOp2).asNumber();
     return JSValue::encode(jsNumber(num1 + num2));
 }
 
 EncodedJSValue DFG_OPERATION operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
-    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    double num1 = JSValue::decode(encodedOp1).asNumber();
+    double num2 = JSValue::decode(encodedOp2).asNumber();
     return JSValue::encode(jsNumber(num1 - num2));
 }
 
 EncodedJSValue DFG_OPERATION operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
-    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    double num1 = JSValue::decode(encodedOp1).asNumber();
+    double num2 = JSValue::decode(encodedOp2).asNumber();
     return JSValue::encode(jsNumber(num1 * num2));
 }
 
 EncodedJSValue DFG_OPERATION operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
-    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    double num1 = JSValue::decode(encodedOp1).asNumber();
+    double num2 = JSValue::decode(encodedOp2).asNumber();
     return JSValue::encode(jsNumber(num1 / num2));
 }
 
 EncodedJSValue DFG_OPERATION operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
-    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    double num1 = JSValue::decode(encodedOp1).asNumber();
+    double num2 = JSValue::decode(encodedOp2).asNumber();
     return JSValue::encode(jsNumber(fmod(num1, num2)));
 }
 

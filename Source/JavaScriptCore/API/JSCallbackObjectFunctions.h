@@ -480,10 +480,13 @@ double JSCallbackObject<Parent>::toNumber(ExecState* exec) const
                 throwError(exec, toJS(exec, exception));
                 return 0;
             }
-
-            double dValue;
-            if (value)
-                return toJS(exec, value).getNumber(dValue) ? dValue : std::numeric_limits<double>::quiet_NaN();
+            if (!value)
+                continue;
+                
+            JSValue jsValue = toJS(exec, value);
+            if (!jsValue.isNumber())
+                return std::numeric_limits<double>::quiet_NaN();
+            return jsValue.asNumber();
         }
             
     return Parent::toNumber(exec);

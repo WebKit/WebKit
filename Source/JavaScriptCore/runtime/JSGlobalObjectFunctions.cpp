@@ -473,9 +473,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     // values in the range -1 < n <= -10^-6 need to truncate to -0, not 0.
     static const double tenToTheMinus6 = 0.000001;
     static const double intMaxPlusOne = 2147483648.0;
-    double n;
-    if (value.getNumber(n) && ((n < intMaxPlusOne && n >= tenToTheMinus6) || !n) && radixValue.isUndefinedOrNull())
-        return JSValue::encode(jsNumber(static_cast<int32_t>(n)));
+    if (value.isNumber()) {
+        double n = value.asNumber();
+        if (((n < intMaxPlusOne && n >= tenToTheMinus6) || !n) && radixValue.isUndefinedOrNull())
+            return JSValue::encode(jsNumber(static_cast<int32_t>(n)));
+    }
 
     // If ToString throws, we shouldn't call ToInt32.
     UString s = value.toString(exec);

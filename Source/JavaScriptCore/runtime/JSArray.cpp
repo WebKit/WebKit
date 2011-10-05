@@ -882,8 +882,8 @@ void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 static int compareNumbersForQSort(const void* a, const void* b)
 {
-    double da = static_cast<const JSValue*>(a)->uncheckedGetNumber();
-    double db = static_cast<const JSValue*>(b)->uncheckedGetNumber();
+    double da = static_cast<const JSValue*>(a)->asNumber();
+    double db = static_cast<const JSValue*>(b)->asNumber();
     return (da > db) - (da < db);
 }
 

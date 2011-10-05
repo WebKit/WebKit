@@ -42,11 +42,6 @@ void NumberObject::finishCreation(JSGlobalData& globalData)
     ASSERT(inherits(&s_info));
 }
 
-JSValue NumberObject::getJSNumber() const
-{
-    return internalValue();
-}
-
 NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)
 {
     NumberObject* object = NumberObject::create(exec->globalData(), globalObject->numberObjectStructure());

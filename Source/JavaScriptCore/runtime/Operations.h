@@ -248,7 +248,7 @@ namespace JSC {
     {
         do {
             if (v1.isNumber() && v2.isNumber())
-                return v1.uncheckedGetNumber() == v2.uncheckedGetNumber();
+                return v1.asNumber() == v2.asNumber();
 
             bool s1 = v1.isString();
             bool s2 = v2.isString();
@@ -299,10 +299,10 @@ namespace JSC {
 
             if (v1.isBoolean()) {
                 if (v2.isNumber())
-                    return static_cast<double>(v1.getBoolean()) == v2.uncheckedGetNumber();
+                    return static_cast<double>(v1.asBoolean()) == v2.asNumber();
             } else if (v2.isBoolean()) {
                 if (v1.isNumber())
-                    return v1.uncheckedGetNumber() == static_cast<double>(v2.getBoolean());
+                    return v1.asNumber() == static_cast<double>(v2.asBoolean());
             }
 
             return v1 == v2;
@@ -326,7 +326,7 @@ namespace JSC {
             return v1 == v2;
 
         if (v1.isNumber() && v2.isNumber())
-            return v1.uncheckedGetNumber() == v2.uncheckedGetNumber();
+            return v1.asNumber() == v2.asNumber();
 
         if (!v1.isCell() || !v2.isCell())
             return v1 == v2;
@@ -343,15 +343,15 @@ namespace JSC {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() < v2.asInt32();
 
-        double n1;
-        double n2;
-        if (v1.getNumber(n1) && v2.getNumber(n2))
-            return n1 < n2;
+        if (v1.isNumber() && v2.isNumber())
+            return v1.asNumber() < v2.asNumber();
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return asString(v1)->value(callFrame) < asString(v2)->value(callFrame);
 
+        double n1;
+        double n2;
         JSValue p1;
         JSValue p2;
         bool wasNotString1;
@@ -378,15 +378,15 @@ namespace JSC {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() <= v2.asInt32();
 
-        double n1;
-        double n2;
-        if (v1.getNumber(n1) && v2.getNumber(n2))
-            return n1 <= n2;
+        if (v1.isNumber() && v2.isNumber())
+            return v1.asNumber() <= v2.asNumber();
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return !(asString(v2)->value(callFrame) < asString(v1)->value(callFrame));
 
+        double n1;
+        double n2;
         JSValue p1;
         JSValue p2;
         bool wasNotString1;
@@ -415,9 +415,8 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
-        double left = 0.0, right;
-        if (v1.getNumber(left) && v2.getNumber(right))
-            return jsNumber(left + right);
+        if (v1.isNumber() && v2.isNumber())
+            return jsNumber(v1.asNumber() + v2.asNumber());
         
         if (v1.isString()) {
             return v2.isString()

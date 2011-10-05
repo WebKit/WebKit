@@ -406,7 +406,7 @@ private:
 
         if (value.isNumber()) {
             write(DoubleTag);
-            write(value.uncheckedGetNumber());
+            write(value.asNumber());
             return true;
         }
 

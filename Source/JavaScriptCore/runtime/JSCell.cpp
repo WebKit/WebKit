@@ -118,13 +118,6 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec, exec->lexicalGlobalObject());
 }
 
-JSValue JSCell::getJSNumber() const
-{
-    if (structure()->typeInfo().isNumberObject())
-        return static_cast<const NumberObject*>(this)->getJSNumber();
-    return JSValue();
-}
-
 JSValue JSCell::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
 {
     if (isString())

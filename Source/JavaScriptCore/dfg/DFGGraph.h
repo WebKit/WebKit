@@ -247,11 +247,11 @@ public:
     }
     double valueOfNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return valueOfJSConstantNode(codeBlock, nodeIndex).uncheckedGetNumber();
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asNumber();
     }
     bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return valueOfJSConstantNode(codeBlock, nodeIndex).getBoolean();
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asBoolean();
     }
     JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {

@@ -52,7 +52,7 @@ namespace JSC {
             return instance;
         }
 
-        double internalNumber() const { return internalValue().uncheckedGetNumber(); }
+        double internalNumber() const { return internalValue().asNumber(); }
 
         static JS_EXPORTDATA const ClassInfo s_info;
 

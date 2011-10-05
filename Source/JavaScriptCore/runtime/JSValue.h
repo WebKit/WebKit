@@ -157,6 +157,8 @@ namespace JSC {
         int32_t asInt32() const;
         uint32_t asUInt32() const;
         double asDouble() const;
+        bool asBoolean() const;
+        double asNumber() const;
 
         // Querying the type.
         bool isUndefined() const;
@@ -171,10 +173,6 @@ namespace JSC {
         bool inherits(const ClassInfo*) const;
         
         // Extracting the value.
-        bool getBoolean(bool&) const;
-        bool getBoolean() const; // false if not a boolean
-        bool getNumber(double&) const;
-        double uncheckedGetNumber() const;
         bool getString(ExecState* exec, UString&) const;
         UString getString(ExecState* exec) const; // null string if not a string
         JSObject* getObject() const; // 0 if not an object
@@ -224,8 +222,6 @@ namespace JSC {
         static bool strictEqual(ExecState* exec, JSValue v1, JSValue v2);
         static bool strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2);
         static bool strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2);
-
-        JSValue getJSNumber() const; // JSValue() if this is not a JSNumber or number object
 
         bool isCell() const;
         JSCell* asCell() const;

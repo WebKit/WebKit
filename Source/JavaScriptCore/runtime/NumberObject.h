@@ -46,8 +46,6 @@ namespace JSC {
         {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), &s_info);
         }
-
-        JSValue getJSNumber() const;
     };
 
     NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);

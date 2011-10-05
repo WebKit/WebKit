@@ -153,8 +153,8 @@ static inline UString gap(ExecState* exec, JSValue space)
     space = unwrapBoxedPrimitive(exec, space);
 
     // If the space value is a number, create a gap string with that number of spaces.
-    double spaceCount;
-    if (space.getNumber(spaceCount)) {
+    if (space.isNumber()) {
+        double spaceCount = space.asNumber();
         int count;
         if (spaceCount > maxGapLength)
             count = maxGapLength;
@@ -228,9 +228,8 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
                 continue;
             }
 
-            double value = 0;
-            if (name.getNumber(value)) {
-                m_arrayReplacerPropertyNames.add(Identifier::from(exec, value));
+            if (name.isNumber()) {
+                m_arrayReplacerPropertyNames.add(Identifier::from(exec, name.asNumber()));
                 continue;
             }
 
@@ -376,7 +375,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
         return StringifyFailed;
 
     if (value.isBoolean()) {
-        builder.append(value.getBoolean() ? "true" : "false");
+        builder.append(value.isTrue() ? "true" : "false");
         return StringifySucceeded;
     }
 
@@ -386,12 +385,12 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
         return StringifySucceeded;
     }
 
-    double numericValue;
-    if (value.getNumber(numericValue)) {
-        if (!isfinite(numericValue))
+    if (value.isNumber()) {
+        double number = value.asNumber();
+        if (!isfinite(number))
             builder.append("null");
         else
-            builder.append(UString::number(numericValue));
+            builder.append(UString::number(number));
         return StringifySucceeded;
     }
 

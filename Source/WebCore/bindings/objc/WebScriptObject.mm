@@ -541,10 +541,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     }
 
     if (value.isNumber())
-        return [NSNumber numberWithDouble:value.uncheckedGetNumber()];
+        return [NSNumber numberWithDouble:value.asNumber()];
 
     if (value.isBoolean())
-        return [NSNumber numberWithBool:value.getBoolean()];
+        return [NSNumber numberWithBool:value.asBoolean()];
 
     if (value.isUndefined())
         return [WebUndefined undefined];
