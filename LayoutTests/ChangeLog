@@ -1,5 +1,11 @@
 2011-10-05  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        [Qt] Unreviewed gardening, update expected file after r96509.
+
+        * platform/qt-4.8/tables/mozilla/bugs/bug113235-2-expected.txt:
+
+2011-10-05  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         * platform/qt-mac/Skipped: Skip new failing tests.
