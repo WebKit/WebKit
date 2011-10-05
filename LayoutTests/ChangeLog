@@ -1,3 +1,17 @@
+2011-10-05  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Add baselines for new SVG tests from r96712.
+
+        * platform/chromium-cg-mac/svg/clip-path/clip-path-transform-1-expected.png: Added.
+        * platform/chromium-cg-mac/svg/clip-path/clip-path-transform-2-expected.png: Added.
+        * platform/chromium-cg-mac/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-transform-1-expected.png: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-transform-2-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Added.
+        * platform/chromium-win/svg/clip-path/clip-path-transform-1-expected.png: Added.
+        * platform/chromium-win/svg/clip-path/clip-path-transform-2-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Added.
+
 2011-10-04  Gavin Barraclough  <barraclough@apple.com>
 
         Make Object.prototype getter/setter methods match ES5 behaviour
