@@ -1,3 +1,10 @@
+2011-10-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Use an explicit cast when shortening.
+
 2011-10-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static ClassInfo structs to classes that override JSCell::getCallData
