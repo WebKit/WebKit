@@ -1,3 +1,16 @@
+2011-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Only set when the custom encoding is different from existing value
+        https://bugs.webkit.org/show_bug.cgi?id=69061
+
+        Reviewed by Hajime Morita.
+
+        Only set the custom encoding value if it is different from the current value, to avoid
+        reloading the page.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_encoding_custom_set):
+
 2011-10-04  Rémi Duraffort  <remi.duraffort@st.com>
 
         [EFL] Fix compilation when SQLite and/or libxslt are not installed in /usr/include

@@ -2073,9 +2073,8 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* o, const char* encod
     Evas_Object* main_frame = ewk_view_frame_main_get(o);
     WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
     DBG("%s", encoding);
-    eina_stringshare_replace(&priv->settings.encoding_custom, encoding);
-    core_frame->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));
-
+    if (eina_stringshare_replace(&priv->settings.encoding_custom, encoding))
+        core_frame->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));
     return EINA_TRUE;
 }
 
