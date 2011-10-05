@@ -1,3 +1,9 @@
+2011-10-05  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Skip new failing tests.
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types

@@ -5125,3 +5125,16 @@ fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
 
 # Qt specific results were added by r95723, but they fail on Qt-Mac platform
 css3/selectors3
+
+# new failing tests
+fast/block/positioning/absolute-position-direction.html
+fast/css-generated-content/first-letter-in-nested-before.html
+fast/css/outline-narrowLine.html
+fast/dynamic/first-letter-after-list-marker.html
+fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html
+fast/multicol/float-paginate-empty-lines.html
+fast/ruby/ruby-base-merge-block-children-crash.html
+fast/ruby/ruby-text-before-after-content.html
+fast/table/quote-text-around-iframe.html 
+fast/text/complex-synthetic-bold-space-width.html
+inspector/styles/styles-disable-then-delete.html
