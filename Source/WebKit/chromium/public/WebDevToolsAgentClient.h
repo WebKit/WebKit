@@ -46,8 +46,6 @@ public:
     // Returns the identifier of the entity hosting this agent.
     virtual int hostIdentifier() { return -1; }
 
-    // Notifies host upon runtime feature being enabled/disabled.
-    virtual void runtimePropertyChanged(const WebString& name, const WebString& value) { }
     // Save the agent state in order to pass it later into WebDevToolsAgent::reattach
     // if the same client is reattached to another agent.
     virtual void saveAgentRuntimeState(const WebString&) { }

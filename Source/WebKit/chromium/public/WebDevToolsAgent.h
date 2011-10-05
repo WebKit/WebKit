@@ -65,8 +65,6 @@ public:
     virtual void dispatchOnInspectorBackend(const WebString& message) = 0;
 
     virtual void inspectElementAt(const WebPoint&) = 0;
-    // Deprecated. Will be removed shortly.
-    virtual void setRuntimeProperty(const WebString& name, const WebString& value) = 0;
     virtual void setProcessId(long) = 0;
 
     // Exposed for LayoutTestController.

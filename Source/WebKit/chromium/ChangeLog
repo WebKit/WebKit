@@ -1,3 +1,18 @@
+2011-10-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: save inspector state into single string instead of string map
+        https://bugs.webkit.org/show_bug.cgi?id=69335
+
+        Now that Chromium side is updated, remove unused methods from the DevToolsAgent API.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::updateInspectorStateCookie):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types

@@ -71,9 +71,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const char kFrontendConnectedFeatureName[] = "frontend-connected";
-static const char kInspectorStateFeatureName[] = "inspector-state";
-
 class ClientMessageLoopAdapter : public PageScriptDebugServer::ClientMessageLoop {
 public:
     static void ensureClientMessageLoopCreated(WebDevToolsAgentClient* client)
@@ -250,14 +247,6 @@ void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
     m_webViewImpl->inspectElementAt(point);
 }
 
-void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)
-{
-    if (name == kInspectorStateFeatureName) {
-        InspectorController* ic = inspectorController();
-        ic->restoreInspectorStateFromCookie(value);
-    }
-}
-
 InspectorController* WebDevToolsAgentImpl::inspectorController()
 {
     if (Page* page = m_webViewImpl->page())
@@ -311,7 +300,6 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)
 
 void WebDevToolsAgentImpl::updateInspectorStateCookie(const String& state)
 {
-    m_client->runtimePropertyChanged(kInspectorStateFeatureName, state);
     m_client->saveAgentRuntimeState(state);
 }
 
