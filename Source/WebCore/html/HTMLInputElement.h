@@ -307,7 +307,6 @@ private:
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();
-    virtual void willBlur();
     virtual void handleBlurEvent();
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }

@@ -513,14 +513,9 @@ void HTMLInputElement::handleFocusEvent()
         document()->setUseSecureKeyboardEntryWhenActive(true);
 }
 
-void HTMLInputElement::willBlur()
-{
-    m_inputType->willBlur();
-    HTMLTextFormControlElement::willBlur();
-}
-
 void HTMLInputElement::handleBlurEvent()
 {
+    m_inputType->handleBlurEvent();
     if (!isTextField())
         return;
     Frame* frame = document()->frame();

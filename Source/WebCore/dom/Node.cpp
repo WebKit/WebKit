@@ -2742,10 +2742,6 @@ void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
     EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(oldFocusedNode));
 }
 
-void Node::willBlur()
-{
-}
-
 void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
     if (document()->page())

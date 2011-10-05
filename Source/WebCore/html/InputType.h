@@ -182,7 +182,7 @@ public:
     virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool shouldUseInputMethod() const;
-    virtual void willBlur();
+    virtual void handleBlurEvent();
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual bool canBeSuccessfulSubmitButton();
 
