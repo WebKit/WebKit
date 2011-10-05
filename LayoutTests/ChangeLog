@@ -1,3 +1,26 @@
+2011-10-05  Dirk Schulze  <krit@webkit.org>
+
+        SVG 1.1: ineffectual transform attribute for ClipPath
+        https://bugs.webkit.org/show_bug.cgi?id=55361
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Test that the clip path gets concatenated with the current animated transformation and
+        that hit testing is affected correctly.
+
+        * platform/mac/svg/clip-path/clip-path-transform-1-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-transform-1-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-transform-2-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-transform-2-expected.txt: Added.
+        * svg/clip-path/clip-path-transform-1.svg: Added. Test clipping to path with transform.
+        * svg/clip-path/clip-path-transform-2.svg: Added. Test masking with transform.
+        * svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Added.
+        * svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html: Added.
+        * svg/dynamic-updates/script-tests/SVGClipPathElement-transform-influences-hitTesting.js: Added.
+        (executeBackgroundTest):
+        (executeTest):
+
 2011-10-05  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move elements panel update semantics from ElementsPanel to ElementsTreeOutline.

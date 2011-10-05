@@ -65,7 +65,7 @@ private:
     // clipPath can be clipped too, but don't have a boundingBox or repaintRect. So we can't call
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     bool applyClippingToContext(RenderObject*, const FloatRect&, const FloatRect&, GraphicsContext*);
-    bool pathOnlyClipping(GraphicsContext*, const FloatRect&);
+    bool pathOnlyClipping(GraphicsContext*, const AffineTransform&, const FloatRect&);
     bool drawContentIntoMaskImage(ClipperData*, const FloatRect& objectBoundingBox);
     void calculateClipContentRepaintRect();
 
