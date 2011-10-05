@@ -436,16 +436,12 @@ http/tests/loading/state-object-security-exception.html
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html
-editing/inserting/insert-composition-whitespace.html
 svg/text/caret-in-svg-text.xhtml
-editing/input/ime-composition-clearpreedit.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
 fast/events/ime-composition-events-001.html
-fast/forms/input-maxlength-ime-completed.html
-fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
 platform/mac/editing/input/5576619.html
 platform/mac/editing/input/bold-node.html
@@ -455,13 +451,9 @@ platform/mac/editing/input/firstrectforcharacterrange-styled.html
 platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html
 platform/mac/editing/input/insert-delete-smp-symbol.html
 platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html
-platform/mac/editing/input/maxlength.html
-platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/input/range-for-empty-document.html
 platform/mac/editing/input/replace-invalid-range.html
 platform/mac/editing/input/secure-input.html
-platform/mac/editing/input/selection-change-closes-typing.html
-platform/mac/editing/input/text-control-ime-input.html
 platform/mac/editing/input/text-input-controller.html
 platform/mac/editing/input/wrapped-line-char-rect.html
 platform/mac/editing/pasteboard/paste-and-match-style-selector-event.html

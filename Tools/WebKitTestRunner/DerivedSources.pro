@@ -13,6 +13,7 @@ IDL_BINDINGS += \
     InjectedBundle/Bindings/EventSendingController.idl \
     InjectedBundle/Bindings/GCController.idl \
     InjectedBundle/Bindings/LayoutTestController.idl \
+    InjectedBundle/Bindings/TextInputController.idl \
 
 defineTest(addExtraCompiler) {
     eval($${1}.CONFIG = target_predeps no_link)

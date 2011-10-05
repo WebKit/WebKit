@@ -29,6 +29,7 @@ INTERFACES = \
     EventSendingController \
     GCController \
     LayoutTestController \
+    TextInputController \
 #
 
 SCRIPTS = \

@@ -374,6 +374,10 @@ public:
     void gestureDidEnd();
 #endif
 
+    void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);
+    bool hasCompositionForTesting();
+    void confirmCompositionForTesting(const String& compositionString);
+
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     void dummy(bool&);

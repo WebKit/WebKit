@@ -24,6 +24,8 @@ SOURCES += \
     ../GCController.h \
     ../LayoutTestController.cpp \
     ../LayoutTestController.h \
+    ../TextInputController.cpp \
+    ../TextInputController.h \
     ../Bindings/JSWrapper.cpp \
     ActivateFontsQt.cpp \
     InjectedBundleQt.cpp \
@@ -31,6 +33,7 @@ SOURCES += \
     $$GENERATED_SOURCES_DIR/JSEventSendingController.cpp \
     $$GENERATED_SOURCES_DIR/JSGCController.cpp \
     $$GENERATED_SOURCES_DIR/JSLayoutTestController.cpp \
+    $$GENERATED_SOURCES_DIR/JSTextInputController.cpp \
 
 HEADERS += \
     ../ActivateFonts.h \
@@ -39,6 +42,7 @@ HEADERS += \
     ../InjectedBundle.h \
     ../InjectedBundlePage.h \
     ../LayoutTestController.h \
+    ../TextInputController.h \
 
 !CONFIG(release, debug|release) {
     OBJECTS_DIR = obj/debug

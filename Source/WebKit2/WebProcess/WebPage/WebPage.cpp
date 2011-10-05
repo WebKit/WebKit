@@ -2547,6 +2547,34 @@ String WebPage::viewportConfigurationAsText(int deviceDPI, int deviceWidth, int 
     return String::format("viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale, attrs.userScalable);
 }
 
+void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return;
+
+    Vector<CompositionUnderline> underlines;
+    underlines.append(CompositionUnderline(0, compositionString.length(), Color(Color::black), false));
+    frame->editor()->setComposition(compositionString, underlines, from, from + length);
+}
+
+bool WebPage::hasCompositionForTesting()
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    return frame && frame->editor()->hasComposition();
+}
+
+void WebPage::confirmCompositionForTesting(const String& compositionString)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return;
+
+    if (compositionString.isNull())
+        frame->editor()->confirmComposition();
+    frame->editor()->confirmComposition(compositionString);
+}
+
 Frame* WebPage::mainFrame() const
 {
     return m_page ? m_page->mainFrame() : 0;

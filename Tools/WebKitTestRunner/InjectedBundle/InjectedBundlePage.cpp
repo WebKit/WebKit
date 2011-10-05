@@ -644,6 +644,7 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().eventSendingController()->makeWindowObject(context, window, &exception);
+    InjectedBundle::shared().textInputController()->makeWindowObject(context, window, &exception);
     WebCoreTestSupport::injectInternalsObject(context);
 }
 

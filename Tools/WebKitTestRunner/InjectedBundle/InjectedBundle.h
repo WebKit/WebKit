@@ -29,6 +29,7 @@
 #include "EventSendingController.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
+#include "TextInputController.h"
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnPtr.h>
@@ -54,6 +55,7 @@ public:
     LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
+    TextInputController* textInputController() { return m_textInputController.get(); }
 
     InjectedBundlePage* page() const;
     size_t pageCount() const { return m_pages.size(); }
@@ -104,6 +106,7 @@ private:
     RefPtr<LayoutTestController> m_layoutTestController;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;
+    RefPtr<TextInputController> m_textInputController;
 
     WKBundleFrameRef m_topLoadingFrame;
 

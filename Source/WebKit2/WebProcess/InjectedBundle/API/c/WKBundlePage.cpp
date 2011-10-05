@@ -295,3 +295,23 @@ WKStringRef WKBundlePageViewportConfigurationAsText(WKBundlePageRef pageRef, int
 {
     return toCopiedAPI(toImpl(pageRef)->viewportConfigurationAsText(deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight));
 }
+
+void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length)
+{
+    toImpl(pageRef)->setCompositionForTesting(toImpl(text)->string(), from, length);
+}
+
+bool WKBundlePageHasComposition(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->hasCompositionForTesting();
+}
+
+void WKBundlePageConfirmComposition(WKBundlePageRef pageRef)
+{
+    toImpl(pageRef)->confirmCompositionForTesting(String());
+}
+
+void WKBundlePageConfirmCompositionWithText(WKBundlePageRef pageRef, WKStringRef text)
+{
+    toImpl(pageRef)->confirmCompositionForTesting(toImpl(text)->string());
+}
