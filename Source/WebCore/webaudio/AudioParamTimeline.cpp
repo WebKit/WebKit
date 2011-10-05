@@ -246,8 +246,9 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     values[writeIndex] = value;
             } else {
                 // Interpolate in log space.
-                value1 = log2f(value1);
-                value2 = log2f(value2);
+                // FIXME: we should just use log2f(), but Windows doesn't have this function.
+                value1 = narrowPrecisionToFloat(log2(value1));
+                value2 = narrowPrecisionToFloat(log2(value2));
 
                 // FIXME: optimize to not use pow() in inner loop, this is just a simple exponential ramp.
                 for (; writeIndex < fillToFrame; ++writeIndex) {
