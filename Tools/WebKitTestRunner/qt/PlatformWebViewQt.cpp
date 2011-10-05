@@ -32,7 +32,6 @@
 #include <QApplication>
 #include <QDeclarativeProperty>
 #include <QSGView>
-#include <WebCore/NotImplemented.h>
 
 namespace WTR {
 
@@ -121,17 +120,14 @@ void PlatformWebView::postEvent(QEvent* event)
 
 void PlatformWebView::addChromeInputField()
 {
-    notImplemented();
 }
 
 void PlatformWebView::removeChromeInputField()
 {
-    notImplemented();
 }
 
 void PlatformWebView::makeWebViewFirstResponder()
 {
-    notImplemented();
 }
 
 } // namespace WTR
