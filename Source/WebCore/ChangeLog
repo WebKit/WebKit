@@ -1,3 +1,19 @@
+2011-10-05  Andreas Kling  <kling@webkit.org>
+
+        Shrink FontDescription.
+        https://bugs.webkit.org/show_bug.cgi?id=69426
+
+        Reviewed by Nikolas Zimmermann.
+
+        Pack FontDescription's members in a bitfield, effectively shrinking
+        the class by two CPU-words. This reduces memory consumption by ~1 MB
+        on 64-bit when loading the full HTML5 spec.
+
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::orientation):
+        (WebCore::FontDescription::textOrientation):
+        (WebCore::FontDescription::widthVariant):
+
 2011-10-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for search in script content.
