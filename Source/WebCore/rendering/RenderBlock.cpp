@@ -1703,9 +1703,10 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
     // collapsed into the page edge.
     LayoutState* layoutState = view()->layoutState();
-    if (layoutState->isPaginated() && layoutState->pageLogicalHeight() && logicalTop > beforeCollapseLogicalTop) {
+    if (layoutState->isPaginated() && layoutState->pageLogicalHeight() && logicalTop > beforeCollapseLogicalTop
+        && hasNextPage(beforeCollapseLogicalTop)) {
         LayoutUnit oldLogicalTop = logicalTop;
-        logicalTop = min(logicalTop, nextPageLogicalTopExcludingBoundaryPoint(beforeCollapseLogicalTop));
+        logicalTop = min(logicalTop, nextPageLogicalTop(beforeCollapseLogicalTop));
         setLogicalHeight(logicalHeight() + (logicalTop - oldLogicalTop));
     }
     return logicalTop;
@@ -1773,8 +1774,9 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
     // Adjust logicalTopEstimate down to the next page if the margins are so large that we don't fit on the current
     // page.
     LayoutState* layoutState = view()->layoutState();
-    if (layoutState->isPaginated() && layoutState->pageLogicalHeight() && logicalTopEstimate > logicalHeight())
-        logicalTopEstimate = min(logicalTopEstimate, nextPageLogicalTopExcludingBoundaryPoint(logicalHeight()));
+    if (layoutState->isPaginated() && layoutState->pageLogicalHeight() && logicalTopEstimate > logicalHeight()
+        && hasNextPage(logicalHeight()))
+        logicalTopEstimate = min(logicalTopEstimate, nextPageLogicalTop(logicalHeight()));
 
     logicalTopEstimate += getClearDelta(child, logicalTopEstimate);
     
@@ -6129,18 +6131,25 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
     return newBox;
 }
 
-LayoutUnit RenderBlock::nextPageLogicalTopExcludingBoundaryPoint(LayoutUnit logicalOffset) const
+bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
 {
-    LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
-    if (!pageLogicalHeight)
-        return logicalOffset;
-    
-    // The logicalOffset is in our coordinate space.  We can add in our pushed offset.
-    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset);
-    return logicalOffset + (remainingLogicalHeight ? remainingLogicalHeight : pageLogicalHeight);
+    ASSERT(view()->layoutState() && view()->layoutState()->isPaginated());
+
+    if (!inRenderFlowThread())
+        return true; // Printing and multi-column both make new pages to accommodate content.
+
+    // See if we're in the last region.
+    LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
+    RenderRegion* region = enclosingRenderFlowThread()->renderRegionForLine(pageOffset, false);
+    if (!region)
+        return false;
+    if (region->isLastRegion())
+        return region->style()->regionOverflow() == BreakRegionOverflow
+            || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->offsetFromLogicalTopOfFirstPage());
+    return true;
 }
 
-LayoutUnit RenderBlock::nextPageLogicalTopIncludingBoundaryPoint(LayoutUnit logicalOffset) const
+LayoutUnit RenderBlock::nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
 {
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     if (!pageLogicalHeight)
@@ -6148,6 +6157,8 @@ LayoutUnit RenderBlock::nextPageLogicalTopIncludingBoundaryPoint(LayoutUnit logi
     
     // The logicalOffset is in our coordinate space.  We can add in our pushed offset.
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset);
+    if (pageBoundaryRule == ExcludePageBoundary)
+        return logicalOffset + (remainingLogicalHeight ? remainingLogicalHeight : pageLogicalHeight);
     return logicalOffset + remainingLogicalHeight;
 }
 
@@ -6173,10 +6184,10 @@ int RenderBlock::applyBeforeBreak(RenderBox* child, int logicalOffset)
     bool checkRegionBreaks = inRenderFlowThread();
     bool checkBeforeAlways = (checkColumnBreaks && child->style()->columnBreakBefore() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakBefore() == PBALWAYS)
                              || (checkRegionBreaks && child->style()->regionBreakBefore() == PBALWAYS);
-    if (checkBeforeAlways && inNormalFlow(child)) {
+    if (checkBeforeAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         if (checkColumnBreaks)
             view()->layoutState()->addForcedColumnBreak(logicalOffset);
-        return nextPageLogicalTopIncludingBoundaryPoint(logicalOffset);
+        return nextPageLogicalTop(logicalOffset, IncludePageBoundary);
     }
     return logicalOffset;
 }
@@ -6189,11 +6200,11 @@ int RenderBlock::applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo
     bool checkRegionBreaks = inRenderFlowThread();
     bool checkAfterAlways = (checkColumnBreaks && child->style()->columnBreakAfter() == PBALWAYS) || (checkPageBreaks && child->style()->pageBreakAfter() == PBALWAYS)
                             || (checkRegionBreaks && child->style()->regionBreakAfter() == PBALWAYS);
-    if (checkAfterAlways && inNormalFlow(child)) {
+    if (checkAfterAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         marginInfo.setMarginAfterQuirk(true); // Cause margins to be discarded for any following content.
         if (checkColumnBreaks)
             view()->layoutState()->addForcedColumnBreak(logicalOffset);
-        return nextPageLogicalTopIncludingBoundaryPoint(logicalOffset);
+        return nextPageLogicalTop(logicalOffset, IncludePageBoundary);
     }
     return logicalOffset;
 }
@@ -6203,10 +6214,10 @@ LayoutUnit RenderBlock::pageLogicalHeightForOffset(LayoutUnit offset) const
     RenderView* renderView = view();
     if (!inRenderFlowThread())
         return renderView->layoutState()->m_pageLogicalHeight;
-    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offsetFromLogicalTopOfFirstPage() + offset);
+    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offset + offsetFromLogicalTopOfFirstPage());
 }
 
-LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, bool includeBoundaryPoint) const
+LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
 {
     RenderView* renderView = view();
     offset += offsetFromLogicalTopOfFirstPage();
@@ -6214,7 +6225,7 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, b
     if (!inRenderFlowThread()) {
         LayoutUnit pageLogicalHeight = renderView->layoutState()->m_pageLogicalHeight;
         LayoutUnit remainingHeight = pageLogicalHeight - layoutMod(offset, pageLogicalHeight);
-        if (includeBoundaryPoint) {
+        if (pageBoundaryRule == IncludePageBoundary) {
             // If includeBoundaryPoint is true the line exactly on the top edge of a
             // column will act as being part of the previous column.
             remainingHeight = layoutMod(remainingHeight, pageLogicalHeight);
@@ -6222,7 +6233,7 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, b
         return remainingHeight;
     }
     
-    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, includeBoundaryPoint);
+    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, pageBoundaryRule);
 }
 
 LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins)
@@ -6237,9 +6248,10 @@ LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit 
         layoutState->m_columnInfo->updateMinimumColumnHeight(childLogicalHeight);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !inRenderFlowThread() || enclosingRenderFlowThread()->regionsHaveUniformLogicalHeight();
-    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight))
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight)
+        || !hasNextPage(logicalOffset))
         return logicalOffset;
-    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset);
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
     if (remainingLogicalHeight < childLogicalHeight) {
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
             return logicalOffset;
@@ -6250,15 +6262,17 @@ LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit 
 
 bool RenderBlock::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const
 {
-    bool checkedRegion = false;
+    bool checkRegion = false;
     for (LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight;
-         pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
-         if (minimumLogicalHeight <= pageLogicalHeight)
+        pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
+        if (minimumLogicalHeight <= pageLogicalHeight)
             return true;
-         adjustment += pageLogicalHeight;
-         checkedRegion = true;
+        if (!hasNextPage(logicalOffset + adjustment))
+            return false;
+        adjustment += pageLogicalHeight;
+        checkRegion = true;
     }
-    return !checkedRegion;
+    return !checkRegion;
 }
 
 void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta)
@@ -6293,10 +6307,10 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     lineBox->setPaginationStrut(0);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !inRenderFlowThread() || enclosingRenderFlowThread()->regionsHaveUniformLogicalHeight();
-    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && lineHeight > pageLogicalHeight))
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && lineHeight > pageLogicalHeight)
+        || !hasNextPage(logicalOffset))
         return;
-    const bool includeBoundaryPoint = false;
-    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, includeBoundaryPoint);
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
     if (remainingLogicalHeight < lineHeight) {
         // If we have a non-uniform page height, then we have to shift further possibly.
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))

@@ -352,10 +352,10 @@ void RenderFlowThread::layout()
                     continue;
                 LayoutRect regionRect;
                 if (isHorizontalWritingMode()) {
-                    regionRect = IntRect(style()->direction() == LTR ? 0 : logicalWidth() - region->contentWidth(), logicalHeight, region->contentWidth(), region->contentHeight());
+                    regionRect = LayoutRect(style()->direction() == LTR ? 0 : logicalWidth() - region->contentWidth(), logicalHeight, region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.height();
                 } else {
-                    regionRect = IntRect(logicalHeight, style()->direction() == LTR ? 0 : logicalWidth() - region->contentHeight(), region->contentWidth(), region->contentHeight());
+                    regionRect = LayoutRect(logicalHeight, style()->direction() == LTR ? 0 : logicalWidth() - region->contentHeight(), region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.width();
                 }
                 region->setRegionRect(regionRect);
@@ -510,7 +510,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         flipForWritingMode(flippedRegionRect); // Put the region rects into physical coordinates.
         flipForWritingMode(flippedRegionOverflowRect);
 
-        IntRect clippedRect(flippedRegionOverflowRect);
+        LayoutRect clippedRect(flippedRegionOverflowRect);
         clippedRect.intersect(repaintRect);
         if (clippedRect.isEmpty())
             continue;
@@ -574,7 +574,7 @@ LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) con
     return isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
 }
 
-LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, bool includeBoundaryPoint) const
+LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule pageBoundaryRule) const
 {
     RenderRegion* region = renderRegionForLine(position);
     if (!region)
@@ -582,8 +582,8 @@ LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit posi
 
     LayoutUnit regionLogicalBottom = isHorizontalWritingMode() ? region->regionRect().maxY() : region->regionRect().maxX();
     LayoutUnit remainingHeight = regionLogicalBottom - position;
-    if (includeBoundaryPoint) {
-        // If includeBoundaryPoint is true the line exactly on the top edge of a
+    if (pageBoundaryRule == IncludePageBoundary) {
+        // If IncludePageBoundary is set, the line exactly on the top edge of a
         // region will act as being part of the previous region.
         LayoutUnit regionHeight = isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
         remainingHeight = layoutMod(remainingHeight, regionHeight);

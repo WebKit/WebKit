@@ -865,22 +865,24 @@ private:
     void linkToEndLineIfNeeded(LineLayoutState&);
     static void repaintDirtyFloats(Vector<FloatWithRect>& floats);
 
+protected:
     // Pagination routines.
     
     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
-    // then nextPageLogicalTopExcludingBoundaryPoint will still move to the top of the next page. nextPageLogicalTopIncludingBoundaryPoint
-    // will not.
+    // then nextPageLogicalTop with ExcludePageBoundary will still move to the top of the next page. nextPageLogicalTop with
+    // IncludePageBoundary set will not.
     //
-    // For a page height of 800px, the first function will return 800 if the value passed in is 0. The second function will simply return 0.
-    LayoutUnit nextPageLogicalTopExcludingBoundaryPoint(LayoutUnit logicalOffset) const;
-    LayoutUnit nextPageLogicalTopIncludingBoundaryPoint(LayoutUnit logicalOffset) const;
+    // For a page height of 800px, the first rule will return 800 if the value passed in is 0. The second rule will simply return 0.
+    enum PageBoundaryRule { ExcludePageBoundary, IncludePageBoundary };
+    LayoutUnit nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
+    bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
     int applyBeforeBreak(RenderBox* child, int logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     int applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo& marginInfo); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
 
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
-    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, bool includeBoundaryPoint = true) const;
+    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
 
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
@@ -894,7 +896,8 @@ private:
 
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;
     bool logicalWidthChangedInRegions() const;
-    
+
+private:
     struct FloatingObjectHashFunctions {
         static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }
         static bool equal(FloatingObject* a, FloatingObject* b) { return a->m_renderer == b->m_renderer; }

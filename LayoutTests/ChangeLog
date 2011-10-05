@@ -1,3 +1,36 @@
+2011-10-04  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69398
+
+        [CSS3 Regions] Support the region-overflow property properly.
+
+        Reviewed by Dan Bernstein.
+
+        * fast/regions/region-overflow-auto-overflow-hidden.html: Added.
+        * fast/regions/region-overflow-auto-overflow-visible.html: Added.
+        * fast/regions/region-overflow-break.html: Added.
+        * fast/regions/script-tests/webkit-region-overflow-parsing.js:
+        * fast/regions/webkit-region-overflow-parsing-expected.txt:
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt:
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt:
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/percentage-margins-variable-width-regions-expected.png:
+        * platform/mac/fast/regions/percentage-margins-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/region-overflow-auto-overflow-hidden-expected.png: Added.
+        * platform/mac/fast/regions/region-overflow-auto-overflow-hidden-expected.txt: Added.
+        * platform/mac/fast/regions/region-overflow-auto-overflow-visible-expected.png: Added.
+        * platform/mac/fast/regions/region-overflow-auto-overflow-visible-expected.txt: Added.
+        * platform/mac/fast/regions/region-overflow-break-expected.png: Added.
+        * platform/mac/fast/regions/region-overflow-break-expected.txt: Added.
+        * platform/mac/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png:
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt:
+        * platform/mac/fast/regions/webkit-flow-inlines-dynamic-expected.png:
+        * platform/mac/fast/regions/webkit-flow-inlines-dynamic-expected.txt:
+
 2011-10-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Fix FrameView::scrollElementToRect to take already scrolled amount into consideration.

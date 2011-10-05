@@ -55,7 +55,11 @@ RenderRegion::~RenderRegion()
 
 LayoutRect RenderRegion::regionOverflowRect() const
 {
-    if (hasOverflowClip() || !isValid() || !m_flowThread)
+    // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
+    // folded into RenderBlock, switch to hasOverflowClip().
+    bool clipX = style()->overflowX() != OVISIBLE;
+    bool clipY = style()->overflowY() != OVISIBLE;
+    if ((clipX && clipY) || !isValid() || !m_flowThread)
         return regionRect();
 
     LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
@@ -64,12 +68,14 @@ LayoutRect RenderRegion::regionOverflowRect() const
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
         LayoutUnit minY = isFirstRegion() ? flowThreadOverflow.y() : regionRect().y();
-        LayoutUnit maxY = isLastRegion() ? flowThreadOverflow.maxY() : regionRect().maxY();
-        clipRect = LayoutRect(flowThreadOverflow.x(), minY, flowThreadOverflow.width(), maxY - minY);
+        LayoutUnit maxY = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? flowThreadOverflow.maxY() : regionRect().maxY();
+        clipRect = LayoutRect(clipX ? regionRect().x() : flowThreadOverflow.x(), minY,
+                              clipX ? regionRect().width() : flowThreadOverflow.width(), maxY - minY);
     } else {
         LayoutUnit minX = isFirstRegion() ? flowThreadOverflow.x() : regionRect().x();
-        LayoutUnit maxX = isLastRegion() ? flowThreadOverflow.maxX() : regionRect().maxX();
-        clipRect = LayoutRect(minX, flowThreadOverflow.y(), maxX - minX, flowThreadOverflow.height());
+        LayoutUnit maxX = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? flowThreadOverflow.maxX() : regionRect().maxX();
+        clipRect = LayoutRect(minX, clipY ? regionRect().y() : flowThreadOverflow.y(),
+                              maxX - minX, clipY ? regionRect().height() : flowThreadOverflow.height());
     }
 
     return clipRect;

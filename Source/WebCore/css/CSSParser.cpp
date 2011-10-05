@@ -1642,7 +1642,7 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = validUnit(value, FInteger, m_strict);
         break;
     case CSSPropertyWebkitRegionOverflow:
-        if (id == CSSValueAuto || id == CSSValueWebkitBreak)
+        if (id == CSSValueAuto || id == CSSValueBreak)
             validPrimitive = true;
         break;
 

@@ -21,7 +21,7 @@ function testComputedStyle(declaration) {
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': auto")', "auto");
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': initial")', "initial");
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': inherit")', "inherit");
-shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': -webkit-break")', "-webkit-break");
+shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': break")', "break");
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': 0")', "");
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': -1")', "");
 shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': 12.5")', "");
@@ -30,7 +30,7 @@ shouldBeEqualToString('testCSSText("' + webkitRegionOverflowProperty + ': 1px")'
 shouldBeEqualToString('testComputedStyle("auto")', "auto");
 shouldBeEqualToString('testComputedStyle("initial")', "auto");
 shouldBeEqualToString('testComputedStyle("inherit")', "auto");
-shouldBeEqualToString('testComputedStyle("-webkit-break")', "-webkit-break");
+shouldBeEqualToString('testComputedStyle("break")', "break");
 shouldBeEqualToString('testComputedStyle("0")', "auto");
 shouldBeEqualToString('testComputedStyle("-1")', "auto");
 shouldBeEqualToString('testComputedStyle("12.5")', "auto");

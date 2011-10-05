@@ -11,7 +11,7 @@ Flow Threads
   Thread with flow-name 'flow'
     layer at (0,0) size 200x180
       RenderFlowThread at (0,0) size 200x180
-        RenderBlock {DIV} at (0,30) size 200x150
+        RenderBlock {DIV} at (0,30) size 200x118
           RenderBlock {P} at (0,0) size 200x118
             RenderInline {B} at (0,0) size 111x18
               RenderText {#text} at (0,0) size 111x18

@@ -99,7 +99,7 @@ public:
 
     LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
     LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
-    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, bool includeBoundaryPoint = true) const;
+    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule = IncludePageBoundary) const;
     RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }

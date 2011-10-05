@@ -1,3 +1,49 @@
+2011-10-04  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69398
+
+        [CSS3 Regions] Support the region-overflow property properly.
+        
+        (1) Change -webkit-break to break, since the -webkit-region-overflow property already has the
+        -webkit- extension.
+        
+        (2) Fix clipping so that it works when overflow is set or when region break is set.
+        
+        (3) Refactor all the pagination spots to check if a next page is available using the new hasNextPage
+        function. This prevents us from paginating if we hit the last region and further breaks are no longer
+        allowed.
+        
+        Reviewed by Dan Bernstein.
+
+        Added new tests in fast/regions.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator RegionOverflow):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::hasNextPage):
+        (WebCore::RenderBlock::nextPageLogicalTop):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::pageLogicalHeightForOffset):
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::pushToNextPageWithMinimumLogicalHeight):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::regionRemainingLogicalHeightForLine):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOverflowRect):
+
 2011-10-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static ClassInfo structs to classes that override JSCell::getCallData

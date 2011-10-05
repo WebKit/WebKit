@@ -1597,7 +1597,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
         m_value.ident = CSSValueAuto;
         break;
     case BreakRegionOverflow:
-        m_value.ident = CSSValueWebkitBreak;
+        m_value.ident = CSSValueBreak;
         break;
     }
 }
@@ -1607,7 +1607,7 @@ template<> inline CSSPrimitiveValue::operator RegionOverflow() const
     switch (m_value.ident) {
     case CSSValueAuto:
         return AutoRegionOverflow;
-    case CSSValueWebkitBreak:
+    case CSSValueBreak:
         return BreakRegionOverflow;
     default:
         ASSERT_NOT_REACHED();
