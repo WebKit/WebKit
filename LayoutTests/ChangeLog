@@ -1,3 +1,16 @@
+2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: debugger-activation-crash2.html are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=69428
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/debugger-activation-crash2-expected.txt:
+        * inspector/debugger/debugger-activation-crash2.html:
+        * platform/chromium/inspector/debugger/debugger-activation-crash2-expected.txt: Removed.
+
 2011-10-05  Abhishek Arya  <inferno@chromium.org>
 
         Crash in SVGTRefElement::updateReferencedText.

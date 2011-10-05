@@ -40,7 +40,7 @@ function test() {
 
     function step3(callFrames)
     {
-        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.captureStackTrace(callFrames, true);
         InspectorTest.completeDebuggerTest();
     }
 }

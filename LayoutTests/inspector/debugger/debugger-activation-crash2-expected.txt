@@ -5,8 +5,8 @@ Script source was shown.
 Set timer for test function.
 Script execution paused.
 Call stack:
-    0)  (debugger-activation-crash2.html:9)
-    1) testFunction (debugger-activation-crash2.html:20)
+    0)  (debugger-activation-crash2.html)
+    1) testFunction (debugger-activation-crash2.html)
 Script execution resumed.
 Debugger was disabled.
 

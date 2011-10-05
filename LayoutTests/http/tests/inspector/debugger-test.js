@@ -102,7 +102,7 @@ InspectorTest.resumeExecution = function(callback)
     InspectorTest.waitUntilResumed(callback);
 };
 
-InspectorTest.captureStackTrace = function(callFrames)
+InspectorTest.captureStackTrace = function(callFrames, dropLineNumbers)
 {
     InspectorTest.addResult("Call stack:");
     for (var i = 0; i < callFrames.length; i++) {
@@ -117,7 +117,7 @@ InspectorTest.captureStackTrace = function(callFrames)
             url = "(internal script)";
             lineNumber = "(line number)";
         }
-        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + lineNumber + ")";
+        var s = "    " + i + ") " + frame.functionName + " (" + url + (dropLineNumbers ? "" : ":" + lineNumber) + ")";
         InspectorTest.addResult(s);
     }
 };
