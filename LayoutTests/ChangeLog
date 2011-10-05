@@ -1,3 +1,12 @@
+2011-10-05  Chris Rogers  <crogers@google.com>
+
+        Rebaseline webaudio/audiobuffersource-playbackrate.html due to http://trac.webkit.org/changeset/96745
+        https://bugs.webkit.org/show_bug.cgi?id=69470
+
+        Unreviewed.
+
+        * webaudio/audiobuffersource-playbackrate-expected.wav:
+
 2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Create a Skipped file to support the new WinCairo test bot.
