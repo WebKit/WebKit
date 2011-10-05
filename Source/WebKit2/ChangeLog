@@ -1,3 +1,12 @@
+2011-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Make built-in PDF description localizable
+        https://bugs.webkit.org/show_bug.cgi?id=69442
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: Use a localized string instead of a literal one.
+
 2011-10-05  Chang Shu  <cshu@webkit.org>
 
         [WK2] WebKitTestRunner needs LayoutTestController.dumpConfigurationForViewport

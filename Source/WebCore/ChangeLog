@@ -1,3 +1,24 @@
+2011-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Make built-in PDF description localizable
+        https://bugs.webkit.org/show_bug.cgi?id=69442
+
+        Reviewed by Dan Bernstein.
+
+        Added strings for plug-in's name and for its supported MIME type.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::builtInPDFPluginName):
+        (WebCore::DefaultLocalizationStrategy::pdfDocumentTypeDescription):
+        * platform/DefaultLocalizationStrategy.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::builtInPDFPluginName):
+        (WebCore::pdfDocumentTypeDescription):
+        * platform/LocalizedStrings.h:
+
 2011-10-05  David Levin  <levin@chromium.org>
 
         Attempt to fix the bindings test (broken by r96727).

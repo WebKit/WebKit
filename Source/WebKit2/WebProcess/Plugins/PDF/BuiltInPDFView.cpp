@@ -35,6 +35,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ScrollAnimator.h>
@@ -72,11 +73,11 @@ BuiltInPDFView::~BuiltInPDFView()
 PluginInfo BuiltInPDFView::pluginInfo()
 {
     PluginInfo info;
-    info.name = "WebKit built-in PDF"; // FIXME: Name and description should be localizable.
+    info.name = builtInPDFPluginName();
 
     MimeClassInfo mimeClassInfo;
     mimeClassInfo.type ="application/pdf";
-    mimeClassInfo.desc = "Portable Document Format";
+    mimeClassInfo.desc = pdfDocumentTypeDescription();
     mimeClassInfo.extensions.append("pdf");
 
     info.mimes.append(mimeClassInfo);
