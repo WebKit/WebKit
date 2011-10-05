@@ -258,8 +258,8 @@ static PassOwnPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
         return PassOwnPtr<Evas_Object>();
 
     Evas_Object* image = evas_object_image_filled_add(evas);
-    evas_object_image_memfile_set(image, imageBuffer.get(), bytesRead, 0, 0);
     evas_object_image_colorspace_set(image, EVAS_COLORSPACE_ARGB8888);
+    evas_object_image_memfile_set(image, imageBuffer.get(), bytesRead, 0, 0);
 
     resizeEcoreEvasIfNeeded(image);
 
