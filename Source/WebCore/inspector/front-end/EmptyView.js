@@ -39,6 +39,9 @@ WebInspector.EmptyView = function(text)
 }
 
 WebInspector.EmptyView.prototype = {
+    /**
+     * @param {Element=} parentElement
+     */
     show: function(parentElement)
     {
         WebInspector.View.prototype.show.call(this, parentElement);

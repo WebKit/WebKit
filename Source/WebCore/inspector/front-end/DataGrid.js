@@ -1036,6 +1036,7 @@ WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {boolean=} hasChildren
  */
 WebInspector.DataGridNode = function(data, hasChildren)
 {

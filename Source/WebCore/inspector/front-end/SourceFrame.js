@@ -992,3 +992,8 @@ WebInspector.SourceFrameDelegate.prototype = {
 
     suggestedFileName: function() { }
 }
+
+/**
+ * Default implementation.
+ */
+WebInspector.SourceFrameDelegate.stub = Object.create(WebInspector.SourceFrameDelegate.prototype);

@@ -28,6 +28,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @param {function(PageAgent.Cookie)=} deleteCallback
+ * @param {function()=} refreshCallback
+ */
 WebInspector.CookiesTable = function(cookieDomain, expandable, deleteCallback, refreshCallback)
 {
     this._cookieDomain = cookieDomain;
@@ -164,7 +169,7 @@ WebInspector.CookiesTable.prototype = {
         }
 
         var comparator;
-        switch (parseInt(this._dataGrid.sortColumnIdentifier)) {
+        switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
             case 0: comparator = localeCompare.bind(this, "name"); break;
             case 1: comparator = localeCompare.bind(this, "value"); break;
             case 2: comparator = localeCompare.bind(this, "domain"); break;
@@ -179,6 +184,9 @@ WebInspector.CookiesTable.prototype = {
         cookies.sort(comparator);
     },
 
+    /**
+     * @param {PageAgent.Cookie} cookie
+     */
     _createGridNode: function(cookie)
     {
         var data = {};

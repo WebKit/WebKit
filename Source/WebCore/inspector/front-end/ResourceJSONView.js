@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.ResourceView}
+ * @constructor
+ */
 WebInspector.ResourceJSONView = function(resource, parsedJSON)
 {
     WebInspector.ResourceView.call(this, resource);
@@ -63,7 +67,7 @@ WebInspector.ResourceJSONView.parseJSONP = function(text)
 
     var prefix = text.substring(0, start + 1);
     var suffix = text.substring(end);
-    var text = text.substring(start + 1, end);
+    text = text.substring(start + 1, end);
 
     try {
         return new WebInspector.ParsedJSON(JSON.parse(text), prefix, suffix);
@@ -101,6 +105,9 @@ WebInspector.ResourceJSONView.prototype = {
 
 WebInspector.ResourceJSONView.prototype.__proto__ = WebInspector.ResourceView.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ParsedJSON = function(data, prefix, suffix)
 {
     this.data = data;

@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.ResourceContentView}
+ * @constructor
+ */
 WebInspector.ResourceResponseView = function(resource)
 {
     WebInspector.ResourceContentView.call(this, resource);

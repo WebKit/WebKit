@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.ResourceView}
+ * @constructor
+ */
 WebInspector.ImageView = function(resource)
 {
     WebInspector.ResourceView.call(this, resource);
@@ -101,7 +105,7 @@ WebInspector.ImageView.prototype = {
             infoListElement.appendChild(dt);
             var dd = document.createElement("dd");
             var externalResource = true;
-            dd.appendChild(WebInspector.linkifyURLAsNode(this.resource.url, null, null, externalResource));
+            dd.appendChild(WebInspector.linkifyURLAsNode(this.resource.url, undefined, undefined, externalResource));
             infoListElement.appendChild(dd);
 
             this._container.appendChild(infoListElement);
@@ -136,7 +140,7 @@ WebInspector.ImageView.prototype = {
 
     _openInNewTab: function(event)
     {
-        WebInspector.openResource(this.resource.url, false);
+        PageAgent.open(this.resource.url, true);
     }
 }
 

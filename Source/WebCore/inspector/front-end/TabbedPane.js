@@ -31,6 +31,7 @@
 /**
  * @extends {WebInspector.View}
  * @constructor
+ * @param {Element=} element
  */
 WebInspector.TabbedPane = function(element)
 {
@@ -55,6 +56,9 @@ WebInspector.TabbedPane.prototype = {
         this._tabs[id] = { tabElement: tabElement, view: view };
     },
 
+    /**
+     * @param {boolean=} userGesture
+     */
     selectTab: function(id, userGesture)
     {
         if (!(id in this._tabs))

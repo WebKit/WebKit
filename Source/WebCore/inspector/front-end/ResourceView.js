@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.ResourceView = function(resource)
 {
     WebInspector.View.call(this);
@@ -70,9 +74,13 @@ WebInspector.ResourceView.nonSourceViewForResource = function(resource)
     }
 }
 
+/**
+ * @extends {WebInspector.SourceFrame}
+ * @constructor
+ */
 WebInspector.ResourceSourceFrame = function(resource)
 {
-    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(resource), resource.url);
+    WebInspector.SourceFrame.call(this, WebInspector.SourceFrameDelegate.stub, resource.url);
     this._resource = resource;
 }
 
@@ -118,6 +126,10 @@ WebInspector.EditableResourceSourceFrame = function(resource)
     WebInspector.ResourceSourceFrame.call(this, resource);
 }
 
+/**
+ * @extends {WebInspector.ResourceSourceFrame}
+ * @constructor
+ */
 WebInspector.EditableResourceSourceFrame.prototype = {
     canEditSource: function()
     {
@@ -161,6 +173,10 @@ WebInspector.EditableResourceSourceFrame.prototype = {
 
 WebInspector.EditableResourceSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;
 
+/**
+ * @extends {WebInspector.ResourceSourceFrame}
+ * @constructor
+ */
 WebInspector.ResourceRevisionSourceFrame = function(revision)
 {
     WebInspector.ResourceSourceFrame.call(this, revision.resource);

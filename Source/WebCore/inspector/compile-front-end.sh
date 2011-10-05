@@ -68,10 +68,11 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:27:jsmodule_common \
+    --module jsmodule_ui:28:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/Color.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
+        --js Source/WebCore/inspector/front-end/CookiesTable.js \
         --js Source/WebCore/inspector/front-end/DataGrid.js \
         --js Source/WebCore/inspector/front-end/Drawer.js \
         --js Source/WebCore/inspector/front-end/EmptyView.js \
@@ -96,11 +97,22 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Toolbar.js \
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
-    --module jsmodule_inspector:7:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_inspector:18:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/FontView.js \
+        --js Source/WebCore/inspector/front-end/ImageView.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
+        --js Source/WebCore/inspector/front-end/NetworkItemView.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
+        --js Source/WebCore/inspector/front-end/ResourceCookiesView.js \
+        --js Source/WebCore/inspector/front-end/ResourceHeadersView.js \
+        --js Source/WebCore/inspector/front-end/ResourceHTMLView.js \
+        --js Source/WebCore/inspector/front-end/ResourceJSONView.js \
+        --js Source/WebCore/inspector/front-end/ResourcePreviewView.js \
+        --js Source/WebCore/inspector/front-end/ResourceResponseView.js \
+        --js Source/WebCore/inspector/front-end/ResourceTimingView.js \
+        --js Source/WebCore/inspector/front-end/ResourceView.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js

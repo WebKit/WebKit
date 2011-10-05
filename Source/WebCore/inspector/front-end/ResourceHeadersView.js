@@ -28,6 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.ResourceHeadersView = function(resource)
 {
     WebInspector.View.call(this);
@@ -219,7 +223,7 @@ WebInspector.ResourceHeadersView.prototype = {
             var valueEscaped = this._decodeRequestParameters ? this._decodeURIComponent(value) : value.escapeHTML();
             var nameEscaped = this._decodeRequestParameters ? this._decodeURIComponent(name) : name.escapeHTML();
 
-            var title = "<div class=\"header-name\">" + nameEscaped + ":</div>";
+            title = "<div class=\"header-name\">" + nameEscaped + ":</div>";
             title += "<div class=\"header-value source-code\">" + valueEscaped + "</div>";
 
             var parmTreeElement = new TreeElement(null, null, false);
@@ -251,7 +255,7 @@ WebInspector.ResourceHeadersView.prototype = {
         if (typeof this._resource.webSocketRequestKey3 !== "undefined")
             additionalRow = {header: "(Key3)", value: this._resource.webSocketRequestKey3};
         if (this._showRequestHeadersText)
-            this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._resource.requestHeadersText, this._requestHeadersTreeElement);
+            this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._resource.sortedRequestHeaders, this._resource.requestHeadersText, this._requestHeadersTreeElement);
         else
             this._refreshHeaders(WebInspector.UIString("Request Headers"), this._resource.sortedRequestHeaders, additionalRow, this._requestHeadersTreeElement);
 
@@ -270,7 +274,7 @@ WebInspector.ResourceHeadersView.prototype = {
         if (typeof this._resource.webSocketChallengeResponse !== "undefined")
             additionalRow = {header: "(Challenge Response)", value: this._resource.webSocketChallengeResponse};
         if (this._showResponseHeadersText)
-            this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._resource.responseHeadersText, this._responseHeadersTreeElement);
+            this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._resource.sortedResponseHeaders, this._resource.responseHeadersText, this._responseHeadersTreeElement);
         else
             this._refreshHeaders(WebInspector.UIString("Response Headers"), this._resource.sortedResponseHeaders, additionalRow, this._responseHeadersTreeElement);
 
@@ -313,17 +317,15 @@ WebInspector.ResourceHeadersView.prototype = {
         }
     },
 
-    _refreshHeadersTitle: function(title, headersTreeElement, isHeadersTextShown, headersLength)
+    _refreshHeadersTitle: function(title, headersTreeElement, headersLength)
     {
         headersTreeElement.listItemElement.removeChildren();
         headersTreeElement.listItemElement.appendChild(document.createTextNode(title));
 
-        if (!isHeadersTextShown) {
-            var headerCount = document.createElement("span");
-            headerCount.addStyleClass("header-count");
-            headerCount.textContent = WebInspector.UIString(" (%d)", headersLength);
-            headersTreeElement.listItemElement.appendChild(headerCount);
-        }
+        var headerCount = document.createElement("span");
+        headerCount.addStyleClass("header-count");
+        headerCount.textContent = WebInspector.UIString(" (%d)", headersLength);
+        headersTreeElement.listItemElement.appendChild(headerCount);
     },
 
     _refreshHeaders: function(title, headers, additionalRow, headersTreeElement)
@@ -331,10 +333,10 @@ WebInspector.ResourceHeadersView.prototype = {
         headersTreeElement.removeChildren();
 
         var length = headers.length;
-        this._refreshHeadersTitle(title, headersTreeElement, false, length);
+        this._refreshHeadersTitle(title, headersTreeElement, length);
         headersTreeElement.hidden = !length;
         for (var i = 0; i < length; ++i) {
-            var title = "<div class=\"header-name\">" + headers[i].header.escapeHTML() + ":</div>";
+            title = "<div class=\"header-name\">" + headers[i].header.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + headers[i].value.escapeHTML() + "</div>"
 
             var headerTreeElement = new TreeElement(null, null, false);
@@ -344,7 +346,7 @@ WebInspector.ResourceHeadersView.prototype = {
         }
 
         if (additionalRow) {
-            var title = "<div class=\"header-name\">" + additionalRow.header.escapeHTML() + ":</div>";
+            title = "<div class=\"header-name\">" + additionalRow.header.escapeHTML() + ":</div>";
             title += "<div class=\"header-value source-code\">" + additionalRow.value.escapeHTML() + "</div>"
 
             var headerTreeElement = new TreeElement(null, null, false);
@@ -354,11 +356,11 @@ WebInspector.ResourceHeadersView.prototype = {
         }
     },
 
-    _refreshHeadersText: function(title, headersText, headersTreeElement)
+    _refreshHeadersText: function(title, headers, headersText, headersTreeElement)
     {
         headersTreeElement.removeChildren();
 
-        this._refreshHeadersTitle(title, headersTreeElement, true);
+        this._refreshHeadersTitle(title, headersTreeElement, headers.length);
         var headerTreeElement = new TreeElement(null, null, false);
         headerTreeElement.selectable = false;
         headersTreeElement.appendChild(headerTreeElement);

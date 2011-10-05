@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.TabbedPane}
+ * @constructor
+ */
 WebInspector.NetworkItemView = function(resource)
 {
     WebInspector.TabbedPane.call(this);
@@ -63,6 +67,9 @@ WebInspector.NetworkItemView.prototype = {
         this._selectTab();
     },
 
+    /**
+     * @param {string=} tabId
+     */
     _selectTab: function(tabId)
     {
         if (!tabId)
@@ -84,6 +91,10 @@ WebInspector.NetworkItemView.prototype = {
 
 WebInspector.NetworkItemView.prototype.__proto__ = WebInspector.TabbedPane.prototype;
 
+/**
+ * @extends {WebInspector.ResourceView}
+ * @constructor
+ */
 WebInspector.ResourceContentView = function(resource)
 {
     WebInspector.ResourceView.call(this, resource);

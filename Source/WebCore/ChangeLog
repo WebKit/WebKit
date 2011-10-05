@@ -1,3 +1,45 @@
+2011-10-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make ResourceView(s) compile
+        https://bugs.webkit.org/show_bug.cgi?id=69351
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable.prototype._sortCookies):
+        * inspector/front-end/DataGrid.js:
+        * inspector/front-end/EmptyView.js:
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype._createContentIfNeeded):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._createContentIfNeeded.onImageLoad):
+        (WebInspector.ImageView.prototype._createContentIfNeeded):
+        (WebInspector.ImageView.prototype._openInNewTab):
+        * inspector/front-end/NetworkItemView.js:
+        * inspector/front-end/ResourceCookiesView.js:
+        * inspector/front-end/ResourceHTMLView.js:
+        (WebInspector.ResourceHTMLView.prototype.hide):
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._refreshParms):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeadersTitle):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeaders):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeadersText):
+        * inspector/front-end/ResourceJSONView.js:
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.parseJSONP):
+        * inspector/front-end/ResourcePreviewView.js:
+        * inspector/front-end/ResourceResponseView.js:
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.createTimingTable):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceSourceFrame):
+        * inspector/front-end/SourceFrame.js:
+        * inspector/front-end/TabbedPane.js:
+        * inspector/front-end/UIUtils.js:
+        (Number.secondsToString):
+        (Number.bytesToString):
+        * inspector/front-end/inspector.js:
+
 2011-10-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: debuggerPresentatioModel.linkifyLocation leaks updateAnchor closure instances.

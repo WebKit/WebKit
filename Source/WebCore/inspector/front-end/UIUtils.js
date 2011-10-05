@@ -396,3 +396,55 @@ WebInspector.startEditing = function(element, config)
     };
 }
 
+/**
+ * @param {boolean=} higherResolution
+ */
+Number.secondsToString = function(seconds, higherResolution)
+{
+    if (seconds === 0)
+        return "0";
+
+    var ms = seconds * 1000;
+    if (higherResolution && ms < 1000)
+        return WebInspector.UIString("%.3fms", ms);
+    else if (ms < 1000)
+        return WebInspector.UIString("%.0fms", ms);
+
+    if (seconds < 60)
+        return WebInspector.UIString("%.2fs", seconds);
+
+    var minutes = seconds / 60;
+    if (minutes < 60)
+        return WebInspector.UIString("%.1fmin", minutes);
+
+    var hours = minutes / 60;
+    if (hours < 24)
+        return WebInspector.UIString("%.1fhrs", hours);
+
+    var days = hours / 24;
+    return WebInspector.UIString("%.1f days", days);
+}
+
+/**
+ * @param {boolean=} higherResolution
+ */
+Number.bytesToString = function(bytes, higherResolution)
+{
+    if (typeof higherResolution === "undefined")
+        higherResolution = true;
+
+    if (bytes < 1024)
+        return WebInspector.UIString("%.0fB", bytes);
+
+    var kilobytes = bytes / 1024;
+    if (higherResolution && kilobytes < 1024)
+        return WebInspector.UIString("%.2fKB", kilobytes);
+    else if (kilobytes < 1024)
+        return WebInspector.UIString("%.0fKB", kilobytes);
+
+    var megabytes = kilobytes / 1024;
+    if (higherResolution)
+        return WebInspector.UIString("%.2fMB", megabytes);
+    else
+        return WebInspector.UIString("%.0fMB", megabytes);
+}

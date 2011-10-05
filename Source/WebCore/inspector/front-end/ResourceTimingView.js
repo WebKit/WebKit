@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.ResourceTimingView = function(resource)
 {
     WebInspector.View.call(this);
@@ -76,7 +80,7 @@ WebInspector.ResourceTimingView.createTimingTable = function(resource)
     var tableElement = document.createElement("table");
     var rows = [];
 
-    function addRow(title, className, start, end, color)
+    function addRow(title, className, start, end)
     {
         var row = {};
         row.title = title;
