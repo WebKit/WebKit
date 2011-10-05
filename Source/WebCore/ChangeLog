@@ -1,3 +1,10 @@
+2011-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        32-bit build fix.
+
+        * WebCore.exp.in: In 32-bit, WebCore needs to export both NSSize and CGSize constructors.
+        In 64-bit, NSSize is just a typedef for CGSize. Also fixed conversion operators, for good measure.
+
 2011-10-05  Jer Noble  <jer.noble@apple.com>
 
         WEB_AUDIO does not compile on Leopard 32-bit.
