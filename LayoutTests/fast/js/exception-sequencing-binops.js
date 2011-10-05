@@ -64,7 +64,7 @@ function createTestWithRHSExec(expr) {
     }
 }
 
-__defineGetter__('throwingProperty', function(){ throw "throwing resolve"; });
+window.__defineGetter__('throwingProperty', function(){ throw "throwing resolve"; });
 
 var throwingPropStr = 'throwingProperty';
 var valueOfThrowerStr = 'valueOfThrower';

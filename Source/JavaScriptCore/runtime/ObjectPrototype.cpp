@@ -138,34 +138,46 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSObject* thisObject = exec->hostThisValue().toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     CallData callData;
     if (getCallData(exec->argument(1), callData) == CallTypeNone)
         return throwVMError(exec, createSyntaxError(exec, "invalid getter usage"));
-    thisValue.toThisObject(exec)->defineGetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
+    thisObject->defineGetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSObject* thisObject = exec->hostThisValue().toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     CallData callData;
     if (getCallData(exec->argument(1), callData) == CallTypeNone)
         return throwVMError(exec, createSyntaxError(exec, "invalid setter usage"));
-    thisValue.toThisObject(exec)->defineSetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
+    thisObject->defineSetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(thisValue.toThisObject(exec)->lookupGetter(exec, Identifier(exec, exec->argument(0).toString(exec))));
+    JSObject* thisObject = exec->hostThisValue().toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    return JSValue::encode(thisObject->lookupGetter(exec, Identifier(exec, exec->argument(0).toString(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(thisValue.toThisObject(exec)->lookupSetter(exec, Identifier(exec, exec->argument(0).toString(exec))));
+    JSObject* thisObject = exec->hostThisValue().toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    return JSValue::encode(thisObject->lookupSetter(exec, Identifier(exec, exec->argument(0).toString(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec)

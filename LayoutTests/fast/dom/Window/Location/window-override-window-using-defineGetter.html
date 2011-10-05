@@ -8,7 +8,7 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-    __defineGetter__("window", function() {
+    window.__defineGetter__("window", function() {
         return { location: "haxored" };
     });
 

@@ -1,3 +1,18 @@
+2011-10-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Make Object.prototype getter/setter methods match ES5 behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=69393
+
+        Reviewed by Sam Weinig.
+
+        Update tests to conform with ES5 style handling of 'this' in host functions.
+
+        * fast/dom/Window/Location/window-override-location-using-defineGetter.html:
+        * fast/dom/Window/Location/window-override-window-using-defineGetter.html:
+        * fast/js/exception-sequencing-binops.js:
+        * fast/js/exception-sequencing.html:
+        * fast/js/pic/delete-global-object.html:
+
 2011-10-05  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed. Skipping media layout tests for Mac Leopard GPU.

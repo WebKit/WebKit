@@ -70,7 +70,7 @@ function createTestWithRHSExec(expr) {
     }
 }
 
-__defineGetter__('throwingProperty', function(){ throw "throwing resolve"; });
+window.__defineGetter__('throwingProperty', function(){ throw "throwing resolve"; });
 
 var throwingPropStr = 'throwingProperty';
 var valueOfThrowerStr = 'valueOfThrower';
@@ -675,7 +675,7 @@ rhsGetterTester = { get value() { executedRHS = true; return 'string'; }};
 var rhsGetterTesterStr = "rhsGetterTester.value";
 
 var executionOrder = "";
-__defineGetter__("nonThrowingIndexBase", function(){ 
+window.__defineGetter__("nonThrowingIndexBase", function(){ 
     executionOrder += "nonThrowingIndexBase, "; 
     return {
         get nonThrowingTestIndex(){ executionOrder += "get nonThrowingTestIndex, "; return undefined; },
@@ -684,30 +684,30 @@ __defineGetter__("nonThrowingIndexBase", function(){
         set throwingTestIndex(){ executionOrder += "set nonThrowingTestIndex, "; throw {}; return undefined; }
     }
   });
-__defineGetter__("throwingIndexBase", function(){ 
+window.__defineGetter__("throwingIndexBase", function(){ 
     executionOrder += "throwingIndexBase, "; 
     throw {};
   });
 
-__defineGetter__("nonThrowingIndexNoThrowProperty", function(){
+window.__defineGetter__("nonThrowingIndexNoThrowProperty", function(){
     return {
         toString: function() {executionOrder += "nonThrowingIndexNoThrowProperty, "; return "nonThrowingTestIndex"; }
     }
 });
 
-__defineGetter__("nonThrowingIndexThrowProperty", function(){ 
+window.__defineGetter__("nonThrowingIndexThrowProperty", function(){ 
     return {
         toString: function() {executionOrder += "nonThrowingIndexThrowProperty, "; return "throwingTestIndex"; }
     }
 });
 
-__defineGetter__("throwingIndex", function(){
+window.__defineGetter__("throwingIndex", function(){
     return {
         toString: function() {executionOrder += "throwingIndex, "; throw {};}
     }
 });
 
-__defineGetter__("valueForAssignment", function(){ executionOrder += "valueForAssignment, "; return 1; })
+window.__defineGetter__("valueForAssignment", function(){ executionOrder += "valueForAssignment, "; return 1; })
 
 function createTestWithExecOrderTest(expr, expected) {
     // This tests that we evaluate the right hand side of a binary expression before we

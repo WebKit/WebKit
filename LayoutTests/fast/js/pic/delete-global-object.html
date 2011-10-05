@@ -30,9 +30,9 @@ had a property deleted. If the test passes, you'll see a PASS message below.
     a = 1;
     delete a;
     y = "";
-    __defineGetter__("x", function() { return y; });
+    window.__defineGetter__("x", function() { return y; });
     x;
-    __defineGetter__("y", function() { return 42; });
+    window.__defineGetter__("y", function() { return 42; });
 
     shouldBe(x, "x", 42);
 })();
