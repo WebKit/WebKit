@@ -168,7 +168,6 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);
-            putThisToAnonymousValue(0);
             init(thisValue);
         }
 

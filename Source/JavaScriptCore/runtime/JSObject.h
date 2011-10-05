@@ -251,11 +251,6 @@ namespace JSC {
 
         static const unsigned StructureFlags = 0;
 
-        void putThisToAnonymousValue(unsigned index)
-        {
-            locationForOffset(index)->setWithoutWriteBarrier(this);
-        }
-
         // To instantiate objects you likely want JSFinalObject, below.
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);

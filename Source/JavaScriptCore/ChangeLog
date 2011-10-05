@@ -1,3 +1,16 @@
+2011-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Remove last vestiges of anonymous storage.
+
+        Reviewed by Gavin Barraclough.
+
+        One anonymous storage function escaped my prior purge of
+        this feature, this patch removes it.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSObject.h:
+
 2011-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be capable of a broader range of speculations on branch and not
