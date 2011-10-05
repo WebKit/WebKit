@@ -1,3 +1,39 @@
+2011-10-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static ClassInfo structs to classes that override JSCell::getCallData
+        https://bugs.webkit.org/show_bug.cgi?id=69311
+
+        Reviewed by Darin Adler.
+
+        Added ClassInfo structs to each class that defined its own getCallData 
+        function but did not already have its own ClassInfo struct.  This is a 
+        necessary addition for when we switch over to looking up getCallData from 
+        the MethodTable in ClassInfo rather than doing the virtual call (which we 
+        are removing).  These new ClassInfo structs are public because we often 
+        use these structs in other areas of the code to uniquely identify JSC classes and 
+        to enforce runtime invariants based on those class identities using ASSERTs.
+        Also added new createStructure methods to those classes that didn't have 
+        them so that the new ClassInfo structs would be used when creating the Structures 
+        in these classes.
+
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::createStructure):
+
+        getCallData was not marked as static in StrictModeTypeErrorFunction.  
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::getCallDataVirtual):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        (JSC::StrictModeTypeErrorFunction::createStructure):
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::createStructure):
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::createStructure):
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionPrototype.h:
+
 2011-10-03  Geoffrey Garen  <ggaren@apple.com>
 
         Some JSValue cleanup

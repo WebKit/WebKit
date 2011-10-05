@@ -201,15 +201,22 @@ public:
         return JSValue::encode(jsNull());
     }
 
-    CallType getCallDataVirtual(CallData& callData)
+    virtual CallType getCallDataVirtual(CallData& callData)
     {
         return getCallData(this, callData);
     }
 
-    CallType getCallData(JSCell*, CallData& callData)
+    static CallType getCallData(JSCell*, CallData& callData)
     {
         callData.native.function = callThrowTypeError;
         return CallTypeHost;
+    }
+
+    static const ClassInfo s_info;
+
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+    { 
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
 
 private:
@@ -217,6 +224,8 @@ private:
 };
 
 ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
+
+const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {

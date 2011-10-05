@@ -170,6 +170,8 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static const ClassInfo s_info;
+
 protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
@@ -201,6 +203,8 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+ 
+    static const ClassInfo s_info;
 
 protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}

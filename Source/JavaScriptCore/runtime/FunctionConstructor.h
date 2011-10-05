@@ -38,6 +38,13 @@ namespace JSC {
             return constructor;
         }
 
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        { 
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        }
+
     private:
         FunctionConstructor(JSGlobalObject*, Structure*);
         void finishCreation(ExecState*, FunctionPrototype*);

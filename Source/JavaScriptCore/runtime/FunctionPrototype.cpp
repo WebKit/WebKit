@@ -39,6 +39,8 @@ static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState*);
 
+const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };
+
 FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
