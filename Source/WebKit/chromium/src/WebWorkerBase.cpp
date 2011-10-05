@@ -244,6 +244,18 @@ void WebWorkerBase::postMessageToPageInspectorTask(ScriptExecutionContext*, WebW
     thisPtr->commonClient()->dispatchDevToolsMessage(message);
 }
 
+void WebWorkerBase::updateInspectorStateCookie(const WTF::String& cookie)
+{
+    dispatchTaskToMainThread(createCallbackTask(&updateInspectorStateCookieTask, AllowCrossThreadAccess(this), cookie));
+}
+
+void WebWorkerBase::updateInspectorStateCookieTask(ScriptExecutionContext*, WebWorkerBase* thisPtr, const String& cookie)
+{
+    if (!thisPtr->commonClient())
+        return;
+    thisPtr->commonClient()->saveDevToolsAgentState(cookie);
+}
+
 void WebWorkerBase::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
     dispatchTaskToMainThread(createCallbackTask(&confirmMessageTask, AllowCrossThreadAccess(this),

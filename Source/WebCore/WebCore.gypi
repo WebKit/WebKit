@@ -2712,6 +2712,7 @@
             'inspector/InspectorRuntimeAgent.h',
             'inspector/InspectorState.cpp',
             'inspector/InspectorState.h',
+            'inspector/InspectorStateClient.h',
             'inspector/InspectorStyleSheet.cpp',
             'inspector/InspectorStyleSheet.h',
             'inspector/InspectorStyleTextEditor.cpp',

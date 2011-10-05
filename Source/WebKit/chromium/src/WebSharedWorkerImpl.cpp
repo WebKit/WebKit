@@ -122,6 +122,18 @@ void WebSharedWorkerImpl::attachDevTools()
     workerThread()->runLoop().postTask(createCallbackTask(connectToWorkerContextInspectorTask, true));
 }
 
+static void reconnectToWorkerContextInspectorTask(ScriptExecutionContext* context, const String& savedState)
+{
+    ASSERT(context->isWorkerContext());
+    WorkerInspectorController* ic = static_cast<WorkerContext*>(context)->workerInspectorController();
+    ic->restoreInspectorStateFromCookie(savedState);
+}
+
+void WebSharedWorkerImpl::reattachDevTools(const WebString& savedState)
+{
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(reconnectToWorkerContextInspectorTask, String(savedState)), WorkerScriptDebugServer::debuggerTaskMode);
+}
+
 static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT(context->isWorkerContext());

@@ -2034,6 +2034,7 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorRuntimeAgent.h \
 	Source/WebCore/inspector/InspectorState.cpp \
 	Source/WebCore/inspector/InspectorState.h \
+	Source/WebCore/inspector/InspectorStateClient.h \
 	Source/WebCore/inspector/InspectorStyleSheet.cpp \
 	Source/WebCore/inspector/InspectorStyleSheet.h \
 	Source/WebCore/inspector/InspectorStyleTextEditor.cpp \

@@ -111,6 +111,7 @@ public:
     }
 
     virtual void dispatchDevToolsMessage(const WebString&) { }
+    virtual void saveDevToolsAgentState(const WebString&) { }
 
 protected:
     ~WebCommonWorkerClient() { }

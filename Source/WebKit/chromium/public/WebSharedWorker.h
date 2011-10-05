@@ -79,6 +79,7 @@ public:
     virtual void clientDestroyed() = 0;
 
     virtual void attachDevTools() { }
+    virtual void reattachDevTools(const WebString& savedState) { }
     virtual void detachDevTools() { }
     virtual void dispatchDevToolsMessage(const WebString&) { }
 };

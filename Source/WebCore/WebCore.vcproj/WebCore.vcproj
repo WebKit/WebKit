@@ -68910,6 +68910,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorStateClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorStyleSheet.cpp"
 				>
 			</File>

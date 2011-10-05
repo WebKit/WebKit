@@ -40,6 +40,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
+#include "NotImplemented.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
@@ -437,6 +438,11 @@ void WorkerMessagingProxy::terminateWorkerContext()
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
     m_scriptExecutionContext->postTask(PostMessageToPageInspectorTask::create(this, message));
+}
+
+void WorkerMessagingProxy::updateInspectorStateCookie(const String&)
+{
+    notImplemented();
 }
 #endif
 

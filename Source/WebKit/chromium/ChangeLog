@@ -1,3 +1,28 @@
+2011-10-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide a way for persisting worker inspector state
+        https://bugs.webkit.org/show_bug.cgi?id=69422
+
+        Provided an API for saving/restoring worker inspector state.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::saveDevToolsAgentState):
+        * public/WebSharedWorker.h:
+        (WebKit::WebSharedWorker::reattachDevTools):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::reconnectToWorkerContextInspectorTask):
+        (WebKit::WebSharedWorkerImpl::reattachDevTools):
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::updateInspectorStateCookie):
+        (WebKit::WebWorkerBase::updateInspectorStateCookieTask):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::updateInspectorStateCookie):
+        * src/WebWorkerClientImpl.h:
+
 2011-10-04  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: save inspector state into single string instead of string map

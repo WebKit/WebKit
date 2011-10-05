@@ -41,11 +41,11 @@
 
 namespace WebCore {
 
-class InspectorClient;
+class InspectorStateClient;
 
 class InspectorState {
 public:
-    InspectorState(InspectorClient*);
+    InspectorState(InspectorStateClient*);
     virtual ~InspectorState() {}
 
     void loadFromCookie(const String& inspectorStateCookie);
@@ -67,7 +67,7 @@ private:
     void updateCookie();
     void setValue(const String& propertyName, PassRefPtr<InspectorValue>);
 
-    InspectorClient* m_client;
+    InspectorStateClient* m_client;
     RefPtr<InspectorObject> m_properties;
     bool m_isOnMute;
 };

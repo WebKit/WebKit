@@ -87,6 +87,7 @@ public:
         WebCore::MessageSource, WebCore::MessageType,
         WebCore::MessageLevel, const WTF::String&, int, const WTF::String&);
     virtual void postMessageToPageInspector(const WTF::String&);
+    virtual void updateInspectorStateCookie(const WTF::String&);
     virtual void confirmMessageFromWorkerObject(bool);
     virtual void reportPendingActivity(bool);
     virtual void workerContextClosed();
@@ -144,6 +145,7 @@ private:
         int lineNumber,
         const WTF::String& sourceURL);
     static void postMessageToPageInspectorTask(WebCore::ScriptExecutionContext*, WebWorkerBase*, const WTF::String&);
+    static void updateInspectorStateCookieTask(WebCore::ScriptExecutionContext*, WebWorkerBase* thisPtr, const WTF::String& cookie);
     static void confirmMessageTask(
         WebCore::ScriptExecutionContext* context,
         WebWorkerBase* thisPtr,

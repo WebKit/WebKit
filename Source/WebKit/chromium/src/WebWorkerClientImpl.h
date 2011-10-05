@@ -82,6 +82,7 @@ public:
     virtual void disconnectFromInspector();
     virtual void sendMessageToInspector(const String&);
     virtual void postMessageToPageInspector(const String&);
+    virtual void updateInspectorStateCookie(const String&);
 #endif
     // WebCore::WorkerLoaderProxy methods:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);

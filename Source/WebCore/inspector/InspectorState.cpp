@@ -31,11 +31,11 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorClient.h"
+#include "InspectorStateClient.h"
 
 namespace WebCore {
 
-InspectorState::InspectorState(InspectorClient* client)
+InspectorState::InspectorState(InspectorStateClient* client)
     : m_client(client)
     , m_properties(InspectorObject::create())
     , m_isOnMute(false)

@@ -1,3 +1,37 @@
+2011-10-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide a way for persisting worker inspector state
+        https://bugs.webkit.org/show_bug.cgi?id=69422
+
+        Worker inspector can persist and restore its state. InspectorStateClient is
+        exctracted into a separate interface and has a custom implementation in case
+        of worker inspector.
+
+        Reviewed by Pavel Feldman.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/InspectorStateClient.h: Copied from Source/WebCore/inspector/InspectorClient.h.
+        (WebCore::InspectorStateClient::~InspectorStateClient):
+        (WebCore::InspectorStateClient::updateInspectorStateCookie):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::restoreInspectorStateFromCookie):
+        * inspector/WorkerInspectorController.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postMessageToPageInspector):
+        (WebCore::SharedWorkerProxy::updateInspectorStateCookie):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::updateInspectorStateCookie):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerReportingProxy.h:
+
 2011-10-05  Abhishek Arya  <inferno@chromium.org>
 
         Crash in SVGTRefElement::updateReferencedText.

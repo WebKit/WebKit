@@ -71,6 +71,7 @@ namespace WebCore {
         virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
 #if ENABLE(INSPECTOR)
         virtual void postMessageToPageInspector(const String&);
+        virtual void updateInspectorStateCookie(const String&);
 #endif
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
         virtual void reportPendingActivity(bool hasPendingActivity);

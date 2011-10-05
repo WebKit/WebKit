@@ -137,6 +137,10 @@ void WebWorkerClientImpl::postMessageToPageInspector(const String& message)
 {
     m_proxy->postMessageToPageInspector(message);
 }
+
+void WebWorkerClientImpl::updateInspectorStateCookie(const String&)
+{
+}
 #endif // ENABLE(INSPECTOR)
 
 

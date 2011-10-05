@@ -51,6 +51,7 @@ class InspectorFrontendChannel;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
 class InspectorState;
+class InspectorStateClient;
 class InstrumentingAgents;
 class WorkerContext;
 
@@ -63,12 +64,14 @@ public:
 
     void connectFrontend();
     void disconnectFrontend();
+    void restoreInspectorStateFromCookie(const String& inspectorCookie);
     void dispatchMessageFromFrontend(const String&);
 
 private:
     friend InstrumentingAgents* instrumentationForWorkerContext(WorkerContext*);
 
     WorkerContext* m_workerContext;
+    OwnPtr<InspectorStateClient> m_stateClient;
     OwnPtr<InspectorState> m_state;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
