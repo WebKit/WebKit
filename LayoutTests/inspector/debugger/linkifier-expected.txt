@@ -23,6 +23,6 @@ DummyRawSourceCode.removeEventListener was called for source with id = 'fakeUrl-
 
 --- location update ---
 original location: linkifier.html:93
-pretty printed location: linkifier.html:99
+pretty printed location: linkifier.html:98
 reverted location: linkifier.html:93
 

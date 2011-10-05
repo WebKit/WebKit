@@ -1,3 +1,9 @@
+2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rebaseline for test.
+
+        * inspector/debugger/linkifier-expected.txt:
+
 2011-10-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: debuggerPresentatioModel.linkifyLocation leaks updateAnchor closure instances.
