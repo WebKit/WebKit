@@ -1,3 +1,10 @@
+2011-10-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(FILTERS) after r96203.
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientUpdatedFromElement):
+
 2011-10-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for windows bots after r96679.

@@ -135,7 +135,7 @@ void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifferen
     clientUpdatedFromElement(renderer, newStyle);
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 }
- 
+
 void SVGResourcesCache::clientUpdatedFromElement(RenderObject* renderer, const RenderStyle* newStyle)
 {
     ASSERT(renderer);
@@ -145,9 +145,11 @@ void SVGResourcesCache::clientUpdatedFromElement(RenderObject* renderer, const R
     cache->removeResourcesFromRenderObject(renderer);
     cache->addResourcesFromRenderObject(renderer, newStyle);
 
+#if ENABLE(FILTERS)
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (resources && resources->filter())
         resources->removeClientFromCache(renderer);
+#endif
 }
 
 void SVGResourcesCache::clientDestroyed(RenderObject* renderer)
