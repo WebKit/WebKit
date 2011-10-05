@@ -1,3 +1,9 @@
+2011-10-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening.
+
+        * platform/qt-wk2/Skipped: Unskip sputnik tests, because they pass with newer Qt5.
+
 2011-10-05  Dirk Schulze  <krit@webkit.org>
 
         SVG 1.1: ineffectual transform attribute for ClipPath
