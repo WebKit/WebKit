@@ -1,3 +1,16 @@
+2011-10-06  Elliot Poger  <epoger@google.com>
+
+        allow new-run-webkit-tests to run on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=69429
+
+        Add fallback lists for chromium-mac-lion, and add chromium-mac-snowleopard
+        directory to fallback lists (even though that directory doesn't exist yet)
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+
 2011-10-03  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Remove SQLite-LevelDB migration code

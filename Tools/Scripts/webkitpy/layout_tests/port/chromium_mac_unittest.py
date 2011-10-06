@@ -79,6 +79,9 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-leopard'))
 
         port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-snowleopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-snowleopard'))
+
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-lion')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
     def test_graphics_type(self):

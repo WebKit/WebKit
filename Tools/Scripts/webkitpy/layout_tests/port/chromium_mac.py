@@ -48,16 +48,26 @@ class ChromiumMacPort(chromium.ChromiumPort):
     FALLBACK_PATHS = {
         'leopard': [
             'chromium-mac-leopard',
+            'chromium-mac-snowleopard',
             'chromium-mac',
             'chromium',
             'mac-leopard',
             'mac-snowleopard',
+            'mac-lion',
             'mac',
         ],
         'snowleopard': [
+            'chromium-mac-snowleopard',
             'chromium-mac',
             'chromium',
             'mac-snowleopard',
+            'mac-lion',
+            'mac',
+        ],
+        'lion': [
+            'chromium-mac',
+            'chromium',
+            'mac-lion',
             'mac',
         ],
         'future': [
@@ -70,16 +80,26 @@ class ChromiumMacPort(chromium.ChromiumPort):
     FALLBACK_PATHS_CG = {
         'leopard': [
             'chromium-cg-mac-leopard',
+            'chromium-cg-mac-snowleopard',
             'chromium-cg-mac',
             'chromium',
             'mac-leopard',
             'mac-snowleopard',
+            'mac-lion',
             'mac',
         ],
         'snowleopard': [
+            'chromium-cg-mac-snowleopard',
             'chromium-cg-mac',
             'chromium',
             'mac-snowleopard',
+            'mac-lion',
+            'mac',
+        ],
+        'lion': [
+            'chromium-cg-mac',
+            'chromium',
+            'mac-lion',
             'mac',
         ],
         'future': [
