@@ -25,7 +25,7 @@
 #define WebKitWebContext_h
 
 #include <glib-object.h>
-#include <WebKit2/WKBase.h>
+#include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
 
@@ -57,10 +57,10 @@ struct _WebKitWebContextClass {
     void (*_webkit_reserved3) (void);
 };
 
-WK_EXPORT GType
+WEBKIT_API GType
 webkit_web_context_get_type    (void);
 
-WK_EXPORT WebKitWebContext *
+WEBKIT_API WebKitWebContext *
 webkit_web_context_get_default (void);
 
 G_END_DECLS

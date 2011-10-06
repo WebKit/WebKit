@@ -32,8 +32,8 @@
 #ifndef WebKitWebViewBase_h
 #define WebKitWebViewBase_h
 
-#include <WebKit2/WKBase.h>
 #include <gtk/gtk.h>
+#include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
 
@@ -64,7 +64,7 @@ struct _WebKitWebViewBaseClass {
     void (*_webkit_reserved3) (void);
 };
 
-WK_EXPORT GType
+WEBKIT_API GType
 webkit_web_view_base_get_type();
 
 G_END_DECLS

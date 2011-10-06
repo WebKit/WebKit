@@ -24,8 +24,8 @@
 #ifndef WebKitWebLoaderClient_h
 #define WebKitWebLoaderClient_h
 
-#include <WebKit2/WKBase.h>
 #include <glib-object.h>
+#include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
 
@@ -62,7 +62,7 @@ struct _WebKitWebLoaderClientClass {
                                                             GError                *error);
 };
 
-WK_EXPORT GType
+WEBKIT_API GType
 webkit_web_loader_client_get_type (void);
 
 G_END_DECLS

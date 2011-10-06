@@ -22,6 +22,7 @@
 
 #define __WEBKIT2_H_INSIDE__
 
+#include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>
 #include <webkit2/WebKitWebContext.h>

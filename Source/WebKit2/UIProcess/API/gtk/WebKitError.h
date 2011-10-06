@@ -25,8 +25,7 @@
 #ifndef WebKitError_h
 #define WebKitError_h
 
-#include <WebKit2/WKBase.h>
-#include <glib.h>
+#include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
 
@@ -70,13 +69,13 @@ typedef enum {
     WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD = 204,
 } WebKitPluginError;
 
-WK_EXPORT GQuark
+WEBKIT_API GQuark
 webkit_network_error_quark (void);
 
-WK_EXPORT GQuark
+WEBKIT_API GQuark
 webkit_policy_error_quark  (void);
 
-WK_EXPORT GQuark
+WEBKIT_API GQuark
 webkit_plugin_error_quark  (void);
 
 G_END_DECLS

@@ -27,6 +27,7 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
+#include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitWebViewBase.h>
@@ -65,39 +66,39 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved7) (void);
 };
 
-WK_EXPORT GType
+WEBKIT_API GType
 webkit_web_view_get_type            (void);
 
-WK_EXPORT GtkWidget *
+WEBKIT_API GtkWidget *
 webkit_web_view_new                 (void);
 
-WK_EXPORT GtkWidget *
+WEBKIT_API GtkWidget *
 webkit_web_view_new_with_context    (WebKitWebContext      *context);
 
-WK_EXPORT WebKitWebContext *
+WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context         (WebKitWebView         *web_view);
 
-WK_EXPORT WebKitWebLoaderClient *
+WEBKIT_API WebKitWebLoaderClient *
 webkit_web_view_get_loader_client   (WebKitWebView         *web_view);
 
-WK_EXPORT void
+WEBKIT_API void
 webkit_web_view_set_loader_client   (WebKitWebView         *web_view,
                                      WebKitWebLoaderClient *loader_client);
 
-WK_EXPORT void
+WEBKIT_API void
 webkit_web_view_load_uri            (WebKitWebView         *web_view,
                                      const gchar           *uri);
 
-WK_EXPORT void
+WEBKIT_API void
 webkit_web_view_load_alternate_html (WebKitWebView         *web_view,
                                      const gchar           *content,
                                      const gchar           *base_uri,
                                      const gchar           *unreachable_uri);
 
-WK_EXPORT void
+WEBKIT_API void
 webkit_web_view_go_back             (WebKitWebView         *web_view);
 
-WK_EXPORT void
+WEBKIT_API void
 webkit_web_view_go_forward          (WebKitWebView         *web_view);
 
 G_END_DECLS
