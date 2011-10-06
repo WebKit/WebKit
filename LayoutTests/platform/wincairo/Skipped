@@ -503,6 +503,7 @@ svg/hixie/processing-model
 svg/hixie/rendering-model
 svg/hixie/shapes/path
 svg/hixie/text
+svg/hixie/viewbox
 svg/in-html
 svg/overflow
 svg/repaint
@@ -553,6 +554,7 @@ http/tests/inspector/console-resource-errors.html
 http/tests/inspector/console-xhr-logging.html
 http/tests/inspector/inspect-iframe-from-different-domain.html
 http/tests/inspector/network-preflight-options.html
+http/tests/inspector/network
 http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/resource-main-cookies.php
 http/tests/inspector/resource-parameters.html

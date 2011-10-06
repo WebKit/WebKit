@@ -1,3 +1,9 @@
+2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] unreviewed build correction.
+
+        * platform/wincairo/Skipped: Update to get build green.
+
 2011-10-03  Ojan Vafai  <ojan@chromium.org>
 
         [flexbox] take marginBeforeForChild into account when positioning children
