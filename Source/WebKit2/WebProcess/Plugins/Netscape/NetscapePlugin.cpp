@@ -880,6 +880,11 @@ bool NetscapePlugin::getFormValue(String& formValue)
     return true;
 }
 
+bool NetscapePlugin::handleScroll(ScrollDirection, ScrollGranularity)
+{
+    return false;
+}
+
 bool NetscapePlugin::supportsSnapshotting() const
 {
 #if PLATFORM(MAC)

@@ -28,6 +28,7 @@
 
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KURL.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -198,6 +199,9 @@ public:
 
     // Gets the form value representation for the plug-in, letting plug-ins participate in form submission.
     virtual bool getFormValue(String& formValue) = 0;
+
+    // Tells the plug-in that it should scroll. The plug-in should return true if it did scroll.
+    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) = 0;
 
 protected:
     Plugin();

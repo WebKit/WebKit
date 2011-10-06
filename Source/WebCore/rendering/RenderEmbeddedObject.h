@@ -66,7 +66,10 @@ private:
 
     virtual void layout();
     virtual void viewCleared();
-    
+
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Node** stopNode);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Node** stopNode);
+
     void setMissingPluginIndicatorIsPressed(bool);
     bool isInMissingPluginIndicator(MouseEvent*) const;
     bool isInMissingPluginIndicator(const LayoutPoint&) const;

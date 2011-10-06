@@ -519,6 +519,15 @@ bool PluginView::getFormValue(String& formValue)
     return m_plugin->getFormValue(formValue);
 }
 
+bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
+    return m_plugin->handleScroll(direction, granularity);
+}
+
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
 {
     Widget::setFrameRect(rect);
@@ -582,6 +591,8 @@ void PluginView::handleEvent(Event* event)
         || (event->type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
         || (event->type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
         // We have a mouse event.
+
+        // FIXME: Clicking in a scroll bar should not change focus.
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
         

@@ -102,6 +102,7 @@ private:
 
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
+    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     // ScrollableArea methods.
     virtual WebCore::IntRect scrollCornerRect() const;

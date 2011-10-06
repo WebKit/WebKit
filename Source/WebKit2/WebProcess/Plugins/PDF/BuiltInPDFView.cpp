@@ -385,6 +385,8 @@ bool BuiltInPDFView::handleMouseEvent(const WebMouseEvent& event)
             m_horizontalScrollbar->mouseDown(mouseDownEvent);
         if (m_verticalScrollbar)
             m_verticalScrollbar->mouseDown(mouseDownEvent);
+        // Returning false as that will make EventHandler unfocus the plug-in, which is appropriate when clicking scrollbars.
+        // When support for PDF forms is added, we'll need to actually focus the plug-in.
         break;
     }
     case WebEvent::MouseUp:
@@ -464,6 +466,11 @@ void BuiltInPDFView::privateBrowsingStateChanged(bool)
 bool BuiltInPDFView::getFormValue(String&)
 {
     return false;
+}
+
+bool BuiltInPDFView::handleScroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    return scroll(direction, granularity);
 }
 
 IntRect BuiltInPDFView::scrollCornerRect() const

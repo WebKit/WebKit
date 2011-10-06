@@ -249,7 +249,22 @@ void RenderEmbeddedObject::viewCleared()
             view->setMarginHeight(marginHeight);
     }
 }
- 
+
+bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float, Node**)
+{
+    if (!widget() || !widget()->isPluginViewBase())
+        return false;
+
+    return static_cast<PluginViewBase*>(widget())->scroll(direction, granularity);
+}
+
+bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+{
+    // Plugins don't expose a writing direction, so assuming horizontal LTR.
+    return scroll(logicalToPhysical(direction, true, false), granularity, multiplier, stopNode);
+}
+
+
 bool RenderEmbeddedObject::isInMissingPluginIndicator(const LayoutPoint& point) const
 {
     FloatRect contentRect;

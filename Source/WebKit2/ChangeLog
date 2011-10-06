@@ -1,3 +1,32 @@
+2011-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69492
+        [Mac] Should be able to scroll embedded PDFs from keyboard
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::handleScroll):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::handleScroll):
+        * WebProcess/Plugins/PluginProxy.h:
+        Added a handleScroll method. A plug-in gets it if it doesn't handle a keyboard event, and
+        WebCore decides that this is an event for scrolling. A plug-in can decide whether it scrolls
+        main content, or some scrollable subview of its own.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::handleMouseEvent): Added a comment explaining returned value.
+        (WebKit::BuiltInPDFView::handleScroll): Just call ScrollableArea, it will do everything.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: Added a handleScroll override.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scroll): Pass a PluginViewBase scroll to plug-in to handle.
+        (WebKit::PluginView::handleEvent): Added a FIXME.
+        * WebProcess/Plugins/PluginView.h:
+
 2011-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not use C API in GTK+ API public headers

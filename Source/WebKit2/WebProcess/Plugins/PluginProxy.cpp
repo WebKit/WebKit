@@ -382,6 +382,11 @@ bool PluginProxy::getFormValue(String& formValue)
     return returnValue;
 }
 
+bool PluginProxy::handleScroll(ScrollDirection, ScrollGranularity)
+{
+    return false;
+}
+
 void PluginProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     controller()->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);

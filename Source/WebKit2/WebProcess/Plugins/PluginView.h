@@ -103,6 +103,7 @@ private:
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*);
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String&);
+    virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);

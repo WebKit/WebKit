@@ -102,6 +102,7 @@ private:
 
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
+    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     bool needsBackingStore() const;
     uint64_t windowNPObjectID();

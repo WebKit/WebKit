@@ -205,6 +205,7 @@ private:
 
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
+    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     bool supportsSnapshotting() const;
 
