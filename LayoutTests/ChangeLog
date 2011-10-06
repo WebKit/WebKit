@@ -1,3 +1,10 @@
+2011-10-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r96620.
+
+        * platform/gtk/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+
 2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.
