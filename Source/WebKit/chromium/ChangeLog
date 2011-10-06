@@ -1,3 +1,11 @@
+2011-10-06  Hans Wennborg  <hans@chromium.org>
+
+        [Chromium] WebKit.gyp fix to unbreak Linux(shared) build after r96791
+
+        Unreviewed gardening.
+
+        * WebKit.gyp:
+
 2011-10-03  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Remove SQLite-LevelDB migration code
