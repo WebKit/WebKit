@@ -36,6 +36,7 @@
 #include <QtGui/QCursor>
 #include <QtGui/QDrag>
 #include <QtGui/QFocusEvent>
+#include <QtGui/QGuiApplication>
 #include <QtGui/QHoverEvent>
 #include <QtGui/QInputMethodEvent>
 #include <QtGui/QKeyEvent>
@@ -141,7 +142,8 @@ void QDesktopWebViewPrivate::didChangeStatusText(const QString& newMessage)
 
 void QDesktopWebViewPrivate::didChangeCursor(const QCursor& newCursor)
 {
-    // FIXME: add proper cursor handling when Qt 5 supports it.
+    // FIXME: This is a temporary fix until we get cursor support in QML items.
+    QGuiApplication::setOverrideCursor(newCursor);
 }
 
 void QDesktopWebViewPrivate::loadDidBegin()
