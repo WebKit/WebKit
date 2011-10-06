@@ -31,6 +31,8 @@
 #ifndef V8HTMLAudioElementConstructor_h
 #define V8HTMLAudioElementConstructor_h
 
+#if ENABLE(VIDEO)
+
 #include "WrapperTypeInfo.h"
 
 #include <v8.h>
@@ -44,5 +46,7 @@ public:
 };
 
 }
+
+#endif // ENABLE(VIDEO)
 
 #endif // V8HTMLAudioElementConstructor_h

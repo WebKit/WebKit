@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(VIDEO)
+
 #include "V8HTMLAudioElementConstructor.h"
 
 #include "HTMLAudioElement.h"
@@ -96,3 +99,5 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLAudioElementConstructor::GetTemplate(
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(VIDEO)
