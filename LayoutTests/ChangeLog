@@ -1,3 +1,12 @@
+2011-10-06  Alejandro G. Castro  <alex@igalia.com>
+
+        [WK2] [GTK] Add Skipped file for Webkit2 test runner
+        https://bugs.webkit.org/show_bug.cgi?id=69517
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk-wk2/Skipped: Added.
+
 2011-10-06  Mark Pilgrim  <pilgrim@chromium.org>
 
         Test how DOMTokenList methods react to too few arguments

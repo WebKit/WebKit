@@ -2475,7 +2475,7 @@ sub readSkippedFiles($)
     # Because nearly all of the skipped tests for WebKit 2 on Mac are due to
     # cross-platform issues, the Windows and Qt ports use the Mac skipped list
     # additionally to their own to avoid maintaining separate lists.
-    push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "qt-wk2" || $platform eq "mac-wk2");
+    push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "qt-wk2" || $platform eq "mac-wk2" || $platform eq "gtk-wk2");
     foreach my $level (@skippedFileDirectories) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose) {
