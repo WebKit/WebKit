@@ -36,11 +36,13 @@
 
 using namespace WebKit;
 
+extern "C" {
 // For binary compatibility with Safari 5.1. Should be removed eventually.
 WK_EXPORT void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory);
 WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
 WK_EXPORT void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath);
 WK_EXPORT void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
+}
 
 WKTypeID WKContextGetTypeID()
 {

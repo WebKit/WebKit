@@ -1,3 +1,14 @@
+2011-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        r96770 broke binary compatibility with Safari
+        https://bugs.webkit.org/show_bug.cgi?id=69496
+
+        Reviewed by Dan Bernstein.
+        
+        Fix binary compatibility issue by declaring the deprecated methods inside a extern "C" block.
+
+        * UIProcess/API/C/WKContext.cpp:
+
 2011-10-05  Jer Noble  <jer.noble@apple.com>
 
         Enable WEB_AUDIO by default in the WebKit/mac port.
