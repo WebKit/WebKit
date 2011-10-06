@@ -1,3 +1,18 @@
+2011-10-06  Adam Barth  <abarth@webkit.org>
+
+        Add missing tests for LegacyDefaultOptionalArguments for setCustomValidity
+        https://bugs.webkit.org/show_bug.cgi?id=69532
+
+        Reviewed by Andreas Kling.
+
+        These APIs are relatively new and it's unlikely that many folks will
+        call them without their argument.  Making the parameters required
+        aligns WebKit more closely with the specifications for this API at
+        minimal compatibility cost.
+
+        * fast/dom/set-custom-validity-with-too-few-arguments-expected.txt: Added.
+        * fast/dom/set-custom-validity-with-too-few-arguments.html: Added.
+
 2011-10-06  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed: irst chunk of new SVG baseline for lion.
