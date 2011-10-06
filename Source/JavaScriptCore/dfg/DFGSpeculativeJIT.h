@@ -592,11 +592,10 @@ private:
 
     bool isKnownString(NodeIndex op1)
     {
-        Node& node = m_jit.graph()[op1];
-        switch (node.op) {
-        case GetLocal:
-            return isStringPrediction(node.variableAccessData()->prediction());
-
+        switch (m_jit.graph()[op1].op) {
+        case StrCat:
+            return true;
+            
         default:
             return false;
         }
