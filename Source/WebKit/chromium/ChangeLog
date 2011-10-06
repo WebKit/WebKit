@@ -1,3 +1,15 @@
+2011-10-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove USE(THREADED_COMPOSITING) from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=69489
+
+        Reviewed by Darin Fisher.
+
+        * features.gypi:
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+
 2011-10-05  Alexei Svitkine  <asvitkine@chromium.org>
 
         Make destructor of WebURLLoaderClient virtual.
