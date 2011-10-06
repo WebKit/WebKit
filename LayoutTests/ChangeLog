@@ -1,3 +1,84 @@
+2011-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed: 3rd chunk of new SVG baseline for lion.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/script-handle-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-dom-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-dom-06-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-group-03-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-image-02-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-image-06-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/struct-use-03-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/styling-css-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/styling-css-02-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/styling-css-03-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/styling-css-04-f-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-deco-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-path-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-03-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-04-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-05-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-06-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-text-08-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-tref-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-tselect-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-06-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-group-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tref-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+
 2011-10-05  Ojan Vafai  <ojan@chromium.org>
 
         extend flexbox testing to test children and parents of the flexbox
