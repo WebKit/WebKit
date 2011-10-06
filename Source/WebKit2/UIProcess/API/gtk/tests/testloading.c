@@ -64,6 +64,7 @@ typedef struct {
     gboolean hasBeenCommitted;
     gboolean hasBeenFinished;
     gboolean hasBeenFailed;
+    gdouble progress;
 } WebLoadingFixture;
 
 static void webLoadingFixtureSetup(WebLoadingFixture *fixture, gconstpointer data)
@@ -76,6 +77,7 @@ static void webLoadingFixtureSetup(WebLoadingFixture *fixture, gconstpointer dat
     fixture->hasBeenCommitted = FALSE;
     fixture->hasBeenFinished = FALSE;
     fixture->hasBeenFailed = FALSE;
+    fixture->progress = 0;
 }
 
 static void webLoadingFixtureTeardown(WebLoadingFixture *fixture, gconstpointer data)
@@ -252,6 +254,37 @@ static void testLoadAlternateContent(WebLoadingFixture *fixture, gconstpointer d
     g_main_loop_run(fixture->loop);
 }
 
+static void loadProgressEstimatedProgressChanged(GObject *object, GParamSpec *pspec, WebLoadingFixture *fixture)
+{
+    gdouble progress = webkit_web_loader_client_get_estimated_progress(WEBKIT_WEB_LOADER_CLIENT(object));
+
+    g_assert_cmpfloat(fixture->progress, <, progress);
+    fixture->progress = progress;
+}
+
+static gboolean loadProgressLoadFinished(WebKitWebLoaderClient *client, WebLoadingFixture *fixture)
+{
+    g_assert_cmpfloat(fixture->progress, ==, 1.0);
+    g_main_loop_quit(fixture->loop);
+
+    return TRUE;
+}
+
+static void testLoadProgress(WebLoadingFixture *fixture, gconstpointer data)
+{
+    char *uriString;
+    WebKitWebLoaderClient *client = webkit_web_view_get_loader_client(fixture->webView);
+
+    g_signal_connect(client, "load-finished", G_CALLBACK(loadProgressLoadFinished), fixture);
+    g_signal_connect(client, "notify::estimated-progress", G_CALLBACK(loadProgressEstimatedProgressChanged), fixture);
+
+    uriString = getURIForPath("/");
+    webkit_web_view_load_uri(fixture->webView, uriString);
+    g_free(uriString);
+
+    g_main_loop_run(fixture->loop);
+}
+
 int main(int argc, char **argv)
 {
     SoupServer *server;
@@ -284,6 +317,11 @@ int main(int argc, char **argv)
                WebLoadingFixture, NULL,
                webLoadingFixtureSetup,
                testLoadAlternateContent,
+               webLoadingFixtureTeardown);
+    g_test_add("/webkit2/loading/progress",
+               WebLoadingFixture, NULL,
+               webLoadingFixtureSetup,
+               testLoadProgress,
                webLoadingFixtureTeardown);
 
     return g_test_run();

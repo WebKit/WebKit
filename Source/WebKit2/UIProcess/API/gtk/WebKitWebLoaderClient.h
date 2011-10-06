@@ -63,7 +63,10 @@ struct _WebKitWebLoaderClientClass {
 };
 
 WEBKIT_API GType
-webkit_web_loader_client_get_type (void);
+webkit_web_loader_client_get_type               (void);
+
+WEBKIT_API gdouble
+webkit_web_loader_client_get_estimated_progress (WebKitWebLoaderClient* client);
 
 G_END_DECLS
 

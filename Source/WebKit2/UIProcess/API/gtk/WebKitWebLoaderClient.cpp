@@ -46,11 +46,14 @@ enum {
 enum {
     PROP_0,
 
-    PROP_WEB_VIEW
+    PROP_WEB_VIEW,
+    PROP_ESTIMATED_PROGRESS
 };
 
 struct _WebKitWebLoaderClientPrivate {
     GRefPtr<WebKitWebView> view;
+
+    gdouble estimatedProgress;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -121,6 +124,18 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
                   webError.get(), &returnValue);
 }
 
+static void didChangeProgress(WKPageRef page, const void* clientInfo)
+{
+    WebKitWebLoaderClient* client = WEBKIT_WEB_LOADER_CLIENT(clientInfo);
+    gdouble estimatedProgress = WKPageGetEstimatedProgress(page);
+
+    if (client->priv->estimatedProgress == estimatedProgress)
+        return;
+
+    client->priv->estimatedProgress = estimatedProgress;
+    g_object_notify(G_OBJECT(clientInfo), "estimated-progress");
+}
+
 static void webkitWebLoaderClientConstructed(GObject* object)
 {
     WebKitWebLoaderClient* client = WEBKIT_WEB_LOADER_CLIENT(object);
@@ -145,9 +160,9 @@ static void webkitWebLoaderClientConstructed(GObject* object)
         0,       // didRunInsecureContentForFrame
         0,       // canAuthenticateAgainstProtectionSpaceInFrame
         0,       // didReceiveAuthenticationChallengeInFrame
-        0,       // didStartProgress
-        0,       // didChangeProgress
-        0,       // didFinishProgress
+        didChangeProgress, // didStartProgress
+        didChangeProgress,
+        didChangeProgress, // didFinishProgress
         0,       // didBecomeUnresponsive
         0,       // didBecomeResponsive
         0,       // processDidCrash
@@ -193,6 +208,9 @@ static void webkitWebLoaderClientGetProperty(GObject* object, guint propId, GVal
     case PROP_WEB_VIEW:
         g_value_set_object(value, client->priv->view.get());
         break;
+    case PROP_ESTIMATED_PROGRESS:
+        g_value_set_double(value, webkit_web_loader_client_get_estimated_progress(client));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -224,7 +242,7 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
     clientClass->load_failed = webkitWebLoaderClientLoadFailed;
 
     /**
-     * WebKitWebView:web-view:
+     * WebKitWebLoaderClient:web-view:
      *
      * The #WebKitWebView of the loader client.
      */
@@ -235,6 +253,23 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                                                         "The web view for the loader client",
                                                         WEBKIT_TYPE_WEB_VIEW,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+    /**
+     * WebKitWebLoaderClient:estimated-progress:
+     *
+     * An estimate of the percent completion for the current loading operation.
+     * This value will range from 0.0 to 1.0 and, once a load completes,
+     * will remain at 1.0 until a new load starts, at which point it
+     * will be reset to 0.0.
+     * The value is an estimate based on the total number of bytes expected
+     * to be received for a document, including all its possible subresources.
+     */
+    g_object_class_install_property(objectClass,
+                                    PROP_ESTIMATED_PROGRESS,
+                                    g_param_spec_double("estimated-progress",
+                                                        "Estimated Progress",
+                                                        "An estimate of the percent completion for a document load",
+                                                        0.0, 1.0, 0.0,
+                                                        WEBKIT_PARAM_READABLE));
 
     /**
      * WebKitWebLoaderClient::provisional-load-started:
@@ -382,4 +417,22 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                      G_TYPE_POINTER);
 
     g_type_class_add_private(clientClass, sizeof(WebKitWebLoaderClientPrivate));
+}
+
+/**
+ * webkit_web_loader_client_get_estimated_progress:
+ * @client: a #WebKitWebLoaderClient
+ *
+ * Gets the value of #WebKitWebLoaderClient:estimated-progress.
+ * You can monitor the estimated progress of a load operation by
+ * connecting to the ::notify signal of @client.
+ *
+ * Returns: an estimate of the of the percent complete for a document
+ *     load as a range from 0.0 to 1.0.
+ */
+gdouble webkit_web_loader_client_get_estimated_progress(WebKitWebLoaderClient* client)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_LOADER_CLIENT(client), 0.);
+
+    return client->priv->estimatedProgress;
 }
