@@ -132,6 +132,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
  
 WorkerInspectorController::~WorkerInspectorController()
 {
+    disconnectFrontend();
 }
 
 void WorkerInspectorController::connectFrontend()
