@@ -1680,6 +1680,8 @@ void FrameSelection::updateAppearance()
     if (!view)
         return;
 
+    // Construct a new VisibleSolution, since m_selection is not necessarily valid, and the following steps
+    // assume a valid selection. See <https://bugs.webkit.org/show_bug.cgi?id=69563> and <rdar://problem/10232866>.
     VisibleSelection selection(m_selection.visibleStart(), m_selection.visibleEnd());
 
     if (!selection.isRange()) {

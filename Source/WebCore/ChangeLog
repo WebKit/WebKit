@@ -1,3 +1,12 @@
+2011-10-06  Dan Bernstein  <mitz@apple.com>
+
+        Added a comment explaining code added in r96834.
+
+        Suggested by Darin Adler.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+
 2011-10-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deleting line break before h1 converts h1 to span
