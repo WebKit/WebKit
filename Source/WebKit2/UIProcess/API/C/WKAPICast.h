@@ -31,6 +31,7 @@
 #include "FontSmoothingLevel.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "ResourceCachesToClear.h"
+#include "WebGrammarDetail.h"
 #include "WKContext.h"
 #include "WKCookieManager.h"
 #include "WKCredentialTypes.h"
@@ -64,6 +65,7 @@ class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebGeolocationManagerProxy;
 class WebGeolocationPosition;
+class WebGrammarDetail;
 class WebHitTestResult;
 class WebIconDatabase;
 class WebInspectorProxy;
@@ -77,6 +79,7 @@ class WebPageProxy;
 class WebPluginSiteDataManager;
 class WebPreferences;
 class WebProtectionSpace;
+class WebTextChecker;
 
 WK_ADD_API_MAPPING(WKApplicationCacheManagerRef, WebApplicationCacheManagerProxy)
 WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
@@ -95,6 +98,7 @@ WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
 WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
+WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManagerProxy)
@@ -107,6 +111,7 @@ WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPluginSiteDataManagerRef, WebPluginSiteDataManager)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
+WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 
 #if ENABLE(INSPECTOR)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
@@ -326,6 +331,11 @@ inline WKHTTPCookieAcceptPolicy toAPI(HTTPCookieAcceptPolicy policy)
 
     ASSERT_NOT_REACHED();
     return kWKHTTPCookieAcceptPolicyAlways;
+}
+
+inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
+{
+    return ProxyingRefPtr<WebGrammarDetail>(WebGrammarDetail::create(grammarDetail));
 }
 
 } // namespace WebKit

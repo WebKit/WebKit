@@ -1,3 +1,33 @@
+2011-10-06  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Move windows specific TextChecker implementation common to all ports.
+        https://bugs.webkit.org/show_bug.cgi?id=68532
+
+        Reviewed by Anders Carlsson.
+
+        All the TextChecker feature implementation files are moved outside of win port since they are
+        platform independent and can be moved across all ports. Only the implementation of TextChecker
+        class is platform dependent now and has been retained across all ports. Rest all files has been
+        moved for all ports usage.
+
+        * Shared/API/c/WKBase.h: Add WKGrammarDetailRef & WKTextCheckerRef types.
+        * Shared/API/c/win/WKBaseWin.h: Remove WKGrammarDetailRef & WKTextCheckerRef types.
+        * Shared/APIObject.h: Moved TypeGrammarDetail & TypeTextChecker from platform specific section to UIProcess types.
+        * UIProcess/API/C/WKAPICast.h: Added mapping for WKTextCheckerRef & WKGrammarDetailRef.
+        * UIProcess/API/C/WKGrammarDetail.cpp: Renamed from Source/WebKit2/UIProcess/API/C/win/WKGrammarDetail.cpp.
+        * UIProcess/API/C/WKGrammarDetail.h: Renamed from Source/WebKit2/UIProcess/API/C/win/WKGrammarDetail.h.
+        * UIProcess/API/C/WKTextChecker.cpp: Renamed from Source/WebKit2/UIProcess/API/C/win/WKTextChecker.cpp.
+        * UIProcess/API/C/WKTextChecker.h: Renamed from Source/WebKit2/UIProcess/API/C/win/WKTextChecker.h.
+        * UIProcess/API/C/win/WKAPICastWin.h: Removed mapping for WKTextCheckerRef & WKGrammarDetailRef.
+        * UIProcess/WebGrammarDetail.cpp: Renamed from Source/WebKit2/UIProcess/win/WebGrammarDetail.cpp.
+        * UIProcess/WebGrammarDetail.h: Renamed from Source/WebKit2/UIProcess/win/WebGrammarDetail.h.
+        * UIProcess/WebTextChecker.cpp: Renamed from Source/WebKit2/UIProcess/win/WebTextChecker.cpp.
+        * UIProcess/WebTextChecker.h: Renamed from Source/WebKit2/UIProcess/win/WebTextChecker.h.
+        * UIProcess/WebTextCheckerClient.cpp: Renamed from Source/WebKit2/UIProcess/win/WebTextCheckerClient.cpp.
+        * UIProcess/WebTextCheckerClient.h: Renamed from Source/WebKit2/UIProcess/win/WebTextCheckerClient.h.
+        * win/WebKit2.vcproj: Corrected paths for renamed files.
+        * win/WebKit2Generated.make: Corrected paths for renamed files.
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         Crash when PluginProxy object is destroyed inside PluginProxy::pluginScriptableNPObject

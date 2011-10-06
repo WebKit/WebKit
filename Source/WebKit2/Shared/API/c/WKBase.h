@@ -87,6 +87,7 @@ typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
 typedef const struct OpaqueWKGeolocationManager* WKGeolocationManagerRef;
 typedef const struct OpaqueWKGeolocationPermissionRequest* WKGeolocationPermissionRequestRef;
 typedef const struct OpaqueWKGeolocationPosition* WKGeolocationPositionRef;
+typedef const struct OpaqueWKGrammarDetail* WKGrammarDetailRef;
 typedef const struct OpaqueWKHitTestResult* WKHitTestResultRef;
 typedef const struct OpaqueWKIconDatabase* WKIconDatabaseRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;
@@ -100,6 +101,7 @@ typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
 typedef const struct OpaqueWKPluginSiteDataManager* WKPluginSiteDataManagerRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
+typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
 
 /* WebKit2 Bundle types */
 
