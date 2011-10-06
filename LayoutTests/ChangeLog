@@ -1,3 +1,68 @@
+2011-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed: irst chunk of new SVG baseline for lion.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-11-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-22-b-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-23-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-25-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-26-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-27-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-32-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-37-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-61-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-62-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-64-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-11-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-22-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-23-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-25-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-26-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-27-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-32-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-64-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png:
+
 2011-10-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10232866> Assertion failure beneath blockSelectionGaps() when a selected node is removed
