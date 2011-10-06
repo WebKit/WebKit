@@ -1,8 +1,10 @@
 description("Canonicalization of standard URLs");
 
-cases = [ 
+cases = [
   ["http://www.google.com/foo?bar=baz#", "http://www.google.com/foo?bar=baz#"],
+  ["http://www.google.com/foo?bar=baz# \u00bb", "http://www.google.com/foo?bar=baz# \u00bb"],
   ["http://[www.google.com]/", "http://[www.google.com]/"],
+  ["http://www.google.com", "http://www.google.com/"],
   // Disabled because whitespace gets treated different in this API.
   // ["ht\ttp:@www.google.com:80/;p?#", "ht%09tp://www.google.com:80/;p?#"],
   ["http:////////user:@google.com:99?foo", "http://user@google.com:99/?foo"],
@@ -58,6 +60,9 @@ cases = [
   ["data:example.com/", "data:example.com/"],
   ["javascript:example.com/", "javascript:example.com/"],
   ["mailto:example.com/", "mailto:example.com/"],
+  // Escaping of non hierarchical URLs
+  ["javascript:alert(\\t 1 \\n\\r)", "javascript:alert( 1 )"],
+  ['javascript:alert(" \1 \u03B2 ")', 'javascript:alert(" %01 %CE%B2 ")'],
 ];
 
 for (var i = 0; i < cases.length; ++i) {

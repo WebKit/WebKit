@@ -1,3 +1,39 @@
+2011-10-05  Erik Arvidsson  <arv@chromium.org>
+
+        window.location.href and others needlessly decodes URI-encoded characters
+        https://bugs.webkit.org/show_bug.cgi?id=30225
+
+        Reviewed by Darin Adler.
+
+        Don't decode KURL::path() and stop using KURL::deprecatedString() in Location methods.
+
+        This slightly changes how we parse data and javascript URLs (non hierarchical URLs) to
+        not encode so aggressively.
+
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::crackFileSystemURL): Manually decode path()
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType): Manually decode path()
+        * page/Location.cpp:
+        (WebCore::Location::href): Use string() instead of deprecatedString()
+        * page/Location.h:
+        (WebCore::Location::toString): Inline call to href()
+        * platform/KURL.cpp:
+        (WebCore::KURL::path): Don't decode.
+        (WebCore::escapeAndAppendNonHierarchicalPart): Rename escapeAndAppendFragment to escapeAndAppendNonHierarchicalPart
+                                                       since this is now used for more than just fragments.
+        (WebCore::KURL::parse): Don't decode
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::path): Remove out of date comment
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::fileSystemPath): Manually decode path()
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalHDropContent): Manually decode path()
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::href): Use string() instead of deprecatedString()
+        * workers/WorkerLocation.h:
+        (WebCore::WorkerLocation::toString): Inline call to href()
+
 2011-10-05  Darin Adler  <darin@apple.com>
 
         [Mac] Use four more named cursors if present

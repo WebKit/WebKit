@@ -849,7 +849,8 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
 ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
     String mimeType = mimeTypeIn;
-    String extension = url.path().substring(url.path().reverseFind('.') + 1);
+    String decodedPath = decodeURLEscapeSequences(url.path());
+    String extension = decodedPath.substring(decodedPath.reverseFind('.') + 1);
 
     // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure
     if (mimeType.isEmpty())

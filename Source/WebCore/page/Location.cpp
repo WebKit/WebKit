@@ -65,9 +65,7 @@ String Location::href() const
     if (!m_frame)
         return String();
 
-    const KURL& url = this->url();
-    // FIXME: Stop using deprecatedString(): https://bugs.webkit.org/show_bug.cgi?id=30225
-    return url.hasPath() ? url.deprecatedString() : url.deprecatedString() + "/";
+    return url().string();
 }
 
 String Location::protocol() const
@@ -148,16 +146,6 @@ String Location::getParameter(const String& name) const
     ParsedURLParameters parameters;
     url().copyParsedQueryTo(parameters);
     return parameters.get(name);
-}
-
-String Location::toString() const
-{
-    if (!m_frame)
-        return String();
-
-    const KURL& url = this->url();
-    // FIXME: Stop using deprecatedString(): https://bugs.webkit.org/show_bug.cgi?id=30225
-    return url.hasPath() ? url.deprecatedString() : url.deprecatedString() + "/";
 }
 
 void Location::setHref(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)

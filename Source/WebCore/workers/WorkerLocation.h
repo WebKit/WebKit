@@ -30,10 +30,10 @@
 #if ENABLE(WORKERS)
 
 #include "KURL.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ namespace WebCore {
         String search() const;
         String hash() const;
 
-        String toString() const;
+        String toString() const { return href(); }
 
     private:
         WorkerLocation(const KURL& url) : m_url(url) { }

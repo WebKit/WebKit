@@ -51,10 +51,9 @@ String KURL::fileSystemPath() const
 
     // A valid qrc resource path begins with a colon.
     if (protocolIs("qrc"))
-        return ":" + path();
+        return ":" + decodeURLEscapeSequences(path());
 
     return String();
 }
 
 }
-

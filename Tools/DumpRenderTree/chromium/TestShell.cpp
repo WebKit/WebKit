@@ -403,7 +403,7 @@ static string normalizeLayoutTestURLInternal(const string& url)
         result.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
     } else if (!url.find(dataUrlPattern)) {
         // URL-escape data URLs to match results upstream.
-        string path = webkit_support::EscapePath(url.substr(dataUrlPatternSize));
+        string path = url.substr(dataUrlPatternSize);
         result.replace(dataUrlPatternSize, url.length(), path);
     }
     return result;

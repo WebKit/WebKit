@@ -1,3 +1,13 @@
+2011-10-05  Erik Arvidsson  <arv@chromium.org>
+
+        window.location.href and others needlessly decodes URI-encoded characters
+        https://bugs.webkit.org/show_bug.cgi?id=30225
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (normalizeLayoutTestURLInternal): Remove extra encode.
+
 2011-10-05  Darin Adler  <darin@apple.com>
 
         Fix build.

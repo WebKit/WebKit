@@ -63,7 +63,7 @@ bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, AsyncFileSystem::Typ
         return false;
 
     KURL originURL(ParsedURLString, url.path());
-    String path = originURL.path();
+    String path = decodeURLEscapeSequences(originURL.path());
     if (path.isEmpty() || path[0] != '/')
         return false;
     path = path.substring(1);

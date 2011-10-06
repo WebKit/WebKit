@@ -36,7 +36,8 @@ cases = [
     // Make sure relative paths can't go above the "C:"
     ["file:///C:/foo/../../../bar.html", "file:///C:/bar.html"],
     // Busted refs shouldn't make the whole thing fail.
-    ["file:///C:/asdf#\\xc2", "file:///C:/asdf#\\xef\\xbf\\xbd"],
+    ["file:///C:/asdf#\\xc2", "file:///C:/asdf#\\xc2"],
+    ["file:///C:/asdf#\xc2", "file:///C:/asdf#\xc2"],
 
     // Unix-style paths
     ["file:///home/me", "file:///home/me"],

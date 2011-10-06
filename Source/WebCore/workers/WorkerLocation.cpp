@@ -36,8 +36,7 @@ namespace WebCore {
 
 String WorkerLocation::href() const
 {
-    // FIXME: Stop using deprecatedString(): https://bugs.webkit.org/show_bug.cgi?id=30225
-    return m_url.hasPath() ? m_url.deprecatedString() : m_url.deprecatedString() + "/";
+    return m_url.string();
 }
 
 String WorkerLocation::protocol() const
@@ -73,12 +72,6 @@ String WorkerLocation::search() const
 String WorkerLocation::hash() const
 {
     return m_url.fragmentIdentifier().isEmpty() ? emptyString() : "#" + m_url.fragmentIdentifier();
-}
-
-String WorkerLocation::toString() const
-{
-    // FIXME: Stop using deprecatedString(): https://bugs.webkit.org/show_bug.cgi?id=30225
-    return m_url.hasPath() ? m_url.deprecatedString() : m_url.deprecatedString() + "/";
 }
 
 

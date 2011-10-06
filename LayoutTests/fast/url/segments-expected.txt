@@ -8,7 +8,7 @@ PASS segments('http:foo.com') is '["http:","example.org","","/foo/foo.com","",""
 PASS segments('\t   :foo.com   \n') is '["http:","example.org","","/foo/:foo.com","",""]'
 PASS segments(' foo.com  ') is '["http:","example.org","","/foo/foo.com","",""]'
 PASS segments('a:\t foo.com') is '["a:","",""," foo.com","",""]'
-FAIL segments('http://f:21/ b ? d # e ') should be ["http:","f","21","/%20b%20","?%20d%20","# e"]. Was ["http:","f","21","/ b ","?%20d%20","# e"].
+PASS segments('http://f:21/ b ? d # e ') is '["http:","f","21","/%20b%20","?%20d%20","# e"]'
 PASS segments('http://f:/c') is '["http:","f","","/c","",""]'
 PASS segments('http://f:0/c') is '["http:","f","0","/c","",""]'
 PASS segments('http://f:00000000000000/c') is '["http:","f","0","/c","",""]'
@@ -93,6 +93,11 @@ PASS segments('wss:example.com/') is '["wss:","example.com","","/","",""]'
 PASS segments('data:example.com/') is '["data:","","","example.com/","",""]'
 PASS segments('javascript:example.com/') is '["javascript:","","","example.com/","",""]'
 PASS segments('mailto:example.com/') is '["mailto:","","","example.com/","",""]'
+PASS segments('/a/b/c') is '["http:","example.org","","/a/b/c","",""]'
+PASS segments('/a/ /c') is '["http:","example.org","","/a/%20/c","",""]'
+PASS segments('/a%2fc') is '["http:","example.org","","/a%2fc","",""]'
+PASS segments('/a/%2f/c') is '["http:","example.org","","/a/%2f/c","",""]'
+FAIL segments('#β') should be ["http:","example.org","","/foo/bar","","#β"]. Was ["http:","example.org","","/foo/bar","","#%CE%B2"].
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,6 +1,6 @@
 description("Test URL segmentation");
 
-cases = [ 
+cases = [
   // [URL, [SCHEME, HOST, PORT, PATH, QUERY, REF]]
   ["http://user:pass@foo:21/bar;par?b#c",    ["http:","foo","21","/bar;par","?b","#c"]],
   ["http:foo.com",                           ["http:","example.org","","/foo/foo.com","",""]],
@@ -91,7 +91,14 @@ cases = [
   ["wss:example.com/",                       ["wss:","example.com","","/","",""]],
   ["data:example.com/",                      ["data:","","","example.com/","",""]],
   ["javascript:example.com/",                ["javascript:","","","example.com/","",""]],
-  ["mailto:example.com/",                    ["mailto:","","","example.com/","",""]],  
+  ["mailto:example.com/",                    ["mailto:","","","example.com/","",""]],
+
+  ["/a/b/c",                                  ["http:","example.org","","/a/b/c","",""]],
+  ["/a/ /c",                                  ["http:","example.org","","/a/%20/c","",""]],
+  ["/a%2fc",                                  ["http:","example.org","","/a%2fc","",""]],
+  ["/a/%2f/c",                                ["http:","example.org","","/a/%2f/c","",""]],
+
+  ["#\u03B2",                                 ["http:","example.org","","/foo/bar","","#\u03B2"]],
 ];
 
 var originalBaseURL = canonicalize(".");

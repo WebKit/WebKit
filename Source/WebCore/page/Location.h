@@ -29,9 +29,9 @@
 #ifndef Location_h
 #define Location_h
 
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -71,7 +71,7 @@ public:
     String hash() const;
     String origin() const;
 
-    String toString() const;
+    String toString() const { return href(); }
 
     String getParameter(const String&) const;
 

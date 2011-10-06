@@ -1,3 +1,48 @@
+2011-10-05  Erik Arvidsson  <arv@chromium.org>
+
+        window.location.href and others needlessly decodes URI-encoded characters
+        https://bugs.webkit.org/show_bug.cgi?id=30225
+
+        Reviewed by Darin Adler.
+
+        The path part of location.href and location.pathname are now not decoded and we keep percent escape sequences.
+
+        data and javascript URLs only encodes non ascii characters.
+
+        * fast/dom/anchor-origin-expected.txt:
+        * fast/dom/anchor-origin.html: Change to not use document.write since we don't want to output HTML.
+        * fast/history/history-back-initial-vs-final-url-expected.txt:
+        * fast/loader/subframe-navigate-during-main-frame-load-expected.txt:
+        * fast/url/file-http-base-expected.txt:
+        * fast/url/mailto-expected.txt:
+        * fast/url/script-tests/file-http-base.js:
+        * fast/url/script-tests/segments.js:
+        * fast/url/script-tests/standard-url.js:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/segments.html: Use UTF-8
+        * fast/url/standard-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * platform/chromium-cg-mac/fast/url/standard-url-expected.txt:
+        * platform/chromium-linux/fast/url/standard-url-expected.txt:
+        * platform/chromium-mac/fast/url/standard-url-expected.txt:
+        * platform/chromium-win/fast/url/standard-url-expected.txt:
+        * platform/chromium/fast/dom/anchor-origin-expected.txt: Removed.
+
 2011-10-05  Tony Chang  <tony@chromium.org>
 
         force margin:auto to 0 in flex items

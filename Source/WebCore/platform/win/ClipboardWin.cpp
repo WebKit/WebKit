@@ -176,7 +176,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
     WCHAR filePath[MAX_PATH];
 
     if (url.isLocalFile()) {
-        String localPath = url.path();
+        String localPath = decodeURLEscapeSequences(url.path());
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);

@@ -18,5 +18,5 @@ final page contents
 ============== Back Forward List ==============
 curr->  (file test):fast/history/history-back-initial-vs-final-url.html  **nav target**
             (file test):fast/history/resources/frame-final-url.html (in frame "<!--framePath //<!--frame0-->-->")
-        data:text/html,%3Cscript%3Ealert(%22Going%20back.%22);history.back();%3C/script%3E  **nav target**
+        data:text/html,<script>alert("Going back.");history.back();</script>  **nav target**
 ===============================================
