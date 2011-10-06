@@ -924,6 +924,7 @@ void SpeculativeJIT::compile(Node& node)
             positive.link(&m_jit);
             
             doubleResult(outputFPR, m_compileIndex);
+            break;
         }
 
         IntegerOperand op1(this, node.child1());
