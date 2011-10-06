@@ -1,5 +1,16 @@
 2011-10-06  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/9717490> Flash of white when navigating daringfireball.net
+        https://bugs.webkit.org/show_bug.cgi?id=69581
+
+        Reviewed by Darin Adler.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Moved the calls to Scrollbar::setEnabled() into the code
+        section where invalidation is suppressed if necessary, so that they do not trigger premature invalidation.
+
+2011-10-06  Dan Bernstein  <mitz@apple.com>
+
         Added a comment explaining code added in r96834.
 
         Suggested by Darin Adler.
