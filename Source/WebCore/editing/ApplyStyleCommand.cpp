@@ -819,7 +819,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
         if (mode == RemoveNone)
             return true;
         ASSERT(extractedStyle);
-        extractedStyle->mergeInlineStyleOfElement(element.get());
+        extractedStyle->mergeInlineStyleOfElement(element.get(), EditingStyle::OverrideValues);
         removeNodePreservingChildren(element);
         return true;
     }
@@ -937,7 +937,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* sty
     RefPtr<EditingStyle> newInlineStyle = style;
     if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->inlineStyleDecl()) {
         newInlineStyle = style->copy();
-        newInlineStyle->mergeInlineStyleOfElement(static_cast<HTMLElement*>(node));
+        newInlineStyle->mergeInlineStyleOfElement(static_cast<HTMLElement*>(node), EditingStyle::OverrideValues);
     }
 
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.

@@ -12,5 +12,4 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 The last paragraph of the incoming fragment should be in the same paragraph as 'three'.
 | "one "
 | <div>
-|   "two<#selection-caret>"
-|   "three"
+|   "two<#selection-caret>three"

@@ -123,7 +123,9 @@ public:
 
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
     void mergeTypingStyle(Document*);
-    void mergeInlineStyleOfElement(StyledElement*);
+    enum CSSPropertyOverrideMode { OverrideValues, DoNotOverrideValues };
+    void mergeInlineStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude = AllProperties);
+    void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyleFromRules(StyledElement*);
     void mergeStyleFromRulesForSerialization(StyledElement*);
     void removeStyleFromRulesAndContext(StyledElement*, Node* context);
@@ -146,7 +148,7 @@ private:
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
-    void mergeStyle(CSSMutableStyleDeclaration*);
+    void mergeStyle(CSSMutableStyleDeclaration*, CSSPropertyOverrideMode);
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;

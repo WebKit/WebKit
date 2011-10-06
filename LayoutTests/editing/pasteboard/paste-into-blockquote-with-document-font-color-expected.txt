@@ -3,6 +3,4 @@ This tests to make sure that content that has the document default color is past
 | <blockquote>
 |   type="cite"
 |   <div>
-|     "("
-|     "This text should be blue.<#selection-caret>"
-|     ")"
+|     "(This text should be blue.<#selection-caret>)"

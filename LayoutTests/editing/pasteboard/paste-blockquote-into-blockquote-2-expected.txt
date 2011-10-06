@@ -2,8 +2,7 @@ This tests pasting a nested blockquote into a blockquote. The text "One" should 
 | <blockquote>
 |   id="block"
 |   type="cite"
-|   "One"
-|   "Two"
+|   "OneTwo"
 | <blockquote>
 |   type="cite"
 |   <blockquote>

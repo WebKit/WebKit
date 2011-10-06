@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -754,6 +755,12 @@ static bool isInlineNodeWithStyle(const Node* node)
     return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(element);
 }
 
+inline Node* nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& insertionPos)
+{
+    Node* containgBlock = enclosingBlock(insertionPos.containerNode());
+    return highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary, containgBlock);
+}
+
 void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
@@ -907,8 +914,7 @@ void ReplaceSelectionCommand::doApply()
             insertionPos = firstPositionInNode(insertionPos.containerNode());
         }
 
-        if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary,
-            enclosingBlock(insertionPos.containerNode()))) {
+        if (RefPtr<Node> nodeToSplitTo = nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(insertionPos)) {
             if (insertionPos.containerNode() != nodeToSplitTo->parentNode()) {
                 nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo->parentNode()).get();
                 insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
@@ -1266,7 +1272,12 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     // FIXME: Would be nice to handle smart replace in the fast path.
     if (m_smartReplace || fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd())
         return false;
-    
+
+    // e.g. when "bar" is inserted after "foo" in <div><u>foo</u></div>, "bar" should not be underlined.
+    if (nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(endingSelection().start()))
+        return false;
+
+    Node* nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();
     Text* textNode = static_cast<Text*>(fragment.firstChild());
     // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
 
@@ -1274,6 +1285,9 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     Position end = replaceSelectedTextInNode(textNode->data());
     if (end.isNull())
         return false;
+
+    if (nodeAfterInsertionPos && nodeAfterInsertionPos->hasTagName(brTag) && shouldRemoveEndBR(nodeAfterInsertionPos, positionBeforeNode(nodeAfterInsertionPos)))
+        removeNodeAndPruneAncestors(nodeAfterInsertionPos);
 
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
 

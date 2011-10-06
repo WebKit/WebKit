@@ -16,8 +16,7 @@ This tests to see that selected editable nodes that are not in both the start an
         "
 |       <td>
 |         contenteditable="true"
-|         "Editable <#selection-caret>"
-|         "content"
+|         "Editable <#selection-caret>content"
 |       "
         "
 |       <!--  The following cell should be removed, even though it contains non-editable pieces.  -->

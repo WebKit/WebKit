@@ -4,4 +4,3 @@ The test passes if it does not crash.
 
 Copy the second word in this sentence.
 the
-

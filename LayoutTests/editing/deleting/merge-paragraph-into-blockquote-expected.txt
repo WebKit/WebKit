@@ -14,5 +14,4 @@ WebKit should not cancel styles added by blockquote by those of document's defau
 | "
 "
 | <blockquote>
-|   "hello<#selection-caret>"
-|   "world"
+|   "hello<#selection-caret>world"

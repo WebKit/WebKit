@@ -53,7 +53,7 @@ public:
     void append(PassRefPtr<CSSValue>);
     void prepend(PassRefPtr<CSSValue>);
     bool removeAll(CSSValue*);
-    bool hasValue(CSSValue*);
+    bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
 
     virtual String cssText() const;

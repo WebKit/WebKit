@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > LI > UL > DIV > BODY > HTML > #document to 4 of #text > DIV > LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > LI > UL > DIV > BODY > HTML > #document to 3 of #text > DIV > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > LI > UL > DIV > BODY > HTML > #document to 7 of #text > DIV > LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > LI > UL > DIV > BODY > HTML > #document to 3 of #text > DIV > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
@@ -19,8 +19,6 @@ After insertion:
 | <ul>
 |   <li>
 |     <div>
-|       "Item"
-|       "foo"
+|       "Itemfoo"
 |     <div>
-|       "bar<#selection-caret>"
-|       " 1"
+|       "bar<#selection-caret> 1"

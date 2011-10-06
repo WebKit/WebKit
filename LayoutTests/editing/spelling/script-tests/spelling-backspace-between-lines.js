@@ -32,9 +32,9 @@ function testWithDelete()
     document.execCommand("Delete", false);
     sel.modify("move", "right", "line"); // Moves to the line ending to focus the "OK zz OK" text.
 
-    shouldBe("sel.anchorNode.data", "'OK zz OK'");
+    shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
     shouldBe("firstLineText()", "'OKOK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(3, 2)");
+    shouldBeTrue("layoutTestController.hasSpellingMarker(5, 2)");
 }
 
 function testWithForwardDelete()
@@ -54,8 +54,8 @@ function testWithForwardDelete()
     sel.modify("move", "right", "line"); // Moves to the line ending to focus the "OK zz OK" text.
 
     shouldBe("firstLineText()", "'OKOK zz OK'");
-    shouldBe("sel.anchorNode.data", "'OK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(3, 2)");
+    shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
+    shouldBeTrue("layoutTestController.hasSpellingMarker(5, 2)");
 }
 
 testWithDelete();

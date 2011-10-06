@@ -15,8 +15,7 @@ This tests to see that selected non-editable nodes that are not in both the star
         "
 |       <td>
 |         contenteditable="true"
-|         "Editable <#selection-caret>"
-|         "content"
+|         "Editable <#selection-caret>content"
 |       "
         "
 |       <td>

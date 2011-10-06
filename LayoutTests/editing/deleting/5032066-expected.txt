@@ -4,5 +4,4 @@ This tests deleting when the caret is at the start of a paragraph just after a t
 |   <tbody>
 |     <tr>
 |       <td>
-|         "All the content in this editable region <#selection-caret>"
-|         "should be in one table cell."
+|         "All the content in this editable region <#selection-caret>should be in one table cell."

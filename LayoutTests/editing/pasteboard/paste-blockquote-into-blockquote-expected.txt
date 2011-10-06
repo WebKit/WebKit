@@ -2,8 +2,7 @@ This tests pasting a blockquote into a blockquote. Nothing below should be doubl
 | <blockquote>
 |   id="block"
 |   type="cite"
-|   "One"
-|   "Two"
+|   "OneTwo"
 | <blockquote>
 |   type="cite"
 |   <div>

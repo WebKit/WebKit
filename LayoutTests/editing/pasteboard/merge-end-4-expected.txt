@@ -10,8 +10,7 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 Tests for a case where paste's end merge was failing. You should see xfoo
 bar
 bazx.
-| "x"
-| "foo"
+| "xfoo"
 | <div>
 |   "bar"
 | "baz<#selection-caret>"

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009 Apple Computer, Inc.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,9 @@ namespace WebCore {
 
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
-static const int editingInheritableProperties[] = {
+static const int editingProperties[] = {
+    CSSPropertyBackgroundColor,
+
     // CSS inheritable properties
     CSSPropertyColor,
     CSSPropertyFontFamily,
@@ -75,11 +77,21 @@ static const int editingInheritableProperties[] = {
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
 };
-size_t numEditingInheritableProperties = WTF_ARRAY_LENGTH(editingInheritableProperties);
 
-static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style)
+static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style, bool includeBackgroundColor = false)
 {
-    return style->copyPropertiesInSet(editingInheritableProperties, numEditingInheritableProperties);
+    if (includeBackgroundColor)
+        return style->copyPropertiesInSet(editingProperties, WTF_ARRAY_LENGTH(editingProperties));
+    return style->copyPropertiesInSet(editingProperties + 1, WTF_ARRAY_LENGTH(editingProperties) - 1);
+}
+
+static inline bool isEditingProperty(int id)
+{
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(editingProperties); ++i) {
+        if (editingProperties[i] == id)
+            return true;
+    }
+    return false;
 }
 
 static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(PassRefPtr<CSSComputedStyleDeclaration> style)
@@ -101,7 +113,7 @@ public:
     virtual ~HTMLElementEquivalent() { }
     virtual bool matches(const Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
-    virtual bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
+    virtual bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style && style->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
 
@@ -784,14 +796,7 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
         if (CSSMutableStyleDeclaration* style = element->inlineStyleDecl()) {
             CSSMutableStyleDeclaration::const_iterator end = style->end();
             for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                bool matched = false;
-                for (size_t i = 0; i < numEditingInheritableProperties; ++i) {
-                    if (editingInheritableProperties[i] == it->id()) {
-                        matched = true;
-                        break;
-                    }
-                }
-                if (!matched && it->id() != CSSPropertyBackgroundColor)
+                if (!isEditingProperty(it->id()))
                     return false;
             }
         }
@@ -843,16 +848,63 @@ void EditingStyle::mergeTypingStyle(Document* document)
     if (!typingStyle || typingStyle == this)
         return;
 
-    mergeStyle(typingStyle->style());
+    mergeStyle(typingStyle->style(), OverrideValues);
 }
 
-void EditingStyle::mergeInlineStyleOfElement(StyledElement* element)
+void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
 {
     ASSERT(element);
-    mergeStyle(element->inlineStyleDecl());
+    if (!element->inlineStyleDecl())
+        return;
+
+    switch (propertiesToInclude) {
+    case AllProperties:
+        mergeStyle(element->inlineStyleDecl(), mode);
+        return;
+    case OnlyEditingInheritableProperties:
+    case EditingInheritablePropertiesAndBackgroundColorInEffect:
+        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), propertiesToInclude == EditingInheritablePropertiesAndBackgroundColorInEffect).get(), mode);
+        return;
+    }
 }
 
-void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
+static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLElementEquivalent* equivalent, const StyledElement* element,
+    EditingStyle::CSSPropertyOverrideMode mode, CSSMutableStyleDeclaration* style)
+{
+    return equivalent->matches(element) && !equivalent->propertyExistsInStyle(element->inlineStyleDecl())
+        && (mode == EditingStyle::OverrideValues || !equivalent->propertyExistsInStyle(style));
+}
+
+void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
+{
+    mergeInlineStyleOfElement(element, mode, propertiesToInclude);
+
+    const Vector<OwnPtr<HTMLElementEquivalent> >& elementEquivalents = htmlElementEquivalents();
+    for (size_t i = 0; i < elementEquivalents.size(); ++i) {
+        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(elementEquivalents[i].get(), element, mode, m_mutableStyle.get()))
+            elementEquivalents[i]->addToStyle(element, this);
+    }
+
+    const Vector<OwnPtr<HTMLAttributeEquivalent> >& attributeEquivalents = htmlAttributeEquivalents();
+    for (size_t i = 0; i < attributeEquivalents.size(); ++i) {
+        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(attributeEquivalents[i].get(), element, mode, m_mutableStyle.get()))
+            attributeEquivalents[i]->addToStyle(element, this);
+    }
+}
+
+static void mergeTextDecorationValues(CSSValueList* mergedValue, const CSSValueList* valueToMerge)
+{
+    DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+    DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+
+    if (valueToMerge->hasValue(underline.get()) && !mergedValue->hasValue(underline.get()))
+        mergedValue->append(underline.get());
+
+    if (valueToMerge->hasValue(lineThrough.get()) && !mergedValue->hasValue(lineThrough.get()))
+        mergedValue->append(lineThrough.get());
+}
+
+void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style, CSSPropertyOverrideMode mode)
 {
     if (!style)
         return;
@@ -864,30 +916,20 @@ void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
 
     CSSMutableStyleDeclaration::const_iterator end = style->end();
     for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        RefPtr<CSSValue> value;
-        if ((it->id() == CSSPropertyTextDecoration || it->id() == CSSPropertyWebkitTextDecorationsInEffect) && it->value()->isValueList()) {
-            value = m_mutableStyle->getPropertyCSSValue(it->id());
-            if (value && !value->isValueList())
-                value = 0;
+        RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(it->id());
+        ExceptionCode ec;
+
+        // text decorations never override values
+        if ((it->id() == CSSPropertyTextDecoration || it->id() == CSSPropertyWebkitTextDecorationsInEffect) && it->value()->isValueList() && value) {
+            if (value->isValueList()) {
+                mergeTextDecorationValues(static_cast<CSSValueList*>(value.get()), static_cast<CSSValueList*>(it->value()));
+                continue;
+            }
+            value = 0; // text-decoration: none is equivalent to not having the property
         }
 
-        if (!value) {
-            ExceptionCode ec;
+        if (mode == OverrideValues || (mode == DoNotOverrideValues && !value))
             m_mutableStyle->setProperty(it->id(), it->value()->cssText(), it->isImportant(), ec);
-            continue;
-        }
-
-        CSSValueList* newTextDecorations = static_cast<CSSValueList*>(it->value());
-        CSSValueList* textDecorations = static_cast<CSSValueList*>(value.get());
-
-        DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
-        DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
-
-        if (newTextDecorations->hasValue(underline.get()) && !textDecorations->hasValue(underline.get()))
-            textDecorations->append(underline.get());
-
-        if (newTextDecorations->hasValue(lineThrough.get()) && !textDecorations->hasValue(lineThrough.get()))
-            textDecorations->append(lineThrough.get());
     }
 }
 

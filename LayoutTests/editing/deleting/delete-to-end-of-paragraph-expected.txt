@@ -9,7 +9,5 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BODY > HTML > #docu
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-| <span>
-|   style="font-size: medium; "
-|   "<#selection-caret>four five six"
+| "<#selection-caret>four five six"
 | <br>

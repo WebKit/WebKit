@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2008, 2009 Google Inc.
+ * Copyright (C) 2008, 2009, 2010, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
@@ -343,17 +343,28 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
         m_highestNodeToBeSerialized = lastClosed;
     }
 
-    Node* parentOfHighestNode = m_highestNodeToBeSerialized ? m_highestNodeToBeSerialized->parentNode() : 0;
-    if (parentOfHighestNode) {
-        m_wrappingStyle = EditingStyle::create(parentOfHighestNode, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+    if (Node* parentOfHighestNode = m_highestNodeToBeSerialized ? m_highestNodeToBeSerialized->parentNode() : 0) {
+        if (shouldAnnotate()) {
+            m_wrappingStyle = EditingStyle::create(parentOfHighestNode, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
 
-        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
-        // to help us differentiate those styles from ones that the user has applied.
-        // This helps us get the color of content pasted into blockquotes right.
-        m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isMailBlockquote, CanCrossEditingBoundary));
+            // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
+            // to help us differentiate those styles from ones that the user has applied.
+            // This helps us get the color of content pasted into blockquotes right.
+            m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isMailBlockquote, CanCrossEditingBoundary));
 
-        // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
-        m_wrappingStyle->collapseTextDecorationProperties();
+            // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
+            m_wrappingStyle->collapseTextDecorationProperties();
+        } else {
+            m_wrappingStyle = EditingStyle::create();
+
+            // When not annotating for interchange, we only preserve inline style declarations.
+            for (Node* node = parentOfHighestNode; node && !node->isDocumentNode(); node = node->parentNode()) {
+                if (node->isStyledElement()) {
+                    m_wrappingStyle->mergeInlineAndImplicitStyleOfElement(static_cast<StyledElement*>(node), EditingStyle::DoNotOverrideValues,
+                        EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+                }
+            }
+        }
     }
 
     return traverseNodesForSerialization(startNode, pastEnd, EmitString);

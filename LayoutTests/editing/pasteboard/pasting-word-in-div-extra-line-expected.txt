@@ -1,4 +1,2 @@
 This test ensures pasting words copied from TextEdit in Mail does not add extra newline. See rdar://problem/5483567.
-| "x"
-| "foo<#selection-caret>"
-| "x"
+| "xfoo<#selection-caret>x"

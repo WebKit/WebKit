@@ -1,3 +1,102 @@
+2011-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting line break before h1 converts h1 to span
+        https://bugs.webkit.org/show_bug.cgi?id=45784
+
+        Reviewed by Enrica Casucci.
+
+        Many rebaselines are due to text nodes merged correctly after ReplaceSelectionCommand because
+        they started to use the fast path (perfromTrivialReplace).
+
+        New tests:
+        * editing/deleting/merge-paragraph-from-address-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-address.html: Added.
+        * editing/deleting/merge-paragraph-from-h6-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-2-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-2.html: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-3-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-3.html: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style.html: Added.
+        * editing/deleting/merge-paragraph-from-h6.html: Added.
+        * editing/deleting/merge-paragraph-from-listing-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-listing.html: Added.
+        * editing/deleting/merge-paragraph-from-p-with-style-2-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-p-with-style-2.html: Added.
+        * editing/deleting/merge-paragraph-from-p-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-p-with-style.html: Added.
+        * editing/deleting/merge-paragraph-into-blockquote-expected.txt:
+        * editing/deleting/merge-paragraph-into-h1-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style.html: Added.
+        * editing/deleting/merge-paragraph-into-h1.html: Added.
+        * editing/deleting/merge-paragraph-into-pre-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-pre.html: Added.
+
+        Rebaselines:
+        * editing/pasteboard/5521237-expected.txt: A collapsed br at the end is removed.
+        * editing/spelling/script-tests/spelling-backspace-between-lines.js: text nodes are merged.
+        (testWithDelete):
+        (testWithForwardDelete):
+        * editing/spelling/spelling-backspace-between-lines-expected.txt:
+        * editing/style/apply-through-end-of-document-expected.txt: A collapsed br at the end is removed.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.txt: "bar" is merged into p from
+        pre and losing monospace style.
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt: A text node is split into
+        two with no visual effect.
+
+        Rebaselines due to text nodes being merged:
+        * editing/deleting/5032066-expected.txt:
+        * editing/deleting/delete-across-editable-content-boundaries-2-expected.txt:
+        * editing/deleting/delete-across-editable-content-boundaries-3-expected.txt:
+        * editing/deleting/delete-line-011-expected.txt:
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt:
+        * editing/deleting/deleting-line-break-preserves-underline-color-expected.txt:
+        * editing/pasteboard/copy-null-characters-expected.txt:
+        * editing/pasteboard/insert-div-text-into-text-expected.txt:
+        * editing/pasteboard/interchange-newline-1-expected.txt:
+        * editing/pasteboard/interchange-newline-2-expected.txt:
+        * editing/pasteboard/merge-end-3-expected.txt:
+        * editing/pasteboard/merge-end-4-expected.txt:
+        * editing/pasteboard/merge-end-5-expected.txt:
+        * editing/pasteboard/merge-end-list-2-expected.txt:
+        * editing/pasteboard/merge-end-table-2-expected.txt:
+        * editing/pasteboard/paste-after-inline-style-element-expected.txt:
+        * editing/pasteboard/paste-blockquote-2-expected.txt:
+        * editing/pasteboard/paste-blockquote-3-expected.txt:
+        * editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt:
+        * editing/pasteboard/paste-blockquote-into-blockquote-expected.txt:
+        * editing/pasteboard/paste-into-blockquote-with-document-font-color-expected.txt:
+        * editing/pasteboard/pasting-word-in-div-extra-line-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-003-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-004-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-015-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * platform/mac/editing/deleting/delete-br-010-expected.txt:
+        * platform/mac/editing/deleting/delete-line-012-expected.txt:
+        * platform/mac/editing/deleting/delete-listitem-001-expected.txt:
+        * platform/mac/editing/inserting/multiple-lines-selected-expected.txt:
+        * platform/mac/editing/pasteboard/5032095-expected.txt:
+        * platform/mac/editing/pasteboard/merge-after-delete-1-expected.txt:
+        * platform/mac/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/mac/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+
 2011-10-06  Abhishek Arya  <inferno@chromium.org>
 
         Crash in VisiblePosition::canonicalPosition.
