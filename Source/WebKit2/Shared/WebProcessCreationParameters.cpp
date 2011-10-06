@@ -36,6 +36,7 @@ namespace WebKit {
 WebProcessCreationParameters::WebProcessCreationParameters()
     : shouldTrackVisitedLinks(false)
     , shouldAlwaysUseComplexTextCodePath(false)
+    , shouldUseFontSmoothing(true)
     , defaultRequestTimeoutInterval(INT_MAX)
 #if PLATFORM(MAC)
     , nsURLCacheMemoryCapacity(0)
@@ -60,6 +61,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encodeEnum(cacheModel);
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
+    encoder->encode(shouldUseFontSmoothing);
     encoder->encode(iconDatabaseEnabled);
 #if ENABLE(PLUGIN_PROCESS)
     encoder->encode(disablePluginProcessMessageTimeout);
@@ -121,6 +123,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.shouldTrackVisitedLinks))
         return false;
     if (!decoder->decode(parameters.shouldAlwaysUseComplexTextCodePath))
+        return false;
+    if (!decoder->decode(parameters.shouldUseFontSmoothing))
         return false;
     if (!decoder->decode(parameters.iconDatabaseEnabled))
         return false;

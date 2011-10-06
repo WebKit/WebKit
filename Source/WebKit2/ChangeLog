@@ -1,3 +1,45 @@
+2011-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        In WebKitTestRunner, text has font smoothing in pixel snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=69396
+
+        Reviewed by Darin Adler.
+        
+        Plumb through a method on WKContext that controls whether font smoothing
+        is enabled. Since this is a global setting, such a method is more appropriate
+        than a preference.
+        
+        Remove leading underscores on some WKContext functions, but keep
+        exported versions of same for binary compatibility.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetAlwaysUsesComplexTextCodePath):
+        (WKContextSetShouldUseFontSmoothing):
+        (WKContextSetAdditionalPluginsDirectory):
+        (WKContextRegisterURLSchemeAsEmptyDocument):
+        (WKContextSetHTTPPipeliningEnabled):
+        (_WKContextSetAdditionalPluginsDirectory):
+        (_WKContextRegisterURLSchemeAsEmptyDocument):
+        (_WKContextSetAlwaysUsesComplexTextCodePath):
+        (_WKContextSetHTTPPipeliningEnabled):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::setShouldUseFontSmoothing):
+        (WebKit::WebContext::httpPipeliningEnabled):
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setShouldUseFontSmoothing):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2011-10-05  Anders Carlsson  <andersca@apple.com>
 
         Flash of white when unminimizing windows

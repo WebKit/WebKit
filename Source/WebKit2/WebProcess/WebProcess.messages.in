@@ -40,6 +40,7 @@ messages -> WebProcess {
     SetDomainRelaxationForbiddenForURLScheme(WTF::String scheme)
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+    SetShouldUseFontSmoothing(bool useFontSmoothing)
     LanguageChanged(WTF::String language)
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)

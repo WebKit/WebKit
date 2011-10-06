@@ -44,11 +44,13 @@ WK_EXPORT void WKContextGetGlobalStatistics(WKContextStatistics* statistics);
 
 WK_EXPORT WKContextRef WKContextGetSharedThreadContext();
 
-WK_EXPORT void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory);
+WK_EXPORT void WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory);
 
-WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
+WK_EXPORT void WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
 
-WK_EXPORT void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath);
+WK_EXPORT void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath);
+
+WK_EXPORT void WKContextSetShouldUseFontSmoothing(WKContextRef context, bool useFontSmoothing);
 
 WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme);
 
@@ -66,8 +68,8 @@ WK_EXPORT void WKContextSetLocalStorageDirectory(WKContextRef context, WKStringR
 WK_EXPORT void WKContextDisableProcessTermination(WKContextRef context);
 WK_EXPORT void WKContextEnableProcessTermination(WKContextRef context);
 
-WK_EXPORT void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
-    
+WK_EXPORT void WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
+
 WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
 
 #ifdef __cplusplus

@@ -293,7 +293,7 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
-    _WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
+    WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
     m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get()));
 
@@ -390,6 +390,8 @@ bool TestController::resetStateToConsistentValues()
     WKDictionaryAddItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
+
+    WKContextSetShouldUseFontSmoothing(TestController::shared().context(), false);
 
     // FIXME: This function should also ensure that there is only one page open.
 

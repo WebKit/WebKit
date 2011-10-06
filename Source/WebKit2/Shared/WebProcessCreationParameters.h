@@ -67,6 +67,7 @@ struct WebProcessCreationParameters {
     bool shouldTrackVisitedLinks;
 
     bool shouldAlwaysUseComplexTextCodePath;
+    bool shouldUseFontSmoothing;
 
     bool iconDatabaseEnabled;
 

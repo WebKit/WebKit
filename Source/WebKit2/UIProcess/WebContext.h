@@ -113,6 +113,7 @@ public:
     String applicationCacheDirectory();
 
     void setAlwaysUsesComplexTextCodePath(bool);
+    void setShouldUseFontSmoothing(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -178,7 +179,7 @@ public:
 
     // Defaults to false.
     void setHTTPPipeliningEnabled(bool);
-    bool httpPipeliningEnabled();
+    bool httpPipeliningEnabled() const;
     
     void getWebCoreStatistics(PassRefPtr<DictionaryCallback>);
     void garbageCollectJavaScriptObjects();
@@ -244,6 +245,7 @@ private:
     HashSet<String> m_schemesToSetDomainRelaxationForbiddenFor;
 
     bool m_alwaysUsesComplexTextCodePath;
+    bool m_shouldUseFontSmoothing;
 
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 

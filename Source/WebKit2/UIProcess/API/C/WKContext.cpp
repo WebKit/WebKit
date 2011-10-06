@@ -36,6 +36,12 @@
 
 using namespace WebKit;
 
+// For binary compatibility with Safari 5.1. Should be removed eventually.
+WK_EXPORT void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory);
+WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
+WK_EXPORT void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath);
+WK_EXPORT void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
+
 WKTypeID WKContextGetTypeID()
 {
     return toAPI(WebContext::APIType);
@@ -117,17 +123,22 @@ WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->cacheModel());
 }
 
-void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
+void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
 {
     toImpl(contextRef)->setAlwaysUsesComplexTextCodePath(alwaysUseComplexTextCodePath);
 }
 
-void _WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
+void WKContextSetShouldUseFontSmoothing(WKContextRef contextRef, bool useFontSmoothing)
+{
+    toImpl(contextRef)->setShouldUseFontSmoothing(useFontSmoothing);
+}
+
+void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
     toImpl(contextRef)->setAdditionalPluginsDirectory(toImpl(pluginsDirectory)->string());
 }
 
-void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
+void WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
 {
     toImpl(contextRef)->registerURLSchemeAsEmptyDocument(toImpl(urlScheme)->string());
 }
@@ -222,7 +233,7 @@ void WKContextEnableProcessTermination(WKContextRef contextRef)
     toImpl(contextRef)->enableProcessTermination();
 }
 
-void _WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
+void WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 {
     toImpl(contextRef)->setHTTPPipeliningEnabled(enabled);
 }
@@ -242,3 +253,23 @@ void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)
     toImpl(contextRef)->garbageCollectJavaScriptObjects();
 }
 
+// Deprecated functions.
+void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
+{
+    WKContextSetAdditionalPluginsDirectory(context, pluginsDirectory);
+}
+
+void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme)
+{
+    WKContextRegisterURLSchemeAsEmptyDocument(context, urlScheme);
+}
+
+void _WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath)
+{
+    WKContextSetAlwaysUsesComplexTextCodePath(context, alwaysUseComplexTextCodePath);
+}
+
+void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled)
+{
+    WKContextSetHTTPPipeliningEnabled(context, enabled);
+}

@@ -141,6 +141,7 @@ private:
     void setDomainRelaxationForbiddenForURLScheme(const String&) const;
     void setDefaultRequestTimeoutInterval(double);
     void setAlwaysUsesComplexTextCodePath(bool);
+    void setShouldUseFontSmoothing(bool);
     void languageChanged(const String&) const;
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);

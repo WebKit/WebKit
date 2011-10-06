@@ -237,6 +237,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     if (parameters.shouldAlwaysUseComplexTextCodePath)
         setAlwaysUsesComplexTextCodePath(true);
 
+    if (parameters.shouldUseFontSmoothing)
+        setShouldUseFontSmoothing(true);
+
 #if USE(CFURLSTORAGESESSIONS)
     WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
@@ -274,6 +277,11 @@ void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     WebCore::Font::setCodePath(alwaysUseComplexText ? WebCore::Font::Complex : WebCore::Font::Auto);
+}
+
+void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
+{
+    WebCore::Font::setShouldUseSmoothing(useFontSmoothing);
 }
 
 void WebProcess::languageChanged(const String& language) const

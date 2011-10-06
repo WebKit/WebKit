@@ -122,6 +122,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
+    , m_shouldUseFontSmoothing(true)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
@@ -254,6 +255,7 @@ void WebContext::ensureWebProcess()
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
+    parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
     
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
@@ -506,6 +508,12 @@ void WebContext::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
     sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
+}
+
+void WebContext::setShouldUseFontSmoothing(bool useFontSmoothing)
+{
+    m_shouldUseFontSmoothing = useFontSmoothing;
+    sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothing(useFontSmoothing));
 }
 
 void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
@@ -803,7 +811,7 @@ void WebContext::setHTTPPipeliningEnabled(bool enabled)
 #endif
 }
 
-bool WebContext::httpPipeliningEnabled()
+bool WebContext::httpPipeliningEnabled() const
 {
 #if PLATFORM(MAC)
     return ResourceRequest::httpPipeliningEnabled();

@@ -1,3 +1,17 @@
+2011-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        In WebKitTestRunner, text has font smoothing in pixel snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=69396
+
+        Reviewed by Darin Adler.
+        
+        Call the new WKContext method that disables font smoothing in
+        WebKitTestRunner, so that pixel snapshots don't have font smoothing
+        enabled. Remove leading underscore from a WKContext function call.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2011-10-05  David Levin  <levin@chromium.org>
 
         Improve the watchlist for threading entries.
