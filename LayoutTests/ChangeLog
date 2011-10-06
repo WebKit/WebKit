@@ -1,3 +1,9 @@
+2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * platform/wincairo/Skipped: Skip css3 folder (for now).
+
 2011-10-05  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Add extensions attribute
