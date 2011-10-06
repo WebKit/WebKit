@@ -1,3 +1,16 @@
+2011-10-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] WebIconDatabase expects a file path not a directory.
+        https://bugs.webkit.org/show_bug.cgi?id=69557
+
+        Reviewed by Andreas Kling.
+
+        WebIconDatabase::setDatabasePath expects a file path not a directory.
+        I used the same name as the Mac port.
+
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         In background window, page flashes white if it enters and then immediately leaves compositing mode

@@ -82,7 +82,7 @@ String WebContext::platformDefaultDatabaseDirectory() const
 
 String WebContext::platformDefaultIconDatabasePath() const
 {
-    return defaultDataLocation();
+    return defaultDataLocation() + QLatin1String("WebpageIcons.db");
 }
 
 String WebContext::platformDefaultLocalStorageDirectory() const
