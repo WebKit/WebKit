@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x452
+  RenderBlock {HTML} at (0,0) size 800x452
+    RenderBody {BODY} at (8,16) size 784x428
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 779x72
+          text run at (0,0) width 775: "In the test case below, the green block's width should not vary and should use the second region to determine its width. It is"
+          text run at (0,18) width 731: "overflowing upwards out of the blue block, and so the portion that overflows should continue to use the blue block's"
+          text run at (0,36) width 779: "containing block width. The blue block does not exist in region one, so using some hypothetical made-up width is incorrect."
+          text run at (0,54) width 386: "The overflow should be spilling out of the top of region two. "
+        RenderInline {FONT} at (0,0) size 389x18 [color=#FF0000]
+          RenderText {#text} at (386,54) size 389x18
+            text run at (386,54) width 389: "RIGHT NOW THIS TEST HAS INCORRECT RESULTS."
+      RenderBlock {DIV} at (0,222) size 784x206
+        RenderRegion {DIV} at (0,100) size 302x102 [border: (1px solid #000000)]
+        RenderText {#text} at (302,188) size 4x18
+          text run at (302,188) width 4: " "
+        RenderRegion {DIV} at (306,0) size 402x202 [border: (1px solid #000000)]
+        RenderText {#text} at (708,188) size 4x18
+          text run at (708,188) width 4: " "
+        RenderRegion {DIV} at (712,200) size 2x2 [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 400x300
+      RenderFlowThread at (0,0) size 400x300
+        RenderBlock {DIV} at (0,0) size 400x165
+          RenderBlock {DIV} at (5,100) size 390x60 [border: (1px solid #0000FF)]
+            RenderBlock {DIV} at (48,-99) size 293x158 [border: (1px solid #008000)]
+              RenderBlock {P} at (1,17) size 291x54
+                RenderText {#text} at (0,0) size 291x54
+                  text run at (0,0) width 291: "These lines should all fit to the width of the"
+                  text run at (0,18) width 291: "block in the second region and spill out of the"
+                  text run at (0,36) width 112: "top of the second "
+                  text run at (112,36) width 44: "region."
+              RenderBlock {P} at (1,87) size 291x54
+                RenderText {#text} at (0,0) size 291x54
+                  text run at (0,0) width 291: "These lines should all fit to the width of the"
+                  text run at (0,18) width 291: "block in the second region and spill out of the"
+                  text run at (0,36) width 112: "top of the second "
+                  text run at (112,36) width 44: "region."
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1 with index 0
+    RenderRegion {DIV} #region2 with index 0
+    RenderRegion {DIV} #region3 with index 0

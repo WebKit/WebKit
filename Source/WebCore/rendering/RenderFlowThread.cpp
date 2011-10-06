@@ -55,6 +55,12 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     setInRenderFlowThread();
 }
 
+RenderFlowThread::~RenderFlowThread()
+{
+    deleteAllValues(m_regionRangeMap);
+    m_regionRangeMap.clear();
+}
+
 PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
 {
     RefPtr<RenderStyle> newStyle(RenderStyle::create());
@@ -309,6 +315,8 @@ void RenderFlowThread::layout()
         m_hasValidRegions = false;
         m_regionsHaveUniformLogicalWidth = true;
         m_regionsHaveUniformLogicalHeight = true;
+        deleteAllValues(m_regionRangeMap);
+        m_regionRangeMap.clear();
         LayoutUnit previousRegionLogicalWidth = 0;
         LayoutUnit previousRegionLogicalHeight = 0;
         if (hasRegions()) {
@@ -524,17 +532,29 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     }
 }
 
-RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool extendLastRegion) const
+RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, const RenderBox* box, bool extendLastRegion) const
 {
     ASSERT(!m_regionsInvalidated);
     
+    // We need to clamp blockOffset to our border box, since we want any lines or blocks that overflow out of the
+    // logical top or logical bottom to size as though the border box in the first and last regions extended infinitely.
+    // Otherwise the lines are going to size according to the regions they overflow into, which makes no sense when, for example,
+    // the ancestor blocks may not exist in the region either.
+    RenderRegion* startRegion;
+    RenderRegion* endRegion;
+    if (box == this) {
+        startRegion = firstRegion();
+        endRegion = lastRegion();
+    } else // Clamp to our containing block's set of regions.
+        getRegionRangeForBox(box->containingBlock(), startRegion, endRegion);
+
     // If no region matches the position and extendLastRegion is true, it will return
     // the last valid region. It is similar to auto extending the size of the last region. 
     RenderRegion* lastValidRegion = 0;
     
     // FIXME: The regions are always in order, optimize this search.
     bool useHorizontalWritingMode = isHorizontalWritingMode();
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (RenderRegionList::const_iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())
             continue;
@@ -544,39 +564,38 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
 
         LayoutRect regionRect = region->regionRect();
 
-        if ((useHorizontalWritingMode && regionRect.y() <= position && position < regionRect.maxY())
-            || (!useHorizontalWritingMode && regionRect.x() <= position && position < regionRect.maxX()))
+        if ((useHorizontalWritingMode && position < regionRect.maxY()) || (!useHorizontalWritingMode && position < regionRect.maxX()))
             return region;
 
         if (extendLastRegion)
             lastValidRegion = region;
+            
+        if (region == endRegion)
+            break;
     }
 
     return lastValidRegion;
 }
 
-LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
+LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position, const RenderBox* box) const
 {
-    const bool extendLastRegion = true;
-    RenderRegion* region = renderRegionForLine(position, extendLastRegion);
+    RenderRegion* region = renderRegionForLine(position, box, true);
     if (!region)
         return contentLogicalWidth();
-
     return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
 }
 
-LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) const
+LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position, const RenderBox* box) const
 {
-    RenderRegion* region = renderRegionForLine(position);
+    RenderRegion* region = renderRegionForLine(position, box);
     if (!region)
         return 0;
-
     return isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
 }
 
-LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule pageBoundaryRule) const
+LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, const RenderBox* box, PageBoundaryRule pageBoundaryRule) const
 {
-    RenderRegion* region = renderRegionForLine(position);
+    RenderRegion* region = renderRegionForLine(position, box);
     if (!region)
         return 0;
 
@@ -603,9 +622,8 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
     // for now we just take the center of the mapped enclosing box and map it to a region.
     // Note: Using the center in order to avoid rounding errors.
 
-    const bool extendLastRegion = true;
     LayoutPoint center = boxRect.center();
-    RenderRegion* renderRegion = renderRegionForLine(isHorizontalWritingMode() ? center.y() : center.x(), extendLastRegion);
+    RenderRegion* renderRegion = renderRegionForLine(isHorizontalWritingMode() ? center.y() : center.x(), this, true);
     if (!renderRegion)
         return 0;
 
@@ -619,27 +637,35 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
 
 void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 {
-    // FIXME: Would be nice if we also cached the box's start and end regions so that we didn't have to
-    // walk every single region.
     if (!hasRegions())
         return;
 
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    RenderRegion* startRegion;
+    RenderRegion* endRegion;
+    getRegionRangeForBox(box, startRegion, endRegion);
+    
+    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())
             continue;
-        delete region->takeRenderBoxRegionInfo(box);
+        region->removeRenderBoxRegionInfo(box);
+        if (region == endRegion)
+            break;
     }
+    
+    m_regionRangeMap.remove(box);
 }
 
 bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
-    // FIXME: Would be nice if we also cached the box's start and end regions so that we didn't have to
-    // walk every single region.
     if (!hasRegions() || block == this) // Not necessary, since if any region changes, we do a full pagination relayout anyway.
         return false;
 
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    RenderRegion* startRegion;
+    RenderRegion* endRegion;
+    getRegionRangeForBox(block, startRegion, endRegion);
+
+    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         
         if (!region->isValid())
@@ -656,6 +682,9 @@ bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, La
             delete oldInfo;
             return true;
         }
+        
+        if (region == endRegion)
+            break;
     }
     
     return false;
@@ -729,4 +758,47 @@ RenderRegion* RenderFlowThread::lastRegion() const
     return 0;
 }
 
+void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit offsetFromLogicalTopOfFirstPage)
+{
+    // FIXME: Not right for differing writing-modes.
+    RenderRegion* startRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage, box, true);
+    RenderRegion* endRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage + box->logicalHeight(), box, true);
+    RenderRegionRange* range = m_regionRangeMap.get(box);
+    if (range) {
+        // If nothing changed, just bail.
+        if (range->startRegion() == startRegion && range->endRegion() == endRegion)
+            return;
+
+        // Delete any info that we find before our new startRegion and after our new endRegion.
+        for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+            RenderRegion* region = *iter;
+            if (region == startRegion) {
+                iter = m_regionList.find(endRegion);
+                continue;
+            }
+            
+            region->removeRenderBoxRegionInfo(box);
+
+            if (region == range->endRegion())
+                break;
+        }
+        
+        range->setRange(startRegion, endRegion);
+        return;
+    }
+    range = new RenderRegionRange(startRegion, endRegion);
+    m_regionRangeMap.set(box, range);
+}
+
+void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
+{
+    startRegion = 0;
+    endRegion = 0;
+    RenderRegionRange* range = m_regionRangeMap.get(box);
+    if (!range)
+        return;
+    startRegion = range->startRegion();
+    endRegion = range->endRegion();
+}
+    
 } // namespace WebCore

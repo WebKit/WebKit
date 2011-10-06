@@ -1,3 +1,46 @@
+2011-10-06  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69544
+        
+        [CSS3 Regions] Compute the starting and ending regions of a block, so that we can clamp
+        descendants to those regions. This is preparation for having true overflow in the boxes
+        in each region, and it's also a performance optimization to reduce the amount of
+        region walking that the RenderFlowThread is doing.
+
+        Add a range map to RenderFlowThread to cache the start/end regions for each box.
+        
+        Amend everyone who calls renderRegionForLine to pass in the box that is making the query.
+        This box is then used to clamp to start and end regions so that any regions outside of that
+        range will never be examined.
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/regions/top-overflow-out-of-second-region.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::hasNextPage):
+        (WebCore::RenderBlock::pageLogicalHeightForOffset):
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::~RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::renderRegionForLine):
+        (WebCore::RenderFlowThread::regionLogicalWidthForLine):
+        (WebCore::RenderFlowThread::regionLogicalHeightForLine):
+        (WebCore::RenderFlowThread::regionRemainingLogicalHeightForLine):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegions):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        * rendering/RenderRegion.h:
+
 2011-10-05  Gavin Barraclough  <barraclough@apple.com>
 
         Add explicit JSGlobalThis type.

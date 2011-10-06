@@ -206,10 +206,12 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
 
 RenderBoxRegionInfo* RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
 {
-    ASSERT(m_isValid && m_flowThread);
-    if (!m_isValid || !m_flowThread)
-        return 0;
     return m_renderBoxRegionInfo.take(box);
+}
+
+void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
+{
+    m_renderBoxRegionInfo.remove(box);
 }
 
 void RenderRegion::deleteAllRenderBoxRegionInfo()

@@ -1220,8 +1220,19 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     RenderView* renderView = view();
     LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
     
-    if (logicalWidthChangedInRegions())
-        relayoutChildren = true;
+    if (inRenderFlowThread()) {
+        // Regions changing widths can force us to relayout our children.
+        if (logicalWidthChangedInRegions())
+            relayoutChildren = true;
+    
+        // Set our start and end regions. No regions above or below us will be considered by our children. They are
+        // effectively clamped to our region range.
+        LayoutUnit oldHeight =  logicalHeight();
+        setLogicalHeight(INT_MAX / 2); // FIXME: With the eventual refactoring of logical height computation to be region-aware, we can avoid this hack.
+        computeLogicalHeight();
+        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
+        setLogicalHeight(oldHeight);
+    }
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -1298,6 +1309,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         relayoutChildren = true;
 
     bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
+
+    if (inRenderFlowThread())
+        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);
@@ -6140,7 +6154,7 @@ bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBou
 
     // See if we're in the last region.
     LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
-    RenderRegion* region = enclosingRenderFlowThread()->renderRegionForLine(pageOffset, false);
+    RenderRegion* region = enclosingRenderFlowThread()->renderRegionForLine(pageOffset, this);
     if (!region)
         return false;
     if (region->isLastRegion())
@@ -6214,7 +6228,7 @@ LayoutUnit RenderBlock::pageLogicalHeightForOffset(LayoutUnit offset) const
     RenderView* renderView = view();
     if (!inRenderFlowThread())
         return renderView->layoutState()->m_pageLogicalHeight;
-    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offset + offsetFromLogicalTopOfFirstPage());
+    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offset + offsetFromLogicalTopOfFirstPage(), this);
 }
 
 LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
@@ -6233,7 +6247,7 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, P
         return remainingHeight;
     }
     
-    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, pageBoundaryRule);
+    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, this, pageBoundaryRule);
 }
 
 LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins)
@@ -6427,15 +6441,7 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
     if (!flowThread || !flowThread->hasValidRegions())
         return 0;
 
-    // FIXME: Technically we need to clamp blockOffset to our border box, since we want any lines or blocks that overflow out of the
-    // logical top or logical bottom to size as though the border box in the first and last regions extended infinitely.
-    // Otherwise the lines are going to size according to the regions they overflow into, which makes no sense when, for example,
-    // the ancestor blocks may not exist in the region either.
-    // The issue with clamping to our border box is we're in the middle of layout, and our actual height hasn't been
-    // determined yet. We'll need to compute our logical height earlier using a passed in intrinsic height of infinity (to detect
-    // max-height clamping), and then cache that result in a global table that can be checked here. If we're not mid-layout, we
-    // can of course just use our border box.
-    return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+    return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, this, true);
 }
 
 bool RenderBlock::logicalWidthChangedInRegions() const

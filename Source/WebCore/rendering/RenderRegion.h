@@ -67,6 +67,8 @@ public:
     RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
     RenderBoxRegionInfo* takeRenderBoxRegionInfo(const RenderBox*);
+    void removeRenderBoxRegionInfo(const RenderBox*);
+    
     void deleteAllRenderBoxRegionInfo();
 
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;

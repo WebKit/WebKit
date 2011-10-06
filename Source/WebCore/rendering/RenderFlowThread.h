@@ -57,6 +57,7 @@ typedef ListHashSet<RenderRegion*> RenderRegionList;
 class RenderFlowThread: public RenderBlock {
 public:
     RenderFlowThread(Node*, const AtomicString& flowThread);
+    ~RenderFlowThread();
 
     virtual bool isRenderFlowThread() const { return true; }
 
@@ -97,10 +98,10 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
-    LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
-    LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
-    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule = IncludePageBoundary) const;
-    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
+    LayoutUnit regionLogicalWidthForLine(LayoutUnit position, const RenderBox*) const;
+    LayoutUnit regionLogicalHeightForLine(LayoutUnit position, const RenderBox*) const;
+    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, const RenderBox*, PageBoundaryRule = IncludePageBoundary) const;
+    RenderRegion* renderRegionForLine(LayoutUnit position, const RenderBox*, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
@@ -116,6 +117,9 @@ public:
     
     RenderRegion* firstRegion() const;
     RenderRegion* lastRegion() const;
+
+    void setRegionRangeForBox(const RenderBox*, LayoutUnit offsetFromLogicalTopOfFirstPage);
+    void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
@@ -133,6 +137,27 @@ private:
     AtomicString m_flowThread;
     RenderRegionList m_regionList;
 
+    class RenderRegionRange {
+    public:
+        RenderRegionRange(RenderRegion* start, RenderRegion* end)
+        {
+            setRange(start, end);
+        }
+        
+        void setRange(RenderRegion* start, RenderRegion* end)
+        {
+            m_startRegion = start;
+            m_endRegion = end;
+        }
+
+        RenderRegion* startRegion() const { return m_startRegion; }
+        RenderRegion* endRegion() const { return m_endRegion; }
+
+    private:
+        RenderRegion* m_startRegion;
+        RenderRegion* m_endRegion;
+    };
+
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy
     // to notify them when a region was removed from this flow.
@@ -142,6 +167,10 @@ private:
     // That's because they contain a RenderRegion that should display this thread. The set makes it
     // easy to sort the order of threads layout.
     RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
+
+    // A maps from RenderBox
+    typedef HashMap<const RenderBox*, RenderRegionRange*> RenderRegionRangeMap;
+    RenderRegionRangeMap m_regionRangeMap;
 
     bool m_hasValidRegions;
     bool m_regionsInvalidated;
