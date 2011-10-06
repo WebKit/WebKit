@@ -1,3 +1,15 @@
+2011-10-06  Anna Cavender  <annacc@chromium.org>
+
+        Adding parens in WebVTTParser.cpp to appease compiler preferences.
+        https://bugs.webkit.org/show_bug.cgi?id=69460
+
+        Reviewed by David Levin.
+
+        No new tests. No new functionality.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::constructTreeFromToken):
+
 2011-10-06  Fady Samuel  <fsamuel@chromium.org>
 
         Code clean-up: Make RenderObject::absoluteBoundingBoxRect and associated methods const and make its parameter useTransforms no longer default to false

@@ -1,3 +1,12 @@
+2011-10-06  Anna Cavender  <annacc@chromium.org>
+
+        Turn ENABLE_VIDEO_TRACK on for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=69460
+
+        Reviewed by David Levin.
+
+        * features.gypi:
+
 2011-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96791.
