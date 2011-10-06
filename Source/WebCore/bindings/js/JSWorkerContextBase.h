@@ -55,7 +55,7 @@ namespace WebCore {
 
     protected:
         JSWorkerContextBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<WorkerContext>);
-        void finishCreation(JSC::JSGlobalData&, JSWorkerContextBase*);
+        void finishCreation(JSC::JSGlobalData&);
 
     private:
         RefPtr<WorkerContext> m_impl;

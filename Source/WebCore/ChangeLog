@@ -1,3 +1,31 @@
+2011-10-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Add explicit JSGlobalThis type.
+        https://bugs.webkit.org/show_bug.cgi?id=69478
+
+        Reviewed by Darin Adler.
+
+        JSC supports a split global object, as used by WebCore for the Window. As a stage
+        of making this visible to JSC, make it so that if the global this value is not the
+        global object itself, it must be a subclass of JSGlobalThis.
+
+        * ForwardingHeaders/runtime/JSGlobalThis.h: Added.
+            - Added forwarding header.
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        * bindings/js/JSDOMGlobalObject.h:
+            - finishCreation takes a JSGlobalThis, or thisValue is implicit.
+        * bindings/js/JSDOMWindowShell.h:
+            - Make the window shell a subclass of JSGlobalThis.
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::finishCreation):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation.
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation,
+              for worker contexts.
+
 2011-10-06  Anna Cavender  <annacc@chromium.org>
 
         Fix CodeGeneratorV8 for EnabledAtRuntime when class has no parent class.

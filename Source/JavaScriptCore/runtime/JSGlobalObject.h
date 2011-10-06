@@ -24,6 +24,7 @@
 
 #include "JSArray.h"
 #include "JSGlobalData.h"
+#include "JSGlobalThis.h"
 #include "JSVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
@@ -143,7 +144,7 @@ namespace JSC {
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
             JSGlobalObject* globalObject = new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
-            globalObject->finishCreation(globalData, globalObject);
+            globalObject->finishCreation(globalData);
             return globalObject;
         }
 
@@ -159,7 +160,14 @@ namespace JSC {
         {
         }
 
-        void finishCreation(JSGlobalData& globalData, JSObject* thisValue)
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
+            structure()->setGlobalObject(globalData, this);
+            init(this);
+        }
+
+        void finishCreation(JSGlobalData& globalData, JSGlobalThis* thisValue)
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);

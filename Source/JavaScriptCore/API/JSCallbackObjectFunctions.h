@@ -79,7 +79,7 @@ void JSCallbackObject<Parent>::finishCreation(JSGlobalData& globalData)
 {
     ASSERT(Parent::inherits(&s_info));
     ASSERT(Parent::isGlobalObject());
-    Base::finishCreation(globalData, this);
+    Base::finishCreation(globalData);
     init(static_cast<JSGlobalObject*>(this)->globalExec());
 }
 

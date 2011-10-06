@@ -30,14 +30,15 @@
 #define JSDOMWindowShell_h
 
 #include "JSDOMWindow.h"
+#include <runtime/JSGlobalThis.h>
 
 namespace WebCore {
 
     class DOMWindow;
     class Frame;
 
-    class JSDOMWindowShell : public JSC::JSNonFinalObject {
-        typedef JSC::JSNonFinalObject Base;
+    class JSDOMWindowShell : public JSC::JSGlobalThis {
+        typedef JSC::JSGlobalThis Base;
     public:
         JSDOMWindowShell(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
         virtual ~JSDOMWindowShell();

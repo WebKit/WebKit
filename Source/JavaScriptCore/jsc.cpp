@@ -161,7 +161,7 @@ public:
 protected:
     void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
     {
-        Base::finishCreation(globalData, this);
+        Base::finishCreation(globalData);
         
         addFunction(globalData, "debug", functionDebug, 1);
         addFunction(globalData, "print", functionPrint, 1);

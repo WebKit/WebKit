@@ -54,9 +54,9 @@ JSWorkerContextBase::JSWorkerContextBase(JSC::JSGlobalData& globalData, JSC::Str
 {
 }
 
-void JSWorkerContextBase::finishCreation(JSGlobalData& globalData, JSWorkerContextBase* thisValue)
+void JSWorkerContextBase::finishCreation(JSGlobalData& globalData)
 {
-    Base::finishCreation(globalData, thisValue);
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 }
 

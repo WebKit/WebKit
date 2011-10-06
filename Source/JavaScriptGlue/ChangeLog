@@ -1,3 +1,18 @@
+2011-10-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Add explicit JSGlobalThis type.
+        https://bugs.webkit.org/show_bug.cgi?id=69478
+
+        Reviewed by Darin Adler.
+
+        JSC supports a split global object, as used by WebCore for the Window. As a stage
+        of making this visible to JSC, make it so that if the global this value is not the
+        global object itself, it must be a subclass of JSGlobalThis.
+
+        * JSRun.h:
+        (JSGlueGlobalObject::create):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation.
+
 2011-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Removed redundant helper functions for allocating Strong handles

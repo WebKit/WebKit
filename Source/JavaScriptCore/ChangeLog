@@ -1,3 +1,35 @@
+2011-10-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Add explicit JSGlobalThis type.
+        https://bugs.webkit.org/show_bug.cgi?id=69478
+
+        Reviewed by Darin Adler.
+
+        JSC supports a split global object, as used by WebCore for the Window. As a stage
+        of making this visible to JSC, make it so that if the global this value is not the
+        global object itself, it must be a subclass of JSGlobalThis.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::finishCreation):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Added JSGlobalThis.h
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        (JSC::JSGlobalObject::finishCreation):
+            - finishCreation takes a JSGlobalThis, or thisValue is implicit.
+        * runtime/JSGlobalThis.h: Added.
+        (JSC::JSGlobalThis::create):
+        (JSC::JSGlobalThis::JSGlobalThis):
+        (JSC::JSGlobalThis::finishCreation):
+            - Thin wrapper on JSNonFinalObject to allow type checking.
+        * testRegExp.cpp:
+        (GlobalObject::finishCreation):
+            - Don't pass the thisValue to JSGlobalObject::finishCreation.
+
 2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC objects need to know their own cell size at runtime.

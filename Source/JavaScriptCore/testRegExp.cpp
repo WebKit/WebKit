@@ -124,7 +124,7 @@ public:
 protected:
     void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
     {
-        Base::finishCreation(globalData, this);
+        Base::finishCreation(globalData);
         UNUSED_PARAM(arguments);
     }
 };
