@@ -8,11 +8,19 @@
             "filename": r"Source/WebKit/chromium/public/.*"
         },
         "ThreadingFiles": {
-            "filename": r"Source/JavaScriptCore/wtf/ThreadSafeRefCounted\.h"
-                        r"|Source/JavaScriptCore/wtf/Threading\.h",
+            "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\..*"
+                        r"|Source/JavaScriptCore/wtf/ThreadSafeRefCounted\..*"
+                        r"|Source/JavaScriptCore/wtf/ThreadingPrimitives\..*"
+                        r"|Source/JavaScriptCore/wtf/Threading\..*"
+                        r"|Source/WebCore/dom/CrossThreadTask\..*"
+                        r"|Source/WebCore/platform/CrossThreadCopier\..*",
         },
         "ThreadingUsage": {
-            "more": r"deprecatedTurnOffVerifier|crossThreadString|threadsafeCopy|ThreadSafeRefCounted|CrossThreadRefCounted",
+            # The intention of this regex is to detect places where people are using common threading mechanisms,
+            # so that one can look them over for common mistakes. This list is long and likely to get longer over time.
+            # Note the negative look-ahead to avoid new mentions of the files (for builds or includes).
+            "more": r"(AllowCrossThreadAccess|AtomicallyInitialize|CrossThreadCopier|CrossThreadRefCounted|Mutex|ReadWriteLock|ThreadCondition|ThreadSafeRefCounted|ThreadSpecific"
+                    r"|createCallbackTask|crossThreadString|deprecatedTurnOffVerifier|threadsafeCopy)(?!\.(h|cpp))",
         },
         "WatchListScript": {
             "filename": r"Tools/Scripts/webkitpy/common/watchlist/.*",
@@ -24,8 +32,8 @@
             "filename": r"Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/.*",
         },
         "SecurityCritical": {
-            "more": r"[Ss]ecurityOrigin(?!\.(h|cpp)",
-            "less": r"[Ss]ecurityOrigin(?!\.(h|cpp)",
+            "more": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
+            "less": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
             "filename": r"XSS|[Ss]ecurity",
         },
         "V8Bindings": {
