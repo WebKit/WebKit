@@ -39,67 +39,6 @@
 
 namespace JSC { namespace DFG {
 
-// This method used to fill a numeric value to a FPR when linking speculative -> non-speculative.
-void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg temporary)
-{
-    Node& node = graph()[nodeIndex];
-
-    if (node.hasConstant()) {
-        ASSERT(isNumberConstant(nodeIndex));
-        move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(nodeIndex)))), temporary);
-        movePtrToDouble(temporary, fpr);
-    } else {
-        loadPtr(addressFor(node.virtualRegister()), temporary);
-        Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, temporary, GPRInfo::tagTypeNumberRegister);
-        unboxDouble(temporary, fpr);
-        Jump hasUnboxedDouble = jump();
-        isInteger.link(this);
-        convertInt32ToDouble(temporary, fpr);
-        hasUnboxedDouble.link(this);
-    }
-}
-
-// This method used to fill an integer value to a GPR when linking speculative -> non-speculative.
-void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
-{
-    Node& node = graph()[nodeIndex];
-
-    if (node.hasConstant()) {
-        ASSERT(isInt32Constant(nodeIndex));
-        move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
-    } else {
-#if ENABLE(DFG_JIT_ASSERT)
-        // Redundant load, just so we can check the tag!
-        loadPtr(addressFor(node.virtualRegister()), gpr);
-        jitAssertIsJSInt32(gpr);
-#endif
-        load32(addressFor(node.virtualRegister()), gpr);
-    }
-}
-
-// This method used to fill a JSValue to a GPR when linking speculative -> non-speculative.
-void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
-{
-    Node& node = graph()[nodeIndex];
-
-    if (node.hasConstant()) {
-        if (isInt32Constant(nodeIndex)) {
-            JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-        } else if (isNumberConstant(nodeIndex)) {
-            JSValue jsValue(JSValue::EncodeAsDouble, valueOfNumberConstant(nodeIndex));
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-        } else {
-            ASSERT(isJSConstant(nodeIndex));
-            JSValue jsValue = valueOfJSConstant(nodeIndex);
-            move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-        }
-        return;
-    }
-
-    loadPtr(addressFor(node.virtualRegister()), gpr);
-}
-
 void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecovery* recovery, Vector<BytecodeAndMachineOffset>& decodedCodeMap)
 {
     // 1) Pro-forma stuff.

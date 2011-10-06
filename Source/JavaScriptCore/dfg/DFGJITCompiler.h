@@ -430,11 +430,6 @@ private:
     void compileBody();
     void link(LinkBuffer&);
 
-    // These methods used in linking the speculative & non-speculative paths together.
-    void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
-    void fillInt32ToInteger(NodeIndex, GPRReg);
-    void fillToJS(NodeIndex, GPRReg);
-    
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*, Vector<BytecodeAndMachineOffset>& decodedCodeMap);
     void linkOSRExits(SpeculativeJIT&);
 
