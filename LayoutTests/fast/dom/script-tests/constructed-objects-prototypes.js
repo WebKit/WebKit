@@ -39,7 +39,8 @@ function constructorPropertiesOnWindow(globalObject)
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
             type == "FileReaderConstructor" ||
-            type == "WebKitBlobBuilderConstructor")
+            type == "WebKitBlobBuilderConstructor" ||
+            type == "AudioContextConstructor")
             continue;
         if (!type.match('Constructor$'))
             continue;
