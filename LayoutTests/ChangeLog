@@ -1,3 +1,12 @@
+2011-10-06  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Rebaseline test missed in r96814.
+
+        Unreviewed.
+
+        * platform/chromium-mac-snowleopard/printing/return-from-printing-mode-expected.png: Added.
+        * platform/chromium-mac/printing/return-from-printing-mode-expected.png: Removed.
+
 2011-10-06  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed: 3rd chunk of new SVG baseline for lion.
