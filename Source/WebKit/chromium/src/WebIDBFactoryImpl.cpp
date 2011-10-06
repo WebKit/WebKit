@@ -44,16 +44,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static WebIDBFactory::BackingStoreType overriddenBackingStoreType = WebIDBFactory::DefaultBackingStore;
-
 WebIDBFactory* WebIDBFactory::create()
 {
     return new WebIDBFactoryImpl();
-}
-
-void WebIDBFactory::setOverrideBackingStoreType(BackingStoreType type)
-{
-    overriddenBackingStoreType = type;
 }
 
 WebIDBFactoryImpl::WebIDBFactoryImpl()
@@ -69,11 +62,6 @@ void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSe
 {
     WebString path = dataDir;
 
-    if (overriddenBackingStoreType != DefaultBackingStore) {
-        // Backing store type overridden by LayoutTestController.
-        backingStoreType = overriddenBackingStoreType;
-    }
-
     if (backingStoreType == DefaultBackingStore)
         backingStoreType = LevelDBBackingStore;
 
@@ -84,11 +72,6 @@ void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSe
 void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType backingStoreType)
 {
     WebString path = dataDir;
-
-    if (overriddenBackingStoreType != DefaultBackingStore) {
-        // Backing store type overridden by LayoutTestController.
-        backingStoreType = overriddenBackingStoreType;
-    }
 
     if (backingStoreType == DefaultBackingStore)
         backingStoreType = LevelDBBackingStore;

@@ -61,7 +61,6 @@ public:
 private:
     IDBFactoryBackendImpl();
     PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir, int64_t maximumSize, BackingStoreType);
-    bool migrateFromSQLiteToLevelDB(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;

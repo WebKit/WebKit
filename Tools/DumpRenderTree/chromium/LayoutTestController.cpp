@@ -170,7 +170,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
-    bindMethod("setOverrideIndexedDBBackingStore", &LayoutTestController::setOverrideIndexedDBBackingStore);
     bindMethod("setPageVisibility", &LayoutTestController::setPageVisibility);
     bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
@@ -1111,22 +1110,6 @@ void LayoutTestController::setIconDatabaseEnabled(const CppArgumentList&, CppVar
 {
     // We don't use the WebKit icon database.
     result->setNull();
-}
-
-void LayoutTestController::setOverrideIndexedDBBackingStore(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-#if ENABLE(INDEXED_DATABASE)
-    if (arguments.size() < 1 || !arguments[0].isString())
-        return;
-    string name = arguments[0].toString();
-    if (name == "default")
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::DefaultBackingStore);
-    else if (name == "sqlite")
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::SQLiteBackingStore);
-    else if (name == "leveldb")
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::LevelDBBackingStore);
-#endif
 }
 
 void LayoutTestController::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)

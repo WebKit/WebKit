@@ -1,3 +1,15 @@
+2011-10-03  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Remove SQLite-LevelDB migration code
+        https://bugs.webkit.org/show_bug.cgi?id=69264
+
+        Reviewed by Tony Chang.
+
+        Remove layout test covering migration.
+
+        * storage/indexeddb/migrate-basics-expected.txt: Removed.
+        * storage/indexeddb/migrate-basics.html: Removed.
+
 2011-10-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r96620.

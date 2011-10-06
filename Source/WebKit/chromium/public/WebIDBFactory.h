@@ -63,9 +63,6 @@ public:
     virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Used for DumpRenderTree tests.
-    WEBKIT_EXPORT static void setOverrideBackingStoreType(BackingStoreType);
 };
 
 } // namespace WebKit

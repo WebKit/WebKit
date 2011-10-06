@@ -1,3 +1,18 @@
+2011-10-03  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Remove SQLite-LevelDB migration code
+        https://bugs.webkit.org/show_bug.cgi?id=69264
+
+        Reviewed by Tony Chang.
+
+        Remove setOverrideBackingStoreType. It was used in the layout test
+        for migration.
+
+        * public/WebIDBFactory.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::getDatabaseNames):
+        (WebKit::WebIDBFactoryImpl::open):
+
 2011-10-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove USE(THREADED_COMPOSITING) from the tree

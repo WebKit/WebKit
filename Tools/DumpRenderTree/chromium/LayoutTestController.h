@@ -315,8 +315,6 @@ public:
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
     // Sets the default quota for all origins
     void setDatabaseQuota(const CppArgumentList&, CppVariant*);
-    // Overrides the backend for IndexedDB
-    void setOverrideIndexedDBBackingStore(const CppArgumentList&, CppVariant*);
 
     // Calls setlocale(LC_ALL, ...) for a specified locale.
     // Resets between tests.
