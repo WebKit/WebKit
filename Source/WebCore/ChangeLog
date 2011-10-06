@@ -1,3 +1,14 @@
+2011-10-06  Anna Cavender  <annacc@chromium.org>
+
+        Fix CodeGeneratorV8 for EnabledAtRuntime when class has no parent class.
+        https://bugs.webkit.org/show_bug.cgi?id=69480
+
+        Reviewed by Adam Barth.
+
+        No new tests. No new functionality, yet.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2011-10-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10232866> Assertion failure beneath blockSelectionGaps() when a selected node is removed

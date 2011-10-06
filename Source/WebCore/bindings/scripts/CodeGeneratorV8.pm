@@ -2186,7 +2186,7 @@ END
         my $enable_function = GetRuntimeEnableFunctionName($dataNode);
         push(@implContent, <<END);
     if (!${enable_function}())
-        defaultSignature = configureTemplate(desc, \"${parentClass}\", $parentClassTemplate, ${parentClass}::internalFieldCount, 0, 0, 0, 0);
+        defaultSignature = configureTemplate(desc, \"\", $parentClassTemplate, V8${interfaceName}::internalFieldCount, 0, 0, 0, 0);
     else
 END
     }
