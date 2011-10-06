@@ -1,3 +1,17 @@
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
+        In background window, page flashes white if it enters and then immediately leaves compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=69566
+        <rdar://problem/9521192>
+
+        Reviewed by Dan Bernstein.
+
+        Don't update the backing store state if we're just about to exit accelerated compositing mode. Otherwise
+        the UI process will try to render an empty layer tree for a short period of time, leading to a white flash.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+
 2011-10-06  Fady Samuel  <fsamuel@chromium.org>
 
         Code clean-up: Make RenderObject::absoluteBoundingBoxRect and associated methods const and make its parameter useTransforms no longer default to false
