@@ -364,58 +364,6 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
-    buildHighlightConfig: function(mode)
-    {
-        mode = mode || "all";
-        var highlightConfig = { showInfo: mode === "all" };
-        if (mode === "all" || mode === "content")
-            highlightConfig.contentColor = WebInspector.Color.PageHighlight.Content.toProtocolRGBA();
-
-        if (mode === "all" || mode === "padding")
-            highlightConfig.paddingColor = WebInspector.Color.PageHighlight.Padding.toProtocolRGBA();
-
-        if (mode === "all" || mode === "border")
-            highlightConfig.borderColor = WebInspector.Color.PageHighlight.Border.toProtocolRGBA();
-
-        if (mode === "all" || mode === "margin")
-            highlightConfig.marginColor = WebInspector.Color.PageHighlight.Margin.toProtocolRGBA();
-
-        return highlightConfig;
-    },
-
-    highlightDOMNode: function(nodeId, mode)
-    {
-        if ("_hideDOMNodeHighlightTimeout" in this) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            delete this._hideDOMNodeHighlightTimeout;
-        }
-
-        this._highlightedDOMNodeId = nodeId;
-        if (nodeId)
-            DOMAgent.highlightNode(nodeId, this.buildHighlightConfig(mode));
-        else
-            DOMAgent.hideHighlight();
-    },
-
-    highlightDOMNodeForTwoSeconds: function(nodeId)
-    {
-        this.highlightDOMNode(nodeId);
-        this._hideDOMNodeHighlightTimeout = setTimeout(this.highlightDOMNode.bind(this, 0), 2000);
-    },
-
-    wireElementWithDOMNode: function(element, nodeId)
-    {
-        element.addEventListener("click", this._updateFocusedNode.bind(this, nodeId), false);
-        element.addEventListener("mouseover", this.highlightDOMNode.bind(this, nodeId, "all"), false);
-        element.addEventListener("mouseout", this.highlightDOMNode.bind(this, 0), false);
-    },
-
-    _updateFocusedNode: function(nodeId)
-    {
-        this.setCurrentPanel(this.panels.elements);
-        this.panels.elements.updateFocusedNode(nodeId);
-    },
-
     networkResourceById: function(id)
     {
         return this.panels.network.resourceById(id);
@@ -930,7 +878,7 @@ WebInspector.reset = function()
             panel.reset();
     }
 
-    this.highlightDOMNode(0);
+    this.domAgent.hideDOMNodeHighlight();
 
     if (!WebInspector.settings.preserveConsoleLog.get())
         this.console.clearMessages();
@@ -1071,8 +1019,7 @@ WebInspector.inspect = function(payload, hints)
 
 WebInspector.updateFocusedNode = function(nodeId)
 {
-    this._updateFocusedNode(nodeId);
-    this.highlightDOMNodeForTwoSeconds(nodeId);
+    this.panels.elements.revealAndSelectNode(nodeId);
 }
 
 WebInspector.displayNameForURL = function(url)

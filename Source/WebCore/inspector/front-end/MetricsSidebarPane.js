@@ -108,10 +108,10 @@ WebInspector.MetricsSidebarPane.prototype = {
             if (this._highlightMode === mode)
                 return;
             this._highlightMode = mode;
-            WebInspector.highlightDOMNode(nodeId, mode);
+            WebInspector.domAgent.highlightDOMNode(nodeId, mode);
         } else {
             delete this._highlightMode;
-            WebInspector.highlightDOMNode(0, "");
+            WebInspector.domAgent.hideDOMNodeHighlight();
         }
 
         for (var i = 0; this._boxElements && i < this._boxElements.length; ++i) {
@@ -419,8 +419,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 self.originalPropertyData = self.previousPropertyDataCandidate;
 
             if (typeof self._highlightMode !== "undefined") {
-                WebInspector.highlightDOMNode(0, "");
-                WebInspector.highlightDOMNode(self.node.id, self._highlightMode);
+                WebInspector.domAgent.highlightDOMNode(self.node.id, self._highlightMode);
             }
 
             if (commitEditor) {

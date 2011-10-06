@@ -1,3 +1,36 @@
+2011-10-05  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make ElementsTreeOutline compile
+        https://bugs.webkit.org/show_bug.cgi?id=69439
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/DOMSyntaxHighlighter.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.get this):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._populateContextMenu):
+        (WebInspector.ElementsPanel.prototype._inspectElementRequested):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired.focusElement):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.ElementsTreeOutline.prototype._updateModifiedNodes):
+        (WebInspector.ElementsTreeOutline.prototype._populateContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAttribute):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTextNode):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.changeTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        ():
+        * inspector/front-end/externs.js:
+        (WebInspector.highlightDOMNode):
+        (WebInspector.resourceURLForRelatedNode):
+
 2011-10-06  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Inspector fails to start if there was at least one watch expression.

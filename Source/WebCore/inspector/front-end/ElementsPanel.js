@@ -41,7 +41,7 @@ WebInspector.ElementsPanel = function()
 
     this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
-    this.treeOutline = new WebInspector.ElementsTreeOutline(true, true);
+    this.treeOutline = new WebInspector.ElementsTreeOutline(true, true, false, this._populateContextMenu.bind(this));
     this.treeOutline.wireToDomAgent();
 
     this.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
@@ -97,6 +97,7 @@ WebInspector.ElementsPanel = function()
 
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.InspectElementRequested, this._inspectElementRequested, this);
 }
 
 WebInspector.ElementsPanel.prototype = {
@@ -136,7 +137,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         WebInspector.Panel.prototype.hide.call(this);
 
-        WebInspector.highlightDOMNode(0);
+        WebInspector.domAgent.hideDOMNodeHighlight();
         this.setSearchingForNode(false);
         this.treeOutline.setVisible(false);
     },
@@ -286,6 +287,16 @@ WebInspector.ElementsPanel.prototype = {
         this.selectDOMNode(node, true);
     },
 
+    _populateContextMenu: function(contextMenu, node)
+    {
+        if (Preferences.nativeInstrumentationEnabled) {
+            // Add debbuging-related actions
+            contextMenu.appendSeparator();
+            var pane = this.sidebarPanes.domBreakpoints;
+            pane.populateNodeContextMenu(node, contextMenu);
+        }
+    },
+
     _updateMatchesCount: function()
     {
         WebInspector.searchController.updateSearchMatchesCount(this._searchResults.length, this);
@@ -414,7 +425,7 @@ WebInspector.ElementsPanel.prototype = {
         var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
         var crumbElement = nodeUnderMouse.enclosingNodeOrSelfWithClass("crumb");
 
-        WebInspector.highlightDOMNode(crumbElement ? crumbElement.representedObject.id : 0);
+        WebInspector.domAgent.highlightDOMNode(crumbElement ? crumbElement.representedObject.id : 0);
 
         if ("_mouseOutOfCrumbsTimeout" in this) {
             clearTimeout(this._mouseOutOfCrumbsTimeout);
@@ -428,7 +439,7 @@ WebInspector.ElementsPanel.prototype = {
         if (nodeUnderMouse && nodeUnderMouse.isDescendant(this.crumbsElement))
             return;
 
-        WebInspector.highlightDOMNode(0);
+        WebInspector.domAgent.hideDOMNodeHighlight();
 
         this._mouseOutOfCrumbsTimeout = setTimeout(this.updateBreadcrumbSizes.bind(this), 1000);
     },
@@ -607,7 +618,11 @@ WebInspector.ElementsPanel.prototype = {
         var link = document.createElement("span");
         link.className = "node-link";
         this.decorateNodeLabel(node, link);
-        WebInspector.wireElementWithDOMNode(link, node.id);
+
+        link.addEventListener("click", this.revealAndSelectNode.bind(this, node.id), false);
+        link.addEventListener("mouseover", WebInspector.domAgent.highlightDOMNode.bind(WebInspector.domAgent, node.id, ""), false);
+        link.addEventListener("mouseout", WebInspector.domAgent.hideDOMNodeHighlight.bind(WebInspector.domAgent), false);
+
         return link;
     },
 
@@ -984,12 +999,21 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.updateSelection();
     },
 
-    updateFocusedNode: function(nodeId)
+    _inspectElementRequested: function(event)
     {
+        var node = event.data;
+        this.revealAndSelectNode(node.id);
+    },
+
+    revealAndSelectNode: function(nodeId)
+    {
+        WebInspector.setCurrentPanel(this);
+
         var node = WebInspector.domAgent.nodeForId(nodeId);
         if (!node)
             return;
 
+        WebInspector.domAgent.highlightDOMNodeForTwoSeconds(nodeId);
         this.selectDOMNode(node, true);
         if (this.nodeSearchButton.toggled) {
             InspectorFrontendHost.bringToFront();
@@ -997,14 +1021,14 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    _setSearchingForNode: function(enabled)
-    {
-        this.nodeSearchButton.toggled = enabled;
-    },
-
     setSearchingForNode: function(enabled)
     {
-        DOMAgent.setInspectModeEnabled(enabled, WebInspector.buildHighlightConfig(), this._setSearchingForNode.bind(this, enabled));
+        function callback(error)
+        {
+            if (!error)
+                this.nodeSearchButton.toggled = enabled;
+        }
+        WebInspector.domAgent.setInspectModeEnabled(enabled, callback.bind(this));
     },
 
     toggleSearchingForNode: function()

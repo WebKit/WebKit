@@ -106,17 +106,6 @@ WebInspector.debuggerPresentationModel = {
 }
 
 /**
- * @constructor
- * @extends {TreeOutline}
- * @param {boolean=} omitRootDOMNode
- * @param {boolean=} selectEnabled
- * @param {boolean=} showInElementsPanelEnabled
- */
-WebInspector.ElementsTreeOutline = function(omitRootDOMNode, selectEnabled, showInElementsPanelEnabled)
-{
-}
-
-/**
  * @param {NetworkAgent.RequestId} requestId
  * @return {?WebInspector.Resource}
  */
@@ -202,3 +191,5 @@ Event.prototype.initWebKitWheelEvent = function(vararg) {}
  * @param {boolean=} showConsole
  */
 WebInspector.log = function(message, messageLevel, showConsole) {}
+
+WebInspector.resourceURLForRelatedNode = function(node, url) {}

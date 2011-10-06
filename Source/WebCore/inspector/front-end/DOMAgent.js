@@ -617,6 +617,9 @@ WebInspector.DOMAgent.prototype = {
         delete this._idToDOMNode[nodeId];
     },
 
+    /**
+     * @param {number} nodeId
+     */
     inspectElement: function(nodeId)
     {
         var node = this._idToDOMNode[nodeId];
@@ -644,6 +647,62 @@ WebInspector.DOMAgent.prototype = {
     querySelectorAll: function(nodeId, selectors, callback)
     {
         DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callback));
+    },
+
+    /**
+     * @param {?number} nodeId
+     * @param {string=} mode
+     */
+    highlightDOMNode: function(nodeId, mode)
+    {
+        if (this._hideDOMNodeHighlightTimeout) {
+            clearTimeout(this._hideDOMNodeHighlightTimeout);
+            delete this._hideDOMNodeHighlightTimeout;
+        }
+
+        this._highlightedDOMNodeId = nodeId;
+        if (nodeId)
+            DOMAgent.highlightNode(nodeId, this._buildHighlightConfig(mode));
+        else
+            DOMAgent.hideHighlight();
+    },
+
+    hideDOMNodeHighlight: function()
+    {
+        this.highlightDOMNode(0);
+    },
+
+    highlightDOMNodeForTwoSeconds: function(nodeId)
+    {
+        this.highlightDOMNode(nodeId);
+        this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this), 2000);
+    },
+
+    setInspectModeEnabled: function(enabled, callback)
+    {
+        DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), callback);
+    },
+
+    /**
+     * @param {string=} mode
+     */
+    _buildHighlightConfig: function(mode)
+    {
+        mode = mode || "all";
+        var highlightConfig = { showInfo: mode === "all" };
+        if (mode === "all" || mode === "content")
+            highlightConfig.contentColor = WebInspector.Color.PageHighlight.Content.toProtocolRGBA();
+
+        if (mode === "all" || mode === "padding")
+            highlightConfig.paddingColor = WebInspector.Color.PageHighlight.Padding.toProtocolRGBA();
+
+        if (mode === "all" || mode === "border")
+            highlightConfig.borderColor = WebInspector.Color.PageHighlight.Border.toProtocolRGBA();
+
+        if (mode === "all" || mode === "margin")
+            highlightConfig.marginColor = WebInspector.Color.PageHighlight.Margin.toProtocolRGBA();
+
+        return highlightConfig;
     }
 }
 
