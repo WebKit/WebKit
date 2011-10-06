@@ -1,3 +1,16 @@
+2011-10-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Create icon database path in LayoutTestController::setIconDatabaseEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=69450
+
+        Reviewed by Ryosuke Niwa.
+
+        This should avoid stderr messages when running
+        webarchive/test-link-rel-icon.html.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setIconDatabaseEnabled):
+
 2011-10-06  Alejandro G. Castro  <alex@igalia.com>
 
         [WK2] [GTK] Add Skipped file for Webkit2 test runner

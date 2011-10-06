@@ -44,6 +44,7 @@
 #include "WorkQueueItem.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
+#include <Ecore_File.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
@@ -399,17 +400,19 @@ void LayoutTestController::setIconDatabaseEnabled(bool enabled)
     }
 
     String databasePath;
+    const char* tempDir = getenv("TMPDIR");
 
-    if (getenv("TMPDIR"))
-        databasePath = String::fromUTF8(getenv("TMPDIR"));
-    else if (getenv("TEMP"))
-        databasePath = String::fromUTF8(getenv("TEMP"));
+    if (tempDir)
+        databasePath = String::fromUTF8(tempDir);
+    else if (tempDir = getenv("TEMP"))
+        databasePath = String::fromUTF8(tempDir);
     else
         databasePath = String::fromUTF8("/tmp");
 
     databasePath.append("/DumpRenderTree/IconDatabase");
 
-    ewk_settings_icon_database_path_set(databasePath.utf8().data());
+    if (ecore_file_mkpath(databasePath.utf8().data()))
+        ewk_settings_icon_database_path_set(databasePath.utf8().data());
 }
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool)
