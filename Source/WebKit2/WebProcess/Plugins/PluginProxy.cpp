@@ -329,6 +329,10 @@ void PluginProxy::setFocus(bool hasFocus)
 
 NPObject* PluginProxy::pluginScriptableNPObject()
 {
+    // Sending the synchronous Messages::PluginControllerProxy::GetPluginScriptableNPObject message can cause us to dispatch an
+    // incoming synchronous message that ends up destroying the PluginProxy object.
+    PluginController::PluginDestructionProtector protector(controller());
+
     uint64_t pluginScriptableNPObjectID = 0;
     
     if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::GetPluginScriptableNPObject(), Messages::PluginControllerProxy::GetPluginScriptableNPObject::Reply(pluginScriptableNPObjectID), m_pluginInstanceID))

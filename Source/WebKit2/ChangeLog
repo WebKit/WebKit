@@ -1,3 +1,20 @@
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Crash when PluginProxy object is destroyed inside PluginProxy::pluginScriptableNPObject
+        https://bugs.webkit.org/show_bug.cgi?id=69559
+        <rdar://problem/9704066>
+
+        Reviewed by Maciej Stachowiak.
+
+        Protect the plug-in itself in the call to pluginScriptableNPObject. In some cases, sending
+        the synchronous message to the plug-in process can end up causing the web process to handle
+        an incoming message that will destroy t he plug-in.
+
+        Unfortunately, this is highly timing-dependent and can't be tested reliably.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::pluginScriptableNPObject):
+
 2011-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add estimated-progress property to WebKitWebLoaderClient
