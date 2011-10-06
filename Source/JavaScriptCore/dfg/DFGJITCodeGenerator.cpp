@@ -247,13 +247,6 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex 
 #endif
 
 #if ENABLE(GGC)
-    JITCompiler::Jump rhsNotCell;
-    bool hadCellCheck = false;
-    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.getPrediction(valueIndex))) {
-        hadCellCheck = true;
-        rhsNotCell = m_jit.branchIfNotCell(valueGPR);
-    }
-
     GPRTemporary temp1;
     GPRTemporary temp2;
     if (scratch1 == InvalidGPRReg) {
@@ -266,8 +259,16 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex 
         temp2.adopt(scratchGPR);
         scratch2 = temp2.gpr();
     }
+    
+    JITCompiler::Jump rhsNotCell;
+    bool hadCellCheck = false;
+    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.getPrediction(valueIndex))) {
+        hadCellCheck = true;
+        rhsNotCell = m_jit.branchIfNotCell(valueGPR);
+    }
 
     markCellCard(m_jit, ownerGPR, scratch1, scratch2);
+
     if (hadCellCheck)
         rhsNotCell.link(&m_jit);
 #endif

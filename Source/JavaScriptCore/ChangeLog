@@ -1,3 +1,15 @@
+2011-10-06  Oliver Hunt  <oliver@apple.com>
+
+        Write barrier shouldn't allocate temporaries inside control flow
+        https://bugs.webkit.org/show_bug.cgi?id=69582
+
+        Reviewed by Gavin Barraclough.
+
+        Reorder the code to avoid spill-related badness.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+
 2011-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::shouldSpeculate methods are too complicated
