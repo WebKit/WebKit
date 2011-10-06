@@ -1,3 +1,29 @@
+2011-10-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not create cairo surfaces with the wrong size for form elements
+        https://bugs.webkit.org/show_bug.cgi?id=69533
+
+        Reviewed by Ryosuke Niwa.
+
+        RenderThemeEfl::cacheThemePartResizeAndReset resizes the Ecore_Evas
+        associated with an entry, but did not reset the `size` attribute of the
+        struct -- in practice, this meant the subsequent call to
+        themePartCacheEntrySurfaceCreate would create a cairo surface with the
+        previous size, thus rendering an element with the wrong size.
+
+        No new tests, this is triggered by running running pixel tests for
+        running, in this order, fast/forms/button-sizes.html,
+        fast/forms/input-appearance-preventDefault.html,
+        fast/forms/input-appearance-spinbutton-disabled-readonly.html,
+        fast/forms/input-appearance-width.html,
+        fast/forms/input-button-sizes.html,
+        fast/forms/input-placeholder-text-indent.html and
+        fast/forms/input-text-click-inside.html (!).
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::cacheThemePartResizeAndReset): Reset the
+        size attribute when resizing the canvas.
+
 2011-10-06  Chris Rogers  <crogers@google.com>
 
         Make sure OfflineAudioContext can not be created with a sample-rate less than 44.1KHz

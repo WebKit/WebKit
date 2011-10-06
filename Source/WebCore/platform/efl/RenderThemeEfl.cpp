@@ -218,6 +218,8 @@ struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartReset(
 struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartResizeAndReset(FormType type, const IntSize& size, struct RenderThemeEfl::ThemePartCacheEntry* entry)
 {
     cairo_surface_finish(entry->surface);
+
+    entry->size = size;
     ecore_evas_resize(entry->ee, size.width(), size.height());
     evas_object_resize(entry->o, size.width(), size.height());
 
