@@ -31,20 +31,6 @@
 WebInspector.WatchExpressionsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Watch Expressions"));
-
-    this.section = new WebInspector.WatchExpressionsSection();
-    this.bodyElement.appendChild(this.section.element);
-
-    var refreshButton = document.createElement("button");
-    refreshButton.className = "pane-title-button refresh";
-    refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
-    this.titleElement.appendChild(refreshButton);
-
-    var addButton = document.createElement("button");
-    addButton.className = "pane-title-button add";
-    addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
-    this.titleElement.appendChild(addButton);
-    this._requiresUpdate = true;
 }
 
 WebInspector.WatchExpressionsSidebarPane.prototype = {
@@ -53,11 +39,29 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
         this._visible = true;
 
         // Expand and update watches first time they are shown.
-        if (!this._wasShown && WebInspector.settings.watchExpressions.get().length > 0)
-            this.expanded = true;
+        if (this._wasShown) {
+            this._refreshExpressionsIfNeeded();
+            return;
+        }
 
-        this._refreshExpressionsIfNeeded();
         this._wasShown = true;
+
+        this.section = new WebInspector.WatchExpressionsSection();
+        this.bodyElement.appendChild(this.section.element);
+    
+        var refreshButton = document.createElement("button");
+        refreshButton.className = "pane-title-button refresh";
+        refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+        this.titleElement.appendChild(refreshButton);
+    
+        var addButton = document.createElement("button");
+        addButton.className = "pane-title-button add";
+        addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
+        this.titleElement.appendChild(addButton);
+        this._requiresUpdate = true;
+
+        if (WebInspector.settings.watchExpressions.get().length > 0)
+            this.expanded = true;
     },
 
     hide: function()

@@ -1,3 +1,14 @@
+2011-10-06  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Inspector fails to start if there was at least one watch expression.
+        https://bugs.webkit.org/show_bug.cgi?id=69516
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSidebarPane):
+
 2011-10-06  Dominic Cooney   <dominicc@chromium.org>
 
         Don't make virtual calls in Node::parentNode.
