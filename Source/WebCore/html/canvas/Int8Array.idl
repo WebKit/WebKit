@@ -27,8 +27,7 @@
 module html {
     interface [
         CanBeConstructed,
-        CustomConstructFunction,
-        V8CustomConstructor,
+        CustomConstructor,
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,

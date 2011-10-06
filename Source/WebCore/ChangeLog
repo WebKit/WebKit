@@ -1,3 +1,65 @@
+2011-10-05  Kentaro Hara  <haraken@chromium.org>
+
+        Refactor IDL attributes about constructor
+        https://bugs.webkit.org/show_bug.cgi?id=69074
+
+        Reviewed by Adam Barth.
+
+        Currently, IDL attributes about constructor are confusing:
+
+        - [CustomConstructFunction] means that there is a custom constructor for JSC.
+        - [V8CustomConstructor] means that there is a custom constructor for V8.
+        - [CustomConstructor] exists in CodeGenerator*.pm but is not used in any IDL files.
+        - For almost all IDL files, [CustomConstructFunction] and [V8CustomConstructor] are used at the same time.
+        - ObjC, CPP and GObject bindings do not support custom constructors.
+
+        This patch makes the following changes:
+
+        - Rename [CustomConstructFunction] to [JSCustomConstructor].
+        - [JSCustomConstructor] means that there is a custom constructor for JSC.
+        - [V8CustomConstructor] means that there is a custom constructor for V8.
+        - [CustomConstructor] means that there is a custom constructor for both JSC and V8.
+
+        No new tests. No change in behavior. Confirm that build succeeds.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed [CustomConstructFunction] and added [JSCustomConstructor]
+        (GenerateHeader):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+        (GenerateConstructorDefinition):
+        * css/WebKitCSSMatrix.idl: Renamed [CustomConstructFunction] to [JSCustomConstructor]. If both [JSCustomConstructor] and [V8CustomConstructor] are specified, then we replaced them with [CustomConstructor].
+        * dom/CustomEvent.idl: Ditto.
+        * dom/ErrorEvent.idl: Ditto.
+        * dom/Event.idl: Ditto.
+        * dom/HashChangeEvent.idl: Ditto.
+        * dom/MessageChannel.idl: Ditto.
+        * dom/MessageEvent.idl: Ditto.
+        * dom/PageTransitionEvent.idl: Ditto.
+        * dom/PopStateEvent.idl: Ditto.
+        * dom/ProgressEvent.idl: Ditto.
+        * dom/WebKitAnimationEvent.idl: Ditto.
+        * html/DOMFormData.idl: Ditto.
+        * html/canvas/ArrayBuffer.idl: Ditto.
+        * html/canvas/DataView.idl: Ditto.
+        * html/canvas/Float32Array.idl: Ditto.
+        * html/canvas/Float64Array.idl: Ditto.
+        * html/canvas/Int16Array.idl: Ditto.
+        * html/canvas/Int32Array.idl: Ditto.
+        * html/canvas/Int8Array.idl: Ditto.
+        * html/canvas/Uint16Array.idl: Ditto.
+        * html/canvas/Uint32Array.idl: Ditto.
+        * html/canvas/Uint8Array.idl: Ditto.
+        * p2p/PeerConnection.idl: Ditto.
+        * page/EventSource.idl: Ditto.
+        * page/WebKitPoint.idl: Ditto.
+        * webaudio/AudioContext.idl: Ditto.
+        * websockets/CloseEvent.idl: Ditto.
+        * websockets/WebSocket.idl: Ditto.
+        * workers/SharedWorker.idl: Ditto.
+        * workers/Worker.idl: Ditto.
+        * xml/XMLHttpRequest.idl: Ditto.
+        * xml/XSLTProcessor.idl: Ditto.
+
 2011-10-03  Andy Estes  <aestes@apple.com>
 
         Add the option to suppress rendering until the document's load event fires.

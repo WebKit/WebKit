@@ -24,8 +24,7 @@ module events {
     interface [
         CustomToJS,
         CanBeConstructed,
-        CustomConstructFunction,
-        V8CustomConstructor,
+        CustomConstructor,
         NoStaticTables,
         Polymorphic
     ] Event {

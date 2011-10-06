@@ -35,7 +35,7 @@ module xml {
     interface [
         Conditional=XSLT,
         CanBeConstructed,
-        CustomConstructFunction,
+        JSCustomConstructor,
         Constructor
     ] XSLTProcessor {
         

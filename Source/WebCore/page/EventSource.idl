@@ -34,7 +34,7 @@ module window {
     interface [
         ActiveDOMObject,
         CanBeConstructed,
-        CustomConstructFunction,
+        JSCustomConstructor,
         ConstructorParameters=1,
         Constructor(in DOMString scriptUrl),
         ConstructorWith=ScriptExecutionContext,

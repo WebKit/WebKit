@@ -28,8 +28,7 @@ module events {
 
     interface [
         CanBeConstructed,
-        CustomConstructFunction,
-        V8CustomConstructor,
+        CustomConstructor,
         CustomMarkFunction,
         NoStaticTables
     ] MessageChannel {

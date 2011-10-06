@@ -28,7 +28,7 @@ module css {
     // Introduced in DOM Level ?:
     interface [
         CanBeConstructed,
-        CustomConstructFunction,
+        JSCustomConstructor,
         ConstructorParameters=1,
         Constructor(in [Optional=CallWithNullValue] DOMString cssValue),
         ConstructorRaisesException,

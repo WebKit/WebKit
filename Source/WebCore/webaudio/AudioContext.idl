@@ -28,8 +28,7 @@ module webaudio {
         Conditional=WEB_AUDIO,
         ActiveDOMObject,
         CanBeConstructed,
-        CustomConstructFunction,
-        V8CustomConstructor,
+        CustomConstructor,
         CustomMarkFunction,
 #if defined(V8_BINDING) && V8_BINDING
         EventTarget

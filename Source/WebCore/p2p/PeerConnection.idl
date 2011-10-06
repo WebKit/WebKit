@@ -27,9 +27,8 @@ module p2p {
     interface [
         Conditional=MEDIA_STREAM,
         CanBeConstructed,
-        CustomConstructFunction,
+        CustomConstructor,
         ConstructorParameters=2,
-        V8CustomConstructor,
         EventTarget
     ] PeerConnection {
         void processSignalingMessage(in DOMString message)
