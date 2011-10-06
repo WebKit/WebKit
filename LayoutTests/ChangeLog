@@ -1,3 +1,21 @@
+2011-10-05  Ojan Vafai  <ojan@chromium.org>
+
+        extend flexbox testing to test children and parents of the flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=69495
+
+        Reviewed by Tony Chang.
+
+        Checking children of flex items allows for making sure that padding/border
+        get properly taken into account. Checking the parent of the flexbox allows
+        for checking that margins on the flexbox itself are applied correctly.
+
+        Also, make it so that failures print the outerHTML of the failing case to
+        make it easier to diagnose.
+
+        * css3/flexbox/001.html:
+        * css3/flexbox/resources/flexbox.js:
+        * css3/flexbox/writing-modes.html:
+
 2011-10-06  Cary Clark  <caryclark@google.com>
 
         New chromium-mac image baselines for focus-ring fix in

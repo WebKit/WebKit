@@ -6,6 +6,14 @@ function insertAfter(nodeToAdd, referenceNode)
         referenceNode.parentNode.appendChild(nodeToAdd);
 }
 
+function checkSubtreeExpectedValues(parent, failures)
+{
+    checkExpectedValues(parent, failures);
+    Array.prototype.forEach.call(parent.childNodes, function(node) {
+        checkSubtreeExpectedValues(node, failures);
+    });
+}
+
 function checkExpectedValues(node, failures)
 {
     var expectedWidth = node.getAttribute && node.getAttribute("data-expected-width");
@@ -37,16 +45,12 @@ function checkFlexBoxen()
 {
     var flexboxen = document.getElementsByClassName("flexbox");
     Array.prototype.forEach.call(flexboxen, function(flexbox) {
-      var failures = [];
-      checkExpectedValues(flexbox, failures);
+        var failures = [];
+        checkExpectedValues(flexbox.parentNode, failures);
+        checkSubtreeExpectedValues(flexbox, failures);
 
-      var child = flexbox.firstChild;
-      while (child) {
-          checkExpectedValues(child, failures);
-          child = child.nextSibling;
-      }
-
-      insertAfter(document.createElement("p"), flexbox);
-      insertAfter(document.createTextNode(failures.length ? failures.join('') : "PASS"), flexbox);
+        var pre = document.createElement('pre');
+        pre.appendChild(document.createTextNode(failures.length ? "FAIL:\n" + failures.join('\n') + '\n\n' + flexbox.outerHTML : "PASS"));
+        insertAfter(pre, flexbox);
     });
 }

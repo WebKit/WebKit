@@ -142,7 +142,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- Test border/padding/margin on the flexbox itself. -->
-<div style="border: 10px solid; display: inline-block;">
+<div data-expected-width="830" style="border: 10px solid; display: inline-block;">
     <div data-expected-width="700" style="display: -webkit-flexbox; padding-left: 10px; padding-right: 20px; border-left: 30px solid; border-right: 40px solid; margin-left: 50px; margin-right:60px;" class="flexbox ">
       <div data-offset-x="100" data-expected-width="200" style="width: -webkit-flex(1)"></div>
       <div data-offset-x="300" data-expected-width="200" style="width: -webkit-flex(1)"></div>
