@@ -67,7 +67,7 @@ public:
     AudioParam* parameter3() { return m_parameter3.get(); }
 
     FilterType type() const { return m_type; }
-    void setType(FilterType type) { m_type = type; reset(); }
+    void setType(FilterType);
 
 private:
     FilterType m_type;

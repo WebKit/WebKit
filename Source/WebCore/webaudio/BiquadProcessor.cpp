@@ -122,6 +122,14 @@ void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t fr
         m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->data(), framesToProcess);
 }
 
+void BiquadProcessor::setType(FilterType type)
+{
+    if (type != m_type) {
+        m_type = type;
+        reset(); // The filter state must be reset only if the type has changed.
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

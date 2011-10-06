@@ -1,3 +1,16 @@
+2011-10-06  Chris Rogers  <crogers@google.com>
+
+        BiquadFilterNode must not reset filter state if type attribute is set to the same type
+        https://bugs.webkit.org/show_bug.cgi?id=69485
+
+        Reviewed by Kenneth Russell.
+
+        No new tests.  This particular case is difficult to test with a layout test using OfflineAudioContext.
+
+        * webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::setType):
+        * webaudio/BiquadProcessor.h:
+
 2011-10-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not create cairo surfaces with the wrong size for form elements
