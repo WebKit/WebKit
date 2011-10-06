@@ -1,3 +1,13 @@
+2011-10-06  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in VisiblePosition::canonicalPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=69568
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/selection-plugin-clear-crash-expected.txt: Added.
+        * editing/selection/selection-plugin-clear-crash.html: Added.
+
 2011-10-06  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Remove passing tests from test_expectations.txt.

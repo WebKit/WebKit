@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
+function runTest()
+{
+    var obj = document.getElementById("test");
+    var s = window.getSelection();
+    s.setPosition(obj, 0);
+	document.body.innerHTML = "PASS";
+}
+</script>
+<body onload="runTest()">
+<div>
+<object id="test"></object>
+<embed type="application/x-webkit-test-netscape" cleardocumentduringnew></embed>
+</div>
+</body>
+</html>
