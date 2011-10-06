@@ -1,3 +1,12 @@
+2011-10-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Skipping a test that requires
+        continuousMouseScrollBy() which is not yet supported by GTK
+        EventSender API.
+
+        * platform/gtk/Skipped: skipped
+        fast/events/wheelevent-direction-inverted-from-device.html
+
 2011-10-06  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Unreviewed, Qt rebaseline after r96789.
