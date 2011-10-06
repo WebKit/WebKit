@@ -1,3 +1,23 @@
+2011-10-06  Gavin Peters  <gavinp@chromium.org>
+
+        conditionalize m_cachedScript stacks to just Chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=69537
+
+        New stack saving telemetry code in ScriptElement shouldn't have
+        been put in all ports; just narrowing it to the chromium port will
+        save other ports the memory hit of this diagnostic code.
+
+        Reviewed by Nate Chapin.
+
+        No new tests.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::stopLoadRequest):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptElement.h:
+
 2011-10-06  Arthur Hsu  <arthurhsu@chromium.org>
 
         Ensure font loaded before calling Skia to drawPosText in Chrome sandbox
