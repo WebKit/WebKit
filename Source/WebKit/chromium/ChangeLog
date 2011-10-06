@@ -1,3 +1,13 @@
+2011-10-05  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Make destructor of WebURLLoaderClient virtual.
+        https://bugs.webkit.org/show_bug.cgi?id=69457
+
+        Reviewed by Darin Fisher.
+
+        * public/WebURLLoaderClient.h:
+        (WebKit::WebURLLoaderClient::~WebURLLoaderClient):
+
 2011-10-05  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Switching threaded compositor from a compile time option to a

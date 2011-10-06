@@ -70,7 +70,7 @@ public:
     virtual void didFail(WebURLLoader*, const WebURLError&) { }
 
 protected:
-    ~WebURLLoaderClient() { }
+    virtual ~WebURLLoaderClient() { }
 };
 
 } // namespace WebKit
