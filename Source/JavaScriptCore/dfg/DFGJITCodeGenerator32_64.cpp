@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 
 GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -97,7 +97,7 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
 
 FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 {
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -212,7 +212,7 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
     // FIXME: For double we could fill with a FPR.
     UNUSED_PARAM(fpr);
 
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -350,7 +350,7 @@ void JITCodeGenerator::nonSpeculativeValueToNumber(Node& node)
     m_jit.push(payloadGPR);
     m_jit.push(GPRInfo::callFrameRegister);
     appendCallWithExceptionCheck(dfgConvertJSValueToNumber);
-    boxDouble(FPRInfo::returnValueFPR, resultTagGPR, resultPayloadGPR, m_jit.graph()[m_compileIndex].virtualRegister());
+    boxDouble(FPRInfo::returnValueFPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
     silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
     JITCompiler::Jump hasCalledToNumber = m_jit.jump();
     
@@ -375,7 +375,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
         return;
     }
 
-    GenerationInfo& childInfo = m_generationInfo[m_jit.graph()[node.child1()].virtualRegister()];
+    GenerationInfo& childInfo = m_generationInfo[at(node.child1())].virtualRegister()];
     if (isJSDouble(childInfo.registerFormat())) {
         DoubleOperand op1(this, node.child1());
         GPRTemporary result(this);
@@ -438,7 +438,7 @@ void JITCodeGenerator::nonSpeculativeUInt32ToNumber(Node& node)
     m_jit.move(JITCompiler::TrustedImmPtr(&twoToThe32), resultPayload.gpr()); // reuse resultPayload register here.
     m_jit.addDouble(JITCompiler::Address(resultPayload.gpr(), 0), boxer.fpr());
         
-    boxDouble(boxer.fpr(), resultTag.gpr(), resultPayload.gpr(), m_jit.graph()[m_compileIndex].virtualRegister());
+    boxDouble(boxer.fpr(), resultTag.gpr(), resultPayload.gpr(), at(m_compileIndex).virtualRegister());
         
     JITCompiler::Jump done = m_jit.jump();
         
@@ -558,7 +558,7 @@ void JITCodeGenerator::nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex
         failureCases.link(&m_jit);
     }
     
-    boxDouble(tmp2FPR, resultTagGPR, resultPayloadGPR, m_jit.graph()[m_compileIndex].virtualRegister());
+    boxDouble(tmp2FPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
         
     if (!isKnownNumeric(regChild)) {
         ASSERT(notInt.isSet());
@@ -648,7 +648,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
     if (arg1.isDouble()) {
         arg1TagGPR = tmpTag.gpr();
         arg1PayloadGPR = tmpPayload.gpr();
-        boxDouble(arg1.fpr(), arg1TagGPR, arg1PayloadGPR, m_jit.graph()[arg1.index()].virtualRegister());
+        boxDouble(arg1.fpr(), arg1TagGPR, arg1PayloadGPR, at(arg1.index()).virtualRegister());
         arg2TagGPR = arg2.tagGPR();
         arg2PayloadGPR = arg2.payloadGPR();
     } else if (arg2.isDouble()) {
@@ -656,7 +656,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         arg1PayloadGPR = arg1.payloadGPR();
         arg2TagGPR = tmpTag.gpr();
         arg2PayloadGPR = tmpPayload.gpr();
-        boxDouble(arg2.fpr(), arg2TagGPR, arg2PayloadGPR, m_jit.graph()[arg2.index()].virtualRegister());
+        boxDouble(arg2.fpr(), arg2TagGPR, arg2PayloadGPR, at(arg2.index()).virtualRegister());
     } else {
         arg1TagGPR = arg1.tagGPR();
         arg1PayloadGPR = arg1.payloadGPR();
@@ -728,7 +728,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         if (arg1.isDouble())
             m_jit.moveDouble(arg1.fpr(), tmp1FPR);
         else
-            unboxDouble(arg1TagGPR, arg1PayloadGPR, tmp1FPR, m_jit.graph()[arg1.index()].virtualRegister());
+            unboxDouble(arg1TagGPR, arg1PayloadGPR, tmp1FPR, at(arg1.index()).virtualRegister());
             
         // child1 is converted to a double; child2 may either be an int or
         // a boxed double
@@ -768,7 +768,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         if (arg2.isDouble())
             m_jit.moveDouble(arg2.fpr(), tmp2FPR);
         else
-            unboxDouble(arg2TagGPR, arg2PayloadGPR, tmp2FPR, m_jit.graph()[arg2.index()].virtualRegister());
+            unboxDouble(arg2TagGPR, arg2PayloadGPR, tmp2FPR, at(arg2.index()).virtualRegister());
     }
         
     haveFPRArguments.link(&m_jit);
@@ -803,7 +803,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         failureCases.link(&m_jit);
     }
         
-    boxDouble(tmp1FPR, resultTagGPR, resultPayloadGPR, m_jit.graph()[m_compileIndex].virtualRegister());
+    boxDouble(tmp1FPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
         
     if (!notNumbers.empty()) {
         ASSERT(op == ValueAdd);
@@ -1192,7 +1192,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
 
 void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
     
@@ -1253,7 +1253,7 @@ bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, 
 
 void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -1395,7 +1395,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
 
 void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex branchNodeIndex, bool invert)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -1592,7 +1592,7 @@ void JITCodeGenerator::emitCall(Node& node)
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
 
     JITCompiler::Call fastCall = m_jit.nearCall();
-    m_jit.notifyCall(fastCall, m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.notifyCall(fastCall, at(m_compileIndex).codeOrigin);
 
     JITCompiler::Jump done = m_jit.jump();
 
@@ -1600,10 +1600,10 @@ void JITCodeGenerator::emitCall(Node& node)
 
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     m_jit.push(GPRInfo::argumentGPR0);
-    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, m_jit.graph()[m_compileIndex].codeOrigin);
+    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, at(m_compileIndex).codeOrigin);
     m_jit.move(Imm32(numPassedArgs), GPRInfo::regT1);
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
-    m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), at(m_compileIndex).codeOrigin);
 
     done.link(&m_jit);
 
@@ -1611,7 +1611,7 @@ void JITCodeGenerator::emitCall(Node& node)
 
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
 
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, at(m_compileIndex).codeOrigin);
 }
 
 #endif

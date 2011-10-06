@@ -38,7 +38,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 #if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "SpecInt@%d   ", nodeIndex);
 #endif
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -170,7 +170,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 #if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "SpecDouble@%d   ", nodeIndex);
 #endif
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -294,7 +294,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 #if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "SpecCell@%d   ", nodeIndex);
 #endif
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -362,7 +362,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 #if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "SpecBool@%d   ", nodeIndex);
 #endif
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -479,7 +479,7 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
     if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
         return true;
 
-    if (shouldSpeculateInteger(node.child1(), node.child2())) {
+    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))) {
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
         GPRTemporary result(this, op1, op2);
@@ -489,7 +489,7 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
+    } else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         GPRTemporary result(this);
@@ -500,9 +500,9 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         trueCase.link(&m_jit);
 
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2()))
+    } else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
         compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr);
-    else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2()))
+    else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
         compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr);
     else
         nonSpeculativeNonPeepholeCompare(node, condition, operation);
@@ -565,15 +565,15 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
         return;
     }
-    if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+    if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
         compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsFinalObjectVPtr);
         return;
     }
-    if (shouldSpeculateArrayOrOther(node.child1())) {
+    if (at(node.child1()).shouldSpeculateArrayOrOther()) {
         compileObjectOrOtherLogicalNot(node.child1(), m_jit.globalData()->jsArrayVPtr);
         return;
     }
-    if (shouldSpeculateInteger(node.child1())) {
+    if (at(node.child1()).shouldSpeculateInteger()) {
         SpeculateIntegerOperand value(this, node.child1());
         GPRTemporary result(this, value);
         m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
@@ -581,7 +581,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
         return;
     }
-    if (shouldSpeculateNumber(node.child1())) {
+    if (at(node.child1()).shouldSpeculateNumber()) {
         SpeculateDoubleOperand value(this, node.child1());
         FPRTemporary scratch(this);
         GPRTemporary result(this);
@@ -675,12 +675,12 @@ void SpeculativeJIT::emitBranch(Node& node)
             addBranch(m_jit.jump(), notTaken);
         
         noResult(m_compileIndex);
-    } else if (shouldSpeculateFinalObjectOrOther(node.child1())) {
+    } else if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
         emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsFinalObjectVPtr);
-    } else if (shouldSpeculateArrayOrOther(node.child1())) {
+    } else if (at(node.child1()).shouldSpeculateArrayOrOther()) {
         emitObjectOrOtherBranch(node.child1(), taken, notTaken, m_jit.globalData()->jsArrayVPtr);
-    } else if (shouldSpeculateNumber(node.child1())) {
-        if (shouldSpeculateInteger(node.child1())) {
+    } else if (at(node.child1()).shouldSpeculateNumber()) {
+        if (at(node.child1()).shouldSpeculateInteger()) {
             bool invert = false;
             
             if (taken == (m_block + 1)) {
@@ -804,7 +804,7 @@ void SpeculativeJIT::compile(Node& node)
         // SetLocal and whatever other DFG Nodes are associated with the same
         // bytecode index as the SetLocal.
         ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex());
-        Node& nextNode = m_jit.graph()[m_compileIndex+1];
+        Node& nextNode = at(m_compileIndex + 1);
         
         // Oddly, it's possible for the bytecode index for the next node to be
         // equal to ours. This will happen for op_post_inc. And, even more oddly,
@@ -939,13 +939,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToInt32: {
-        if (shouldNotSpeculateInteger(node.child1())) {
-            // Do it the safe way.
-            nonSpeculativeValueToInt32(node);
-            break;
-        }
-        
-        if (shouldNotSpeculateInteger(node.child1())) {
+        if (at(node.child1()).shouldNotSpeculateInteger()) {
             // Do it the safe way.
             nonSpeculativeValueToInt32(node);
             break;
@@ -959,7 +953,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToNumber: {
-        if (shouldNotSpeculateInteger(node.child1())) {
+        if (at(node.child1()).shouldNotSpeculateInteger()) {
             SpeculateDoubleOperand op1(this, node.child1());
             FPRTemporary result(this, op1);
             m_jit.moveDouble(op1.fpr(), result.fpr());
@@ -984,7 +978,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case ValueAdd:
     case ArithAdd: {
-        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             if (isInt32Constant(node.child1())) {
                 int32_t imm1 = valueOfInt32Constant(node.child1());
                 SpeculateIntegerOperand op2(this, node.child2());
@@ -1045,7 +1039,7 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        if (shouldSpeculateNumber(node.child1(), node.child2())) {
+        if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
             SpeculateDoubleOperand op1(this, node.child1());
             SpeculateDoubleOperand op2(this, node.child2());
             FPRTemporary result(this, op1, op2);
@@ -1064,7 +1058,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithSub: {
-        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             if (isInt32Constant(node.child2())) {
                 SpeculateIntegerOperand op1(this, node.child1());
                 int32_t imm2 = valueOfInt32Constant(node.child2());
@@ -1107,7 +1101,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMul: {
-        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
             SpeculateIntegerOperand op2(this, node.child2());
             GPRTemporary result(this);
@@ -1151,7 +1145,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithDiv: {
-        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
             SpeculateIntegerOperand op2(this, node.child2());
             GPRTemporary eax(this, X86Registers::eax);
@@ -1204,8 +1198,8 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMod: {
-        if (shouldNotSpeculateInteger(node.child1()) || shouldNotSpeculateInteger(node.child2())
-            || !nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (at(node.child1()).shouldNotSpeculateInteger() || at(node.child2()).shouldNotSpeculateInteger()
+            || !node.canSpeculateInteger()) {
             SpeculateDoubleOperand op1(this, node.child1());
             SpeculateDoubleOperand op2(this, node.child2());
             
@@ -1250,7 +1244,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithAbs: {
-        if (shouldSpeculateInteger(node.child1()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (at(node.child1()).shouldSpeculateInteger() && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
             GPRTemporary result(this, op1);
             GPRTemporary scratch(this);
@@ -1277,7 +1271,7 @@ void SpeculativeJIT::compile(Node& node)
         
     case ArithMin:
     case ArithMax: {
-        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             SpeculateStrictInt32Operand op1(this, node.child1());
             SpeculateStrictInt32Operand op2(this, node.child2());
             GPRTemporary result(this, op1);
@@ -1618,7 +1612,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case Branch:
-        if (isStrictInt32(node.child1()) || shouldSpeculateInteger(node.child1())) {
+        if (isStrictInt32(node.child1()) || at(node.child1()).shouldSpeculateInteger()) {
             SpeculateIntegerOperand op(this, node.child1());
             
             BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
@@ -1678,7 +1672,7 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ToPrimitive: {
-        if (shouldSpeculateInteger(node.child1())) {
+        if (at(node.child1()).shouldSpeculateInteger()) {
             // It's really profitable to speculate integer, since it's really cheap,
             // it means we don't have to do any real work, and we emit a lot less code.
             
@@ -1822,7 +1816,7 @@ void SpeculativeJIT::compile(Node& node)
         // Need to verify that the prototype is an object. If we have reason to believe
         // that it's a FinalObject then we speculate on that directly. Otherwise we
         // do the slow (structure-based) check.
-        if (shouldSpeculateFinalObject(node.child1()))
+        if (at(node.child1()).shouldSpeculateFinalObject())
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(protoGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr)));
         else {
             m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSCell::structureOffset()), scratchGPR);

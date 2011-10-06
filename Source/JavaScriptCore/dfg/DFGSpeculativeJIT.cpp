@@ -124,7 +124,7 @@ void OSRExit::dump(FILE* out) const
 
 void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
     
@@ -139,7 +139,7 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNod
 
 void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, void* vptr)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -168,7 +168,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
 
 void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition condition)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -210,19 +210,19 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::Relationa
         // so can be no intervening nodes to also reference the compare. 
         ASSERT(node.adjustedRefCount() == 1);
 
-        if (shouldSpeculateInteger(node.child1(), node.child2())) {
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))) {
             compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
             use(node.child1());
             use(node.child2());
-        } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
+        } else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
             compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
             use(node.child1());
             use(node.child2());
-        } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2())) {
+        } else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
             compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr);
             use(node.child1());
             use(node.child2());
-        } else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2())) {
+        } else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
             compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr);
             use(node.child1());
             use(node.child2());
@@ -262,7 +262,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         if (nodeIndex == NoNode)
             m_arguments[i] = ValueSource(ValueInRegisterFile);
         else
-            m_arguments[i] = ValueSource::forPrediction(m_jit.graph()[nodeIndex].variableAccessData()->prediction());
+            m_arguments[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }
     
     ASSERT(m_variables.size() == block.m_localsAtHead.size());
@@ -271,14 +271,14 @@ void SpeculativeJIT::compile(BasicBlock& block)
         if (nodeIndex == NoNode)
             m_variables[i] = ValueSource(ValueInRegisterFile);
         else
-            m_variables[i] = ValueSource::forPrediction(m_jit.graph()[nodeIndex].variableAccessData()->prediction());
+            m_variables[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }
     
     m_lastSetOperand = std::numeric_limits<int>::max();
     m_bytecodeIndexForOSR = std::numeric_limits<uint32_t>::max();
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
-        Node& node = m_jit.graph()[m_compileIndex];
+        Node& node = at(m_compileIndex);
         m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex();
         if (!node.shouldGenerate()) {
 #if ENABLE(DFG_DEBUG_VERBOSE)
@@ -356,7 +356,7 @@ void SpeculativeJIT::checkArgumentTypes()
     
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
-        PredictedType predictedType = m_jit.graph()[m_jit.graph().m_arguments[i]].variableAccessData()->prediction();
+        PredictedType predictedType = at(m_jit.graph().m_arguments[i]).variableAccessData()->prediction();
 #if USE(JSVALUE64)
         if (isInt32Prediction(predictedType))
             speculationCheck(m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
@@ -412,7 +412,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         if (m_jit.isConstant(valueSource.nodeIndex()))
             return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));
     
-        Node* nodePtr = &m_jit.graph()[valueSource.nodeIndex()];
+        Node* nodePtr = &at(valueSource.nodeIndex());
         if (!nodePtr->shouldGenerate()) {
             // It's legitimately dead. As in, nobody will ever use this node, or operand,
             // ever. Set it to Undefined to make the GC happy after the OSR.
@@ -446,7 +446,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         
             if (nodePtr->op == UInt32ToNumber) {
                 NodeIndex nodeIndex = nodePtr->child1();
-                nodePtr = &m_jit.graph()[nodeIndex];
+                nodePtr = &at(nodeIndex);
                 infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
                 if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
                     found = true;
@@ -463,7 +463,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                         continue;
                     if (info.nodeIndex() == NoNode)
                         continue;
-                    Node& node = m_jit.graph()[info.nodeIndex()];
+                    Node& node = at(info.nodeIndex());
                     if (node.child1Unchecked() != valueSource.nodeIndex())
                         continue;
                     switch (node.op) {
@@ -493,7 +493,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     nodeIndexToUse = NoNode;
             
                 if (nodeIndexToUse != NoNode) {
-                    nodePtr = &m_jit.graph()[nodeIndexToUse];
+                    nodePtr = &at(nodeIndexToUse);
                     infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
                     ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
                     found = true;

@@ -933,6 +933,83 @@ struct Node {
         return mergePrediction(m_prediction, prediction);
     }
     
+    bool shouldSpeculateInteger()
+    {
+        return isInt32Prediction(prediction());
+    }
+    
+    bool shouldSpeculateDouble()
+    {
+        return isDoublePrediction(prediction());
+    }
+    
+    bool shouldSpeculateNumber()
+    {
+        return isNumberPrediction(prediction()) || prediction() == PredictNone;
+    }
+    
+    bool shouldNotSpeculateInteger()
+    {
+        return !!(prediction() & PredictDouble);
+    }
+    
+    bool shouldSpeculateFinalObject()
+    {
+        return isFinalObjectPrediction(prediction());
+    }
+    
+    bool shouldSpeculateFinalObjectOrOther()
+    {
+        return isFinalObjectOrOtherPrediction(prediction());
+    }
+    
+    bool shouldSpeculateArray()
+    {
+        return isArrayPrediction(prediction());
+    }
+    
+    bool shouldSpeculateArrayOrOther()
+    {
+        return isArrayOrOtherPrediction(prediction());
+    }
+    
+    bool shouldSpeculateObject()
+    {
+        return isObjectPrediction(prediction());
+    }
+    
+    bool shouldSpeculateCell()
+    {
+        return isCellPrediction(prediction());
+    }
+    
+    static bool shouldSpeculateInteger(Node& op1, Node& op2)
+    {
+        return !(op1.shouldNotSpeculateInteger() || op2.shouldNotSpeculateInteger()) && (op1.shouldSpeculateInteger() || op2.shouldSpeculateInteger());
+    }
+    
+    static bool shouldSpeculateNumber(Node& op1, Node& op2)
+    {
+        return op1.shouldSpeculateNumber() && op2.shouldSpeculateNumber();
+    }
+    
+    static bool shouldSpeculateFinalObject(Node& op1, Node& op2)
+    {
+        return (op1.shouldSpeculateFinalObject() && op2.shouldSpeculateObject())
+            || (op1.shouldSpeculateObject() && op2.shouldSpeculateFinalObject());
+    }
+
+    static bool shouldSpeculateArray(Node& op1, Node& op2)
+    {
+        return (op1.shouldSpeculateArray() && op2.shouldSpeculateObject())
+            || (op1.shouldSpeculateObject() && op2.shouldSpeculateArray());
+    }
+    
+    bool canSpeculateInteger()
+    {
+        return nodeCanSpeculateInteger(arithNodeFlags());
+    }
+    
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).

@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 
 GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -111,7 +111,7 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
 
 FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 {
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -236,7 +236,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 
 GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
 {
-    Node& node = m_jit.graph()[nodeIndex];
+    Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -378,7 +378,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
         return;
     }
     
-    GenerationInfo& childInfo = m_generationInfo[m_jit.graph()[node.child1()].virtualRegister()];
+    GenerationInfo& childInfo = m_generationInfo[at(node.child1()).virtualRegister()];
     if (isJSDouble(childInfo.registerFormat())) {
         DoubleOperand op1(this, node.child1());
         GPRTemporary result(this);
@@ -1130,7 +1130,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
 
 void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
     
@@ -1191,7 +1191,7 @@ bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, 
 
 void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -1320,7 +1320,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
 
 void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex branchNodeIndex, bool invert)
 {
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
 
@@ -1527,17 +1527,17 @@ void JITCodeGenerator::emitCall(Node& node)
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     
     JITCompiler::Call fastCall = m_jit.nearCall();
-    m_jit.notifyCall(fastCall, m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.notifyCall(fastCall, at(m_compileIndex).codeOrigin);
     
     JITCompiler::Jump done = m_jit.jump();
     
     slowPath.link(&m_jit);
     
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, m_jit.graph()[m_compileIndex].codeOrigin);
+    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, at(m_compileIndex).codeOrigin);
     m_jit.move(Imm32(numPassedArgs), GPRInfo::regT1);
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
-    m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), at(m_compileIndex).codeOrigin);
     
     done.link(&m_jit);
     
@@ -1545,7 +1545,7 @@ void JITCodeGenerator::emitCall(Node& node)
     
     jsValueResult(resultGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
     
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, m_jit.graph()[m_compileIndex].codeOrigin);
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, at(m_compileIndex).codeOrigin);
 }
 
 #endif

@@ -404,7 +404,7 @@ private:
 
     bool isInteger(NodeIndex nodeIndex)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (node.hasInt32Result())
             return true;
 
@@ -417,166 +417,9 @@ private:
         return info.isJSInteger();
     }
     
-    bool shouldSpeculateInteger(NodeIndex nodeIndex)
-    {
-        if (isInteger(nodeIndex))
-            return true;
-        
-        if (isInt32Prediction(m_jit.getPrediction(nodeIndex)))
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldSpeculateDouble(NodeIndex nodeIndex)
-    {
-        if (isDoubleConstant(nodeIndex))
-            return true;
-
-        Node& node = m_jit.graph()[nodeIndex];
-
-        VirtualRegister virtualRegister = node.virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        if (info.isJSDouble())
-            return true;
-        
-        if (isDoublePrediction(m_jit.getPrediction(nodeIndex)))
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldSpeculateNumber(NodeIndex nodeIndex)
-    {
-        Node& node = m_jit.graph()[nodeIndex];
-        
-        if (node.hasNumberResult())
-            return true;
-        
-        if (isNumberConstant(nodeIndex))
-            return true;
-        
-        VirtualRegister virtualRegister = node.virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        if (info.isJSInteger() || info.isJSDouble())
-            return true;
-        
-        PredictedType prediction = m_jit.getPrediction(nodeIndex);
-        
-        if (isNumberPrediction(prediction) || prediction == PredictNone)
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldNotSpeculateInteger(NodeIndex nodeIndex)
-    {
-        if (isDoubleConstant(nodeIndex))
-            return true;
-
-        Node& node = m_jit.graph()[nodeIndex];
-
-        VirtualRegister virtualRegister = node.virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        if (info.isJSDouble())
-            return true;
-        
-        if (m_jit.getPrediction(nodeIndex) & PredictDouble)
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldSpeculateFinalObject(NodeIndex nodeIndex)
-    {
-        PredictedType prediction;
-        if (isJSConstant(nodeIndex))
-            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
-        else
-            prediction = m_jit.getPrediction(nodeIndex);
-        return isFinalObjectPrediction(prediction);
-    }
-    
-    bool shouldSpeculateFinalObjectOrOther(NodeIndex nodeIndex)
-    {
-        return isFinalObjectOrOtherPrediction(m_jit.getPrediction(nodeIndex));
-    }
-    
-    bool shouldSpeculateArray(NodeIndex nodeIndex)
-    {
-        PredictedType prediction;
-        if (isJSConstant(nodeIndex))
-            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
-        else
-            prediction = m_jit.getPrediction(nodeIndex);
-        return isArrayPrediction(prediction);
-    }
-    
-    bool shouldSpeculateArrayOrOther(NodeIndex nodeIndex)
-    {
-        return isArrayOrOtherPrediction(m_jit.getPrediction(nodeIndex));
-    }
-    
-    bool shouldSpeculateObject(NodeIndex nodeIndex)
-    {
-        Node& node = m_jit.graph()[nodeIndex];
-        if (node.op == ConvertThis)
-            return true;
-        PredictedType prediction;
-        if (isJSConstant(nodeIndex))
-            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
-        else
-            prediction = m_jit.getPrediction(nodeIndex);
-        return isObjectPrediction(prediction);
-    }
-    
-    bool shouldSpeculateCell(NodeIndex nodeIndex)
-    {
-        if (isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isCell())
-            return true;
-        
-        Node& node = m_jit.graph()[nodeIndex];
-
-        if (isCellPrediction(m_jit.getPrediction(nodeIndex)))
-            return true;
-
-        VirtualRegister virtualRegister = node.virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-        
-        if (info.isJSCell())
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
-    {
-        return !(shouldNotSpeculateInteger(op1) || shouldNotSpeculateInteger(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
-    }
-    
-    bool shouldSpeculateNumber(NodeIndex op1, NodeIndex op2)
-    {
-        return shouldSpeculateNumber(op1) && shouldSpeculateNumber(op2);
-    }
-    
-    bool shouldSpeculateFinalObject(NodeIndex op1, NodeIndex op2)
-    {
-        return (shouldSpeculateFinalObject(op1) && shouldSpeculateObject(op2))
-            || (shouldSpeculateObject(op1) && shouldSpeculateFinalObject(op2));
-    }
-
-    bool shouldSpeculateArray(NodeIndex op1, NodeIndex op2)
-    {
-        return (shouldSpeculateArray(op1) && shouldSpeculateObject(op2))
-            || (shouldSpeculateObject(op1) && shouldSpeculateArray(op2));
-    }
-    
     bool isKnownArray(NodeIndex op1)
     {
-        Node& node = m_jit.graph()[op1];
+        Node& node = at(op1);
         switch (node.op) {
         case GetLocal:
             return isArrayPrediction(node.variableAccessData()->prediction());
@@ -592,7 +435,7 @@ private:
 
     bool isKnownString(NodeIndex op1)
     {
-        switch (m_jit.graph()[op1].op) {
+        switch (at(op1).op) {
         case StrCat:
             return true;
             

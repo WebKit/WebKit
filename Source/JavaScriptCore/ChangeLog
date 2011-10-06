@@ -1,3 +1,104 @@
+2011-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::shouldSpeculate methods are too complicated
+        https://bugs.webkit.org/show_bug.cgi?id=69560
+
+        Reviewed by Geoffrey Garen.
+        
+        Moved shouldSpeculate methods to DFG::Node, and cleaned them up to
+        just use node predictions.
+        
+        By itself this would have meant that SpeculativeJIT code would have
+        had to say things like m_jit.graph()[nodeIndex].shouldSpeculateXYZ().
+        So this adds an at(NodeIndex) method to JITCodeGenerator. I replaced
+        all uses of the m_jit.graph()[nodeIndex] idiom with at(nodeIndex).
+        
+        This is an 0.4% progression overall that shows up in all benchmarks,
+        for reasons unknown.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::at):
+        (JSC::DFG::JITCodeGenerator::canReuse):
+        (JSC::DFG::JITCodeGenerator::isFilled):
+        (JSC::DFG::JITCodeGenerator::isFilledDouble):
+        (JSC::DFG::JITCodeGenerator::use):
+        (JSC::DFG::JITCodeGenerator::silentSpillFPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::detectPeepHoleBranch):
+        (JSC::DFG::integerResult):
+        (JSC::DFG::noResult):
+        (JSC::DFG::cellResult):
+        (JSC::DFG::jsValueResult):
+        (JSC::DFG::storageResult):
+        (JSC::DFG::doubleResult):
+        (JSC::DFG::initConstantInfo):
+        (JSC::DFG::appendCallWithExceptionCheck):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeKnownConstantArithOp):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeBasicArithOp):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInteger):
+        (JSC::DFG::Node::shouldSpeculateDouble):
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        (JSC::DFG::Node::shouldNotSpeculateInteger):
+        (JSC::DFG::Node::shouldSpeculateFinalObject):
+        (JSC::DFG::Node::shouldSpeculateFinalObjectOrOther):
+        (JSC::DFG::Node::shouldSpeculateArray):
+        (JSC::DFG::Node::shouldSpeculateArrayOrOther):
+        (JSC::DFG::Node::shouldSpeculateObject):
+        (JSC::DFG::Node::shouldSpeculateCell):
+        (JSC::DFG::Node::canSpeculateInteger):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownArray):
+        (JSC::DFG::SpeculativeJIT::isKnownString):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-06  Gavin Peters  <gavinp@chromium.org>
 
         REGRESSION (r96595): First frame in assertion backtraces is no longer labeled "1"

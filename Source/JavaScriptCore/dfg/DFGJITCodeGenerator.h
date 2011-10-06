@@ -73,6 +73,11 @@ protected:
     static const double twoToThe32;
 
 public:
+    Node& at(NodeIndex nodeIndex)
+    {
+        return m_jit.graph()[nodeIndex];
+    }
+    
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
     FPRReg fillDouble(NodeIndex);
 #if USE(JSVALUE64)
@@ -104,7 +109,7 @@ public:
     // and its machine registers may be reused.
     bool canReuse(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.canReuse();
     }
@@ -169,13 +174,13 @@ public:
     // avoid spilling values we will need immediately).
     bool isFilled(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() != DataFormatNone;
     }
     bool isFilledDouble(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() == DataFormatDouble;
     }
@@ -183,7 +188,7 @@ public:
     // Called on an operand once it has been consumed by a parent node.
     void use(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         // use() returns true when the value becomes dead, and any
@@ -303,12 +308,12 @@ protected:
             return;
         if (!info.needsSpill()) {
             // it's either a constant or it's already been spilled
-            ASSERT(m_jit.graph()[info.nodeIndex()].hasConstant() || info.spillFormat() != DataFormatNone);
+            ASSERT(at(info.nodeIndex()).hasConstant() || info.spillFormat() != DataFormatNone);
             return;
         }
         
         // it's neither a constant nor has it been spilled.
-        ASSERT(!m_jit.graph()[info.nodeIndex()].hasConstant());
+        ASSERT(!at(info.nodeIndex()).hasConstant());
         ASSERT(info.spillFormat() == DataFormatNone);
 
         m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
@@ -326,7 +331,7 @@ protected:
             return;
 
         NodeIndex nodeIndex = info.nodeIndex();
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         ASSERT(info.registerFormat() != DataFormatNone);
         ASSERT(info.registerFormat() != DataFormatDouble);
         DataFormat registerFormat = info.registerFormat();
@@ -368,7 +373,7 @@ protected:
 
         NodeIndex nodeIndex = info.nodeIndex();
 #if USE(JSVALUE64)
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         ASSERT(info.registerFormat() == DataFormatDouble);
 
         if (node.hasConstant()) {
@@ -709,12 +714,12 @@ protected:
 
         // Check that no intervening nodes will be generated.
         for (NodeIndex index = m_compileIndex + 1; index < lastNodeIndex; ++index) {
-            if (m_jit.graph()[index].shouldGenerate())
+            if (at(index).shouldGenerate())
                 return NoNode;
         }
 
         // Check if the lastNode is a branch on this node.
-        Node& lastNode = m_jit.graph()[lastNodeIndex];
+        Node& lastNode = at(lastNodeIndex);
         return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
     }
     
@@ -806,7 +811,7 @@ protected:
     // to describe the result of an operation.
     void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -836,12 +841,12 @@ protected:
     {
         if (mode == UseChildrenCalledExplicitly)
             return;
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         useChildren(node);
     }
     void cellResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -856,7 +861,7 @@ protected:
         if (format == DataFormatJSInteger)
             m_jit.jitAssertIsJSInt32(reg);
         
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -872,7 +877,7 @@ protected:
 #elif USE(JSVALUE32_64)
     void jsValueResult(GPRReg tag, GPRReg payload, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -889,7 +894,7 @@ protected:
 #endif
     void storageResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
         
@@ -900,7 +905,7 @@ protected:
     }
     void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -912,7 +917,7 @@ protected:
     void initConstantInfo(NodeIndex nodeIndex)
     {
         ASSERT(isInt32Constant(nodeIndex) || isNumberConstant(nodeIndex) || isJSConstant(nodeIndex));
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }
 
@@ -1350,7 +1355,7 @@ protected:
 
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        return m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].codeOrigin);
+        return m_jit.appendCallWithExceptionCheck(function, at(m_compileIndex).codeOrigin);
     }
 
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)
