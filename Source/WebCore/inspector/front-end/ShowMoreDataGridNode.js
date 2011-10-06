@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.DataGridNode}
+ */
 WebInspector.ShowMoreDataGridNode = function(callback, nextCount, allCount)
 {
     function populate(count)

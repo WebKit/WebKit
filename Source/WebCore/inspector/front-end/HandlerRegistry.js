@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.HandlerRegistry = function(setting)
 {
     WebInspector.Object.call(this);
@@ -79,6 +83,9 @@ WebInspector.HandlerRegistry.EventTypes = {
 
 WebInspector.HandlerRegistry.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.HandlerSelector = function(handlerRegistry)
 {
     this._handlerRegistry = handlerRegistry;

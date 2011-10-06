@@ -34,6 +34,9 @@
 // FIXME: Some fields are not yet supported due to back-end limitations.
 // See https://bugs.webkit.org/show_bug.cgi?id=58127 for details.
 
+/**
+ * @constructor
+ */
 WebInspector.HAREntry = function(resource)
 {
     this._resource = resource;
@@ -206,6 +209,9 @@ WebInspector.HAREntry._toMilliseconds = function(time)
     return time === -1 ? -1 : Math.round(time * 1000);
 }
 
+/**
+ * @constructor
+ */
 WebInspector.HARLog = function(resources)
 {
     this._resources = resources;

@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ */
 WebInspector.SidebarSectionTreeElement = function(title, representedObject, hasChildren)
 {
     TreeElement.call(this, title.escapeHTML(), representedObject || {}, hasChildren);
@@ -63,6 +67,10 @@ WebInspector.SidebarSectionTreeElement.prototype = {
 
 WebInspector.SidebarSectionTreeElement.prototype.__proto__ = TreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ */
 WebInspector.SidebarTreeElement = function(className, title, subtitle, representedObject, hasChildren)
 {
     TreeElement.call(this, "", representedObject || {}, hasChildren);

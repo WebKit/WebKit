@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.WelcomeView = function(identifier, headingText, instructionsText)
 {
     WebInspector.View.call(this);

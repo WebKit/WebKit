@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @extends {WebInspector.View}
+ * @constructor
+ */
 WebInspector.PanelEnablerView = function(identifier, headingText, disclaimerText, buttonTitle)
 {
     WebInspector.View.call(this);
@@ -59,7 +63,7 @@ WebInspector.PanelEnablerView = function(identifier, headingText, disclaimerText
     };
 
     this.enabledForSession = enableOption(WebInspector.UIString("Only enable for this session"), true);
-    this.enabledAlways = enableOption(WebInspector.UIString("Always enable"));
+    this.enabledAlways = enableOption(WebInspector.UIString("Always enable"), false);
 
     this.disclaimerElement = document.createElement("div");
     this.disclaimerElement.className = "panel-enabler-disclaimer";

@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SourceFrame}
+ */
 WebInspector.JavaScriptSourceFrame = function(model, uiSourceCode)
 {
     // FIXME: move all SourceFrame methods related to JavaScript debugging here and
@@ -38,6 +42,10 @@ WebInspector.JavaScriptSourceFrame = function(model, uiSourceCode)
 
 WebInspector.JavaScriptSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
 
+/**
+ * @constructor
+ * @implements {WebInspector.SourceFrameDelegate}
+ */
 WebInspector.SourceFrameDelegateForScriptsPanel = function(model, uiSourceCode)
 {
     WebInspector.SourceFrameDelegate.call(this);

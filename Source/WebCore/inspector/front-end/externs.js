@@ -193,3 +193,5 @@ Event.prototype.initWebKitWheelEvent = function(vararg) {}
 WebInspector.log = function(message, messageLevel, showConsole) {}
 
 WebInspector.resourceURLForRelatedNode = function(node, url) {}
+
+WebInspector.addMainEventListeners = function(doc) {}

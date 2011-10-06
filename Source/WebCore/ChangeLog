@@ -1,5 +1,30 @@
 2011-10-05  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: add 10 more front-end classes to the compilation process.
+        https://bugs.webkit.org/show_bug.cgi?id=69445
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/HAREntry.js:
+        * inspector/front-end/HandlerRegistry.js:
+        * inspector/front-end/IFrameView.js:
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        * inspector/front-end/PanelEnablerView.js:
+        (WebInspector.PanelEnablerView):
+        * inspector/front-end/PartialQuickSort.js:
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.fillSection):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/ShowMoreDataGridNode.js:
+        * inspector/front-end/SidebarTreeElement.js:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/WelcomeView.js:
+        * inspector/front-end/externs.js:
+        (WebInspector.addMainEventListeners):
+
+2011-10-05  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: make ElementsTreeOutline compile
         https://bugs.webkit.org/show_bug.cgi?id=69439
 

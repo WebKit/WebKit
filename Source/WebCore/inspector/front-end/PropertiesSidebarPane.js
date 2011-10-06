@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.PropertiesSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Properties"));
@@ -83,7 +87,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
 
             // Get array of prototype user-friendly names.
             for (var i = 0; i < prototypes.length; ++i) {
-                if (!parseInt(prototypes[i].name))
+                if (!parseInt(prototypes[i].name, 10))
                     continue;
 
                 var prototype = prototypes[i].value;

@@ -28,7 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.defineProperty(Array.prototype, "sortRange", { value: function(comparator, leftBound, rightBound, k)
+Object.defineProperty(Array.prototype, "sortRange", { value: 
+/** @this {Array} */
+function(comparator, leftBound, rightBound, k)
 {
     function swap(array, i1, i2)
     {
