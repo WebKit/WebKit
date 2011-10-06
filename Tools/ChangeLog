@@ -1,5 +1,14 @@
 2011-10-05  Erik Arvidsson  <arv@chromium.org>
 
+        [QT] Fix DRT after r96779
+
+        unreviewed.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::dumpHistoryItem):
+
+2011-10-05  Erik Arvidsson  <arv@chromium.org>
+
         window.location.href and others needlessly decodes URI-encoded characters
         https://bugs.webkit.org/show_bug.cgi?id=30225
 
