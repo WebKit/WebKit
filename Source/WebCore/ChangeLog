@@ -1,3 +1,16 @@
+2011-10-05  Tony Chang  <tony@chromium.org>
+
+        force margin:auto to 0 in flex items
+        https://bugs.webkit.org/show_bug.cgi?id=69475
+
+        Reviewed by Ojan Vafai.
+
+        The spec used to say the margin had a value of flex(1 0 0), but changed to just be 0.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidth):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+
 2011-10-05  Dean Jackson  <dino@apple.com>
 
         Computed style for filter property

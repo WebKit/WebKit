@@ -392,11 +392,6 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Tree
             preferredLogicalWidth += child->style()->marginBottom().calcMinValue(flexboxAvailableLogicalWidth);
         }
 
-        if (marginStartStyleForChild(child).isAuto())
-            totalPositiveFlexibility += 1;
-        if (marginEndStyleForChild(child).isAuto())
-            totalPositiveFlexibility += 1;
-
         preferredLogicalWidth += logicalBorderAndPaddingWidthForChild(child);
         preferredLogicalWidth += preferredLogicalContentWidthForFlexItem(child);
 
@@ -487,9 +482,9 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderBefore() + flowAwarePaddingBefore() + flowAwareMarginBeforeForChild(child) + flowAwareLogicalHeightForChild(child) + flowAwareMarginAfterForChild(child) + flowAwarePaddingAfter() + flowAwareBorderAfter() + scrollbarLogicalHeight()));
 
         if (marginStartStyleForChild(child).isAuto())
-            setFlowAwareMarginStartForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+            setFlowAwareMarginStartForChild(child, 0);
         if (marginEndStyleForChild(child).isAuto())
-            setFlowAwareMarginEndForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+            setFlowAwareMarginEndForChild(child, 0);
 
         startEdge += flowAwareMarginStartForChild(child);
 
