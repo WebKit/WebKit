@@ -1,3 +1,16 @@
+2011-10-06  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT 32_64 should check type of values being filled by fillSpeculateInt
+        https://bugs.webkit.org/show_bug.cgi?id=69549
+
+        Reviewed by Oliver Hunt.
+
+        This breaks sunspider/3d-cube.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+            - Speculation check on the tag. 
+
 2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Snow Leopard build fix

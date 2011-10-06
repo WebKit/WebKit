@@ -61,12 +61,15 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
             return allocate();
         }
 
-        ASSERT(info.spillFormat() & DataFormatJS);
+        DataFormat spillFormat = info.spillFormat();
+        ASSERT(spillFormat & DataFormatJS);
 
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
 
         // If we know this was spilled as an integer we can fill without checking.
-        // FIXME: Currently we always assume strict integers.
+        if (spillFormat != DataFormatJSInteger)
+            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag)));
+
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         info.fillInteger(gpr);
         returnFormat = DataFormatInteger;
