@@ -211,10 +211,11 @@ void WTFReportBacktrace()
         if (mangledName)
             cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
 #endif
+        const int frameNumber = i - framesToSkip + 1;
         if (mangledName || cxaDemangled)
-            fprintf(stderr, "%-3d %p %s\n", i, samples[i], cxaDemangled ? cxaDemangled : mangledName);
+            fprintf(stderr, "%-3d %p %s\n", frameNumber, samples[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            fprintf(stderr, "%-3d %p\n", i, samples[i]);
+            fprintf(stderr, "%-3d %p\n", frameNumber, samples[i]);
         free(cxaDemangled);
     }
 }

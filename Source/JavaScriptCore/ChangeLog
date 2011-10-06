@@ -1,3 +1,12 @@
+2011-10-06  Gavin Peters  <gavinp@chromium.org>
+
+        REGRESSION (r96595): First frame in assertion backtraces is no longer labeled "1"
+        https://bugs.webkit.org/show_bug.cgi?id=69556
+
+        Reviewed by Adam Roben.
+
+        * wtf/Assertions.cpp:
+
 2011-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG implementation of UInt32ToNumber is missing a break statement
