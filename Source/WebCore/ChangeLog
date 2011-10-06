@@ -1,3 +1,16 @@
+2011-10-06  David Grogan  <dgrogan@chromium.org>
+
+        Return null for the value of IDB key cursors instead of ASSERTing
+        https://bugs.webkit.org/show_bug.cgi?id=69131
+        
+        This is in support of the IndexedDB performance improvement here:
+        http://codereview.chromium.org/7834006/
+
+        Reviewed by Tony Chang.
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::value):
+
 2011-10-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Should be able to scroll embedded PDFs using mouse

@@ -73,7 +73,8 @@ PassRefPtr<IDBKey> IDBCursorBackendImpl::primaryKey() const
 
 PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
 {
-    ASSERT(m_cursorType != IndexKeyCursor);
+    if (m_cursorType == IndexKeyCursor)
+      return SerializedScriptValue::nullValue();
     return SerializedScriptValue::createFromWire(m_cursor->value());
 }
 
