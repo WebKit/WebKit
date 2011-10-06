@@ -1,3 +1,32 @@
+2011-10-06  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add all Resource panel views to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69526
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._contextMenu):
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable):
+        (WebInspector.CookiesTable.prototype._onDeleteFromGrid):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._dataGridForDOMStorageEntries):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.createSortableDataGrid.sortDataGrid.comparator):
+        (WebInspector.DataGrid.createSortableDataGrid.sortDataGrid):
+        (WebInspector.DataGrid.createSortableDataGrid):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.showDatabase):
+        * inspector/front-end/TextPrompt.js:
+
 2011-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96791.

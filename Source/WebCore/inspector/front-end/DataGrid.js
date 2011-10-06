@@ -26,6 +26,8 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {function(WebInspector.DataGridNode, number, string, string)=} editCallback
+ * @param {function(WebInspector.DataGridNode)=} deleteCallback
  */
 WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 {
@@ -156,6 +158,82 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     this.indentWidth = 15;
     this.resizers = [];
     this._columnWidthsInitialized = false;
+}
+
+/**
+ * @param {Array.<string>} columnNames
+ * @param {Array.<string>} values
+ */
+WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
+{
+    var numColumns = columnNames.length;
+    if (!numColumns)
+        return null;
+
+    var columns = {};
+
+    for (var i = 0; i < columnNames.length; ++i) {
+        var column = {};
+        column.width = columnNames[i].length;
+        column.title = columnNames[i];
+        column.sortable = true;
+
+        columns[columnNames[i]] = column;
+    }
+
+    var nodes = [];
+    for (var i = 0; i < values.length / numColumns; ++i) {
+        var data = {};
+        for (var j = 0; j < columnNames.length; ++j)
+            data[columnNames[j]] = values[numColumns * i + j];
+
+        var node = new WebInspector.DataGridNode(data, false);
+        node.selectable = false;
+        nodes.push(node);
+    }
+
+    var dataGrid = new WebInspector.DataGrid(columns);
+    var length = nodes.length;
+    for (var i = 0; i < length; ++i)
+        dataGrid.appendChild(nodes[i]);
+
+    dataGrid.addEventListener("sorting changed", sortDataGrid, this);
+
+    function sortDataGrid()
+    {
+        var nodes = dataGrid.children.slice();
+        var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
+        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
+        var columnIsNumeric = true;
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (isNaN(Number(nodes[i].data[sortColumnIdentifier])))
+                columnIsNumeric = false;
+        }
+
+        function comparator(dataGridNode1, dataGridNode2)
+        {
+            var item1 = dataGridNode1.data[sortColumnIdentifier];
+            var item2 = dataGridNode2.data[sortColumnIdentifier];
+
+            var comparison;
+            if (columnIsNumeric) {
+                // Sort numbers based on comparing their values rather than a lexicographical comparison.
+                var number1 = parseFloat(item1);
+                var number2 = parseFloat(item2);
+                comparison = number1 < number2 ? -1 : (number1 > number2 ? 1 : 0);
+            } else
+                comparison = item1 < item2 ? -1 : (item1 > item2 ? 1 : 0);
+
+            return sortDirection * comparison;
+        }
+
+        nodes.sort(comparator);
+        dataGrid.removeChildren();
+        for (var i = 0; i < nodes.length; i++)
+            dataGrid.appendChild(nodes[i]);
+    }
+    return dataGrid;
 }
 
 WebInspector.DataGrid.prototype = {
@@ -334,6 +412,9 @@ WebInspector.DataGrid.prototype = {
         return this._dataTableBody;
     },
 
+    /**
+     * @param {number=} maxDescentLevel
+     */
     autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
     {
         if (minPercent)

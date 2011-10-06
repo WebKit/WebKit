@@ -67,13 +67,12 @@ WebInspector.CookiesTable = function(cookieDomain, expandable, deleteCallback, r
     columns[7].sortable = true;
     columns[7].width = "7%";
 
-    this._dataGrid = new WebInspector.DataGrid(columns, null, deleteCallback ? this._onDeleteFromGrid.bind(this) : null);
+    this._dataGrid = new WebInspector.DataGrid(columns, undefined, deleteCallback ? this._onDeleteFromGrid.bind(this, deleteCallback) : undefined);
     this._dataGrid.addEventListener("sorting changed", this._rebuildTable, this);
     this._dataGrid.refreshCallback = refreshCallback;
 
     this.element = this._dataGrid.element;
     this._data = [];
-    this._deleteCallback = deleteCallback;
 }
 
 WebInspector.CookiesTable.prototype = {
@@ -207,8 +206,8 @@ WebInspector.CookiesTable.prototype = {
         return node;
     },
 
-    _onDeleteFromGrid: function(node)
+    _onDeleteFromGrid: function(deleteCallback, node)
     {
-        this._deleteCallback(node.cookie);
+        deleteCallback(node.cookie);
     }
 }

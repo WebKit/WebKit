@@ -107,9 +107,13 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_inspector:20:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_inspector:24:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/CookieItemsView.js \
+        --js Source/WebCore/inspector/front-end/DatabaseQueryView.js \
+        --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
+        --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
         --js Source/WebCore/inspector/front-end/ElementsTreeOutline.js \
         --js Source/WebCore/inspector/front-end/FontView.js \
         --js Source/WebCore/inspector/front-end/ImageView.js \
@@ -139,10 +143,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # StylesSidebarPane
 #
 # [Resources]
-# CookieItemsView
-# DatabaseQueryView
-# DatabaseTableView
-# DOMStorageItemsView
 # ResourcesPanel
 # 
 # [Network]

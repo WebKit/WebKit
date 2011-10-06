@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 {
     WebInspector.View.call(this);
@@ -155,7 +159,7 @@ WebInspector.CookieItemsView.prototype = {
         this._update();
     },
 
-    _contextMenu: function()
+    _contextMenu: function(event)
     {
         if (!this._cookies.length) {
             var contextMenu = new WebInspector.ContextMenu();
@@ -167,6 +171,9 @@ WebInspector.CookieItemsView.prototype = {
 
 WebInspector.CookieItemsView.prototype.__proto__ = WebInspector.View.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.SimpleCookiesTable = function()
 {
     this.element = document.createElement("div");
@@ -249,7 +256,7 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
 {
     var url = resourceURL.asParsedURL();
-    if (!url || !this.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
+    if (!url || !WebInspector.Cookies.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
         return false;
     return (url.path.indexOf(cookie.path) === 0
         && (!cookie.port || url.port == cookie.port)

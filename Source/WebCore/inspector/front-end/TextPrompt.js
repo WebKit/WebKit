@@ -151,6 +151,9 @@ WebInspector.TextPrompt.prototype = {
         return true;
     },
 
+    /**
+     * @param {boolean=} includeTimeout
+     */
     clearAutoComplete: function(includeTimeout)
     {
         if (includeTimeout && "_completeTimeout" in this) {

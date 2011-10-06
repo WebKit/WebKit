@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.DatabaseQueryView = function(database)
 {
     WebInspector.View.call(this);
@@ -43,6 +47,10 @@ WebInspector.DatabaseQueryView = function(database)
     this.element.appendChild(this.promptElement);
 
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " ");
+}
+
+WebInspector.DatabaseQueryView.Events = {
+    SchemaUpdated: "SchemaUpdated"
 }
 
 WebInspector.DatabaseQueryView.prototype = {
@@ -139,7 +147,7 @@ WebInspector.DatabaseQueryView.prototype = {
 
     _queryFinished: function(query, columnNames, values)
     {
-        var dataGrid = WebInspector.panels.resources.dataGridForResult(columnNames, values);
+        var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         var trimmedQuery = query.trim();
 
         if (dataGrid) {
@@ -149,7 +157,7 @@ WebInspector.DatabaseQueryView.prototype = {
         }
 
         if (trimmedQuery.match(/^create /i) || trimmedQuery.match(/^drop table /i))
-            WebInspector.panels.resources.updateDatabaseTables(this.database);
+            this.dispatchEventToListeners(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this.database);
     },
 
     _queryError: function(query, error)
@@ -164,6 +172,9 @@ WebInspector.DatabaseQueryView.prototype = {
         this._appendQueryResult(query, message, "error");
     },
 
+    /**
+     * @param {string=} resultClassName
+     */
     _appendQueryResult: function(query, result, resultClassName)
     {
         var element = document.createElement("div");

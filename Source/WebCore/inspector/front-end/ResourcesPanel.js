@@ -138,6 +138,8 @@ WebInspector.ResourcesPanel.prototype = {
         for (var i = 0; i < this._databases.length; ++i) {
             var database = this._databases[i];
             delete database._tableViews;
+            if (database._queryView)
+                database._queryView.removeEventListener(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this._updateDatabaseTables, this);
             delete database._queryView;
         }
         this._databases = [];
@@ -432,6 +434,7 @@ WebInspector.ResourcesPanel.prototype = {
             if (!view) {
                 view = new WebInspector.DatabaseQueryView(database);
                 database._queryView = view;
+                view.addEventListener(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this._updateDatabaseTables, this);
             }
         }
 
@@ -509,8 +512,10 @@ WebInspector.ResourcesPanel.prototype = {
         delete this.visibleView;
     },
 
-    updateDatabaseTables: function(database)
+    _updateDatabaseTables: function(event)
     {
+        var database = event.data;
+
         if (!database || !database._databasesTreeElement)
             return;
 
@@ -536,78 +541,6 @@ WebInspector.ResourcesPanel.prototype = {
             }
         }
         database.getTableNames(tableNamesCallback);
-    },
-
-    dataGridForResult: function(columnNames, values)
-    {
-        var numColumns = columnNames.length;
-        if (!numColumns)
-            return null;
-
-        var columns = {};
-
-        for (var i = 0; i < columnNames.length; ++i) {
-            var column = {};
-            column.width = columnNames[i].length;
-            column.title = columnNames[i];
-            column.sortable = true;
-
-            columns[columnNames[i]] = column;
-        }
-
-        var nodes = [];
-        for (var i = 0; i < values.length / numColumns; ++i) {
-            var data = {};
-            for (var j = 0; j < columnNames.length; ++j)
-                data[columnNames[j]] = values[numColumns * i + j];
-
-            var node = new WebInspector.DataGridNode(data, false);
-            node.selectable = false;
-            nodes.push(node);
-        }
-
-        var dataGrid = new WebInspector.DataGrid(columns);
-        var length = nodes.length;
-        for (var i = 0; i < length; ++i)
-            dataGrid.appendChild(nodes[i]);
-
-        dataGrid.addEventListener("sorting changed", this._sortDataGrid.bind(this, dataGrid), this);
-        return dataGrid;
-    },
-
-    _sortDataGrid: function(dataGrid)
-    {
-        var nodes = dataGrid.children.slice();
-        var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
-        var columnIsNumeric = true;
-
-        for (var i = 0; i < nodes.length; i++) {
-            if (isNaN(Number(nodes[i].data[sortColumnIdentifier])))
-                columnIsNumeric = false;
-        }
-
-        function comparator(dataGridNode1, dataGridNode2)
-        {
-            var item1 = dataGridNode1.data[sortColumnIdentifier];
-            var item2 = dataGridNode2.data[sortColumnIdentifier];
-
-            var comparison;
-            if (columnIsNumeric) {
-                // Sort numbers based on comparing their values rather than a lexicographical comparison.
-                var number1 = parseFloat(item1);
-                var number2 = parseFloat(item2);
-                comparison = number1 < number2 ? -1 : (number1 > number2 ? 1 : 0);
-            } else
-                comparison = item1 < item2 ? -1 : (item1 > item2 ? 1 : 0);
-
-            return sortDirection * comparison;
-        }
-
-        nodes.sort(comparator);
-        dataGrid.removeChildren();
-        for (var i = 0; i < nodes.length; i++)
-            dataGrid.appendChild(nodes[i]);
     },
 
     updateDOMStorage: function(storageId)

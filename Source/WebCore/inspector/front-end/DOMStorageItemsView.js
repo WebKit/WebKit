@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.DOMStorageItemsView = function(domStorage)
 {
     WebInspector.View.call(this);
@@ -107,7 +111,7 @@ WebInspector.DOMStorageItemsView.prototype = {
         }
 
         var dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
-        var length = nodes.length;
+        length = nodes.length;
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
         dataGrid.addCreationNode(false);

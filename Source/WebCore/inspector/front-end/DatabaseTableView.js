@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.DatabaseTableView = function(database, tableName)
 {
     WebInspector.View.call(this);
@@ -58,7 +62,7 @@ WebInspector.DatabaseTableView.prototype = {
     {
         this.element.removeChildren();
 
-        var dataGrid = WebInspector.panels.resources.dataGridForResult(columnNames, values);
+        var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (!dataGrid) {
             this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("The “%s”\ntable is empty.", this.tableName));
             this._emptyView.show(this.element);
