@@ -1,3 +1,14 @@
+2011-10-06  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Add baselines for new Mac tests. Revert test_expectations breakage.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/table/border-collapsing/cached-69296-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png: Renamed from LayoutTests/platform/chromium-cg-mac/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-06  Adam Barth  <abarth@webkit.org>
 
         Add missing tests for LegacyDefaultOptionalArguments for setCustomValidity
