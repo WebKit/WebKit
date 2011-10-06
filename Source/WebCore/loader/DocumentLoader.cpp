@@ -847,6 +847,12 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
     }
 }
 
+void DocumentLoader::maybeFinishLoadingMultipartContent()
+{
+    if (!doesProgressiveLoad(m_response.mimeType()))
+        setupForReplaceByMIMEType(m_response.mimeType());
+}
+
 void DocumentLoader::iconLoadDecisionAvailable()
 {
     if (m_frame)

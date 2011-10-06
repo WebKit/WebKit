@@ -480,6 +480,9 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<DocumentLoader> dl = documentLoader();
 
+    if (m_loadingMultipartContent)
+        dl->maybeFinishLoadingMultipartContent();
+
     ASSERT(!documentLoader()->timing()->responseEnd);
     documentLoader()->timing()->responseEnd = finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : currentTime());
     frameLoader()->finishedLoading();

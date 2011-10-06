@@ -1,3 +1,13 @@
+2011-10-06  Tony Chang  <tony@chromium.org>
+
+        last frame of a multipart response is not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=69449
+
+        Reviewed by Adam Barth.
+
+        * http/tests/multipart/load-last-non-html-frame-expected.txt: Added.
+        * http/tests/multipart/load-last-non-html-frame.php: Added.
+
 2011-10-06  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Rebaseline test missed in r96814.

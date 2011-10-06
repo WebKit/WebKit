@@ -223,6 +223,8 @@ namespace WebCore {
 
         void transferLoadingResourcesFromPage(Page*);
 
+        void maybeFinishLoadingMultipartContent();
+
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
         bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
