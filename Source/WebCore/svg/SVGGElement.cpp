@@ -40,8 +40,8 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+    : SVGStyledTransformableElement(tagName, document, constructionType)
 {
     ASSERT(hasTagName(SVGNames::gTag));
     registerAnimatedPropertiesForSVGGElement();

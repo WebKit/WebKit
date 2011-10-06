@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-SVGStyledLocatableElement::SVGStyledLocatableElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+SVGStyledLocatableElement::SVGStyledLocatableElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+    : SVGStyledElement(tagName, document, constructionType)
 {
 }
 

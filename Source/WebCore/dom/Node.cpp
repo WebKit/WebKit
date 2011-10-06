@@ -563,7 +563,7 @@ void Node::clearRareData()
 
 Element* Node::shadowHost() const
 {
-    return toElement(getFlag(IsShadowRootFlag) ? parent() : 0);
+    return toElement(isShadowRoot() ? parent() : 0);
 }
 
 void Node::setShadowHost(Element* host)

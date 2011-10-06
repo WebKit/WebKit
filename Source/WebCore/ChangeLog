@@ -1,3 +1,46 @@
+2011-10-06  Dominic Cooney   <dominicc@chromium.org>
+
+        Don't make virtual calls in Node::parentNode.
+        https://bugs.webkit.org/show_bug.cgi?id=69266
+
+        Reviewed by Antti Koivisto.
+
+        ShadowRoot and SVGShadowRoot remain semantically separate (eg
+        isShadowRoot/isSVGShadowRoot) but share a flag
+        (IsShadowRootOrSVGShadowRootFlag, hitherto IsShadowRootFlag just
+        for ShadowRoot). In combination with IsSVGFlag ShadowRoot (false)
+        can be distinguished from SVGShadowRoot (true). This lets us make
+        isSVGShadowRoot non-virtual.
+
+        No change in behavior => No new tests.
+
+        * dom/Node.cpp:
+        (WebCore::Node::shadowHost):
+        * dom/Node.h:
+        (WebCore::Node::isSVGShadowRoot):
+        (WebCore::Node::isShadowRoot):
+        (WebCore::Node::parentNode):
+        (WebCore::Node::parentNodeGuaranteedHostFree):
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::SVGShadowTreeContainerElement):
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement):
+        * rendering/svg/SVGShadowTreeElements.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        * svg/SVGElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        * svg/SVGGElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::SVGStyledLocatableElement):
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        * svg/SVGStyledTransformableElement.h:
+
 2011-10-06  John Knottenbelt  <jknotten@chromium.org>
 
         Take pageScaleFactor into account for MouseRelatedEvents.

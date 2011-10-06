@@ -40,8 +40,8 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledLocatableElement(tagName, document)
+SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+    : SVGStyledLocatableElement(tagName, document, constructionType)
 {
     registerAnimatedPropertiesForSVGStyledTransformableElement();
 }

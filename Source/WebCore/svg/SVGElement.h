@@ -102,7 +102,7 @@ public:
     virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap();
 
 protected:
-    SVGElement(const QualifiedName&, Document*);
+    SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
     virtual void parseMappedAttribute(Attribute*);
 

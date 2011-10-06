@@ -64,8 +64,8 @@ void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToId
     propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
 }
 
-SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* document)
-    : SVGElement(tagName, document)
+SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+    : SVGElement(tagName, document, constructionType)
 {
     registerAnimatedPropertiesForSVGStyledElement();
 }

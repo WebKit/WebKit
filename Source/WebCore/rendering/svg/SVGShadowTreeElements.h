@@ -42,7 +42,7 @@ public:
     virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
 protected:
-    SVGShadowTreeContainerElement(Document*);
+    SVGShadowTreeContainerElement(Document*, ConstructionType = CreateSVGElement);
 
 private:
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
@@ -59,8 +59,6 @@ public:
 
     void attachElement(PassRefPtr<RenderStyle>, RenderArena*);
     void clearSVGShadowHost();
-
-    virtual bool isSVGShadowRoot() const { return true; }
 
 private:
     SVGShadowTreeRootElement(Document*, SVGUseElement* host);

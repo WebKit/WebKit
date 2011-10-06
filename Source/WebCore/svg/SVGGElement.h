@@ -40,7 +40,7 @@ public:
     virtual bool isShadowTreeContainerElement() const { return false; }
 
 protected:
-    SVGGElement(const QualifiedName&, Document*);
+    SVGGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

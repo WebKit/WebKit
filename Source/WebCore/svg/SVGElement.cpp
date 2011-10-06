@@ -55,8 +55,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, document, CreateSVGElement)
+SVGElement::SVGElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+    : StyledElement(tagName, document, constructionType)
 {
     setHasCustomStyleForRenderer();
 }

@@ -198,7 +198,7 @@ public:
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
 
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
-    virtual bool isSVGShadowRoot() const { return false; }
+    bool isSVGShadowRoot() const { return getFlag(IsShadowRootOrSVGShadowRootFlag) && isSVGElement(); }
 #if ENABLE(SVG)
     SVGUseElement* svgShadowHost() const;
 #endif
@@ -211,7 +211,7 @@ public:
     bool isCommentNode() const { return getFlag(IsCommentFlag); }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
-    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    bool isShadowRoot() const { return getFlag(IsShadowRootOrSVGShadowRootFlag) && !isSVGElement(); }
     virtual bool isContentElement() const { return false; }
     virtual bool canHaveLightChildRendererWithShadow() const { return false; }
 
@@ -600,7 +600,7 @@ private:
         InActiveChainFlag = 1 << 15,
         InDetachFlag = 1 << 16,
         HasRareDataFlag = 1 << 17,
-        IsShadowRootFlag = 1 << 18,
+        IsShadowRootOrSVGShadowRootFlag = 1 << 18,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
@@ -640,10 +640,11 @@ protected:
         CreateComment = DefaultNodeFlags | IsCommentFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
-        CreateShadowRoot = CreateContainer | IsShadowRootFlag,
+        CreateShadowRoot = CreateContainer | IsShadowRootOrSVGShadowRootFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
+        CreateSVGShadowRoot = CreateSVGElement | IsShadowRootOrSVGShadowRootFlag,
     };
     Node(Document*, ConstructionType);
 
@@ -743,7 +744,7 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 
 inline ContainerNode* Node::parentNode() const
 {
-    return getFlag(IsShadowRootFlag) || isSVGShadowRoot() ? 0 : parent();
+    return getFlag(IsShadowRootOrSVGShadowRootFlag) ? 0 : parent();
 }
 
 inline ContainerNode* Node::parentOrHostNode() const
@@ -753,7 +754,7 @@ inline ContainerNode* Node::parentOrHostNode() const
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
-    ASSERT(!getFlag(IsShadowRootFlag) && !isSVGShadowRoot());
+    ASSERT(!getFlag(IsShadowRootOrSVGShadowRootFlag));
     return parentOrHostNode();
 }
 
