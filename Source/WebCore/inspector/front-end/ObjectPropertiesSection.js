@@ -27,6 +27,7 @@
 /**
  * @constructor
  * @extends {WebInspector.PropertiesSection}
+ * @param {*=} object
  * @param {string=} title
  * @param {string=} subtitle
  * @param {string=} emptyPlaceholder

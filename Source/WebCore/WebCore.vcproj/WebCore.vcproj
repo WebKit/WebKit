@@ -69261,6 +69261,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DOMPresentationUtils.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DOMBreakpointsSidebarPane.js"
 					>
 				</File>

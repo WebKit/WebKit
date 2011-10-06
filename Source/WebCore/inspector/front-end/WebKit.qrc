@@ -39,6 +39,7 @@
     <file>DebuggerPresentationModel.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
+    <file>DOMPresentationUtils.js</file>
     <file>DOMStorage.js</file>
     <file>DOMStorageItemsView.js</file>
     <file>DOMSyntaxHighlighter.js</file>

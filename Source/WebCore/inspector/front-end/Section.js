@@ -29,6 +29,7 @@
 
 /**
  * @constructor
+ * @param {string=} subtitle
  */
 WebInspector.Section = function(title, subtitle)
 {

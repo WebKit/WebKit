@@ -526,7 +526,7 @@ WebInspector.ElementsPanel.prototype = {
             var crumbTitle;
             switch (current.nodeType()) {
                 case Node.ELEMENT_NODE:
-                    this.decorateNodeLabel(current, crumb);
+                    WebInspector.DOMPresentationUtils.decorateNodeLabel(current, crumb);
                     break;
 
                 case Node.TEXT_NODE:
@@ -542,7 +542,7 @@ WebInspector.ElementsPanel.prototype = {
                     break;
 
                 default:
-                    crumbTitle = this.treeOutline.nodeNameToCorrectCase(current.nodeName());
+                    crumbTitle = current.nodeNameInCorrectCase();
             }
 
             if (!crumb.childNodes.length) {
@@ -566,72 +566,6 @@ WebInspector.ElementsPanel.prototype = {
             crumbs.lastChild.addStyleClass("start");
 
         this.updateBreadcrumbSizes();
-    },
-
-    decorateNodeLabel: function(node, parentElement)
-    {
-        var title = this.treeOutline.nodeNameToCorrectCase(node.nodeName());
-
-        var nameElement = document.createElement("span");
-        nameElement.textContent = title;
-        parentElement.appendChild(nameElement);
-
-        var idAttribute = node.getAttribute("id");
-        if (idAttribute) {
-            var idElement = document.createElement("span");
-            parentElement.appendChild(idElement);
-
-            var part = "#" + idAttribute;
-            title += part;
-            idElement.appendChild(document.createTextNode(part));
-
-            // Mark the name as extra, since the ID is more important.
-            nameElement.className = "extra";
-        }
-
-        var classAttribute = node.getAttribute("class");
-        if (classAttribute) {
-            var classes = classAttribute.split(/\s+/);
-            var foundClasses = {};
-
-            if (classes.length) {
-                var classesElement = document.createElement("span");
-                classesElement.className = "extra";
-                parentElement.appendChild(classesElement);
-
-                for (var i = 0; i < classes.length; ++i) {
-                    var className = classes[i];
-                    if (className && !(className in foundClasses)) {
-                        var part = "." + className;
-                        title += part;
-                        classesElement.appendChild(document.createTextNode(part));
-                        foundClasses[className] = true;
-                    }
-                }
-            }
-        }
-        parentElement.title = title;
-    },
-
-    linkifyNodeReference: function(node)
-    {
-        var link = document.createElement("span");
-        link.className = "node-link";
-        this.decorateNodeLabel(node, link);
-
-        link.addEventListener("click", this.revealAndSelectNode.bind(this, node.id), false);
-        link.addEventListener("mouseover", WebInspector.domAgent.highlightDOMNode.bind(WebInspector.domAgent, node.id, ""), false);
-        link.addEventListener("mouseout", WebInspector.domAgent.hideDOMNodeHighlight.bind(WebInspector.domAgent), false);
-
-        return link;
-    },
-
-    linkifyNodeById: function(nodeId)
-    {
-        var node = WebInspector.domAgent.nodeForId(nodeId);
-        if (!node)
-            return document.createTextNode(WebInspector.UIString("<node>"));
-        return this.linkifyNodeReference(node);
     },
 
     updateBreadcrumbSizes: function(focusedCrumb)

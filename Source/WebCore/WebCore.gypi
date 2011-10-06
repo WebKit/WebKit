@@ -6247,6 +6247,7 @@
             'inspector/front-end/DetailedHeapshotView.js',
             'inspector/front-end/DOMAgent.js',
             'inspector/front-end/DOMBreakpointsSidebarPane.js',
+            'inspector/front-end/DOMPresentationUtils.js',
             'inspector/front-end/DOMStorage.js',
             'inspector/front-end/DOMStorageItemsView.js',
             'inspector/front-end/DOMSyntaxHighlighter.js',

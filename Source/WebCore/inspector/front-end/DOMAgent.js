@@ -105,6 +105,11 @@ WebInspector.DOMNode.prototype = {
         return this._nodeName;
     },
 
+    nodeNameInCorrectCase: function()
+    {
+        return this.isXMLNode() ? this.nodeName() : this.nodeName().toLowerCase();
+    },
+
     setNodeName: function(name, callback)
     {
         DOMAgent.setNodeName(this.id, name, callback);
@@ -364,6 +369,11 @@ WebInspector.DOMNode.prototype = {
     moveTo: function(targetNode, anchorNode, callback)
     {
         DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, callback);
+    },
+
+    isXMLNode: function()
+    {
+        return this.ownerDocument && !!this.ownerDocument.xmlVersion;
     }
 }
 

@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.EventListenersSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Event Listeners"));
@@ -128,6 +132,10 @@ WebInspector.EventListenersSidebarPane.prototype = {
 
 WebInspector.EventListenersSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.PropertiesSection}
+ */
 WebInspector.EventListenersSection = function(title, nodeId, linkifier)
 {
     this.eventListeners = [];
@@ -176,11 +184,16 @@ WebInspector.EventListenersSection.prototype = {
 
 WebInspector.EventListenersSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ObjectPropertiesSection}
+ */
 WebInspector.EventListenerBar = function(eventListener, nodeId, linkifier)
 {
+    WebInspector.ObjectPropertiesSection.call(this);
+
     this.eventListener = eventListener;
     this._nodeId = nodeId;
-    WebInspector.ObjectPropertiesSection.call(this);
     this._setNodeTitle();
     this._setFunctionSubtitle(linkifier);
     this.editable = false;
@@ -233,7 +246,7 @@ WebInspector.EventListenerBar.prototype = {
         }
 
         this.titleElement.removeChildren();
-        this.titleElement.appendChild(WebInspector.panels.elements.linkifyNodeReference(this.eventListener.node));
+        this.titleElement.appendChild(WebInspector.DOMPresentationUtils.linkifyNodeReference(this.eventListener.node));
     },
 
     _setFunctionSubtitle: function(linkifier)

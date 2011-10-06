@@ -388,7 +388,7 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             for (var name in styles.styleAttributes) {
                 var attrStyle = { style: styles.styleAttributes[name], editable: false };
-                attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName()) + "[" + name;
+                attrStyle.selectorText = node.nodeNameInCorrectCase() + "[" + name;
                 if (node.getAttribute(name))
                     attrStyle.selectorText += "=" + node.getAttribute(name);
                 attrStyle.selectorText += "]";
@@ -573,7 +573,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 var separatorElement = document.createElement("div");
                 separatorElement.className = "styles-sidebar-separator";
                 if (styleRule.node) {
-                    var link = WebInspector.panels.elements.linkifyNodeReference(styleRule.node);
+                    var link = WebInspector.DOMPresentationUtils.linkifyNodeReference(styleRule.node);
                     separatorElement.appendChild(document.createTextNode(WebInspector.UIString("Inherited from") + " "));
                     separatorElement.appendChild(link);
                     if (!sections.inheritedPropertiesSeparatorElement)

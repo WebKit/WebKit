@@ -110,7 +110,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         this._rootDOMNode = x;
 
-        this._isXMLMimeType = x && !!x.xmlVersion;
+        this._isXMLMimeType = x && x.isXMLNode();
 
         this.update();
     },
@@ -118,11 +118,6 @@ WebInspector.ElementsTreeOutline.prototype = {
     get isXMLMimeType()
     {
         return this._isXMLMimeType;
-    },
-
-    nodeNameToCorrectCase: function(nodeName)
-    {
-        return this.isXMLMimeType ? nodeName : nodeName.toLowerCase();
     },
 
     selectedDOMNode: function()
@@ -1533,7 +1528,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.ELEMENT_NODE:
-                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName());
+                var tagName = node.nodeNameInCorrectCase();
                 if (this._elementCloseTag) {
                     this._buildTagDOM(info.titleDOM, tagName, true, true);
                     info.hasChildren = false;
@@ -1613,7 +1608,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue() + "]]>"));
                 break;
             default:
-                var defaultElement = info.titleDOM.appendChild(document.createTextNode(this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace()));
+                var defaultElement = info.titleDOM.appendChild(document.createTextNode(node.nodeNameInCorrectCase().collapseWhitespace()));
         }
 
         return info;

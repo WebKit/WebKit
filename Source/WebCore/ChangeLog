@@ -1,5 +1,68 @@
 2011-10-06  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: extract DOMPresentation, make EventListenersSidebar compile
+        https://bugs.webkit.org/show_bug.cgi?id=69527
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.nodeNameInCorrectCase):
+        (WebInspector.DOMNode.prototype.moveTo):
+        (WebInspector.DOMNode.prototype.isXMLNode):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._setBreakpoint):
+        * inspector/front-end/DOMPresentation.js: Added.
+        (WebInspector.DOMPresentation.decorateNodeLabel):
+        (WebInspector.DOMPresentation.linkifyNodeReference):
+        (WebInspector.DOMPresentation.linkifyNodeById):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set rootDOMNode):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        * inspector/front-end/PropertiesSection.js:
+        * inspector/front-end/Section.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
+2011-10-06  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add all Resource panel views to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69526
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._contextMenu):
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable):
+        (WebInspector.CookiesTable.prototype._onDeleteFromGrid):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._dataGridForDOMStorageEntries):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.createSortableDataGrid.sortDataGrid.comparator):
+        (WebInspector.DataGrid.createSortableDataGrid.sortDataGrid):
+        (WebInspector.DataGrid.createSortableDataGrid):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.showDatabase):
+        * inspector/front-end/TextPrompt.js:
+
+2011-10-06  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: add all Resource panel views to the compilation.
         https://bugs.webkit.org/show_bug.cgi?id=69526
 

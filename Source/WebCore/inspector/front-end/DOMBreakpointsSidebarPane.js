@@ -105,11 +105,11 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
     {
         var message;
         var typeLabel = this._breakpointTypeLabels[auxData.type];
-        var linkifiedNode = WebInspector.panels.elements.linkifyNodeById(auxData.nodeId);
+        var linkifiedNode = WebInspector.DOMPresentationUtils.linkifyNodeById(auxData.nodeId);
         var substitutions = [typeLabel, linkifiedNode];
         var targetNode = "";
         if (targetNodeId)
-            targetNode = WebInspector.panels.elements.linkifyNodeById(targetNodeId);
+            targetNode = WebInspector.DOMPresentationUtils.linkifyNodeById(targetNodeId);
 
         if (auxData.type === this._breakpointTypes.SubtreeModified) {
             if (auxData.insertion) {
@@ -185,7 +185,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
         var labelElement = document.createElement("span");
         element.appendChild(labelElement);
 
-        var linkifiedNode = WebInspector.panels.elements.linkifyNodeById(node.id);
+        var linkifiedNode = WebInspector.DOMPresentationUtils.linkifyNodeById(node.id);
         linkifiedNode.addStyleClass("monospace");
         labelElement.appendChild(linkifiedNode);
 
