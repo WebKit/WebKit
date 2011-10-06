@@ -45,9 +45,7 @@ public:
         , m_bidiEmbeddingLevel(0)
         , m_dirty(false)
         , m_extracted(false)
-#if ENABLE(SVG)
         , m_hasVirtualLogicalHeight(false)
-#endif
         , m_isHorizontal(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
@@ -77,9 +75,7 @@ public:
         , m_bidiEmbeddingLevel(0)
         , m_dirty(dirty)
         , m_extracted(extracted)
-#if ENABLE(SVG)
         , m_hasVirtualLogicalHeight(false)
-#endif
         , m_isHorizontal(isHorizontal)
         , m_endsWithBreak(false)
         , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)

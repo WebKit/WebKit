@@ -143,10 +143,8 @@ void InlineBox::showBox(int printedCharacters) const
 
 LayoutUnit InlineBox::logicalHeight() const
 {
-#if ENABLE(SVG)
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
-#endif
     
     if (renderer()->isText())
         return m_isText ? renderer()->style(m_firstLine)->fontMetrics().height() : 0;

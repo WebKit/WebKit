@@ -1,3 +1,21 @@
+2011-10-06  Andreas Kling  <kling@webkit.org>
+
+        InlineBox's virtualLogicalHeight() partially limited to builds with SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=69538
+
+        Reviewed by Dan Bernstein.
+
+        Remove erroneous ENABLE(SVG) guards around the initialization and use
+        of InlineBox::hasVirtualLogicalHeight.
+
+        This variable is used by TrailingFloatsRootInlineBox and should always
+        be respected regardless of SVG support.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2011-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement cache model for WebKit2
