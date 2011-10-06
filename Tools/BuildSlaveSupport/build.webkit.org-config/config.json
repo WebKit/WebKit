@@ -254,8 +254,8 @@
                       "slavenames": ["google-linux-android"]
                     },
                     {
-                      "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
-                      "platform": "wincairo", "configuration": "debug", "architectures": ["i386"],
+                      "name": "WinCairo Release", "type": "BuildAndTest", "builddir": "win-cairo-release",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
                     },
                     {

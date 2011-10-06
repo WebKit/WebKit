@@ -1,3 +1,14 @@
+2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Switch to building Release target, and activate tests.
+        https://bugs.webkit.org/show_bug.cgi?id=69272
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Change from debug to release target. Switch from "Build" to
+        "BuildAndTest"
+
 2011-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         In WebKitTestRunner, text has font smoothing in pixel snapshots
