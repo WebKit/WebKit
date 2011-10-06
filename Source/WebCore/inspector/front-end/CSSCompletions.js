@@ -40,6 +40,22 @@ WebInspector.CSSCompletions = function(values, acceptEmptyPrefix)
     this._acceptEmptyPrefix = acceptEmptyPrefix;
 }
 
+
+/**
+ * @type {WebInspector.CSSCompletions}
+ */
+WebInspector.CSSCompletions.cssNameCompletions = null;
+
+WebInspector.CSSCompletions.requestCSSNameCompletions = function()
+{
+    function propertyNamesCallback(error, names)
+    {
+        if (!error)
+            WebInspector.CSSCompletions.cssNameCompletions = new WebInspector.CSSCompletions(names, false);
+    }
+    CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+}
+
 WebInspector.CSSCompletions.prototype = {
     startsWith: function(prefix)
     {

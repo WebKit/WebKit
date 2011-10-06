@@ -71,7 +71,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:35:jsmodule_common \
+    --module jsmodule_ui:37:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/Color.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
@@ -120,6 +120,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/FontView.js \
         --js Source/WebCore/inspector/front-end/ImageView.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
+        --js Source/WebCore/inspector/front-end/MetricsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/NetworkItemView.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
@@ -132,6 +133,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/ResourceTimingView.js \
         --js Source/WebCore/inspector/front-end/ResourceView.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
+        --js Source/WebCore/inspector/front-end/StylesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/TimelineAgent.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js
 
@@ -141,8 +143,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 #
 # ElementsPanel
 # BreakpointsSidebarPane
-# MetricsSidebarPane
-# StylesSidebarPane
 # DOMBreakpointsSidebarPane
 #
 # [Resources]

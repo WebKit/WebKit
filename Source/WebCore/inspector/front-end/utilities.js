@@ -45,6 +45,9 @@ Function.prototype.bind = function(thisObject)
     return bound;
 }
 
+/**
+ * @param {string=} direction
+ */
 Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, direction)
 {
     var startNode;

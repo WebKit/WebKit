@@ -50,6 +50,12 @@ WebInspector.linkifyStringAsFragment = function(url) {}
 WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(url, linkifier) {}
 
 /**
+ * @param {string=} classes
+ * @param {string=} tooltipText
+ */
+WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipText) {}
+
+/**
  * @param {string} url
  * @param {number} lineNumber
  */
@@ -81,7 +87,16 @@ JSON.parse = function(str) {}
 /** @return {string} */
 JSON.stringify = function(str) {}
 
-Element.prototype.scrollIntoViewIfNeeded = function() {}
+/**
+ * @param {boolean=} param
+ */
+Element.prototype.scrollIntoViewIfNeeded = function(param) {}
+
+/**
+ * @return {number}
+ */
+Element.prototype.selectionLeftOffset = function() {}
+
 
 /**
  * @param {boolean=} onlyFirst

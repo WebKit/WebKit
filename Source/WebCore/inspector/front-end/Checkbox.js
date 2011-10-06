@@ -25,6 +25,7 @@
 
 /**
  * @constructor
+ * @param {string=} tooltip
  */
 WebInspector.Checkbox = function(label, className, tooltip)
 {

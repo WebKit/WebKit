@@ -28,27 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
-WebInspector.CSSKeywordCompletions = {
-    forProperty: function(propertyName)
-    {
-        var acceptedKeywords = ["initial"];
-        if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
-            acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
-        if (propertyName in WebInspector.CSSKeywordCompletions._colorAwareProperties)
-            acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
-        if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
-            acceptedKeywords.push("inherit");
-        return new WebInspector.CSSCompletions(acceptedKeywords, true);
-    },
+WebInspector.CSSKeywordCompletions = {}
 
-    isColorAwareProperty: function(propertyName)
-    {
-        return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
-    }
-};
+WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
+{
+    var acceptedKeywords = ["initial"];
+    if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
+        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
+    if (propertyName in WebInspector.CSSKeywordCompletions._colorAwareProperties)
+        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
+    if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
+        acceptedKeywords.push("inherit");
+    return new WebInspector.CSSCompletions(acceptedKeywords, true);
+}
+
+WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)
+{
+    return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
+}
 
 // Taken from http://www.w3.org/TR/CSS21/propidx.html.
 WebInspector.CSSKeywordCompletions.InheritedProperties = [

@@ -513,13 +513,7 @@ WebInspector.doLoadedDone = function()
 
     WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
 
-    function propertyNamesCallback(error, names)
-    {
-        if (!error)
-            WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
-    }
-    // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
-    CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+    WebInspector.CSSCompletions.requestCSSNameCompletions();
 }
 
 WebInspector.addPanel = function(panel)

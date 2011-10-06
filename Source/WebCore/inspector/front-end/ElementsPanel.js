@@ -377,11 +377,6 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    renameSelector: function(oldIdentifier, newIdentifier, oldSelector, newSelector)
-    {
-        // TODO: Implement Shifting the oldSelector, and its contents to a newSelector
-    },
-
     selectedDOMNode: function()
     {
         return this.treeOutline.selectedDOMNode();

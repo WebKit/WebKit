@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.MetricsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Metrics"));
@@ -36,6 +40,9 @@ WebInspector.MetricsSidebarPane = function()
 }
 
 WebInspector.MetricsSidebarPane.prototype = {
+    /**
+     * @param {WebInspector.DOMNode=} node
+     */
     update: function(node)
     {
         if (node)
@@ -208,7 +215,7 @@ WebInspector.MetricsSidebarPane.prototype = {
             WebInspector.Color.fromRGBA(0, 0, 0, 0)
         ];
         var boxLabels = [WebInspector.UIString("content"), WebInspector.UIString("padding"), WebInspector.UIString("border"), WebInspector.UIString("margin"), WebInspector.UIString("position")];
-        var previousBox;
+        var previousBox = null;
         this._boxElements = [];
         for (var i = 0; i < boxes.length; ++i) {
             var name = boxes[i];
@@ -280,11 +287,13 @@ WebInspector.MetricsSidebarPane.prototype = {
         targetElement.addEventListener("keydown", boundKeyDown, false);
 
         this._isEditingMetrics = true;
-        WebInspector.startEditing(targetElement, {
-            context: context,
-            commitHandler: this.editingCommitted.bind(this),
-            cancelHandler: this.editingCancelled.bind(this)
-        });
+
+        var config = new WebInspector.EditingConfig();
+        config.setContext(context);
+        config.setCommitHandler(this.editingCommitted.bind(this));
+        config.setCancelHandler(this.editingCancelled.bind(this));
+        WebInspector.startEditing(targetElement, config);
+
         window.getSelection().setBaseAndExtent(targetElement, 0, targetElement, 1);
     },
 
@@ -309,9 +318,9 @@ WebInspector.MetricsSidebarPane.prototype = {
         var matches = /(.*?)(-?(?:\d+(?:\.\d+)?|\.\d+))(.*)/.exec(wordString);
         var replacementString;
         if (matches && matches.length) {
-            prefix = matches[1];
-            suffix = matches[3];
-            number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
+            var prefix = matches[1];
+            var suffix = matches[3];
+            var number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
             if (number === null) {
                 // Need to check for null explicitly.
                 return;
@@ -369,7 +378,6 @@ WebInspector.MetricsSidebarPane.prototype = {
     {
         if (!this.inlineStyle) {
             // Element has no renderer.
-            delete this.originalPropertyValue;
             return this.editingCancelled(element, context); // nothing changed, so cancel
         }
 
@@ -391,8 +399,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
         if (computedStyle.getPropertyValue("box-sizing") === "border-box" && (styleProperty === "width" || styleProperty === "height")) {
             if (!userInput.match(/px$/)) {
-                WebInspector.log("For elements with box-sizing: border-box, only absolute content area dimensions can be applied", WebInspector.ConsoleMessage.MessageLevel.Error);
-                WebInspector.showConsole();
+                WebInspector.log("For elements with box-sizing: border-box, only absolute content area dimensions can be applied", WebInspector.ConsoleMessage.MessageLevel.Error, true);
                 return;
             }
 

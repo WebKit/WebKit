@@ -1,5 +1,46 @@
 2011-10-06  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: add Styles and Metrics sidebars to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69529
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions.requestCSSNameCompletions):
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        (WebInspector.CSSKeywordCompletions.isColorAwareProperty):
+        * inspector/front-end/Checkbox.js:
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._updateMetrics):
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertiesSection.prototype.startEditingSelector):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+        (WebInspector.BlankStylePropertiesSection.prototype.makeNormal):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.linkifyURL):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/externs.js:
+        (WebInspector.linkifyResourceAsNode):
+        (Element.prototype.scrollIntoViewIfNeeded):
+        (Element.prototype.selectionLeftOffset):
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/utilities.js:
+
+2011-10-06  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: extract DOMPresentation, make EventListenersSidebar compile
         https://bugs.webkit.org/show_bug.cgi?id=69527
 

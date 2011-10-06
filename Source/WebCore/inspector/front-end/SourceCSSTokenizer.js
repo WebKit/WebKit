@@ -49,7 +49,7 @@ WebInspector.SourceCSSTokenizer = function()
 {
     WebInspector.SourceTokenizer.call(this);
 
-    this._propertyKeywords = WebInspector.cssNameCompletions.keySet();
+    this._propertyKeywords = WebInspector.CSSCompletions.cssNameCompletions.keySet();
 
     this._valueKeywords = [
         "above", "absolute", "activeborder", "activecaption", "afar", "after-white-space", "ahead", "alias", "all", "all-scroll",
