@@ -1,3 +1,11 @@
+2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Snow Leopard build fix
+
+        Unreviewed build fix
+
+        * JavaScriptCore.exp:
+
 2011-10-05  Gavin Barraclough  <barraclough@apple.com>
 
         Add explicit JSGlobalThis type.
