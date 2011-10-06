@@ -568,12 +568,7 @@ Element* Node::shadowHost() const
 
 void Node::setShadowHost(Element* host)
 {
-    ASSERT(!parentNode() && !isSVGShadowRoot());
-    if (host)
-        setFlag(IsShadowRootFlag);
-    else
-        clearFlag(IsShadowRootFlag);
-
+    ASSERT(!parentNode() && isShadowRoot());
     setParent(host);
 }
 

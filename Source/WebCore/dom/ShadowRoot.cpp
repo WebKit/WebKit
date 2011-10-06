@@ -37,7 +37,7 @@
 namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
-    : TreeScope(document)
+    : TreeScope(document, CreateShadowRoot)
     , m_applyAuthorSheets(false)
 {
     ASSERT(document);

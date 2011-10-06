@@ -36,8 +36,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(Document* document)
-    : ContainerNode(document)
+TreeScope::TreeScope(Document* document, ConstructionType constructionType)
+    : ContainerNode(document, constructionType)
     , m_parentTreeScope(0)
     , m_numNodeListCaches(0)
 {

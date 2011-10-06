@@ -1,3 +1,21 @@
+2011-10-05  Dominic Cooney  <dominicc@chromium.org>
+
+        IsShadowRootFlag should not depend on whether a ShadowRoot is attached to a host.
+        https://bugs.webkit.org/show_bug.cgi?id=69406
+
+        Reviewed by Hajime Morita.
+
+        No change in behavior => No new tests.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setShadowHost): Don't twiddle the flag.
+        * dom/Node.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot): Set the IsShadowRootFlag on creation.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope): Let ShadowRoot set creation flags.
+        * dom/TreeScope.h:
+
 2011-10-05  Chris Rogers  <crogers@google.com>
 
         Define a log2f() function for Windows in wtf/MathExtras.h

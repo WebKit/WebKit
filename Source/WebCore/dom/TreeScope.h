@@ -65,7 +65,7 @@ public:
     virtual bool applyAuthorSheets() const;
 
 protected:
-    TreeScope(Document*);
+    TreeScope(Document*, ConstructionType = CreateContainer);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();
