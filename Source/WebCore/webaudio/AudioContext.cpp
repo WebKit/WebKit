@@ -84,7 +84,9 @@ namespace {
     
 bool isSampleRateRangeGood(float sampleRate)
 {
-    return sampleRate >= 22050 && sampleRate <= 96000;
+    // FIXME: It would be nice if the minimum sample-rate could be less than 44.1KHz,
+    // but that will require some fixes in HRTFPanner::fftSizeForSampleRate(), and some testing there.
+    return sampleRate >= 44100 && sampleRate <= 96000;
 }
 
 }
@@ -296,9 +298,6 @@ void AudioContext::refBuffer(PassRefPtr<AudioBuffer> buffer)
 
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
-    if (!isSampleRateRangeGood(sampleRate) || numberOfChannels > 10 || !numberOfFrames)
-        return 0;
-    
     return AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
 }
 
