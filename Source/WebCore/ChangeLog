@@ -1,3 +1,20 @@
+2011-10-06  John Knottenbelt  <jknotten@chromium.org>
+
+        Take pageScaleFactor into account for MouseRelatedEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=67592
+
+        Reviewed by Tony Gentilcore.
+
+        Tests: fast/events/page-scaled-mouse-click-iframe.html
+               fast/events/page-scaled-mouse-click.html
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsScrollOffset):
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::frameScaleFactor):
+        (WebCore::MouseRelatedEvent::computePageLocation):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+
 2011-10-03  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Remove SQLite-LevelDB migration code

@@ -1,3 +1,26 @@
+2011-10-06  John Knottenbelt  <jknotten@chromium.org>
+
+        Take pageScaleFactor into account for MouseRelatedEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=67592
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/events/page-scaled-mouse-click-expected.txt: Added.
+        * fast/events/page-scaled-mouse-click-iframe-expected.txt: Added.
+        * fast/events/page-scaled-mouse-click-iframe.html: Added.
+        * fast/events/page-scaled-mouse-click.html: Added.
+        * fast/events/resources/page-scaled-mouse-click-iframe-inner.html: Added.
+        * fast/events/script-tests/page-scaled-mouse-click-iframe.js: Added.
+        ():
+        (clearEventLog):
+        (testEvents):
+        (iframeLoaded):
+        * fast/events/script-tests/page-scaled-mouse-click.js: Added.
+        ():
+        (clearEventLog):
+        (sendEvents):
+        (testEvents):
+
 2011-10-06  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Skipped a test that lacks a console message.

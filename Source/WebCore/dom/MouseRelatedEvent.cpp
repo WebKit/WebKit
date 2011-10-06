@@ -48,8 +48,8 @@ static LayoutSize contentsScrollOffset(AbstractView* abstractView)
     FrameView* frameView = frame->view();
     if (!frameView)
         return LayoutSize();
-    return LayoutSize(frameView->scrollX() / frame->pageZoomFactor(),
-        frameView->scrollY() / frame->pageZoomFactor());
+    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    return LayoutSize(frameView->scrollX() / scaleFactor, frameView->scrollY() / scaleFactor);
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
@@ -67,15 +67,15 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
         if (FrameView* frameView = frame->view()) {
             scrollPosition = frameView->scrollPosition();
             adjustedPageLocation = frameView->windowToContents(windowLocation);
-            float pageZoom = frame->pageZoomFactor();
-            if (pageZoom != 1.0f) {
+            float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+            if (scaleFactor != 1.0f) {
                 // Adjust our pageX and pageY to account for the page zoom.
-                adjustedPageLocation.scale(1 / pageZoom, 1 / pageZoom);
+                adjustedPageLocation.scale(1 / scaleFactor, 1 / scaleFactor);
 
                 // FIXME: Change this to use float math and proper rounding (or
                 // better yet, use LayoutPoint::scale).
-                scrollPosition.setX(scrollPosition.x() / pageZoom);
-                scrollPosition.setY(scrollPosition.y() / pageZoom);
+                scrollPosition.setX(scrollPosition.x() / scaleFactor);
+                scrollPosition.setY(scrollPosition.y() / scaleFactor);
             }
         }
     }
@@ -122,10 +122,21 @@ static float pageZoomFactor(const UIEvent* event)
     return frame->pageZoomFactor();
 }
 
+static float frameScaleFactor(const UIEvent* event)
+{
+    DOMWindow* window = event->view();
+    if (!window)
+        return 1;
+    Frame* frame = window->frame();
+    if (!frame)
+        return 1;
+    return frame->frameScaleFactor();
+}
+
 void MouseRelatedEvent::computePageLocation()
 {
-    float zoomFactor = pageZoomFactor(this);
-    setAbsoluteLocation(roundedLayoutPoint(FloatPoint(pageX() * zoomFactor, pageY() * zoomFactor)));
+    float scaleFactor = pageZoomFactor(this) * frameScaleFactor(this);
+    setAbsoluteLocation(roundedLayoutPoint(FloatPoint(pageX() * scaleFactor, pageY() * scaleFactor)));
 }
 
 void MouseRelatedEvent::receivedTarget()
@@ -151,7 +162,7 @@ void MouseRelatedEvent::computeRelativePosition()
         if (RenderObject* r = targetNode->renderer()) {
             FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
             m_offsetLocation = roundedLayoutPoint(localPos);
-            float scaleFactor = 1 / pageZoomFactor(this);
+            float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
             if (scaleFactor != 1.0f)
                 m_offsetLocation.scale(scaleFactor, scaleFactor);
         }
