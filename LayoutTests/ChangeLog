@@ -1,3 +1,13 @@
+2011-10-06  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Test how media element TimeRange methods react to too few arguments
+        https://bugs.webkit.org/show_bug.cgi?id=66532
+
+        Reviewed by Adam Barth.
+
+        * media/video-buffered-too-few-arguments-expected.txt: Added.
+        * media/video-buffered-too-few-arguments.html: Added.
+
 2011-10-06  Cary Clark  <caryclark@google.com>
 
         Unreviewed: Update all chromium-mac baseline images that differ only
