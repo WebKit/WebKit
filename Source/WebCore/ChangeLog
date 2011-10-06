@@ -1,3 +1,26 @@
+2011-10-06  Gavin Peters  <gavinp@chromium.org>
+
+        save resource zeroing stacks in ScriptElement for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=69453
+
+        The state machine tracking how m_cachedScript gets zeroed shows that sometimes we get
+        two notifyFinished() events in a ScriptElement, which can crash chrome (see chrome bug
+        75604).  This patch will save a stack in the ScriptElement when this happens, so that if
+        we do later crash, we can see how we did the first zeroing.
+
+        See http://code.google.com/p/chromium/issues/detail?id=75604 for the chromium bug that
+        this change will help track down.
+
+        Reviewed by Nate Chapin.
+
+        No new tests, this shouldn't affect output at all, and isn't particularly testable.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::stopLoadRequest):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptElement.h:
+
 2011-10-06  Rémi Duraffort  <remi.duraffort@st.com>
 
         Fix compilation by adding some missing ENABLE(VIDEO|XSLT)
