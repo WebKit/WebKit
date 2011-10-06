@@ -2397,3 +2397,7 @@ http/tests/multipart/stop-crash.html
 # One test failed after r96260
 # https://bugs.webkit.org/show_bug.cgi?id=69257
 inspector/styles/styles-disable-then-change.html
+
+# [Qt] REGRESSION(r96779): It made svg/as-image/svg-nested.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=69511
+svg/as-image/svg-nested.html

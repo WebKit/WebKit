@@ -1,3 +1,10 @@
+2011-10-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r96779): It made svg/as-image/svg-nested.html timeout
+        https://bugs.webkit.org/show_bug.cgi?id=69511
+
+        * platform/qt/Skipped: Skip svg/as-image/svg-nested.html until fix.
+
 2011-10-06  John Knottenbelt  <jknotten@chromium.org>
 
         Take pageScaleFactor into account for MouseRelatedEvents.
