@@ -1,3 +1,28 @@
+2011-10-06  Konstantin Scheglov  <scheglov@google.com>
+
+        REGRESSION (r95852?): Disappearing Border on bugs.webkit.org attachments <table>
+        https://bugs.webkit.org/show_bug.cgi?id=69296
+
+        Reviewed by David Hyatt.
+
+        Test: fast/table/border-collapsing/cached-69296.html
+
+        Remember BorderValue in CollapsedBorderValue by value.
+        See https://bugs.webkit.org/show_bug.cgi?id=69296#c7 for motivation.
+
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::width):
+        (WebCore::CollapsedBorderValue::style):
+        (WebCore::CollapsedBorderValue::exists):
+        (WebCore::CollapsedBorderValue::isTransparent):
+        (WebCore::CollapsedBorderValue::operator==):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedStartBorder):
+        (WebCore::RenderTableCell::collapsedEndBorder):
+        (WebCore::RenderTableCell::collapsedBeforeBorder):
+        (WebCore::RenderTableCell::collapsedAfterBorder):
+
 2011-10-06  Gavin Peters  <gavinp@chromium.org>
 
         save resource zeroing stacks in ScriptElement for debugging

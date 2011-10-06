@@ -1,3 +1,16 @@
+2011-10-06  Konstantin Scheglov  <scheglov@google.com>
+
+        REGRESSION (r95852?): Disappearing Border on bugs.webkit.org attachments <table>
+        https://bugs.webkit.org/show_bug.cgi?id=69296
+
+        Reviewed by David Hyatt.
+        
+        Collapsed borders should not disappear.
+
+        * fast/table/border-collapsing/cached-69296-expected.png: Added.
+        * fast/table/border-collapsing/cached-69296-expected.txt: Added.
+        * fast/table/border-collapsing/cached-69296.html: Added.
+
 2011-10-06  Mark Pilgrim  <pilgrim@chromium.org>
 
         Test how media element TimeRange methods react to too few arguments
