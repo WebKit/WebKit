@@ -1,3 +1,29 @@
+2011-10-06  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Test how DOMTokenList methods react to too few arguments
+        https://bugs.webkit.org/show_bug.cgi?id=66537
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+        (createElement):
+
+2011-10-06  Adam Barth  <abarth@webkit.org>
+
+        Add missing tests for LegacyDefaultOptionalArguments for setCustomValidity
+        https://bugs.webkit.org/show_bug.cgi?id=69532
+
+        Reviewed by Darin Adler.
+
+        These APIs are relatively new and it's unlikely that many folks will
+        call them without their argument.  Making the parameters required
+        aligns WebKit more closely with the specifications for this API at
+        minimal compatibility cost.
+
+        * fast/dom/set-custom-validity-with-too-few-arguments-expected.txt: Added.
+        * fast/dom/set-custom-validity-with-too-few-arguments.html: Added.
+
 2011-10-06  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Add check for JavaScript URLs in HTMLPlugInImageElement::allowedToLoadFrameURL

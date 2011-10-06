@@ -154,6 +154,9 @@ shouldThrowDOMException(function() {
 }, DOMException.INVALID_CHARACTER_ERR);
 
 createElement('');
+shouldThrow("element.classList.add()");
+
+createElement('');
 shouldThrowDOMException(function() {
     element.classList.remove('');
 }, DOMException.SYNTAX_ERR);
@@ -162,6 +165,9 @@ createElement('');
 shouldThrowDOMException(function() {
     element.classList.remove('x y');
 }, DOMException.INVALID_CHARACTER_ERR);
+
+createElement('');
+shouldThrow("element.classList.remove()");
 
 createElement('');
 shouldThrowDOMException(function() {
@@ -173,6 +179,8 @@ shouldThrowDOMException(function() {
     element.classList.toggle('x y');
 }, DOMException.INVALID_CHARACTER_ERR);
 
+createElement('');
+shouldThrow("element.classList.toggle()");
 
 debug('Indexing');
 
@@ -197,6 +205,7 @@ shouldBeNull('element.classList[4]');
 shouldBeNull('element.classList.item(4)');
 shouldBeUndefined('element.classList[-1]');  // Not a valid index so should not trigger item().
 shouldBeNull('element.classList.item(-1)');
+shouldThrow('element.classList.item()');
 
 debug('Test case since DOMTokenList is case sensitive');
 
@@ -204,6 +213,7 @@ createElement('x');
 shouldBeTrue('element.classList.contains(\'x\')');
 shouldBeFalse('element.classList.contains(\'X\')');
 shouldBeEqualToString('element.classList[0]', 'x');
+shouldThrow('element.classList.contains()');
 
 createElement('X');
 shouldBeTrue('element.classList.contains(\'X\')');
