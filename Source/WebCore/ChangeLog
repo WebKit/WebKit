@@ -1,3 +1,13 @@
+2011-10-06  Arthur Hsu  <arthurhsu@chromium.org>
+
+        Ensure font loaded before calling Skia to drawPosText in Chrome sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=69370
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2011-10-06  Chris Rogers  <crogers@google.com>
 
         BiquadFilterNode must not reset filter state if type attribute is set to the same type
