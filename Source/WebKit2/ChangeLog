@@ -1,3 +1,16 @@
+2011-10-06  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2][Mac] QtWebProcess should not show up in the Dock.
+        https://bugs.webkit.org/show_bug.cgi?id=69432
+
+        We can set the environment variable QT_MAC_DISABLE_FOREGROUND_APPLICATION_TRANSFORM
+        in the WebProcess stub to disable the automatic foreground transformation.
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::setupChildProcess):
+
 2011-10-03  Andy Estes  <aestes@apple.com>
 
         Add an option to suppress rendering until the document's load event fires.

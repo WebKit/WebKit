@@ -50,7 +50,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
-#if defined Q_OS_LINUX
+#if defined(Q_OS_LINUX)
 #include <sys/prctl.h>
 #include <signal.h>
 #endif
@@ -74,12 +74,15 @@ protected:
 
 void QtWebProcess::setupChildProcess()
 {
-#if defined Q_OS_LINUX
+#if defined(Q_OS_LINUX)
 #ifndef NDEBUG
     if (getenv("QT_WEBKIT_KEEP_ALIVE_WEB_PROCESS"))
         return;
 #endif
     prctl(PR_SET_PDEATHSIG, SIGKILL);
+#endif
+#if defined(Q_OS_MACX)
+    qputenv("QT_MAC_DISABLE_FOREGROUND_APPLICATION_TRANSFORM", QByteArray("1"));
 #endif
 }
 
