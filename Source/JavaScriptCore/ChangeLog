@@ -1,3 +1,36 @@
+2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC objects need to know their own cell size at runtime.
+        https://bugs.webkit.org/show_bug.cgi?id=69390
+
+        Reviewed by Geoffrey Garen.
+
+        Added the cellSize field to ClassInfo and the static calculation of 
+        size of each class to the CREATE_METHOD_TABLE macro, which will be 
+        renamed in a followup patch to make its name match its broader use.
+
+        Also added a few ClassInfo structs so that each object that is allocated has its 
+        correct size.  
+
+        * JavaScriptCore.exp:
+        * runtime/ClassInfo.h:
+
+        Changed JSByteArray s_defaultInfo to s_info so that the template will get the 
+        correct ClassInfo struct from it when it's allocated.
+        * runtime/JSByteArray.cpp:
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.h:
+        (JSC::allocateCell):
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSCell::cellSize):
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StrictEvalActivation.h:
+
 2011-10-06  Gavin Peters  <gavinp@chromium.org>
 
         export new stack dumping method

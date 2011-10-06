@@ -365,6 +365,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return Structure::create(globalData, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), &s_info);
         }
 
+        static const ClassInfo s_info;
+
     protected:
         void finishCreation(JSGlobalData& globalData)
         {

@@ -41,7 +41,8 @@ namespace JSC {
 #define CREATE_METHOD_TABLE(ClassName) { \
         &ClassName::visitChildren, \
         &ClassName::getCallData \
-    }
+    }, \
+    sizeof(ClassName)
 
     struct ClassInfo {
         /**
@@ -79,6 +80,8 @@ namespace JSC {
         const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
 
         MethodTable methodTable;
+
+        size_t cellSize;
     };
 
 } // namespace JSC

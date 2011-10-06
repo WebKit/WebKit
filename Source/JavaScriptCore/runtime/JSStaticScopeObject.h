@@ -50,6 +50,8 @@ namespace JSC{
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); }
 
+        static const ClassInfo s_info;
+
     protected:
         void finishCreation(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
         {

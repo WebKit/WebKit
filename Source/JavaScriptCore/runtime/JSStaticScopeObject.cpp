@@ -32,6 +32,8 @@
 namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
+const ClassInfo JSStaticScopeObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSStaticScopeObject) };
+
 void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);

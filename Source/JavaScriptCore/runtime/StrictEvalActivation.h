@@ -49,6 +49,8 @@ public:
         return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
     
+    static const ClassInfo s_info;
+
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | JSNonFinalObject::StructureFlags;
 

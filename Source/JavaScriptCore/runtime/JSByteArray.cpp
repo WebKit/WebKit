@@ -33,7 +33,7 @@ using namespace WTF;
 
 namespace JSC {
 
-const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSByteArray) };
+const ClassInfo JSByteArray::s_info = { "ByteArray", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSByteArray) };
 
 JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* storage)
     : JSNonFinalObject(exec->globalData(), structure)

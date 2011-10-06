@@ -36,6 +36,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSNotAnObject);
 
+const ClassInfo JSNotAnObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSNotAnObject) };
+
 // JSValue methods
 JSValue JSNotAnObject::defaultValue(ExecState* exec, PreferredPrimitiveType) const
 {
