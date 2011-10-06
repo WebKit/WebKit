@@ -50,6 +50,9 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "ShadowValue.h"
+#if ENABLE(CSS_FILTERS)
+#include "WebKitCSSFilterValue.h"
+#endif
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 
@@ -641,6 +644,96 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
 
     return list.release();
 }
+
+#if ENABLE(CSS_FILTERS)
+static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    if (!renderer || style->filter().operations().isEmpty())
+        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+    
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
+    RefPtr<WebKitCSSFilterValue> filterValue;
+    
+    Vector<RefPtr<FilterOperation> >::const_iterator end = style->filter().operations().end();
+    for (Vector<RefPtr<FilterOperation> >::const_iterator it = style->filter().operations().begin(); it != end; ++it) {
+        FilterOperation* filterOperation = (*it).get();
+        switch (filterOperation->getOperationType()) {
+        case FilterOperation::REFERENCE: {
+            ReferenceFilterOperation* referenceOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(referenceOperation->reference(), CSSPrimitiveValue::CSS_STRING));
+            break;
+        }
+        case FilterOperation::GRAYSCALE: {
+            BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::GrayscaleFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::SEPIA: {
+            BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SepiaFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::SATURATE: {
+            BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SaturateFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::HUE_ROTATE: {
+            BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::HueRotateFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_DEG));
+            break;
+        }
+        case FilterOperation::INVERT: {
+            BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::InvertFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::OPACITY: {
+            BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::OpacityFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::GAMMA: {
+            GammaFilterOperation* gammaOperation = static_cast<GammaFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::GammaFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(gammaOperation->amplitude(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(primitiveValueCache->createValue(gammaOperation->exponent(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(primitiveValueCache->createValue(gammaOperation->offset(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::BLUR: {
+            BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::BlurFilterOperation);
+            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationX().value(), style, primitiveValueCache));
+            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationY().value(), style, primitiveValueCache));
+            break;
+        }
+        case FilterOperation::SHARPEN: {
+            SharpenFilterOperation* sharpenOperation = static_cast<SharpenFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SharpenFilterOperation);
+            filterValue->append(primitiveValueCache->createValue(sharpenOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(zoomAdjustedPixelValue(sharpenOperation->radius().value(), style, primitiveValueCache));
+            filterValue->append(primitiveValueCache->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        default:
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::UnknownFilterOperation);
+            break;
+        }
+        list->append(filterValue);
+    }
+    
+    return list.release();
+}
+#endif
 
 static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList, CSSPrimitiveValueCache* primitiveValueCache)
 {
@@ -1899,7 +1992,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->regionIndex(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitRegionOverflow:
             return primitiveValueCache->createValue(style->regionOverflow());
-
+#if ENABLE(CSS_FILTERS)
+        case CSSPropertyWebkitFilter:
+            return computedFilter(renderer, style.get(), primitiveValueCache);
+#endif
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
         case CSSPropertyBorder:
@@ -1993,9 +2089,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
         case CSSPropertyWebkitColumnRule:
-#if ENABLE(CSS_FILTERS)
-        case CSSPropertyWebkitFilter:
-#endif
         case CSSPropertyWebkitMarginCollapse:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:

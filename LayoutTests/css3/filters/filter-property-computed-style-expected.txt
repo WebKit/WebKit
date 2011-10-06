@@ -1,0 +1,294 @@
+Test the computed style of the -webkit-filter property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Basic reference : url('#a')
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
+PASS subRule.cssText is 'url(\'#a\')'
+
+Bare unquoted reference converting to quoted form : url(#a)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
+PASS subRule.cssText is 'url(\'#a\')'
+
+Multiple references : url('#a') url('#b')
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
+PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
+PASS subRule.cssText is 'url(\'#b\')'
+
+Reference as 2nd value : grayscale(1) url('#a')
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(1)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
+PASS subRule.cssText is 'url(\'#a\')'
+
+Integer value : grayscale(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(1)'
+
+Float value converts to integer : grayscale(1.0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(1)'
+
+Zero value : grayscale(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0)'
+
+Multiple values : grayscale(0.5) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Integer value : sepia(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(1)'
+
+Float value converts to integer : sepia(1.0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(1)'
+
+Zero value : sepia(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0)'
+
+Multiple values : sepia(0.5) sepia(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0.25)'
+
+Rule combinations : sepia(0.5) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Integer value : saturate(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(1)'
+
+Float value converts to integer : saturate(1.0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(1)'
+
+Zero value : saturate(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0)'
+
+Multiple values : saturate(0.5) saturate(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0.25)'
+
+Rule combinations : saturate(0.5) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Degrees value as integer : hue-rotate(10deg)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(10deg)'
+
+Degrees float value converts to integer : hue-rotate(10.0deg)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(10deg)'
+
+Radians value : hue-rotate(10rad)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(572.9577951308232deg)'
+
+Gradians value : hue-rotate(10grad)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(9deg)'
+
+Turns value : hue-rotate(0.5turn)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(180deg)'
+
+Zero value : hue-rotate(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(0deg)'
+
+Rule combinations : hue-rotate(10deg) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(10deg)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Integer value : invert(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(1)'
+
+Float value converts to integer : invert(1.0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(1)'
+
+Zero value : invert(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0)'
+
+Multiple values : invert(0.5) invert(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0.25)'
+
+Rule combinations : invert(0.5) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Integer value : opacity(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(1)'
+
+Float value converts to integer : opacity(1.0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(1)'
+
+Zero value : opacity(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0)'
+
+Multiple values : opacity(0.5) opacity(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0.25)'
+
+Rule combinations : opacity(0.5) grayscale(0.25)
+PASS filterStyle.length is 2
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.25)'
+
+Three values : gamma(1 1 0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(1 1 0)'
+
+Two values : gamma(1 1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(1 1 0)'
+
+One value : gamma(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(1 1 0)'
+
+Float value : gamma(1.3)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(1.3 1 0)'
+
+Two zeros to px : blur(0 0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(0px 0px)'
+
+One zero to px : blur(0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(0px 0px)'
+
+Two lengths : blur(5px 2em)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(5px 32px)'
+
+One length : blur(10%)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(10px 10px)'
+
+One length : blur(5px)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(5px 5px)'
+
+Three values : sharpen(1.0 10px 1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(1 10px 1)'
+
+Three values with zero length : sharpen(1.0 0 1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(1 0px 1)'
+
+Two values : sharpen(0.7 1em)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(0.7 16px 1)'
+
+One value : sharpen(0.5)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(0.5 0px 1)'
+
+Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
+PASS filterStyle.length is 9
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0.25)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0.75)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(35deg)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0.2)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0.9)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(2 1.1 1)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(5px 32px)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(0.5 3px 2)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
