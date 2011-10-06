@@ -528,6 +528,24 @@ bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity
     return m_plugin->handleScroll(direction, granularity);
 }
 
+Scrollbar* PluginView::horizontalScrollbar()
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+
+    return m_plugin->horizontalScrollbar();
+}
+
+Scrollbar* PluginView::verticalScrollbar()
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+
+    return m_plugin->verticalScrollbar();
+}
+
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
 {
     Widget::setFrameRect(rect);

@@ -380,13 +380,9 @@ bool BuiltInPDFView::handleMouseEvent(const WebMouseEvent& event)
         // FIXME: Should also notify scrollbar to show hover effect. Should also send mouseExited to hide it.
         break;
     case WebEvent::MouseDown: {
-        PlatformMouseEvent mouseDownEvent = platform(event);
-        if (m_horizontalScrollbar)
-            m_horizontalScrollbar->mouseDown(mouseDownEvent);
-        if (m_verticalScrollbar)
-            m_verticalScrollbar->mouseDown(mouseDownEvent);
-        // Returning false as that will make EventHandler unfocus the plug-in, which is appropriate when clicking scrollbars.
-        // When support for PDF forms is added, we'll need to actually focus the plug-in.
+        // Returning false as will make EventHandler unfocus the plug-in, which is appropriate when clicking scrollbars.
+        // Ideally, we wouldn't change focus at all, but PluginView already did that for us.
+        // When support for PDF forms is added, we'll need to actually focus the plug-in when clicking in a form.
         break;
     }
     case WebEvent::MouseUp:
@@ -473,6 +469,16 @@ bool BuiltInPDFView::handleScroll(ScrollDirection direction, ScrollGranularity g
     return scroll(direction, granularity);
 }
 
+Scrollbar* BuiltInPDFView::horizontalScrollbar()
+{
+    return m_horizontalScrollbar.get();
+}
+
+Scrollbar* BuiltInPDFView::verticalScrollbar()
+{
+    return m_verticalScrollbar.get();
+}
+
 IntRect BuiltInPDFView::scrollCornerRect() const
 {
     if (!m_horizontalScrollbar || !m_verticalScrollbar)
@@ -554,6 +560,16 @@ IntPoint BuiltInPDFView::maximumScrollPosition() const
     IntPoint maximumOffset(m_pdfDocumentSize.width() - m_frameRect.width() + verticalScrollbarWidth, m_pdfDocumentSize.height() - m_frameRect.height() + horizontalScrollbarHeight);
     maximumOffset.clampNegativeToZero();
     return maximumOffset;
+}
+
+LayoutUnit BuiltInPDFView::visibleHeight() const
+{
+    return m_frameRect.height();
+}
+
+LayoutUnit BuiltInPDFView::visibleWidth() const
+{
+    return m_frameRect.width();
 }
 
 IntSize BuiltInPDFView::contentsSize() const

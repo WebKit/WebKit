@@ -104,6 +104,8 @@ private:
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String&);
     virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
+    virtual WebCore::Scrollbar* horizontalScrollbar();
+    virtual WebCore::Scrollbar* verticalScrollbar();
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);

@@ -1,3 +1,29 @@
+2011-10-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Should be able to scroll embedded PDFs using mouse
+        https://bugs.webkit.org/show_bug.cgi?id=69579
+
+        Reviewed by Darin Adler.
+
+        Hit testing doesn't find scrollbars installed by a plug-in, so mouse events don't work.
+
+        As we want to use WebKit scrollbars with PDF plug-in, a cleaner long-term solution would be
+        to have a base class under PluginViewBase that can handle scrolling instead of doing that
+        in PluginView and Plugin.
+
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::horizontalScrollbar):
+        (WebCore::PluginViewBase::verticalScrollbar):
+        Added accessors for scrollbars installed by plug-in.
+
+        * rendering/nodeAtPoint.cpp: (WebCore::RenderEmbeddedObject::nodeAtPoint):
+        Like RenderLayer, add scrollbars to hit result after normal  hit testing.
+
+        * rendering/RenderEmbeddedObject.h: Added a nodeAtPoint override.
+
+        * rendering/RenderWidget.h: Made nodeAtPoint() protected instead of private, so that
+        RenderEmbeddedObject could call it.
+
 2011-10-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9717490> Flash of white when navigating daringfireball.net

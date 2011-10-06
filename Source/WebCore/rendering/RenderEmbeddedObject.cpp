@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
+#include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
@@ -248,6 +249,33 @@ void RenderEmbeddedObject::viewCleared()
         if (marginHeight != -1)
             view->setMarginHeight(marginHeight);
     }
+}
+
+bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (!RenderPart::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
+        return false;
+
+    if (!widget() || !widget()->isPluginViewBase())
+        return true;
+
+    PluginViewBase* view = static_cast<PluginViewBase*>(widget());
+
+    if (Scrollbar* horizontalScrollbar = view->horizontalScrollbar()) {
+        if (horizontalScrollbar->frameRect().contains(pointInContainer)) {
+            result.setScrollbar(horizontalScrollbar);
+            return true;
+        }
+    }
+
+    if (Scrollbar* verticalScrollbar = view->verticalScrollbar()) {
+        if (verticalScrollbar->frameRect().contains(pointInContainer)) {
+            result.setScrollbar(verticalScrollbar);
+            return true;
+        }
+    }
+
+    return true;
 }
 
 bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float, Node**)

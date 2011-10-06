@@ -42,6 +42,7 @@ namespace CoreIPC {
 namespace WebCore {
     class GraphicsContext;
     class IntRect;
+    class Scrollbar;
 }
 
 namespace WebKit {
@@ -202,6 +203,11 @@ public:
 
     // Tells the plug-in that it should scroll. The plug-in should return true if it did scroll.
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) = 0;
+
+    // A plug-in can use WebCore scroll bars. Make them known, so that hit testing can find them.
+    // FIXME: This code should be in PluginView or its base class, not in individual plug-ins.
+    virtual WebCore::Scrollbar* horizontalScrollbar() = 0;
+    virtual WebCore::Scrollbar* verticalScrollbar() = 0;
 
 protected:
     Plugin();

@@ -1,3 +1,35 @@
+2011-10-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Should be able to scroll embedded PDFs using mouse
+        https://bugs.webkit.org/show_bug.cgi?id=69579
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::handleMouseEvent): No longer need to hardcode mouseDown handling,
+        ScrollableArea does everything now.
+        (WebKit::BuiltInPDFView::horizontalScrollbar): Added plumbing to access scrollbars from
+        WebCore hit testing code.
+        (WebKit::BuiltInPDFView::verticalScrollbar): Ditto.
+        (WebKit::BuiltInPDFView::visibleHeight): ScrollableArea now wants this.
+        (WebKit::BuiltInPDFView::visibleWidth): Ditto.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::horizontalScrollbar):
+        (WebKit::NetscapePlugin::verticalScrollbar):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::horizontalScrollbar):
+        (WebKit::PluginProxy::verticalScrollbar):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::horizontalScrollbar):
+        (WebKit::PluginView::verticalScrollbar):
+        * WebProcess/Plugins/PluginView.h:
+        Added plumbing to access scrollbars from WebCore hit testing code.
+
 2011-10-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] WebIconDatabase expects a file path not a directory.

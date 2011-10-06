@@ -103,6 +103,8 @@ private:
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
+    virtual WebCore::Scrollbar* horizontalScrollbar();
+    virtual WebCore::Scrollbar* verticalScrollbar();
 
     // ScrollableArea methods.
     virtual WebCore::IntRect scrollCornerRect() const;
@@ -117,6 +119,8 @@ private:
     virtual WebCore::IntPoint scrollPosition() const;
     virtual WebCore::IntPoint minimumScrollPosition() const;
     virtual WebCore::IntPoint maximumScrollPosition() const;
+    virtual WebCore::LayoutUnit visibleHeight() const;
+    virtual WebCore::LayoutUnit visibleWidth() const;
     virtual WebCore::IntSize contentsSize() const;
     virtual WebCore::Scrollbar* horizontalScrollbar() const  { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
