@@ -32,6 +32,7 @@
 
 import logging
 import os.path
+import re
 import sys
 
 from checkers.common import categories as CommonCategories
@@ -277,15 +278,12 @@ _XML_FILE_EXTENSIONS = [
 # WebKit maintains some files in Mozilla style on purpose to ease
 # future merges.
 _SKIPPED_FILES_WITH_WARNING = [
-    "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
-    "gtkdrawing.h", # WebCore/platform/gtk/gtkdrawing.h
     "Source/WebKit/gtk/tests/",
-    # Soup API that is still being cooked, will be removed from WebKit
-    # in a few months when it is merged into soup proper. The style
-    # follows the libsoup style completely.
-    "Source/WebCore/platform/network/soup/cache/",
-    ]
-
+    # All WebKit*.h files in Source/WebKit2/UIProcess/API/gtk,
+    # except those ending in ...Private.h are GTK+ API headers,
+    # which differ greatly from WebKit coding style.
+    re.compile(r'Source/WebKit2/UIProcess/API/gtk/WebKit(?!.*Private\.h).*\.h$'),
+    'Source/WebKit2/UIProcess/API/gtk/webkit2.h']
 
 # Files to skip that are more common or obvious.
 #
@@ -467,10 +465,18 @@ class CheckerDispatcher(object):
         """Return the file extension without the leading dot."""
         return os.path.splitext(file_path)[1].lstrip(".")
 
+    def _should_skip_file_path(self, file_path, skip_array_entry):
+        if isinstance(skip_array_entry, str):
+            if file_path.find(skip_array_entry) >= 0:
+                return True
+        elif skip_array_entry.match(file_path):
+                return True
+        return False
+
     def should_skip_with_warning(self, file_path):
         """Return whether the given file should be skipped with a warning."""
         for skipped_file in _SKIPPED_FILES_WITH_WARNING:
-            if file_path.find(skipped_file) >= 0:
+            if self._should_skip_file_path(file_path, skipped_file):
                 return True
         return False
 
@@ -492,7 +498,7 @@ class CheckerDispatcher(object):
         elif basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
             return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
-            if file_path.find(skipped_file) >= 0:
+            if self._should_skip_file_path(file_path, skipped_file):
                 return True
         return False
 

@@ -1,3 +1,24 @@
+2011-10-06  Martin Robinson  <mrobinson@igalia.com>
+
+        The GTK+ WebKit2 headers produce a lot of style warnings
+        https://bugs.webkit.org/show_bug.cgi?id=69481
+
+        Reviewed by David Levin.
+
+        Prevent emitting so many style warnings for GTK+ API. We skip header
+        files in the WebKit2 GTK+ API directory and also avoid warnings about
+        identifier names that begin with "webkit_" in files that contain the
+        string "gtk".
+
+        * Scripts/webkitpy/style/checker.py: Do not check header files in
+        Source/WebKit2/UIProcess/API/gtk that do not end in Private.h. This required
+        adding the ability to specify a regular expression in the skip list. Remove
+        a few files from the skipped list that no longer exist.
+        * Scripts/webkitpy/style/checker_unittest.py: Added a test for this behavior.
+        * Scripts/webkitpy/style/checkers/cpp.py: If a path contains "gtk" don't warn
+        about identifiers that begin with "webkit_".
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added a test for this behavior.
+
 2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Correct config.json for WinCairo Test builds.

@@ -4399,6 +4399,19 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('void webkit_dom_object_init();', '')
         self.assert_lint('void webkit_dom_object_class_init();', '')
 
+        # There is an exception for GTK+ API.
+        self.assert_lint('void webkit_web_view_load(int var1, int var2)', '', 'Source/Webkit/gtk/webkit/foo.cpp')
+        self.assert_lint('void webkit_web_view_load(int var1, int var2)', '', 'Source/Webkit2/UIProcess/gtk/foo.cpp')
+
+        # Test that this doesn't also apply to files not in a 'gtk' directory.
+        self.assert_lint('void webkit_web_view_load(int var1, int var2)',
+            'webkit_web_view_load is incorrectly named. Don\'t use underscores in your identifier names.'
+            '  [readability/naming] [4]', 'Source/Webkit/webkit/foo.cpp')
+        # Test that this doesn't also apply to names that don't start with 'webkit_'.
+        self.assert_lint_one_of_many_errors_re('void otherkit_web_view_load(int var1, int var2)',
+            'otherkit_web_view_load is incorrectly named. Don\'t use underscores in your identifier names.'
+            '  [readability/naming] [4]', 'Source/Webkit/webkit/foo.cpp')
+
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
 

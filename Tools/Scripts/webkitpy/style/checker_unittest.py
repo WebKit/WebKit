@@ -302,21 +302,29 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
 
     def test_should_skip_with_warning(self):
         """Test should_skip_with_warning()."""
-        # Check a non-skipped file.
-        self.assertFalse(self._dispatcher.should_skip_with_warning("foo.txt"))
-
         # Check skipped files.
         paths_to_skip = [
-           "gtk2drawing.c",
-           "gtkdrawing.h",
-           "Source/WebCore/platform/gtk/gtk2drawing.c",
-           "Source/WebCore/platform/gtk/gtkdrawing.h",
            "Source/WebKit/gtk/tests/testatk.c",
+           "Source/WebKit2/UIProcess/API/gtk/webkit2.h",
+           "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h",
+           "Source/WebKit2/UIProcess/API/gtk/WebKitLoader.h",
             ]
 
         for path in paths_to_skip:
             self.assertTrue(self._dispatcher.should_skip_with_warning(path),
                             "Checking: " + path)
+
+        # Verify that some files are not skipped.
+        paths_not_to_skip = [
+           "foo.txt",
+           "Source/WebKit2/UIProcess/API/gtk/HelperClass.cpp",
+           "Source/WebKit2/UIProcess/API/gtk/HelperClass.h",
+           "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp",
+           "Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h",
+            ]
+
+        for path in paths_not_to_skip:
+            self.assertFalse(self._dispatcher.should_skip_with_warning(path))
 
     def _assert_should_skip_without_warning(self, path, is_checker_none,
                                             expected):
