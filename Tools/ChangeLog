@@ -1,3 +1,11 @@
+2011-10-05  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp:
+        (TestWebKitAPI::TEST): Remove underscore prefix from call to
+        WKContextRegisterURLSchemeAsEmptyDocument.
+
 2011-10-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Switch to building Release target, and activate tests.

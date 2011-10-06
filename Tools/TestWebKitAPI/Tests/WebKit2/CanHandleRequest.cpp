@@ -57,7 +57,7 @@ TEST(WebKit2, CanHandleRequest)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("CanHandleRequestTest"));
     setInjectedBundleClient(context.get());
 
-    _WKContextRegisterURLSchemeAsEmptyDocument(context.get(), Util::toWK("emptyscheme").get());
+    WKContextRegisterURLSchemeAsEmptyDocument(context.get(), Util::toWK("emptyscheme").get());
 
     PlatformWebView webView(context.get());
 
