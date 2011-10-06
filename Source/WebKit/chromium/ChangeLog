@@ -1,3 +1,17 @@
+2011-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96791.
+        http://trac.webkit.org/changeset/96791
+        https://bugs.webkit.org/show_bug.cgi?id=69528
+
+        webkit_unit_tests broken on Mac and Win (Requested by
+        hwennborg on #webkit).
+
+        * features.gypi:
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+
 2011-10-06  Hans Wennborg  <hans@chromium.org>
 
         [Chromium] WebKit.gyp fix to unbreak Linux(shared) build after r96791

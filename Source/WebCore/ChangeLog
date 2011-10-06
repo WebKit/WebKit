@@ -1,3 +1,14 @@
+2011-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96791.
+        http://trac.webkit.org/changeset/96791
+        https://bugs.webkit.org/show_bug.cgi?id=69528
+
+        webkit_unit_tests broken on Mac and Win (Requested by
+        hwennborg on #webkit).
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-10-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Heap Snapshot colors legend help popup is not shown.

@@ -24,6 +24,8 @@
 
 #include "config.h"
 
+#if USE(THREADED_COMPOSITING)
+
 #include "cc/CCLayerTreeHost.h"
 
 #include "cc/CCLayerImpl.h"
@@ -168,7 +170,9 @@ public:
     {
     }
 
+#if !USE(THREADED_COMPOSITING)
     virtual void scheduleComposite() { }
+#endif
 
 private:
     explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
@@ -212,7 +216,11 @@ protected:
     {
         m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
         WebCompositor::setThread(m_webThread.get());
+#if USE(THREADED_COMPOSITING)
         m_settings.enableCompositorThread = true;
+#else
+        m_settings.enableCompositorThread = false;
+#endif
     }
 
     void doBeginTest();
@@ -708,3 +716,5 @@ TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, run)
 }
 
 } // namespace
+
+#endif

@@ -54,10 +54,9 @@ public:
     virtual void applyScrollDelta(const IntSize&) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
-
-    // Used in the non-threaded path
+#if !USE(THREADED_COMPOSITING)
     virtual void scheduleComposite() = 0;
-
+#endif
 protected:
     virtual ~CCLayerTreeHostClient() { }
 };
