@@ -1,3 +1,14 @@
+2011-10-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][Wk2] Fix build with Qt 5 when QtScript is built as standalone module
+        https://bugs.webkit.org/show_bug.cgi?id=69520
+
+        Reviewed by Csaba Osztrogonác.
+
+        * QtWebKit.pro: Convenience, use qt5 scope.
+        * declarative/declarative.pro: Ditto.
+        * tests/tests.pri: Ditto.
+
 2011-10-03  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Build fix: Qt::escape is deprecated in Qt5

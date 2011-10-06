@@ -3871,3 +3871,9 @@ contains(CONFIG, opengl-shims) {
     SOURCES += platform/graphics/cairo/OpenGLShims.cpp
     DEFINES += QT_OPENGL_SHIMS=1
 }
+
+qt5 {
+    # Add a QtScript dependency for the time being, in order to pull in the include
+    # path for QtScript when it's built as a standalone module
+    QT += script
+}

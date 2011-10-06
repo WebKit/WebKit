@@ -29,7 +29,7 @@ V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
 V8_LIB_DIR = "$$[QT_INSTALL_PREFIX]/src/script/v8"
 
 v8 {
-    lessThan(QT_MAJOR_VERSION, 5): error("To build QtWebKit+V8 you need qtscript-staging's v8 branch. (See: http://qt.gitorious.org/+qt-developers/qt/qtscript-staging)")
+    !qt5: error("To build QtWebKit+V8 you need qtscript-staging's v8 branch. (See: http://qt.gitorious.org/+qt-developers/qt/qtscript-staging)")
     !exists($${V8_DIR}$${QMAKE_DIR_SEP}include$${QMAKE_DIR_SEP}v8.h): error("Cannot build with V8. Needed file $${V8_DIR}$${QMAKE_DIR_SEP}include$${QMAKE_DIR_SEP}v8.h does not exist.")
     !exists($${V8_LIB_DIR}$${QMAKE_DIR_SEP}libv8.a): error("Cannot build with V8. Needed library $${V8_LIB_DIR}$${QMAKE_DIR_SEP}libv8.a does not exist.")
 
@@ -334,7 +334,7 @@ linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 unix|win32-g++* {
     QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
-    greaterThan(QT_MAJOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES += QtWidgets
+    qt5: QMAKE_PKGCONFIG_REQUIRES += QtWidgets
 }
 unix:!mac:!symbian:CONFIG += link_pkgconfig
 

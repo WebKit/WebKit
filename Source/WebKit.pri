@@ -2,6 +2,9 @@
 
 contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 
+# For convenience
+greaterThan(QT_MAJOR_VERSION, 4): CONFIG += qt5
+
 # Detect that we are building as a standalone package by the presence of
 # either the generated files directory or as part of the Qt package through
 # QTDIR_build

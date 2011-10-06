@@ -9,7 +9,7 @@ include(WebKit.pri)
 }
 
 webkit2 {
-    lessThan(QT_MAJOR_VERSION, 5) {
+    !qt5 {
         message("Building WebKit2 with Qt versions older than 5.0 is no longer supported.")
         message("Read http://www.mail-archive.com/webkit-qt@lists.webkit.org/msg01674.html for more information.")
         error("Aborting build.")
@@ -17,7 +17,7 @@ webkit2 {
     exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
 }
 
-greaterThan(QT_MAJOR_VERSION, 4) {
+qt5 {
     isEmpty(QT.widgets.name)|isEmpty(QT.printsupport.name) {
         message("Building WebKit against Qt 5.0 requires the QtWidgets and QtPrintSupport modules.")
         error("Aborting build.")
@@ -34,10 +34,10 @@ webkit2 {
 }
 
 exists($$PWD/WebKit/qt/declarative) {
-    lessThan(QT_MAJOR_VERSION, 5) {
-        contains(QT_CONFIG, declarative): SUBDIRS += WebKit/qt/declarative
-    } else {
+    qt5 {
         contains(QT_CONFIG, qtquick1): SUBDIRS += WebKit/qt/declarative
+    } else {
+        contains(QT_CONFIG, declarative): SUBDIRS += WebKit/qt/declarative
     }
 }
 

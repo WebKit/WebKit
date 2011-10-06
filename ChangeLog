@@ -1,3 +1,13 @@
+2011-10-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][Wk2] Fix build with Qt 5 when QtScript is built as standalone module
+        https://bugs.webkit.org/show_bug.cgi?id=69520
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/WebKit.pri: Introduce convenience qt5 scope.
+        * Source/WebKit.pro: Replace QT_MAJOR_VERSION stuff with qt5 scope.
+
 2011-10-06  Nayan Kumar K  <nayankk@motorola.com>
 
         Provide configure option to switch between JSC and V8.
