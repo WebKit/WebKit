@@ -3844,3 +3844,6 @@ BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 
 // Broken with Skia roll: 2394 to 2412
 BUGWK69465 LINUX : fast/forms/select-background-none.html = IMAGE
+
+// Broken in r96745.
+BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO

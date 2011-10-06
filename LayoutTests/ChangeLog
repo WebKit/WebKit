@@ -1,3 +1,11 @@
+2011-10-05  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Update test expectations for Web Audio on Windows.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-05  Erik Arvidsson  <arv@chromium.org>
 
         window.location.href and others needlessly decodes URI-encoded characters
