@@ -818,7 +818,7 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
 LayoutRect Node::getRect() const
 {
     if (renderer())
-        return renderer()->absoluteBoundingBoxRect(true);
+        return renderer()->absoluteBoundingBoxRect();
     return LayoutRect();
 }
     
@@ -830,7 +830,7 @@ LayoutRect Node::renderRect(bool* isReplaced)
     while (renderer && !renderer->isBody() && !renderer->isRoot()) {
         if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplaced()) {
             *isReplaced = renderer->isReplaced();
-            return renderer->absoluteBoundingBoxRect(true);
+            return renderer->absoluteBoundingBoxRect();
         }
         renderer = renderer->parent();
     }

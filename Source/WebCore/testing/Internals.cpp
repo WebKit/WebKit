@@ -202,7 +202,7 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     RenderObject* renderer = element->renderer();
     if (!renderer)
         return ClientRect::create();
-    return ClientRect::create(renderer->absoluteBoundingBoxRect());
+    return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
 unsigned Internals::markerCountForNode(Node* node, ExceptionCode& ec)

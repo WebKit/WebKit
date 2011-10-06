@@ -1,3 +1,13 @@
+2011-10-06  Fady Samuel  <fsamuel@chromium.org>
+
+        Code clean-up: Make RenderObject::absoluteBoundingBoxRect and associated methods const and make its parameter useTransforms no longer default to false
+        https://bugs.webkit.org/show_bug.cgi?id=69009
+
+        Reviewed by Simon Fraser.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+
 2011-10-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][Wk2] Fix build with Qt 5 when QtScript is built as standalone module

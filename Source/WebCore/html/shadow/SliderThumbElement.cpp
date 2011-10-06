@@ -216,7 +216,8 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     // We need to calculate currentPosition from absolute points becaue the
     // renderer for this node is usually on a layer and renderBox()->x() and
     // y() are unusable.
-    LayoutPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRect().location();
+    // FIXME: This should probably respect transforms.
+    LayoutPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRectIgnoringTransforms().location();
     LayoutPoint absoluteSliderContentOrigin = roundedLayoutPoint(input->renderer()->localToAbsolute());
     if (isVertical) {
         trackSize = input->renderBox()->contentHeight() - renderBox()->height();

@@ -152,7 +152,7 @@ void getPluginOcclusions(Element* element, Widget* parentWidget, const IntRect& 
         RenderObject* iframeRenderer = element->renderer();
 
         if (element->hasTagName(HTMLNames::iframeTag)
-            && iframeRenderer->absoluteBoundingBoxRect().intersects(frameRect)
+            && iframeRenderer->absoluteBoundingBoxRectIgnoringTransforms().intersects(frameRect)
             && (!iframeRenderer->style() || iframeRenderer->style()->visibility() == VISIBLE)) {
             getObjectStack(iframeRenderer, &iframeZstack);
             if (iframeIsAbovePlugin(iframeZstack, pluginZstack)) {

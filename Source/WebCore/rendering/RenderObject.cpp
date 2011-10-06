@@ -1165,7 +1165,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
         graphicsContext->endTransparencyLayer();
 }
 
-IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
+IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
 {
     if (useTransforms) {
         Vector<FloatQuad> quads;
@@ -1215,14 +1215,14 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 void RenderObject::addAbsoluteRectForLayer(IntRect& result)
 {
     if (hasLayer())
-        result.unite(absoluteBoundingBoxRect());
+        result.unite(absoluteBoundingBoxRectIgnoringTransforms());
     for (RenderObject* current = firstChild(); current; current = current->nextSibling())
         current->addAbsoluteRectForLayer(result);
 }
 
 LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
 {
-    LayoutRect result = absoluteBoundingBoxRect();
+    LayoutRect result = absoluteBoundingBoxRectIgnoringTransforms();
     topLevelRect = result;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling())
         current->addAbsoluteRectForLayer(result);

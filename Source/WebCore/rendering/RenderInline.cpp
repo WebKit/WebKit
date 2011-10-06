@@ -466,7 +466,7 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
+void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     if (!alwaysCreateLineBoxes())
         culledInlineAbsoluteRects(this, rects, toLayoutSize(accumulatedOffset));
@@ -485,7 +485,7 @@ void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& a
     }
 }
 
-void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<LayoutRect>& rects, const LayoutSize& offset)
+void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<LayoutRect>& rects, const LayoutSize& offset) const
 {
     if (!culledInlineFirstLineBox()) {
         rects.append(IntRect(offset.width(), offset.height(), 0, 0));
@@ -553,7 +553,7 @@ void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vect
     }
 }
 
-void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
+void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     if (!alwaysCreateLineBoxes())
         culledInlineAbsoluteQuads(this, quads);
@@ -569,7 +569,7 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
         continuation()->absoluteQuads(quads, wasFixed);
 }
 
-void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>& quads)
+void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>& quads) const
 {
     if (!culledInlineFirstLineBox()) {
         quads.append(localToAbsoluteQuad(FloatRect()));

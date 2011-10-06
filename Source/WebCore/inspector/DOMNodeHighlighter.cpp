@@ -361,7 +361,7 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
         return;
 
     LayoutSize mainFrameOffset = frameToMainFrameOffset(containingFrame);
-    LayoutRect boundingBox = renderer->absoluteBoundingBoxRect(true);
+    LayoutRect boundingBox = renderer->absoluteBoundingBoxRect();
 
     boundingBox.move(mainFrameOffset);
 

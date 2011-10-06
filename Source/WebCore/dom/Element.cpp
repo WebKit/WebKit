@@ -573,7 +573,8 @@ LayoutRect Element::screenRect() const
 {
     if (!renderer())
         return LayoutRect();
-    return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRect());
+    // FIXME: this should probably respect transforms
+    return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
 static inline bool shouldIgnoreAttributeCase(const Element* e)

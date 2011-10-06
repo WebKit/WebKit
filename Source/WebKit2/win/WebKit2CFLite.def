@@ -135,7 +135,8 @@ EXPORTS
         ??0String@WTF@@QAE@PB_W@Z
         ??1NodeRenderingContext@WebCore@@QAE@XZ
         ??1Range@WebCore@@QAE@XZ
-        ?absoluteBoundingBoxRect@RenderObject@WebCore@@QAE?AVIntRect@2@_N@Z
+        ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
+        ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z

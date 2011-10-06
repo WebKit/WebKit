@@ -44,7 +44,7 @@ private:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject*) const { return LayoutRect(); }
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 };

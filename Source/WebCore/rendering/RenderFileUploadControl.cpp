@@ -132,7 +132,8 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
         // We want to match the button's baseline
         RenderButton* buttonRenderer = toRenderButton(button->renderer());
-        LayoutUnit textY = buttonRenderer->absoluteBoundingBoxRect().y()
+        // FIXME: Make this work with transforms.
+        LayoutUnit textY = buttonRenderer->absoluteBoundingBoxRectIgnoringTransforms().y()
             + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
 
         paintInfo.context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());

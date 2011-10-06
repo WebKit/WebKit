@@ -82,9 +82,9 @@ void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
 }
 
-void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
+void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this);
+    const RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this);
     if (!object)
         return;
 

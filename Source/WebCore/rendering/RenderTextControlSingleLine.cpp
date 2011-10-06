@@ -174,7 +174,7 @@ void RenderTextControlSingleLine::showPopup()
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
-    m_searchPopup->popupMenu()->show(absoluteBoundingBoxRect(true), document()->view(), -1);
+    m_searchPopup->popupMenu()->show(absoluteBoundingBoxRect(), document()->view(), -1);
 }
 
 void RenderTextControlSingleLine::hidePopup()

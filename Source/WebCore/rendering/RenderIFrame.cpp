@@ -105,7 +105,7 @@ bool RenderIFrame::flattenFrame()
         return false;
 
     // Do not flatten offscreen inner frames during frame flattening, as flattening might make them visible.
-    IntRect boundingRect = absoluteBoundingBoxRect();
+    IntRect boundingRect = absoluteBoundingBoxRectIgnoringTransforms();
     return boundingRect.maxX() > 0 && boundingRect.maxY() > 0;
 }
 

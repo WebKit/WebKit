@@ -70,14 +70,14 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(RenderBoxModelObject* r
     return containerRelativeQuad.enclosingBoundingBox();
 }
 
-void RenderSVGModelObject::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
+void RenderSVGModelObject::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     LayoutRect rect = enclosingLayoutRect(strokeBoundingBox());
     rect.moveBy(accumulatedOffset);
     rects.append(rect);
 }
 
-void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
+void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     quads.append(localToAbsoluteQuad(strokeBoundingBox(), false, wasFixed));
 }

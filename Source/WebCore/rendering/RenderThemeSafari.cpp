@@ -1080,7 +1080,7 @@ bool RenderThemeSafari::paintSearchFieldCancelButton(RenderObject* o, const Pain
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 
-    IntRect searchRect = renderer->absoluteBoundingBoxRect();
+    IntRect searchRect = renderer->absoluteBoundingBoxRectIgnoringTransforms();
 
     paintThemePart(SafariTheme::SearchFieldCancelButtonPart, paintInfo.context->platformContext(), searchRect, controlSizeFromRect(searchRect, searchFieldSizes()), determineState(o));
     return false;
@@ -1134,7 +1134,7 @@ bool RenderThemeSafari::paintSearchFieldResultsDecoration(RenderObject* o, const
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 
-    IntRect searchRect = renderer->absoluteBoundingBoxRect();
+    IntRect searchRect = renderer->absoluteBoundingBoxRectIgnoringTransforms();
 
     paintThemePart(SafariTheme::SearchFieldResultsDecorationPart, paintInfo.context->platformContext(), searchRect, controlSizeFromRect(searchRect, searchFieldSizes()), determineState(o));
     return false;
@@ -1157,7 +1157,7 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Pai
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 
-    IntRect searchRect = renderer->absoluteBoundingBoxRect();
+    IntRect searchRect = renderer->absoluteBoundingBoxRectIgnoringTransforms();
 
     paintThemePart(SafariTheme::SearchFieldResultsButtonPart, paintInfo.context->platformContext(), searchRect, controlSizeFromRect(searchRect, searchFieldSizes()), determineState(o));
     return false;

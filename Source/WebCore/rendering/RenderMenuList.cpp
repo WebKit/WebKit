@@ -302,7 +302,7 @@ void RenderMenuList::showPopup()
     // Compute the top left taking transforms into account, but use
     // the actual width of the element to size the popup.
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), false, true);
-    LayoutRect absBounds = absoluteBoundingBoxRect();
+    LayoutRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
     m_popup->show(absBounds, document()->view(),
         select->optionToListIndex(select->selectedIndex()));
