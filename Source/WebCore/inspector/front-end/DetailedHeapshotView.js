@@ -1083,7 +1083,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     _helpClicked: function(event)
     {
-        if (!this.helpPopover) {
+        if (!this._helpPopoverContentElement) {
             var refTypes = ["a:", "console-formatted-name", WebInspector.UIString("property"),
                             "0:", "console-formatted-name", WebInspector.UIString("element"),
                             "a:", "console-formatted-number", WebInspector.UIString("context var"),
@@ -1119,7 +1119,8 @@ WebInspector.DetailedHeapshotView.prototype = {
                 row.appendChild(objCell);
                 contentElement.appendChild(row);
             }
-            this.helpPopover = new WebInspector.Popover(contentElement);
+            this._helpPopoverContentElement = contentElement;
+            this.helpPopover = new WebInspector.Popover();
 
             function appendHelp(help, index, cell)
             {
@@ -1138,7 +1139,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         if (this.helpPopover.visible)
             this.helpPopover.hide();
         else
-            this.helpPopover.show(this.helpButton.element);
+            this.helpPopover.show(this._helpPopoverContentElement, this.helpButton.element);
     },
 
     _startRetainersHeaderDragging: function(event)
