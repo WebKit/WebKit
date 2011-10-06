@@ -45,6 +45,9 @@
         "FrameLoader": {
             "more": r"FrameLoader\.(cpp|h)",
         },
+        "StyleChecker": {
+            "filename": r"Tools/Scripts/webkitpy/style/.*",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -52,6 +55,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "webkitpy|TestFailures|SecurityCritical|V8Bindings|BindingsScripts|FrameLoader": [ "abarth@webkit.org" ],
