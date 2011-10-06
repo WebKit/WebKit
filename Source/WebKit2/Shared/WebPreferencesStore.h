@@ -95,6 +95,7 @@ namespace WebKit {
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false) \
     macro(WebAudioEnabled, webAudioEnabled, Bool, bool, false) \
     macro(ApplicationChromeModeEnabled, applicationChromeMode, Bool, bool, false) \
+    macro(SuppressIncrementalRendering, suppressIncrementalRendering, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

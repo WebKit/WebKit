@@ -1,3 +1,20 @@
+2011-10-03  Andy Estes  <aestes@apple.com>
+
+        Add an option to suppress rendering until the document's load event fires.
+        https://bugs.webkit.org/show_bug.cgi?id=69298
+
+        Reviewed by Simon Fraser.
+        
+        Add a new WKPreference.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSuppressRenderingWhileInitiallyLoading):
+        (WKPreferencesGetSuppressRenderingWhileInitiallyLoading):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         r96770 broke binary compatibility with Safari

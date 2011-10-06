@@ -2231,6 +2231,14 @@ void Document::implicitClose()
             view()->layout();
     }
 
+    // If painting and compositing layer updates were suppressed pending the load event, do these actions now.
+    if (renderer() && settings() && settings()->suppressIncrementalRendering()) {
+#if USE(ACCELERATED_COMPOSITING)
+        view()->updateCompositingLayers();
+#endif
+        renderer()->repaint();
+    }
+
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
     if (f && renderObject && this == topDocument() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
@@ -5161,6 +5169,13 @@ void Document::didRemoveWheelEventHandler()
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+}
+
+bool Document::visualUpdatesAllowed() const
+{
+    return !settings()
+        || !settings()->suppressIncrementalRendering()
+        || loadEventFinished();
 }
 
 DocumentLoader* Document::loader() const

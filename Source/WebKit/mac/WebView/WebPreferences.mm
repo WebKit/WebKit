@@ -385,6 +385,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitSuppressIncrementalRenderingKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1550,6 +1551,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setPictographFontFamily:(NSString *)family
 {
     [self _setStringValue: family forKey: WebKitPictographFontPreferenceKey];
+}
+
+- (void)setSuppressIncrementalRendering:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitSuppressIncrementalRenderingKey];
+}
+
+- (BOOL)suppressIncrementalRendering
+{
+    return [self _boolValueForKey:WebKitSuppressIncrementalRenderingKey];
 }
 
 @end

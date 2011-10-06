@@ -1,3 +1,41 @@
+2011-10-03  Andy Estes  <aestes@apple.com>
+
+        Add the option to suppress rendering until the document's load event fires.
+        https://bugs.webkit.org/show_bug.cgi?id=69298
+
+        Reviewed by Simon Fraser.
+
+        Add a WebCore setting that suppresses painting and compositing layer
+        updates until the document's load event fires. This masks the effects
+        of incremental rendering (for clients that opt in) by ensuring that all
+        sub-resources have loaded and a full layout has taken place before
+        painting the document for the first time.
+
+        No tests currently possible. Testing this would require the ability for
+        DRT to dump state while resources are loading, which it doesn't
+        currently do.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): If rendering was previously
+        suppressed, force a repaint and compositing layer update.
+        (WebCore::Document::visualUpdatesAllowed): Add a helper method to
+        determine if the document is in a state where rendering is allowed.
+        * dom/Document.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setSuppressIncrementalRendering):
+        (WebCore::Settings::suppressIncrementalRendering):
+        * rendering/RenderLayer.cpp:
+        (WebCore::shouldSuppressPaintingLayer): Encapsulate the FOUC and
+        painting suppression checks into a single helper function for
+        readability's sake.
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): If we should
+        suppress compositing layer updates and the load event has yet to fire,
+        return early.
+
 2011-10-05  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Add extensions attribute

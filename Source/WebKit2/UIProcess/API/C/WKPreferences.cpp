@@ -641,3 +641,13 @@ bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef preferencesRe
 {
     return toImpl(preferencesRef)->applicationChromeMode();
 }
+
+void WKPreferencesSetSuppressIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setSuppressIncrementalRendering(enabled);
+}
+
+bool WKPreferencesGetSuppressIncrementalRendering(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->suppressIncrementalRendering();
+}

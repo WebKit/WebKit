@@ -1097,6 +1097,8 @@ public:
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
     
+    bool visualUpdatesAllowed() const;
+    
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 

@@ -244,6 +244,10 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerC
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     m_updateCompositingLayersTimer.stop();
+    
+    // Compositing layers will be updated in Document::implicitClose() if suppressed here.
+    if (!m_renderView->document()->visualUpdatesAllowed())
+        return;
 
     if (m_forceCompositingMode && !m_compositing)
         enableCompositingMode(true);

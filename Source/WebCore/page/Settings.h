@@ -462,6 +462,9 @@ namespace WebCore {
         void setPasswordEchoEnabled(bool flag) { m_passwordEchoEnabled = flag; }
         bool passwordEchoEnabled() const { return m_passwordEchoEnabled; }
 
+        void setSuppressIncrementalRendering(bool flag) { m_suppressIncrementalRendering = flag; }
+        bool suppressIncrementalRendering() const { return m_suppressIncrementalRendering; }
+
         void setPasswordEchoDurationInSeconds(double durationInSeconds) { m_passwordEchoDurationInSeconds = durationInSeconds; }
         double passwordEchoDurationInSeconds() const { return m_passwordEchoDurationInSeconds; }
 
@@ -594,6 +597,7 @@ namespace WebCore {
         bool m_mediaPlaybackRequiresUserGesture : 1;
         bool m_mediaPlaybackAllowsInline : 1;
         bool m_passwordEchoEnabled : 1;
+        bool m_suppressIncrementalRendering : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

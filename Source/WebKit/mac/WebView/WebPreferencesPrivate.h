@@ -265,4 +265,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
 - (BOOL)isHixie76WebSocketProtocolEnabled;
 
+- (void)setSuppressIncrementalRendering:(BOOL)flag;
+- (BOOL)suppressIncrementalRendering;
+
 @end

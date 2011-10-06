@@ -2623,6 +2623,22 @@ static bool shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflect
     return paintingReflection && !layer->has3DTransform();
 }
 #endif
+    
+static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
+{
+    // Avoid painting descendants of the root layer when stylesheets haven't loaded. This eliminates FOUC.
+    // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
+    // will do a full repaint().
+    if (layer->renderer()->document()->didLayoutWithPendingStylesheets() && !layer->renderer()->isRenderView() && !layer->renderer()->isRoot())
+        return true;
+
+    // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
+    // A full repaint will occur in Document::implicitClose() if painting is suppressed here.
+    if (!layer->renderer()->document()->visualUpdatesAllowed())
+        return true;
+
+    return false;
+}
 
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
@@ -2642,10 +2658,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
 #endif
 
-    // Avoid painting layers when stylesheets haven't loaded.  This eliminates FOUC.
-    // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
-    // will do a full repaint().
-    if (renderer()->document()->didLayoutWithPendingStylesheets() && !renderer()->isRenderView() && !renderer()->isRoot())
+    if (shouldSuppressPaintingLayer(this))
         return;
     
     // If this layer is totally invisible then there is nothing to paint.

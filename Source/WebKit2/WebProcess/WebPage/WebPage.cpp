@@ -1699,8 +1699,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
 #endif
 
-    settings->setApplicationChromeMode(store.getBoolValueForKey(WebPreferencesKey::applicationChromeModeKey()));
-    
+    settings->setApplicationChromeMode(store.getBoolValueForKey(WebPreferencesKey::applicationChromeModeKey()));    
+    settings->setSuppressIncrementalRendering(store.getBoolValueForKey(WebPreferencesKey::suppressIncrementalRenderingKey()));
+
     platformPreferencesDidChange(store);
 }
 

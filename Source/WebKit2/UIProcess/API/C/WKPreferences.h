@@ -168,6 +168,10 @@ WK_EXPORT bool WKPreferencesGetAVFoundationEnabled(WKPreferencesRef preferencesR
 // Defaults to false
 WK_EXPORT void WKPreferencesSetWebAudioEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef);
+    
+// Defaults to false
+WK_EXPORT void WKPreferencesSetSuppressIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetSuppressIncrementalRendering(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }
