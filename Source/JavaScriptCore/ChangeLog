@@ -1,3 +1,16 @@
+2011-10-06  Gavin Peters  <gavinp@chromium.org>
+
+        export new stack dumping method
+        https://bugs.webkit.org/show_bug.cgi?id=69018
+
+        The original landing of bug 69018 didn't export WTFGetBacktrace, so that when bug 69453 landed, the first use
+        of this function, many builds broke.  So here we add the exports, so that the function is usable.
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-10-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r96347): Build is broken with MSVC compiler if !PLATFORM(WINDOWS)

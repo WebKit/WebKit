@@ -90,6 +90,7 @@ _JSWeakObjectMapCreate
 _JSWeakObjectMapGet
 _JSWeakObjectMapRemove
 _JSWeakObjectMapSet
+_WTFGetBacktrace
 _WTFLog
 _WTFLogVerbose
 _WTFReportArgumentAssertionFailure

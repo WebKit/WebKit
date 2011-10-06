@@ -379,6 +379,7 @@ EXPORTS
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     ?writeBarrier@HandleHeap@JSC@@QAEXPAVJSValue@2@ABV32@@Z
     ?yield@WTF@@YAXXZ
+    WTFGetBacktrace
     WTFLog
     WTFLogVerbose
     WTFReportArgumentAssertionFailure
