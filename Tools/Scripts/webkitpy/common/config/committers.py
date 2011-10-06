@@ -143,6 +143,7 @@ committers_unable_to_review = [
     Committer("Alexander Pavlov", "apavlov@chromium.org", "apavlov"),
     Committer("Alexis Menard", ["alexis.menard@openbossa.org", "menard@kde.org", "alexis.menard@nokia.com"], "darktears"),
     Committer("Alok Priyadarshi", "alokp@chromium.org", "alokp"),
+    Committer("Amruth Raj", "amruthraj@motorola.com", "amruthraj"),
     Committer("Andre Boule", "aboule@apple.com"),
     Committer("Andrei Popescu", "andreip@google.com", "andreip"),
     Committer("Andrew Wellington", ["andrew@webkit.org", "proton@wiretapped.net"], "proton"),
