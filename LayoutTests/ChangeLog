@@ -1,5 +1,12 @@
 2011-10-06  Sergio Villar Senin  <svillar@igalia.com>
 
+        Unreviewed. Skipped a test that lacks a console message.
+
+        * platform/gtk/Skipped: skipped
+        http/tests/security/redirect-BLOCKED-to-localURL.html
+
+2011-10-06  Sergio Villar Senin  <svillar@igalia.com>
+
         Unreviewed. Skipping a test that requires
         continuousMouseScrollBy() which is not yet supported by GTK
         EventSender API.
