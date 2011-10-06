@@ -27,6 +27,23 @@ static void testWebContextDefault(void)
     g_assert(webkit_web_context_get_default() == webkit_web_context_get_default());
 }
 
+static void testWebContextCacheModel(void)
+{
+    WebKitWebContext *context = webkit_web_context_get_default();
+
+    /* Check default cache model is web browser. */
+    g_assert(webkit_web_context_get_cache_model(context) == WEBKIT_CACHE_MODEL_WEB_BROWSER);
+
+    webkit_web_context_set_cache_model(context, WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
+    g_assert(webkit_web_context_get_cache_model(context) == WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
+
+    webkit_web_context_set_cache_model(context, WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
+    g_assert(webkit_web_context_get_cache_model(context) == WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
+
+    webkit_web_context_set_cache_model(context, WEBKIT_CACHE_MODEL_WEB_BROWSER);
+    g_assert(webkit_web_context_get_cache_model(context) == WEBKIT_CACHE_MODEL_WEB_BROWSER);
+}
+
 int main(int argc, char **argv)
 {
     g_thread_init(NULL);
@@ -35,6 +52,8 @@ int main(int argc, char **argv)
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit2/webcontext/default_context",
                     testWebContextDefault);
+    g_test_add_func("/webkit2/webcontext/cache_model",
+                    testWebContextCacheModel);
 
     return g_test_run();
 }

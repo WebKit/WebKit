@@ -198,6 +198,7 @@ RetainPtr<CFURLRef> pathAsURL(const String&);
 String filenameToString(const char*);
 String filenameForDisplay(const String&);
 CString applicationDirectoryPath();
+uint64_t getVolumeFreeSizeForPath(const char*);
 #endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
