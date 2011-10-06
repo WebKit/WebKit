@@ -79,6 +79,7 @@ public:
     unsigned long bufferedAmount() const;
 
     String protocol() const;
+    String extensions() const;
 
     String binaryType() const;
     void setBinaryType(const String& binaryType, ExceptionCode&);

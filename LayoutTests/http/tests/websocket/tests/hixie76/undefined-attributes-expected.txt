@@ -3,6 +3,7 @@ Test WebSocket attributes which should not be defined when hixie-76 protocol is 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS ws.binaryType is undefined.
+PASS ws.extensions is undefined.
 PASS ws.protocol is undefined.
 PASS successfullyParsed is true
 

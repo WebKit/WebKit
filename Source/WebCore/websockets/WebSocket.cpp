@@ -369,6 +369,14 @@ String WebSocket::protocol() const
     return m_subprotocol;
 }
 
+String WebSocket::extensions() const
+{
+    if (m_useHixie76Protocol)
+        return String();
+    // WebSocket protocol extension is not supported yet.
+    return "";
+}
+
 String WebSocket::binaryType() const
 {
     if (m_useHixie76Protocol)
