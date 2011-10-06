@@ -1,3 +1,13 @@
+2011-10-03  Ojan Vafai  <ojan@chromium.org>
+
+        [flexbox] take marginBeforeForChild into account when positioning children
+        https://bugs.webkit.org/show_bug.cgi?id=69313
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/002.html:
+        * css3/flexbox/writing-modes.html:
+
 2011-10-05  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Update test expectations after Skia roll.

@@ -497,7 +497,7 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         LayoutUnit logicalLeft = isLeftToRightFlow() ? startEdge : totalLogicalWidth - startEdge - childLogicalWidth;
         // FIXME: Do repaintDuringLayoutIfMoved.
         // FIXME: Supporting layout deltas.
-        setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop));
+        setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop + flowAwareMarginBeforeForChild(child)));
         startEdge += childLogicalWidth + marginEndForChild(child);
 
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)

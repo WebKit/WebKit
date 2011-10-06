@@ -37,6 +37,12 @@ if (window.layoutTestController)
   <div data-expected-width="200" data-offset-x="400" style="width: -webkit-flex(1 0 0)"></div>
 </div>
 
+<div data-expected-height="120" class="flexbox">
+  <div data-expected-width="200" data-offset-y="50" style="width: -webkit-flex(1 0 0); margin: 50px 0;"></div>
+  <div data-expected-width="100" data-offset-x="250" style="width: 100px; margin: 0 50px;"></div>
+  <div data-expected-width="200" data-offset-x="400" style="width: -webkit-flex(1 0 0)"></div>
+</div>
+
 <!-- Margins set to auto have a positive flex of 1.  In this example, the left and right margin should each be 100px. -->
 <div class="flexbox">
   <div data-expected-width="100" style="width: -webkit-flex(1 0 0);"></div>
