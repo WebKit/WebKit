@@ -339,11 +339,10 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     }
     case WebVTTTokenTypes::EndTag:
         if (isRecognizedTag(tokenTagName)
-            || (m_token.name().size() == 1 && m_token.name()[0] == 'c')
-            || (m_token.name().size() == 1 && m_token.name()[0] == 'v')) {
+            || m_token.name().size() == 1 && m_token.name()[0] == 'c'
+            || m_token.name().size() == 1 && m_token.name()[0] == 'v')
             if (m_currentNode->parentNode())
                 m_currentNode = m_currentNode->parentNode();
-        }
         break;
     case WebVTTTokenTypes::TimestampTag: {
         unsigned position = 0;
