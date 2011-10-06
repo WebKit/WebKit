@@ -276,7 +276,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release", "Qt Linux MIPS Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
                                        "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
-                                       "Chromium Android Release", "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
+                                       "Chromium Android Release", "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-leopard", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Debug (Build)"]

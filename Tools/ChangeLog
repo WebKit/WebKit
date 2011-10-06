@@ -1,3 +1,14 @@
+2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Correct config.json for WinCairo Test builds.
+        https://bugs.webkit.org/show_bug.cgi?id=69272
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove
+         old 'WinCairo Debug (Build)' label and replace with correct
+         'WinCairo Release' label.
+
 2011-10-06  David Levin  <levin@chromium.org>
 
         Add a style checker watchlist definition and add myself to it.
