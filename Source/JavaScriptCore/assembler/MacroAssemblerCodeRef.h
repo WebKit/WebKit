@@ -108,8 +108,13 @@ public:
 
 #if CALLING_CONVENTION_IS_CDECL
 #ifndef STDCALL
+#if COMPILER(MSVC)
+#define STDCALL __stdcall
+#else
 #define STDCALL __attribute__ ((stdcall))
-#endif
+#endif // COMPILER(MSVC)
+#endif // STDCALL
+
     template<typename returnType>
     FunctionPtr(returnType (STDCALL *value)())
         : m_value((void*)value)
