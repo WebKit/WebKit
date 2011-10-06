@@ -104,6 +104,7 @@ TestShell::TestShell(bool testShellMode)
     , m_devTools(0)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingEnabled(false)
+    , m_threadedCompositingEnabled(false)
     , m_compositeToTexture(false)
     , m_forceCompositingMode(false)
     , m_accelerated2dCanvasEnabled(false)
@@ -192,6 +193,7 @@ void TestShell::resetWebSettings(WebView& webView)
 {
     m_prefs.reset();
     m_prefs.acceleratedCompositingEnabled = m_acceleratedCompositingEnabled;
+    m_prefs.threadedCompositingEnabled = m_threadedCompositingEnabled;
     m_prefs.compositeToTexture = m_compositeToTexture;
     m_prefs.forceCompositingMode = m_forceCompositingMode;
     m_prefs.accelerated2dCanvasEnabled = m_accelerated2dCanvasEnabled;

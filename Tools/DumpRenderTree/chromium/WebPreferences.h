@@ -81,6 +81,7 @@ struct WebPreferences {
     bool hyperlinkAuditingEnabled;
     bool caretBrowsingEnabled;
     bool acceleratedCompositingEnabled;
+    bool threadedCompositingEnabled;
     bool compositeToTexture;
     bool forceCompositingMode;
     bool accelerated2dCanvasEnabled;

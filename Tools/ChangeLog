@@ -1,3 +1,24 @@
+2011-10-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add a command line option to DumpRenderTree and run_webkit_tests.py to enable threaded compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=69498
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setThreadedCompositingEnabled):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-10-05  Erik Arvidsson  <arv@chromium.org>
 
         [QT] Fix DRT after r96779
