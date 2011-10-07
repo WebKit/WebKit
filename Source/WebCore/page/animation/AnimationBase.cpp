@@ -295,6 +295,23 @@ protected:
     void (RenderStyle::*m_setter)(T);
 };
 
+class PropertyWrapperColor : public PropertyWrapperGetter<Color> {
+public:
+    PropertyWrapperColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+        : PropertyWrapperGetter<Color>(prop, getter)
+        , m_setter(setter)
+    {
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<Color>::m_getter)(), (b->*PropertyWrapperGetter<Color>::m_getter)(), progress));
+    }
+
+protected:
+    void (RenderStyle::*m_setter)(const Color&);
+};
+
 #if USE(ACCELERATED_COMPOSITING)
 class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
 public:
@@ -470,7 +487,7 @@ private:
 
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {
 public:
-    PropertyWrapperMaybeInvalidColor(int prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperMaybeInvalidColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -509,7 +526,7 @@ public:
     }
 
 private:
-    const Color& (RenderStyle::*m_getter)() const;
+    Color (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
 };
 
@@ -673,7 +690,7 @@ private:
 #if ENABLE(SVG)
 class PropertyWrapperSVGPaint : public PropertyWrapperBase {
 public:
-    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_paintTypeGetter(paintTypeGetter)
         , m_getter(getter)
@@ -727,7 +744,7 @@ public:
 
 private:
     const SVGPaint::SVGPaintType& (RenderStyle::*m_paintTypeGetter)() const;
-    const Color& (RenderStyle::*m_getter)() const;
+    Color (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
 };
 #endif
@@ -770,9 +787,9 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom));
-        gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor));
+        gPropertyWrappers->append(new PropertyWrapperColor(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor));
 
-        gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor));
+        gPropertyWrappers->append(new PropertyWrapperColor(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor));
 
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));

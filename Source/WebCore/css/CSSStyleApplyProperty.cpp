@@ -219,9 +219,9 @@ enum ColorInherit {NoInheritFromParent = 0, InheritFromParent};
 template <ColorInherit inheritColorFromParent>
 class ApplyPropertyColor : public ApplyPropertyBase {
 public:
-    typedef const Color& (RenderStyle::*GetterFunction)() const;
+    typedef Color (RenderStyle::*GetterFunction)() const;
     typedef void (RenderStyle::*SetterFunction)(const Color&);
-    typedef const Color& (RenderStyle::*DefaultFunction)() const;
+    typedef Color (RenderStyle::*DefaultFunction)() const;
     typedef Color (*InitialFunction)();
 
     ApplyPropertyColor(GetterFunction getter, SetterFunction setter, DefaultFunction defaultFunction, InitialFunction initialFunction = 0)
@@ -235,7 +235,7 @@ public:
 private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
-        const Color& color = (selector->parentStyle()->*m_getter)();
+        const Color color = (selector->parentStyle()->*m_getter)();
         if (m_default && !color.isValid())
             (selector->style()->*m_setter)((selector->parentStyle()->*m_default)());
         else
