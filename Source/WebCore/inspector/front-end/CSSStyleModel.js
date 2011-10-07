@@ -407,7 +407,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
             }
         }
 
-        CSSAgent.setPropertyText(this.id, index, name + ": " + value + ";", false, callback.bind(null, userCallback));
+        CSSAgent.setPropertyText(this.id, index, name + ": " + value + ";", false, callback.bind(this, userCallback));
     },
 
     appendProperty: function(name, value, userCallback)

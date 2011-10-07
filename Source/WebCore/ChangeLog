@@ -1,3 +1,13 @@
+2011-10-07  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: TypeError: Cannot read property 'styleSheetId' of undefined in tests.
+        https://bugs.webkit.org/show_bug.cgi?id=69634
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration.prototype.insertPropertyAt):
+
 2011-10-06  Andreas Kling  <kling@webkit.org>
 
         Shrink BorderValue.
