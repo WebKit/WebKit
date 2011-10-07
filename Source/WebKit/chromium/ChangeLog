@@ -1,3 +1,29 @@
+2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96909.
+        http://trac.webkit.org/changeset/96909
+        https://bugs.webkit.org/show_bug.cgi?id=69616
+
+        Broke chromium mac compilation (Requested by podivilov on
+        #webkit).
+
+        * WebKit.gyp:
+        * public/WebContentLayer.h: Removed.
+        * public/WebContentLayerClient.h: Removed.
+        * public/WebLayer.h: Removed.
+        * public/WebLayerClient.h: Removed.
+        * public/WebLayerTreeView.h: Removed.
+        * public/WebLayerTreeViewClient.h: Removed.
+        * src/WebContentLayer.cpp: Removed.
+        * src/WebContentLayerImpl.cpp: Removed.
+        * src/WebContentLayerImpl.h: Removed.
+        * src/WebLayer.cpp: Removed.
+        * src/WebLayerImpl.cpp: Removed.
+        * src/WebLayerImpl.h: Removed.
+        * src/WebLayerTreeView.cpp: Removed.
+        * src/WebLayerTreeViewImpl.cpp: Removed.
+        * src/WebLayerTreeViewImpl.h: Removed.
+
 2011-10-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, revert r96924.
