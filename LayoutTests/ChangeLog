@@ -1,3 +1,49 @@
+2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK rebaseline after r96870. Also skip editing/pasteboard/smart-paste-008.html because it's a real failure
+        (tracked by the bug 69587).
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-003-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-004-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-015-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * platform/gtk/editing/deleting/delete-br-010-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-012-expected.txt:
+        * platform/gtk/editing/deleting/delete-listitem-001-expected.txt:
+        * platform/gtk/editing/deleting/merge-whitespace-pre-expected.txt:
+        * platform/gtk/editing/inserting/insert-3907422-fix-expected.txt: Copied from
+        LayoutTests/editing/inserting/insert-3907422-fix-expected.txt.
+        * platform/gtk/editing/inserting/multiple-lines-selected-expected.txt:
+        * platform/gtk/editing/pasteboard/5032095-expected.txt:
+        * platform/gtk/editing/pasteboard/interchange-newline-1-expected.txt: Copied from
+        LayoutTests/editing/pasteboard/interchange-newline-1-expected.txt.
+        * platform/gtk/editing/pasteboard/merge-after-delete-1-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-002-expected.txt: Copied from
+        LayoutTests/editing/pasteboard/paste-text-002-expected.txt.
+        * platform/gtk/editing/pasteboard/paste-text-003-expected.txt: Copied from
+        LayoutTests/editing/pasteboard/paste-text-003-expected.txt.
+        * platform/gtk/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-008-expected.txt:
+
 2011-10-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deleting line break before h1 converts h1 to span

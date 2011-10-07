@@ -11,10 +11,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (22,0) size 33x19
             text run at (22,0) width 33: "Paste"
           RenderBR {BR} at (55,15) size 0x0
-          RenderText {#text} at (22,19) size 31x19
-            text run at (22,19) width 31: "Here"
-          RenderText {#text} at (53,19) size 27x19
-            text run at (53,19) width 27: "One"
+          RenderText {#text} at (22,19) size 58x19
+            text run at (22,19) width 58: "HereOne"
         RenderBlock (anonymous) at (0,38) size 784x19
           RenderText {#text} at (0,0) size 30x19
             text run at (0,0) width 30: "Two"
