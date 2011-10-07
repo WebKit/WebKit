@@ -58,10 +58,10 @@ public:
     String label() const;
     String language() const;
 
-    enum ReadyState { NONE, LOADING, LOADED, ERROR };
+    enum ReadyState { None, Loading, Loaded, Error };
     ReadyState readyState() const;
 
-    enum Mode { OFF = 0, HIDDEN = 1, SHOWING = 2 };
+    enum Mode { Off = 0, Hidden = 1, Showing = 2 };
     Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
 

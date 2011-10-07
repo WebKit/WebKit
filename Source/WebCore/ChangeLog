@@ -1,5 +1,23 @@
 2011-10-07  Anna Cavender  <annacc@chromium.org>
 
+        Change enum value names for TextTrack::readyState and TextTrack::mode
+        https://bugs.webkit.org/show_bug.cgi?id=69603
+
+        Reviewed by David Levin.
+
+        No new tests. No new functionality.
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::trackLoadStarted):
+        (WebCore::LoadableTextTrack::trackLoadError):
+        (WebCore::LoadableTextTrack::trackLoadCompleted):
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::setMode):
+        * html/TextTrack.h:
+
+2011-10-07  Anna Cavender  <annacc@chromium.org>
+
         Adding parens in WebVTTParser.cpp to appease compiler preferences.
         https://bugs.webkit.org/show_bug.cgi?id=69602
 

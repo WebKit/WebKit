@@ -58,17 +58,17 @@ void LoadableTextTrack::newCuesParsed()
 
 void LoadableTextTrack::trackLoadStarted()
 {
-    setReadyState(TextTrack::LOADING);
+    setReadyState(TextTrack::Loading);
 }
 
 void LoadableTextTrack::trackLoadError()
 {
-    setReadyState(TextTrack::ERROR);
+    setReadyState(TextTrack::Error);
 }
 
 void LoadableTextTrack::trackLoadCompleted()
 {
-    setReadyState(TextTrack::LOADED);
+    setReadyState(TextTrack::Loaded);
 }
 
 void LoadableTextTrack::newCuesLoaded()
