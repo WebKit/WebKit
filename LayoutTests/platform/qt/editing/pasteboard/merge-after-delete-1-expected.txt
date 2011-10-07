@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -28,10 +28,8 @@ layer at (0,0) size 800x600
           text run at (0,66) width 335: "line or a collapsed block after the paste operation."
       RenderBlock {DIV} at (2,186) size 780x56 [border: (1px solid #000000)]
         RenderBlock {DIV} at (3,3) size 774x24 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 9x22
-            text run at (1,1) width 9: "b"
-          RenderText {#text} at (10,1) size 21x22
-            text run at (10,1) width 21: "foo"
+          RenderText {#text} at (1,1) size 30x22
+            text run at (1,1) width 30: "bfoo"
         RenderBlock {DIV} at (3,29) size 774x24 [border: (1px solid #000000)]
           RenderText {#text} at (1,1) size 24x22
             text run at (1,1) width 24: "bar"

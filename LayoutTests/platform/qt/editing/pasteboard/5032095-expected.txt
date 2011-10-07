@@ -9,8 +9,6 @@ layer at (0,0) size 800x600
           text run at (751,0) width 29: "You"
           text run at (0,22) width 201: "should see 'helloworld' below."
       RenderBlock {DIV} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 32x22
-          text run at (0,0) width 32: "hello"
-        RenderText {#text} at (32,0) size 40x22
-          text run at (32,0) width 40: "world"
-caret: position 5 of child 1 {#text} of child 2 {DIV} of body
+        RenderText {#text} at (0,0) size 72x22
+          text run at (0,0) width 72: "helloworld"
+caret: position 10 of child 0 {#text} of child 2 {DIV} of body

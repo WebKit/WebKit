@@ -10,11 +10,8 @@ layer at (0,0) size 800x600
           text run at (0,22) width 197: "'baz' should be in the second."
       RenderBlock {DIV} at (0,60) size 784x52
         RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-          RenderInline {SPAN} at (0,0) size 18x17
-            RenderText {#text} at (21,3) size 18x17
-              text run at (21,3) width 18: "bar"
+          RenderText {#text} at (0,0) size 45x22
+            text run at (0,0) width 45: "foobar"
         RenderBlock {PRE} at (0,35) size 784x17
           RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "baz"

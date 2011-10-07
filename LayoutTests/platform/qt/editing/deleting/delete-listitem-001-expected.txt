@@ -17,7 +17,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > LI > UL > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document
@@ -32,10 +31,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x175 [border: (2px solid #FF0000)]
         RenderBlock {UL} at (14,38) size 756x99
           RenderListItem {LI} at (40,0) size 716x33
-            RenderText {#text} at (0,0) size 36x33
-              text run at (0,0) width 36: "one"
-            RenderText {#text} at (36,0) size 54x33
-              text run at (36,0) width 54: "three"
+            RenderText {#text} at (0,0) size 90x33
+              text run at (0,0) width 90: "onethree"
           RenderListItem {LI} at (40,33) size 716x33
             RenderText {#text} at (0,0) size 44x33
               text run at (0,0) width 44: "four"

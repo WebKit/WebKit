@@ -29,7 +29,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 7 of #text > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -40,8 +40,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x33
           RenderBlock {DIV} at (0,0) size 756x33
-            RenderText {#text} at (0,0) size 67x33
-              text run at (0,0) width 67: "This is"
-            RenderText {#text} at (67,0) size 109x33
-              text run at (67,0) width 109: " some text."
+            RenderText {#text} at (0,0) size 176x33
+              text run at (0,0) width 176: "This is some text."
 caret: position 7 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of body

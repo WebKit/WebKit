@@ -13,8 +13,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldDeleteDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > DIV > BODY > HTML > #document to 12 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -23,9 +23,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > DIV > BODY > HTML > #document to 12 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 12 of #text > DIV > DIV > BODY > HTML > #document to 12 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -35,12 +35,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x33
-          RenderText {#text} at (0,0) size 43x33
-            text run at (0,0) width 43: "One"
-          RenderText {#text} at (43,0) size 45x33
-            text run at (43,0) width 45: "Two"
-          RenderText {#text} at (88,0) size 62x33
-            text run at (88,0) width 62: "Three"
+          RenderText {#text} at (0,0) size 150x33
+            text run at (0,0) width 150: "OneTwoThree"
           RenderText {#text} at (150,0) size 51x33
             text run at (150,0) width 51: "Four"
-caret: position 5 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of body
+caret: position 12 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body
