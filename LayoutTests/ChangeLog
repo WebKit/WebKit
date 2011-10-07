@@ -1,3 +1,41 @@
+2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac rebaselines after r96870.
+
+        * platform/chromium-cg-mac-snowleopard/editing: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-3907422-fix-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-002-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-003-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-004-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-005-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-008-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/spelling: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/spelling/spelling-backspace-between-lines-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/events: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/events/ondragenter-expected.txt: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-3907422-fix-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-002-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-003-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-004-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-005-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-008-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/spelling: Added.
+        * platform/chromium-mac-snowleopard/editing/spelling/spelling-backspace-between-lines-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast: Added.
+        * platform/chromium-mac-snowleopard/fast/events: Added.
+        * platform/chromium-mac-snowleopard/fast/events/ondragenter-expected.txt: Added.
+        * platform/chromium-win/editing/spelling/spelling-backspace-between-lines-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-06  Kent Tamura  <tkent@chromium.org>
 
         [JSC binding] Fix inconsistent behavior of DOMStringMap

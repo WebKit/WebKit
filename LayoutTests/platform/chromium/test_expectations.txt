@@ -3797,4 +3797,4 @@ BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 // Broken in r96745.
 BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 
-BUGWK69587 WIN LINUX : editing/pasteboard/smart-paste-008.html = TEXT
+BUGWK69587 MAC : editing/pasteboard/smart-paste-008.html = IMAGE+TEXT
