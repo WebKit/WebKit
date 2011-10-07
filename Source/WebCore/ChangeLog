@@ -1,3 +1,15 @@
+2011-10-07  Vineet Chaudary  <vineet.chaudhary@motorola.com>
+
+        background-color affects the font color in disabled textarea.
+        https://bugs.webkit.org/show_bug.cgi?id=65361
+
+        Reviewed by Darin Adler.
+
+        For the transparent/translucent background colors use lightening fortext color.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::disabledTextColor):
+
 2011-10-07  David Barr  <davidbarr@chromium.org>
 
         Implement currentColor support for box-shadow and text-shadow

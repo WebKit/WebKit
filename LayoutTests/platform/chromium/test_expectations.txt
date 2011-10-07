@@ -3798,4 +3798,7 @@ BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 // Broken in r96745.
 BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 
+// Need rebaseline
+BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
+
 BUGWK69587 : editing/pasteboard/smart-paste-008.html = IMAGE+TEXT
