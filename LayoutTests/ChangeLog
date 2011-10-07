@@ -1,3 +1,11 @@
+2011-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline. The test started to pass after r96873.
+
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-006-expected.png: Added.
+        * platform/chromium-win/editing/pasteboard/paste-text-006-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-07  Cary Clark  <caryclark@google.com>
 
         Reviewed by Adam Barth.
