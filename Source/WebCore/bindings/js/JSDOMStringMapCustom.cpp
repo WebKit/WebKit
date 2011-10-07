@@ -59,46 +59,24 @@ void JSDOMStringMap::getOwnPropertyNames(ExecState* exec, PropertyNameArray& pro
 
 bool JSDOMStringMap::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
-    // Only perform the custom delete if the object doesn't have a native property by this name.
-    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
-    // the native property slots manually.
-    PropertySlot slot;
-    if (getStaticValueSlot<JSDOMStringMap, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
+    AtomicString stringName = identifierToAtomicString(propertyName);
+    if (!m_impl->contains(stringName))
         return false;
-        
-    JSValue prototype = this->prototype();
-    if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
-        return false;
-
     ExceptionCode ec = 0;
-    m_impl->deleteItem(identifierToString(propertyName), ec);
+    m_impl->deleteItem(stringName, ec);
     setDOMException(exec, ec);
-
-    return true;
+    return !ec;
 }
 
 bool JSDOMStringMap::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    // Only perform the custom put if the object doesn't have a native property by this name.
-    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
-    // the native property slots manually.
-    PropertySlot slot;
-    if (getStaticValueSlot<JSDOMStringMap, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
-        return false;
-        
-    JSValue prototype = this->prototype();
-    if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
-        return false;
-    
     String stringValue = ustringToString(value.toString(exec));
     if (exec->hadException())
-        return true;
-    
+        return false;
     ExceptionCode ec = 0;
     impl()->setItem(identifierToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
-
-    return true;
+    return !ec;
 }
 
 } // namespace WebCore

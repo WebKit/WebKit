@@ -1,3 +1,22 @@
+2011-10-06  Kent Tamura  <tkent@chromium.org>
+
+        [JSC binding] Fix inconsistent behavior of DOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=53752
+
+        Reviewed by Darin Adler.
+
+        The dataset behavior was inconsistent. The get operation handled
+        data-* attributes first, and the put and delete operations handled
+        JavaScript properties first.
+
+        Like Firefox and Opera, the put and delete operations should
+        handle data-* attribute first.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::deleteProperty):
+         Handles DOMStringMap first, then returns false if the DOMStringMap makes an error.
+        (WebCore::JSDOMStringMap::putDelegate): ditto.
+
 2011-10-06  Nico Weber  <thakis@chromium.org>
 
         [chromium] Let rule_binding use os.execvp() instead of subprocess.call() to spawn fewer processes.

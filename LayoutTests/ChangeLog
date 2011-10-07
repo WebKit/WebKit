@@ -1,3 +1,18 @@
+2011-10-06  Kent Tamura  <tkent@chromium.org>
+
+        [JSC binding] Fix inconsistent behavior of DOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=53752
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/dataset-expected.txt:
+        * fast/dom/script-tests/dataset.js:
+         - Change the expectation for a case deleting a property of which name can't be a data-* attribute.
+           This behavior matches to Firefox and Opera.
+         - Add test cases to check put/get/delete priorities.
+        * platform/chromium/test_expectations.txt:
+         V8 binding is not ready for this change.
+
 2011-10-06  Jer Noble  <jer.noble@apple.com>
 
         Some media tests fail when run inside a directory path containing periods.

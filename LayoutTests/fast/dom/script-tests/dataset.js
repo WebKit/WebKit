@@ -74,7 +74,7 @@ shouldBeTrue("testDelete('data-', '')");
 shouldBeTrue("testDelete('data-\xE0', '\xE0')");
 debug("");
 
-shouldThrow("testDelete('dummy', '-foo')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+shouldBeFalse("testDelete('dummy', '-foo')");
 debug("");
 
 function testForIn(array)
@@ -96,4 +96,31 @@ shouldBe("testForIn(['data-foo', 'data-bar', 'dataFoo'])", "2");
 shouldBe("testForIn(['data-foo', 'data-bar', 'style'])", "2");
 shouldBe("testForIn(['data-foo', 'data-bar', 'data-'])", "3");
 
+
+debug("");
+debug("Property override:");
+var div = document.createElement("div");
+// If the Object prorotype already has "foo", dataset doesn't create the
+// corresponding attribute for "foo".
+shouldBe("Object.prototype.foo = 'on Object'; div.dataset.foo", "'on Object'");
+shouldBe("div.dataset['foo'] = 'on dataset'; div.dataset.foo", "'on dataset'");
+shouldBeTrue("div.hasAttribute('data-foo')");
+shouldBe("div.setAttribute('data-foo', 'attr'); div.dataset.foo", "'attr'");
+debug("Update the JavaScript property:");
+shouldBe("div.dataset.foo = 'updated'; div.dataset.foo", "'updated'");
+shouldBe("div.getAttribute('data-foo')", "'updated'");
+// "Bar" can't be represented as a data- attribute.
+shouldBe("div.dataset.Bar = 'on dataset'; div.dataset.Bar", "'on dataset'");
+shouldBeFalse("div.hasAttribute('data-Bar')");
+debug("Make the JavaScript property empty:");
+shouldBe("div.dataset.foo = ''; div.dataset.foo", "''");
+shouldBe("div.getAttribute('data-foo')", "''");
+debug("Remove the attribute:");
+shouldBe("div.removeAttribute('data-foo'); div.dataset.foo", "'on Object'");
+debug("Remove the JavaScript property:");
+shouldBe("div.setAttribute('data-foo', 'attr'); delete div.dataset.foo; div.dataset.foo", "'on Object'");
+shouldBeFalse("div.hasAttribute('foo')");
+shouldBeUndefined("delete div.dataset.Bar; div.dataset.Bar");
+
+debug("");
 var successfullyParsed = true;

@@ -39,12 +39,33 @@ PASS testDelete('data---foo', '-Foo') is true
 PASS testDelete('data-', '') is true
 PASS testDelete('data-à', 'à') is true
 
-PASS testDelete('dummy', '-foo') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS testDelete('dummy', '-foo') is false
 
 PASS testForIn(['data-foo', 'data-bar', 'data-baz']) is 3
 PASS testForIn(['data-foo', 'data-bar', 'dataFoo']) is 2
 PASS testForIn(['data-foo', 'data-bar', 'style']) is 2
 PASS testForIn(['data-foo', 'data-bar', 'data-']) is 3
+
+Property override:
+PASS Object.prototype.foo = 'on Object'; div.dataset.foo is 'on Object'
+PASS div.dataset['foo'] = 'on dataset'; div.dataset.foo is 'on dataset'
+PASS div.hasAttribute('data-foo') is true
+PASS div.setAttribute('data-foo', 'attr'); div.dataset.foo is 'attr'
+Update the JavaScript property:
+PASS div.dataset.foo = 'updated'; div.dataset.foo is 'updated'
+PASS div.getAttribute('data-foo') is 'updated'
+PASS div.dataset.Bar = 'on dataset'; div.dataset.Bar is 'on dataset'
+PASS div.hasAttribute('data-Bar') is false
+Make the JavaScript property empty:
+PASS div.dataset.foo = ''; div.dataset.foo is ''
+PASS div.getAttribute('data-foo') is ''
+Remove the attribute:
+PASS div.removeAttribute('data-foo'); div.dataset.foo is 'on Object'
+Remove the JavaScript property:
+PASS div.setAttribute('data-foo', 'attr'); delete div.dataset.foo; div.dataset.foo is 'on Object'
+PASS div.hasAttribute('foo') is false
+PASS delete div.dataset.Bar; div.dataset.Bar is undefined.
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
