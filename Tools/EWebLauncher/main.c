@@ -440,7 +440,8 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
 {
     ELauncher *app = (ELauncher *)user_data;
 
-    float w, h, initScale, minScale, maxScale, devicePixelRatio;
+    int w, h;
+    float initScale, minScale, maxScale, devicePixelRatio;
     Eina_Bool userScalable;
 
     ewk_view_viewport_attributes_get(webview, &w, &h, &initScale, &maxScale, &minScale, &devicePixelRatio, &userScalable);
@@ -448,9 +449,9 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
     /**
      * If there is no argument in viewport tag, argument's value is -1.
      */
-    if ((int)w == -1)
+    if (w == -1)
         w = DEFAULT_WIDTH;
-    if ((int)h == -1)
+    if (h == -1)
         h = DEFAULT_HEIGHT;
     if ((int)initScale == -1)
         initScale = DEFAULT_ZOOM_INIT; // There's no scale separated from zooming in webkit-efl.
@@ -463,8 +464,8 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
     if ((int)userScalable == -1)
         userScalable = EINA_TRUE;
 
-    app->viewport.w = (int)w;
-    app->viewport.h = (int)h;
+    app->viewport.w = w;
+    app->viewport.h = h;
     app->viewport.initScale = initScale;
     app->viewport.minScale = minScale;
     app->viewport.maxScale = maxScale;

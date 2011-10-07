@@ -1,3 +1,13 @@
+2011-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change data type of parameter in ewk_view_viewport_attributes_get().
+        https://bugs.webkit.org/show_bug.cgi?id=69505
+
+        Reviewed by Andreas Kling.
+
+        * EWebLauncher/main.c: Use *int* variables for width and height of viewport meta tag.
+        (on_viewport_changed):
+
 2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed test correction.

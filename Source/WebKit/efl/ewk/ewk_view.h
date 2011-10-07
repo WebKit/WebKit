@@ -2062,7 +2062,7 @@ EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr,
  * @param device_pixel_ratio the pointer to store the device pixel ratio value
  * @param user_scalable the pointer to store if user can scale viewport
  */
-EAPI void ewk_view_viewport_attributes_get(const Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
+EAPI void ewk_view_viewport_attributes_get(const Evas_Object *o, int *w, int *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
 
 /**
  * Sets the zoom range.

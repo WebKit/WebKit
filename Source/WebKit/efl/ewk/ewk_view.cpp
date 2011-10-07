@@ -3456,7 +3456,7 @@ void ewk_view_viewport_attributes_set(Evas_Object* o, const WebCore::ViewportArg
     evas_object_smart_callback_call(o, "viewport,changed", 0);
 }
 
-void ewk_view_viewport_attributes_get(const Evas_Object* o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio, Eina_Bool* user_scalable)
+void ewk_view_viewport_attributes_get(const Evas_Object* o, int* w, int* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio, Eina_Bool* user_scalable)
 {
     WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(o);
 

@@ -1,3 +1,17 @@
+2011-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change data type of parameter in ewk_view_viewport_attributes_get().
+        https://bugs.webkit.org/show_bug.cgi?id=69505
+
+        Reviewed by Andreas Kling.
+
+        ewk_view_viewport_attributes_get() has used implicit casting for width and height of viewport.
+        However, it is better to use *int* data type as parameter data type instead of *float* casting.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_viewport_attributes_get):
+        * ewk/ewk_view.h:
+
 2011-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Only set when the custom encoding is different from existing value
