@@ -32,7 +32,7 @@
 namespace WebKit {
 class WebContentLayerClient;
 class WebContentLayerImpl;
-struct WebFloatRect;
+class WebFloatRect;
 class WebLayerClient;
 
 class WebContentLayer : public WebLayer {

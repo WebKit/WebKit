@@ -1,5 +1,11 @@
 2011-10-07  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, revert r96924.
+
+        * public/WebContentLayer.h:
+
+2011-10-07  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, fix mac build after r96909.
 
         * public/WebContentLayer.h:
