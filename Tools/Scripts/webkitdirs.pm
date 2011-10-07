@@ -309,6 +309,7 @@ sub argumentsForConfiguration()
     push(@args, '--symbian') if isSymbian();
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
+    push(@args, '--wincairo') if isWinCairo();
     push(@args, '--wince') if isWinCE();
     push(@args, '--wx') if isWx();
     push(@args, '--chromium') if isChromium() && !isChromiumAndroid();

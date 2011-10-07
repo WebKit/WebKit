@@ -2,6 +2,15 @@
 
         [WinCairo] Unreviewed test correction.
 
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Add 'wincairo' option to the set of
+        configuration flags used by run-javascript-core tests, so that it
+        does not attempt to run Apple's release version.
+
+2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed test correction.
+
         * BuildSlaveSupport/test-result-archive: Add 'wincairo' to the set
          of known build slave types so that test-result-archive won't fail
          when running tests.
