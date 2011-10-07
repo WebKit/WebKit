@@ -1547,7 +1547,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
                 callType = ConstantFunction;
-            else if (m_profiledBlock->getCallLinkInfo(m_currentIndex).isLinked())
+            else if (m_profiledBlock->getCallLinkInfo(m_currentIndex).isLinked() && !m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
                 callType = LinkedFunction;
             else
                 callType = UnknownFunction;

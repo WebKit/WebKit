@@ -1,3 +1,15 @@
+2011-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Verify that our call speculation is valid.
+
+        Reviewed by Filip Pizlo.
+
+        Before specialising an intrinsic we need to verify that
+        we our speculation is correct.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2011-10-07  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction for the build bot.
