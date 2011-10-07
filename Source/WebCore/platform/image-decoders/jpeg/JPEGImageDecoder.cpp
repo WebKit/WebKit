@@ -101,9 +101,17 @@ static ColorProfile readColorProfile(jpeg_decompress_struct* info)
 
     if (!read_icc_profile(info, &profile, &profileLength))
         return ColorProfile();
+    char* profileData = reinterpret_cast<char*>(profile);
+    // Images with grayscale profiles get "upsampled" by libjpeg. If we use
+    // their color profile, CoreGraphics will "upsample" them
+    // again, resulting in horizontal distortions.
+    if (profileLength >= 20 && !memcmp(&profileData[16], "GRAY", 4)) {
+        free(profile);
+        return ColorProfile();
+    }
 
     ColorProfile colorProfile;
-    colorProfile.append(reinterpret_cast<char*>(profile), profileLength);
+    colorProfile.append(profileData, profileLength);
     free(profile);
     return colorProfile;
 #else
@@ -209,12 +217,12 @@ public:
             // Let libjpeg take care of gray->RGB and YCbCr->RGB conversions.
             switch (m_info.jpeg_color_space) {
             case JCS_GRAYSCALE:
-            case JCS_YCbCr:
                 // Grayscale images get "upsampled" by libjpeg.  If we use
                 // their color profile, CoreGraphics will "upsample" them
                 // again, resulting in horizontal distortions.
                 m_decoder->setIgnoreGammaAndColorProfile(true);
                 // Note fall-through!
+            case JCS_YCbCr:
             case JCS_RGB:
                 m_info.out_color_space = JCS_RGB;
                 break;

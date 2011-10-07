@@ -1,3 +1,16 @@
+2011-10-07  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Adam Barth.
+
+        Add a image with a color profile that's not gray.
+        https://bugs.webkit.org/show_bug.cgi?id=69622
+
+        Test that we properly render JPEGs with embedded non-gray color profiles.
+
+        * fast/images/color-jpeg-with-color-profile.html: Added.
+        * fast/images/resources/icc-v2-gbr.jpg: Added.
+        * platform/chromium-mac/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+
 2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96938.
