@@ -1,3 +1,11 @@
+2011-10-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction for the build bot.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Add the missing
+        Release_Cairo_CFLite and Debug_Cairo_CFLite targets so that
+        build-jsc can find the target it needs to run the JSC tests.
+
 2011-10-07  Oliver Hunt  <oliver@apple.com>
 
         Fix 32-bit build.
