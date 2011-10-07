@@ -1,0 +1,33 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/fs-test-util.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type="file">
+<script>
+description('This test tries calling various FileAPI functions with too few arguments.');
+
+var reader = new FileReader();
+
+shouldThrow('reader.readAsArrayBuffer()');
+shouldThrow('reader.readAsBinaryString()');
+shouldThrow('reader.readAsText()');
+shouldThrow('reader.readAsDataURL()');
+
+var blobBuilder = new WebKitBlobBuilder();
+
+shouldThrow('blobBuilder.append()');
+
+var fileInput = document.getElementsByTagName('input')[0];
+
+shouldThrow('fileInput.files.item()');
+
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

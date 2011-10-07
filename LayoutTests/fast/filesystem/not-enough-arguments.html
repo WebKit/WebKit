@@ -1,0 +1,61 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/fs-test-util.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('This test tries calling various filesystem functions with too few arguments.');
+
+function errorCallback(error)
+{
+    debug("Error occured:" + error.code);
+    finishJSTest();
+}
+
+function successCallback(fs)
+{
+    fileSystem = fs;
+    debug("Successfully obtained Persistent FileSystem:" + fileSystem.name);
+
+    shouldThrow("fileSystem.root.moveTo()");
+    shouldThrow("fileSystem.root.copyTo()");
+    reader = fileSystem.root.createReader();
+    shouldThrow("reader.readEntries()");
+
+    reader.readEntries(function(entries) {
+        window.entries = entries;
+        shouldThrow("entries.item()");
+
+        fileSystem.root.getFile("/test", { create: true }, function(entry) {
+            window.entry = entry;
+            shouldThrow("entry.createWriter()");
+            shouldThrow("entry.file()");
+
+            entry.createWriter(function(writer) {
+                window.writer = writer;
+
+                shouldThrow("writer.write()");
+                shouldThrow("writer.seek()");
+                shouldThrow("writer.truncate()");
+
+                finishJSTest();
+            });
+        });
+    });
+}
+
+if (window.webkitRequestFileSystem) {
+    webkitRequestFileSystem(window.TEMPORARY, 100, successCallback, errorCallback);
+    window.jsTestIsAsync = true;
+} else
+    debug("This test requires FileSystem API support.");
+
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

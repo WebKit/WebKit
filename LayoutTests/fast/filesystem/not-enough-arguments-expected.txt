@@ -1,0 +1,19 @@
+This test tries calling various filesystem functions with too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Successfully obtained Persistent FileSystem:file__0:Temporary
+PASS fileSystem.root.moveTo() threw exception TypeError: Not enough arguments.
+PASS fileSystem.root.copyTo() threw exception TypeError: Not enough arguments.
+PASS reader.readEntries() threw exception TypeError: Not enough arguments.
+PASS entries.item() threw exception TypeError: Not enough arguments.
+PASS entry.createWriter() threw exception TypeError: Not enough arguments.
+PASS entry.file() threw exception TypeError: Not enough arguments.
+PASS writer.write() threw exception TypeError: Not enough arguments.
+PASS writer.seek() threw exception TypeError: Not enough arguments.
+PASS writer.truncate() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

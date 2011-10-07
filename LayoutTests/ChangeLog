@@ -1,3 +1,21 @@
+2011-10-07  Adam Barth  <abarth@webkit.org>
+
+        Add missing tests for LegacyDefaultOptionalArguments/FileAPI IDL
+        https://bugs.webkit.org/show_bug.cgi?id=66236
+
+        Reviewed by Darin Adler.
+
+        These APIs are all very new and everyone who's using them should be
+        aware that they are vendor-prefixed and subject to adjustments as the
+        spec evolves.  Recently, we changed these APIs to more carefully check
+        whether required parameters are actually present.  This patch adds
+        tests to verify that we're doing the proper checks.
+
+        * fast/files/not-enough-arguments-expected.txt: Added.
+        * fast/files/not-enough-arguments.html: Added.
+        * fast/filesystem/not-enough-arguments-expected.txt: Added.
+        * fast/filesystem/not-enough-arguments.html: Added.
+
 2011-10-07  David Barr  <davidbarr@google.com>
 
         Implement currentColor support for box-shadow and text-shadow
