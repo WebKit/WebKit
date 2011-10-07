@@ -1,3 +1,34 @@
+2011-10-06  Adam Barth  <abarth@webkit.org>
+
+        Port PixelZoomer to work in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=69577
+
+        Reviewed by David Levin.
+
+        This implementation of PixelZoomer is basically a fork of the
+        implementation used by results.html.  These two apps have different
+        requirements on where this code lives.  results.html wants to be
+        self-contained whereas garden-o-matic wants to live in the public_html
+        folder of the buildbot.  We could do something fancy here to share the
+        code, but that's not likely to be of much benefit.
+
+        I had to change a few things about pixelzoomer to accounter for the
+        differences in DOM between results.html and garden-o-matic, but
+        surprisingly little.  I also moved all the code into an anonymous
+        function, which is the style we're suing for module separation in
+        garden-o-matic.  Finally, some jQuery-ims snuck in because I didn't
+        want to drag along too many extra functions from results.html.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/pixelzoomer.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/pixelzoomer.css: Added.
+        (.pixel-zoom-container):
+        (.pixel-zoom-container > *):
+        (.pixel-zoom-container .scaled-image-container):
+        (.scaled-image-container > img):
+
 2011-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Change data type of parameter in ewk_view_viewport_attributes_get().

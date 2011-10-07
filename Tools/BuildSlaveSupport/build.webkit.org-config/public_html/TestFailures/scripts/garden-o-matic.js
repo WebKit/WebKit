@@ -60,6 +60,8 @@ function update()
 $(document).ready(function() {
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
 
+    pixelzoomer.installEventListeners();
+
     onebar = new ui.onebar();
     onebar.attach();
 

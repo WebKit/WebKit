@@ -65,9 +65,9 @@ test("results.ResultsGrid", 1, function() {
             '</thead>' +
             '<tbody>' +
                 '<tr>' +
-                    '<td class="expected"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-expected.png"></td>' +
-                    '<td class="actual"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-actual.png"></td>' +
-                    '<td class="diff"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-diff.png"></td>' +
+                    '<td class="expected result-container"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-expected.png"></td>' +
+                    '<td class="actual result-container"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-actual.png"></td>' +
+                    '<td class="diff result-container"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-diff.png"></td>' +
                 '</tr>' +
             '</tbody>' +
         '</table>' +
@@ -81,9 +81,9 @@ test("results.ResultsGrid", 1, function() {
             '</thead>' +
             '<tbody>' +
                 '<tr>' +
-                    '<td class="expected"></td>' +
-                    '<td class="actual"></td>' +
-                    '<td class="diff"><iframe class="text-result" src="http://example.com/layout-test-results/foo-bar-diff.txt"></iframe></td>' +
+                    '<td class="expected result-container"></td>' +
+                    '<td class="actual result-container"></td>' +
+                    '<td class="diff result-container"><iframe class="text-result" src="http://example.com/layout-test-results/foo-bar-diff.txt"></iframe></td>' +
                 '</tr>' +
             '</tbody>' +
         '</table>');

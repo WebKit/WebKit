@@ -1,3 +1,16 @@
+2011-10-06  Adam Barth  <abarth@webkit.org>
+
+        Port PixelZoomer to work in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=69577
+
+        Reviewed by David Levin.
+
+        Change the timeout constant to so that it matches garden-o-matic.  In
+        garden-o-matic, 200 MS was too fast because you mouse around the UI a
+        lot more.
+
+        * fast/harness/results.html:
+
 2011-10-06  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Fix test expectations. Broken test from r96870. Bug filed.

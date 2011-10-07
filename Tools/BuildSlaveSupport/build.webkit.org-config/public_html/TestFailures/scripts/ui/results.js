@@ -36,7 +36,7 @@ ui.results.Comparison = base.extends('table', {
     {
         this.className = 'comparison';
         this.innerHTML = '<thead><tr><th>Expected</th><th>Actual</th><th>Diff</th></tr></thead>' +
-                         '<tbody><tr><td class="expected"></td><td class="actual"></td><td class="diff"></td></tr></tbody>';
+                         '<tbody><tr><td class="expected result-container"></td><td class="actual result-container"></td><td class="diff result-container"></td></tr></tbody>';
     },
     _selectorForKind: function(kind)
     {
