@@ -1,3 +1,20 @@
+2011-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webkitwebsrc: avoid GST_BOILERPLATE_FULL
+        https://bugs.webkit.org/show_bug.cgi?id=69630
+
+        Reviewed by Martin Robinson.
+
+        Use G_DEFINE_TYPE_WITH_CODE instead of GST_BOILERPLATE_FULL and
+        replace use of gst_ghost_pad_new_no_target_from_template() and
+        gst_ghost_pad_set_target() with a single call to
+        gst_ghost_pad_new_from_template(). These changes keep the element
+        compatible with GStreamer 0.10 while preparing the port to 0.11.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_class_init):
+        (webkit_web_src_init):
+
 2011-10-07  Martin Robinson  <mrobinson@igalia.com>
 
         [Freetype] Pseudo-italics do not work

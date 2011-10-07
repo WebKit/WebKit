@@ -130,32 +130,12 @@ static GstAppSrcCallbacks appsrcCallbacks = {
     { 0 }
 };
 
-static void doInit(GType gtype)
-{
-    static const GInterfaceInfo uriHandlerInfo = {
-        webKitWebSrcUriHandlerInit,
-        0, 0
-    };
-
-    GST_DEBUG_CATEGORY_INIT(webkit_web_src_debug, "webkitwebsrc", 0, "websrc element");
-    g_type_add_interface_static(gtype, GST_TYPE_URI_HANDLER,
-                                &uriHandlerInfo);
-}
-
-GST_BOILERPLATE_FULL(WebKitWebSrc, webkit_web_src, GstBin, GST_TYPE_BIN, doInit);
-
-static void webkit_web_src_base_init(gpointer klass)
-{
-    GstElementClass* eklass = GST_ELEMENT_CLASS(klass);
-
-    gst_element_class_add_pad_template(eklass,
-                                       gst_static_pad_template_get(&srcTemplate));
-    gst_element_class_set_details_simple(eklass,
-                                         (gchar*) "WebKit Web source element",
-                                         (gchar*) "Source",
-                                         (gchar*) "Handles HTTP/HTTPS uris",
-                                         (gchar*) "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
-}
+#define webkit_web_src_parent_class parent_class
+// We split this out into another macro to avoid a check-webkit-style error.
+#define WEBKIT_WEB_SRC_CATEGORY_INIT GST_DEBUG_CATEGORY_INIT(webkit_web_src_debug, "webkitwebsrc", 0, "websrc element");
+G_DEFINE_TYPE_WITH_CODE(WebKitWebSrc, webkit_web_src, GST_TYPE_BIN,
+                         G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webKitWebSrcUriHandlerInit);
+                         WEBKIT_WEB_SRC_CATEGORY_INIT);
 
 static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 {
@@ -165,6 +145,14 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     oklass->finalize = webKitWebSrcFinalize;
     oklass->set_property = webKitWebSrcSetProperty;
     oklass->get_property = webKitWebSrcGetProperty;
+
+    gst_element_class_add_pad_template(eklass,
+                                       gst_static_pad_template_get(&srcTemplate));
+    gst_element_class_set_details_simple(eklass,
+                                         (gchar*) "WebKit Web source element",
+                                         (gchar*) "Source",
+                                         (gchar*) "Handles HTTP/HTTPS uris",
+                                         (gchar*) "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
     // icecast stuff
     g_object_class_install_property(oklass,
@@ -222,8 +210,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     g_type_class_add_private(klass, sizeof(WebKitWebSrcPrivate));
 }
 
-static void webkit_web_src_init(WebKitWebSrc* src,
-                                WebKitWebSrcClass* gKlass)
+static void webkit_web_src_init(WebKitWebSrc* src)
 {
     GstPadTemplate* padTemplate = gst_static_pad_template_get(&srcTemplate);
     GstPad* targetpad;
@@ -232,12 +219,6 @@ static void webkit_web_src_init(WebKitWebSrc* src,
     src->priv = priv;
 
     priv->client = new StreamingClient(src);
-
-    priv->srcpad = gst_ghost_pad_new_no_target_from_template("src",
-                                                             padTemplate);
-
-    gst_element_add_pad(GST_ELEMENT(src), priv->srcpad);
-    gst_pad_set_query_function(priv->srcpad, webKitWebSrcQuery);
 
     priv->appsrc = GST_APP_SRC(gst_element_factory_make("appsrc", 0));
     if (!priv->appsrc) {
@@ -250,9 +231,13 @@ static void webkit_web_src_init(WebKitWebSrc* src,
 
     gst_bin_add(GST_BIN(src), GST_ELEMENT(priv->appsrc));
 
+
     targetpad = gst_element_get_static_pad(GST_ELEMENT(priv->appsrc), "src");
-    gst_ghost_pad_set_target(GST_GHOST_PAD(priv->srcpad), targetpad);
+    priv->srcpad = gst_ghost_pad_new_from_template("src", targetpad, padTemplate);
     gst_object_unref(targetpad);
+
+    gst_element_add_pad(GST_ELEMENT(src), priv->srcpad);
+    gst_pad_set_query_function(priv->srcpad, webKitWebSrcQuery);
 
     gst_app_src_set_callbacks(priv->appsrc, &appsrcCallbacks, src, 0);
     gst_app_src_set_emit_signals(priv->appsrc, FALSE);
