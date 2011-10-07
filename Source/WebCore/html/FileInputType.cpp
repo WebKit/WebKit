@@ -327,6 +327,7 @@ void FileInputType::receiveDropForDirectoryUpload(const Vector<String>& paths)
         settings.allowsDirectoryUpload = true;
         settings.allowsMultipleFiles = true;
         settings.selectedFiles.append(paths[0]);
+        settings.acceptTypes = element()->accept();
         chrome->enumerateChosenDirectory(newFileChooser(settings));
     }
 }

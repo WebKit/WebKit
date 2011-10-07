@@ -1,3 +1,16 @@
+2011-10-06  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Pass "accept" mime type information into FileChooser at all call sites
+        https://bugs.webkit.org/show_bug.cgi?id=69592
+
+        No new tests. This only exposes some more information to
+        WebKit ports, no functionality change in WebCore.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::receiveDropForDirectoryUpload):
+
 2011-10-06  Kent Tamura  <tkent@chromium.org>
 
         [JSC binding] Fix inconsistent behavior of DOMStringMap
