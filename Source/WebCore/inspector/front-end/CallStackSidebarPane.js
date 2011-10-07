@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.CallStackSidebarPane = function(model)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
@@ -32,7 +36,7 @@ WebInspector.CallStackSidebarPane = function(model)
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    update: function(callFrames, details)
+    update: function(callFrames)
     {
         this.bodyElement.removeChildren();
 
@@ -99,7 +103,7 @@ WebInspector.CallStackSidebarPane.prototype = {
         return -1;
     },
 
-    _placardSelected: function(placard, event)
+    _placardSelected: function(placard)
     {
         this._model.selectedCallFrame = placard.callFrame;
     },

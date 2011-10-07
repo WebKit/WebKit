@@ -44,6 +44,15 @@ var WebInspector = {}
  */
 WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, tooltipText) {}
 
+/**
+ * @param {string} url
+ * @param {string=} linkText
+ * @param {string=} classes
+ * @param {boolean=} isExternal
+ * @param {string=} tooltipText
+ */
+WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipText) {}
+
 /** @param {string} url */
 WebInspector.linkifyStringAsFragment = function(url) {}
 /** @param {string} url */
@@ -148,19 +157,7 @@ WebInspector.useLowerCaseMenuTitles = function()
 WebInspector.panels = {};
 
 /**
- * @constructor
- */
-WebInspector.ScriptsPanel = function()
-{
-    /** @param {...*} var_args */     
-    this.evaluateInSelectedCallFrame = function(var_args) {}
-    /** @param {...*} var_args */     
-    this.getSelectedCallFrameVariables = function(var_args) {}
-    this.paused = false;
-}
-
-/**
- * @type {?WebInspector.ScriptsPanel}
+ * @type {WebInspector.ScriptsPanel}
  */
 WebInspector.panels.scripts = null;
 
@@ -222,3 +219,11 @@ DOMApplicationCache.prototype.UPDATEREADY = 4;
 DOMApplicationCache.prototype.OBSOLETE = 5;
 
 WebInspector.openRequestInNetworkPanel = function(request) {}
+
+var InjectedFakeWorker = function() {}
+
+WebInspector.queryParamsObject = {}
+
+WebInspector.Events = {
+    InspectorClosing: "InspectorClosing"
+}

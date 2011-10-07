@@ -24,6 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.ScopeChainSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Scope Variables"));
@@ -76,7 +80,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                         extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(callFrame.this)) ];
                     if (i == 0) {
                         var details = WebInspector.debuggerModel.debuggerPausedDetails;
-                        var exception = details.reason === WebInspector.ScriptsPanel.BreakReason.Exception ? details.auxData : 0;
+                        var exception = details.reason === WebInspector.DebuggerModel.BreakReason.Exception ? details.auxData : 0;
                         if (exception) {
                             extraProperties = extraProperties || [];
                             extraProperties.push(new WebInspector.RemoteObjectProperty("<exception>", WebInspector.RemoteObject.fromPayload(exception)));
@@ -117,6 +121,10 @@ WebInspector.ScopeChainSidebarPane.prototype = {
 
 WebInspector.ScopeChainSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ObjectPropertyTreeElement}
+ */
 WebInspector.ScopeVariableTreeElement = function(property)
 {
     WebInspector.ObjectPropertyTreeElement.call(this, property);

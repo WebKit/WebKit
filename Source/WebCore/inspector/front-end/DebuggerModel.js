@@ -59,6 +59,13 @@ WebInspector.DebuggerModel.Events = {
     Reset: "reset"
 }
 
+WebInspector.DebuggerModel.BreakReason = {
+    DOM: "DOM",
+    EventListener: "EventListener",
+    XHR: "XHR",
+    Exception: "exception"
+}
+
 WebInspector.DebuggerModel.prototype = {
     enableDebugger: function()
     {

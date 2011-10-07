@@ -101,3 +101,5 @@ WebInspector.Object.prototype = {
         return event.defaultPrevented;
     }
 }
+
+WebInspector.notifications = new WebInspector.Object();

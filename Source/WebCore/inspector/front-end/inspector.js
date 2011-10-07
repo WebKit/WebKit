@@ -419,8 +419,6 @@ WebInspector.doLoadedDone = function()
 {
     InspectorFrontendHost.loaded();
 
-    this.notifications = new WebInspector.Object();
-
     var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
     var flavor = WebInspector.platformFlavor;

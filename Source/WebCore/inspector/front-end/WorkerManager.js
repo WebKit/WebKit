@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.WorkerManager = function()
 {
     this._workerIdToWindow = {};
@@ -103,7 +107,7 @@ WebInspector.WorkerManager.prototype = {
 
     _openInspectorWindow: function(workerId)
     {
-        var url = location.href + "&dedicatedWorkerId=" + workerId;
+        var url = window.location.href + "&dedicatedWorkerId=" + workerId;
         url = url.replace("docked=true&", "");
         // Set location=0 just to make sure the front-end will be opened in a separate window, not in new tab.
         var workerInspectorWindow = window.open(url, undefined, "location=0");
@@ -134,7 +138,7 @@ WebInspector.WorkerManager.prototype = {
         this._ignoreWorkerInspectorClosing = true;
         for (var workerId in this._workerIdToWindow) {
             this._workerIdToWindow[workerId].close();
-            WorkerAgent.disconnectFromWorker(workerId);
+            WorkerAgent.disconnectFromWorker(parseInt(workerId, 10));
         }
     },
 
@@ -150,6 +154,10 @@ WebInspector.WorkerManager.prototype = {
 
 WebInspector.WorkerManager.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @implements {WorkerAgent.Dispatcher}
+ */
 WebInspector.DedicatedWorkerMessageForwarder = function(workerManager)
 {
     this._workerManager = workerManager;
@@ -159,8 +167,8 @@ WebInspector.DedicatedWorkerMessageForwarder = function(workerManager)
 WebInspector.DedicatedWorkerMessageForwarder.prototype = {
     _receiveMessage: function(event)
     {
-        var workerId = event.data.workerId;
-        workerId = parseInt(workerId);
+        var workerId = event.data["workerId"];
+        workerId = parseInt(workerId, 10);
         var command = event.data.command;
         var message = event.data.message;
 

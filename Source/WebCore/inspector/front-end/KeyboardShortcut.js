@@ -117,6 +117,9 @@ WebInspector.KeyboardShortcut.makeKeyFromEvent = function(keyboardEvent)
     return WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers(keyboardEvent.keyCode, modifiers);
 }
 
+/**
+ * @param {number=} modifiers
+ */
 WebInspector.KeyboardShortcut.makeDescriptor = function(key, modifiers)
 {
     return {

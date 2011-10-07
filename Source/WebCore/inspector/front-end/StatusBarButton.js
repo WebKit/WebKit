@@ -31,7 +31,7 @@
 /**
  * @extends {WebInspector.Object}
  * @constructor
- * @param {Array.<string>=} states
+ * @param {number=} states
  */
 WebInspector.StatusBarButton = function(title, className, states)
 {

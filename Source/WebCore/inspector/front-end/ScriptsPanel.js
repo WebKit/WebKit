@@ -24,6 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ */
 WebInspector.ScriptsPanel = function(presentationModel)
 {
     WebInspector.Panel.call(this, "scripts");
@@ -79,7 +83,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
     this.toggleBreakpointsButton.toggled = true;
-    this.toggleBreakpointsButton.addEventListener("click", this.toggleBreakpointsClicked.bind(this), false);
+    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked.bind(this), false);
     this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
 
     this.debuggerStatusElement = document.createElement("div");
@@ -189,13 +193,6 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
     PauseOnAllExceptions : "all",
     PauseOnUncaughtExceptions: "uncaught"
 };
-
-WebInspector.ScriptsPanel.BreakReason = {
-    DOM: "DOM",
-    EventListener: "EventListener",
-    XHR: "XHR",
-    Exception: "exception"
-}
 
 WebInspector.ScriptsPanel.prototype = {
     get toolbarItemLabel()
@@ -390,7 +387,7 @@ WebInspector.ScriptsPanel.prototype = {
         return { domain: (parsedURL ? parsedURL.host : ""), folderName: folderName, displayName: displayName };
     },
 
-    setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
+    _setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
     {
         var option = uiSourceCode._option;
         if (!option)
@@ -492,25 +489,25 @@ WebInspector.ScriptsPanel.prototype = {
 
         WebInspector.setCurrentPanel(this);
 
-        this.sidebarPanes.callstack.update(callFrames, details);
+        this.sidebarPanes.callstack.update(callFrames);
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
 
-        if (details.reason === WebInspector.ScriptsPanel.BreakReason.DOM) {
+        if (details.reason === WebInspector.DebuggerModel.BreakReason.DOM) {
             this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.auxData);
             function didCreateBreakpointHitStatusMessage(element)
             {
                 this.sidebarPanes.callstack.setStatus(element);
             }
             this.sidebarPanes.domBreakpoints.createBreakpointHitStatusMessage(details.auxData, didCreateBreakpointHitStatusMessage.bind(this));
-        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.EventListener) {
+        } else if (details.reason === WebInspector.DebuggerModel.BreakReason.EventListener) {
             var eventName = details.auxData.eventName;
             this.sidebarPanes.eventListenerBreakpoints.highlightBreakpoint(details.auxData.eventName);
             var eventNameForUI = WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI(eventName);
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI));
-        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.XHR) {
-            this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.auxData.breakpointURL);
+        } else if (details.reason === WebInspector.DebuggerModel.BreakReason.XHR) {
+            this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.auxData["breakpointURL"]);
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a XMLHttpRequest."));
-        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.Exception) {
+        } else if (details.reason === WebInspector.DebuggerModel.BreakReason.Exception) {
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", details.auxData.description));
         } else {
             function didGetUILocation(uiLocation)
@@ -669,7 +666,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _createSourceFrame: function(uiSourceCode)
     {
-        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this._presentationModel, uiSourceCode);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this, uiSourceCode);
+        var sourceFrame = new WebInspector.JavaScriptSourceFrame(delegate, uiSourceCode);
+
         this.addChildView(sourceFrame);
         sourceFrame._uiSourceCode = uiSourceCode;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -994,7 +993,7 @@ WebInspector.ScriptsPanel.prototype = {
         DebuggerAgent.stepOut();
     },
 
-    toggleBreakpointsClicked: function()
+    _toggleBreakpointsClicked: function()
     {
         this.toggleBreakpointsButton.toggled = !this.toggleBreakpointsButton.toggled;
         if (this.toggleBreakpointsButton.toggled) {
@@ -1182,3 +1181,97 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.SourceFrameDelegate}
+ * @param {WebInspector.ScriptsPanel} scriptsPanel
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ */
+WebInspector.SourceFrameDelegateForScriptsPanel = function(scriptsPanel, uiSourceCode)
+{
+    WebInspector.SourceFrameDelegate.call(this);
+
+    this._scriptsPanel = scriptsPanel;
+    this._model = this._scriptsPanel._presentationModel;
+    this._uiSourceCode = uiSourceCode;
+    this._popoverObjectGroup = "popover";
+}
+
+WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
+    requestContent: function(callback)
+    {
+        this._uiSourceCode.requestContent(callback);
+    },
+
+    debuggingSupported: function()
+    {
+        return true;
+    },
+
+    setBreakpoint: function(lineNumber, condition, enabled)
+    {
+        this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
+
+        if (!this._scriptsPanel.breakpointsActivated)
+            this._scriptsPanel._toggleBreakpointsClicked();
+    },
+
+    updateBreakpoint: function(lineNumber, condition, enabled)
+    {
+        this._model.updateBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
+    },
+
+    removeBreakpoint: function(lineNumber)
+    {
+        this._model.removeBreakpoint(this._uiSourceCode, lineNumber);
+    },
+
+    findBreakpoint: function(lineNumber)
+    {
+        return this._model.findBreakpoint(this._uiSourceCode, lineNumber);
+    },
+
+    continueToLine: function(lineNumber)
+    {
+        this._model.continueToLine(this._uiSourceCode, lineNumber);
+    },
+
+    canEditScriptSource: function()
+    {
+        return this._model.canEditScriptSource(this._uiSourceCode);
+    },
+
+    setScriptSource: function(text, callback)
+    {
+        this._model.setScriptSource(this._uiSourceCode, text, callback);
+    },
+
+    setScriptSourceIsBeingEdited: function(inEditMode)
+    {
+        this._scriptsPanel._setScriptSourceIsBeingEdited(this._uiSourceCode, inEditMode);
+    },
+
+    debuggerPaused: function()
+    {
+        return WebInspector.panels.scripts.paused;
+    },
+
+    evaluateInSelectedCallFrame: function(string, callback)
+    {
+        this._scriptsPanel.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, false, callback);
+    },
+
+    releaseEvaluationResult: function()
+    {
+        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
+    },
+
+    suggestedFileName: function()
+    {
+        var names = this._scriptsPanel._folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
+        return names.displayName || "untitled.js";
+    }
+}
+
+WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

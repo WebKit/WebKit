@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.WorkersSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Workers"));
@@ -67,7 +71,7 @@ WebInspector.WorkersSidebarPane.prototype = {
     removeWorker: function(id)
     {
         if (id in this._workers) {
-            this._treeOutline.removeChild(this._treeOutline.findTreeElement(this._workers[id]));
+            this._treeOutline.removeChild(this._treeOutline.getCachedTreeElement(this._workers[id]));
             delete this._workers[id];
         }
     },
@@ -94,6 +98,9 @@ WebInspector.WorkersSidebarPane.prototype = {
 
 WebInspector.WorkersSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.Worker = function(id, url, shared)
 {
     this.id = id;
@@ -101,8 +108,10 @@ WebInspector.Worker = function(id, url, shared)
     this.shared = shared;
 }
 
-
-
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.WorkerListSidebarPane = function(workerManager)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Worker inspectors"));

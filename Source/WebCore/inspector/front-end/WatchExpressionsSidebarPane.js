@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.WatchExpressionsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Watch Expressions"));
@@ -105,11 +109,16 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
 
 WebInspector.WatchExpressionsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ObjectPropertiesSection}
+ */
 WebInspector.WatchExpressionsSection = function()
 {
     this._watchObjectGroupId = "watch-group";
 
     WebInspector.ObjectPropertiesSection.call(this);
+
     this.emptyElement = document.createElement("div");
     this.emptyElement.className = "info";
     this.emptyElement.textContent = WebInspector.UIString("No Watch Expressions");
@@ -159,7 +168,7 @@ WebInspector.WatchExpressionsSection.prototype = {
                 if (this._newExpressionAdded) {
                     delete this._newExpressionAdded;
 
-                    treeElement = this.findAddedTreeElement();
+                    var treeElement = this.findAddedTreeElement();
                     if (treeElement)
                         treeElement.startEditing();
                 }
@@ -285,6 +294,10 @@ WebInspector.WatchExpressionsSection.CompareProperties = function(propertyA, pro
         return 1;
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.ObjectPropertyTreeElement}
+ */
 WebInspector.WatchExpressionTreeElement = function(property)
 {
     WebInspector.ObjectPropertyTreeElement.call(this, property);
@@ -326,11 +339,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
 
         this.listItemElement.addStyleClass("editing-sub-part");
 
-        WebInspector.startEditing(this.nameElement, {
-            context: context,
-            commitHandler: this.editingCommitted.bind(this),
-            cancelHandler: this.editingCancelled.bind(this)
-        });
+        WebInspector.startEditing(this.nameElement, new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context));
     },
 
     editingCancelled: function(element, context)

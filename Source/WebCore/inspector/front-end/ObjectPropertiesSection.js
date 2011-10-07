@@ -31,7 +31,7 @@
  * @param {string=} title
  * @param {string=} subtitle
  * @param {string=} emptyPlaceholder
- * @param {string=} ignoreHasOwnProperty
+ * @param {boolean=} ignoreHasOwnProperty
  * @param {Array.<WebInspector.RemoteObjectProperty>=} extraProperties
  * @param {function()=} treeElementConstructor
  */

@@ -72,7 +72,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:37:jsmodule_common \
+    --module jsmodule_ui:35:jsmodule_common \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/Color.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
@@ -108,27 +108,29 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_inspector_views:31:jsmodule_sdk,jsmodule_ui \
-        --js Source/WebCore/inspector/front-end/ApplicationCacheItemsView.js \
+    --module jsmodule_inspector_views:14:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
-        --js Source/WebCore/inspector/front-end/ConsoleView.js \
-        --js Source/WebCore/inspector/front-end/CookieItemsView.js \
-        --js Source/WebCore/inspector/front-end/DatabaseQueryView.js \
-        --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
         --js Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMBreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMPresentationUtils.js \
-        --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
         --js Source/WebCore/inspector/front-end/ElementsTreeOutline.js \
         --js Source/WebCore/inspector/front-end/EventListenersSidebarPane.js \
-        --js Source/WebCore/inspector/front-end/FontView.js \
         --js Source/WebCore/inspector/front-end/GoToLineDialog.js \
-        --js Source/WebCore/inspector/front-end/ImageView.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
-        --js Source/WebCore/inspector/front-end/MetricsSidebarPane.js \
-        --js Source/WebCore/inspector/front-end/NetworkItemView.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
+        --js Source/WebCore/inspector/front-end/SourceFrame.js \
+        --js Source/WebCore/inspector/front-end/TimelineAgent.js \
+        --js Source/WebCore/inspector/front-end/TimelineGrid.js \
+        --js Source/WebCore/inspector/front-end/TimelineManager.js \
+    --module jsmodule_elements:3:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/StylesSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/MetricsSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/ElementsPanel.js \
+    --module jsmodule_network:12:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/FontView.js \
+        --js Source/WebCore/inspector/front-end/ImageView.js \
+        --js Source/WebCore/inspector/front-end/NetworkItemView.js \
         --js Source/WebCore/inspector/front-end/ResourceCookiesView.js \
         --js Source/WebCore/inspector/front-end/ResourceHeadersView.js \
         --js Source/WebCore/inspector/front-end/ResourceHTMLView.js \
@@ -137,26 +139,27 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/ResourceResponseView.js \
         --js Source/WebCore/inspector/front-end/ResourceTimingView.js \
         --js Source/WebCore/inspector/front-end/ResourceView.js \
-        --js Source/WebCore/inspector/front-end/SourceFrame.js \
-        --js Source/WebCore/inspector/front-end/StylesSidebarPane.js \
-        --js Source/WebCore/inspector/front-end/TimelineAgent.js \
-        --js Source/WebCore/inspector/front-end/TimelineGrid.js \
-        --js Source/WebCore/inspector/front-end/TimelineManager.js \
-    --module jsmodule_inspector_panels:3:jsmodule_inspector_views \
-        --js Source/WebCore/inspector/front-end/ElementsPanel.js \
         --js Source/WebCore/inspector/front-end/NetworkPanel.js \
-        --js Source/WebCore/inspector/front-end/ResourcesPanel.js
+    --module jsmodule_resources:6:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/ApplicationCacheItemsView.js \
+        --js Source/WebCore/inspector/front-end/CookieItemsView.js \
+        --js Source/WebCore/inspector/front-end/DatabaseQueryView.js \
+        --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
+        --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
+        --js Source/WebCore/inspector/front-end/ResourcesPanel.js \
+    --module jsmodule_scripts:7:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/CallStackSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/ScopeChainSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/JavaScriptSourceFrame.js \
+        --js Source/WebCore/inspector/front-end/ScriptsPanel.js \
+        --js Source/WebCore/inspector/front-end/WatchExpressionsSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/WorkerManager.js \
+        --js Source/WebCore/inspector/front-end/WorkersSidebarPane.js \
+    --module jsmodule_console:2:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/ConsoleView.js \
+        --js Source/WebCore/inspector/front-end/ConsolePanel.js
 
 # To be compiled...
-# [Scripts]
-# JavaScriptFormatter
-# JavaScriptSourceFrame
-# ScopeChainSidebarPane
-# ScriptFormatterWorker
-# ScriptsPanel
-# WatchExpressionsSidebarPane
-# CallStackSidebarPane
-#
 # [Timeline]
 # TimelineOverviewPane
 # TimelinePanel
@@ -182,9 +185,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # AuditRules
 # AuditsPanel
 #
-# [Console]
-# ConsolePanel
-#
 # [Extensions]
 # ExtensionAPI
 # ExtensionAuditCategory
@@ -199,8 +199,5 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # SourceHTMLTokenizer
 # SourceJavaScriptTokenizer
 # TestController
-#
-# [Workers]
-# InjectedFakeWorker
-# WorkerManager
-# WorkersSidebarPane
+# JavaScriptFormatter
+# ScriptFormatterWorker
