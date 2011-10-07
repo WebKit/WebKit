@@ -45,6 +45,7 @@
 #include "FrameLoaderClient.h"
 #include "Node.h"
 #include "NotImplemented.h"
+#include "NPObjectWrapper.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
@@ -113,7 +114,7 @@ ScriptController::ScriptController(Frame* frame)
     , m_paused(false)
     , m_proxy(adoptPtr(new V8Proxy(frame)))
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_windowScriptNPObject(0)
+    , m_wrappedWindowScriptNPObject(0)
 #endif
 {
 }
@@ -132,12 +133,21 @@ void ScriptController::clearScriptObjects()
     m_pluginObjects.clear();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (m_windowScriptNPObject) {
+    if (m_wrappedWindowScriptNPObject) {
+        NPObjectWrapper* windowScriptObjectWrapper = NPObjectWrapper::getWrapper(m_wrappedWindowScriptNPObject);
+        ASSERT(windowScriptObjectWrapper);
+
+        NPObject* windowScriptNPObject = NPObjectWrapper::getUnderlyingNPObject(m_wrappedWindowScriptNPObject);
+        ASSERT(windowScriptNPObject);
         // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
         // script object properly.
         // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
-        _NPN_DeallocateObject(m_windowScriptNPObject);
-        m_windowScriptNPObject = 0;
+        _NPN_DeallocateObject(windowScriptNPObject);
+
+        // Clear out the wrapped window script object pointer held by the wrapper.
+        windowScriptObjectWrapper->clear();
+        _NPN_ReleaseObject(m_wrappedWindowScriptNPObject);
+        m_wrappedWindowScriptNPObject = 0;
     }
 #endif
 }
@@ -359,21 +369,24 @@ static NPObject* createScriptObject(Frame* frame)
 
 NPObject* ScriptController::windowScriptNPObject()
 {
-    if (m_windowScriptNPObject)
-        return m_windowScriptNPObject;
+    if (m_wrappedWindowScriptNPObject)
+        return m_wrappedWindowScriptNPObject;
 
+    NPObject* windowScriptNPObject = 0;
     if (canExecuteScripts(NotAboutToExecuteScript)) {
         // JavaScript is enabled, so there is a JavaScript window object.
         // Return an NPObject bound to the window object.
-        m_windowScriptNPObject = createScriptObject(m_frame);
-        _NPN_RegisterObject(m_windowScriptNPObject, 0);
+        windowScriptNPObject = createScriptObject(m_frame);
+        _NPN_RegisterObject(windowScriptNPObject, 0);
     } else {
         // JavaScript is not enabled, so we cannot bind the NPObject to the
         // JavaScript window object. Instead, we create an NPObject of a
         // different class, one which is not bound to a JavaScript object.
-        m_windowScriptNPObject = createNoScriptObject();
+        windowScriptNPObject = createNoScriptObject();
     }
-    return m_windowScriptNPObject;
+
+    m_wrappedWindowScriptNPObject = NPObjectWrapper::create(windowScriptNPObject);
+    return m_wrappedWindowScriptNPObject;
 }
 
 NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)

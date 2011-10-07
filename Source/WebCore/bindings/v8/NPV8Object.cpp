@@ -31,6 +31,7 @@
 #include "PlatformSupport.h"
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "NPObjectWrapper.h"
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
@@ -283,8 +284,13 @@ bool _NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStri
     if (!npObject)
         return false;
 
-    if (npObject->_class != npScriptObjectClass)
-        return false;
+    if (npObject->_class != npScriptObjectClass) {
+        // Check if the object passed in is wrapped. If yes, then we need to invoke on the underlying object.
+        NPObject* actualObject = NPObjectWrapper::getUnderlyingNPObject(npObject);
+        if (!actualObject)
+            return false;
+        npObject = actualObject;
+    }
 
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> context = toV8Context(npp, npObject);

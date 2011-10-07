@@ -208,7 +208,14 @@ private:
     // The frame keeps a NPObject reference for each item on the list.
     PluginObjectMap m_pluginObjects;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* m_windowScriptNPObject;
+    // The window script object can get destroyed while there are outstanding
+    // references to it. Please refer to ScriptController::clearScriptObjects
+    // for more information as to why this is necessary. To avoid crashes due
+    // to calls on the destroyed window object, we return a proxy NPObject
+    // which wraps the underlying window object. The wrapped window object
+    // pointer in this object is cleared out when the window object is
+    // destroyed.
+    NPObject* m_wrappedWindowScriptNPObject;
 #endif
 };
 
