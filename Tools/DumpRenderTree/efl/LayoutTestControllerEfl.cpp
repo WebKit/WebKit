@@ -90,7 +90,7 @@ void LayoutTestController::display()
 
 JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
 {
-    OwnFastMallocPtr<char> counterValue(ewk_frame_counter_value_by_element_id_get(mainFrame, id->ustring().utf8().data()));
+    OwnFastMallocPtr<char> counterValue(ewk_frame_counter_value_by_element_id_get(browser->mainFrame(), id->ustring().utf8().data()));
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(counterValue.get()));
 }
 
@@ -119,12 +119,12 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
 {
-    return ewk_frame_page_number_by_element_id_get(mainFrame, id->ustring().utf8().data(), pageWidth, pageHeight);
+    return ewk_frame_page_number_by_element_id_get(browser->mainFrame(), id->ustring().utf8().data(), pageWidth, pageHeight);
 }
 
 int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 {
-    return ewk_frame_page_number_get(mainFrame, pageWidth, pageHeight);
+    return ewk_frame_page_number_get(browser->mainFrame(), pageWidth, pageHeight);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char*, int) const
@@ -147,7 +147,7 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, i
 
 size_t LayoutTestController::webHistoryItemCount()
 {
-    const Ewk_History* history = ewk_view_history_get(browser);
+    const Ewk_History* history = ewk_view_history_get(browser->mainView());
     if (!history)
         return -1;
 
@@ -175,7 +175,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
-    String absoluteUrl = String::fromUTF8(ewk_frame_uri_get(mainFrame));
+    String absoluteUrl = String::fromUTF8(ewk_frame_uri_get(browser->mainFrame()));
     absoluteUrl.append(url->characters(), url->length());
 
     JSRetainPtr<JSStringRef> jsAbsoluteURL(
@@ -186,7 +186,7 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 
 void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 {
-    ewk_view_editable_set(browser, acceptsEditing);
+    ewk_view_editable_set(browser->mainView(), acceptsEditing);
 }
 
 void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
@@ -241,7 +241,7 @@ static bool gUserStyleSheetEnabled = true;
 void LayoutTestController::setUserStyleSheetEnabled(bool flag)
 {
     gUserStyleSheetEnabled = flag;
-    ewk_view_setting_user_stylesheet_set(browser, flag ? gUserStyleSheet.data() : 0);
+    ewk_view_setting_user_stylesheet_set(browser->mainView(), flag ? gUserStyleSheet.data() : 0);
 }
 
 void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
@@ -295,7 +295,7 @@ int LayoutTestController::windowCount()
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
 {
-    ewk_view_setting_private_browsing_set(browser, flag);
+    ewk_view_setting_private_browsing_set(browser->mainView(), flag);
 }
 
 void LayoutTestController::setJavaScriptCanAccessClipboard(bool)
@@ -310,12 +310,12 @@ void LayoutTestController::setXSSAuditorEnabled(bool)
 
 void LayoutTestController::setFrameFlatteningEnabled(bool flag)
 {
-    ewk_view_setting_enable_frame_flattening_set(browser, flag);
+    ewk_view_setting_enable_frame_flattening_set(browser->mainView(), flag);
 }
 
 void LayoutTestController::setSpatialNavigationEnabled(bool flag)
 {
-    ewk_view_setting_spatial_navigation_set(browser, flag);
+    ewk_view_setting_spatial_navigation_set(browser->mainView(), flag);
 }
 
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool)
@@ -432,7 +432,7 @@ void LayoutTestController::setPopupBlockingEnabled(bool)
 
 void LayoutTestController::setPluginsEnabled(bool flag)
 {
-    ewk_view_setting_enable_plugins_set(browser, flag);
+    ewk_view_setting_enable_plugins_set(browser->mainView(), flag);
 }
 
 bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef)
@@ -472,7 +472,7 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
             wrap = true;
     }
 
-    return !!ewk_view_text_search(browser, target->ustring().utf8().data(), caseSensitive, forward, wrap);
+    return !!ewk_view_text_search(browser->mainView(), target->ustring().utf8().data(), caseSensitive, forward, wrap);
 }
 
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
@@ -593,32 +593,32 @@ void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
-    return ewk_frame_animation_pause(mainFrame, animationName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return ewk_frame_animation_pause(browser->mainFrame(), animationName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
-    return ewk_frame_transition_pause(mainFrame, propertyName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return ewk_frame_transition_pause(browser->mainFrame(), propertyName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
 {
-    return ewk_frame_svg_animation_pause(mainFrame, animationId->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return ewk_frame_svg_animation_pause(browser->mainFrame(), animationId->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
-    return ewk_frame_animation_active_number_get(mainFrame);
+    return ewk_frame_animation_active_number_get(browser->mainFrame());
 }
 
 void LayoutTestController::suspendAnimations() const
 {
-    ewk_frame_animation_suspend(mainFrame);
+    ewk_frame_animation_suspend(browser->mainFrame());
 }
 
 void LayoutTestController::resumeAnimations() const
 {
-    ewk_frame_animation_resume(mainFrame);
+    ewk_frame_animation_resume(browser->mainFrame());
 }
 
 void LayoutTestController::overridePreference(JSStringRef, JSStringRef)
@@ -639,7 +639,7 @@ void LayoutTestController::addUserStyleSheet(JSStringRef, bool)
 
 void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
 {
-    ewk_view_setting_enable_developer_extras_set(browser, enabled);
+    ewk_view_setting_enable_developer_extras_set(browser->mainView(), enabled);
 }
 
 void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
@@ -690,7 +690,7 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
 
 void LayoutTestController::setWebViewEditable(bool)
 {
-    ewk_frame_editable_set(mainFrame, EINA_TRUE);
+    ewk_frame_editable_set(browser->mainFrame(), EINA_TRUE);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef, JSValueRef) const

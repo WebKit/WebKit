@@ -1,3 +1,73 @@
+2011-10-07  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Add DumpRenderTreeChrome.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=66380
+
+        Reviewed by Antonio Gomes.
+
+        This encapsulates EWebKit into an object that manages multiple windows
+        and provides a cleaner interface to EFL's DumpRenderTree.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp: Added.
+        (DumpRenderTreeChrome::create):
+        (DumpRenderTreeChrome::DumpRenderTreeChrome):
+        (DumpRenderTreeChrome::~DumpRenderTreeChrome):
+        (DumpRenderTreeChrome::createNewWindow):
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::removeWindow):
+        (DumpRenderTreeChrome::initialize):
+        (DumpRenderTreeChrome::extraViews):
+        (DumpRenderTreeChrome::mainFrame):
+        (DumpRenderTreeChrome::mainView):
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+        (DumpRenderTreeChrome::onLoadStarted):
+        (DumpRenderTreeChrome::processWork):
+        (DumpRenderTreeChrome::onLoadFinished):
+        (DumpRenderTreeChrome::onStatusbarTextSet):
+        (DumpRenderTreeChrome::onTitleChanged):
+        (DumpRenderTreeChrome::onDocumentLoadFinished):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h: Added.
+        * DumpRenderTree/efl/EventSender.cpp:
+        (sendClick): Use browser->mainFrame() instead of mainFrame.
+        (mouseDownCallback): Ditto.
+        (mouseUpCallback): Ditto.
+        (mouseMoveToCallback): Ditto.
+        (mouseScrollByCallback): Ditto.
+        (keyDownCallback): Ditto.
+        (scalePageByCallback): Ditto.
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::counterValueForElementById): Use
+        browser->mainFrame() instead of mainFrame.
+        (LayoutTestController::pageNumberForElementById): Ditto.
+        (LayoutTestController::numberOfPages): Ditto.
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId): Ditto.
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId): Ditto.
+        (LayoutTestController::sampleSVGAnimationForElementAtTime): Ditto.
+        (LayoutTestController::numberOfActiveAnimations): Ditto.
+        (LayoutTestController::suspendAnimations): Ditto.
+        (LayoutTestController::resumeAnimations): Ditto.
+        (LayoutTestController::setWebViewEditable): Ditto.
+        (LayoutTestController::webHistoryItemCount): Use browser->mainView()
+        instead of browser.
+        (LayoutTestController::queueLoad): Ditto.
+        (LayoutTestController::setAcceptsEditing): Ditto.
+        (LayoutTestController::setUserStyleSheetEnabled): Ditto.
+        (LayoutTestController::setPrivateBrowsingEnabled): Ditto.
+        (LayoutTestController::setFrameFlatteningEnabled): Ditto.
+        (LayoutTestController::setSpatialNavigationEnabled): Ditto.
+        (LayoutTestController::setPluginsEnabled): Ditto.
+        (LayoutTestController::findString): Ditto.
+        (LayoutTestController::setDeveloperExtrasEnabled): Ditto.
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView): Use browser->mainFrame() instead of
+        mainFrame.
+        * DumpRenderTree/efl/WorkQueueItemEfl.cpp:
+        (LoadItem::invoke): Ditto.
+        (LoadHTMLStringItem::invoke): Ditto.
+        (ScriptItem::invoke): Ditto.
+        (ReloadItem::invoke): Use browser->mainView() instead of browser.
+
 2011-10-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Touch mocking is broken with Qt 5 post refactor merge

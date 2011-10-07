@@ -32,14 +32,16 @@
 #include "config.h"
 
 #include "DumpRenderTree.h"
+#include "DumpRenderTreeChrome.h"
 #include "PixelDumpSupportCairo.h"
 #include "RefPtrCairo.h"
 #include "ewk_private.h"
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
 {
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(browser));
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(browser->mainView()));
     Ewk_View_Private_Data* privateData = static_cast<Ewk_View_Private_Data*>(smartData->_priv);
+    const Evas_Object* mainFrame = browser->mainFrame();
 
     int x, y, width, height;
     if (!ewk_frame_visible_content_geometry_get(mainFrame, EINA_TRUE, &x, &y, &width, &height))
