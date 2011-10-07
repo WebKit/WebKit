@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-String WebContext::platformDefaultApplicationCacheDirectory() const
+String WebContext::applicationCacheDirectory()
 {
     return WebCore::cacheStorage().cacheDirectory();
 }

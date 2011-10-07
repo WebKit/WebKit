@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-WTF::String WebContext::platformDefaultApplicationCacheDirectory() const
+WTF::String WebContext::applicationCacheDirectory()
 {
     return WebCore::cacheStorage().cacheDirectory();
 }

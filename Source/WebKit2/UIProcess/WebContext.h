@@ -110,9 +110,7 @@ public:
     void setAdditionalPluginsDirectory(const String&);
 
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
-    String applicationCacheDirectory() const;
-    String platformDefaultApplicationCacheDirectory() const;
-    void setApplicationCacheDirectory(const String& dir) { m_overrideApplicationCacheDirectory = dir; }
+    String applicationCacheDirectory();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
@@ -281,7 +279,6 @@ private:
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
-    String m_overrideApplicationCacheDirectory;
 
     bool m_processTerminationEnabled;
     
