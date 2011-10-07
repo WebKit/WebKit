@@ -1,3 +1,122 @@
+2011-10-06  Antoine Labour  <piman@chromium.org>
+
+        Webkit API for compositor
+        https://bugs.webkit.org/show_bug.cgi?id=69107
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebContentLayer.h: Added.
+        (WebKit::WebContentLayer::WebContentLayer):
+        (WebKit::WebContentLayer::~WebContentLayer):
+        (WebKit::WebContentLayer::operator=):
+        * public/WebContentLayerClient.h: Added.
+        (WebKit::WebContentLayerClient::~WebContentLayerClient):
+        * public/WebLayer.h: Added.
+        (WebKit::WebLayer::WebLayer):
+        (WebKit::WebLayer::operator=):
+        (WebKit::WebLayer::to):
+        (WebKit::WebLayer::toConst):
+        (WebKit::WebLayer::unwrap):
+        (WebKit::WebLayer::constUnwrap):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebLayerClient.h: Added.
+        (WebKit::WebLayerClient::~WebLayerClient):
+        * public/WebLayerTreeView.h: Added.
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (WebKit::WebLayerTreeView::WebLayerTreeView):
+        (WebKit::WebLayerTreeView::~WebLayerTreeView):
+        (WebKit::WebLayerTreeView::operator=):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebLayerTreeViewClient.h: Added.
+        (WebKit::WebLayerTreeViewClient::~WebLayerTreeViewClient):
+        * src/WebContentLayer.cpp: Added.
+        (WebKit::WebContentLayer::create):
+        (WebKit::WebContentLayer::setDrawsContent):
+        (WebKit::WebContentLayer::drawsContent):
+        (WebKit::WebContentLayer::setNeedsDisplay):
+        (WebKit::WebContentLayer::dirtyRect):
+        (WebKit::WebContentLayer::WebContentLayer):
+        (WebKit::WebContentLayer::operator=):
+        (WebKit::WebContentLayer::operator PassRefPtr<WebContentLayerImpl>):
+        * src/WebContentLayerImpl.cpp: Added.
+        (WebKit::WebContentLayerImpl::create):
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::setDrawsContent):
+        (WebKit::WebContentLayerImpl::drawsContent):
+        (WebKit::WebContentLayerImpl::paintContents):
+        (WebKit::WebContentLayerImpl::notifySyncRequired):
+        * src/WebContentLayerImpl.h: Added.
+        * src/WebLayer.cpp: Added.
+        (WebKit::WebLayer::create):
+        (WebKit::WebLayer::~WebLayer):
+        (WebKit::WebLayer::reset):
+        (WebKit::WebLayer::assign):
+        (WebKit::WebLayer::equals):
+        (WebKit::WebLayer::rootLayer):
+        (WebKit::WebLayer::parent):
+        (WebKit::WebLayer::addChild):
+        (WebKit::WebLayer::insertChild):
+        (WebKit::WebLayer::replaceChild):
+        (WebKit::WebLayer::removeFromParent):
+        (WebKit::WebLayer::removeAllChildren):
+        (WebKit::WebLayer::setAnchorPoint):
+        (WebKit::WebLayer::anchorPoint):
+        (WebKit::WebLayer::setAnchorPointZ):
+        (WebKit::WebLayer::anchorPointZ):
+        (WebKit::WebLayer::setBounds):
+        (WebKit::WebLayer::bounds):
+        (WebKit::WebLayer::setMasksToBounds):
+        (WebKit::WebLayer::masksToBounds):
+        (WebKit::WebLayer::setMaskLayer):
+        (WebKit::WebLayer::maskLayer):
+        (WebKit::WebLayer::setOpacity):
+        (WebKit::WebLayer::opacity):
+        (WebKit::WebLayer::setOpaque):
+        (WebKit::WebLayer::opaque):
+        (WebKit::WebLayer::setPosition):
+        (WebKit::WebLayer::position):
+        (WebKit::WebLayer::setSublayerTransform):
+        (WebKit::WebLayer::sublayerTransform):
+        (WebKit::WebLayer::setTransform):
+        (WebKit::WebLayer::transform):
+        (WebKit::WebLayer::WebLayer):
+        (WebKit::WebLayer::operator=):
+        (WebKit::WebLayer::operator PassRefPtr<LayerChromium>):
+        * src/WebLayerImpl.cpp: Added.
+        (WebKit::WebLayerImpl::create):
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        (WebKit::WebLayerImpl::~WebLayerImpl):
+        (WebKit::WebLayerImpl::drawsContent):
+        (WebKit::WebLayerImpl::paintContents):
+        (WebKit::WebLayerImpl::notifySyncRequired):
+        * src/WebLayerImpl.h: Added.
+        * src/WebLayerTreeView.cpp: Added.
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::create):
+        (WebKit::WebLayerTreeView::reset):
+        (WebKit::WebLayerTreeView::assign):
+        (WebKit::WebLayerTreeView::equals):
+        (WebKit::WebLayerTreeView::composite):
+        (WebKit::WebLayerTreeView::setViewportSize):
+        (WebKit::WebLayerTreeView::viewportSize):
+        (WebKit::WebLayerTreeView::WebLayerTreeView):
+        (WebKit::WebLayerTreeView::operator=):
+        (WebKit::WebLayerTreeView::operator PassRefPtr<CCLayerTreeHost>):
+        * src/WebLayerTreeViewImpl.cpp: Added.
+        (WebKit::WebLayerTreeViewImpl::create):
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        (WebKit::WebLayerTreeViewImpl::~WebLayerTreeViewImpl):
+        (WebKit::WebLayerTreeViewImpl::animateAndLayout):
+        (WebKit::WebLayerTreeViewImpl::applyScrollDelta):
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebLayerTreeViewImpl::didRecreateGraphicsContext):
+        (WebKit::WebLayerTreeViewImpl::scheduleComposite):
+        * src/WebLayerTreeViewImpl.h: Added.
+
 2011-10-06  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Build fix for r96907.
