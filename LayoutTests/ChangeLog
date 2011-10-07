@@ -1,3 +1,9 @@
+2011-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip http/tests/multipart/load-last-non-html-frame.php in GTK.
+
+        * platform/gtk/Skipped:
+
 2011-10-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] http/tests/multipart/load-last-non-html-frame.php is failing
