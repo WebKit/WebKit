@@ -1,3 +1,51 @@
+2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96944.
+        http://trac.webkit.org/changeset/96944
+        https://bugs.webkit.org/show_bug.cgi?id=69662
+
+        Caused many tests to crash on Snow Leopard (Requested by rniwa
+        on #webkit).
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyColor::applyInheritValue):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperMaybeInvalidColor::PropertyWrapperMaybeInvalidColor):
+        (WebCore::PropertyWrapperSVGPaint::PropertyWrapperSVGPaint):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::isTransparent):
+        (WebCore::BorderValue::operator==):
+        (WebCore::BorderValue::color):
+        * rendering/style/OutlineValue.h:
+        (WebCore::OutlineValue::operator==):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBorderLeftColor):
+        (WebCore::InheritedFlags::setBorderRightColor):
+        (WebCore::InheritedFlags::setBorderTopColor):
+        (WebCore::InheritedFlags::setBorderBottomColor):
+        (WebCore::InheritedFlags::setOutlineColor):
+        (WebCore::InheritedFlags::setColumnRuleColor):
+        (WebCore::InheritedFlags::fillPaintColor):
+        (WebCore::InheritedFlags::strokePaintColor):
+        (WebCore::InheritedFlags::borderLeftColor):
+        (WebCore::InheritedFlags::borderRightColor):
+        (WebCore::InheritedFlags::borderTopColor):
+        (WebCore::InheritedFlags::borderBottomColor):
+        (WebCore::InheritedFlags::backgroundColor):
+        (WebCore::InheritedFlags::color):
+        (WebCore::InheritedFlags::columnRuleColor):
+        (WebCore::InheritedFlags::outlineColor):
+        (WebCore::InheritedFlags::textEmphasisColor):
+        (WebCore::InheritedFlags::textFillColor):
+        (WebCore::InheritedFlags::textStrokeColor):
+        (WebCore::InheritedFlags::stopColor):
+        (WebCore::InheritedFlags::floodColor):
+        (WebCore::InheritedFlags::lightingColor):
+
 2011-10-07  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69658

@@ -34,9 +34,7 @@ class BorderValue {
 friend class RenderStyle;
 public:
     BorderValue()
-        : m_rgba(0)
-        , m_validColor(false)
-        , m_width(3)
+        : m_width(3)
         , m_style(BNONE)
         , m_isAuto(AUTO_OFF)
     {
@@ -49,7 +47,7 @@ public:
 
     bool isTransparent() const
     {
-        return m_validColor && !alphaChannel(m_rgba);
+        return m_color.isValid() && !m_color.alpha();
     }
 
     bool isVisible(bool checkStyle = true) const
@@ -59,7 +57,7 @@ public:
 
     bool operator==(const BorderValue& o) const
     {
-        return m_width == o.m_width && m_style == o.m_style && color() == o.color();
+        return m_width == o.m_width && m_style == o.m_style && m_color == o.m_color;
     }
 
     bool operator!=(const BorderValue& o) const
@@ -67,23 +65,12 @@ public:
         return !(*this == o);
     }
     
-    void setColor(const Color& color)
-    {
-        m_rgba = color.rgb();
-        m_validColor = color.isValid();
-    }
-    Color color() const { return Color(m_rgba, m_validColor); }
-
+    const Color& color() const { return m_color; }
     unsigned short width() const { return m_width; }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
 
-private:
-    // Instead of using the Color class here, we "unroll" its members onto BorderValue
-    // to maximize struct packing. Use accessors to read/write.
-    RGBA32 m_rgba;
-    bool m_validColor : 1;
-
 protected:
+    Color m_color;
     unsigned m_width : 12;
     unsigned m_style : 4; // EBorderStyle
 

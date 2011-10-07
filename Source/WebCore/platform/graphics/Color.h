@@ -78,7 +78,7 @@ class Color {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Color() : m_color(0), m_valid(false) { }
-    Color(RGBA32 color, bool valid = true) : m_color(color), m_valid(valid) { ASSERT(m_valid || !m_color); }
+    Color(RGBA32 col) : m_color(col), m_valid(true) { }
     Color(int r, int g, int b) : m_color(makeRGB(r, g, b)), m_valid(true) { }
     Color(int r, int g, int b, int a) : m_color(makeRGBA(r, g, b, a)), m_valid(true) { }
     // Color is currently limited to 32bit RGBA, perhaps some day we'll support better colors
