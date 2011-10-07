@@ -98,10 +98,10 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
-    LayoutUnit regionLogicalWidthForLine(LayoutUnit position, const RenderBox*) const;
-    LayoutUnit regionLogicalHeightForLine(LayoutUnit position, const RenderBox*) const;
-    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, const RenderBox*, PageBoundaryRule = IncludePageBoundary) const;
-    RenderRegion* renderRegionForLine(LayoutUnit position, const RenderBox*, bool extendLastRegion = false) const;
+    LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
+    LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
+    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule = IncludePageBoundary) const;
+    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }

@@ -6228,7 +6228,7 @@ LayoutUnit RenderBlock::pageLogicalHeightForOffset(LayoutUnit offset) const
     RenderView* renderView = view();
     if (!inRenderFlowThread())
         return renderView->layoutState()->m_pageLogicalHeight;
-    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offset + offsetFromLogicalTopOfFirstPage(), this);
+    return enclosingRenderFlowThread()->regionLogicalHeightForLine(offset + offsetFromLogicalTopOfFirstPage());
 }
 
 LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
@@ -6247,7 +6247,7 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, P
         return remainingHeight;
     }
     
-    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, this, pageBoundaryRule);
+    return enclosingRenderFlowThread()->regionRemainingLogicalHeightForLine(offset, pageBoundaryRule);
 }
 
 LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins)
@@ -6441,7 +6441,7 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
     if (!flowThread || !flowThread->hasValidRegions())
         return 0;
 
-    return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, this, true);
+    return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
 }
 
 bool RenderBlock::logicalWidthChangedInRegions() const
@@ -6454,6 +6454,26 @@ bool RenderBlock::logicalWidthChangedInRegions() const
         return 0;
     
     return flowThread->logicalWidthChangedInRegions(this, offsetFromLogicalTopOfFirstPage());
+}
+
+RenderRegion* RenderBlock::clampToStartAndEndRegions(RenderRegion* region) const
+{
+    ASSERT(region && inRenderFlowThread());
+    
+    // We need to clamp to the block, since we want any lines or blocks that overflow out of the
+    // logical top or logical bottom of the block to size as though the border box in the first and
+    // last regions extended infinitely. Otherwise the lines are going to size according to the regions
+    // they overflow into, which makes no sense when this block doesn't exist in |region| at all.
+    RenderRegion* startRegion;
+    RenderRegion* endRegion;
+    enclosingRenderFlowThread()->getRegionRangeForBox(this, startRegion, endRegion);
+    
+    if (startRegion && region->offsetFromLogicalTopOfFirstPage() < startRegion->offsetFromLogicalTopOfFirstPage())
+        return startRegion;
+    if (endRegion && region->offsetFromLogicalTopOfFirstPage() > endRegion->offsetFromLogicalTopOfFirstPage())
+        return endRegion;
+    
+    return region;
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox* child) const

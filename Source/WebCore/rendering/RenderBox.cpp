@@ -213,7 +213,7 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, LayoutUnit off
         
     // Now apply the parent inset since it is cumulative whenever anything in the containing block chain shifts.
     // FIXME: Doesn't work right with perpendicular writing modes.
-    const RenderBox* currentBox = containingBlock();
+    const RenderBlock* currentBox = containingBlock();
     offsetFromTopOfFirstPage -= logicalTop();
     RenderBoxRegionInfo* currentBoxInfo = currentBox->renderBoxRegionInfo(region, offsetFromTopOfFirstPage);
     while (currentBoxInfo && currentBoxInfo->isShifted()) {
@@ -223,6 +223,7 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, LayoutUnit off
             logicalLeft -= (currentBox->logicalWidth() - currentBoxInfo->logicalWidth()) - currentBoxInfo->logicalLeft();
         offsetFromTopOfFirstPage -= logicalTop();
         currentBox = currentBox->containingBlock();
+        region = currentBox->clampToStartAndEndRegions(region);
         currentBoxInfo = currentBox->renderBoxRegionInfo(region, offsetFromTopOfFirstPage);
     }
     
@@ -1284,12 +1285,13 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
         return containingBlockLogicalWidthForContent();
 
     RenderBlock* cb = containingBlock();
+    RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
     if (shrinkToAvoidFloats()) {
         LayoutUnit offsetFromLogicalTopOfRegion = region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage;
-        return cb->availableLogicalWidthForLine(max(logicalTop(), logicalTop() + offsetFromLogicalTopOfRegion), false, region, offsetFromLogicalTopOfFirstPage - logicalTop());
+        return cb->availableLogicalWidthForLine(max(logicalTop(), logicalTop() + offsetFromLogicalTopOfRegion), false, containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     }
     LayoutUnit result = cb->availableLogicalWidth();
-    RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region, offsetFromLogicalTopOfFirstPage - logicalTop());
+    RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     if (!boxInfo)
         return result;
     return max(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
@@ -1912,7 +1914,9 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Layout
             region, offsetFromLogicalTopOfFirstPage);
         logicalLeftOffset += cb->style()->isLeftToRightDirection() ? startPositionDelta : -startPositionDelta;
     }
-    RenderBoxRegionInfo* containingBlockInfo = cb->renderBoxRegionInfo(region, offsetFromLogicalTopOfFirstPage - logicalTop());
+    
+    RenderRegion* clampedContainingBlockRegion = cb->clampToStartAndEndRegions(region);
+    RenderBoxRegionInfo* containingBlockInfo = cb->renderBoxRegionInfo(clampedContainingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     bool isShifted = containingBlockInfo && (containingBlockInfo->isShifted()
         || (style()->direction() == LTR && logicalLeftOffset)
         || (style()->direction() == RTL && (logicalWidth() - (logicalLeftOffset + logicalWidthInRegion))));

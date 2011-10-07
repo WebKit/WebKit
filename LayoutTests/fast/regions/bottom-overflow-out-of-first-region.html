@@ -1,0 +1,62 @@
+<!doctype html>
+
+ <style>
+    #content {
+        -webkit-flow: "flow1";
+        text-align: justify;
+        padding: 5px;
+    }
+    
+    #first-box {
+        border: 1px solid blue;
+        height:188px;
+    }
+    
+    #second-box {
+        margin:auto;
+        border: 1px solid green;
+        width:75%
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+        content: -webkit-from-flow("flow1");
+    }
+
+    #region1 {
+        width: 400px;
+        height: 200px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 100px;
+    }
+
+</style>
+
+<body>
+
+<p>In the test case below, the green block's width should not vary and should use the first region to determine its width.
+It is overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's
+containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect.
+The overflow should be spilling out of the top of region one and be painted in region two. 
+
+<div id="content">
+    <div id="first-box">
+        <div id="second-box">
+            <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
+            region.</P>
+             <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
+            region.</P>
+             <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
+            region.</P>
+        </div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>

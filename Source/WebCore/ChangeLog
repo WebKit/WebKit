@@ -1,3 +1,37 @@
+2011-10-07  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69658
+        
+        [CSS3 Regions] Box painting of overflow into regions is incorrect because children were being
+        incorrectly clamped to their containing block region ranges. Change the clamping model so that
+        renderRegionForLine no longer does it. A block will now truly have an accurate range across
+        all the regions that paint it. Instead, do the clamping at the time a child box asks the containing
+        block for its information. At that time clamp to the start and end regions, so that we never ask
+        a containing block for info about a region that it doesn't exist in.
+
+        Reviewed by Anders Carlsson.
+
+        Added new test in fast/regions and updated an old result to be correct.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::pageLogicalHeightForOffset):
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        (WebCore::RenderBlock::clampToStartAndEndRegions):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::renderRegionForLine):
+        (WebCore::RenderFlowThread::regionLogicalWidthForLine):
+        (WebCore::RenderFlowThread::regionLogicalHeightForLine):
+        (WebCore::RenderFlowThread::regionRemainingLogicalHeightForLine):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+
 2011-10-07  Chang Shu  <cshu@webkit.org>
 
         Remove compile time flag ENABLE_PASSWORD_ECHO

@@ -896,6 +896,9 @@ protected:
 
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;
     bool logicalWidthChangedInRegions() const;
+    
+public:
+    RenderRegion* clampToStartAndEndRegions(RenderRegion*) const;
 
 private:
     struct FloatingObjectHashFunctions {

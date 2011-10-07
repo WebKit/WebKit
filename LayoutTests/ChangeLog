@@ -1,3 +1,23 @@
+2011-10-07  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69658
+        
+        [CSS3 Regions] Box painting of overflow into regions is incorrect because children were being
+        incorrectly clamped to their containing block region ranges. Change the clamping model so that
+        renderRegionForLine no longer does it. A block will now truly have an accurate range across
+        all the regions that paint it. Instead, do the clamping at the time a child box asks the containing
+        block for its information. At that time clamp to the start and end regions, so that we never ask
+        a containing block for info about a region that it doesn't exist in.
+
+        Reviewed by Anders Carlsson.
+
+        * fast/regions/bottom-overflow-out-of-first-region.html: Added.
+        * fast/regions/top-overflow-out-of-second-region.html:
+        * platform/mac/fast/regions/bottom-overflow-out-of-first-region-expected.png: Added.
+        * platform/mac/fast/regions/bottom-overflow-out-of-first-region-expected.txt: Added.
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.png:
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.txt:
+
 2011-10-07  Chang Shu  <cshu@webkit.org>
 
         Remove compile time flag ENABLE_PASSWORD_ECHO

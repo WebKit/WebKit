@@ -21,7 +21,6 @@
     #region1, #region2, #region3 {
         border: 1px solid black;
         content: -webkit-from-flow("flow1");
-        display:inline-block
     }
 
     #region1 {
@@ -34,8 +33,6 @@
         height: 200px;
     }
 
-    #container { margin-top:150px }
-
 </style>
 
 <body>
@@ -43,7 +40,7 @@
 <p>In the test case below, the green block's width should not vary and should use the second region to determine its width.
 It is overflowing upwards out of the blue block, and so the portion that overflows should continue to use the blue block's
 containing block width. The blue block does not exist in region one, so using some hypothetical made-up width is incorrect.
-The overflow should be spilling out of the top of region two. <font color=red>RIGHT NOW THIS TEST HAS INCORRECT RESULTS.</font></p>
+The overflow should be spilling out of the top of region two and be painted in region one. 
 
 <div id="content">
     <div id="first-box">
