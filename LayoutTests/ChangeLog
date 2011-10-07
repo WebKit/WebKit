@@ -1,3 +1,12 @@
+2011-10-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: UI performance test for logging 100 messages to the console.
+        https://bugs.webkit.org/show_bug.cgi?id=69608
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/performance/resources/console-append-100-lines.html: Added.
+
 2011-10-05  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=file> tests to fast/forms/file/
