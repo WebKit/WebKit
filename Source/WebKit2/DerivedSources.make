@@ -114,6 +114,6 @@ ifeq ($(OS),Windows_NT)
 all : HeaderDetection.h
 
 HeaderDetection.h : DerivedSources.make
-	if [ -f "$(WEBKITLIBRARIESDIR)/include/WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsBase.h" ]; then echo "#define HAVE_WKQCA 1" > $@; else echo > $@; fi
+	if [ -f "$(WEBKITLIBRARIESDIR)/include/WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsBase.h" ] && [ ! -f "$(WEBKITLIBRARIESDIR)/include/cairo/cairo.h" ]; then echo "#define HAVE_WKQCA 1" > $@; else echo > $@; fi
 
 endif # Windows_NT

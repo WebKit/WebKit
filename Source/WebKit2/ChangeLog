@@ -1,3 +1,11 @@
+2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Correct improper identification of WKQC extensions.
+        https://bugs.webkit.org/show_bug.cgi?id=69600
+
+        * DerivedSources.make: Make sure we are not building the
+        WinCairo variant.
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         When building with clang, enable -Wglobal-constructors and -Wexit-time-destructors
