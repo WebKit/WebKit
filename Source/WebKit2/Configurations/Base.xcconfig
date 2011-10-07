@@ -23,6 +23,9 @@
 
 #include "CompilerVersion.xcconfig"
 
+COMPILER_SPECIFIC_WARNING_CFLAGS = $(COMPILER_SPECIFIC_WARNING_CFLAGS_$(TARGET_GCC_VERSION));
+COMPILER_SPECIFIC_WARNING_CFLAGS_LLVM_COMPILER = -Wglobal-constructors -Wexit-time-destructors;
+
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 DEBUG_INFORMATION_FORMAT = dwarf;
 GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -52,7 +55,7 @@ OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
 VALID_ARCHS = i386 x86_64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
-WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
+WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings $(COMPILER_SPECIFIC_WARNING_CFLAGS);
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv;

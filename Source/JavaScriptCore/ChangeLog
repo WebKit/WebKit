@@ -1,5 +1,27 @@
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
+        When building with clang, enable -Wglobal-constructors and -Wexit-time-destructors
+        https://bugs.webkit.org/show_bug.cgi?id=69586
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        Add -Wglobal-constructors and -Wexit-time-destructors when building with clang.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        When building with clang, we don't need to run the check-for-global-initializers and
+        check-for-exit-time-destructors anymore.
+
+        * jsc.cpp:
+        (runInteractive):
+        Move interpreterName into runInteractive.
+
+        * wtf/StdLibExtras.h:
+        When building with clang, disable the -Wglobal-constructors and -Wexit-time-destructors
+        warnings around the variable declaration.
+
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
         Add DEFINE_DEBUG_ONLY_GLOBAL for globals that should be defined in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=69584
 

@@ -23,6 +23,9 @@
 
 #include "CompilerVersion.xcconfig"
 
+COMPILER_SPECIFIC_WARNING_CFLAGS = $(COMPILER_SPECIFIC_WARNING_CFLAGS_$(TARGET_GCC_VERSION));
+COMPILER_SPECIFIC_WARNING_CFLAGS_LLVM_COMPILER = -Wglobal-constructors -Wexit-time-destructors;
+
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 DEBUG_INFORMATION_FORMAT = dwarf;
 GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -55,7 +58,7 @@ VALID_ARCHS_iphoneos = $(ARCHS_STANDARD_32_BIT);
 VALID_ARCHS_iphonesimulator = $(ARCHS_STANDARD_32_BIT);
 VALID_ARCHS_macosx = i386 ppc x86_64 ppc64;
 WARNING_CFLAGS_BASE = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
-WARNING_CFLAGS = $(WARNING_CFLAGS_$(REAL_PLATFORM_NAME));
+WARNING_CFLAGS = $(WARNING_CFLAGS_$(REAL_PLATFORM_NAME)) $(COMPILER_SPECIFIC_WARNING_CFLAGS);
 WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_macosx_$(CURRENT_ARCH));

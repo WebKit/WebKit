@@ -115,7 +115,6 @@ struct Options {
 };
 
 static const char interactivePrompt[] = "> ";
-static const UString interpreterName("Interpreter");
 
 class StopWatch {
 public:
@@ -479,6 +478,8 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
 static void runInteractive(GlobalObject* globalObject)
 {
+    UString interpreterName("Interpreter");
+
     while (true) {
 #if HAVE(READLINE) && !RUNNING_FROM_XCODE
         char* line = readline(interactivePrompt);

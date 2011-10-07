@@ -39,7 +39,11 @@
 
 using std::max;
 
-static const float gGaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
+static inline float gaussianKernelFactor()
+{
+    return 3 / 4.f * sqrtf(2 * piFloat);
+}
+
 static const unsigned gMaxKernelSize = 1000;
 
 namespace WebCore {
@@ -230,10 +234,10 @@ void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, 
     
     kernelSizeX = 0;
     if (stdX)
-        kernelSizeX = max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gGaussianKernelFactor + 0.5f)));
+        kernelSizeX = max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gaussianKernelFactor() + 0.5f)));
     kernelSizeY = 0;
     if (stdY)
-        kernelSizeY = max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gGaussianKernelFactor + 0.5f)));
+        kernelSizeY = max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gaussianKernelFactor() + 0.5f)));
     
     // Limit the kernel size to 1000. A bigger radius won't make a big difference for the result image but
     // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
@@ -307,7 +311,7 @@ TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) c
 float FEGaussianBlur::calculateStdDeviation(float radius)
 {
     // Blur radius represents 2/3 times the kernel size, the dest pixel is half of the radius applied 3 times
-    return max((radius * 2 / 3.f - 0.5f) / gGaussianKernelFactor, 0.f);
+    return max((radius * 2 / 3.f - 0.5f) / gaussianKernelFactor(), 0.f);
 }
 
 } // namespace WebCore
