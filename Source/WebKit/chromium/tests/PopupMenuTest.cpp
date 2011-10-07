@@ -36,12 +36,12 @@
 #include "Color.h"
 #include "Element.h"
 #include "FrameView.h"
+#include "HTMLSelectElement.h"
 #include "KeyboardCodes.h"
 #include "PopupContainer.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
-#include "SelectElement.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -74,7 +74,7 @@ public:
     {
         m_selectIndex = listIndex;
         if (m_node) {
-            SelectElement* select = toSelectElement(static_cast<Element*>(m_node));
+            HTMLSelectElement* select = toSelectElement(static_cast<Element*>(m_node));
             select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireEvents);
         }
     }
