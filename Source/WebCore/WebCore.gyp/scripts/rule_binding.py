@@ -49,6 +49,7 @@ import errno
 import os
 import shlex
 import shutil
+import subprocess
 import sys
 
 
@@ -123,9 +124,13 @@ def main(args):
     command.extend(['--outputHeadersDir', hdir])
     command.extend(['--outputDir', cppdir, input])
 
-    # Do it.
-    os.execvp('perl', command)
+    # Do it. check_call is new in 2.5, so simulate its behavior with call and
+    # assert.
+    returnCode = subprocess.call(command)
+    assert returnCode == 0
+
+    return returnCode
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    sys.exit(main(sys.argv))
