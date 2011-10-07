@@ -1,3 +1,11 @@
+2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed test correction.
+
+        * BuildSlaveSupport/test-result-archive: Add 'wincairo' to the set
+         of known build slave types so that test-result-archive won't fail
+         when running tests.
+
 2011-10-06  Martin Robinson  <mrobinson@igalia.com>
 
         The GTK+ WebKit2 headers produce a lot of style warnings

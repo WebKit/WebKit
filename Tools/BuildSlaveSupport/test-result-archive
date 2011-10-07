@@ -46,7 +46,7 @@ def main():
     return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)
 
 def archiveTestResults(configuration, platform, layoutTestResultsDir):
-    assert platform in ('mac', 'win', 'gtk', 'qt', 'chromium')
+    assert platform in ('mac', 'win', 'wincairo', 'gtk', 'qt', 'chromium')
 
     try:
         os.unlink(archiveFile)
@@ -66,7 +66,7 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
     if platform == 'mac':
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile]):
             return 1
-    elif platform in ('win', 'gtk', 'qt'):
+    elif platform in ('win', 'wincairo', 'gtk', 'qt'):
         if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
     elif platform == 'chromium':
