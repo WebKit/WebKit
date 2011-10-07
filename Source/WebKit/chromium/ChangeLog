@@ -1,3 +1,12 @@
+2011-10-07  Anna Cavender  <annacc@chromium.org>
+
+        Turn ENABLE_VIDEO_TRACK on for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=69460
+
+        Reviewed by David Levin.
+
+        * features.gypi:
+
 2011-10-07  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: also add glass pane to the frame document's body.
