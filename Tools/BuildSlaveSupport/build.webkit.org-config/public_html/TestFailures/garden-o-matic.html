@@ -28,6 +28,13 @@ James, a web developer from Birmingham, UK.
 -->
 <html>
 <head>
+<meta http-equiv="X-WebKit-CSP" content="default-src 'none';
+                                         script-src 'self' file: https://ajax.googleapis.com;
+                                         style-src 'self' 'unsafe-inline' file: https://ajax.googleapis.com http://fonts.googleapis.com;
+                                         font-src http://themes.googleusercontent.com;
+                                         img-src https://ajax.googleapis.com http://build.chromium.org;
+                                         frame-src http://build.chromium.org;
+                                         connect-src *">
 <title>Garden-O-Matic</title>
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/themes/base/jquery-ui.css">
