@@ -55,6 +55,7 @@
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
             'tests/CCLayerSorterTest.cpp',
+            'tests/CCLayerTreeHostCommonTest.cpp',
             'tests/CCLayerTreeHostImplTest.cpp',
             'tests/CCLayerTreeHostTest.cpp',
             'tests/CCSchedulerTest.cpp',
