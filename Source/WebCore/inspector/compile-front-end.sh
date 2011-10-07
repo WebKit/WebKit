@@ -163,7 +163,14 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/ConsolePanel.js \
     --module jsmodule_timeline:2:jsmodule_components \
         --js Source/WebCore/inspector/front-end/TimelineOverviewPane.js \
-        --js Source/WebCore/inspector/front-end/TimelinePanel.js
+        --js Source/WebCore/inspector/front-end/TimelinePanel.js \
+    --module jsmodule_audits:6:jsmodule_components \
+        --js Source/WebCore/inspector/front-end/AuditCategories.js \
+        --js Source/WebCore/inspector/front-end/AuditFormatters.js \
+        --js Source/WebCore/inspector/front-end/AuditLauncherView.js \
+        --js Source/WebCore/inspector/front-end/AuditResultView.js \
+        --js Source/WebCore/inspector/front-end/AuditRules.js \
+        --js Source/WebCore/inspector/front-end/AuditsPanel.js
     
 
 # To be compiled...
@@ -180,14 +187,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # ProfilesPanel
 # ProfileView
 # TopDownProfileDataGridTree
-#
-# [Audits]
-# AuditCategories
-# AuditFormatters
-# AuditLauncherView
-# AuditResultView
-# AuditRules
-# AuditsPanel
 #
 # [Extensions]
 # ExtensionAPI

@@ -63,6 +63,10 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
     return domainToResourcesMap;
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.GzipRule = function()
 {
     WebInspector.AuditRule.call(this, "network-gzip", "Enable gzip compression");
@@ -115,7 +119,10 @@ WebInspector.AuditRules.GzipRule.prototype = {
 
 WebInspector.AuditRules.GzipRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, resourceTypeName, allowedPerDomain)
 {
     WebInspector.AuditRule.call(this, id, name);
@@ -127,7 +134,7 @@ WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, [this._type]);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, [this._type], false);
         var penalizedResourceCount = 0;
         // TODO: refactor according to the chosen i18n approach
         var summary = result.addChild("", true);
@@ -150,21 +157,30 @@ WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CombineExternalResourcesRule}
+ */
 WebInspector.AuditRules.CombineJsResourcesRule = function(allowedPerDomain) {
     WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externaljs", "Combine external JavaScript", WebInspector.Resource.Type.Script, "JavaScript", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineJsResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CombineExternalResourcesRule}
+ */
 WebInspector.AuditRules.CombineCssResourcesRule = function(allowedPerDomain) {
     WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externalcss", "Combine external CSS", WebInspector.Resource.Type.Stylesheet, "CSS", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineCssResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.MinimizeDnsLookupsRule = function(hostCountThreshold) {
     WebInspector.AuditRule.call(this, "network-minimizelookups", "Minimize DNS lookups");
     this._hostCountThreshold = hostCountThreshold;
@@ -174,7 +190,7 @@ WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
     doRun: function(resources, result, callback)
     {
         var summary = result.addChild("");
-        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, undefined);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, undefined, false);
         for (var domain in domainToResourcesMap) {
             if (domainToResourcesMap[domain].length > 1)
                 continue;
@@ -183,7 +199,7 @@ WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
                 continue;
             if (!parsedURL.host.search(WebInspector.AuditRules.IPAddressRegexp))
                 continue; // an IP address
-            summary.addSnippet(match[2]);
+            summary.addSnippet(domain);
             result.violationCount++;
         }
         if (!summary.children || summary.children.length <= this._hostCountThreshold)
@@ -196,7 +212,10 @@ WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
 
 WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.ParallelizeDownloadRule = function(optimalHostnameCount, minRequestThreshold, minBalanceThreshold)
 {
     WebInspector.AuditRule.call(this, "network-parallelizehosts", "Parallelize downloads across hostnames");
@@ -204,7 +223,6 @@ WebInspector.AuditRules.ParallelizeDownloadRule = function(optimalHostnameCount,
     this._minRequestThreshold = minRequestThreshold;
     this._minBalanceThreshold = minBalanceThreshold;
 }
-
 
 WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
     doRun: function(resources, result, callback)
@@ -264,9 +282,12 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
 
 WebInspector.AuditRules.ParallelizeDownloadRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
-// The reported CSS rule size is incorrect (parsed != original in WebKit),
-// so use percentages instead, which gives a better approximation.
+/**
+ * The reported CSS rule size is incorrect (parsed != original in WebKit),
+ * so use percentages instead, which gives a better approximation.
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.UnusedCssRule = function()
 {
     WebInspector.AuditRule.call(this, "page-unusedcss", "Remove unused CSS rules");
@@ -392,7 +413,10 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
 WebInspector.AuditRules.UnusedCssRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.CacheControlRule = function(id, name)
 {
     WebInspector.AuditRule.call(this, id, name);
@@ -412,7 +436,7 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
         callback(result);
     },
 
-    handleNonCacheableResources: function()
+    handleNonCacheableResources: function(resources, result)
     {
     },
 
@@ -530,7 +554,10 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
 
 WebInspector.AuditRules.CacheControlRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CacheControlRule}
+ */
 WebInspector.AuditRules.BrowserCacheControlRule = function()
 {
     WebInspector.AuditRules.CacheControlRule.call(this, "http-browsercache", "Leverage browser caching");
@@ -596,7 +623,10 @@ WebInspector.AuditRules.BrowserCacheControlRule.prototype = {
 
 WebInspector.AuditRules.BrowserCacheControlRule.prototype.__proto__ = WebInspector.AuditRules.CacheControlRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CacheControlRule}
+ */
 WebInspector.AuditRules.ProxyCacheControlRule = function() {
     WebInspector.AuditRules.CacheControlRule.call(this, "http-proxycache", "Leverage proxy caching");
 }
@@ -633,7 +663,10 @@ WebInspector.AuditRules.ProxyCacheControlRule.prototype = {
 
 WebInspector.AuditRules.ProxyCacheControlRule.prototype.__proto__ = WebInspector.AuditRules.CacheControlRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.ImageDimensionsRule = function()
 {
     WebInspector.AuditRule.call(this, "page-imagedims", "Specify image dimensions");
@@ -726,7 +759,10 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
 WebInspector.AuditRules.ImageDimensionsRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.CssInHeadRule = function()
 {
     WebInspector.AuditRule.call(this, "page-cssinhead", "Put CSS in the document head");
@@ -795,7 +831,10 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
 WebInspector.AuditRules.CssInHeadRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.StylesScriptsOrderRule = function()
 {
     WebInspector.AuditRule.call(this, "page-stylescriptorder", "Optimize the order of styles and scripts");
@@ -862,7 +901,10 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.CookieRuleBase = function(id, name)
 {
     WebInspector.AuditRule.call(this, id, name);
@@ -902,7 +944,10 @@ WebInspector.AuditRules.CookieRuleBase.prototype = {
 
 WebInspector.AuditRules.CookieRuleBase.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CookieRuleBase}
+ */
 WebInspector.AuditRules.CookieSizeRule = function(avgBytesThreshold)
 {
     WebInspector.AuditRules.CookieRuleBase.call(this, "http-cookiesize", "Minimize cookie size");
@@ -1008,7 +1053,10 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
 
 WebInspector.AuditRules.CookieSizeRule.prototype.__proto__ = WebInspector.AuditRules.CookieRuleBase.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CookieRuleBase}
+ */
 WebInspector.AuditRules.StaticCookielessRule = function(minResources)
 {
     WebInspector.AuditRules.CookieRuleBase.call(this, "http-staticcookieless", "Serve static content from a cookieless domain");

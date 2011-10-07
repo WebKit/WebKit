@@ -61,3 +61,8 @@ WebInspector.NetworkLog.prototype = {
         this._resources.push(event.data);
     }
 }
+
+/**
+ * @type {WebInspector.NetworkLog}
+ */
+WebInspector.networkLog = null;

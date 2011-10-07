@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.AuditCategory}
+ */
 WebInspector.AuditCategories.PagePerformance = function() {
     WebInspector.AuditCategory.call(this, WebInspector.AuditCategories.PagePerformance.AuditCategoryName);
 }
@@ -45,6 +49,10 @@ WebInspector.AuditCategories.PagePerformance.prototype = {
 
 WebInspector.AuditCategories.PagePerformance.prototype.__proto__ = WebInspector.AuditCategory.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.AuditCategory}
+ */
 WebInspector.AuditCategories.NetworkUtilization = function() {
     WebInspector.AuditCategory.call(this, WebInspector.AuditCategories.NetworkUtilization.AuditCategoryName);
 }

@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.AuditResultView = function(categoryResults)
 {
     WebInspector.View.call(this);
@@ -43,7 +47,10 @@ WebInspector.AuditResultView = function(categoryResults)
 
 WebInspector.AuditResultView.prototype.__proto__ = WebInspector.View.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ */
 WebInspector.AuditCategoryResultPane = function(categoryResult)
 {
     WebInspector.SidebarPane.call(this, categoryResult.title);

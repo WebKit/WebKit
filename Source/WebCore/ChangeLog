@@ -1,3 +1,23 @@
+2011-10-07  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add Audits panel to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69633
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/AuditCategories.js:
+        * inspector/front-end/AuditLauncherView.js:
+        * inspector/front-end/AuditResultView.js:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.CombineExternalResourcesRule.prototype.doRun):
+        (WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.doRun):
+        (WebInspector.AuditRules.CacheControlRule.prototype.handleNonCacheableResources):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/NetworkLog.js:
+        * inspector/front-end/treeoutline.js:
+
 2011-10-07  Andreas Kling  <kling@webkit.org>
 
         Functions that return "const Color" should simply return "Color".

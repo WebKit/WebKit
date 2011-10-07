@@ -442,6 +442,9 @@ TreeOutline.prototype.select = function()
     // this is the root, do nothing
 }
 
+/**
+ * @param {boolean=} omitFocus
+ */
 TreeOutline.prototype.revealAndSelect = function(omitFocus)
 {
     // this is the root, do nothing
@@ -852,6 +855,9 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser)
         this.onselect(this, selectedByUser);
 }
 
+/**
+ * @param {boolean=} omitFocus
+ */
 TreeElement.prototype.revealAndSelect = function(omitFocus)
 {
     this.reveal();

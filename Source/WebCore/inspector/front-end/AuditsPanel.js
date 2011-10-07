@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ */
 WebInspector.AuditsPanel = function()
 {
     WebInspector.Panel.call(this, "audits");
@@ -55,7 +59,7 @@ WebInspector.AuditsPanel = function()
     this._constructCategories();
 
     this._launcherView = new WebInspector.AuditLauncherView(this.initiateAudit.bind(this));
-    for (id in this.categoriesById)
+    for (var id in this.categoriesById)
         this._launcherView.addCategory(this.categoriesById[id]);
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
@@ -261,8 +265,9 @@ WebInspector.AuditsPanel.prototype = {
 
 WebInspector.AuditsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-
-
+/**
+ * @constructor
+ */
 WebInspector.AuditCategory = function(displayName)
 {
     this._displayName = displayName;
@@ -310,7 +315,9 @@ WebInspector.AuditCategory.prototype = {
     }
 }
 
-
+/**
+ * @constructor
+ */
 WebInspector.AuditRule = function(id, displayName)
 {
     this._id = id;
@@ -358,6 +365,9 @@ WebInspector.AuditRule.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.AuditCategoryResult = function(category)
 {
     this.title = category.displayName;
@@ -371,6 +381,11 @@ WebInspector.AuditCategoryResult.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @param {boolean=} expanded
+ * @param {string=} className
+ */
 WebInspector.AuditRuleResult = function(value, expanded, className)
 {
     this.value = value;
@@ -390,6 +405,10 @@ WebInspector.AuditRuleResult.resourceDomain = function(domain)
 }
 
 WebInspector.AuditRuleResult.prototype = {
+    /**
+     * @param {boolean=} expanded
+     * @param {string=} className
+     */
     addChild: function(value, expanded, className)
     {
         if (!this.children)
@@ -416,6 +435,10 @@ WebInspector.AuditRuleResult.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarTreeElement}
+ */
 WebInspector.AuditsSidebarTreeElement = function()
 {
     this.small = false;
@@ -447,7 +470,10 @@ WebInspector.AuditsSidebarTreeElement.prototype = {
 
 WebInspector.AuditsSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarTreeElement}
+ */
 WebInspector.AuditResultSidebarTreeElement = function(results, mainResourceURL, ordinal)
 {
     this.results = results;
