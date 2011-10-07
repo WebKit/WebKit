@@ -44,11 +44,6 @@ const char* predictionToString(PredictedType value)
     static char description[size];
     BoundsCheckedPointer<char> ptr(description, size);
     
-    if (value & PredictObjectUnknown) {
-        ASSERT(!(value & (PredictObjectMask & ~PredictObjectUnknown)));
-        ptr.strcat("Object");
-    }
-
     if (value & PredictCellOther)
         ptr.strcat("Othercell");
     

@@ -1710,11 +1710,42 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ConvertThis: {
-        SpeculateCellOperand thisValue(this, node.child1());
-
-        speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
-
-        cellResult(thisValue.gpr(), m_compileIndex);
+        if (isOtherPrediction(node.prediction())) {
+            JSValueOperand thisValue(this, node.child1());
+            GPRTemporary scratch(this, thisValue);
+            
+            GPRReg thisValueTagGPR = thisValue.tagGPR();
+            GPRReg scratchGPR = scratch.gpr();
+            
+            m_jit.move(thisValueTagGPR, scratchGPR);
+            m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), scratchGPR);
+            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::UndefinedTag)));
+            
+            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), scratchGPR);
+            cellResult(scratchGPR, m_compileIndex);
+            break;
+        }
+        
+        if (isObjectPrediction(node.prediction())) {
+            SpeculateCellOperand thisValue(this, node.child1());
+            
+            speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+            
+            cellResult(thisValue.gpr(), m_compileIndex);
+            break;
+        }
+        
+        JSValueOperand thisValue(this, node.child1());
+        GPRReg thisValueTagGPR = thisValue.tagGPR();
+        GPRReg thisValuePayloadGPR = thisValue.payloadGPR();
+        
+        flushRegisters();
+        
+        GPRResult2 resultTag(this);
+        GPRResult resultPayload(this);
+        callOperation(operationConvertThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
+        
+        cellResult(resultPayload.gpr(), m_compileIndex);
         break;
     }
 

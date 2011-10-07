@@ -375,7 +375,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
         return;
     }
 
-    GenerationInfo& childInfo = m_generationInfo[at(node.child1())].virtualRegister()];
+    GenerationInfo& childInfo = m_generationInfo[at(node.child1()).virtualRegister()];
     if (isJSDouble(childInfo.registerFormat())) {
         DoubleOperand op1(this, node.child1());
         GPRTemporary result(this);

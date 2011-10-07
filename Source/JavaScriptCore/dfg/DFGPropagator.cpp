@@ -478,7 +478,7 @@ private:
             if (prediction) {
                 if (prediction & ~PredictObjectMask) {
                     prediction &= PredictObjectMask;
-                    prediction = mergePredictions(prediction, PredictObjectUnknown);
+                    prediction = mergePredictions(prediction, PredictObjectOther);
                 }
                 changed |= mergePrediction(prediction);
             }

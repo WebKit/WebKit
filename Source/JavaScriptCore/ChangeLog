@@ -1,3 +1,26 @@
+2011-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not always speculate that ConvertThis is operating on an object
+        https://bugs.webkit.org/show_bug.cgi?id=69570
+
+        Reviewed by Oliver Hunt.
+        
+        Mostly neutral, but with a slight regression in Kraken since it increases
+        coverage in DFG and thus reveals some performance pathologies (which I
+        prefer to think of as performance opportunities, in a good way).
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        * bytecode/PredictedType.h:
+        (JSC::isOtherPrediction):
+        (JSC::mergePredictions):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Windows build fix

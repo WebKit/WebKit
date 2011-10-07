@@ -40,7 +40,6 @@ static const PredictedType PredictNone          = 0x0000; // We don't know anyth
 static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
 static const PredictedType PredictArray         = 0x0002; // It's definitely a JSArray.
 static const PredictedType PredictObjectOther   = 0x0010; // It's definitely an object but not JSFinalObject or JSArray.
-static const PredictedType PredictObjectUnknown = 0x0020; // It's definitely an object, but we didn't record enough informatin to know more.
 static const PredictedType PredictObjectMask    = 0x003f; // Bitmask used for testing for any kind of object prediction.
 static const PredictedType PredictString        = 0x0040; // It's definitely a JSString.
 static const PredictedType PredictCellOther     = 0x0080; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
@@ -107,21 +106,17 @@ inline bool isBooleanPrediction(PredictedType value)
     return value == PredictBoolean;
 }
 
+inline bool isOtherPrediction(PredictedType value)
+{
+    return value == PredictOther;
+}
+
 #ifndef NDEBUG
 const char* predictionToString(PredictedType value);
 #endif
 
 inline PredictedType mergePredictions(PredictedType left, PredictedType right)
 {
-    if (left & PredictObjectUnknown) {
-        ASSERT(!(left & (PredictObjectMask & ~PredictObjectUnknown)));
-        if (right & PredictObjectMask)
-            return (left & ~PredictObjectUnknown) | right;
-    } else if (right & PredictObjectUnknown) {
-        ASSERT(!(right & (PredictObjectMask & ~PredictObjectUnknown)));
-        if (left & PredictObjectMask)
-            return (right & ~PredictObjectUnknown) | left;
-    }
     return left | right;
 }
 

@@ -1786,11 +1786,39 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ConvertThis: {
-        SpeculateCellOperand thisValue(this, node.child1());
-
-        speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
-
-        cellResult(thisValue.gpr(), m_compileIndex);
+        if (isOtherPrediction(node.prediction())) {
+            JSValueOperand thisValue(this, node.child1());
+            GPRTemporary scratch(this, thisValue);
+            GPRReg thisValueGPR = thisValue.gpr();
+            GPRReg scratchGPR = scratch.gpr();
+            
+            m_jit.move(thisValueGPR, scratchGPR);
+            m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), scratchGPR);
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, scratchGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+            
+            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), scratchGPR);
+            cellResult(scratchGPR, m_compileIndex);
+            break;
+        }
+        
+        if (isObjectPrediction(node.prediction())) {
+            SpeculateCellOperand thisValue(this, node.child1());
+            
+            speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+            
+            cellResult(thisValue.gpr(), m_compileIndex);
+            break;
+        }
+        
+        JSValueOperand thisValue(this, node.child1());
+        GPRReg thisValueGPR = thisValue.gpr();
+        
+        flushRegisters();
+        
+        GPRResult result(this);
+        callOperation(operationConvertThis, result.gpr(), thisValueGPR);
+        
+        cellResult(result.gpr(), m_compileIndex);
         break;
     }
 
