@@ -1,3 +1,26 @@
+2011-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Support string indexing in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=69671
+
+        Reviewed by Gavin Barraclough.
+
+        Emit code to support inline indexing of strings 
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+            Shared code to perform string indexing.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            Use compileGetByValOnString if we predict that the base object
+            is a string in GetByVal.
+        * runtime/JSString.h:
+        (JSC::JSString::offsetOfFiberCount):
+        (JSC::JSString::offsetOfValue):
+
 2011-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ConvertThis speculation logic is wrong

@@ -528,6 +528,42 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
     }
 }
 
+void SpeculativeJIT::compileGetByValOnString(Node& node)
+{
+    ASSERT(node.child3() == NoNode);
+    SpeculateCellOperand base(this, node.child1());
+    SpeculateStrictInt32Operand property(this, node.child2());
+    
+    GPRReg baseReg = base.gpr();
+    GPRReg propertyReg = property.gpr();
+
+    if (!isKnownString(node.child1()))
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+
+    // unsigned comparison so we can filter out negative indices and indices that are too large
+    speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSString::offsetOfLength())));
+
+    // Speculate that we're not accessing a rope
+    speculationCheck(m_jit.branchTest32(MacroAssembler::NonZero, MacroAssembler::Address(baseReg, JSString::offsetOfFiberCount())));
+    
+    GPRTemporary scratch(this);
+    GPRReg scratchReg = scratch.gpr();
+    
+    // Load the character into scratchReg
+    m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), scratchReg);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load16(MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesTwo, 0), scratchReg);
+
+    // We only support ascii characters
+    speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, scratchReg, TrustedImm32(0x100)));
+    GPRTemporary smallStrings(this);
+    GPRReg smallStringsReg = smallStrings.gpr();
+    m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalData()->smallStrings.singleCharacterStrings()), smallStringsReg);
+    m_jit.loadPtr(MacroAssembler::BaseIndex(smallStringsReg, scratchReg, MacroAssembler::ScalePtr, 0), scratchReg);
+    speculationCheck(m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
+    cellResult(scratchReg, m_compileIndex);
+}
+
 } } // namespace JSC::DFG
 
 #endif

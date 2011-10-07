@@ -456,6 +456,8 @@ private:
     void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr);
     void emitBranch(Node&);
     
+    void compileGetByValOnString(Node&);
+    
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.
     template<typename T>

@@ -1378,6 +1378,13 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case GetByVal: {
+        if (at(node.child1()).prediction() == PredictString) {
+            compileGetByValOnString(node);
+            if (!m_compileOkay)
+                return;
+            break;
+        }
+
         ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());

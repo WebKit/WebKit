@@ -447,6 +447,8 @@ namespace JSC {
         }
 
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
+        static size_t offsetOfFiberCount() { return OBJECT_OFFSETOF(JSString, m_fiberCount); }
+        static size_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_value); }
 
         static const ClassInfo s_info;
 
