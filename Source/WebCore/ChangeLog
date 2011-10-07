@@ -1,3 +1,16 @@
+2011-10-07  Chang Shu  <cshu@webkit.org>
+
+        Remove compile time flag ENABLE_PASSWORD_ECHO
+        https://bugs.webkit.org/show_bug.cgi?id=69647
+
+        As we have runtime flag in the page/Settings, we should remove this redundant compile time flag.
+
+        Reviewed by Andreas Kling.
+
+        * config.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2011-10-07  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 69562 - AccessibilityImageMapLink holds onto it's parent even after it's been freed

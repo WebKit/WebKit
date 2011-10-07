@@ -215,7 +215,11 @@ Settings::Settings(Page* page)
 #endif
     , m_mediaPlaybackRequiresUserGesture(false)
     , m_mediaPlaybackAllowsInline(true)
+#if OS(SYMBIAN)
+    , m_passwordEchoEnabled(true)
+#else
     , m_passwordEchoEnabled(false)
+#endif
     , m_suppressIncrementalRendering(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_zoomAnimatorScale(1)

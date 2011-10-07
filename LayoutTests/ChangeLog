@@ -1,3 +1,14 @@
+2011-10-07  Chang Shu  <cshu@webkit.org>
+
+        Remove compile time flag ENABLE_PASSWORD_ECHO
+        https://bugs.webkit.org/show_bug.cgi?id=69647
+
+        WK2 tests are passing after r96740 (bug 68924).
+
+        Reviewed by Andreas Kling.
+
+        * platform/wk2/Skipped:
+
 2011-10-07  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 69562 - AccessibilityImageMapLink holds onto it's parent even after it's been freed

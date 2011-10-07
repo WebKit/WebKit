@@ -284,11 +284,6 @@ void QWebSettingsPrivate::apply()
         settings->setNeedsSiteSpecificQuirks(value);
 
         settings->setUsesPageCache(WebCore::pageCache()->capacity());
-
-#if ENABLE(PASSWORD_ECHO)
-        settings->setPasswordEchoEnabled(true);
-        settings->setPasswordEchoDurationInSeconds(1);
-#endif
     } else {
         QList<QWebSettingsPrivate*> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
