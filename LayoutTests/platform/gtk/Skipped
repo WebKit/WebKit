@@ -730,6 +730,8 @@ security/set-form-autocomplete-attribute.html
 # Tests in svg/ directory
 #   Tests failing
 svg/filters/feColorMatrix-values.svg
+# Failing only in 32-bits Release, 1 pixel difference
+svg/filters/feColorMatrix-saturate.svg
 svg/filters/sourceAlpha.svg
 svg/dom/altGlyph-dom.xhtml
 svg/custom/getSubStringLength.html

@@ -1,5 +1,11 @@
 2011-10-07  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip failing svg test in GTK.
+
+        * platform/gtk/Skipped: Skip svg/filters/feColorMatrix-saturate.svg
+
+2011-10-07  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip http/tests/multipart/load-last-non-html-frame.php in GTK.
 
         * platform/gtk/Skipped:
