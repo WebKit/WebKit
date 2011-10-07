@@ -1,3 +1,11 @@
+2011-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for
+        security/redirect-BLOCKED-to-localURL.html test.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt: Added.
+
 2011-10-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: UI performance test for logging 100 messages to the console.

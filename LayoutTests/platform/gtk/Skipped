@@ -1528,7 +1528,6 @@ canvas/philip/tests/2d.imageData.object.wrap.html
 fast/viewport/viewport-128.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
-http/tests/security/redirect-BLOCKED-to-localURL.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56081
 fast/js/large-expressions.html
