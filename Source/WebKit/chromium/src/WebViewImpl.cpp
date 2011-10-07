@@ -2632,18 +2632,15 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
     if (!active) {
         m_isAcceleratedCompositingActive = false;
-        // We need to finish all GL rendering before sending
-        // didActivateAcceleratedCompositing(false) to prevent
+        // We need to finish all GL rendering before sending didDeactivateCompositor() to prevent
         // flickering when compositing turns off.
         if (m_layerTreeHost)
             m_layerTreeHost->finishAllRendering();
-        m_client->didActivateAcceleratedCompositing(false);
         m_client->didDeactivateCompositor();
     } else if (m_layerTreeHost) {
         m_isAcceleratedCompositingActive = true;
         updateLayerTreeViewport();
 
-        m_client->didActivateAcceleratedCompositing(true);
         m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
@@ -2659,7 +2656,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_layerTreeHost = CCLayerTreeHost::create(this, m_nonCompositedContentHost->topLevelRootLayer()->platformLayer(), ccSettings);
         if (m_layerTreeHost) {
             updateLayerTreeViewport();
-            m_client->didActivateAcceleratedCompositing(true);
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
@@ -2667,7 +2663,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 m_pageOverlay->update();
         } else {
             m_isAcceleratedCompositingActive = false;
-            m_client->didActivateAcceleratedCompositing(false);
             m_client->didDeactivateCompositor();
             m_compositorCreationFailed = true;
         }
