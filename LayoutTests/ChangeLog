@@ -1,5 +1,20 @@
 2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows rebaseline after r96870. Also skip editing/pasteboard/smart-paste-008.html because it's a real failure
+        (tracked by the bug 69587).
+
+        * platform/win/Skipped:
+        * platform/win/editing/deleting/delete-br-010-expected.txt:
+        * platform/win/editing/deleting/regional-indicators-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-3907422-fix-expected.txt: Copied from LayoutTests/editing/inserting/insert-3907422-fix-expected.txt.
+        * platform/win/editing/pasteboard/paste-text-002-expected.txt: Copied from LayoutTests/editing/pasteboard/paste-text-002-expected.txt.
+        * platform/win/editing/pasteboard/paste-text-004-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-004-expected.txt.
+        * platform/win/editing/pasteboard/paste-text-005-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-005-expected.txt.
+        * platform/win/editing/pasteboard/paste-text-008-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-text-008-expected.txt.
+        * platform/win/editing/spelling/spelling-backspace-between-lines-expected.txt:
+
+2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium Mac rebaselines after r96870.
 
         * platform/chromium-cg-mac-snowleopard/editing: Added.
