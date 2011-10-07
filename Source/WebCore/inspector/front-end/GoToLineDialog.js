@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.GoToLineDialog = function(view)
 {
     this._element = document.createElement("div");
@@ -83,9 +86,9 @@ WebInspector.GoToLineDialog._show = function(sourceView)
 {
     if (!sourceView || !sourceView.canHighlightLine())
         return;
-    if (this._instance)
+    if (WebInspector.GoToLineDialog._instance)
         return;
-    this._instance = new WebInspector.GoToLineDialog(sourceView);
+    WebInspector.GoToLineDialog._instance = new WebInspector.GoToLineDialog(sourceView);
 }
 
 WebInspector.GoToLineDialog.createShortcut = function()
@@ -144,4 +147,4 @@ WebInspector.GoToLineDialog.prototype = {
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
     }
-};
+}

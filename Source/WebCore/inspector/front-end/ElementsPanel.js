@@ -28,6 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ */
 WebInspector.ElementsPanel = function()
 {
     WebInspector.Panel.call(this, "elements");
@@ -189,6 +193,9 @@ WebInspector.ElementsPanel.prototype = {
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarPanes.domBreakpoints.restoreBreakpoints();
 
+        /**
+         * @param {WebInspector.DOMNode=} candidateFocusNode
+         */
         function selectNode(candidateFocusNode)
         {
             if (!candidateFocusNode)
@@ -367,7 +374,7 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    _hideSearchHighlights: function(node)
+    _hideSearchHighlights: function()
     {
         for (var i = 0; this._searchResults && i < this._searchResults.length; ++i) {
             var node = this._searchResults[i];
@@ -439,6 +446,9 @@ WebInspector.ElementsPanel.prototype = {
         this._mouseOutOfCrumbsTimeout = setTimeout(this.updateBreadcrumbSizes.bind(this), 1000);
     },
 
+    /**
+     * @param {boolean=} forceUpdate
+     */
     updateBreadcrumb: function(forceUpdate)
     {
         if (!this.visible)
@@ -513,7 +523,7 @@ WebInspector.ElementsPanel.prototype = {
             if (current === this.treeOutline.rootDOMNode)
                 foundRoot = true;
 
-            var crumb = document.createElement("span");
+            crumb = document.createElement("span");
             crumb.className = "crumb";
             crumb.representedObject = current;
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
@@ -563,6 +573,9 @@ WebInspector.ElementsPanel.prototype = {
         this.updateBreadcrumbSizes();
     },
 
+    /**
+     * @param {Element=} focusedCrumb
+     */
     updateBreadcrumbSizes: function(focusedCrumb)
     {
         if (!this.visible)
@@ -632,6 +645,9 @@ WebInspector.ElementsPanel.prototype = {
         var AncestorSide = -1;
         var ChildSide = 1;
 
+        /**
+         * @param {boolean=} significantCrumb
+         */
         function makeCrumbsSmaller(shrinkingFunction, direction, significantCrumb)
         {
             if (!significantCrumb)
@@ -769,7 +785,7 @@ WebInspector.ElementsPanel.prototype = {
         function collapseDimmed(crumb)
         {
             if (crumb.hasStyleClass("dimmed"))
-                collapse(crumb);
+                collapse(crumb, false);
         }
 
         if (!focusedCrumb) {
@@ -863,7 +879,8 @@ WebInspector.ElementsPanel.prototype = {
             shortcut.shortcutToString(shortcut.Keys.Down)
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Navigate elements"));
-        var keys = [
+
+        keys = [
             shortcut.shortcutToString(shortcut.Keys.Right),
             shortcut.shortcutToString(shortcut.Keys.Left)
         ];

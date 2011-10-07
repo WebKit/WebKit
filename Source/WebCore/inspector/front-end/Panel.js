@@ -129,6 +129,10 @@ WebInspector.Panel.prototype = {
     {
     },
 
+    /**
+     * @param {Element=} parentElement
+     * @param {Element=} resizerParentElement
+     */
     createSidebar: function(parentElement, resizerParentElement)
     {
         if (this.sidebarElement)

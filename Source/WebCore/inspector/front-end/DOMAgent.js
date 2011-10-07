@@ -637,6 +637,9 @@ WebInspector.DOMAgent.prototype = {
             this.dispatchEventToListeners(WebInspector.DOMAgent.Events.InspectElementRequested, node);
     },
 
+    /**
+     * @param {boolean=} searchSynchronously
+     */
     performSearch: function(query, searchResultCollector, searchSynchronously)
     {
         this._searchResultCollector = searchResultCollector;

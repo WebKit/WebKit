@@ -46,7 +46,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
-    --module jsmodule_sdk:24:jsmodule_common \
+    --module jsmodule_sdk:25:jsmodule_common \
         --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
         --js Source/WebCore/inspector/front-end/CompilerSourceMappingProvider.js \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
@@ -62,6 +62,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/DebuggerModel.js \
         --js Source/WebCore/inspector/front-end/DebuggerPresentationModel.js \
         --js Source/WebCore/inspector/front-end/HAREntry.js \
+        --js Source/WebCore/inspector/front-end/NetworkLog.js \
         --js Source/WebCore/inspector/front-end/Script.js \
         --js Source/WebCore/inspector/front-end/ScriptFormatter.js \
         --js Source/WebCore/inspector/front-end/RawSourceCode.js \
@@ -107,17 +108,20 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_inspector:26:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_inspector_views:30:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
         --js Source/WebCore/inspector/front-end/CookieItemsView.js \
         --js Source/WebCore/inspector/front-end/DatabaseQueryView.js \
         --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
+        --js Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/DOMBreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMPresentationUtils.js \
         --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
         --js Source/WebCore/inspector/front-end/ElementsTreeOutline.js \
         --js Source/WebCore/inspector/front-end/EventListenersSidebarPane.js \
         --js Source/WebCore/inspector/front-end/FontView.js \
+        --js Source/WebCore/inspector/front-end/GoToLineDialog.js \
         --js Source/WebCore/inspector/front-end/ImageView.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
         --js Source/WebCore/inspector/front-end/MetricsSidebarPane.js \
@@ -135,23 +139,16 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
         --js Source/WebCore/inspector/front-end/StylesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/TimelineAgent.js \
-        --js Source/WebCore/inspector/front-end/TimelineManager.js
+        --js Source/WebCore/inspector/front-end/TimelineGrid.js \
+        --js Source/WebCore/inspector/front-end/TimelineManager.js \
+    --module jsmodule_inspector_panels:2:jsmodule_inspector_views \
+        --js Source/WebCore/inspector/front-end/ElementsPanel.js \
+        --js Source/WebCore/inspector/front-end/NetworkPanel.js
 
 # To be compiled...
-#
-# [Elements]
-#
-# ElementsPanel
-# BreakpointsSidebarPane
-# DOMBreakpointsSidebarPane
-#
 # [Resources]
 # ResourcesPanel
 # 
-# [Network]
-# NetworkLog
-# NetworkPanel
-#
 # [Scripts]
 # JavaScriptFormatter
 # JavaScriptSourceFrame

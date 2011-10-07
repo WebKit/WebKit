@@ -292,11 +292,7 @@ WebInspector.DataGrid.prototype = {
 
     _startEditingConfig: function(element)
     {
-        var config = new WebInspector.EditingConfig();
-        config.setContext(element.textContent);
-        config.setCommitHandler(this._editingCommitted.bind(this));
-        config.setCancelHandler(this._editingCancelled.bind(this));
-        return config;
+        return new WebInspector.EditingConfig(this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
     },
 
     _editingCommitted: function(element, newText, oldText, context, moveDirection)

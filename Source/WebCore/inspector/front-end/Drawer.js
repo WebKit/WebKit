@@ -263,3 +263,8 @@ WebInspector.Drawer.prototype = {
         event.stopPropagation();
     }
 }
+
+/**
+ * @type {WebInspector.Drawer}
+ */
+WebInspector.drawer = null;

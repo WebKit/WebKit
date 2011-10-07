@@ -770,9 +770,7 @@ WebInspector.SourceFrame.prototype = {
             callback(committed, newText);
         }
 
-        var config = new WebInspector.EditingConfig();
-        config.setCommitHandler(finishEditing.bind(this, true));
-        config.setCancelHandler(finishEditing.bind(this, false));
+        var config = new WebInspector.EditingConfig(finishEditing.bind(this, true), finishEditing.bind(this, false));
         WebInspector.startEditing(this._conditionEditorElement, config);
         this._conditionEditorElement.value = condition;
         this._conditionEditorElement.select();

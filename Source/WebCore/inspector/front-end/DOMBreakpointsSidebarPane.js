@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.NativeBreakpointsSidebarPane}
+ */
 WebInspector.DOMBreakpointsSidebarPane = function()
 {
     WebInspector.NativeBreakpointsSidebarPane.call(this, WebInspector.UIString("DOM Breakpoints"));
@@ -89,7 +93,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
     createBreakpointHitStatusMessage: function(auxData, callback)
     {
         if (auxData.type === this._breakpointTypes.SubtreeModified) {
-            var targetNodeObject = WebInspector.RemoteObject.fromPayload(auxData.targetNode);
+            var targetNodeObject = WebInspector.RemoteObject.fromPayload(auxData["targetNode"]);
             function didPushNodeToFrontend(targetNodeId)
             {
                 if (targetNodeId)

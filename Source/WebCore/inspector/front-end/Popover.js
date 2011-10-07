@@ -180,6 +180,8 @@ WebInspector.Popover.prototype = {
 
 /**
  * @constructor
+ * @param {function()=} onHide
+ * @param {boolean=} disableOnClick
  */
 WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopover, onHide, disableOnClick)
 {

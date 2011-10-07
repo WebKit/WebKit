@@ -193,32 +193,21 @@ WebInspector.isEditingAnyField = function()
 
 /**
  * @constructor
+ * @param {function(Element,string,string,*,string)} commitHandler
+ * @param {function(Element,*)} cancelHandler
+ * @param {*=} context
  */
-WebInspector.EditingConfig = function()
+WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
 {
-    /**
-     * Handles editing "commit" outcome
-     * @type {function(Element,string,string,*,string)|undefined}
-     */
-    this.commitHandler;
-
-    /**
-     * Handles editing "cancel" outcome
-     * @type {function(Element,*)|undefined}
-     */
-    this.cancelHandler;
+    this.commitHandler = commitHandler;
+    this.cancelHandler = cancelHandler
+    this.context = context;
 
     /**
      * Handles the "paste" event, return values are the same as those for customFinishHandler
      * @type {function(Element)|undefined}
      */
     this.pasteHandler;
-
-    /** 
-     * An arbitrary context object to be passed to the commit and cancel handlers
-     * @type {Object|undefined}
-     */
-    this.context;
 
     /** 
      * Whether the edited element is multiline
@@ -234,24 +223,9 @@ WebInspector.EditingConfig = function()
 }
 
 WebInspector.EditingConfig.prototype = {
-    setCommitHandler: function(commitHandler)
-    {
-        this.commitHandler = commitHandler;
-    },
-
-    setCancelHandler: function(cancelHandler)
-    {
-        this.cancelHandler = cancelHandler;
-    },
-
     setPasteHandler: function(pasteHandler)
     {
         this.pasteHandler = pasteHandler;
-    },
-
-    setContext: function(context)
-    {
-        this.context = context;
     },
 
     setMultiline: function(multiline)
@@ -274,7 +248,7 @@ WebInspector.startEditing = function(element, config)
     if (!WebInspector.markBeingEdited(element, true))
         return;
 
-    config = config || new WebInspector.EditingConfig();
+    config = config || new WebInspector.EditingConfig(function() {}, function() {});
     var committedCallback = config.commitHandler;
     var cancelledCallback = config.cancelHandler;
     var pasteCallback = config.pasteHandler;
@@ -328,8 +302,7 @@ WebInspector.startEditing = function(element, config)
 
         cleanUpAfterEditing.call(this);
 
-        if (cancelledCallback)
-            cancelledCallback(this, context);
+        cancelledCallback(this, context);
     }
 
     /** @this {Element} */
@@ -337,8 +310,7 @@ WebInspector.startEditing = function(element, config)
     {
         cleanUpAfterEditing.call(this);
 
-        if (committedCallback)
-            committedCallback(this, getContent(this), oldText, context, moveDirection);
+        committedCallback(this, getContent(this), oldText, context, moveDirection);
     }
 
     function defaultFinishHandler(event)
@@ -447,4 +419,25 @@ Number.bytesToString = function(bytes, higherResolution)
         return WebInspector.UIString("%.2fMB", megabytes);
     else
         return WebInspector.UIString("%.0fMB", megabytes);
+}
+
+
+WebInspector.formatLocalized = function(format, substitutions, formatters, initialValue, append)
+{
+    return String.format(WebInspector.UIString(format), substitutions, formatters, initialValue, append);
+}
+
+WebInspector.openLinkExternallyLabel = function()
+{
+    return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in new tab" : "Open Link in New Tab");
+}
+
+WebInspector.openInNetworkPanelLabel = function()
+{
+    return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open in network panel" : "Open in Network Panel");
+}
+
+WebInspector.copyLinkAddressLabel = function()
+{
+    return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy link address" : "Copy Link Address");
 }

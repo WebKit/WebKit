@@ -277,10 +277,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (typeof this.valueElement._originalTextContent === "string")
             this.valueElement.textContent = this.valueElement._originalTextContent;
 
-        var config = new WebInspector.EditingConfig();
-        config.setContext(context);
-        config.setCommitHandler(this.editingCommitted.bind(this));
-        config.setCancelHandler(this.editingCancelled.bind(this));
+        var config = new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
         WebInspector.startEditing(this.valueElement, config);
     },
 

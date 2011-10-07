@@ -377,21 +377,6 @@ var WebInspector = {
     resourceForURL: function(url)
     {
         return this.resourceTreeModel.resourceForURL(url);
-    },
-
-    openLinkExternallyLabel: function()
-    {
-        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in new tab" : "Open Link in New Tab");
-    },
-
-    openInNetworkPanelLabel: function()
-    {
-        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open in network panel" : "Open in Network Panel");
-    },
-
-    copyLinkAddressLabel: function()
-    {
-        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy link address" : "Copy Link Address");
     }
 }
 
@@ -1292,11 +1277,6 @@ WebInspector.UIString = function(string)
     }
 
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
-}
-
-WebInspector.formatLocalized = function(format, substitutions, formatters, initialValue, append)
-{
-    return String.format(WebInspector.UIString(format), substitutions, formatters, initialValue, append);
 }
 
 WebInspector.useLowerCaseMenuTitles = function()

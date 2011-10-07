@@ -1137,10 +1137,7 @@ WebInspector.ElementsTreeElement.prototype = {
         // Remove zero-width spaces that were added by nodeTitleInfo.
         removeZeroWidthSpaceRecursive(attribute);
 
-        var config = new WebInspector.EditingConfig();
-        config.setContext(attributeName);
-        config.setCommitHandler(this._attributeEditingCommitted.bind(this));
-        config.setCancelHandler(this._editingCancelled.bind(this));
+        var config = new WebInspector.EditingConfig(this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
         this._editing = WebInspector.startEditing(attribute, config);
 
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
@@ -1153,10 +1150,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (WebInspector.isBeingEdited(textNode))
             return true;
 
-        var config = new WebInspector.EditingConfig();
-        config.setCommitHandler(this._textNodeEditingCommitted.bind(this));
-        config.setCancelHandler(this._editingCancelled.bind(this));
-
+        var config = new WebInspector.EditingConfig(this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
         this._editing = WebInspector.startEditing(textNode, config);
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
 
@@ -1200,11 +1194,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         tagNameElement.addEventListener('keyup', keyupListener, false);
 
-        var config = new WebInspector.EditingConfig();
-        config.setContext(tagName);
-        config.setCommitHandler(editingComitted.bind(this));
-        config.setCancelHandler(editingCancelled.bind(this));
-
+        var config = new WebInspector.EditingConfig(editingComitted.bind(this), editingCancelled.bind(this), tagName);
         this._editing = WebInspector.startEditing(tagNameElement, config);
         window.getSelection().setBaseAndExtent(tagNameElement, 0, tagNameElement, 1);
         return true;
@@ -1261,11 +1251,8 @@ WebInspector.ElementsTreeElement.prototype = {
             this.updateSelection();
         }
 
-        var config = new WebInspector.EditingConfig();
-        config.setCommitHandler(commit.bind(this));
-        config.setCancelHandler(dispose.bind(this));
+        var config = new WebInspector.EditingConfig(commit.bind(this), dispose.bind(this));
         config.setMultiline(true);
-
         this._editing = WebInspector.startEditing(this._htmlEditElement, config);
     },
 

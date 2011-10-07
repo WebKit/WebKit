@@ -28,6 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /**
+  * @constructor
+  * @extends {WebInspector.IFrameView}
+  */
 WebInspector.NetworkLogView = function(parentElement)
 {
     // FIXME: some of the styles should be loaded on demand by components that need them.
@@ -634,14 +638,14 @@ WebInspector.NetworkLogView.prototype = {
     {
         this._mainResourceLoadTime = event.data || -1;
         // Schedule refresh to update boundaries and draw the new line.
-        this._scheduleRefresh(true);
+        this._scheduleRefresh();
     },
 
     _domContentLoadedEventFired: function(event)
     {
         this._mainResourceDOMContentTime = event.data || -1;
         // Schedule refresh to update boundaries and draw the new line.
-        this._scheduleRefresh(true);
+        this._scheduleRefresh();
     },
 
     wasShown: function()
@@ -918,69 +922,6 @@ WebInspector.NetworkLogView.prototype = {
         popover.show(tableElement, anchor);
     },
 
-    _toggleGridMode: function()
-    {
-        if (this._viewingResourceMode) {
-            this._viewingResourceMode = false;
-            this.element.removeStyleClass("viewing-resource");
-            this._viewsContainerElement.addStyleClass("hidden");
-            this.sidebarElement.style.right = 0;
-            this.sidebarElement.style.removeProperty("width");
-            if (this._dataGrid.selectedNode)
-                this._dataGrid.selectedNode.selected = false;
-        }
-
-        this._dataGrid.showColumn("method");
-        this._dataGrid.showColumn("status");
-        this._dataGrid.showColumn("type");
-        if (Preferences.showNetworkPanelInitiatorColumn)
-            this._dataGrid.showColumn("initiator");
-        this._dataGrid.showColumn("size");
-        this._dataGrid.showColumn("time");
-
-        var widths = {};
-        widths.name = 20;
-        widths.method = 6;
-        widths.status = 6;
-        widths.type = 6;
-        if (Preferences.showNetworkPanelInitiatorColumn)
-            widths.initiator = 10;
-        widths.size = 6;
-        widths.time = 6;
-        if (Preferences.showNetworkPanelInitiatorColumn)
-            widths.timeline = 40;
-        else
-            widths.timeline = 50;
-
-        this._dataGrid.showColumn("timeline");
-        this._dataGrid.applyColumnWidthsMap(widths);
-    },
-
-    _toggleViewingResourceMode: function()
-    {
-        if (this._viewingResourceMode)
-            return;
-        this._viewingResourceMode = true;
-
-        this.element.addStyleClass("viewing-resource");
-
-        this._dataGrid.hideColumn("method");
-        this._dataGrid.hideColumn("status");
-        this._dataGrid.hideColumn("type");
-        if (Preferences.showNetworkPanelInitiatorColumn)
-            this._dataGrid.hideColumn("initiator");
-        this._dataGrid.hideColumn("size");
-        this._dataGrid.hideColumn("time");
-        this._dataGrid.hideColumn("timeline");
-
-        this._viewsContainerElement.removeStyleClass("hidden");
-        this.restoreSidebarWidth();
-
-        var widths = {};
-        widths.name = 100;
-        this._dataGrid.applyColumnWidthsMap(widths);
-    },
-
     _contextMenu: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
@@ -1070,7 +1011,7 @@ WebInspector.NetworkLogView.prototype = {
             NetworkAgent.clearBrowserCookies();
     },
 
-    _updateOffscreenRows: function(e)
+    _updateOffscreenRows: function()
     {
         var dataTableBody = this._dataGrid.dataTableBody;
         var rows = dataTableBody.children;
@@ -1249,7 +1190,7 @@ WebInspector.NetworkLogView.prototype = {
         }
     },
 
-    _removeAllNodeHighlights: function(node, decoration)
+    _removeAllNodeHighlights: function()
     {
         if (this._highlightedNode) {
             this._highlightedNode.element.removeStyleClass("highlighted-row");
@@ -1274,6 +1215,10 @@ WebInspector.NetworkLogView.EventTypes = {
     SearchIndexUpdated: "SearchIndexUpdated"
 };
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ */
 WebInspector.NetworkPanel = function()
 {
     WebInspector.Panel.call(this, "network");
@@ -1379,7 +1324,7 @@ WebInspector.NetworkPanel.prototype = {
         if (anchor.getAttribute("request_id"))
             resource = this.resourceById(anchor.getAttribute("request_id"));
         if (!resource)
-            resource = this._resourcesByURL[anchor.href];
+            resource = this._networkLogView._resourcesByURL[anchor.href];
 
         return resource;
     },
@@ -1517,31 +1462,14 @@ WebInspector.NetworkPanel.prototype = {
 
 WebInspector.NetworkPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.NetworkBaseCalculator = function()
 {
 }
 
 WebInspector.NetworkBaseCalculator.prototype = {
-    computeSummaryValues: function(items)
-    {
-        var total = 0;
-        var categoryValues = {};
-
-        var itemsLength = items.length;
-        for (var i = 0; i < itemsLength; ++i) {
-            var item = items[i];
-            var value = this._value(item);
-            if (typeof value === "undefined")
-                continue;
-            if (!(item.category.name in categoryValues))
-                categoryValues[item.category.name] = 0;
-            categoryValues[item.category.name] += value;
-            total += value;
-        }
-
-        return {categoryValues: categoryValues, total: total};
-    },
-
     computeBarGraphPercentages: function(item)
     {
         return {start: 0, middle: 0, end: (this._value(item) / this.boundarySpan) * 100};
@@ -1587,6 +1515,10 @@ WebInspector.NetworkBaseCalculator.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.NetworkBaseCalculator}
+ */
 WebInspector.NetworkTimeCalculator = function(startAtZero)
 {
     WebInspector.NetworkBaseCalculator.call(this);
@@ -1594,61 +1526,6 @@ WebInspector.NetworkTimeCalculator = function(startAtZero)
 }
 
 WebInspector.NetworkTimeCalculator.prototype = {
-    computeSummaryValues: function(resources)
-    {
-        var resourcesByCategory = {};
-        var resourcesLength = resources.length;
-        for (var i = 0; i < resourcesLength; ++i) {
-            var resource = resources[i];
-            if (!(resource.category.name in resourcesByCategory))
-                resourcesByCategory[resource.category.name] = [];
-            resourcesByCategory[resource.category.name].push(resource);
-        }
-
-        var earliestStart;
-        var latestEnd;
-        var categoryValues = {};
-        for (var category in resourcesByCategory) {
-            resourcesByCategory[category].sort(WebInspector.Resource.CompareByTime);
-            categoryValues[category] = 0;
-
-            var segment = {start: -1, end: -1};
-
-            var categoryResources = resourcesByCategory[category];
-            var resourcesLength = categoryResources.length;
-            for (var i = 0; i < resourcesLength; ++i) {
-                var resource = categoryResources[i];
-                if (resource.startTime === -1 || resource.endTime === -1)
-                    continue;
-
-                if (typeof earliestStart === "undefined")
-                    earliestStart = resource.startTime;
-                else
-                    earliestStart = Math.min(earliestStart, resource.startTime);
-
-                if (typeof latestEnd === "undefined")
-                    latestEnd = resource.endTime;
-                else
-                    latestEnd = Math.max(latestEnd, resource.endTime);
-
-                if (resource.startTime <= segment.end) {
-                    segment.end = Math.max(segment.end, resource.endTime);
-                    continue;
-                }
-
-                categoryValues[category] += segment.end - segment.start;
-
-                segment.start = resource.startTime;
-                segment.end = resource.endTime;
-            }
-
-            // Add the last segment
-            categoryValues[category] += segment.end - segment.start;
-        }
-
-        return {categoryValues: categoryValues, total: latestEnd - earliestStart};
-    },
-
     computeBarGraphPercentages: function(resource)
     {
         if (resource.startTime !== -1)
@@ -1768,6 +1645,10 @@ WebInspector.NetworkTimeCalculator.prototype = {
 
 WebInspector.NetworkTimeCalculator.prototype.__proto__ = WebInspector.NetworkBaseCalculator.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.NetworkTimeCalculator}
+ */
 WebInspector.NetworkTransferTimeCalculator = function()
 {
     WebInspector.NetworkTimeCalculator.call(this, false);
@@ -1792,6 +1673,10 @@ WebInspector.NetworkTransferTimeCalculator.prototype = {
 
 WebInspector.NetworkTransferTimeCalculator.prototype.__proto__ = WebInspector.NetworkTimeCalculator.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.NetworkTimeCalculator}
+ */
 WebInspector.NetworkTransferDurationCalculator = function()
 {
     WebInspector.NetworkTimeCalculator.call(this, true);
@@ -1811,6 +1696,10 @@ WebInspector.NetworkTransferDurationCalculator.prototype = {
 
 WebInspector.NetworkTransferDurationCalculator.prototype.__proto__ = WebInspector.NetworkTimeCalculator.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.DataGridNode}
+ */
 WebInspector.NetworkDataGridNode = function(parentView, resource)
 {
     WebInspector.DataGridNode.call(this, {});
@@ -2031,7 +1920,7 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._initiatorCell.removeChildren();
             if (this._resource.redirectSource) {
                 var redirectSource = this._resource.redirectSource;
-                var anchor = WebInspector.linkifyURLAsNode(redirectSource.url, redirectSource.url, null, false);
+                var anchor = WebInspector.linkifyURLAsNode(redirectSource.url, redirectSource.url, undefined, false);
                 anchor.setAttribute("request_id", redirectSource.requestId);
                 anchor.setAttribute("preferred_panel", "network");
                 this._initiatorCell.title = redirectSource.url;

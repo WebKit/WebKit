@@ -109,6 +109,7 @@ WebInspector.extensionServer = {}
 WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
 WebInspector.extensionServer.notifyPanelShown = function(panel) {}
 WebInspector.extensionServer.notifyPanelHidden = function(panel) {}
+WebInspector.extensionServer.notifyObjectSelected = function(object) {}
 
 /**
  * @param {string} url
@@ -210,3 +211,5 @@ WebInspector.log = function(message, messageLevel, showConsole) {}
 WebInspector.resourceURLForRelatedNode = function(node, url) {}
 
 WebInspector.addMainEventListeners = function(doc) {}
+
+WebInspector.openResource = function(url, external) {}

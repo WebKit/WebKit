@@ -1172,9 +1172,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
         this._selectorElement.scrollIntoViewIfNeeded(false);
 
-        var config = new WebInspector.EditingConfig();
-        config.setCommitHandler(this.editingSelectorCommitted.bind(this));
-        config.setCancelHandler(this.editingSelectorCancelled.bind(this));
+        var config = new WebInspector.EditingConfig(this.editingSelectorCommitted.bind(this), this.editingSelectorCancelled.bind(this));
         WebInspector.startEditing(this._selectorElement, config);
 
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
@@ -1903,10 +1901,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (selectElement.parentElement)
             selectElement.parentElement.scrollIntoViewIfNeeded(false);
 
-        var config = new WebInspector.EditingConfig();
-        config.setContext(context);
-        config.setCommitHandler(this.editingCommitted.bind(this));
-        config.setCancelHandler(this.editingCancelled.bind(this));
+        var config = new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
         config.setCustomFinishHandler(nameValueFinishHandler.bind(this, context, isEditingName));
         config.setPasteHandler(isEditingName ? pasteHandler.bind(this, context) : null);
         WebInspector.startEditing(selectElement, config);

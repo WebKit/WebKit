@@ -288,10 +288,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
         this._isEditingMetrics = true;
 
-        var config = new WebInspector.EditingConfig();
-        config.setContext(context);
-        config.setCommitHandler(this.editingCommitted.bind(this));
-        config.setCancelHandler(this.editingCancelled.bind(this));
+        var config = new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
         WebInspector.startEditing(targetElement, config);
 
         window.getSelection().setBaseAndExtent(targetElement, 0, targetElement, 1);
