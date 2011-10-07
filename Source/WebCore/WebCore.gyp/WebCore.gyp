@@ -193,6 +193,7 @@
       '../platform/image-decoders/webp',
       '../platform/image-encoders/skia',
       '../platform/leveldb',
+      '../platform/mediastream',
       '../platform/mock',
       '../platform/network',
       '../platform/network/chromium',

@@ -1,3 +1,55 @@
+2011-10-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Add WebCore platform interfaces needed by updated PeerConnection design
+        https://bugs.webkit.org/show_bug.cgi?id=68460
+
+        Reviewed by Adam Barth.
+
+        Added the PeerConnection platform files to WebCore/platform/mediastream
+
+        Currently not testable.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/mediastream/MediaStreamComponent.h: Added.
+        (WebCore::MediaStreamComponent::create):
+        (WebCore::MediaStreamComponent::source):
+        (WebCore::MediaStreamComponent::enabled):
+        (WebCore::MediaStreamComponent::setEnabled):
+        (WebCore::MediaStreamComponent::MediaStreamComponent):
+        * platform/mediastream/MediaStreamDescriptor.h: Added.
+        (WebCore::MediaStreamDescriptor::create):
+        (WebCore::MediaStreamDescriptor::owner):
+        (WebCore::MediaStreamDescriptor::setOwner):
+        (WebCore::MediaStreamDescriptor::label):
+        (WebCore::MediaStreamDescriptor::component):
+        (WebCore::MediaStreamDescriptor::numberOfComponents):
+        (WebCore::MediaStreamDescriptor::ended):
+        (WebCore::MediaStreamDescriptor::setEnded):
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+        * platform/mediastream/MediaStreamSource.h: Added.
+        (WebCore::MediaStreamSource::create):
+        (WebCore::MediaStreamSource::id):
+        (WebCore::MediaStreamSource::type):
+        (WebCore::MediaStreamSource::name):
+        (WebCore::MediaStreamSource::muted):
+        (WebCore::MediaStreamSource::setMuted):
+        (WebCore::MediaStreamSource::MediaStreamSource):
+        * platform/mediastream/PeerHandler.cpp: Added.
+        (WebCore::PeerHandler::PeerHandler):
+        (WebCore::PeerHandler::~PeerHandler):
+        (WebCore::PeerHandler::produceInitialOffer):
+        (WebCore::PeerHandler::handleInitialOffer):
+        (WebCore::PeerHandler::processSDP):
+        (WebCore::PeerHandler::processPendingStreams):
+        (WebCore::PeerHandler::sendDataStreamMessage):
+        (WebCore::PeerHandler::stop):
+        * platform/mediastream/PeerHandler.h: Added.
+        (WebCore::PeerHandlerClient::~PeerHandlerClient):
+        (WebCore::PeerHandler::create):
+
 2011-10-07  Vineet Chaudary  <vineet.chaudhary@motorola.com>
 
         background-color affects the font color in disabled textarea.
