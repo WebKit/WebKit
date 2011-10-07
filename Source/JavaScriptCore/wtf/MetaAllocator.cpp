@@ -153,7 +153,12 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes)
 #if ENABLE(META_ALLOCATOR_PROFILE)
     m_numAllocations++;
 #endif
-    return adoptRef(new MetaAllocatorHandle(this, start, sizeInBytes));
+
+    MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes);
+    // FIXME: Implement a verifier scheme that groks MetaAllocatorHandles
+    handle->deprecatedTurnOffVerifier();
+
+    return adoptRef(handle);
 }
 
 MetaAllocator::Statistics MetaAllocator::currentStatistics()

@@ -1,3 +1,20 @@
+2011-10-07  Dominic Cooney  <dominicc@chromium.org>
+
+        [JSC] Disable ThreadRestrictionVerifier for JIT ExecutableMemoryHandles
+        https://bugs.webkit.org/show_bug.cgi?id=69599
+
+        Reviewed by Sam Weinig.
+
+        DFG JIT manipulates MetaAllocatorHandles across threads, eg in
+        allocating JITCode buffers on a background thread to execute a
+        proxy autoconfiguration PAC file but garbage collecting it in
+        response to allocation on the main thread. Disabling
+        ThreadRestrictionVerification until there is a verification scheme
+        that understands this handoff.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::allocate):
+
 2011-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not always speculate that ConvertThis is operating on an object
