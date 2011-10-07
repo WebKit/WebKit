@@ -52,6 +52,7 @@
 #include "PaintInfo.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
+#include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Scrollbar.h"
@@ -124,6 +125,7 @@ void RenderListBox::updateFromElement()
             }
 
             if (!text.isEmpty()) {
+                applyTextTransform(style(), text, ' ');
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
                 TextRun textRun = constructTextRun(this, itemFont, text, style(), TextRun::AllowTrailingExpansion);
                 textRun.disableRoundingHacks();
@@ -385,7 +387,8 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = optionElement->textIndentedToRespectGroupLabel();
     else if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element))
         itemText = optionGroupElement->groupLabelText();
-    
+    applyTextTransform(style(), itemText, ' ');
+
     Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
     if (optionElement && optionElement->selected()) {
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())

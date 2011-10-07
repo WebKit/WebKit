@@ -3594,6 +3594,9 @@ BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
 
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
+// New tests for webkit bug 69503. Should be rebaselined once fixed.
+BUGWK69503 MAC WIN : fast/css/text-transform-select.html = IMAGE
+
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT

@@ -210,6 +210,8 @@ inline void RenderText::checkConsistency() const
 }
 #endif
 
+void applyTextTransform(const RenderStyle*, String&, UChar);
+
 } // namespace WebCore
 
 #endif // RenderText_h

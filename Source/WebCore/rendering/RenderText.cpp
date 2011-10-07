@@ -114,7 +114,7 @@ static void makeCapitalized(String* string, UChar previous)
     int32_t endOfWord;
     int32_t startOfWord = textBreakFirst(boundary);
     for (endOfWord = textBreakNext(boundary); endOfWord != TextBreakDone; startOfWord = endOfWord, endOfWord = textBreakNext(boundary)) {
-        if (startOfWord != 0) // Ignore first char of previous string
+        if (startOfWord) // Ignore first char of previous string
             data[startOfWord - 1] = characters[startOfWord - 1] == noBreakSpace ? noBreakSpace : toTitleCase(stringWithPrevious[startOfWord]);
         for (int i = startOfWord + 1; i < endOfWord; i++)
             data[i - 1] = characters[i - 1];
@@ -1265,14 +1265,16 @@ UChar RenderText::previousCharacter() const
     return prev;
 }
 
-void RenderText::transformText(String& text) const
+void applyTextTransform(const RenderStyle* style, String& text, UChar previousCharacter)
 {
-    ASSERT(style());
-    switch (style()->textTransform()) {
+    if (!style)
+        return;
+
+    switch (style->textTransform()) {
     case TTNONE:
         break;
     case CAPITALIZE:
-        makeCapitalized(&text, previousCharacter());
+        makeCapitalized(&text, previousCharacter);
         break;
     case UPPERCASE:
         text.makeUpper();
@@ -1294,7 +1296,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     ASSERT(m_text);
 
     if (style()) {
-        transformText(m_text);
+        applyTextTransform(style(), m_text, previousCharacter());
 
         // We use the same characters here as for list markers.
         // See the listMarkerText function in RenderListMarker.cpp.
@@ -1365,8 +1367,7 @@ String RenderText::textWithoutTranscoding() const
     // Otherwise, we should use original text. If text-transform is
     // specified, we should transform the text on the fly.
     String text = originalText();
-    if (style())
-        transformText(text);
+    applyTextTransform(style(), text, previousCharacter());
     return text;
 }
 

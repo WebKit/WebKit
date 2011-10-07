@@ -157,6 +157,7 @@ void RenderMenuList::updateOptionsWidth()
             continue;
 
         String text = optionElement->textIndentedToRespectGroupLabel();
+        applyTextTransform(style(), text, ' ');
         if (theme()->popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
@@ -223,7 +224,7 @@ void RenderMenuList::setText(const String& s)
         }
     } else {
         if (m_buttonText && !m_buttonText->isBR())
-            m_buttonText->setText(s.impl());
+            m_buttonText->setText(s.impl(), true);
         else {
             if (m_buttonText)
                 m_buttonText->destroy();
@@ -375,12 +376,16 @@ String RenderMenuList::itemText(unsigned listIndex) const
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
+
+    String itemString;
     Element* element = listItems[listIndex];
     if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element))
-        return optionGroupElement->groupLabelText();
+        itemString = optionGroupElement->groupLabelText();
     else if (OptionElement* optionElement = toOptionElement(element))
-        return optionElement->textIndentedToRespectGroupLabel();
-    return String();
+        itemString = optionElement->textIndentedToRespectGroupLabel();
+
+    applyTextTransform(style(), itemString, ' ');
+    return itemString;
 }
 
 String RenderMenuList::itemLabel(unsigned) const

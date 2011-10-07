@@ -1,3 +1,30 @@
+2011-10-07  Ben Wells  <benwells@chromium.org>
+
+        CSS text-transform should apply to select elements
+        https://bugs.webkit.org/show_bug.cgi?id=69503
+
+        Reviewed by Ojan Vafai.
+
+        Select elements are drawn in two ways depending on whether they are multiple and what their size is.
+        Neither method previously handled text-transforms. Both of these rendering styles are now updated to transform
+        their text correctly.
+
+        Test: fast/css/text-transform-select.html
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setText):
+        (WebCore::RenderMenuList::itemText):
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        (WebCore::applyTextTransform):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::textWithoutTranscoding):
+        * rendering/RenderText.h:
+
 2011-10-07  Tony Chang  <tony@chromium.org>
 
         fix a crash when loading non-html multipart data
