@@ -1,3 +1,20 @@
+2011-10-07  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Scrollbars in embedded PDFs should update when system preferences change
+        https://bugs.webkit.org/show_bug.cgi?id=69654
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: Added an scrollbarStyleChanged() override.
+        ScrollAnimatorMac sets scrollbar frame to a bogus (0, 0, thickness, thickness) one when style
+        changes, and expects clients to move them back in place.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::isOnActivePage): Fixed a typo that prevented ScrollAnimatorMac from
+        updating style of PDF view scrollbars.
+        (WebKit::BuiltInPDFView::scrollbarStyleChanged): Reposition scrollbars and content after
+        style change. The behavior is not perfect in edge cases, but roughly matches ScrollView.
+
 2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96938.

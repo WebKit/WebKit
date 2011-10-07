@@ -579,7 +579,19 @@ IntSize BuiltInPDFView::contentsSize() const
 
 bool BuiltInPDFView::isOnActivePage() const
 {
-    return pluginView()->frame()->document()->inPageCache();
+    return !pluginView()->frame()->document()->inPageCache();
+}
+
+void BuiltInPDFView::scrollbarStyleChanged()
+{
+    // If the PDF was scrolled all the way to bottom right and scrollbars change to overlay style, we don't want to display white rectangles where scrollbars were.
+    IntPoint newScrollOffset = IntPoint(m_scrollOffset).shrunkTo(maximumScrollPosition());
+    setScrollOffset(newScrollOffset);
+
+    // As size of the content area changes, scrollbars may need to appear or to disappear.
+    updateScrollbars();
+
+    scrollAnimator()->contentsResized();
 }
 
 } // namespace WebKit

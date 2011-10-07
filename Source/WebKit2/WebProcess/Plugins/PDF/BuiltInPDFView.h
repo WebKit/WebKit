@@ -127,6 +127,7 @@ private:
     virtual bool isOnActivePage() const;
     virtual void disconnectFromPage() { m_page = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
+    virtual void scrollbarStyleChanged();
 
     // In window coordinates.
     WebCore::IntRect m_frameRect;
