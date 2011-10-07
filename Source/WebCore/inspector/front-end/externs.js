@@ -213,3 +213,12 @@ WebInspector.resourceURLForRelatedNode = function(node, url) {}
 WebInspector.addMainEventListeners = function(doc) {}
 
 WebInspector.openResource = function(url, external) {}
+
+DOMApplicationCache.prototype.UNCACHED = 0;
+DOMApplicationCache.prototype.IDLE = 1;
+DOMApplicationCache.prototype.CHECKING = 2;
+DOMApplicationCache.prototype.DOWNLOADING = 3;
+DOMApplicationCache.prototype.UPDATEREADY = 4;
+DOMApplicationCache.prototype.OBSOLETE = 5;
+
+WebInspector.openRequestInNetworkPanel = function(request) {}

@@ -27,6 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ */
 WebInspector.ResourcesPanel = function(database)
 {
     WebInspector.Panel.call(this, "resources");
@@ -333,17 +337,20 @@ WebInspector.ResourcesPanel.prototype = {
     showAnchorLocation: function(anchor)
     {
         var resource = WebInspector.resourceForURL(anchor.href);
-        var lineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number")) : undefined;
+        var lineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number"), 10) : undefined;
         this.showResource(resource, lineNumber);
     },
 
+    /**
+     * @param {number=} line
+     */
     showResource: function(resource, line)
     {
         var resourceTreeElement = this._findTreeElementForResource(resource);
         if (resourceTreeElement)
             resourceTreeElement.revealAndSelect();
 
-        if (line !== undefined) {
+        if (typeof line === "number") {
             var view = this._resourceViewForResource(resource);
             if (view.canHighlightLine())
                 view.highlightLine(line);
@@ -388,6 +395,9 @@ WebInspector.ResourcesPanel.prototype = {
         return treeElement.sourceView();
     },
 
+    /**
+     * @param {WebInspector.ResourceRevision=} revision
+     */
     _fetchAndApplyDiffMarkup: function(view, resource, revision)
     {
         var baseRevision = resource.history[0];
@@ -415,6 +425,9 @@ WebInspector.ResourcesPanel.prototype = {
         view.markDiff(diffData);
     },
 
+    /**
+     * @param {string=} tableName
+     */
     showDatabase: function(database, tableName)
     {
         if (!database)
@@ -815,6 +828,12 @@ WebInspector.ResourcesPanel.prototype = {
 
 WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ * @param {boolean=} hasChildren
+ * @param {boolean=} noIcon
+ */
 WebInspector.BaseStorageTreeElement = function(storagePanel, representedObject, title, iconClasses, hasChildren, noIcon)
 {
     TreeElement.call(this, "", representedObject, hasChildren);
@@ -874,7 +893,7 @@ WebInspector.BaseStorageTreeElement.prototype = {
             this.titleElement.textContent = this._titleText;
     },
 
-    isEventWithinDisclosureTriangle: function()
+    isEventWithinDisclosureTriangle: function(event)
     {
         // Override it since we use margin-left in place of treeoutline's text-indent.
         // Hence we need to take padding into consideration. This all is needed for leading
@@ -887,6 +906,11 @@ WebInspector.BaseStorageTreeElement.prototype = {
 
 WebInspector.BaseStorageTreeElement.prototype.__proto__ = TreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ * @param {boolean=} noIcon
+ */
 WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, settingsKey, iconClasses, noIcon)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClasses, true, noIcon);
@@ -927,6 +951,10 @@ WebInspector.StorageCategoryTreeElement.prototype = {
 
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.FrameTreeElement = function(storagePanel, frame)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, "", ["frame-storage-tree-item"]);
@@ -941,7 +969,7 @@ WebInspector.FrameTreeElement.prototype = {
         this._frameId = frame.id;
 
         var title = frame.name;
-        var subtitle = new WebInspector.Resource(null, frame.url).displayName;
+        var subtitle = WebInspector.Resource.displayName(frame.url);
         this.setTitles(title, subtitle);
 
         this._categoryElements = {};
@@ -1079,6 +1107,10 @@ WebInspector.FrameTreeElement.prototype = {
 
 WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, ["resource-sidebar-tree-item", "resources-category-" + resource.category.name]);
@@ -1320,6 +1352,10 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
 WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.DatabaseTreeElement = function(storagePanel, database)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, database.name, ["database-storage-tree-item"], true);
@@ -1361,6 +1397,10 @@ WebInspector.DatabaseTreeElement.prototype = {
 
 WebInspector.DatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.DatabaseTableTreeElement = function(storagePanel, database, tableName)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, tableName, ["database-storage-tree-item"]);
@@ -1382,6 +1422,10 @@ WebInspector.DatabaseTableTreeElement.prototype = {
 }
 WebInspector.DatabaseTableTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.DOMStorageTreeElement = function(storagePanel, domStorage, className)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.domain ? domStorage.domain : WebInspector.UIString("Local Files"), ["domstorage-storage-tree-item", className]);
@@ -1402,6 +1446,10 @@ WebInspector.DOMStorageTreeElement.prototype = {
 }
 WebInspector.DOMStorageTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.CookieTreeElement = function(storagePanel, cookieDomain)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, cookieDomain ? cookieDomain : WebInspector.UIString("Local Files"), ["cookie-storage-tree-item"]);
@@ -1422,6 +1470,10 @@ WebInspector.CookieTreeElement.prototype = {
 }
 WebInspector.CookieTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.ApplicationCacheTreeElement = function(storagePanel, appcacheDomain)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, appcacheDomain ? appcacheDomain : WebInspector.UIString("Local Files"), ["application-cache-storage-tree-item"]);
@@ -1442,6 +1494,10 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
 WebInspector.ResourceRevisionTreeElement = function(storagePanel, revision)
 {
     var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : WebInspector.UIString("(original)");
@@ -1508,12 +1564,16 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
 
 WebInspector.ResourceRevisionTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.StorageCategoryView = function()
 {
     WebInspector.View.call(this);
 
     this.element.addStyleClass("storage-view");
-    this._emptyView = new WebInspector.EmptyView();
+    this._emptyView = new WebInspector.EmptyView("");
     this._emptyView.show(this.element);
 }
 
@@ -1526,6 +1586,9 @@ WebInspector.StorageCategoryView.prototype = {
 
 WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ResourcesSearchController = function(rootElement)
 {
     this._root = rootElement;
@@ -1574,6 +1637,9 @@ WebInspector.ResourcesSearchController.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.SearchResultsTreeElementsTraverser = function(rootElement)
 {
     this._root = rootElement;
@@ -1585,7 +1651,7 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
         return this.next(this._root);
     },
 
-    last: function(startTreeElement)
+    last: function()
     {
         return this.previous(this._root);
     },

@@ -28,10 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /**
-  * @constructor
-  * @extends {WebInspector.IFrameView}
-  */
+/**
+ * @constructor
+ * @extends {WebInspector.IFrameView}
+ */
 WebInspector.NetworkLogView = function(parentElement)
 {
     // FIXME: some of the styles should be loaded on demand by components that need them.

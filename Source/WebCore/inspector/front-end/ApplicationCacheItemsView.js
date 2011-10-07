@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
 WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
 {
     WebInspector.View.call(this);
@@ -218,7 +222,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         }
 
         var comparator;
-        switch (parseInt(this._dataGrid.sortColumnIdentifier)) {
+        switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
             case 0: comparator = localeCompare.bind(this, "name"); break;
             case 1: comparator = localeCompare.bind(this, "type"); break;
             case 2: comparator = numberCompare.bind(this, "size"); break;
@@ -280,6 +284,10 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
 WebInspector.ApplicationCacheItemsView.prototype.__proto__ = WebInspector.View.prototype;
 
+/**
+ * @constructor
+ * @implements {ApplicationCacheAgent.Dispatcher}
+ */
 WebInspector.ApplicationCacheDispatcher = function()
 {
 }

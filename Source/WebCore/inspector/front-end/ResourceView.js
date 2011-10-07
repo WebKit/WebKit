@@ -121,15 +121,15 @@ WebInspector.ResourceSourceFrame.prototype = {
 
 WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.ResourceSourceFrame}
+ */
 WebInspector.EditableResourceSourceFrame = function(resource)
 {
     WebInspector.ResourceSourceFrame.call(this, resource);
 }
 
-/**
- * @extends {WebInspector.ResourceSourceFrame}
- * @constructor
- */
 WebInspector.EditableResourceSourceFrame.prototype = {
     canEditSource: function()
     {

@@ -108,7 +108,8 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_inspector_views:30:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_inspector_views:31:jsmodule_sdk,jsmodule_ui \
+        --js Source/WebCore/inspector/front-end/ApplicationCacheItemsView.js \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
         --js Source/WebCore/inspector/front-end/CookieItemsView.js \
@@ -141,14 +142,12 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/TimelineAgent.js \
         --js Source/WebCore/inspector/front-end/TimelineGrid.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js \
-    --module jsmodule_inspector_panels:2:jsmodule_inspector_views \
+    --module jsmodule_inspector_panels:3:jsmodule_inspector_views \
         --js Source/WebCore/inspector/front-end/ElementsPanel.js \
-        --js Source/WebCore/inspector/front-end/NetworkPanel.js
+        --js Source/WebCore/inspector/front-end/NetworkPanel.js \
+        --js Source/WebCore/inspector/front-end/ResourcesPanel.js
 
 # To be compiled...
-# [Resources]
-# ResourcesPanel
-# 
 # [Scripts]
 # JavaScriptFormatter
 # JavaScriptSourceFrame
@@ -159,7 +158,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # CallStackSidebarPane
 #
 # [Timeline]
-# TimelineGrid
 # TimelineOverviewPane
 # TimelinePanel
 #
@@ -195,15 +193,12 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # ExtensionServer
 #
 # [Misc]
-# GoToLineDialog
-# TestController
-#
-# [Misc]
 # inspector
 # SettingsScreen
 # SourceCSSTokenizer
 # SourceHTMLTokenizer
 # SourceJavaScriptTokenizer
+# TestController
 #
 # [Workers]
 # InjectedFakeWorker
