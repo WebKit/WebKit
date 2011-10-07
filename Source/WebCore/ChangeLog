@@ -1,3 +1,18 @@
+2011-10-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Don't expose objects with unknown role on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=69561
+
+        Reviewed by Chris Fleizach.
+
+        Ignore accessibility objects in accessibilityPlatformIncludesObject.
+
+        Test: platform/gtk/accessibility/unknown-roles-not-exposed.html
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        For unknown accessibility objects, return IgnoreObject.
+
 2011-10-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add Elements and Network panels to the compilation

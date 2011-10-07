@@ -1,3 +1,20 @@
+2011-10-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Don't expose objects with unknown role on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=69561
+
+        Reviewed by Chris Fleizach.
+
+        New test to check that unknown objects are not exposed in GTK.
+
+        * platform/gtk/accessibility/unknown-roles-not-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/unknown-roles-not-exposed.html: Added.
+
+        Added new expectation for new accessibility layout test introduced
+        in r96127 that was not possible to add before because of this bug.
+
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Added.
+
 2011-10-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for

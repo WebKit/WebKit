@@ -73,6 +73,11 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == ListMarkerRole)
         return IgnoreObject;
 
+    // Never expose an unknown object, since AT's won't know what to
+    // do with them. This is what is done on the Mac as well.
+    if (role == UnknownRole)
+        return IgnoreObject;
+
     return DefaultBehavior;
 }
 

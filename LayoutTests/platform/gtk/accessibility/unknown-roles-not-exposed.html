@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+function runTest()
+{
+  if (window.accessibilityController) {
+
+    window.root = accessibilityController.rootElement;
+    window.webArea = root.childAtIndex(0);
+    window.iframe = webArea.childAtIndex(0);
+    window.iframe_body = iframe.childAtIndex(0);
+    window.iframe_button = iframe_body.childAtIndex(0);
+
+    shouldBe("root.role", "'AXRole: scroll pane'");
+    shouldBe("webArea.role", "'AXRole: document frame'");
+    shouldBe("iframe.role", "'AXRole: scroll pane'");
+    shouldBe("iframe_body.role", "'AXRole: document frame'");
+    shouldBe("iframe_button.role", "'AXRole: push button'");
+  }
+}
+</script>
+</head>
+<body id="body" onload="runTest()">
+<iframe src="data:text/html,<body><button>Click me</button></body>"></iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests accessibility objects with role 'unknown' are not being exposed in the GTK port.");
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

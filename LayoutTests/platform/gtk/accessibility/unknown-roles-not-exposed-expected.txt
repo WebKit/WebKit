@@ -1,0 +1,15 @@
+
+This tests accessibility objects with role 'unknown' are not being exposed in the GTK port.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS root.role is 'AXRole: scroll pane'
+PASS webArea.role is 'AXRole: document frame'
+PASS iframe.role is 'AXRole: scroll pane'
+PASS iframe_body.role is 'AXRole: document frame'
+PASS iframe_button.role is 'AXRole: push button'
+
