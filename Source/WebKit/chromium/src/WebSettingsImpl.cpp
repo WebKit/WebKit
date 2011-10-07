@@ -246,11 +246,6 @@ void WebSettingsImpl::setFontRenderingModeNormal()
     m_settings->setFontRenderingMode(WebCore::NormalRenderingMode);
 }
 
-void WebSettingsImpl::setShouldPaintCustomScrollbars(bool enabled)
-{
-    // FIXME: This should be removed.
-}
-
 void WebSettingsImpl::setAllowUniversalAccessFromFileURLs(bool allow)
 {
     m_settings->setAllowUniversalAccessFromFileURLs(allow);
