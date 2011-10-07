@@ -91,7 +91,7 @@ fast/speech
 fast/dom/MediaStream
 
 # ENABLE(DIRECTORY_UPLOAD) is disabled.
-fast/forms/input-file-directory-upload.html
+fast/forms/file/input-file-directory-upload.html
 
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
@@ -242,7 +242,7 @@ http/tests/misc/drag-not-loaded-image.html
 
 # [Qt] DumpRenderTree needs a beginDragWithFiles implementation
 # https://bugs.webkit.org/show_bug.cgi?id=50902
-fast/forms/file-input-change-event.html
+fast/forms/file/file-input-change-event.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata
@@ -324,8 +324,8 @@ editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
-fast/forms/get-file-upload.html
-fast/forms/input-file-re-render.html
+fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-re-render.html
 fast/events/drag-file-crash.html
 http/tests/security/clipboard/clipboard-file-access.html
 
@@ -1254,10 +1254,10 @@ fast/forms/basic-textareas.html
 fast/forms/box-shadow-override.html
 fast/forms/button-white-space.html
 fast/forms/disabled-select-change-index.html
-fast/forms/file-input-direction.html
-fast/forms/file-input-disabled.html
+fast/forms/file/file-input-direction.html
+fast/forms/file/file-input-disabled.html
+fast/forms/file/hidden-input-file.html
 fast/forms/form-element-geometry.html
-fast/forms/hidden-input-file.html
 fast/forms/input-appearance-height.html
 fast/forms/input-appearance-width.html
 fast/forms/input-disabled-color.html

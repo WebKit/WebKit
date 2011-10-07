@@ -216,9 +216,9 @@ editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
-fast/forms/file-input-change-event.html
-fast/forms/get-file-upload.html
-fast/forms/input-file-re-render.html
+fast/forms/file/file-input-change-event.html
+fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-re-render.html
 http/tests/security/clipboard/clipboard-file-access.html
 fast/events/drag-file-crash.html
 fast/dom/Window/window-postmessage-clone.html
@@ -1136,7 +1136,7 @@ userscripts/user-style-all-frames.html
 userscripts/user-style-top-frame-only.html
 
 # Directory upload is not enabled.
-fast/forms/input-file-directory-upload.html
+fast/forms/file/input-file-directory-upload.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html

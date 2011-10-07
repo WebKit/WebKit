@@ -1,3 +1,153 @@
+2011-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=file> tests to fast/forms/file/
+        https://bugs.webkit.org/show_bug.cgi?id=69504
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/file-input-change-event-expected.txt: Removed.
+        * fast/forms/file-input-change-event.html: Removed.
+        * fast/forms/file-input-direction.html: Removed.
+        * fast/forms/file-input-disabled.html: Removed.
+        * fast/forms/file-input-hit-test-expected.txt: Removed.
+        * fast/forms/file-input-hit-test.html: Removed.
+        * fast/forms/file-input-reset-expected.html: Removed.
+        * fast/forms/file-input-reset.html: Removed.
+        * fast/forms/file/file-input-change-event-expected.txt: Copied from LayoutTests/fast/forms/file-input-change-event-expected.txt.
+        * fast/forms/file/file-input-change-event.html: Copied from LayoutTests/fast/forms/file-input-change-event.html.
+        * fast/forms/file/file-input-direction.html: Copied from LayoutTests/fast/forms/file-input-direction.html.
+        * fast/forms/file/file-input-disabled.html: Copied from LayoutTests/fast/forms/file-input-disabled.html.
+        * fast/forms/file/file-input-hit-test-expected.txt: Copied from LayoutTests/fast/forms/file-input-hit-test-expected.txt.
+        * fast/forms/file/file-input-hit-test.html: Copied from LayoutTests/fast/forms/file-input-hit-test.html.
+        * fast/forms/file/file-input-reset-expected.html: Copied from LayoutTests/fast/forms/file-input-reset-expected.html.
+        * fast/forms/file/file-input-reset.html: Copied from LayoutTests/fast/forms/file-input-reset.html.
+        * fast/forms/file/get-file-upload-expected.txt: Copied from LayoutTests/fast/forms/get-file-upload-expected.txt.
+        * fast/forms/file/get-file-upload.html: Copied from LayoutTests/fast/forms/get-file-upload.html.
+        * fast/forms/file/hidden-input-file-expected.html: Copied from LayoutTests/fast/forms/hidden-input-file.html.
+        * fast/forms/file/hidden-input-file.html: Copied from LayoutTests/fast/forms/hidden-input-file.html.
+        * fast/forms/file/input-file-directory-upload-expected.txt: Copied from LayoutTests/fast/forms/input-file-directory-upload-expected.txt.
+        * fast/forms/file/input-file-directory-upload.html: Copied from LayoutTests/fast/forms/input-file-directory-upload.html.
+        * fast/forms/file/input-file-label-expected.txt: Copied from LayoutTests/fast/forms/input-file-label-expected.txt.
+        * fast/forms/file/input-file-label.html: Copied from LayoutTests/fast/forms/input-file-label.html.
+        * fast/forms/file/input-file-not-open-without-gesture-expected.txt: Copied from LayoutTests/fast/forms/input-file-not-open-without-gesture-expected.txt.
+        * fast/forms/file/input-file-not-open-without-gesture.html: Copied from LayoutTests/fast/forms/input-file-not-open-without-gesture.html.
+        * fast/forms/file/input-file-re-render.html: Copied from LayoutTests/fast/forms/input-file-re-render.html.
+        * fast/forms/get-file-upload-expected.txt: Removed.
+        * fast/forms/get-file-upload.html: Removed.
+        * fast/forms/hidden-input-file.html: Removed.
+        * fast/forms/input-file-directory-upload-expected.txt: Removed.
+        * fast/forms/input-file-directory-upload.html: Removed.
+        * fast/forms/input-file-label-expected.txt: Removed.
+        * fast/forms/input-file-label.html: Removed.
+        * fast/forms/input-file-not-open-without-gesture-expected.txt: Removed.
+        * fast/forms/input-file-not-open-without-gesture.html: Removed.
+        * fast/forms/input-file-re-render.html: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/file: Added.
+        * platform/chromium-cg-mac-leopard/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/input-file-re-render-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/forms/file: Added.
+        * platform/chromium-cg-mac/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/chromium-cg-mac/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-cg-mac/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-cg-mac/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/chromium-cg-mac/fast/forms/file-input-direction-expected.txt.
+        * platform/chromium-cg-mac/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/chromium-cg-mac/fast/forms/file-input-disabled-expected.png.
+        * platform/chromium-cg-mac/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/chromium-cg-mac/fast/forms/input-file-re-render-expected.png.
+        * platform/chromium-cg-mac/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/chromium-cg-mac/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/file: Added.
+        * platform/chromium-linux/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-linux/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/file-input-direction-expected.txt.
+        * platform/chromium-linux/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/file-input-disabled-expected.png.
+        * platform/chromium-linux/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/file-input-disabled-expected.txt.
+        * platform/chromium-linux/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/input-file-re-render-expected.png.
+        * platform/chromium-linux/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/input-file-re-render-expected.txt.
+        * platform/chromium-linux/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/input-file-re-render-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/file: Added.
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/forms/file-input-direction-expected.txt.
+        * platform/chromium-mac/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/input-file-re-render-expected.png.
+        * platform/chromium-mac/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-win/fast/forms/file: Added.
+        * platform/chromium-win/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/chromium-win/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/chromium-win/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-win/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/file-input-direction-expected.txt.
+        * platform/chromium-win/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/file-input-disabled-expected.png.
+        * platform/chromium-win/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/file-input-disabled-expected.txt.
+        * platform/chromium-win/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/input-file-re-render-expected.png.
+        * platform/chromium-win/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/input-file-re-render-expected.txt.
+        * platform/chromium-win/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/chromium-win/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-file-re-render-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/forms/file: Added.
+        * platform/gtk/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/gtk/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/gtk/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/gtk/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/gtk/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/file-input-direction-expected.png.
+        * platform/gtk/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/file-input-direction-expected.txt.
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/file-input-disabled-expected.png.
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/file-input-disabled-expected.txt.
+        * platform/gtk/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/input-file-re-render-expected.png.
+        * platform/gtk/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/input-file-re-render-expected.txt.
+        * platform/gtk/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/gtk/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/gtk/fast/forms/input-file-re-render-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/file: Added.
+        * platform/mac-leopard/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/file-input-direction-expected.png.
+        * platform/mac-leopard/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/file-input-disabled-expected.png.
+        * platform/mac-leopard/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/mac-leopard/fast/forms/file-input-disabled-expected.txt.
+        * platform/mac-leopard/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/input-file-re-render-expected.png.
+        * platform/mac-leopard/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/mac/Skipped:
+        * platform/mac/fast/forms/file: Added.
+        * platform/mac/fast/forms/file-input-direction-expected.png: Removed.
+        * platform/mac/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/mac/fast/forms/file-input-disabled-expected.png: Removed.
+        * platform/mac/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/mac/fast/forms/file/file-input-direction-expected.png: Copied from LayoutTests/platform/mac/fast/forms/file-input-direction-expected.png.
+        * platform/mac/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file-input-direction-expected.txt.
+        * platform/mac/fast/forms/file/file-input-disabled-expected.png: Copied from LayoutTests/platform/mac/fast/forms/file-input-disabled-expected.png.
+        * platform/mac/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file-input-disabled-expected.txt.
+        * platform/mac/fast/forms/file/input-file-re-render-expected.png: Copied from LayoutTests/platform/mac/fast/forms/input-file-re-render-expected.png.
+        * platform/mac/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-file-re-render-expected.txt.
+        * platform/mac/fast/forms/hidden-input-file-expected.png: Removed.
+        * platform/mac/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/mac/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/mac/fast/forms/input-file-re-render-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/file: Added.
+        * platform/qt/fast/forms/file-input-direction-expected.txt: Removed.
+        * platform/qt/fast/forms/file-input-disabled-expected.txt: Removed.
+        * platform/qt/fast/forms/file/file-input-direction-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/file-input-direction-expected.txt.
+        * platform/qt/fast/forms/file/file-input-disabled-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/file-input-disabled-expected.txt.
+        * platform/qt/fast/forms/hidden-input-file-expected.txt: Removed.
+        * platform/win/Skipped:
+
 2011-10-07  Kent Tamura  <tkent@chromium.org>
 
         Test update for r96893.

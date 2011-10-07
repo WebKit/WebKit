@@ -1268,7 +1268,7 @@ editing/pasteboard/5761530-1.html
 http/tests/loading/preload-slow-loading.php
 
 # Directory upload is not enabled.
-fast/forms/input-file-directory-upload.html
+fast/forms/file/input-file-directory-upload.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html

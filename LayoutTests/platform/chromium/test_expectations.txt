@@ -1144,7 +1144,7 @@ BUGCR23496 MAC : fast/block/basic/011.html = IMAGE
 BUGCR23496 MAC : fast/forms/001.html = IMAGE
 BUGCR23496 MAC : fast/forms/basic-inputs.html = IMAGE
 BUGCR23496 MAC : fast/forms/checkbox-radio-onchange.html = IMAGE
-BUGCR23496 MAC : fast/forms/file-input-disabled.html = IMAGE+TEXT
+BUGCR23496 MAC : fast/forms/file/file-input-disabled.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
 // Recently became crashy. See http://crbug.com/24721
@@ -2801,7 +2801,7 @@ BUGCR77095 LINUX WIN : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
 // Has been timing out, initiated at:
 // Webkit patches in range [r81976, r81981]
 // Chromium patches in range [r79428, r79442]
-BUGCR77468 : fast/forms/input-file-directory-upload.html = TIMEOUT
+BUGCR77468 : fast/forms/file/input-file-directory-upload.html = TIMEOUT
 
 // Temprary bug holding to deal with many changed tests due to
 // http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
@@ -3386,7 +3386,7 @@ BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
 BUGWK64946 WIN DEBUG : fast/dom/DeviceOrientation/no-synchronous-events.html = PASS CRASH
 
-BUGWK64948 WIN DEBUG : fast/forms/input-file-label.html = PASS CRASH
+BUGWK64948 WIN DEBUG : fast/forms/file/input-file-label.html = PASS CRASH
 
 BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = PASS CRASH TIMEOUT
 
