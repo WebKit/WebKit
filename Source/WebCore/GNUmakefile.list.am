@@ -618,6 +618,8 @@ webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityMenuListOption.h \
 	Source/WebCore/accessibility/AccessibilityMenuListPopup.cpp \
 	Source/WebCore/accessibility/AccessibilityMenuListPopup.h \
+	Source/WebCore/accessibility/AccessibilityMockObject.cpp \
+	Source/WebCore/accessibility/AccessibilityMockObject.h \
 	Source/WebCore/accessibility/AccessibilityObject.cpp \
 	Source/WebCore/accessibility/AccessibilityObject.h \
 	Source/WebCore/accessibility/AccessibilityProgressIndicator.cpp \

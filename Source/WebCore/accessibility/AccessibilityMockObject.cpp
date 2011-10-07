@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,9 +10,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,37 +23,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityTableHeaderContainer_h
-#define AccessibilityTableHeaderContainer_h
-
+#include "config.h"
 #include "AccessibilityMockObject.h"
-#include "AccessibilityTable.h"
-#include "IntRect.h"
 
 namespace WebCore {
+    
+AccessibilityMockObject::AccessibilityMockObject()
+    : m_parent(0)
+{
+}
 
-class AccessibilityTableHeaderContainer : public AccessibilityMockObject {
+AccessibilityMockObject::~AccessibilityMockObject()
+{
+}
     
-private:
-    AccessibilityTableHeaderContainer();
-public:
-    static PassRefPtr<AccessibilityTableHeaderContainer> create();
-    virtual ~AccessibilityTableHeaderContainer();
-    
-    virtual AccessibilityRole roleValue() const { return TableHeaderContainerRole; }
-    
-    virtual const AccessibilityChildrenVector& children();
-    virtual void addChildren();
-    
-    virtual LayoutSize size() const;
-    virtual LayoutRect elementRect() const;
-    
-private:
-    LayoutRect m_headerRect;
-    
-    virtual bool accessibilityIsIgnored() const;
-}; 
-    
-} // namespace WebCore 
-
-#endif // AccessibilityTableHeaderContainer_h
+}

@@ -56,6 +56,12 @@ private:
     virtual void childrenChanged();
 };
 
+inline AccessibilityMenuList* toAccessibilityMenuList(AccessibilityObject* object)
+{
+    ASSERT(!object || object->isMenuList());
+    return static_cast<AccessibilityMenuList*>(object);
+}
+
 } // namespace WebCore
 
 #endif // AccessibilityMenuList_h

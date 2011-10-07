@@ -62,7 +62,7 @@ void AccessibilityMenuList::addChildren()
         return;
     }
 
-    static_cast<AccessibilityMenuListPopup*>(list)->setMenuList(this);
+    static_cast<AccessibilityMockObject*>(list)->setParent(this);
     m_children.append(list);
 
     list->addChildren();

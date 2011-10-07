@@ -38,7 +38,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 AccessibilityMenuListPopup::AccessibilityMenuListPopup()
-    : m_menuList(0)
 {
 }
 
@@ -49,17 +48,12 @@ bool AccessibilityMenuListPopup::isVisible() const
 
 bool AccessibilityMenuListPopup::isOffScreen() const
 {
-    return m_menuList->isCollapsed();
-}
-
-AccessibilityObject* AccessibilityMenuListPopup::parentObject() const
-{
-    return m_menuList;
+    return m_parent->isCollapsed();
 }
 
 bool AccessibilityMenuListPopup::isEnabled() const
 {
-    return m_menuList->isEnabled();
+    return m_parent->isEnabled();
 }
 
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
@@ -67,7 +61,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     if (!element || !element->hasTagName(optionTag))
         return 0;
 
-    AccessibilityObject* object = m_menuList->renderer()->document()->axObjectCache()->getOrCreate(MenuListOptionRole);
+    AccessibilityObject* object = document()->axObjectCache()->getOrCreate(MenuListOptionRole);
     ASSERT(object->isMenuListOption());
 
     AccessibilityMenuListOption* option = static_cast<AccessibilityMenuListOption*>(object);
@@ -78,13 +72,13 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
 
 bool AccessibilityMenuListPopup::press() const
 {
-    m_menuList->press();
+    m_parent->press();
     return true;
 }
 
 void AccessibilityMenuListPopup::addChildren()
 {
-    Node* selectNode = m_menuList->renderer()->node();
+    Node* selectNode = m_parent->node();
     if (!selectNode)
         return;
 
@@ -105,22 +99,16 @@ void AccessibilityMenuListPopup::addChildren()
 
 void AccessibilityMenuListPopup::childrenChanged()
 {
+    AXObjectCache* cache = axObjectCache();
     for (size_t i = m_children.size(); i > 0 ; --i) {
         AccessibilityObject* child = m_children[i - 1].get();
-        if (child->actionElement() && !child->actionElement()->attached()) {
-            m_menuList->renderer()->document()->axObjectCache()->remove(child->axObjectID());
-        }
+        if (child->actionElement() && !child->actionElement()->attached())
+            cache->remove(child->axObjectID());
     }
+    
     m_children.clear();
     m_haveChildren = false;
     addChildren();
-}
-
-void AccessibilityMenuListPopup::setMenuList(AccessibilityMenuList* menuList)
-{
-    ASSERT_ARG(menuList, menuList);
-    ASSERT(!m_menuList);
-    m_menuList = menuList;
 }
 
 void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
@@ -128,12 +116,11 @@ void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
     ASSERT_ARG(optionIndex, optionIndex >= 0);
     ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(m_children.size()));
 
-    RefPtr<Document> document = m_menuList->renderer()->document();
-    AXObjectCache* cache = document->axObjectCache();
+    AXObjectCache* cache = axObjectCache();
     RefPtr<AccessibilityObject> child = m_children[optionIndex].get();
 
-    cache->postNotification(child.get(), document.get(), AXObjectCache::AXFocusedUIElementChanged, true, PostSynchronously);
-    cache->postNotification(child.get(), document.get(), AXObjectCache::AXMenuListItemSelected, true, PostSynchronously);
+    cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged, true, PostSynchronously);
+    cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected, true, PostSynchronously);
 }
 
 } // namespace WebCore

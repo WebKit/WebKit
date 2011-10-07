@@ -1,3 +1,77 @@
+2011-10-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: re-organize fake elements to use new AccessibilityMockObject
+        https://bugs.webkit.org/show_bug.cgi?id=69588
+
+        This adds an AccessibilityMockObject for "fake" elements to descend from.
+        Its benefit is to consolidate the various ways that these fake elements are setting
+        and returning their parent objects.
+
+        No functional change, hence no new tests.
+
+        Reviewed by Jon Honeycutt.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::AccessibilityImageMapLink):
+        * accessibility/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::node):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren):
+        * accessibility/AccessibilityMenuList.h:
+        (WebCore::toAccessibilityMenuList):
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::AccessibilityMenuListOption):
+        (WebCore::AccessibilityMenuListOption::isVisible):
+        * accessibility/AccessibilityMenuListOption.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::AccessibilityMenuListPopup):
+        (WebCore::AccessibilityMenuListPopup::isOffScreen):
+        (WebCore::AccessibilityMenuListPopup::isEnabled):
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        (WebCore::AccessibilityMenuListPopup::press):
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityMockObject.cpp: Added.
+        (WebCore::AccessibilityMockObject::AccessibilityMockObject):
+        (WebCore::AccessibilityMockObject::~AccessibilityMockObject):
+        * accessibility/AccessibilityMockObject.h: Added.
+        (WebCore::AccessibilityMockObject::parentObject):
+        (WebCore::AccessibilityMockObject::setParent):
+        (WebCore::AccessibilityMockObject::detachFromParent):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren):
+        (WebCore::AccessibilitySliderThumb::AccessibilitySliderThumb):
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::headerContainer):
+        * accessibility/AccessibilityTable.h:
+        (WebCore::toAccessibilityTable):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::AccessibilityTableColumn):
+        (WebCore::AccessibilityTableColumn::setParent):
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        (WebCore::AccessibilityTableColumn::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer):
+        (WebCore::AccessibilityTableHeaderContainer::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/AccessibilityTableHeaderContainer.h:
+
 2011-10-07  Nate Chapin  <japhet@chromium.org>
 
         Make IconLoader a CachedResourceClient instead of a SubresourceLoaderClient.

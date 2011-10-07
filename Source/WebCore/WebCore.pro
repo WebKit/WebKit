@@ -33,6 +33,7 @@ SOURCES += \
     accessibility/AccessibilityMenuList.cpp \
     accessibility/AccessibilityMenuListOption.cpp \
     accessibility/AccessibilityMenuListPopup.cpp \
+    accessibility/AccessibilityMockObject.cpp \    
     accessibility/AccessibilityObject.cpp \    
     accessibility/AccessibilityList.cpp \    
     accessibility/AccessibilityListBox.cpp \    

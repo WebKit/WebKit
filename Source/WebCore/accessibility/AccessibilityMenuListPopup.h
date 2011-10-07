@@ -26,7 +26,7 @@
 #ifndef AccessibilityMenuListPopup_h
 #define AccessibilityMenuListPopup_h
 
-#include "AccessibilityObject.h"
+#include "AccessibilityMockObject.h"
 
 namespace WebCore {
 
@@ -35,11 +35,9 @@ class AccessibilityMenuListOption;
 class HTMLElement;
 class HTMLSelectElement;
 
-class AccessibilityMenuListPopup : public AccessibilityObject {
+class AccessibilityMenuListPopup : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityMenuListPopup> create() { return adoptRef(new AccessibilityMenuListPopup); }
-
-    void setMenuList(AccessibilityMenuList*);
 
     virtual bool isEnabled() const;
     virtual bool isOffScreen() const;
@@ -56,14 +54,11 @@ private:
     virtual AccessibilityRole roleValue() const { return MenuListPopupRole; }
 
     virtual bool isVisible() const;
-    virtual AccessibilityObject* parentObject() const;
     virtual bool press() const;
     virtual void addChildren();
     virtual void childrenChanged();
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
-
-    AccessibilityMenuList* m_menuList;
 };
 
 } // namespace WebCore
