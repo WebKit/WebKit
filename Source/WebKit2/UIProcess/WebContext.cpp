@@ -76,9 +76,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter webContextCounter("WebContext");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
 WebContext* WebContext::sharedProcessContext()
 {

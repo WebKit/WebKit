@@ -1,3 +1,14 @@
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Add DEFINE_DEBUG_ONLY_GLOBAL for globals that should be defined in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=69584
+
+        Reviewed by Darin Adler.
+
+        Add DEFINE_DEBUG_ONLY_GLOBAL macro.
+
+        * wtf/StdLibExtras.h:
+
 2011-10-06  Oliver Hunt  <oliver@apple.com>
 
         Write barrier shouldn't allocate temporaries inside control flow

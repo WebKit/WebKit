@@ -48,9 +48,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter hostedNetscapePluginStreamCounter("HostedNetscapePluginStream");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, hostedNetscapePluginStreamCounter, ("HostedNetscapePluginStream"));
 
 HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstanceProxy* instance, uint32_t streamID, NSURLRequest *request)
     : m_instance(instance)

@@ -27,14 +27,13 @@
 #include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter eventListenerCounter("JSLazyEventListener");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 
 JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber, JSObject* wrapper, DOMWrapperWorld* isolatedWorld)
     : JSEventListener(0, wrapper, true, isolatedWorld)

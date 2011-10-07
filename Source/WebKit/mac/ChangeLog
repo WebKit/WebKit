@@ -1,3 +1,15 @@
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Add DEFINE_DEBUG_ONLY_GLOBAL for globals that should be defined in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=69584
+
+        Reviewed by Darin Adler.
+
+        Adopt the DEFINE_DEBUG_ONLY_GLOBAL macro.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+
 2011-10-03  Andy Estes  <aestes@apple.com>
 
         Add an option to suppress rendering until the document's load event fires.

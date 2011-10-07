@@ -99,9 +99,7 @@ namespace WebKit {
 
 WKPageDebugPaintFlags WebPageProxy::s_debugPaintFlags = 0;
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
 
 #if !LOG_DISABLED
 static const char* webKeyboardEventTypeString(WebEvent::Type type)

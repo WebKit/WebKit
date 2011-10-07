@@ -43,6 +43,15 @@
 #endif
 #endif
 
+// Use this macro to declare and define a debug-only global variable that may have a
+// non-trivial constructor and destructor.
+#ifndef NDEBUG
+#define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments) \
+    static type name arguments;
+#else
+#define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments)
+#endif // NDEBUG
+
 // OBJECT_OFFSETOF: Like the C++ offsetof macro, but you can use it with classes.
 // The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
 // NULL can cause compiler problems, especially in cases of multiple inheritance.

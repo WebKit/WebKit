@@ -88,9 +88,7 @@ namespace WebCore {
 
 static HashSet<Page*>* allPages;
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter pageCounter("Page");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
 static void networkStateChanged()
 {

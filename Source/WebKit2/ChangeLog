@@ -1,3 +1,17 @@
+2011-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Add DEFINE_DEBUG_ONLY_GLOBAL for globals that should be defined in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=69584
+
+        Reviewed by Darin Adler.
+
+        Adopt the DEFINE_DEBUG_ONLY_GLOBAL macro.
+
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2011-10-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Should be able to scroll embedded PDFs using mouse

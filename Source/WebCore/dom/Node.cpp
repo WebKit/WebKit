@@ -284,11 +284,11 @@ void Node::dumpStatistics()
 #endif
 }
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter nodeCounter("WebCoreNode");
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"));
+DEFINE_DEBUG_ONLY_GLOBAL(HashSet<Node*>, ignoreSet, );
 
+#ifndef NDEBUG
 static bool shouldIgnoreLeaks = false;
-static HashSet<Node*> ignoreSet;
 #endif
 
 void Node::startIgnoringLeaks()

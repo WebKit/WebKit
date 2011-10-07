@@ -212,9 +212,7 @@ static uint32_t pluginIDCounter;
 
 bool NetscapePluginInstanceProxy::m_inDestroy;
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter netscapePluginInstanceProxyCounter("NetscapePluginInstanceProxy");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, netscapePluginInstanceProxyCounter, ("NetscapePluginInstanceProxy"));
 
 NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
     : m_pluginHostProxy(pluginHostProxy)
