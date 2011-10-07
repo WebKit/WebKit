@@ -1,3 +1,14 @@
+2011-10-07  Tony Chang  <tony@chromium.org>
+
+        fix a crash when loading non-html multipart data
+        https://bugs.webkit.org/show_bug.cgi?id=69675
+
+        Reviewed by Adam Barth.
+
+        * http/tests/multipart/load-last-non-html-frame.php: Ensure same
+          output on Apple Mac and Chromium (was getting different number of
+          trailing new lines).
+
 2011-10-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         XSLT-generated document should inherit its SecurityOrigin from the source document

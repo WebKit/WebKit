@@ -849,8 +849,12 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
 
 void DocumentLoader::maybeFinishLoadingMultipartContent()
 {
-    if (!doesProgressiveLoad(m_response.mimeType()))
-        setupForReplaceByMIMEType(m_response.mimeType());
+    if (!doesProgressiveLoad(m_response.mimeType())) {
+        frameLoader()->client()->revertToProvisionalState(this);
+        setupForReplace();
+        RefPtr<SharedBuffer> resourceData = mainResourceData();
+        commitLoad(resourceData->data(), resourceData->size());
+    }
 }
 
 void DocumentLoader::iconLoadDecisionAvailable()

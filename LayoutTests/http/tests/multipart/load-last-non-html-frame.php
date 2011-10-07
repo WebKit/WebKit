@@ -18,6 +18,4 @@ PASS
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
-?>
-
---asdf--
+?>--asdf--

@@ -1,3 +1,19 @@
+2011-10-07  Tony Chang  <tony@chromium.org>
+
+        fix a crash when loading non-html multipart data
+        https://bugs.webkit.org/show_bug.cgi?id=69675
+
+        Reviewed by Adam Barth.
+
+        setupForReplaceByMIMEType calls DocumentWriter::end().  This leads to
+        a crash on Mac because WebHTMLRepresentation() calls commitLoad(nil),
+        which tries to write to the DocumentWriter.  By just inlining the code
+        to load the last page, we avoid this crash (and makes the non-html
+        multipart code more like the html multipart code).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::maybeFinishLoadingMultipartContent):
+
 2011-10-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         XSLT-generated document should inherit its SecurityOrigin from the source document
