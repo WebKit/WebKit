@@ -1,3 +1,13 @@
+2011-10-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Windows build fix
+
+        Unreviewed build fix.  Weird runtime failures on Windows due to 
+        linking issues caused by the ClassInfo struct in JSByteArray not 
+        being declared with JS_EXPORTDATA.
+
+        * runtime/JSByteArray.h:
+
 2011-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         Structure does not reset m_previous when pinning the property map

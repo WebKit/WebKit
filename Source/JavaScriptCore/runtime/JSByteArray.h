@@ -96,7 +96,7 @@ namespace JSC {
 
         virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
         
         size_t length() const { return m_storage->length(); }
 
