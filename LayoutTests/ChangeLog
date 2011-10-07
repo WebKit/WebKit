@@ -1,3 +1,11 @@
+2011-10-06  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Fix test expectations. Broken test from r96870. Bug filed.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt: Added smart-paste-008.html on all platforms.
+
 2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows rebaseline after r96870. Also skip editing/pasteboard/smart-paste-008.html because it's a real failure
