@@ -1,3 +1,20 @@
+2011-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] avoid direct access to GstMessage structure field
+        https://bugs.webkit.org/show_bug.cgi?id=69629
+
+        Reviewed by Martin Robinson.
+
+        Use gst_message_get_structure() instead of direct access to the
+        structure field. No direct benefit apart from compatibility with
+        GStreamer 0.11.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::gstGWorldSyncMessageCallback):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::mediaLocationChanged):
+
 2011-10-07  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add timeline panel to the compilation.

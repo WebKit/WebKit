@@ -723,9 +723,10 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     MediaPlayer::NetworkState error;
     bool issueError = true;
     bool attemptNextLocation = false;
+    const GstStructure* structure = gst_message_get_structure(message);
 
-    if (message->structure) {
-        const gchar* messageTypeName = gst_structure_get_name(message->structure);
+    if (structure) {
+        const gchar* messageTypeName = gst_structure_get_name(structure);
 
         // Redirect messages are sent from elements, like qtdemux, to
         // notify of the new location(s) of the media.
@@ -1213,11 +1214,12 @@ void MediaPlayerPrivateGStreamer::mediaLocationChanged(GstMessage* message)
     if (m_mediaLocations)
         gst_structure_free(m_mediaLocations);
 
-    if (message->structure) {
+    const GstStructure* structure = gst_message_get_structure(message);
+    if (structure) {
         // This structure can contain:
         // - both a new-location string and embedded locations structure
         // - or only a new-location string.
-        m_mediaLocations = gst_structure_copy(message->structure);
+        m_mediaLocations = gst_structure_copy(structure);
         const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
 
         if (locations)

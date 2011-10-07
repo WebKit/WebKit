@@ -42,9 +42,10 @@ gboolean gstGWorldSyncMessageCallback(GstBus* bus, GstMessage* message, gpointer
     ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_ELEMENT);
 
     GStreamerGWorld* gstGWorld = static_cast<GStreamerGWorld*>(data);
+    const GstStructure* structure = gst_message_get_structure(message);
 
-    if (gst_structure_has_name(message->structure, "prepare-xwindow-id")
-        || gst_structure_has_name(message->structure, "have-ns-view"))
+    if (gst_structure_has_name(structure, "prepare-xwindow-id")
+        || gst_structure_has_name(structure, "have-ns-view"))
         gstGWorld->setWindowOverlay(message);
     return TRUE;
 }
