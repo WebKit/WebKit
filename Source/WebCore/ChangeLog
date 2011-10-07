@@ -1,3 +1,14 @@
+2011-10-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove USE(THREADED_COMPOSITING) from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=69489
+
+        Reviewed by Darin Fisher.
+
+        This macro isn't needed any more since the logic it guarded is guarded by a runtime switch.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-10-06  David Grogan  <dgrogan@chromium.org>
 
         Return null for the value of IDB key cursors instead of ASSERTing

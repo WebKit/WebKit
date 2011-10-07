@@ -24,8 +24,6 @@
 
 #include "config.h"
 
-#if USE(THREADED_COMPOSITING)
-
 #include "cc/CCLayerTreeHost.h"
 
 #include "cc/CCLayerImpl.h"
@@ -170,9 +168,7 @@ public:
     {
     }
 
-#if !USE(THREADED_COMPOSITING)
     virtual void scheduleComposite() { }
-#endif
 
 private:
     explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
@@ -216,11 +212,7 @@ protected:
     {
         m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
         WebCompositor::setThread(m_webThread.get());
-#if USE(THREADED_COMPOSITING)
         m_settings.enableCompositorThread = true;
-#else
-        m_settings.enableCompositorThread = false;
-#endif
     }
 
     void doBeginTest();
@@ -233,7 +225,11 @@ protected:
     static void onEndTest(void* self)
     {
         ASSERT(isMainThread());
+        // webkit_support::QuitMessageLoop() simply posts a task on the loop to quit. Any pending messages enqueued
+        // before the Quit task will still run. For this test scenario we want to run all pending messages before
+        // tearing down m_layerTreeHost, so we spin the loop after posting the Quit task.
         webkit_support::QuitMessageLoop();
+        webkit_support::RunAllPendingMessages();
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT(test);
         test->m_layerTreeHost.clear();
@@ -716,5 +712,3 @@ TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, run)
 }
 
 } // namespace
-
-#endif
