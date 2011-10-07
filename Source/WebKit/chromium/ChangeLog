@@ -1,3 +1,12 @@
+2011-10-07  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: glass pane does not disappear after network panel's grid column resize.
+        https://bugs.webkit.org/show_bug.cgi?id=69607
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/DevTools.js:
+
 2011-10-07  Nate Chapin  <japhet@chromium.org>
 
         Always call setActive() in WebViewImpl::setFocus(),
