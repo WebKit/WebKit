@@ -1,3 +1,125 @@
+2011-10-06  Kent Tamura  <tkent@chromium.org>
+
+        Remove SelectElement class
+        https://bugs.webkit.org/show_bug.cgi?id=69518
+
+        Reviewed by Ryosuke Niwa.
+
+        SelectElement used to be an abstract class for HTMLSelectElement
+        and WMLSelectElement. SelectElement is not needed anymore because
+        WML was removed.
+
+        This patch just removes SelectElement by moving SelectElement
+        functions to HTMLSelectElement.
+
+        No new tests. Just a refactoring.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Rename dom\SelectElementWin.cpp to html\HTMLSelectElementWin.cpp.
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::setSelected):
+        Remove unnecessary cast.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+        Use HTMLSelectElement instead of SelectElement.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (optionFromSelection): ditto.
+        (webkit_accessible_selection_get_selection_count): ditto.
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (notifyChildrenSelectionChange): ditto.
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::optionIndex): ditto.
+        * dom/OptionElement.h: ditto.
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElementData::checkListItems): ditto.
+        (WebCore::SelectElementData::listItems): ditto.
+        * dom/SelectElementWin.cpp: Removed.
+        * dom/SelectElement.h: Removed SelectElement class declaration.
+        * html/HTMLSelectElement.cpp: Move functions from SelectElement.cpp.
+        (WebCore::HTMLSelectElement::selectedIndex):
+        Removed 'SelectElement::' because the function is moved to HTMLSelectElement.
+        (WebCore::HTMLSelectElement::deselectItems): dito.
+        (WebCore::HTMLSelectElement::setSelectedIndex): dito.
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser): ditto.
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex): ditto.
+        (WebCore::HTMLSelectElement::length): ditto.
+        (WebCore::HTMLSelectElement::saveFormControlState): ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): ditto.
+        (WebCore::HTMLSelectElement::parseMappedAttribute): ditto.
+        (WebCore::HTMLSelectElement::selectAll): ditto.
+        (WebCore::HTMLSelectElement::appendFormData): ditto.
+        (WebCore::HTMLSelectElement::optionToListIndex): ditto.
+        (WebCore::HTMLSelectElement::listToOptionIndex): ditto.
+        (WebCore::HTMLSelectElement::recalcListItems): ditto.
+        (WebCore::HTMLSelectElement::setRecalcListItems): ditto.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::dispatchFocusEvent): ditto.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): ditto.
+        (WebCore::HTMLSelectElement::defaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex): ditto.
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex): ditto.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): ditto.
+        (WebCore::HTMLSelectElement::menuListOnChange): ditto.
+        (WebCore::HTMLSelectElement::listBoxOnChange): ditto.
+        (WebCore::HTMLSelectElement::saveLastSelection): ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): ditto.
+        (WebCore::HTMLSelectElement::scrollToSelection): ditto.
+        (WebCore::HTMLSelectElement::insertedIntoTree): ditto.
+        (WebCore::nextValidIndex): Moved from SelectElement.cpp.
+        (WebCore::nextSelectableListIndex): ditto.
+        (WebCore::previousSelectableListIndex): ditto.
+        (WebCore::firstSelectableListIndex): ditto.
+        (WebCore::lastSelectableListIndex): ditto.
+        (WebCore::nextSelectableListIndexPageAway): ditto.
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer): ditto.
+        (WebCore::HTMLSelectElement::parseMultipleAttribute): ditto.
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent): ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::updateSelectedState): ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): ditto.
+        (WebCore::stripLeadingWhiteSpace): ditto.
+        (WebCore::HTMLSelectElement::typeAheadFind): ditto.
+        (WebCore::HTMLSelectElement::optionCount): ditto.
+        (WebCore::toSelectElement): ditto.
+        * html/HTMLSelectElementWin.cpp: Copied from Source/WebCore/dom/SelectElementWin.cpp.
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        * html/HTMLSelectElement.h: Removed 'virtual' of SelectElement functions.
+        (WebCore::HTMLSelectElement::size):
+        (WebCore::HTMLSelectElement::multiple):
+        (WebCore::HTMLSelectElement::listItems):
+        (WebCore::HTMLSelectElement::updateValidity):
+        * rendering/RenderListBox.cpp: Replace SelectElement with HTMLSelectElement
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::scrollToRevealSelection):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::autoscroll):
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderMenuList.cpp: Replace SelectElement with HTMLSelectElement
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::valueChanged):
+        (WebCore::RenderMenuList::listBoxSelectItem):
+        (WebCore::RenderMenuList::multiple):
+        (WebCore::RenderMenuList::didSetSelectedIndex):
+        (WebCore::RenderMenuList::didUpdateActiveOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemAccessibilityText):
+        (WebCore::RenderMenuList::itemToolTip):
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::itemBackgroundColor):
+        (WebCore::RenderMenuList::listSize):
+        (WebCore::RenderMenuList::selectedIndex):
+        (WebCore::RenderMenuList::itemIsSeparator):
+        (WebCore::RenderMenuList::itemIsLabel):
+        (WebCore::RenderMenuList::itemIsSelected):
+        (WebCore::RenderMenuList::setTextFromItem):
+
 2011-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96896.

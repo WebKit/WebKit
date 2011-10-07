@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SelectElement.h"
+#include "HTMLSelectElement.h"
 
 #include "Element.h"
 #include "KeyboardEvent.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool SelectElement::platformHandleKeydownEvent(SelectElementData& data, Element* element, KeyboardEvent* event)
+bool HTMLSelectElement::platformHandleKeydownEvent(SelectElementData& data, Element* element, KeyboardEvent* event)
 {
     // Allow (Shift) F4 and (Ctrl/Shift) Alt/AltGr + Up/Down arrow to pop the menu, matching Firefox.
     bool eventShowsMenu = (!event->altKey() && !event->ctrlKey() && event->keyIdentifier() == "F4")

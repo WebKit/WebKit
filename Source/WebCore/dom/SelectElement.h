@@ -30,89 +30,10 @@
 
 namespace WebCore {
 
-class Attribute;
 class Element;
-class Event;
-class FormDataList;
-class HTMLFormElement;
-class KeyboardEvent;
-class SelectElementData;
-
-class SelectElement {
-public:
-    virtual bool multiple() const = 0;
-
-    virtual int size() const = 0;
-    virtual const Vector<Element*>& listItems() const = 0;
-
-    virtual void listBoxOnChange() = 0;
-    virtual void updateListBoxSelection(bool deselectOtherOptions) = 0;
-
-    virtual void menuListOnChange() = 0;
-
-    virtual int activeSelectionStartListIndex() const = 0;
-    virtual int activeSelectionEndListIndex() const = 0;
-
-    virtual void setActiveSelectionAnchorIndex(int index) = 0;
-    virtual void setActiveSelectionEndIndex(int index) = 0;
-
-    virtual int listToOptionIndex(int listIndex) const = 0;
-    virtual int optionToListIndex(int optionIndex) const = 0;
-
-    virtual int selectedIndex() const = 0;
-    virtual void setSelectedIndex(int index, bool deselect = true) = 0;
-    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false) = 0;
-
-    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) = 0;
-
-    virtual void updateValidity() = 0;
-
-protected:
-    virtual ~SelectElement() { }
-
-    friend class SelectElementData;
-
-    static void selectAll(SelectElementData&, Element*);
-    static void saveLastSelection(SelectElementData&, Element*);
-    static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
-    static void setActiveSelectionEndIndex(SelectElementData&, int index);
-    static void updateListBoxSelection(SelectElementData&, Element*, bool deselectOtherOptions);
-    static void listBoxOnChange(SelectElementData&, Element*);
-    static void menuListOnChange(SelectElementData&, Element*);
-    static void scrollToSelection(SelectElementData&, Element*);
-    static void setRecalcListItems(SelectElementData&, Element*);
-    static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
-    static int selectedIndex(const SelectElementData&, const Element*);
-    static void setSelectedIndex(SelectElementData&, Element*, int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
-    static int optionToListIndex(const SelectElementData&, const Element*, int optionIndex);
-    static int listToOptionIndex(const SelectElementData&, const Element*, int listIndex);
-    static void dispatchFocusEvent(SelectElementData&, Element*);
-    static void dispatchBlurEvent(SelectElementData&, Element*);
-    static void deselectItems(SelectElementData&, Element*, Element* excludeElement = 0);
-    static bool saveFormControlState(const SelectElementData&, const Element*, String& state);
-    static void restoreFormControlState(SelectElementData&, Element*, const String& state);
-    static void parseMultipleAttribute(SelectElementData&, Element*, Attribute*);
-    static bool appendFormData(SelectElementData&, Element*, FormDataList&);
-    static void reset(SelectElementData&, Element*);
-    static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static int lastSelectedListIndex(const SelectElementData&, const Element*);
-    static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
-    static void insertedIntoTree(SelectElementData&, Element*);
-    static void accessKeySetSelectedIndex(SelectElementData&, Element*, int index);
-    static unsigned optionCount(const SelectElementData&, const Element*);
-
-    static void updateSelectedState(SelectElementData& data, Element* element, int listIndex,
-                                    bool multi, bool shift);
- 
-private:
-    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static bool platformHandleKeydownEvent(SelectElementData&, Element*, KeyboardEvent*);
-    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
-};
 
 // HTMLSelectElement hold this struct as member variable
-// and pass it to the static helper functions in SelectElement
+// and pass it to the static helper functions.
 class SelectElementData {
 public:
     SelectElementData();
@@ -190,8 +111,6 @@ private:
     bool m_activeSelectionState;
     bool m_recalcListItems;
 };
-
-SelectElement* toSelectElement(Element*);
 
 }
 

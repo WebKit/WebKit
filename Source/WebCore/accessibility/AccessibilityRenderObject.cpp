@@ -74,7 +74,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
-#include "SelectElement.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -1147,19 +1146,21 @@ String AccessibilityRenderObject::stringValue() const
     if (cssBox && cssBox->isMenuList()) {
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overriden in the case where the selected item has an aria label
-        SelectElement* selectNode = toSelectElement(static_cast<Element*>(m_renderer->node()));
-        int selectedIndex = selectNode->selectedIndex();
-        const Vector<Element*> listItems = selectNode->listItems();
+        Node* node = m_renderer->node();
+        if (node && node->isHTMLElement() && node->hasTagName(selectTag)) {
+            HTMLSelectElement* selectNode = static_cast<HTMLSelectElement*>(node);
+            int selectedIndex = selectNode->selectedIndex();
+            const Vector<Element*> listItems = selectNode->listItems();
         
-        Element* selectedOption = 0;
-        if (selectedIndex >= 0 && selectedIndex < (int)listItems.size()) 
-            selectedOption = listItems[selectedIndex];
-        if (selectedOption) {
-            String overridenDescription = selectedOption->getAttribute(aria_labelAttr);
-            if (!overridenDescription.isNull())
-                return overridenDescription;
+            Element* selectedOption = 0;
+            if (selectedIndex >= 0 && selectedIndex < (int)listItems.size()) 
+                selectedOption = listItems[selectedIndex];
+            if (selectedOption) {
+                String overridenDescription = selectedOption->getAttribute(aria_labelAttr);
+                if (!overridenDescription.isNull())
+                    return overridenDescription;
+            }
         }
-        
         return toRenderMenuList(m_renderer)->text();
     }
     

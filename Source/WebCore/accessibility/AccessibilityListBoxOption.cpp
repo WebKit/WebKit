@@ -180,7 +180,7 @@ void AccessibilityListBoxOption::setSelected(bool selected)
         return;
     
     // Convert from the entire list index to the option index.
-    int optionIndex = static_cast<SelectElement*>(selectElement)->listToOptionIndex(listBoxOptionIndex());
+    int optionIndex = selectElement->listToOptionIndex(listBoxOptionIndex());
     selectElement->accessKeySetSelectedIndex(optionIndex);
 }
 

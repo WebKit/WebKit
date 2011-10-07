@@ -36,21 +36,21 @@ namespace WebCore {
 class HTMLOptionElement;
 class HTMLOptionsCollection;
 
-class HTMLSelectElement : public HTMLFormControlElementWithState, public SelectElement {
+class HTMLSelectElement : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
-    virtual int selectedIndex() const;
-    virtual void setSelectedIndex(int index, bool deselect = true);
-    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false);
+    int selectedIndex() const;
+    void setSelectedIndex(int index, bool deselect = true);
+    void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false);
 
     // For ValidityState
     bool valueMissing() const;
 
     unsigned length() const;
 
-    virtual int size() const { return m_data.size(); }
-    virtual bool multiple() const { return m_data.multiple(); }
+    int size() const { return m_data.size(); }
+    bool multiple() const { return m_data.multiple(); }
 
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void remove(int index);
@@ -66,7 +66,7 @@ public:
     void setRecalcListItems();
     void recalcListItemsIfNeeded();
 
-    virtual const Vector<Element*>& listItems() const { return m_data.listItems(this); }
+    const Vector<Element*>& listItems() const { return m_data.listItems(this); }
 
     virtual void accessKeyAction(bool sendToAnyElement);
     void accessKeySetSelectedIndex(int);
@@ -87,11 +87,19 @@ public:
 
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
 
-    virtual void updateValidity() { setNeedsValidityCheck(); }
+    void updateValidity() { setNeedsValidityCheck(); }
 
     virtual bool canSelectAll() const;
     virtual void selectAll();
-
+    int listToOptionIndex(int listIndex) const;
+    void listBoxOnChange();
+    int optionToListIndex(int optionIndex) const;
+    int activeSelectionStartListIndex() const;
+    int activeSelectionEndListIndex() const;
+    void setActiveSelectionAnchorIndex(int);
+    void setActiveSelectionEndIndex(int);
+    void updateListBoxSelection(bool deselectOtherOptions);
+    
 protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -116,21 +124,11 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle *);
     virtual bool appendFormData(FormDataList&, bool);
 
-    virtual int optionToListIndex(int optionIndex) const;
-    virtual int listToOptionIndex(int listIndex) const;
-
     virtual void reset();
 
     virtual void defaultEventHandler(Event*);
 
-    virtual void setActiveSelectionAnchorIndex(int index);
-    virtual void setActiveSelectionEndIndex(int index);
-    virtual void updateListBoxSelection(bool deselectOtherOptions);
-    virtual void listBoxOnChange();
-    virtual void menuListOnChange();
-    
-    virtual int activeSelectionStartListIndex() const;
-    virtual int activeSelectionEndListIndex() const;
+    void menuListOnChange();
     
     void recalcListItems(bool updateSelectedStates = true) const;
 
@@ -145,9 +143,49 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
+    // FIXME: Fold some of the following functions.
+    static void selectAll(SelectElementData&, Element*);
+    static void saveLastSelection(SelectElementData&, Element*);
+    static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
+    static void setActiveSelectionEndIndex(SelectElementData&, int index);
+    static void updateListBoxSelection(SelectElementData&, Element*, bool deselectOtherOptions);
+    static void listBoxOnChange(SelectElementData&, Element*);
+    static void menuListOnChange(SelectElementData&, Element*);
+    static void scrollToSelection(SelectElementData&, Element*);
+    static void setRecalcListItems(SelectElementData&, Element*);
+    static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
+    static int selectedIndex(const SelectElementData&, const Element*);
+    static void setSelectedIndex(SelectElementData&, Element*, int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
+    static int optionToListIndex(const SelectElementData&, const Element*, int optionIndex);
+    static int listToOptionIndex(const SelectElementData&, const Element*, int listIndex);
+    static void dispatchFocusEvent(SelectElementData&, Element*);
+    static void dispatchBlurEvent(SelectElementData&, Element*);
+    static void deselectItems(SelectElementData&, Element*, Element* excludeElement = 0);
+    static bool saveFormControlState(const SelectElementData&, const Element*, String& state);
+    static void restoreFormControlState(SelectElementData&, Element*, const String& state);
+    static void parseMultipleAttribute(SelectElementData&, Element*, Attribute*);
+    static bool appendFormData(SelectElementData&, Element*, FormDataList&);
+    static void reset(SelectElementData&, Element*);
+    static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static int lastSelectedListIndex(const SelectElementData&, const Element*);
+    static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
+    static void insertedIntoTree(SelectElementData&, Element*);
+    static void accessKeySetSelectedIndex(SelectElementData&, Element*, int index);
+    static unsigned optionCount(const SelectElementData&, const Element*);
+
+    static void updateSelectedState(SelectElementData&, Element*, int listIndex, bool multi, bool shift);
+ 
+    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static bool platformHandleKeydownEvent(SelectElementData&, Element*, KeyboardEvent*);
+    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
+    friend class SelectElementData;
+
     SelectElementData m_data;
     CollectionCache m_collectionInfo;
 };
+
+HTMLSelectElement* toSelectElement(Element*);
 
 } // namespace
 

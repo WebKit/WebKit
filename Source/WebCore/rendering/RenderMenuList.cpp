@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
 #include "OptionElement.h"
 #include "OptionGroupElement.h"
@@ -42,7 +43,6 @@
 #include "RenderBR.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
-#include "SelectElement.h"
 #include "TextRun.h"
 #include <math.h>
 
@@ -61,6 +61,9 @@ RenderMenuList::RenderMenuList(Element* element)
     , m_lastActiveIndex(-1)
     , m_popupIsVisible(false)
 {
+    ASSERT(element);
+    ASSERT(element->isHTMLElement());
+    ASSERT(element->hasTagName(HTMLNames::selectTag));
 }
 
 RenderMenuList::~RenderMenuList()
@@ -190,7 +193,7 @@ void RenderMenuList::updateFromElement()
 
 void RenderMenuList::setTextFromOption(int optionIndex)
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     int size = listItems.size();
 
@@ -296,7 +299,7 @@ void RenderMenuList::showPopup()
     createInnerBlock();
     if (!m_popup)
         m_popup = document()->page()->chrome()->createPopupMenu(this);
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     m_popupIsVisible = true;
 
     // Compute the top left taking transforms into account, but use
@@ -322,27 +325,27 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
     if (!doc || doc != doc->frame()->document())
         return;
     
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireOnChange);
 }
 
 #if ENABLE(NO_LISTBOX_RENDERING)
 void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     select->listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
 }
 
 bool RenderMenuList::multiple()
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     return select->multiple();
 }
 #endif
 
 void RenderMenuList::didSetSelectedIndex(int listIndex)
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     didUpdateActiveOption(select->listToOptionIndex(listIndex));
 }
 
@@ -355,7 +358,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
         return;
     m_lastActiveIndex = optionIndex;
 
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     int listIndex = select->optionToListIndex(optionIndex);
     if (listIndex < 0 || listIndex >= static_cast<int>(select->listItems().size()))
         return;
@@ -368,7 +371,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
 
 String RenderMenuList::itemText(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
@@ -393,7 +396,7 @@ String RenderMenuList::itemIcon(unsigned) const
 String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
@@ -403,7 +406,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
@@ -413,7 +416,7 @@ String RenderMenuList::itemToolTip(unsigned listIndex) const
 
 bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
@@ -434,7 +437,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size()) {
         // If we are making an out of bounds access, then we want to use the style
@@ -454,7 +457,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 
 Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return style()->visitedDependentColor(CSSPropertyBackgroundColor);
@@ -531,13 +534,13 @@ int RenderMenuList::clientPaddingRight() const
 
 int RenderMenuList::listSize() const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     return select->listItems().size();
 }
 
 int RenderMenuList::selectedIndex() const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     return select->optionToListIndex(select->selectedIndex());
 }
 
@@ -548,7 +551,7 @@ void RenderMenuList::popupDidHide()
 
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
@@ -558,7 +561,7 @@ bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 
 bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
@@ -568,7 +571,7 @@ bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 
 bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
@@ -580,7 +583,7 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     setTextFromOption(select->listToOptionIndex(listIndex));
 }
 

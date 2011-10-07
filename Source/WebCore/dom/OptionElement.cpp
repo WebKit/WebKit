@@ -26,6 +26,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSelectElement.h"
 #include "OptionGroupElement.h"
 #include "ScriptElement.h"
 #include "SelectElement.h"
@@ -42,7 +43,7 @@ void OptionElement::setSelectedState(OptionElementData& data, Element* element, 
     element->setNeedsStyleRecalc();
 }
 
-int OptionElement::optionIndex(SelectElement* selectElement, const Element* element)
+int OptionElement::optionIndex(HTMLSelectElement* selectElement, const Element* element)
 {
     if (!selectElement)
         return 0;

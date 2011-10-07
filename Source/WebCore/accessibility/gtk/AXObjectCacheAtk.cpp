@@ -25,8 +25,8 @@
 #include "Document.h"
 #include "Element.h"
 #include "GOwnPtr.h"
+#include "HTMLSelectElement.h"
 #include "Range.h"
-#include "SelectElement.h"
 #include "TextIterator.h"
 
 namespace WebCore {
@@ -84,7 +84,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     g_signal_emit_by_name(object->wrapper(), "selection-changed");
 
     // Find the item where the selection change was triggered from.
-    SelectElement* select = toSelectElement(static_cast<Element*>(object->node()));
+    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(object->node()));
     if (!select)
         return;
     int changedItemIndex = select->activeSelectionStartListIndex();

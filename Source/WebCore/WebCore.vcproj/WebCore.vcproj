@@ -48694,10 +48694,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\SelectElementWin.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\SelectorQuery.cpp"
 				>
 				<FileConfiguration
@@ -57200,6 +57196,10 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLSelectElementWin.cpp"
+				>
 			</File>
 			<File
 				RelativePath="..\html\HTMLSelectElement.h"
