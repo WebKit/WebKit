@@ -1,3 +1,20 @@
+2011-10-07  Andreas Kling  <kling@webkit.org>
+
+        Shrink StyleInheritedData.
+        https://bugs.webkit.org/show_bug.cgi?id=69625
+
+        Reviewed by Antti Koivisto.
+
+        Rearrange the members of StyleInheritedData to fold as much
+        as possible into the padding at the end of RefCounted.
+
+        This shrinks StyleInheritedData by 8 bytes on 64-bit, reducing
+        memory consumption by 500 kB when loading the full HTML5 spec.
+
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/style/StyleInheritedData.h:
+
 2011-10-07  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make ScriptsPanel compile
