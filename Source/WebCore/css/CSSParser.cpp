@@ -4998,8 +4998,9 @@ bool CSSParser::parseShadow(int propId, bool important)
         } else {
             // The only other type of value that's ok is a color value.
             RefPtr<CSSPrimitiveValue> parsedColor;
-            bool isColor = ((val->id >= CSSValueAqua && val->id <= CSSValueWindowtext) || val->id == CSSValueMenu ||
-                            (val->id >= CSSValueWebkitFocusRingColor && val->id <= CSSValueWebkitText && !m_strict));
+            bool isColor = ((val->id >= CSSValueAqua && val->id <= CSSValueWindowtext) || val->id == CSSValueMenu
+                            || (val->id >= CSSValueWebkitFocusRingColor && val->id <= CSSValueWebkitText && !m_strict)
+                            || val->id == CSSValueCurrentcolor);
             if (isColor) {
                 if (!context.allowColor)
                     return false;
