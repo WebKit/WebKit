@@ -87,11 +87,19 @@ public:
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
 
+    float opacity; // Whether or not we're transparent.
+
+    short m_counterIncrement;
+    short m_counterReset;
+
+    float m_perspective;
+    Length m_perspectiveOriginX;
+    Length m_perspectiveOriginY;
+
     LineClampValue lineClamp; // An Apple extension.
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> m_dashboardRegions;
 #endif
-    float opacity; // Whether or not we're transparent.
 
     DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
 #if ENABLE(CSS3_FLEXBOX)
@@ -117,10 +125,6 @@ public:
 
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;
-
-    float m_perspective;
-    Length m_perspectiveOriginX;
-    Length m_perspectiveOriginY;
 
     LengthSize m_pageSize;
 
@@ -151,9 +155,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool m_runningAcceleratedAnimation : 1;
 #endif
-
-    short m_counterIncrement;
-    short m_counterReset;
 
 private:
     StyleRareNonInheritedData();

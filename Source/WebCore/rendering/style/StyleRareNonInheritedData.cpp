@@ -34,12 +34,14 @@
 namespace WebCore {
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
-    : lineClamp(RenderStyle::initialLineClamp())
-    , opacity(RenderStyle::initialOpacity())
-    , m_mask(FillLayer(MaskFillLayer))
+    : opacity(RenderStyle::initialOpacity())
+    , m_counterIncrement(0)
+    , m_counterReset(0)
     , m_perspective(RenderStyle::initialPerspective())
     , m_perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
+    , lineClamp(RenderStyle::initialLineClamp())
+    , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
     , m_wrapShape(RenderStyle::initialWrapShape())
     , m_flowThread(RenderStyle::initialFlowThread())
@@ -63,16 +65,19 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(false)
 #endif
-    , m_counterIncrement(0)
-    , m_counterReset(0)
 {
     m_maskBoxImage.setMaskDefaults();
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
     : RefCounted<StyleRareNonInheritedData>()
-    , lineClamp(o.lineClamp)
     , opacity(o.opacity)
+    , m_counterIncrement(o.m_counterIncrement)
+    , m_counterReset(o.m_counterReset)
+    , m_perspective(o.m_perspective)
+    , m_perspectiveOriginX(o.m_perspectiveOriginX)
+    , m_perspectiveOriginY(o.m_perspectiveOriginY)
+    , lineClamp(o.lineClamp)
     , m_deprecatedFlexibleBox(o.m_deprecatedFlexibleBox)
 #if ENABLE(CSS3_FLEXBOX)
     , m_flexibleBox(o.m_flexibleBox)
@@ -91,9 +96,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_transitions(o.m_transitions ? adoptPtr(new AnimationList(*o.m_transitions)) : nullptr)
     , m_mask(o.m_mask)
     , m_maskBoxImage(o.m_maskBoxImage)
-    , m_perspective(o.m_perspective)
-    , m_perspectiveOriginX(o.m_perspectiveOriginX)
-    , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , m_pageSize(o.m_pageSize)
     , m_wrapShape(o.m_wrapShape)
     , m_flowThread(o.m_flowThread)
@@ -117,8 +119,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
-    , m_counterIncrement(o.m_counterIncrement)
-    , m_counterReset(o.m_counterReset)
 {
 }
 
