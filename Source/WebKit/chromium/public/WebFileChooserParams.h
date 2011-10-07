@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,21 +38,24 @@
 namespace WebKit {
 
 struct WebFileChooserParams {
-    // If |multiSelect| is true, the dialog allow to select multiple files.
+    // If |multiSelect| is true, the dialog allows the user to select multiple files.
     bool multiSelect;
     // If |directory| is true, the dialog allows the user to select a directory.
     bool directory;
-    // |title| is a title of a file chooser dialog. It can be an empty string.
+    // If |saveAs| is true, the dialog allows the user to select a possibly
+    // non-existent file. This can be used for a "Save As" dialog.
+    bool saveAs;
+    // |title| is the title for a file chooser dialog. It can be an empty string.
     WebString title;
     // |initialValue| is a filename which the dialog should select by default.
     // It can be an empty string.
     WebString initialValue;
     // |acceptTypes| has a comma-separated MIME types such as "audio/*,text/plain".
     // The dialog may restrict selectable files to the specified MIME types.
-    // This value comes from an 'accept' attribute value of an INPUT element.
-    // So it might be a wrong formatted string.
+    // This value comes from an 'accept' attribute value of an INPUT element, so it
+    // might be an incorrectly formatted string.
     WebString acceptTypes;
-    // |selectedFiles| has filenames which a file upload control already select.
+    // |selectedFiles| has filenames which a file upload control already selected.
     // A WebViewClient implementation may ask a user to select
     //  - removing a file from the selected files,
     //  - appending other files, or
@@ -63,6 +66,7 @@ struct WebFileChooserParams {
     WebFileChooserParams()
         : multiSelect(false)
         , directory(false)
+        , saveAs(false)
     {
     }
 };

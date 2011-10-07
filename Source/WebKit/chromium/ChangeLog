@@ -1,3 +1,15 @@
+2011-10-06  Bill Budge  <bbudge@chromium.org>
+
+        Adds a field, "saveAs", to WebFileChooserParams to present the file chooser
+        dialog in "Save As" mode (allows the user to choose a possibly non-existent file
+        for saving).
+        https://bugs.webkit.org/show_bug.cgi?id=69301
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFileChooserParams.h:
+        (WebKit::WebFileChooserParams::WebFileChooserParams):
+
 2011-10-06  Antoine Labour  <piman@chromium.org>
 
         Webkit API for compositor
