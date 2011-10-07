@@ -236,6 +236,8 @@ namespace JSC {
         }
 
         bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
+        
+        void pin();
 
         static const int s_maxTransitionLength = 64;
 

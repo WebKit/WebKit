@@ -369,7 +369,7 @@ Structure* Structure::changePrototypeTransition(JSGlobalData& globalData, Struct
 
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
-    transition->m_isPinnedPropertyTable = true;
+    transition->pin();
 
     return transition;
 }
@@ -385,7 +385,7 @@ Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Stru
 
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
-    transition->m_isPinnedPropertyTable = true;
+    transition->pin();
 
     if (transition->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         transition->despecifyAllFunctions(globalData);
@@ -405,7 +405,7 @@ Structure* Structure::getterSetterTransition(JSGlobalData& globalData, Structure
 
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
-    transition->m_isPinnedPropertyTable = true;
+    transition->pin();
 
     return transition;
 }
@@ -418,8 +418,8 @@ Structure* Structure::toDictionaryTransition(JSGlobalData& globalData, Structure
 
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
-    transition->m_isPinnedPropertyTable = true;
     transition->m_dictionaryKind = kind;
+    transition->pin();
 
     return transition;
 }
@@ -471,8 +471,8 @@ Structure* Structure::preventExtensionsTransition(JSGlobalData& globalData, Stru
 
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
-    transition->m_isPinnedPropertyTable = true;
     transition->m_preventExtensions = true;
+    transition->pin();
 
     return transition;
 }
@@ -549,8 +549,8 @@ size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const I
         specificValue = 0;
 
     materializePropertyMapIfNecessary(globalData);
-
-    m_isPinnedPropertyTable = true;
+    
+    pin();
 
     size_t offset = putSpecificValue(globalData, propertyName, attributes, specificValue);
     if (propertyStorageSize() > propertyStorageCapacity())
@@ -565,9 +565,16 @@ size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, cons
 
     materializePropertyMapIfNecessary(globalData);
 
-    m_isPinnedPropertyTable = true;
+    pin();
     size_t offset = remove(propertyName);
     return offset;
+}
+
+void Structure::pin()
+{
+    m_isPinnedPropertyTable = true;
+    m_previous.clear();
+    m_nameInPrevious.clear();
 }
 
 #if DUMP_PROPERTYMAP_STATS

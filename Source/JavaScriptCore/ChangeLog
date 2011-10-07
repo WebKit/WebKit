@@ -1,3 +1,23 @@
+2011-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure does not reset m_previous when pinning the property map
+        https://bugs.webkit.org/show_bug.cgi?id=69583
+
+        Reviewed by Gavin Barraclough.
+        
+        This is an 0.6% performance improvement in V8, and 0.2% overall.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::pin):
+        * runtime/Structure.h:
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         When building with clang, enable -Wglobal-constructors and -Wexit-time-destructors
