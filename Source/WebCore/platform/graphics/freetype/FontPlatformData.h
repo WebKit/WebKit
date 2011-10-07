@@ -100,7 +100,7 @@ public:
     cairo_scaled_font_t* m_scaledFont;
 
 private:
-    void initializeWithFontFace(cairo_font_face_t*);
+    void initializeWithFontFace(cairo_font_face_t*, const FontDescription& = FontDescription());
     static cairo_scaled_font_t* hashTableDeletedFontValue() { return reinterpret_cast<cairo_scaled_font_t*>(-1); }
 };
 

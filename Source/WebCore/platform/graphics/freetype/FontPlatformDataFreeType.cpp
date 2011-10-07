@@ -122,7 +122,7 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_scaledFont(0)
 {
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
-    initializeWithFontFace(fontFace.get());
+    initializeWithFontFace(fontFace.get(), fontDescription);
 
     int spacing;
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
@@ -238,7 +238,7 @@ String FontPlatformData::description() const
 }
 #endif
 
-void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
+void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const FontDescription& fontDescription)
 {
     cairo_font_options_t* options = getDefaultFontOptions();
 
@@ -265,6 +265,11 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
             FcMatrixMultiply(&fontConfigMatrix, &fontConfigMatrix, tempFontConfigMatrix);
         cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
                           -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
+
+        // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
+        int actualFontSlant;
+        if (fontDescription.italic() && FcPatternGetInteger(m_pattern.get(), FC_SLANT, 0, &actualFontSlant) == FcResultMatch)
+            m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
 
         // The matrix from FontConfig does not include the scale. 
         cairo_matrix_scale(&fontMatrix, realSize, realSize);

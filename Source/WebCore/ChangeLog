@@ -1,3 +1,16 @@
+2011-10-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [Freetype] Pseudo-italics do not work
+        https://bugs.webkit.org/show_bug.cgi?id=40856
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/freetype/FontPlatformData.h: Add the font description as an argument initializeWithFontFace.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Pass the font description to initializeWithFontFace.
+        (WebCore::FontPlatformData::initializeWithFontFace): If we were asked for an italic font and we were
+        given one that wasn't oblique or italic, activate the synthetic oblique bit.
+
 2011-10-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] avoid direct access to GstMessage structure field
