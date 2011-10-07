@@ -3802,3 +3802,9 @@ BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 
 BUGWK69587 : editing/pasteboard/smart-paste-008.html = IMAGE+TEXT
+
+// Broken with V8 roll to 3.6.5.1.
+BUG_RICOW : fast/js/array-functions-non-arrays.html = TEXT
+BUG_RICOW : fast/js/array-prototype-properties.html = TEXT
+BUG_RICOW : fast/js/kde/RegExp.html = TEXT
+BUG_RICOW : fast/js/toString-overrides.html = TEXT

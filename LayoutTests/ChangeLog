@@ -1,3 +1,11 @@
+2011-10-07  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Update test_expectations after V8 roll.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-07  Vineet Chaudary  <vineet.chaudhary@motorola.com>
 
         background-color affects the font color in disabled textarea.
