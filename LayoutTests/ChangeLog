@@ -1,3 +1,9 @@
+2011-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-enable a test fixed by r93529.
+
+        * platform/win/Skipped:
+
 2011-10-07  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69658
