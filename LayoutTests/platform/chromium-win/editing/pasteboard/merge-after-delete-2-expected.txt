@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -27,10 +27,8 @@ layer at (0,0) size 800x600
           text run at (0,60) width 61: "operation."
       RenderBlock {DIV} at (2,172) size 780x52 [border: (1px solid #000000)]
         RenderBlock {DIV} at (3,3) size 774x22 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 8x19
-            text run at (1,1) width 8: "b"
-          RenderText {#text} at (9,1) size 20x19
-            text run at (9,1) width 20: "foo"
+          RenderText {#text} at (1,1) size 28x19
+            text run at (1,1) width 28: "bfoo"
         RenderBlock (anonymous) at (1,27) size 778x0
         RenderBlock {DIV} at (3,27) size 774x22 [border: (1px solid #000000)]
           RenderText {#text} at (1,1) size 20x19

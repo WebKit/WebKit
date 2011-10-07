@@ -1,17 +1,17 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 11 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 4 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -24,10 +24,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 383: "This tests pasting a Mail blockquote at the start of a paragraph. "
           text run at (383,0) width 199: "Blockquoting should be stripped."
       RenderBlock {DIV} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 109x19
-          text run at (0,0) width 109: "Blockquoted Text"
-        RenderText {#text} at (109,0) size 7x19
-          text run at (109,0) width 7: "x"
+        RenderText {#text} at (0,0) size 116x19
+          text run at (0,0) width 116: "Blockquoted Textx"
       RenderBlock {P} at (0,72) size 784x40
         RenderText {#text} at (0,0) size 782x39
           text run at (0,0) width 276: "This tests pasting text into a Mail blockquote. "
@@ -36,15 +34,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,128) size 784x56
         RenderBlock {BLOCKQUOTE} at (40,0) size 704x20
           RenderBlock {DIV} at (0,0) size 704x20
-            RenderText {#text} at (0,0) size 78x19
-              text run at (0,0) width 78: "Blockquoted"
-            RenderText {#text} at (78,0) size 20x19
-              text run at (78,0) width 20: "foo"
+            RenderText {#text} at (0,0) size 98x19
+              text run at (0,0) width 98: "Blockquotedfoo"
         RenderBlock (anonymous) at (0,36) size 784x0
         RenderBlock {BLOCKQUOTE} at (40,36) size 704x20
           RenderBlock {DIV} at (0,0) size 704x20
-            RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "bar"
-            RenderText {#text} at (20,0) size 27x19
-              text run at (20,0) width 27: "Text"
-caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body
+            RenderText {#text} at (0,0) size 47x19
+              text run at (0,0) width 47: "barText"
+caret: position 4 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

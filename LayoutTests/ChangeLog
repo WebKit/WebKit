@@ -1,5 +1,53 @@
 2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium Windows and Chromium Linux rebaselines for r96870. Also skip editing/pasteboard/smart-paste-008.html
+        because it's a real failure (tracked by the bug 69587).
+
+        * platform/chromium-linux/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-linux/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-003-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-004-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-015-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-br-010-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-line-011-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-line-012-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-listitem-001-expected.txt:
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.txt:
+        * platform/chromium-win/editing/inserting/insert-3907422-fix-expected.txt: Added.
+        * platform/chromium-win/editing/inserting/multiple-lines-selected-expected.txt:
+        * platform/chromium-win/editing/pasteboard/5032095-expected.txt:
+        * platform/chromium-win/editing/pasteboard/interchange-newline-1-expected.txt: Added.
+        * platform/chromium-win/editing/pasteboard/merge-after-delete-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/chromium-win/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-win/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-002-expected.txt: Added.
+        * platform/chromium-win/editing/pasteboard/paste-text-003-expected.txt: Added.
+        * platform/chromium-win/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/chromium-win/fast/events/ondragenter-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Qt rebaseline after r96870. Also skip editing/pasteboard/smart-paste-008.html because it's a real failure
         (tracked by the bug 69587).
 
