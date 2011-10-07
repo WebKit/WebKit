@@ -29,7 +29,7 @@
                 var source = document.createElement('source');
                 source.src = findMediaFile(type, name);
                 sources.push(source.src);
-                source.type = mimeTypeForExtension(source.src.split('.')[1]);
+                source.type = mimeTypeForExtension(source.src.split('.').pop());
                 video.appendChild(source);
             }
 

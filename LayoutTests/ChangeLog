@@ -1,3 +1,17 @@
+2011-10-06  Jer Noble  <jer.noble@apple.com>
+
+        Some media tests fail when run inside a directory path containing periods.
+        https://bugs.webkit.org/show_bug.cgi?id=69580
+
+        Reviewed by Darin Adler.
+
+        To determine the extension, retrieve the last string following a period instead of the second.
+
+        * media/media-blocked-by-beforeload.html:
+        * media/video-source-load.html:
+        * media/video-source-moved.html:
+        * media/video-source-removed.html:
+
 2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Windows and Chromium Linux rebaselines for r96870. Also skip editing/pasteboard/smart-paste-008.html

@@ -43,12 +43,12 @@
 
             var blockedSource = document.createElement('source');
             blockedSource.src = blockedURL;
-            blockedSource.type = mimeTypeForExtension(blockedSource.src.split('.')[1]);
+            blockedSource.type = mimeTypeForExtension(blockedSource.src.split('.').pop());
             video.appendChild(blockedSource);
 
             var allowedSource = document.createElement('source');
             allowedSource.src = allowedURL;
-            allowedSource.type = mimeTypeForExtension(allowedSource.src.split('.')[1]);
+            allowedSource.type = mimeTypeForExtension(allowedSource.src.split('.').pop());
             video.appendChild(allowedSource);
 
             test = 2;

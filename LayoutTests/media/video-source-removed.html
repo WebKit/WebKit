@@ -48,7 +48,7 @@
             {
                 source = document.createElement('source');
                 source.src = findMediaFile("video", index + "-" + Date.now());
-                source.type = mimeTypeForExtension(source.src.split('.')[1]);
+                source.type = mimeTypeForExtension(source.src.split('.').pop());
                 video.appendChild(source);
             }
             
