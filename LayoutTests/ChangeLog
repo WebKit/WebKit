@@ -1,3 +1,11 @@
+2011-10-06  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Remove passing tests from test_expectations.txt.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK rebaseline after r96870. Also skip editing/pasteboard/smart-paste-008.html because it's a real failure

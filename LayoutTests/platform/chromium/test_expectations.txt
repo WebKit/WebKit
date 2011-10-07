@@ -3550,6 +3550,9 @@ BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PAS
 BUG_REED MAC : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED MAC : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED MAC : fast/canvas/canvas-lineWidth.html = TEXT
+BUG_REED WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
+BUG_REED WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUG_REED WIN LINUX GPU : fast/canvas/canvas-lineWidth.html = TEXT
 
 // Failing temporarily, rebase-line after skia rolls to WK
 BUG_BSALOMON WIN MAC LINUX GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
@@ -3598,22 +3601,7 @@ BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
-BUGWK68437 LEOPARD CPU GPU RELEASE : canvas/philip/tests/2d.text.draw.align.center.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.end.rtl.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.left.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.right.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.start.ltr.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.start.rtl.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.baseline.alphabetic.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fontface.html = TEXT
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fontface.repeat.html = TEXT
-BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.space.basic.html = TEXT
-BUGWK68437 LEOPARD GPU : fast/canvas/2d.fillText.gradient.html = TEXT
-BUGWK68437 LEOPARD GPU : fast/canvas/fillText-shadow.html = TEXT
 BUGWK68437 LEOPARD GPU : fast/canvas/set-colors.html = TEXT
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
@@ -3629,7 +3617,6 @@ BUGWK68437 LEOPARD GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/drawImage.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/font-update.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
@@ -3765,7 +3752,7 @@ BUGWK62092 MAC : editing/pasteboard/paste-text-006.html = IMAGE
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS FAIL
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
-BUGWK69060 WIN LINUX : editing/pasteboard/paste-text-006.html = IMAGE IMAGE+TEXT
+BUGWK69060 WIN : editing/pasteboard/paste-text-006.html = IMAGE IMAGE+TEXT
 
 BUGWK69062 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
 
