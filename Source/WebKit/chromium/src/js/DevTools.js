@@ -108,7 +108,7 @@ WebInspector.UIString = function(string)
         glassPane = document.createElement("div");
         glassPane.style.cssText = "position:absolute;top:0;bottom:0;left:0;right:0;opacity:0;z-index:1";
         glassPane.id = "glass-pane-for-drag";
-        element.parentElement.appendChild(glassPane);
+        element.ownerDocument.body.appendChild(glassPane);
     }
 
     function hideGlassPane()
