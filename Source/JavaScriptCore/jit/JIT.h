@@ -165,6 +165,7 @@ namespace JSC {
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
         bool isCall;
+        unsigned bytecodeIndex;
     };
 
     struct MethodCallCompilationInfo {

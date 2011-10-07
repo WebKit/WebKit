@@ -587,6 +587,7 @@ private:
         case PutById:
         case PutByIdDirect:
         case CheckStructure:
+        case CheckFunction:
         case PutStructure:
         case PutByOffset:
             break;
@@ -984,7 +985,7 @@ private:
         }
         return NoNode;
     }
-    
+
     NodeIndex getMethodLoadElimination(const MethodCheckData& methodCheckData, unsigned identifierNumber, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
@@ -1022,7 +1023,27 @@ private:
         }
         return NoNode;
     }
-    
+
+    bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case CheckFunction:
+                if (node.child1() == child1 && node.function() == function)
+                    return true;
+                break;
+                
+            default:
+                if (clobbersWorld(index))
+                    return false;
+                break;
+            }
+        }
+        return false;
+    }
+
     bool checkStructureLoadElimination(const StructureSet& structureSet, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
@@ -1308,7 +1329,12 @@ private:
             if (checkStructureLoadElimination(node.structureSet(), node.child1()))
                 eliminate();
             break;
-            
+
+        case CheckFunction:
+            if (checkFunctionElimination(node.function(), node.child1()))
+                eliminate();
+            break;
+
         case GetPropertyStorage:
             setReplacement(getPropertyStorageLoadElimination(node.child1()));
             break;

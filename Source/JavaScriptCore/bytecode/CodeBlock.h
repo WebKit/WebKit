@@ -124,6 +124,7 @@ namespace JSC {
         bool hasSeenShouldRepatch : 1;
         bool isCall : 1;
         bool isDFG : 1;
+        unsigned bytecodeIndex;
 
         bool isLinked() { return callee; }
         void unlink(JSGlobalData&, RepatchBuffer&);
@@ -210,6 +211,11 @@ namespace JSC {
         return callLinkInfo->callReturnLocation.executableAddress();
     }
 
+    inline unsigned getCallLinkInfoBytecodeIndex(CallLinkInfo* callLinkInfo)
+    {
+        return callLinkInfo->bytecodeIndex;
+    }
+
     inline void* getMethodCallLinkInfoReturnLocation(MethodCallLinkInfo* methodCallLinkInfo)
     {
         return methodCallLinkInfo->callReturnLocation.executableAddress();
@@ -289,6 +295,11 @@ namespace JSC {
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
             return *(binarySearch<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
+        }
+        
+        CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<CallLinkInfo, unsigned, getCallLinkInfoBytecodeIndex>(m_callLinkInfos.begin(), m_callLinkInfos.size(), bytecodeIndex));
         }
 
         MethodCallLinkInfo& getMethodCallLinkInfo(ReturnAddressPtr returnAddress)

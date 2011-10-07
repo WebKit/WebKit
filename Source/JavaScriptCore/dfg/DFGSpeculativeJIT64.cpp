@@ -2007,7 +2007,12 @@ void SpeculativeJIT::compile(Node& node)
         integerResult(resultGPR, m_compileIndex);
         break;
     }
-
+    case CheckFunction: {
+        SpeculateCellOperand function(this, node.child1());
+        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, function.gpr(), JITCompiler::TrustedImmPtr(node.function())));
+        noResult(m_compileIndex);
+        break;
+    }
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
         

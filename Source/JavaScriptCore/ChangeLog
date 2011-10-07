@@ -1,3 +1,45 @@
+2011-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Support direct calls to intrinsic functions
+        https://bugs.webkit.org/show_bug.cgi?id=69646
+
+        Reviewed by Gavin Barraclough.
+
+        Add support for optimising non-method_check calls
+        to intrinsic functions (eg. when Math.abs, etc are
+        cached in local variables). 
+
+        * bytecode/CodeBlock.h:
+        (JSC::getCallLinkInfoBytecodeIndex):
+            Support searching CallLinkInfos by bytecode index
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+            Add support for linked calls in addition to method_check
+            when searching for intrinsics
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasFunctionCheckData):
+        (JSC::DFG::Node::function):
+            Add ability to store a JSFunction* in a node - this is safe
+            as the function will be marked by the codeblock we're compiling
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::checkFunctionElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+            Add support for new CheckFunction node, and implement CSE pass.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            Rather trivial implementation of CheckFunction
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+            Need to propagate bytecode index for calls now.
+
 2011-10-07  Dominic Cooney  <dominicc@chromium.org>
 
         [JSC] Disable ThreadRestrictionVerifier for JIT ExecutableMemoryHandles

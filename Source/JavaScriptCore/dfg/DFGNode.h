@@ -341,6 +341,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
+    macro(CheckFunction, NodeMustGenerate) \
     \
     /* Optimizations for array mutation. */\
     macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
@@ -807,7 +808,18 @@ struct Node {
         ASSERT(hasMethodCheckData());
         return m_opInfo2;
     }
-    
+
+    bool hasFunctionCheckData()
+    {
+        return op == CheckFunction;
+    }
+
+    JSFunction* function()
+    {
+        ASSERT(hasFunctionCheckData());
+        return reinterpret_cast<JSFunction*>(m_opInfo);
+    }
+
     bool hasStructureTransitionData()
     {
         return op == PutStructure;

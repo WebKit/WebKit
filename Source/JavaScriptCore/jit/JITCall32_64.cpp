@@ -223,6 +223,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callStructureStubCompilationInfo[callLinkInfoIndex].isCall = opcodeID != op_construct;
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeIndex;
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
 

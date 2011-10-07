@@ -1543,7 +1543,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_call: {
             NodeIndex callTarget = get(currentInstruction[1].u.operand);
-            if (m_graph.isFunctionConstant(m_codeBlock, callTarget)) {
+            enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
+            
+            if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
+                callType = ConstantFunction;
+            else if (m_profiledBlock->getCallLinkInfo(m_currentIndex).isLinked())
+                callType = LinkedFunction;
+            else
+                callType = UnknownFunction;
+            if (callType != UnknownFunction) {
                 int argCount = currentInstruction[2].u.operand;
                 int registerOffset = currentInstruction[3].u.operand;
                 int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
@@ -1559,8 +1567,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     usesResult = true;
                     prediction = getPrediction(m_graph.size(), m_currentIndex + OPCODE_LENGTH(op_call));
                 }
-                
-                DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget)->executable()->intrinsic();
+                DFG::Intrinsic intrinsic;
+                if (callType == ConstantFunction)
+                    intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget)->executable()->intrinsic();
+                else {
+                    ASSERT(callType == LinkedFunction);
+                    JSFunction* function = m_profiledBlock->getCallLinkInfo(m_currentIndex).callee.get();
+                    intrinsic = function->executable()->intrinsic();
+                    if (intrinsic != NoIntrinsic)
+                        addToGraph(CheckFunction, OpInfo(function), callTarget);
+                }
                 
                 if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
                     // NEXT_OPCODE() has to be inside braces.
