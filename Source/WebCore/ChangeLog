@@ -1,3 +1,18 @@
+2011-10-06  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Let rule_binding use os.execvp() instead of subprocess.call() to spawn fewer processes.
+        https://bugs.webkit.org/show_bug.cgi?id=69589
+
+        Reviewed by Adam Barth.
+
+        When building with `make -j40`, all the binding rules are built en bloc. Since this script currently
+        uses subprocess.call(), that actually spawns 80 processes at once. OS X has a max process limit of
+        255 by default, so the build used to fail with
+        "open2: fork failed: Resource temporarily unavailable at ../bindings/scripts/preprocessor.pm line 60"
+        As a fix, use execvp() instead, which replaces the current process instead of spawning a new one.
+
+        * WebCore.gyp/scripts/rule_binding.py:
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         When building with clang, enable -Wglobal-constructors and -Wexit-time-destructors
