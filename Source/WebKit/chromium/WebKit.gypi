@@ -60,6 +60,8 @@
             'tests/CCSchedulerTest.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CCThreadTest.cpp',
+            'tests/FrameTestHelpers.cpp',
+            'tests/FrameTestHelpers.h',
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
@@ -80,6 +82,7 @@
             'tests/WebCompositorImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebURLRequestTest.cpp',
+            'tests/WebViewTest.cpp',
         ],
 
         'conditions': [

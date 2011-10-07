@@ -1,3 +1,25 @@
+2011-10-07  Nate Chapin  <japhet@chromium.org>
+
+        Always call setActive() in WebViewImpl::setFocus(),
+        not just when enabling focus.
+        https://bugs.webkit.org/show_bug.cgi?id=65220
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setFocus):
+        * tests/FrameTestHelpers.cpp: Added, refactored out of WebFrameTest.cpp.
+        (WebKit::FrameTestHelpers::registerMockedURLLoad):
+        (WebKit::FrameTestHelpers::loadFrame):
+        (WebKit::FrameTestHelpers::defaultWebFrameClient):
+        (WebKit::FrameTestHelpers::defaultWebViewClient):
+        (WebKit::FrameTestHelpers::createWebViewAndLoad):
+        * tests/FrameTestHelpers.h: Added, refactored out of WebFrameTest.cpp.
+        * tests/WebFrameTest.cpp:
+        * tests/WebViewTest.cpp: Added.
+
 2011-10-06  Bill Budge  <bbudge@chromium.org>
 
         Adds a field, "saveAs", to WebFileChooserParams to present the file chooser

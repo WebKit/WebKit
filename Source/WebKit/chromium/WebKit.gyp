@@ -691,6 +691,7 @@
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
+                                'tests/WebViewTest.cpp',
                                 'tests/PopupMenuTest.cpp',
                             ],
                             'conditions': [

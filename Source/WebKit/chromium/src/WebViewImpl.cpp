@@ -1300,10 +1300,8 @@ void WebViewImpl::mouseCaptureLost()
 void WebViewImpl::setFocus(bool enable)
 {
     m_page->focusController()->setFocused(enable);
+    m_page->focusController()->setActive(enable);
     if (enable) {
-        // Note that we don't call setActive() when disabled as this cause extra
-        // focus/blur events to be dispatched.
-        m_page->focusController()->setActive(true);
         RefPtr<Frame> focusedFrame = m_page->focusController()->focusedFrame();
         if (focusedFrame) {
             Node* focusedNode = focusedFrame->document()->focusedNode();

@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "FrameTestHelpers.h"
 #include "ResourceError.h"
 #include "WebDocument.h"
 #include "WebFormElement.h"
@@ -39,14 +40,8 @@
 #include "WebSearchableFormData.h"
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebURLRequest.h"
-#include "WebURLResponse.h"
-#include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "v8.h"
-#include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
@@ -57,8 +52,8 @@ namespace {
 class WebFrameTest : public testing::Test {
 public:
     WebFrameTest()
-        : baseURL("http://www.test.com/"),
-          chromeURL("chrome://")
+        : m_baseURL("http://www.test.com/"),
+          m_chromeURL("chrome://")
     {
     }
 
@@ -69,59 +64,17 @@ public:
 
     void registerMockedHttpURLLoad(const std::string& fileName)
     {
-        registerMockedURLLoad(baseURL, fileName);
+        FrameTestHelpers::registerMockedURLLoad(m_baseURL, fileName);
     }
 
     void registerMockedChromeURLLoad(const std::string& fileName)
     {
-        registerMockedURLLoad(chromeURL, fileName);
-    }
-
-    void serveRequests()
-    {
-        webkit_support::ServeAsynchronousMockedRequests();
-    }
-
-    void loadHttpFrame(WebFrame* frame, const std::string& fileName)
-    {
-        loadFrame(frame, baseURL, fileName);
-    }
-
-    void loadChromeFrame(WebFrame* frame, const std::string& fileName)
-    {
-        loadFrame(frame, chromeURL, fileName);
-    }
-
-    void registerMockedURLLoad(const std::string& base, const std::string& fileName)
-    {
-        WebURLResponse response;
-        response.initialize();
-        response.setMIMEType("text/html");
-
-        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-        filePath += "/Source/WebKit/chromium/tests/data/";
-        filePath += fileName;
-
-        webkit_support::RegisterMockedURL(WebURL(GURL(base + fileName)), response, WebString::fromUTF8(filePath));
-    }
-
-    void loadFrame(WebFrame* frame, const std::string& base, const std::string& fileName)
-    {
-        WebURLRequest urlRequest;
-        urlRequest.initialize();
-        urlRequest.setURL(WebURL(GURL(base + fileName)));
-        frame->loadRequest(urlRequest);
+        FrameTestHelpers::registerMockedURLLoad(m_chromeURL, fileName);
     }
 
 protected:
-    std::string baseURL;
-    std::string chromeURL;
-};
-
-class TestWebFrameClient : public WebFrameClient {
-};
-
-class TestWebViewClient : public WebViewClient {
+    std::string m_baseURL;
+    std::string m_chromeURL;
 };
 
 TEST_F(WebFrameTest, ContentText)
@@ -131,13 +84,7 @@ TEST_F(WebFrameTest, ContentText)
     registerMockedHttpURLLoad("invisible_iframe.html");
     registerMockedHttpURLLoad("zero_sized_iframe.html");
 
-    // Create and initialize the WebView.
-    TestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->initializeMainFrame(&webFrameClient);
-
-    loadHttpFrame(webView->mainFrame(), "iframes_test.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "iframes_test.html");
 
     // Now retrieve the frames text and test it only includes visible elements.
     std::string content = webView->mainFrame()->contentAsText(1024).utf8();
@@ -157,14 +104,7 @@ TEST_F(WebFrameTest, FrameForEnteredContext)
     registerMockedHttpURLLoad("invisible_iframe.html");
     registerMockedHttpURLLoad("zero_sized_iframe.html");
 
-    // Create and initialize the WebView.
-    TestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->settings()->setJavaScriptEnabled(true);
-    webView->initializeMainFrame(&webFrameClient);
-
-    loadHttpFrame(webView->mainFrame(), "iframes_test.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "iframes_test.html", true);
 
     v8::HandleScope scope;
     EXPECT_EQ(webView->mainFrame(),
@@ -181,12 +121,7 @@ TEST_F(WebFrameTest, FormWithNullFrame)
 {
     registerMockedHttpURLLoad("form.html");
 
-    TestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->initializeMainFrame(&webFrameClient);
-
-    loadHttpFrame(webView->mainFrame(), "form.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "form.html");
 
     WebVector<WebFormElement> forms;
     webView->mainFrame()->document().forms(forms);
@@ -202,18 +137,11 @@ TEST_F(WebFrameTest, ChromePageNoJavascript)
 {
     registerMockedChromeURLLoad("history.html");
 
-    // Create and initialize the WebView.
-    TestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->settings()->setJavaScriptEnabled(true);
-    webView->initializeMainFrame(&webFrameClient);
-
-    loadChromeFrame(webView->mainFrame(), "history.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_chromeURL + "history.html", true);
 
     // Try to run JS against the chrome-style URL.
     WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs("chrome");
-    loadFrame(webView->mainFrame(), "javascript:", "document.body.appendChild(document.createTextNode('Clobbered'))");
+    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.body.appendChild(document.createTextNode('Clobbered'))");
 
     // Now retrieve the frames text and see if it was clobbered.
     std::string content = webView->mainFrame()->contentAsText(1024).utf8();
@@ -247,17 +175,12 @@ TEST_F(WebFrameTest, ReloadDoesntSetRedirect)
     registerMockedHttpURLLoad("form.html");
 
     TestReloadDoesntRedirectWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->initializeMainFrame(&webFrameClient);
-
-    loadHttpFrame(webView->mainFrame(), "form.html");
-    serveRequests();
-    // Frame is loaded.
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "form.html", false, &webFrameClient);
 
     webView->mainFrame()->reload(true);
     // start reload before request is delivered.
     webView->mainFrame()->reload(true);
-    serveRequests();
+    webkit_support::ServeAsynchronousMockedRequests();
 }
 
 TEST_F(WebFrameTest, ClearFocusedNodeTest)
@@ -265,15 +188,7 @@ TEST_F(WebFrameTest, ClearFocusedNodeTest)
     registerMockedHttpURLLoad("iframe_clear_focused_node_test.html");
     registerMockedHttpURLLoad("autofocus_input_field_iframe.html");
 
-    // Create and initialize the WebView.
-    TestWebFrameClient webFrameClient;
-    TestWebViewClient webviewClient;
-    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(WebView::create(&webviewClient));
-    webViewImpl->settings()->setJavaScriptEnabled(true);
-    webViewImpl->initializeMainFrame(&webFrameClient);
-
-    loadHttpFrame(webViewImpl->mainFrame(), "iframe_clear_focused_node_test.html");
-    serveRequests();
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "iframe_clear_focused_node_test.html", true));
 
     // Clear the focused node.
     webViewImpl->clearFocusedNode();
@@ -353,11 +268,7 @@ TEST_F(WebFrameTest, ContextNotificationsLoadUnload)
 
     // Load a frame with an iframe, make sure we get the right create notifications.
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->settings()->setJavaScriptEnabled(true);
-    webView->initializeMainFrame(&webFrameClient);
-    loadHttpFrame(webView->mainFrame(), "context_notifications_test.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
 
     WebFrame* mainFrame = webView->mainFrame();
     WebFrame* childFrame = mainFrame->firstChild();
@@ -395,15 +306,11 @@ TEST_F(WebFrameTest, ContextNotificationsReload)
     registerMockedHttpURLLoad("context_notifications_test_frame.html");
 
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->settings()->setJavaScriptEnabled(true);
-    webView->initializeMainFrame(&webFrameClient);
-    loadHttpFrame(webView->mainFrame(), "context_notifications_test.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
 
     // Refresh, we should get two release notifications and two more create notifications.
     webView->mainFrame()->reload(false);
-    serveRequests();
+    webkit_support::ServeAsynchronousMockedRequests();
     ASSERT_EQ(4u, webFrameClient.createNotifications.size());
     ASSERT_EQ(2u, webFrameClient.releaseNotifications.size());
 
@@ -438,11 +345,7 @@ TEST_F(WebFrameTest, ContextNotificationsIsolatedWorlds)
     registerMockedHttpURLLoad("context_notifications_test_frame.html");
 
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0);
-    webView->settings()->setJavaScriptEnabled(true);
-    webView->initializeMainFrame(&webFrameClient);
-    loadHttpFrame(webView->mainFrame(), "context_notifications_test.html");
-    serveRequests();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
 
     // Add an isolated world.
     webFrameClient.reset();
