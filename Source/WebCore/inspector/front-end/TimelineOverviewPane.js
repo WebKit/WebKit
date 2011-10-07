@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.TimelineOverviewPane = function(categories)
 {
     this._categories = categories;
@@ -361,7 +365,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         checkElement.type = "checkbox";
         checkElement.className = "timeline-category-checkbox";
         checkElement.checked = true;
-        checkElement.addEventListener("click", onCheckboxClicked);
+        checkElement.addEventListener("click", onCheckboxClicked, false);
         label.appendChild(checkElement);
 
         var typeElement = document.createElement("span");
@@ -377,7 +381,9 @@ WebInspector.TimelineOverviewPane.prototype = {
 
 WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prototype;
 
-
+/**
+ * @constructor
+ */
 WebInspector.TimelineOverviewCalculator = function()
 {
 }
@@ -420,7 +426,9 @@ WebInspector.TimelineOverviewCalculator.prototype = {
     }
 }
 
-
+/**
+ * @constructor
+ */
 WebInspector.TimelineCategoryGraph = function(category, isEven)
 {
     this._category = category;
@@ -462,6 +470,9 @@ WebInspector.TimelineCategoryGraph.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.TimelinePanel.WindowSelector = function(parent, position, event)
 {
     this._startPosition = position;
@@ -506,6 +517,9 @@ WebInspector.TimelinePanel.WindowSelector.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.HeapGraph = function() {
     this._canvas = document.createElement("canvas");
 

@@ -86,6 +86,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
     {
         var cursorOnEnter = cursor;
         var gotoCase = 1;
+        var YYMARKER;
         while (1) {
             switch (gotoCase)
             // Following comment is replaced with generated state machine.

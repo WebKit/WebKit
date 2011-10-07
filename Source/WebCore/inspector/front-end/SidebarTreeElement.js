@@ -70,10 +70,13 @@ WebInspector.SidebarSectionTreeElement.prototype.__proto__ = TreeElement.prototy
 /**
  * @constructor
  * @extends {TreeElement}
+ * @param {string=} subtitle
+ * @param {Object=} representedObject
+ * @param {boolean=} hasChildren
  */
 WebInspector.SidebarTreeElement = function(className, title, subtitle, representedObject, hasChildren)
 {
-    TreeElement.call(this, "", representedObject || {}, hasChildren);
+    TreeElement.call(this, "", representedObject, hasChildren);
 
     if (hasChildren) {
         this.disclosureButton = document.createElement("button");

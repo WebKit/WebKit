@@ -1,3 +1,39 @@
+2011-10-07  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add timeline panel to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=69628
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        * inspector/front-end/TimelineGrid.js:
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype._createTimelineCategoryStatusBarCheckbox):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createEventDivider):
+        (WebInspector.TimelinePanel.prototype._addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.updateMainViewWidth):
+        (WebInspector.TimelinePanel.prototype.onResize):
+        (WebInspector.TimelinePanel.prototype._windowChanged):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineRecordGraphRow.prototype._onClick):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96892.

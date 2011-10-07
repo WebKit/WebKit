@@ -131,6 +131,9 @@ WebInspector.SourceCSSTokenizer.prototype = {
         return { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
     },
 
+    /**
+     * @param {boolean=} stringEnds
+     */
     _stringToken: function(cursor, stringEnds)
     {
         if (this._isPropertyValue())
@@ -149,6 +152,7 @@ WebInspector.SourceCSSTokenizer.prototype = {
     {
         var cursorOnEnter = cursor;
         var gotoCase = 1;
+        var YYMARKER;
         while (1) {
             switch (gotoCase)
             // Following comment is replaced with generated state machine.
