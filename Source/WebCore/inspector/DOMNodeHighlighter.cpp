@@ -133,10 +133,10 @@ void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad,
         drawOutlinedQuad(context, contentQuad, highlightData->content, highlightData->contentOutline);
 }
 
-void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& lineBoxQuads, HighlightData* highlightData)
+void drawHighlightForSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& absoluteQuads, HighlightData* highlightData)
 {
-    for (size_t i = 0; i < lineBoxQuads.size(); ++i)
-        drawOutlinedQuad(context, lineBoxQuads[i], highlightData->content, Color::transparent);
+    for (size_t i = 0; i < absoluteQuads.size(); ++i)
+        drawOutlinedQuad(context, absoluteQuads[i], highlightData->content, Color::transparent);
 }
 
 inline LayoutSize frameToMainFrameOffset(Frame* frame)
@@ -380,25 +380,51 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
     bool isSVGRenderer = false;
 #endif
 
-    if (renderer->isBox() && !isSVGRenderer) {
-        RenderBox* renderBox = toRenderBox(renderer);
+    if (isSVGRenderer) {
+        Vector<FloatQuad> absoluteQuads;
+        renderer->absoluteQuads(absoluteQuads);
+        for (unsigned i = 0; i < absoluteQuads.size(); ++i)
+            absoluteQuads[i] += mainFrameOffset;
 
-        // RenderBox returns the "pure" content area box, exclusive of the scrollbars (if present), which also count towards the content area in CSS.
-        LayoutRect contentBox = renderBox->contentBoxRect();
-        contentBox.setWidth(contentBox.width() + renderBox->verticalScrollbarWidth());
-        contentBox.setHeight(contentBox.height() + renderBox->horizontalScrollbarHeight());
+        drawHighlightForSVGRenderer(context, absoluteQuads, highlightData);
+    } else if (renderer->isBox() || renderer->isRenderInline()) {
+        LayoutRect contentBox;
+        LayoutRect paddingBox;
+        LayoutRect borderBox;
+        LayoutRect marginBox;
 
-        LayoutRect paddingBox(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
-                           contentBox.width() + renderBox->paddingLeft() + renderBox->paddingRight(), contentBox.height() + renderBox->paddingTop() + renderBox->paddingBottom());
-        LayoutRect borderBox(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
-                          paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
-        LayoutRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
-                          borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
+        if (renderer->isBox()) {
+            RenderBox* renderBox = toRenderBox(renderer);
 
-        FloatQuad absContentQuad = renderBox->localToAbsoluteQuad(FloatRect(contentBox));
-        FloatQuad absPaddingQuad = renderBox->localToAbsoluteQuad(FloatRect(paddingBox));
-        FloatQuad absBorderQuad = renderBox->localToAbsoluteQuad(FloatRect(borderBox));
-        FloatQuad absMarginQuad = renderBox->localToAbsoluteQuad(FloatRect(marginBox));
+            // RenderBox returns the "pure" content area box, exclusive of the scrollbars (if present), which also count towards the content area in CSS.
+            contentBox = renderBox->contentBoxRect();
+            contentBox.setWidth(contentBox.width() + renderBox->verticalScrollbarWidth());
+            contentBox.setHeight(contentBox.height() + renderBox->horizontalScrollbarHeight());
+
+            paddingBox = LayoutRect(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
+                    contentBox.width() + renderBox->paddingLeft() + renderBox->paddingRight(), contentBox.height() + renderBox->paddingTop() + renderBox->paddingBottom());
+            borderBox = LayoutRect(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
+                    paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
+            marginBox = LayoutRect(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
+                    borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
+        } else {
+            RenderInline* renderInline = toRenderInline(renderer);
+
+            // RenderInline's bounding box includes paddings and borders, excludes margins.
+            borderBox = renderInline->linesBoundingBox();
+            paddingBox = LayoutRect(borderBox.x() + renderInline->borderLeft(), borderBox.y() + renderInline->borderTop(),
+                    borderBox.width() - renderInline->borderLeft() - renderInline->borderRight(), borderBox.height() - renderInline->borderTop() - renderInline->borderBottom());
+            contentBox = LayoutRect(paddingBox.x() + renderInline->paddingLeft(), paddingBox.y() + renderInline->paddingTop(),
+                    paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
+            // Ignore marginTop and marginBottom for inlines.
+            marginBox = LayoutRect(borderBox.x() - renderInline->marginLeft(), borderBox.y(),
+                    borderBox.width() + renderInline->marginLeft() + renderInline->marginRight(), borderBox.height());
+        }
+
+        FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
+        FloatQuad absPaddingQuad = renderer->localToAbsoluteQuad(FloatRect(paddingBox));
+        FloatQuad absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
+        FloatQuad absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
 
         absContentQuad.move(mainFrameOffset);
         absPaddingQuad.move(mainFrameOffset);
@@ -408,14 +434,6 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightData);
-    } else if (renderer->isRenderInline() || isSVGRenderer) {
-        // FIXME: We should show margins/padding/border for inlines.
-        Vector<FloatQuad> lineBoxQuads;
-        renderer->absoluteQuads(lineBoxQuads);
-        for (unsigned i = 0; i < lineBoxQuads.size(); ++i)
-            lineBoxQuads[i] += mainFrameOffset;
-
-        drawHighlightForLineBoxesOrSVGRenderer(context, lineBoxQuads, highlightData);
     }
 
     // Draw node title if necessary.
