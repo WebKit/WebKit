@@ -331,7 +331,6 @@ storage/open-database-empty-version.html
 storage/read-transactions-running-concurrently.html
 
 # FAIL: Timed out waiting for notifyDone to be called
-http/tests/appcache
 fast/dom/beforeload/video-before-load.html
 media/video-source-moved.html
 http/tests/websocket/tests/hixie76/frame-lengths.html

@@ -55,9 +55,9 @@ static QString defaultDataLocation()
 static QString s_defaultDatabaseDirectory;
 static QString s_defaultLocalStorageDirectory;
 
-String WebContext::applicationCacheDirectory()
+String WebContext::platformDefaultApplicationCacheDirectory() const
 {
-    return WebCore::cacheStorage().cacheDirectory();
+    return defaultDataLocation();
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)

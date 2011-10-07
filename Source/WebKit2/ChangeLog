@@ -1,3 +1,31 @@
+2011-10-07  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        [Qt][WK2] ApplicationCache LayoutTests failed
+        https://bugs.webkit.org/show_bug.cgi?id=69541
+
+        Reviewed by Chang Shu.
+
+        1. Moved applicationCacheDirectory to common code.
+        2. Added interface setApplicationCacheDirectory to allow UI client overriding.
+        3. Renamed all platform-dependent implementations of applicationCacheDirectory to platformDefaultApplicationCacheDirectory.
+        4. On Qt, set the platformDefaultApplicationCacheDirectory to the default data location.
+
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::applicationCacheDirectory):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setApplicationCacheDirectory):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+
 2011-10-06  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Correct improper identification of WKQC extensions.

@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-String WebContext::applicationCacheDirectory()
+String WebContext::platformDefaultApplicationCacheDirectory() const
 {
     return localUserSpecificStorageDirectory();
 }

@@ -44,7 +44,7 @@ NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaul
 
 namespace WebKit {
 
-String WebContext::applicationCacheDirectory()
+String WebContext::platformDefaultApplicationCacheDirectory() const
 {
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)

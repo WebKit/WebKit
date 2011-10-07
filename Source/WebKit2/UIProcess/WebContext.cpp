@@ -802,6 +802,14 @@ String WebContext::localStorageDirectory() const
     return platformDefaultLocalStorageDirectory();
 }
 
+String WebContext::applicationCacheDirectory() const
+{
+    if (!m_overrideApplicationCacheDirectory.isEmpty())
+        return m_overrideApplicationCacheDirectory;
+
+    return platformDefaultApplicationCacheDirectory();
+}
+
 void WebContext::setHTTPPipeliningEnabled(bool enabled)
 {
 #if PLATFORM(MAC)
