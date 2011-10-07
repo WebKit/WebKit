@@ -1,3 +1,14 @@
+2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96879.
+        http://trac.webkit.org/changeset/96879
+        https://bugs.webkit.org/show_bug.cgi?id=69618
+
+        Broke CCLayerTreeHostTestShortlived1 on chromium mac.
+        (Requested by podivilov on #webkit).
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-10-07  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add ResourcesPanel to the compilation.
