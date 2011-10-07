@@ -1,0 +1,54 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+
+<script>
+
+if (window.layoutTestController)
+  layoutTestController.waitUntilDone();
+
+function buildAccessibilityTree(accessibilityObject, indent) {
+    var count = accessibilityObject.childrenCount;
+    for (var i = 0; i < count; ++i) {
+         if (!buildAccessibilityTree(accessibilityObject.childAtIndex(i), indent + 1))
+            return false;
+    }
+
+    return true;
+}
+
+function runAXTest() {
+
+
+   description("This tests that an image map's hold on it's parent will be cleared if the parent goes away.");
+
+   // First access all children using AX
+   buildAccessibilityTree(accessibilityController.rootElement, 0);
+
+   var child = document.getElementById('img'); child.parentNode.removeChild(child);
+ 
+   // Now verify we haven't crashed.
+   buildAccessibilityTree(accessibilityController.rootElement, 0);
+
+   if (window.layoutTestController)
+       layoutTestController.notifyDone();
+}
+</script>
+
+</head>
+<body>
+
+<map name="map">
+<div id="o7"></div>
+<area id="o20" href="#"></area></map>
+
+<img id="img" usemap="#map"><span></span> 
+
+<script>setTimeout("runAXTest();", 1);</script> 
+
+<p id="description"></p>
+<div id="console"></div>
+
+</body>
+</html>

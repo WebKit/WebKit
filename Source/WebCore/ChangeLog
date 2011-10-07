@@ -1,3 +1,37 @@
+2011-10-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Bug 69562 - AccessibilityImageMapLink holds onto it's parent even after it's been freed
+        https://bugs.webkit.org/show_bug.cgi?id=69562
+
+        Some fake objects, like AXImageMapLink, have weak references to their parent's (since they are fake objects and
+        need some connection to the parent). However, if the parent disappears before the child, then we're left with a 
+        out of date reference to that parent.
+
+        The fix is to allow these elements to clear their parentage when the parent goes away.
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/image-map-update-parent-crash.html
+
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::isVisible):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::isOffScreen):
+        (WebCore::AccessibilityMenuListPopup::isEnabled):
+        (WebCore::AccessibilityMenuListPopup::press):
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::detachFromParent):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::clearChildren):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::detachFromParent):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+
 2011-10-07  Andreas Kling  <kling@webkit.org>
 
         Pack StyleRareNonInheritedData even harder on 64-bit.

@@ -175,6 +175,9 @@ PassRefPtr<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
     
 LayoutRect AccessibilitySliderThumb::elementRect() const
 {
+    if (!m_parent)
+        return LayoutRect();
+    
     RenderObject* sliderRenderer = m_parent->renderer();
     if (!sliderRenderer || !sliderRenderer->isSlider())
         return LayoutRect();

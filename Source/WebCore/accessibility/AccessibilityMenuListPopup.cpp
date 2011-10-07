@@ -48,11 +48,17 @@ bool AccessibilityMenuListPopup::isVisible() const
 
 bool AccessibilityMenuListPopup::isOffScreen() const
 {
+    if (!m_parent)
+        return true;
+    
     return m_parent->isCollapsed();
 }
 
 bool AccessibilityMenuListPopup::isEnabled() const
 {
+    if (!m_parent)
+        return false;
+    
     return m_parent->isEnabled();
 }
 
@@ -72,12 +78,18 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
 
 bool AccessibilityMenuListPopup::press() const
 {
+    if (!m_parent)
+        return false;
+    
     m_parent->press();
     return true;
 }
 
 void AccessibilityMenuListPopup::addChildren()
 {
+    if (!m_parent)
+        return;
+    
     Node* selectNode = m_parent->node();
     if (!selectNode)
         return;
@@ -102,8 +114,10 @@ void AccessibilityMenuListPopup::childrenChanged()
     AXObjectCache* cache = axObjectCache();
     for (size_t i = m_children.size(); i > 0 ; --i) {
         AccessibilityObject* child = m_children[i - 1].get();
-        if (child->actionElement() && !child->actionElement()->attached())
+        if (child->actionElement() && !child->actionElement()->attached()) {
+            child->detachFromParent();
             cache->remove(child->axObjectID());
+        }
     }
     
     m_children.clear();

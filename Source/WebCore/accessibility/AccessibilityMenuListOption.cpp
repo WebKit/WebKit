@@ -59,6 +59,9 @@ bool AccessibilityMenuListOption::isEnabled() const
 
 bool AccessibilityMenuListOption::isVisible() const
 {
+    if (!m_parent)
+        return false;
+    
     // In a single-option select with the popup collapsed, only the selected
     // item is considered visible.
     return !m_parent->isOffScreen() || isSelected();

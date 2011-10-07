@@ -41,7 +41,7 @@ public:
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; };
     
     // Must be called when the parent object clears its children.
-    void detachFromParent() { m_parent = 0; }
+    virtual void detachFromParent() { m_parent = 0; }
     
 protected:
     AccessibilityObject* m_parent;
