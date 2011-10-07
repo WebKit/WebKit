@@ -1,3 +1,10 @@
+2011-10-07  Tony Chang  <tony@chromium.org>
+
+        Fix chromium compile when using the components build.  This test
+        helper file is using methods not available when compiling as a dll.
+
+        * WebKit.gyp:
+
 2011-10-07  Adam Barth  <abarth@webkit.org>
 
         Remove setShouldPaintCustomScrollbars, which has no callers

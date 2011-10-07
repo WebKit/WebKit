@@ -672,11 +672,12 @@
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/AssociatedURLLoaderTest.cpp',
                                 'tests/CCLayerTreeHostTest.cpp',
+                                'tests/FrameTestHelpers.cpp',
+                                'tests/PopupMenuTest.cpp',
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
                                 'tests/WebViewTest.cpp',
-                                'tests/PopupMenuTest.cpp',
                             ],
                             'conditions': [
                                 ['OS=="win" or OS=="mac"', {
