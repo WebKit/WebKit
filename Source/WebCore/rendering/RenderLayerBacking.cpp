@@ -757,7 +757,7 @@ bool RenderLayerBacking::rendererHasBackground() const
     return renderer()->hasBackground();
 }
 
-const Color RenderLayerBacking::rendererBackgroundColor() const
+Color RenderLayerBacking::rendererBackgroundColor() const
 {
     // FIXME: share more code here
     if (renderer()->node() && renderer()->node()->isDocumentNode()) {

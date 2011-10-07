@@ -1,3 +1,19 @@
+2011-10-07  Andreas Kling  <kling@webkit.org>
+
+        Functions that return "const Color" should simply return "Color".
+
+        Rubber-stamped by Antti Koivisto.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::rendererBackgroundColor):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::bgColor):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+
 2011-10-07  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: TypeError: Cannot read property 'styleSheetId' of undefined in tests.

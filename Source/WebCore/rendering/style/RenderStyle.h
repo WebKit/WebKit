@@ -1345,7 +1345,7 @@ public:
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_unique = true; m_childIndex = index; }
 
-    const Color visitedDependentColor(int colorProperty) const;
+    Color visitedDependentColor(int colorProperty) const;
 
     // Initial values for all the properties
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
@@ -1525,7 +1525,7 @@ private:
     Color textFillColor() const { return rareInheritedData->textFillColor; }
     Color textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     
-    const Color colorIncludingFallback(int colorProperty) const;
+    Color colorIncludingFallback(int colorProperty) const;
 
 #if ENABLE(SVG)
     Color stopColor() const { return svgStyle()->stopColor(); }
