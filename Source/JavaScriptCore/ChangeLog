@@ -1,3 +1,17 @@
+2011-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ConvertThis speculation logic is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=69663
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-07  Oliver Hunt  <oliver@apple.com>
 
         Verify that our call speculation is valid.

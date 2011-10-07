@@ -1710,7 +1710,7 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ConvertThis: {
-        if (isOtherPrediction(node.prediction())) {
+        if (isOtherPrediction(at(node.child1()).prediction())) {
             JSValueOperand thisValue(this, node.child1());
             GPRTemporary scratch(this, thisValue);
             
@@ -1726,7 +1726,7 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        if (isObjectPrediction(node.prediction())) {
+        if (isObjectPrediction(at(node.child1()).prediction())) {
             SpeculateCellOperand thisValue(this, node.child1());
             
             speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));

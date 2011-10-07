@@ -720,7 +720,7 @@ private:
                 break;
             
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-            printf("  @%u -> %s", nodeIndex, isArray ? "GetArrayLength" : "GetStringLength");
+            printf("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
             node.op = isArray ? GetArrayLength : GetStringLength;
             break;
