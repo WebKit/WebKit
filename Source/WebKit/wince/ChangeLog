@@ -1,3 +1,11 @@
+2011-10-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r95604.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::isLinkVisited):
+        (PlatformStrategiesWinCE::addVisitedLink):
+
 2011-09-24  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(OFFLINE_WEB_APPLICATIONS)

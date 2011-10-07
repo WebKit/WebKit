@@ -671,12 +671,12 @@ String PlatformStrategiesWinCE::validationMessageStepMismatchText()
     return UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute");
 }
 
-bool PlatformStrategiesWinCE::isLinkVisited(Page* page, LinkHash hash)
+bool PlatformStrategiesWinCE::isLinkVisited(Page* page, LinkHash hash, const KURL&, const AtomicString&)
 {
     return page->group().isLinkVisited(hash);
 }
 
-void PlatformStrategiesWinCE::addVisitedLink(Page* page, LinkHash hash, const KURL&, const AtomicString&)
+void PlatformStrategiesWinCE::addVisitedLink(Page* page, LinkHash hash)
 {
     page->group().addVisitedLinkHash(hash);
 }
