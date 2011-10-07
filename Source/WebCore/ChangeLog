@@ -1,3 +1,14 @@
+2011-10-06  Antoine Labour  <piman@chromium.org>
+
+        Webkit API for compositor
+        https://bugs.webkit.org/show_bug.cgi?id=69107
+
+        Reviewed by Darin Fisher.
+
+        Covered by existing compositing tests.
+
+        * platform/graphics/chromium/ContentLayerChromium.h: 
+
 2011-10-06  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kent Tamura.

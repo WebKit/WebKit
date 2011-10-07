@@ -51,9 +51,10 @@ public:
 
     virtual void paintContentsIfDirty();
 
-private:
+protected:
     explicit ContentLayerChromium(CCLayerDelegate*);
 
+private:
     virtual void cleanupResources();
     virtual bool drawsContent() const;
     virtual void createTextureUpdater(const CCLayerTreeHost*);
