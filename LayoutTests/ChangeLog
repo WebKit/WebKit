@@ -1,3 +1,13 @@
+2011-10-07  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Rebaseline test after r96870.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-cg-mac/editing/pasteboard/merge-end-blockquote-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/merge-end-blockquote-expected.png: Removed.
+
 2011-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r96257): fast/repaint/selection-clear.html fail
