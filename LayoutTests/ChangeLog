@@ -1,3 +1,18 @@
+2011-10-07  Kent Tamura  <tkent@chromium.org>
+
+        Test update for r96893.
+        https://bugs.webkit.org/show_bug.cgi?id=53752
+
+        r96893 changed the behavior of dataset-gc.html and
+        dataset-xhtml.xhtml. We update these tests because the new
+        behavior matches to Firefox and Opera.
+
+        * fast/dom/dataset-gc-expected.txt:
+        * fast/dom/dataset-xhtml-expected.txt:
+        * fast/dom/script-tests/dataset-gc.js:
+        * fast/dom/script-tests/dataset-xhtml.js:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-06  Adam Barth  <abarth@webkit.org>
 
         Port PixelZoomer to work in garden-o-matic

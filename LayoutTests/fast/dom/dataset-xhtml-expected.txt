@@ -34,7 +34,7 @@ PASS testDelete('data---foo', '-Foo') is true
 PASS testDelete('data-', '') is true
 PASS testDelete('data-à', 'à') is true
 
-PASS testDelete('dummy', '-foo') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS testDelete('dummy', '-foo') is false
 
 PASS testForIn(['data-foo', 'data-bar', 'data-baz']) is 3
 PASS testForIn(['data-foo', 'data-bar', 'dataFoo']) is 2

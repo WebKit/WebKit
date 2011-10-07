@@ -3747,6 +3747,7 @@ BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
 
 // Need to follow a JSC binding change. See webkit.org/b/53752.
 BUGWK53578 : fast/dom/dataset.html = TEXT
+BUGWK53578 : fast/dom/dataset-xhtml.xhtml = TEXT
 
 // Need rebaselines after r96257
 BUGWK62092 MAC : editing/pasteboard/paste-xml.xhtml = TEXT

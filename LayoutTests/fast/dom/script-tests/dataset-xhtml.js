@@ -69,7 +69,7 @@ shouldBeTrue("testDelete('data-', '')");
 shouldBeTrue("testDelete('data-\xE0', '\xE0')");
 debug("");
 
-shouldThrow("testDelete('dummy', '-foo')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+shouldBeFalse("testDelete('dummy', '-foo')");
 debug("");
 
 function testForIn(array)

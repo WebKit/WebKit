@@ -14,16 +14,17 @@ function gc()
 var d = document.createElement("div");
 
 var dataset = d.dataset;
-dataset.__proto__.customProperty = 1; // Add a property to our prototype, so it won't forward to our element.
+// Add a property to our prototype. It will be hidden by the corresponding data- attribute.
+dataset.__proto__.customProperty = 1;
 dataset.customProperty = 1; // Now set a property on ourselves.
-shouldBe("d.getAttribute('data-custom-property')", "null");
-shouldBe("d.dataset.customProperty", "1");
+shouldBe("d.getAttribute('data-custom-property')", "'1'");
+shouldBe("d.dataset.customProperty", "'1'");
 
 dataset = null;
 
 gc();
 
 // Test that the custom property persisted the GC.
-shouldBe("d.dataset.customProperty", "1");
+shouldBe("d.dataset.customProperty", "'1'");
 
 var successfullyParsed = true;
