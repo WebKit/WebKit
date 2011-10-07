@@ -1,3 +1,21 @@
+2011-10-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Touch mocking is broken with Qt 5 post refactor merge
+        https://bugs.webkit.org/show_bug.cgi?id=69617
+
+        Reviewed by Andreas Kling.
+
+        Injecting fake touch events using qt_translateRawTouchEvent does not work anymore, as it sends
+        the touch events to widgets only. The QML view however is a QWindow. Therefore the fake touch
+        events have to be dispatched through QWindowSystemInterface::handleTouchEvent. As a result the
+        events appear to be spontaenous, which required adjusting the are-we-on-a-real-touch-device
+        logic.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication):
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+
 2011-10-06  Adam Barth  <abarth@webkit.org>
 
         Port PixelZoomer to work in garden-o-matic

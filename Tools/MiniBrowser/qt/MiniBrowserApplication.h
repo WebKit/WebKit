@@ -43,6 +43,7 @@
 #include <QToolBar>
 #include <QTouchEvent>
 #include <QUrl>
+#include "qwindowsysteminterface_qpa.h"
 
 struct WindowOptions {
     WindowOptions()
@@ -81,14 +82,14 @@ private:
     void handleUserOptions();
 
 private:
-    bool m_spontaneousTouchEventReceived;
-    bool m_sendingFakeTouchEvent;
+    bool m_realTouchEventReceived;
+    int m_pendingFakeTouchEventCount;
     bool m_isRobotized;
     int m_robotTimeoutSeconds;
     int m_robotExtraTimeSeconds;
     QStringList m_urls;
 
-    QHash<int, QTouchEvent::TouchPoint> m_touchPoints;
+    QHash<int, QWindowSystemInterface::TouchPoint> m_touchPoints;
 };
 
 #endif

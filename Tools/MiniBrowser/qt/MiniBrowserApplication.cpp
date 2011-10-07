@@ -33,8 +33,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QTouchEvent>
-
-extern Q_GUI_EXPORT void qt_translateRawTouchEvent(QWidget*, QTouchEvent::DeviceType, const QList<QTouchEvent::TouchPoint>&);
+#include <QGuiApplication>
 
 static inline bool isTouchEvent(const QEvent* event)
 {
@@ -64,8 +63,8 @@ static inline bool isMouseEvent(const QEvent* event)
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     : QApplication(argc, argv, QApplication::GuiServer)
     , m_windowOptions()
-    , m_spontaneousTouchEventReceived(false)
-    , m_sendingFakeTouchEvent(false)
+    , m_realTouchEventReceived(false)
+    , m_pendingFakeTouchEventCount(0)
     , m_isRobotized(false)
     , m_robotTimeoutSeconds(0)
     , m_robotExtraTimeSeconds(0)
@@ -82,65 +81,88 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     // We try to be smart, if we received real touch event, we are probably on a device
     // with touch screen, and we should not have touch mocking.
 
-    if (!event->spontaneous() || m_sendingFakeTouchEvent || m_spontaneousTouchEventReceived)
+    if (!event->spontaneous() || m_realTouchEventReceived)
         return QApplication::notify(target, event);
+
     if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
-        m_spontaneousTouchEventReceived = true;
+        if (m_pendingFakeTouchEventCount)
+            --m_pendingFakeTouchEventCount;
+        else
+            m_realTouchEventReceived = true;
         return QApplication::notify(target, event);
     }
-    if (isMouseEvent(event)) {
+
+    QWindow* targetWindow = qobject_cast<QWindow*>(target);
+    if (targetWindow && isMouseEvent(event)) {
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
 
-        QTouchEvent::TouchPoint touchPoint;
-        touchPoint.setScreenPos(mouseEvent->globalPos());
-        touchPoint.setPos(mouseEvent->pos());
+        QWindowSystemInterface::TouchPoint touchPoint;
+        touchPoint.area = QRectF(mouseEvent->globalPos(), QSizeF(1, 1));
+        touchPoint.pressure = 1;
 
         switch (mouseEvent->type()) {
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonDblClick:
-            touchPoint.setId(mouseEvent->button());
-            if (m_touchPoints.contains(touchPoint.id()))
-                touchPoint.setState(Qt::TouchPointMoved);
+            touchPoint.id = mouseEvent->button();
+            if (m_touchPoints.contains(touchPoint.id))
+                touchPoint.state = Qt::TouchPointMoved;
             else
-                touchPoint.setState(Qt::TouchPointPressed);
+                touchPoint.state = Qt::TouchPointPressed;
             break;
         case QEvent::MouseMove:
             if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
                 return QApplication::notify(target, event);
-            touchPoint.setState(Qt::TouchPointMoved);
-            touchPoint.setId(mouseEvent->buttons());
+            touchPoint.state = Qt::TouchPointMoved;
+            touchPoint.id = mouseEvent->buttons();
             break;
         case QEvent::MouseButtonRelease:
             if (mouseEvent->modifiers().testFlag(Qt::ControlModifier))
                 return QApplication::notify(target, event);
-            touchPoint.setState(Qt::TouchPointReleased);
-            touchPoint.setId(mouseEvent->button());
+            touchPoint.state = Qt::TouchPointReleased;
+            touchPoint.id = mouseEvent->button();
             break;
         default:
             Q_ASSERT_X(false, "multi-touch mocking", "unhandled event type");
         }
 
         // Update current touch-point
-        m_touchPoints.insert(touchPoint.id(), touchPoint);
+        m_touchPoints.insert(touchPoint.id, touchPoint);
 
         // Update states for all other touch-points
-        for (QHash<int, QTouchEvent::TouchPoint>::iterator it = m_touchPoints.begin(); it != m_touchPoints.end(); ++it) {
-            if (it.value().id() != touchPoint.id())
-                it.value().setState(Qt::TouchPointStationary);
+        for (QHash<int, QWindowSystemInterface::TouchPoint>::iterator it = m_touchPoints.begin(), end = m_touchPoints.end(); it != end; ++it) {
+            if (it.value().id != touchPoint.id)
+                it.value().state = Qt::TouchPointStationary;
         }
 
-        QList<QTouchEvent::TouchPoint> touchPoints = m_touchPoints.values();
-        QTouchEvent::TouchPoint& firstPoint = touchPoints.first();
-        firstPoint.setState(firstPoint.state() | Qt::TouchPointPrimary);
-        m_sendingFakeTouchEvent = true;
-        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, touchPoints);
-        m_sendingFakeTouchEvent = false;
+        QList<QWindowSystemInterface::TouchPoint> touchPoints = m_touchPoints.values();
+        QWindowSystemInterface::TouchPoint& firstPoint = touchPoints.first();
+        firstPoint.isPrimary = true;
+
+        QEvent::Type eventType;
+        switch (touchPoint.state) {
+        case Qt::TouchPointPressed:
+            eventType = QEvent::TouchBegin;
+            break;
+        case Qt::TouchPointReleased:
+            eventType = QEvent::TouchEnd;
+            break;
+        case Qt::TouchPointStationary:
+            // Don't send the event if nothing changed.
+            return QApplication::notify(target, event);
+        default:
+            eventType = QEvent::TouchUpdate;
+            break;
+        }
+
+        m_pendingFakeTouchEventCount++;
+        QWindowSystemInterface::handleTouchEvent(targetWindow, eventType, QTouchEvent::TouchScreen, touchPoints);
 
         // Get rid of touch-points that are no longer valid
-        foreach (const QTouchEvent::TouchPoint& touchPoint, m_touchPoints) {
-            if (touchPoint.state() ==  Qt::TouchPointReleased)
-                m_touchPoints.remove(touchPoint.id());
+        foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {
+            if (touchPoint.state ==  Qt::TouchPointReleased)
+                m_touchPoints.remove(touchPoint.id);
         }
+        return true;
     }
 
     return QApplication::notify(target, event);
