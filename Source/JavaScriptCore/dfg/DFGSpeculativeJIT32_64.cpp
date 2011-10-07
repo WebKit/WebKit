@@ -528,11 +528,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
     JITCompiler::Jump fastCase = m_jit.branch32(JITCompiler::Equal, arg1TagGPR, TrustedImm32(JSValue::BooleanTag));
         
     silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-    m_jit.push(arg1TagGPR);
-    m_jit.push(arg1PayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+    callOperation(dfgConvertJSValueToBoolean, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR);
     silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
     JITCompiler::Jump doNot = m_jit.jump();
         
@@ -620,11 +616,7 @@ void SpeculativeJIT::emitBranch(Node& node)
 
         slowPath.link(&m_jit);
         silentSpillAllRegisters(resultGPR);
-        m_jit.push(valueTagGPR);
-        m_jit.push(valuePayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(dfgConvertJSValueToBoolean, resultGPR, valueTagGPR, valuePayloadGPR);
         silentFillAllRegisters(resultGPR);
     
         addBranch(m_jit.branchTest8(JITCompiler::NonZero, resultGPR), taken);
@@ -1432,12 +1424,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(storageGPR, storageLengthGPR);
-        m_jit.push(valueTagGPR);
-        m_jit.push(valuePayloadGPR);
-        m_jit.push(baseGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationArrayPush);
-        setupResults(storageGPR, storageLengthGPR);
+        callOperation(operationArrayPush, storageGPR, storageLengthGPR, valueTagGPR, valuePayloadGPR, baseGPR);
         silentFillAllRegisters(storageGPR, storageLengthGPR);
         
         done.link(&m_jit);
@@ -1496,10 +1483,7 @@ void SpeculativeJIT::compile(Node& node)
         slowCase.link(&m_jit);
         
         silentSpillAllRegisters(valueTagGPR, valuePayloadGPR);
-        m_jit.push(baseGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationArrayPop);
-        setupResults(valueTagGPR, valuePayloadGPR);
+        callOperation(operationArrayPop, valueTagGPR, valuePayloadGPR, baseGPR);
         silentFillAllRegisters(valueTagGPR, valuePayloadGPR);
         
         done.link(&m_jit);
@@ -1629,11 +1613,7 @@ void SpeculativeJIT::compile(Node& node)
             alreadyPrimitive.append(m_jit.branchPtr(MacroAssembler::Equal, MacroAssembler::Address(op1PayloadGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
             
             silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-            m_jit.push(op1TagGPR);
-            m_jit.push(op1PayloadGPR);
-            m_jit.push(GPRInfo::callFrameRegister);
-            appendCallWithExceptionCheck(operationToPrimitive);
-            setupResults(resultTagGPR, resultPayloadGPR);
+            callOperation(operationToPrimitive, resultTagGPR, resultPayloadGPR, op1TagGPR, op1PayloadGPR);
             silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
             
             MacroAssembler::Jump done = m_jit.jump();
@@ -1797,11 +1777,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.push(TrustedImm32(JSValue::CellTag));
-        m_jit.push(protoGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationCreateThis);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCreateThis, resultGPR, protoGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);
@@ -1826,9 +1802,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationNewObject);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationNewObject, resultGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);

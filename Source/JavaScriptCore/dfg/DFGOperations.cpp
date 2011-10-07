@@ -135,7 +135,7 @@ EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
-EncodedJSValue DFG_OPERATION operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
+JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
 {
     JSFunction* constructor = asFunction(exec->callee());
     
@@ -147,18 +147,17 @@ EncodedJSValue DFG_OPERATION operationCreateThis(ExecState* exec, EncodedJSValue
     JSGlobalData& globalData = exec->globalData();
     
     Structure* structure;
-    JSValue proto = JSValue::decode(encodedOp);
-    if (proto.isObject())
-        structure = asObject(proto)->inheritorID(globalData);
+    if (prototype->isObject())
+        structure = asObject(prototype)->inheritorID(globalData);
     else
         structure = constructor->scope()->globalObject->emptyObjectStructure();
     
-    return JSValue::encode(constructEmptyObject(exec, structure));
+    return constructEmptyObject(exec, structure);
 }
 
-EncodedJSValue DFG_OPERATION operationNewObject(ExecState* exec)
+JSCell* DFG_OPERATION operationNewObject(ExecState* exec)
 {
-    return JSValue::encode(constructEmptyObject(exec));
+    return constructEmptyObject(exec);
 }
 
 EncodedJSValue DFG_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -374,7 +373,7 @@ void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* 
     array->JSArray::put(exec, index, JSValue::decode(encodedValue));
 }
 
-EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, JSArray* array, EncodedJSValue encodedValue)
+EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)
 {
     array->push(exec, JSValue::decode(encodedValue));
     return JSValue::encode(jsNumber(array->length()));

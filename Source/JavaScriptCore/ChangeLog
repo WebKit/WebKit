@@ -1,3 +1,28 @@
+2011-10-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor DFG to make for use of callOperation
+        https://bugs.webkit.org/show_bug.cgi?id=69672
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+            - Added new callOperation calls, don't ASSERT flushed (use helpers for unexpected calls, too).
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+            - Switch operationNewObject/operationCreateThis to return Cells,
+            - Added C_DFGOperation_E/C_DFGOperation_EC/J_DFGOperation_EA/J_DFGOperation_EJA call types.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Replace code plating calls to operations to with calls to callOperation.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Replace code plating calls to operations to with calls to callOperation.
+
 2011-10-07  Oliver Hunt  <oliver@apple.com>
 
         Support string indexing in the DFG

@@ -621,10 +621,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
     JITCompiler::Jump fastCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
     
     silentSpillAllRegisters(resultGPR);
-    m_jit.move(arg1GPR, GPRInfo::argumentGPR1);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+    callOperation(dfgConvertJSValueToBoolean, resultGPR, arg1GPR);
     silentFillAllRegisters(resultGPR);
     
     fastCase.link(&m_jit);
@@ -728,10 +725,7 @@ void SpeculativeJIT::emitBranch(Node& node)
             value.use();
     
             silentSpillAllRegisters(resultGPR);
-            m_jit.move(valueGPR, GPRInfo::argumentGPR1);
-            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-            appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            callOperation(dfgConvertJSValueToBoolean, resultGPR, valueGPR);
             silentFillAllRegisters(resultGPR);
     
             addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
@@ -1542,10 +1536,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(storageLengthGPR);
-        setupStubArguments(baseGPR, valueGPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationArrayPush);
-        m_jit.move(GPRInfo::returnValueGPR, storageLengthGPR);
+        callOperation(operationArrayPush, storageLengthGPR, valueGPR, baseGPR);
         silentFillAllRegisters(storageLengthGPR);
         
         done.link(&m_jit);
@@ -1598,10 +1589,7 @@ void SpeculativeJIT::compile(Node& node)
         slowCase.link(&m_jit);
         
         silentSpillAllRegisters(valueGPR);
-        m_jit.move(baseGPR, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationArrayPop);
-        m_jit.move(GPRInfo::returnValueGPR, valueGPR);
+        callOperation(operationArrayPop, valueGPR, baseGPR);
         silentFillAllRegisters(valueGPR);
         
         done.link(&m_jit);
@@ -1715,10 +1703,7 @@ void SpeculativeJIT::compile(Node& node)
             alreadyPrimitive.append(m_jit.branchPtr(MacroAssembler::Equal, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
             
             silentSpillAllRegisters(resultGPR);
-            m_jit.move(op1GPR, GPRInfo::argumentGPR1);
-            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-            appendCallWithExceptionCheck(operationToPrimitive);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            callOperation(operationToPrimitive, resultGPR, op1GPR);
             silentFillAllRegisters(resultGPR);
             
             MacroAssembler::Jump done = m_jit.jump();
@@ -1870,10 +1855,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.move(protoGPR, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationCreateThis);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCreateThis, resultGPR, protoGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);
@@ -1898,9 +1880,7 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationNewObject);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationNewObject, resultGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);

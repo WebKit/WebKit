@@ -50,6 +50,10 @@ extern "C" {
 
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJA)(ExecState*, EncodedJSValue, JSArray*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
@@ -67,9 +71,9 @@ typedef double (*D_DFGOperation_DD)(double, double); // Using default calling co
 typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
+JSCell* DFG_OPERATION operationNewObject(ExecState*);
+JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSCell* encodedOp1);
 EncodedJSValue DFG_OPERATION operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
-EncodedJSValue DFG_OPERATION operationCreateThis(ExecState*, EncodedJSValue encodedOp1);
-EncodedJSValue DFG_OPERATION operationNewObject(ExecState*);
 EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue DFG_OPERATION operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
@@ -97,7 +101,7 @@ void DFG_OPERATION operationThrowHasInstanceError(ExecState*, EncodedJSValue bas
 void DFG_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
-EncodedJSValue DFG_OPERATION operationArrayPush(ExecState*, JSArray*, EncodedJSValue encodedValue);
+EncodedJSValue DFG_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*);
 EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray*);
 void DFG_OPERATION operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void DFG_OPERATION operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);

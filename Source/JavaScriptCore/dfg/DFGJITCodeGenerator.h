@@ -1056,8 +1056,6 @@ protected:
     // These methods add calls to C++ helper functions.
     void callOperation(J_DFGOperation_EP operation, GPRReg result, void* pointer)
     {
-        ASSERT(isFlushed());
-
         m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
@@ -1068,10 +1066,12 @@ protected:
     {
         callOperation((J_DFGOperation_EP)operation, result, identifier);
     }
+    void callOperation(J_DFGOperation_EA operation, GPRReg result, GPRReg arg1)
+    {
+        callOperation((J_DFGOperation_EP)operation, result, arg1);
+    }
     void callOperation(J_DFGOperation_EPS operation, GPRReg result, void* pointer, size_t size)
     {
-        ASSERT(isFlushed());
-
         m_jit.move(JITCompiler::TrustedImmPtr(size), GPRInfo::argumentGPR2);
         m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1081,8 +1081,6 @@ protected:
     }
     void callOperation(J_DFGOperation_ESS operation, GPRReg result, int startConstant, int numConstants)
     {
-        ASSERT(isFlushed());
-
         m_jit.move(JITCompiler::TrustedImm32(numConstants), GPRInfo::argumentGPR2);
         m_jit.move(JITCompiler::TrustedImm32(startConstant), GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1092,8 +1090,6 @@ protected:
     }
     void callOperation(J_DFGOperation_EJP operation, GPRReg result, GPRReg arg1, void* pointer)
     {
-        ASSERT(isFlushed());
-
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1105,10 +1101,28 @@ protected:
     {
         callOperation((J_DFGOperation_EJP)operation, result, arg1, identifier);
     }
+    void callOperation(J_DFGOperation_EJA operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        callOperation((J_DFGOperation_EJP)operation, result, arg1, arg2);
+    }
+    // This also handles J_DFGOperation_EP!
     void callOperation(J_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
-        ASSERT(isFlushed());
+        m_jit.move(arg1, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
+    void callOperation(C_DFGOperation_E operation, GPRReg result)
+    {
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
+    void callOperation(C_DFGOperation_EC operation, GPRReg result, GPRReg arg1)
+    {
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
@@ -1117,8 +1131,6 @@ protected:
     }
     void callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
-        ASSERT(isFlushed());
-
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
@@ -1127,18 +1139,15 @@ protected:
     }
     void callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        ASSERT(isFlushed());
-
         setupStubArguments(arg1, arg2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
         appendCallWithExceptionCheck(operation);
         m_jit.move(GPRInfo::returnValueGPR, result);
     }
+    // This also handles J_DFGOperation_EJP!
     void callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        ASSERT(isFlushed());
-
         setupStubArguments(arg1, arg2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
@@ -1147,8 +1156,6 @@ protected:
     }
     void callOperation(V_DFGOperation_EJJP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
-        ASSERT(isFlushed());
-
         setupStubArguments(arg1, arg2);
         m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR3);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1161,8 +1168,6 @@ protected:
     }
     void callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        ASSERT(isFlushed());
-
         setupStubArguments(arg1, arg2, arg3);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
@@ -1170,8 +1175,6 @@ protected:
     }
     void callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
-        ASSERT(isFlushed());
-
         setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
 
         m_jit.appendCall(operation);
@@ -1202,9 +1205,15 @@ protected:
     // These methods add calls to C++ helper functions.
     void callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, void* pointer)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        setupResults(resultTag, resultPayload);
+    }
+    void callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
+    {
+        m_jit.push(arg1);
         m_jit.push(GPRInfo::callFrameRegister);
 
         appendCallWithExceptionCheck(operation);
@@ -1214,10 +1223,12 @@ protected:
     {
         callOperation((J_DFGOperation_EP)operation, resultTag, resultPayload, identifier);
     }
+    void callOperation(J_DFGOperation_EA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
+    {
+        callOperation((J_DFGOperation_EP)operation, resultTag, resultPayload, arg1);
+    }
     void callOperation(J_DFGOperation_EPS operation, GPRReg resultTag, GPRReg resultPayload, void* pointer, size_t size)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(JITCompiler::TrustedImm32(size));
         m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
         m_jit.push(GPRInfo::callFrameRegister);
@@ -1227,8 +1238,6 @@ protected:
     }
     void callOperation(J_DFGOperation_ESS operation, GPRReg resultTag, GPRReg resultPayload, int startConstant, int numConstants)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(JITCompiler::TrustedImm32(numConstants));
         m_jit.push(JITCompiler::TrustedImm32(startConstant));
         m_jit.push(GPRInfo::callFrameRegister);
@@ -1238,9 +1247,17 @@ protected:
     }
     void callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, void* pointer)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
+        m_jit.push(arg1Tag);
+        m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        setupResults(resultTag, resultPayload);
+    }
+    void callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
+    {
+        m_jit.push(arg2);
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
         m_jit.push(GPRInfo::callFrameRegister);
@@ -1252,10 +1269,12 @@ protected:
     {
         callOperation((J_DFGOperation_EJP)operation, resultTag, resultPayload, arg1Tag, arg1Payload, identifier);
     }
+    void callOperation(J_DFGOperation_EJA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
+    {
+        callOperation((J_DFGOperation_EJP)operation, resultTag, resultPayload, arg1Tag, arg1Payload, arg2);
+    }
     void callOperation(J_DFGOperation_EJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
         m_jit.push(GPRInfo::callFrameRegister);
@@ -1263,10 +1282,23 @@ protected:
         appendCallWithExceptionCheck(operation);
         setupResults(resultTag, resultPayload);
     }
+    void callOperation(C_DFGOperation_E operation, GPRReg result)
+    {
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
+    void callOperation(C_DFGOperation_EC operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.push(arg1);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
     void callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
         m_jit.push(GPRInfo::callFrameRegister);
@@ -1276,8 +1308,6 @@ protected:
     }
     void callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(arg2Tag);
         m_jit.push(arg2Payload);
         m_jit.push(arg1Tag);
@@ -1289,8 +1319,6 @@ protected:
     }
     void callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(arg2Tag);
         m_jit.push(arg2Payload);
         m_jit.push(arg1Tag);
@@ -1302,8 +1330,6 @@ protected:
     }
     void callOperation(V_DFGOperation_EJJP operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, void* pointer)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
         m_jit.push(arg2Tag);
         m_jit.push(arg2Payload);
@@ -1319,8 +1345,6 @@ protected:
     }
     void callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
     {
-        ASSERT(isFlushed());
-
         m_jit.push(arg3Tag);
         m_jit.push(arg3Payload);
         m_jit.push(arg2Tag);
@@ -1334,8 +1358,6 @@ protected:
 
     void callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
-        ASSERT(isFlushed());
-
         m_jit.subPtr(TrustedImm32(2 * sizeof(double)), JITCompiler::stackPointerRegister);
         m_jit.storeDouble(arg2, JITCompiler::Address(JITCompiler::stackPointerRegister, sizeof(double)));
         m_jit.storeDouble(arg1, JITCompiler::stackPointerRegister);
