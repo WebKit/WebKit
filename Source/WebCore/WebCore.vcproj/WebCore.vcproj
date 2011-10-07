@@ -26653,6 +26653,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedRawResource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedRawResource.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedResource.cpp"
 					>
 				</File>

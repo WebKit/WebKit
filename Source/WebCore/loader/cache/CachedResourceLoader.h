@@ -42,6 +42,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class CachedFont;
 class CachedImage;
+class CachedRawResource;
 class CachedScript;
 class CachedXSLStyleSheet;
 class Document;
@@ -64,6 +65,7 @@ public:
     CachedCSSStyleSheet* requestUserCSSStyleSheet(ResourceRequest&, const String& charset);
     CachedScript* requestScript(ResourceRequest&, const String& charset);
     CachedFont* requestFont(ResourceRequest&);
+    CachedRawResource* requestRawResource(ResourceRequest&, const ResourceLoaderOptions&);
 
 #if ENABLE(XSLT)
     CachedXSLStyleSheet* requestXSLStyleSheet(ResourceRequest&);
@@ -107,8 +109,6 @@ public:
     bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
     
 private:
-    // FIXME: The default value for ResourceLoaderOptions will always be used currently.
-    // It is plumbed for http://bugs.webkit.org/show_bug.cgi?id=61225 .
     CachedResource* requestResource(CachedResource::Type, ResourceRequest&, const String& charset, const ResourceLoaderOptions&, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false);
     CachedResource* revalidateResource(CachedResource*, ResourceLoadPriority, const ResourceLoaderOptions&);
     CachedResource* loadResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority, const ResourceLoaderOptions&);

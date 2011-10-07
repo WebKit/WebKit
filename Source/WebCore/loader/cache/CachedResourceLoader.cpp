@@ -30,6 +30,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
+#include "CachedRawResource.h"
 #include "CachedResourceRequest.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
@@ -66,6 +67,8 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedScript(request, charset);
     case CachedResource::FontResource:
         return new CachedFont(request);
+    case CachedResource::RawResource:
+        return new CachedRawResource(request);
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(request);
@@ -202,6 +205,11 @@ CachedResource* CachedResourceLoader::requestLinkResource(CachedResource::Type t
 }
 #endif
 
+CachedRawResource* CachedResourceLoader::requestRawResource(ResourceRequest& request, const ResourceLoaderOptions& options)
+{
+    return static_cast<CachedRawResource*>(requestResource(CachedResource::RawResource, request, String(), options, ResourceLoadPriorityUnresolved, false));
+}
+
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const KURL& url) const
 {
     switch (type) {
@@ -226,13 +234,14 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         }
         break;
     }
+    case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
         // Prefetch cannot affect the current document.
-        break;
 #endif
+        break;
     }
     return true;
 }
@@ -254,6 +263,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:
     case CachedResource::FontResource:
+    case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkPrerender:
@@ -308,12 +318,13 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
             return false;
         break;
     }
+    case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
-        break;
 #endif
+        break;
     }
 
     return true;
@@ -452,6 +463,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to type mismatch.");
         return Reload;
     }
+
+    // FIXME: Currently, all CachedRawResources are always reloaded. Some of them should be cacheable.
+    if (existingResource->type() == CachedResource::RawResource)
+        return Reload;
     
     // Don't reload resources while pasting.
     if (m_allowStaleResources)
@@ -627,7 +642,7 @@ void CachedResourceLoader::notifyLoadedFromMemoryCache(CachedResource* resource)
 
 void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
 {
-    if (res->isLinkResource())
+    if (res->ignoreForRequestCount())
         return;
 
     ++m_requestCount;
@@ -635,7 +650,7 @@ void CachedResourceLoader::incrementRequestCount(const CachedResource* res)
 
 void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 {
-    if (res->isLinkResource())
+    if (res->ignoreForRequestCount())
         return;
 
     --m_requestCount;

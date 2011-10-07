@@ -47,6 +47,7 @@ namespace WebCore {
         ~CachedResourceRequest();
 
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }
+        void cancel();
 
     private:
         CachedResourceRequest(CachedResourceLoader*, CachedResource*);

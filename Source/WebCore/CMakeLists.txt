@@ -944,6 +944,7 @@ SET(WebCore_SOURCES
     loader/cache/CachedCSSStyleSheet.cpp
     loader/cache/CachedFont.cpp
     loader/cache/CachedImage.cpp
+    loader/cache/CachedRawResource.cpp
     loader/cache/CachedResource.cpp
     loader/cache/CachedResourceClientWalker.cpp
     loader/cache/CachedResourceHandle.cpp

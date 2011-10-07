@@ -63,7 +63,8 @@ public:
         ImageResource,
         CSSStyleSheet,
         Script,
-        FontResource
+        FontResource,
+        RawResource
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif
@@ -135,13 +136,15 @@ public:
     void setLoading(bool b) { m_loading = b; }
 
     virtual bool isImage() const { return false; }
-    bool isLinkResource() const
+    bool ignoreForRequestCount() const
     {
+        return false
 #if ENABLE(LINK_PREFETCH)
-        return type() == LinkPrefetch || type() == LinkPrerender || type() == LinkSubresource;
-#else
-        return false;
+            || type() == LinkPrefetch
+            || type() == LinkPrerender
+            || type() == LinkSubresource
 #endif
+            || type() == RawResource;
     }
 
     unsigned accessCount() const { return m_accessCount; }

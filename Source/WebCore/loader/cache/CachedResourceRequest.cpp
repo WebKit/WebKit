@@ -60,6 +60,8 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
         return ResourceRequest::TargetIsFontResource;
     case CachedResource::ImageResource:
         return ResourceRequest::TargetIsImage;
+    case CachedResource::RawResource:
+        return ResourceRequest::TargetIsSubresource;    
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return ResourceRequest::TargetIsPrefetch;
@@ -143,6 +145,13 @@ void CachedResourceRequest::willSendRequest(SubresourceLoader* loader, ResourceR
         return;
     }
     m_resource->setRequestedFromNetworkingLayer();
+}
+
+void CachedResourceRequest::cancel()
+{
+    if (m_finishing)
+        return;
+    m_loader->cancel();
 }
 
 void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)

@@ -1,3 +1,36 @@
+2011-10-07  Nate Chapin  <japhet@chromium.org>
+
+        Make IconLoader a CachedResourceClient instead of a SubresourceLoaderClient.
+        This is one of the steps required to remove the SubresourceLoaderClient interface,
+        which will simplify the layering in the loader.
+        https://bugs.webkit.org/show_bug.cgi?id=69567
+
+        Reviewed by Adam Barth.
+
+        No new tests, no functionality change intended.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedRawResource.cpp: Added.
+        * loader/cache/CachedRawResource.h: Added.
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::ignoreForRequestCount): Renamed and generalized from isLinkResource(),
+            which was only used to decided whether the CachedResource should count toward
+            CachedResourceLoader::requestCount().
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        * loader/cache/CachedResourceRequest.h:
+        * loader/icon/IconLoader.cpp: Get a CachedResource instead of a SubresourceLoader.
+        (WebCore::IconLoader::notifyFinished): Merge in the status code check that was in didReceiveResponse(),
+            since we won't be checking any callbacks before the load completes.
+        * loader/icon/IconLoader.h:
+
 2011-10-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Add WebCore platform interfaces needed by updated PeerConnection design

@@ -869,6 +869,7 @@ SOURCES += \
     loader/cache/CachedCSSStyleSheet.cpp \
     loader/cache/CachedFont.cpp \
     loader/cache/CachedImage.cpp \
+    loader/cache/CachedRawResource.cpp \
     loader/cache/CachedResourceClientWalker.cpp \
     loader/cache/CachedResourceHandle.cpp \
     loader/cache/CachedResourceRequest.cpp \

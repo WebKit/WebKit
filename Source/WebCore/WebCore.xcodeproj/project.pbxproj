@@ -5742,6 +5742,8 @@
 		D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */; };
 		D0D141B312B2BF5200E39620 /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D0EDA774143E303C0028E383 /* CachedRawResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0EDA772143E303C0028E383 /* CachedRawResource.cpp */; };
+		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; };
 		D0FF2A5D11F8C45A007E74E0 /* PingLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
@@ -13026,6 +13028,8 @@
 		D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadScheduler.h; sourceTree = "<group>"; };
 		D0D141B012B2BF5200E39620 /* CachedResourceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequest.cpp; sourceTree = "<group>"; };
 		D0D141B112B2BF5200E39620 /* CachedResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequest.h; sourceTree = "<group>"; };
+		D0EDA772143E303C0028E383 /* CachedRawResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRawResource.cpp; sourceTree = "<group>"; };
+		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
 		D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoader.h; sourceTree = "<group>"; };
 		D23CA5480AB0E983005108A5 /* RangeException.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = RangeException.idl; sourceTree = "<group>"; };
@@ -18390,6 +18394,8 @@
 		A8D2B2521287A56000AF4DDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				D0EDA772143E303C0028E383 /* CachedRawResource.cpp */,
+				D0EDA773143E303C0028E383 /* CachedRawResource.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
@@ -21673,6 +21679,7 @@
 				51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
+				D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */,
 				BCB16C200979C3BD00467741 /* CachedResource.h in Headers */,
 				BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */,
 				BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */,
@@ -25019,6 +25026,7 @@
 				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
 				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
 				5101846A0B08602A004A825F /* CachedPage.cpp in Sources */,
+				D0EDA774143E303C0028E383 /* CachedRawResource.cpp in Sources */,
 				BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */,
 				BCB16C210979C3BD00467741 /* CachedResourceClientWalker.cpp in Sources */,
 				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
