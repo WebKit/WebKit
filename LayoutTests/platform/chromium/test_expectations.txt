@@ -2901,7 +2901,7 @@ BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = PASS CRASH
-BUGCR78996 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
+BUGCR78996 LINUX WIN DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT

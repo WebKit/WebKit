@@ -1,3 +1,11 @@
+2011-10-07  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Allow failure of another Mac Skia test.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt: Added first-of-type-pseudo-class.html.
+
 2011-10-07  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed Skiplist update to get bot green.
