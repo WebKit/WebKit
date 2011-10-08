@@ -1,5 +1,14 @@
 2011-10-07  Oliver Hunt  <oliver@apple.com>
 
+        Add missing break statement.
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+
+2011-10-07  Oliver Hunt  <oliver@apple.com>
+
         Support some string intrinsics in the DFG JIT
         https://bugs.webkit.org/show_bug.cgi?id=69678
 

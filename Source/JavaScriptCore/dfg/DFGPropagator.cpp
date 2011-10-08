@@ -345,6 +345,7 @@ private:
 
         case StringCharCodeAt: {
             changed |= mergePrediction(PredictInt32);
+            break;
         }
 
         case ArithMod: {
