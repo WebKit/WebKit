@@ -885,13 +885,6 @@ fast/workers/shared-worker-lifecycle.html
 fast/workers/worker-lifecycle.html
 fast/workers/worker-close-more.html
 
-# WebKitTestRunner needs to clear caches (including app cache) at the start
-http/tests/appcache/empty-manifest.html
-http/tests/appcache/foreign-iframe-main.html
-http/tests/appcache/manifest-with-empty-file.html
-http/tests/appcache/progress-counter.html
-http/tests/appcache/update-cache.html
-
 # WebKitTestRunner needs layoutTestController.clearAllApplicationCaches
 http/tests/appcache/origin-delete.html
 http/tests/appcache/origin-quota.html
@@ -976,7 +969,6 @@ fast/dom/Window/window-resize.html
 # WebKitTestRunner needs to sanitize file urls in the output
 http/tests/misc/image-blocked-src-change.html
 http/tests/misc/image-blocked-src-no-change.html
-http/tests/appcache/local-content.html
 userscripts/script-not-run-for-fragments.html
 userscripts/user-script-image-document.html
 userscripts/user-script-plugin-document.html
@@ -1206,7 +1198,6 @@ fast/workers/storage/interrupt-database.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 http/tests/appcache/different-https-origin-resource-main.html
-http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
 http/tests/history/back-during-onload-triggered-by-back.html

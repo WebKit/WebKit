@@ -1,3 +1,14 @@
+2011-10-08  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        [WK2] Update Skipped file 
+        https://bugs.webkit.org/show_bug.cgi?id=69650
+
+        Reviewed by Andreas Kling.
+
+        Unskip passed ApplicationCache test cases.
+
+        * platform/wk2/Skipped:
+
 2011-10-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening.
