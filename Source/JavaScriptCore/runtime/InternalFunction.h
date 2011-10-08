@@ -56,9 +56,9 @@ namespace JSC {
 
         void finishCreation(JSGlobalData&, const Identifier& name);
 
-    private:
-        virtual CallType getCallDataVirtual(CallData&) = 0;
+        static CallType getCallData(JSCell*, CallData&);
 
+    private:
         virtual void vtableAnchor();
     };
 

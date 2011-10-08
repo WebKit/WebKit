@@ -126,11 +126,6 @@ static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
     return JSValue::encode(constructObject(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
-CallType ObjectConstructor::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callObjectConstructor;

@@ -1,3 +1,105 @@
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove getCallDataVirtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=69186
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all getCallDataVirtual methods and replaced their call sites 
+        with an explicit lookup in the MethodTable.
+
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayConstructor.h:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConstructor.h:
+        * runtime/Error.cpp:
+        (JSC::createTypeErrorFunction):
+
+        Moved StrictModeTypeErrorFunction to Error.h in order to be able to include 
+        the class definition in JSGlobalObject.cpp.
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        (JSC::StrictModeTypeErrorFunction::create):
+        (JSC::StrictModeTypeErrorFunction::constructThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getConstructData):
+        (JSC::StrictModeTypeErrorFunction::callThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        (JSC::StrictModeTypeErrorFunction::createStructure):
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorConstructor.h:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionPrototype.h:
+
+        To allow subclasses of InternalFunction (e.g. QtRuntimeMethod) to not have 
+        to declare their own ClassInfo if they don't override getCallData, provided 
+        an implementation that calls ASSERT_NOT_REACHED if called, providing roughly the same 
+        functionality as of the pure virtual method InternalFunction used to have.
+        Also made this new implementation protected rather than private for the same reason.
+        Also added an ASSERT in InternalFunction::finishCreation to make sure that whatever 
+        object is being created provides their own implementation of getCallData.  This 
+        just makes execution fail earlier in a place where the source of the error is 
+        easy to trace.  These ASSERTs are better than putting a null in the MethodTable because
+        they appear much more intentional to anybody who fails to provide their own 
+        implementation or who tries to explicitly call InternalFunction::getCallData.
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        (JSC::InternalFunction::getCallData):
+        * runtime/InternalFunction.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+
+        Added a global structure to JSGlobalObject for StrictModeTypeErrorFunction to enable 
+        it to be reused rather than creating a new Structure every time we instantiate it.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::strictModeTypeErrorFunctionStructure):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/JSObject.h:
+        (JSC::getCallData):
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectConstructor.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringConstructor.h:
+        * runtime/Structure.h:
+
 2011-10-07  Oliver Hunt  <oliver@apple.com>
 
         Add missing break statement.

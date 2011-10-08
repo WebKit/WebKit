@@ -409,6 +409,13 @@ inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
     return JSFinalObject::create(exec, structure);
 }
 
+inline CallType getCallData(JSValue value, CallData& callData)
+{
+    CallType result = value.isCell() ? value.asCell()->methodTable()->getCallData(value.asCell(), callData) : CallTypeNone;
+    ASSERT(result == CallTypeNone || value.isValidCallee());
+    return result;
+}
+
 inline Structure* createEmptyObjectStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
 {
     return JSFinalObject::createStructure(globalData, globalObject, prototype);

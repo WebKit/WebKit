@@ -1,3 +1,18 @@
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove getCallDataVirtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=69186
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all getCallDataVirtual methods and replaced their call sites 
+        with an explicit lookup in the MethodTable.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-10-07  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Scrollbars in embedded PDFs should update when system preferences change

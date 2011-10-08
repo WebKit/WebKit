@@ -66,11 +66,6 @@ static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
-CallType ErrorConstructor::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType ErrorConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callErrorConstructor;

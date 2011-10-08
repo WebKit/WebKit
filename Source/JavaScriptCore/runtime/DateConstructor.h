@@ -52,7 +52,6 @@ namespace JSC {
     private:
         DateConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

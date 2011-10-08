@@ -1488,11 +1488,6 @@ EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-CallType QtRuntimeMetaMethod::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = call;
@@ -1624,7 +1619,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
             if (exec->argumentCount() == 1) {
                 funcObject = exec->argument(0).toObject(exec);
                 CallData callData;
-                if (funcObject->getCallDataVirtual(callData) == CallTypeNone) {
+                if (funcObject->methodTable()->getCallData(funcObject, callData) == CallTypeNone) {
                     if (d->m_isConnect)
                         return throwVMError(exec, createTypeError(exec, "QtMetaMethod.connect: target is not a function"));
                     else
@@ -1637,7 +1632,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                     // Get the actual function to call
                     JSObject *asObj = exec->argument(1).toObject(exec);
                     CallData callData;
-                    if (asObj->getCallDataVirtual(callData) != CallTypeNone) {
+                    if (asObj->methodTable()->getCallData(asObj, callData) != CallTypeNone) {
                         // Function version
                         funcObject = asObj;
                     } else {
@@ -1650,7 +1645,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                         JSValue val = thisObject->get(exec, funcIdent);
                         JSObject* asFuncObj = val.toObject(exec);
 
-                        if (asFuncObj->getCallDataVirtual(callData) != CallTypeNone) {
+                        if (asFuncObj->methodTable()->getCallData(asFuncObj, callData) != CallTypeNone) {
                             funcObject = asFuncObj;
                         } else {
                             if (d->m_isConnect)
@@ -1732,11 +1727,6 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
     }
 
     return JSValue::encode(jsUndefined());
-}
-
-CallType QtRuntimeConnectionMethod::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
 }
 
 CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
@@ -1862,7 +1852,8 @@ int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 static bool isJavaScriptFunction(JSObjectRef object)
 {
     CallData callData;
-    return toJS(object)->getCallDataVirtual(callData) == CallTypeJS;
+    JSObject* jsObject = toJS(object);
+    return jsObject->methodTable()->getCallData(jsObject, callData) == CallTypeJS;
 }
 
 void QtConnectionObject::execute(void** argv)

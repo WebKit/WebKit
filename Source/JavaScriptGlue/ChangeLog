@@ -1,5 +1,20 @@
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Remove getCallDataVirtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=69186
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all getCallDataVirtual methods and replaced their call sites 
+        with an explicit lookup in the MethodTable.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCallFunction):
+        * UserObjectImp.cpp:
+        * UserObjectImp.h:
+
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Add static version of JSCell::put
         https://bugs.webkit.org/show_bug.cgi?id=69382
 
