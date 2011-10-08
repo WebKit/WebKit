@@ -1,3 +1,31 @@
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Implement drag and drop support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=63706
+
+        Reviewed by Philippe Normand.
+
+        * platform/DragData.h:
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::text): Mark as const.
+        (WebCore::DataObjectGtk::markup): Ditto.
+        (WebCore::DataObjectGtk::urlLabel): Ditto.
+        * platform/gtk/DataObjectGtk.h: Remove unused member
+        m_dragContext.
+        (WebCore::DataObjectGtk::url): Mark as const.
+        (WebCore::DataObjectGtk::uriList): Ditto.
+        (WebCore::DataObjectGtk::filenames): Ditto.
+        (WebCore::DataObjectGtk::image): Ditto.
+        (WebCore::DataObjectGtk::hasText): Ditto.
+        (WebCore::DataObjectGtk::hasMarkup): Ditto.
+        (WebCore::DataObjectGtk::hasURIList): Ditto.
+        (WebCore::DataObjectGtk::hasURL): Ditto.
+        (WebCore::DataObjectGtk::hasFilenames): Ditto.
+        (WebCore::DataObjectGtk::hasImage): Ditto.
+        * platform/gtk/DragIcon.cpp: Added. A helper which takes care of
+        creating a transparent drag window for drags.
+        * platform/gtk/DragIcon.h: Added.
+
 2011-10-08  Abhishek Arya  <inferno@chromium.org>
 
         Add support for ADDRESS_SANITIZER in RenderArena

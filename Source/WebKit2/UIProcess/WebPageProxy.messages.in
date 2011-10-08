@@ -212,7 +212,7 @@ messages -> WebPageProxy {
 #if PLATFORM(WIN)
     StartDragDrop(WebCore::IntPoint imagePoint, WebCore::IntPoint dragPoint, uint64_t okEffect, HashMap<UINT,Vector<String> > dataMap, uint64_t fileSize, String pathname, WebKit::SharedMemory::Handle fileContentHandle, WebCore::IntSize dragImageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
 #endif
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(GTK)
     StartDrag(WebCore::DragData dragData, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 

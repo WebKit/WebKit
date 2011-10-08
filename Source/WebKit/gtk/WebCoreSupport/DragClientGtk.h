@@ -31,8 +31,8 @@
 #define DragClientGtk_h
 
 #include "DragClient.h"
+#include "DragIcon.h"
 #include "GRefPtr.h"
-#include "RefPtrCairo.h"
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -53,13 +53,10 @@ namespace WebKit {
 
         virtual void dragControllerDestroyed();
 
-        void drawDragIconWindow(GtkWidget*, cairo_t*);
-
     private:
         WebKitWebView* m_webView;
         WebCore::IntPoint m_startPos;
-        GtkWidget* m_dragIconWindow;
-        RefPtr<cairo_surface_t> m_dragImage;
+        WebCore::DragIcon m_dragIcon;
     };
 }
 

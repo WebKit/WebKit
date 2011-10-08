@@ -4008,6 +4008,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/DataObjectGtk.cpp \
 	Source/WebCore/platform/gtk/DataObjectGtk.h \
 	Source/WebCore/platform/gtk/DragDataGtk.cpp \
+	Source/WebCore/platform/gtk/DragIcon.cpp \
+	Source/WebCore/platform/gtk/DragIcon.h \
 	Source/WebCore/platform/gtk/DragImageGtk.cpp \
 	Source/WebCore/platform/gtk/EventLoopGtk.cpp \
 	Source/WebCore/platform/gtk/FileSystemGtk.cpp \

@@ -52,7 +52,7 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& win
     return DragSourceActionAny;
 }
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(QT)
+#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(QT) && !PLATFORM(GTK)
 void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
 {
 }

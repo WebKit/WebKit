@@ -28,20 +28,29 @@
 #include "config.h"
 #include "WebKitWebViewBase.h"
 
+#include "ClipboardGtk.h"
+#include "ClipboardUtilitiesGtk.h"
+#include "DataObjectGtk.h"
+#include "DragData.h"
 #include "DrawingAreaProxyImpl.h"
 #include "GOwnPtrGtk.h"
 #include "GtkClickCounter.h"
+#include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
+#include "PasteboardHelper.h"
 #include "RefPtrCairo.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include <WebCore/DragIcon.h>
+#include <WebCore/GtkDragAndDropHelper.h>
+#include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebKit2/WKContext.h>
 #include <wtf/text/CString.h>
@@ -57,6 +66,8 @@ struct _WebKitWebViewBasePrivate {
     GtkIMContext* imContext;
     GtkClickCounter clickCounter;
     CString tooltipText;
+    GtkDragAndDropHelper dragAndDropHelper;
+    DragIcon dragIcon;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -132,11 +143,18 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
     priv->isPageActive = TRUE;
     priv->shouldForwardNextKeyEvent = FALSE;
 
-    gtk_widget_set_double_buffered(GTK_WIDGET(webkitWebViewBase), FALSE);
-    gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
+    GtkWidget* viewWidget = GTK_WIDGET(webkitWebViewBase);
+    gtk_widget_set_double_buffered(viewWidget, FALSE);
+    gtk_widget_set_can_focus(viewWidget, TRUE);
     priv->imContext = gtk_im_multicontext_new();
 
-    priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
+    priv->pageClient = PageClientImpl::create(viewWidget);
+
+    priv->dragAndDropHelper.setWidget(viewWidget);
+
+    gtk_drag_dest_set(viewWidget, static_cast<GtkDestDefaults>(0), 0, 0,
+                      static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
+    gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::defaultPasteboardHelper()->targetList());
 }
 
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
@@ -293,6 +311,82 @@ static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y,
     return TRUE;
 }
 
+static void webkitWebViewBaseDragDataGet(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint time)
+{
+    WEBKIT_WEB_VIEW_BASE(widget)->priv->dragAndDropHelper.handleGetDragData(context, selectionData, info);
+}
+
+static void webkitWebViewBaseDragEnd(GtkWidget* widget, GdkDragContext* context)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    if (!webViewBase->priv->dragAndDropHelper.handleDragEnd(context))
+        return;
+
+    GdkDevice* device = gdk_drag_context_get_device(context);
+    int x = 0, y = 0;
+    gdk_device_get_window_at_position(device, &x, &y);
+    int xRoot = 0, yRoot = 0;
+    gdk_device_get_position(device, 0, &xRoot, &yRoot);
+    webViewBase->priv->pageProxy->dragEnded(IntPoint(x, y), IntPoint(xRoot, yRoot),
+                                            gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
+}
+
+static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragDataReceived(context, selectionData, info));
+    if (!dragData)
+        return;
+
+    webViewBase->priv->pageProxy->resetDragOperation();
+    webViewBase->priv->pageProxy->dragEntered(dragData.get());
+    DragOperation operation = webViewBase->priv->pageProxy->dragOperation();
+    gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
+}
+
+static gboolean webkitWebViewBaseDragMotion(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragMotion(context, IntPoint(x, y), time));
+    if (!dragData)
+        return TRUE;
+
+    webViewBase->priv->pageProxy->dragUpdated(dragData.get());
+    DragOperation operation = webViewBase->priv->pageProxy->dragOperation();
+    gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
+    return TRUE;
+}
+
+static void dragExitedCallback(GtkWidget* widget, DragData* dragData, bool dropHappened)
+{
+    // Don't call dragExited if we have just received a drag-drop signal. This
+    // happens in the case of a successful drop onto the view.
+    if (dropHappened)
+        return;
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    webViewBase->priv->pageProxy->dragExited(dragData);
+    webViewBase->priv->pageProxy->resetDragOperation();
+}
+
+static void webkitWebViewBaseDragLeave(GtkWidget* widget, GdkDragContext* context, guint time)
+{
+    WEBKIT_WEB_VIEW_BASE(widget)->priv->dragAndDropHelper.handleDragLeave(context, dragExitedCallback);
+}
+
+static gboolean webkitWebViewBaseDragDrop(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragDrop(context, IntPoint(x, y)));
+    if (!dragData)
+        return FALSE;
+
+    SandboxExtension::Handle handle;
+    webViewBase->priv->pageProxy->performDrag(dragData.get(), String(), handle);
+    gtk_drag_finish(context, TRUE, FALSE, time);
+    return TRUE;
+}
+
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
 {
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
@@ -308,6 +402,12 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
     widgetClass->query_tooltip = webkitWebViewBaseQueryTooltip;
+    widgetClass->drag_end = webkitWebViewBaseDragEnd;
+    widgetClass->drag_data_get = webkitWebViewBaseDragDataGet;
+    widgetClass->drag_motion = webkitWebViewBaseDragMotion;
+    widgetClass->drag_leave = webkitWebViewBaseDragLeave;
+    widgetClass->drag_drop = webkitWebViewBaseDragDrop;
+    widgetClass->drag_data_received = webkitWebViewBaseDragDataReceived;
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
     gobjectClass->finalize = webkitWebViewBaseFinalize;
@@ -353,6 +453,33 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
     }
 
     gtk_widget_trigger_tooltip_query(GTK_WIDGET(webViewBase));
+}
+
+void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, const DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    RefPtr<DataObjectGtk> dataObject(dragData.platformData());
+    GRefPtr<GtkTargetList> targetList(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
+    GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
+    GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(webViewBase),
+                                             targetList.get(),
+                                             dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),
+                                             1, /* button */
+                                             currentEvent.get());
+    priv->dragAndDropHelper.startedDrag(context, dataObject.get());
+
+
+    // A drag starting should prevent a double-click from happening. This might
+    // happen if a drag is followed very quickly by another click (like in the DRT).
+    priv->clickCounter.reset();
+
+    if (dragImage) {
+        RefPtr<cairo_surface_t> image(dragImage->createCairoSurface());
+        priv->dragIcon.setImage(image.get());
+        priv->dragIcon.useForDrag(context);
+    } else
+        gtk_drag_set_icon_default(context);
 }
 
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase* webkitWebViewBase)

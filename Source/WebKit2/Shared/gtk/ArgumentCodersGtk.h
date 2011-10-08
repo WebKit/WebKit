@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,31 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#ifndef ArgumentCodersGtk_h
+#define ArgumentCodersGtk_h
 
-#include "WebKitWebViewBase.h"
-#include "WebPageProxy.h"
-#include <WebKit2/WebKit2.h>
+#include "ArgumentCoders.h"
 
-using namespace WebKit;
+namespace WebCore {
+class DataObjectGtk;
+class DragData;
+}
 
-G_BEGIN_DECLS
+namespace CoreIPC {
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
+template<> struct ArgumentCoder<WebCore::DragData> {
+    static void encode(ArgumentEncoder*, const WebCore::DragData&);
+    static bool decode(ArgumentDecoder*, WebCore::DragData&);
+};
 
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
+} // namespace CoreIPC
 
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
-
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
-
-void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-
-G_END_DECLS
-
-#endif // WebKitWebViewBasePrivate_h
+#endif // ArgumentCodersGtk_h

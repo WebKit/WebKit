@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,31 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#ifndef DragIcon_h
+#define DragIcon_h
 
-#include "WebKitWebViewBase.h"
-#include "WebPageProxy.h"
-#include <WebKit2/WebKit2.h>
+#include "IntPoint.h"
+#include <RefPtrCairo.h>
 
-using namespace WebKit;
+namespace WebCore {
 
-G_BEGIN_DECLS
+class DragIcon {
+public:
+    DragIcon();
+    virtual ~DragIcon();
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
+    void draw(cairo_t*);
+    void setImage(cairo_surface_t*);
+    void useForDrag(GdkDragContext*);
+    void useForDrag(GdkDragContext*, const IntPoint& hotspot);
 
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
+private:
+    GtkWidget* m_window;
+    RefPtr<cairo_surface_t> m_image;
+    IntSize m_imageSize;
+};
 
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
+}
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
-
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
-
-void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-
-G_END_DECLS
-
-#endif // WebKitWebViewBasePrivate_h
+#endif // DragIcon_h

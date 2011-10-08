@@ -36,31 +36,29 @@ public:
         return adoptRef(new DataObjectGtk());
     }
 
-    const KURL& url() { return m_url; }
-    const String& uriList() { return m_uriList; }
-    const Vector<String>& filenames() { return m_filenames; }
-    GdkPixbuf* image() { return m_image.get(); }
+    const KURL& url() const { return m_url; }
+    const String& uriList() const { return m_uriList; }
+    const Vector<String>& filenames() const { return m_filenames; }
+    GdkPixbuf* image() const { return m_image.get(); }
     void setRange(PassRefPtr<Range> newRange) { m_range = newRange; }
     void setImage(GdkPixbuf* newImage) { m_image = newImage; }
-    void setDragContext(GdkDragContext* newDragContext) { m_dragContext = newDragContext; }
     void setURL(const KURL&, const String&);
-    bool hasText() { return m_range || !m_text.isEmpty(); }
-    bool hasMarkup() { return m_range || !m_markup.isEmpty(); }
-    bool hasURIList() { return !m_uriList.isEmpty(); }
-    bool hasURL() { return !m_url.isEmpty() && m_url.isValid(); }
-    bool hasFilenames() { return !m_filenames.isEmpty(); }
-    bool hasImage() { return m_image; }
+    bool hasText() const { return m_range || !m_text.isEmpty(); }
+    bool hasMarkup() const { return m_range || !m_markup.isEmpty(); }
+    bool hasURIList() const { return !m_uriList.isEmpty(); }
+    bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
+    bool hasFilenames() const { return !m_filenames.isEmpty(); }
+    bool hasImage() const { return m_image; }
     void clearURIList() { m_uriList = ""; }
     void clearURL() { m_url = KURL(); }
     void clearImage() { m_image = 0; }
-    GdkDragContext* dragContext() { return m_dragContext.get(); }
 
-    String text();
-    String markup();
+    String text() const;
+    String markup() const;
     void setText(const String&);
     void setMarkup(const String&);
     void setURIList(const String&);
-    String urlLabel();
+    String urlLabel() const;
     void clear();
     void clearText();
     void clearMarkup();
@@ -74,7 +72,6 @@ private:
     String m_uriList;
     Vector<String> m_filenames;
     GRefPtr<GdkPixbuf> m_image;
-    GRefPtr<GdkDragContext> m_dragContext;
     RefPtr<Range> m_range;
 };
 

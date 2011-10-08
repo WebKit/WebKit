@@ -1786,12 +1786,16 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
     }
 }
 
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
 void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dragData)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+#if PLATFORM(QT)
         QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+#elif PLATFORM(GTK)
+        DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
+#endif
         delete data;
         return;
     }
@@ -1818,7 +1822,11 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
         ASSERT_NOT_REACHED();
     }
     // DragData does not delete its platformData so we need to do that here.
+#if PLATFORM(QT)
     QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+#elif PLATFORM(GTK)
+    DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
+#endif
     delete data;
 }
 

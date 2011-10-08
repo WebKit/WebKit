@@ -1,3 +1,46 @@
+2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Implement drag and drop support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=63706
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * Shared/gtk/ArgumentCodersGtk.cpp: Added.
+        (CoreIPC::encodeImage): Encode a GdkPixbuf.
+        (CoreIPC::decodeImage): Decode a GdkPixbuf.
+        (CoreIPC::encodeDataObject): Encode a DataObjectGtk.
+        (CoreIPC::decodeDataObject): Decode a DataObjectGtk.
+        (CoreIPC::::encode): Encode DragData.
+        (CoreIPC::::decode): Decode DragData.
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init): Set the view as a potential drop destination.
+        (webkitWebViewBaseDragDataGet): Added, delegate to GtkDragAndDropHelper.
+        (webkitWebViewBaseDragEnd): Ditto.
+        (webkitWebViewBaseDragDataReceived): Ditto.
+        (webkitWebViewBaseDragEnter): Ditto.
+        (webkitWebViewBaseDragMotion): Ditto.
+        (doDragLeaveLater): Ditto.
+        (webkitWebViewBaseDragLeave): Ditto.
+        (webkitWebViewBaseDragDrop): Ditto.
+        (webkit_web_view_base_class_init): Override GtkWidget drag and drop methods.
+        (webkitWebViewBaseStartDrag): Calls gtk_drag_begin() to start a drag operation.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Add webkitWebViewBaseStartDrag().
+        * UIProcess/PageClient.h: Add startDrag().
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction): Share the Qt version.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp: Added.
+        * WebProcess/WebPage/WebPage.cpp: Add drag support for GTK+.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
 2011-10-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Wrong handling of visibility in QTouchWebPage
