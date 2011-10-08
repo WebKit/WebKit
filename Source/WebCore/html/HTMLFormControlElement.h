@@ -120,6 +120,7 @@ protected:
     virtual void removedFromDocument();
     virtual void willMoveToNewOwnerDocument();
 
+    virtual const AtomicString& formControlName() const;
     virtual bool supportsFocus() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
@@ -134,7 +135,6 @@ protected:
     virtual bool recalcWillValidate() const;
 
 private:
-    virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const = 0;
 
     virtual void refFormAssociatedElement() { ref(); }

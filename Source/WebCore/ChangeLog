@@ -1,3 +1,37 @@
+2011-10-08  Kent Tamura  <tkent@chromium.org>
+
+        Remove some static functions of HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=69621
+
+        Reviewed by Darin Adler.
+
+        Merge a static function and the corresponding non-static member function
+        into one function if there are no other callers of the static function.
+
+        No new tests, just a refactoring.
+
+        * html/HTMLFormControlElement.h:
+        Make formControlName() protected because it is called from
+        HTMLSelectElement.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        Remove two argument of parseMultipleAttribute().
+        (WebCore::HTMLSelectElement::selectAll):
+        Merged the static function and the member function.
+        (WebCore::HTMLSelectElement::dispatchFocusEvent): ditto.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): ditto.
+        (WebCore::HTMLSelectElement::saveFormControlState): ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+         - Make this non-static member function.
+         - Use reattachIfAttached().
+        (WebCore::HTMLSelectElement::appendFormData): Merged.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::insertedIntoTree): ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): ditto.
+        (WebCore::HTMLSelectElement::length): Merged with optionCount().
+        * html/HTMLSelectElement.h:
+
 2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96996.

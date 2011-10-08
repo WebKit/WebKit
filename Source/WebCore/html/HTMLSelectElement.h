@@ -144,7 +144,6 @@ private:
     bool hasPlaceholderLabelOption() const;
 
     // FIXME: Fold some of the following functions.
-    static void selectAll(SelectElementData&, Element*);
     static void saveLastSelection(SelectElementData&, Element*);
     static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
     static void setActiveSelectionEndIndex(SelectElementData&, int index);
@@ -158,20 +157,12 @@ private:
     static void setSelectedIndex(SelectElementData&, Element*, int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
     static int optionToListIndex(const SelectElementData&, const Element*, int optionIndex);
     static int listToOptionIndex(const SelectElementData&, const Element*, int listIndex);
-    static void dispatchFocusEvent(SelectElementData&, Element*);
-    static void dispatchBlurEvent(SelectElementData&, Element*);
     static void deselectItems(SelectElementData&, Element*, Element* excludeElement = 0);
-    static bool saveFormControlState(const SelectElementData&, const Element*, String& state);
-    static void restoreFormControlState(SelectElementData&, Element*, const String& state);
-    static void parseMultipleAttribute(SelectElementData&, Element*, Attribute*);
-    static bool appendFormData(SelectElementData&, Element*, FormDataList&);
-    static void reset(SelectElementData&, Element*);
+    void parseMultipleAttribute(const Attribute*);
     static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static int lastSelectedListIndex(const SelectElementData&, const Element*);
     static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
     static void insertedIntoTree(SelectElementData&, Element*);
-    static void accessKeySetSelectedIndex(SelectElementData&, Element*, int index);
-    static unsigned optionCount(const SelectElementData&, const Element*);
 
     static void updateSelectedState(SelectElementData&, Element*, int listIndex, bool multi, bool shift);
  

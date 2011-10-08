@@ -197,11 +197,6 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
     return lastSelectedListIndex(m_data, this);
 }
 
-unsigned HTMLSelectElement::length() const
-{
-    return optionCount(m_data, this);
-}
-
 void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
 {
     RefPtr<HTMLElement> protectNewChild(element); // make sure the element is ref'd and deref'd so we don't leak it
@@ -261,17 +256,6 @@ void HTMLSelectElement::setValue(const String &value)
     }
 }
 
-bool HTMLSelectElement::saveFormControlState(String& value) const
-{
-    return saveFormControlState(m_data, this, value);
-}
-
-void HTMLSelectElement::restoreFormControlState(const String& state)
-{
-    restoreFormControlState(m_data, this, state);
-    setNeedsValidityCheck();
-}
-
 void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
@@ -295,7 +279,7 @@ void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
             setRecalcListItems();
         }
     } else if (attr->name() == multipleAttr)
-        parseMultipleAttribute(m_data, this, attr);
+        parseMultipleAttribute(attr);
     else if (attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == alignAttr) {
@@ -326,22 +310,11 @@ bool HTMLSelectElement::canSelectAll() const
     return !m_data.usesMenuList(); 
 }
 
-void HTMLSelectElement::selectAll()
-{
-    selectAll(m_data, this);
-    setNeedsValidityCheck();
-}
-
 RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     if (m_data.usesMenuList())
         return new (arena) RenderMenuList(this);
     return new (arena) RenderListBox(this);
-}
-
-bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
-{
-    return appendFormData(m_data, this, list);
 }
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
@@ -386,24 +359,6 @@ void HTMLSelectElement::setRecalcListItems()
 
     if (!inDocument())
         m_collectionInfo.reset();
-}
-
-void HTMLSelectElement::reset()
-{
-    reset(m_data, this);
-    setNeedsValidityCheck();
-}
-
-void HTMLSelectElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
-{
-    dispatchFocusEvent(m_data, this);
-    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
-}
-
-void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
-{
-    dispatchBlurEvent(m_data, this);
-    HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
 void HTMLSelectElement::defaultEventHandler(Event* event)
@@ -451,11 +406,6 @@ void HTMLSelectElement::accessKeyAction(bool sendToAnyElement)
     dispatchSimulatedClick(0, sendToAnyElement);
 }
 
-void HTMLSelectElement::accessKeySetSelectedIndex(int index)
-{
-    accessKeySetSelectedIndex(m_data, this, index);
-}
-    
 void HTMLSelectElement::setMultiple(bool multiple)
 {
     bool oldMultiple = this->multiple();
@@ -551,12 +501,6 @@ void HTMLSelectElement::scrollToSelection()
     scrollToSelection(m_data, this);
 }
 
-void HTMLSelectElement::insertedIntoTree(bool deep)
-{
-    insertedIntoTree(m_data, this);
-    HTMLFormControlElementWithState::insertedIntoTree(deep);
-}
-
 bool HTMLSelectElement::isRequiredFormControl() const
 {
     return required();
@@ -625,22 +569,23 @@ static int nextSelectableListIndexPageAway(SelectElementData& data, Element* ele
     return nextValidIndex(items, edgeIndex, direction, skipAmount);
 }
 
-void HTMLSelectElement::selectAll(SelectElementData& data, Element* element)
+void HTMLSelectElement::selectAll()
 {
-    ASSERT(!data.usesMenuList());
-    if (!element->renderer() || !data.multiple())
+    ASSERT(!m_data.usesMenuList());
+    if (!renderer() || !m_data.multiple())
         return;
 
     // Save the selection so it can be compared to the new selectAll selection
     // when dispatching change events
-    saveLastSelection(data, element);
+    saveLastSelection(m_data, this);
 
-    data.setActiveSelectionState(true);
-    setActiveSelectionAnchorIndex(data, element, nextSelectableListIndex(data, element, -1));
-    setActiveSelectionEndIndex(data, previousSelectableListIndex(data, element, -1));
+    m_data.setActiveSelectionState(true);
+    setActiveSelectionAnchorIndex(m_data, this, nextSelectableListIndex(m_data, this, -1));
+    setActiveSelectionEndIndex(m_data, previousSelectableListIndex(m_data, this, -1));
 
-    updateListBoxSelection(data, element, false);
-    listBoxOnChange(data, element);
+    updateListBoxSelection(m_data, this, false);
+    listBoxOnChange(m_data, this);
+    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::saveLastSelection(SelectElementData& data, Element* element)
@@ -930,21 +875,23 @@ int HTMLSelectElement::listToOptionIndex(const SelectElementData& data, const El
     return optionIndex;
 }
 
-void HTMLSelectElement::dispatchFocusEvent(SelectElementData& data, Element* element)
+void HTMLSelectElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
 {
     // Save the selection so it can be compared to the new selection when
     // dispatching change events during blur event dispatchal
-    if (data.usesMenuList())
-        saveLastSelection(data, element);
+    if (m_data.usesMenuList())
+        saveLastSelection(m_data, this);
+    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
 }
 
-void HTMLSelectElement::dispatchBlurEvent(SelectElementData& data, Element* element)
+void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
     // We only need to fire change events here for menu lists, because we fire
     // change events for list boxes whenever the selection change is actually made.
     // This matches other browsers' behavior.
-    if (data.usesMenuList())
-        menuListOnChange(data, element);
+    if (m_data.usesMenuList())
+        menuListOnChange(m_data, this);
+    HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
 void HTMLSelectElement::deselectItems(SelectElementData& data, Element* element, Element* excludeElement)
@@ -959,9 +906,9 @@ void HTMLSelectElement::deselectItems(SelectElementData& data, Element* element,
     }
 }
 
-bool HTMLSelectElement::saveFormControlState(const SelectElementData& data, const Element* element, String& value)
+bool HTMLSelectElement::saveFormControlState(String& value) const
 {
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     int length = items.size();
 
     // FIXME: Change this code to use the new StringImpl::createUninitialized code path.
@@ -976,11 +923,11 @@ bool HTMLSelectElement::saveFormControlState(const SelectElementData& data, cons
     return true;
 }
 
-void HTMLSelectElement::restoreFormControlState(SelectElementData& data, Element* element, const String& state)
+void HTMLSelectElement::restoreFormControlState(const String& state)
 {
-    recalcListItems(data, element);
+    recalcListItems(m_data, this);
 
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     int length = items.size();
 
     for (int i = 0; i < length; ++i) {
@@ -988,28 +935,27 @@ void HTMLSelectElement::restoreFormControlState(SelectElementData& data, Element
             optionElement->setSelectedState(state[i] == 'X');
     }
 
-    setOptionsChangedOnRenderer(data, element);
+    setOptionsChangedOnRenderer(m_data, this);
+    setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::parseMultipleAttribute(SelectElementData& data, Element* element, Attribute* attribute)
+void HTMLSelectElement::parseMultipleAttribute(const Attribute* attribute)
 {
-    bool oldUsesMenuList = data.usesMenuList();
-    data.setMultiple(!attribute->isNull());
-    toSelectElement(element)->updateValidity();
-    if (oldUsesMenuList != data.usesMenuList() && element->attached()) {
-        element->detach();
-        element->attach();
-    }
+    bool oldUsesMenuList = m_data.usesMenuList();
+    m_data.setMultiple(!attribute->isNull());
+    updateValidity();
+    if (oldUsesMenuList != m_data.usesMenuList())
+        reattachIfAttached();
 }
 
-bool HTMLSelectElement::appendFormData(SelectElementData& data, Element* element, FormDataList& list)
+bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 {
-    const AtomicString& name = element->formControlName();
+    const AtomicString& name = formControlName();
     if (name.isEmpty())
         return false;
 
     bool successful = false;
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
 
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
@@ -1025,19 +971,19 @@ bool HTMLSelectElement::appendFormData(SelectElementData& data, Element* element
     return successful;
 } 
 
-void HTMLSelectElement::reset(SelectElementData& data, Element* element)
+void HTMLSelectElement::reset()
 {
     OptionElement* firstOption = 0;
     OptionElement* selectedOption = 0;
 
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
         if (!optionElement)
             continue;
 
-        if (items[i]->fastHasAttribute(HTMLNames::selectedAttr)) {
-            if (selectedOption && !data.multiple())
+        if (items[i]->fastHasAttribute(selectedAttr)) {
+            if (selectedOption && !m_data.multiple())
                 selectedOption->setSelectedState(false);
             optionElement->setSelectedState(true);
             selectedOption = optionElement;
@@ -1048,11 +994,12 @@ void HTMLSelectElement::reset(SelectElementData& data, Element* element)
             firstOption = optionElement;
     }
 
-    if (!selectedOption && firstOption && !data.multiple() && data.size() <= 1)
+    if (!selectedOption && firstOption && !m_data.multiple() && m_data.size() <= 1)
         firstOption->setSelectedState(true);
 
-    setOptionsChangedOnRenderer(data, element);
-    element->setNeedsStyleRecalc();
+    setOptionsChangedOnRenderer(m_data, this);
+    setNeedsStyleRecalc();
+    setNeedsValidityCheck();
 }
 
 #if !PLATFORM(WIN) || OS(WINCE)
@@ -1523,43 +1470,44 @@ void HTMLSelectElement::typeAheadFind(SelectElementData& data, Element* element,
     }
 }
 
-void HTMLSelectElement::insertedIntoTree(SelectElementData& data, Element* element)
+void HTMLSelectElement::insertedIntoTree(bool deep)
 {
     // When the element is created during document parsing, it won't have any
     // items yet - but for innerHTML and related methods, this method is called
     // after the whole subtree is constructed.
-    recalcListItems(data, element, true);
+    recalcListItems(m_data, this, true);
+    HTMLFormControlElementWithState::insertedIntoTree(deep);
 }
 
-void HTMLSelectElement::accessKeySetSelectedIndex(SelectElementData& data, Element* element, int index)
+void HTMLSelectElement::accessKeySetSelectedIndex(int index)
 {    
-    // first bring into focus the list box
-    if (!element->focused())
-        element->accessKeyAction(false);
+    // First bring into focus the list box.
+    if (!focused())
+        accessKeyAction(false);
     
     // if this index is already selected, unselect. otherwise update the selected index
-    const Vector<Element*>& items = data.listItems(element);
-    int listIndex = optionToListIndex(data, element, index);
+    const Vector<Element*>& items = m_data.listItems(this);
+    int listIndex = optionToListIndex(m_data, this, index);
     if (OptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
         if (optionElement->selected())
             optionElement->setSelectedState(false);
         else
-            setSelectedIndex(data, element, index, false, true);
+            setSelectedIndex(m_data, this, index, false, true);
     }
 
-    if (data.usesMenuList())
-        menuListOnChange(data, element);
+    if (m_data.usesMenuList())
+        menuListOnChange(m_data, this);
     else
-        listBoxOnChange(data, element);
+        listBoxOnChange(m_data, this);
 
-    scrollToSelection(data, element);
+    scrollToSelection(m_data, this);
 }
 
-unsigned HTMLSelectElement::optionCount(const SelectElementData& data, const Element* element)
+unsigned HTMLSelectElement::length() const
 {
     unsigned options = 0;
 
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     for (unsigned i = 0; i < items.size(); ++i) {
         if (isOptionElement(items[i]))
             ++options;
