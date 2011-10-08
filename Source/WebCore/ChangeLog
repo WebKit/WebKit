@@ -1,3 +1,9 @@
+2011-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Snow Leopard build fix after r96976. Apparently we just need a full rebuild.
+
+        * config.h:
+
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::deleteProperty
