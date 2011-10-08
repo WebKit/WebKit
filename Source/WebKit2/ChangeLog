@@ -1,5 +1,20 @@
 2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Add static version of JSCell::getConstructData
+        https://bugs.webkit.org/show_bug.cgi?id=69673
+
+        Reviewed by Geoffrey Garen.
+
+        Added static version of getConstructData to all classes that 
+        override it and changed the virtual versions to call the static 
+        versions.  This is the first step in de-virtualizing JSCell::getConstructData.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getConstructData):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
+2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Add static version of JSCell::getOwnPropertySlot
         https://bugs.webkit.org/show_bug.cgi?id=69593
 

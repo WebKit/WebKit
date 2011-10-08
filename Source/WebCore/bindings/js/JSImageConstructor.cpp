@@ -76,6 +76,11 @@ static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
 
 ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType JSImageConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructImage;
     return ConstructTypeHost;
 }

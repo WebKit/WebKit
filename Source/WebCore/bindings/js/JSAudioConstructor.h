@@ -56,6 +56,7 @@ namespace WebCore {
         JSAudioConstructor(JSC::Structure*, JSDOMGlobalObject*);
         void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     };
 
 } // namespace WebCore

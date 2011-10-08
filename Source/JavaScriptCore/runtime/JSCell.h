@@ -76,6 +76,7 @@ namespace JSC {
         virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
         virtual ConstructType getConstructData(ConstructData&);
+        static ConstructType getConstructData(JSCell*, ConstructData&);
 
         // Basic conversions.
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;

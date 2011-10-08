@@ -59,6 +59,7 @@ protected:
 
 private:
     virtual ConstructType getConstructData(ConstructData&);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
 
     JSClassRef m_class;
     JSObjectCallAsConstructorCallback m_callback;

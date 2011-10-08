@@ -55,6 +55,11 @@ static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exe
 
 ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructWithErrorConstructor;
     return ConstructTypeHost;
 }

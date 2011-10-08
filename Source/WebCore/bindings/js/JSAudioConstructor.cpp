@@ -77,6 +77,11 @@ static EncodedJSValue JSC_HOST_CALL constructAudio(ExecState* exec)
 
 ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType JSAudioConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructAudio;
     return ConstructTypeHost;
 }

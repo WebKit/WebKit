@@ -88,6 +88,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
 
 ConstructType JSCallbackConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType JSCallbackConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructJSCallback;
     return ConstructTypeHost;
 }

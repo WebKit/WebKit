@@ -243,8 +243,14 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
 
 ConstructType JSNPObject::getConstructData(ConstructData& constructData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject || !m_npObject->_class->construct)
+    return getConstructData(this, constructData);
+}
+
+ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->construct)
         return ConstructTypeNone;
 
     constructData.native.function = constructWithConstructor;

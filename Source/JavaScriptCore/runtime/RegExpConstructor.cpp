@@ -356,6 +356,11 @@ static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* ex
 
 ConstructType RegExpConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType RegExpConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructWithRegExpConstructor;
     return ConstructTypeHost;
 }

@@ -330,7 +330,14 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, uns
 template <class Parent>
 ConstructType JSCallbackObject<Parent>::getConstructData(ConstructData& constructData)
 {
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+    return getConstructData(this, constructData);
+}
+
+template <class Parent>
+ConstructType JSCallbackObject<Parent>::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.native.function = construct;
             return ConstructTypeHost;

@@ -56,6 +56,7 @@ public:
     virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
     virtual ConstructType getConstructData(ConstructData&);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 

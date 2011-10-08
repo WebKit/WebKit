@@ -82,6 +82,7 @@ private:
     virtual JSC::CallType getCallDataVirtual(JSC::CallData&);
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
     virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);

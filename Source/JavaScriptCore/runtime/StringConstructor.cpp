@@ -103,6 +103,11 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
 
 ConstructType StringConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructWithStringConstructor;
     return ConstructTypeHost;
 }

@@ -353,15 +353,21 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
-// ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(ConstructData& constructData)
 {
-    if (isHostFunction()) {
-        constructData.native.function = nativeConstructor();
+    return getConstructData(this, constructData);
+}
+
+// ECMA 13.2.2 [[Construct]]
+ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    if (thisObject->isHostFunction()) {
+        constructData.native.function = thisObject->nativeConstructor();
         return ConstructTypeHost;
     }
-    constructData.js.functionExecutable = jsExecutable();
-    constructData.js.scopeChain = scope();
+    constructData.js.functionExecutable = thisObject->jsExecutable();
+    constructData.js.scopeChain = thisObject->scope();
     return ConstructTypeJS;
 }
 

@@ -311,10 +311,16 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(ExecState* exec)
 
 ConstructType RuntimeObject::getConstructData(ConstructData& constructData)
 {
-    if (!m_instance)
+    return getConstructData(this, constructData);
+}
+
+ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    if (!thisObject->m_instance)
         return ConstructTypeNone;
     
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
     if (!instance->supportsConstruct())
         return ConstructTypeNone;
     

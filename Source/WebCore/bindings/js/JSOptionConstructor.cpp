@@ -77,6 +77,11 @@ static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)
 
 ConstructType JSOptionConstructor::getConstructData(ConstructData& constructData)
 {
+    return getConstructData(this, constructData);
+}
+
+ConstructType JSOptionConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
     constructData.native.function = constructHTMLOptionElement;
     return ConstructTypeHost;
 }

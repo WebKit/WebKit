@@ -69,6 +69,11 @@ ConstructType JSCell::getConstructData(ConstructData&)
     return ConstructTypeNone;
 }
 
+ConstructType JSCell::getConstructData(JSCell*, ConstructData&)
+{
+    return ConstructTypeNone;
+}
+
 bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);
