@@ -322,13 +322,19 @@ bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& proper
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-// ECMA 15.4.5.1
 void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+// ECMA 15.4.5.1
+void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
-        put(exec, i, value);
+        put(thisObject, exec, i, value);
         return;
     }
 
@@ -338,18 +344,24 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value
             throwError(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
-        setLength(newLength);
+        thisObject->setLength(newLength);
         return;
     }
 
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
 void JSArray::put(ExecState* exec, unsigned i, JSValue value)
 {
-    checkConsistency();
+    put(this, exec, i, value);
+}
 
-    ArrayStorage* storage = m_storage;
+void JSArray::put(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    thisObject->checkConsistency();
+
+    ArrayStorage* storage = thisObject->m_storage;
 
     unsigned length = storage->m_length;
     if (i >= length && i <= MAX_ARRAY_INDEX) {
@@ -357,20 +369,20 @@ void JSArray::put(ExecState* exec, unsigned i, JSValue value)
         storage->m_length = length;
     }
 
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
         if (valueSlot) {
-            valueSlot.set(exec->globalData(), this, value);
-            checkConsistency();
+            valueSlot.set(exec->globalData(), thisObject, value);
+            thisObject->checkConsistency();
             return;
         }
-        valueSlot.set(exec->globalData(), this, value);
+        valueSlot.set(exec->globalData(), thisObject, value);
         ++storage->m_numValuesInVector;
-        checkConsistency();
+        thisObject->checkConsistency();
         return;
     }
 
-    putSlowCase(exec, i, value);
+    thisObject->putSlowCase(exec, i, value);
 }
 
 NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue value)

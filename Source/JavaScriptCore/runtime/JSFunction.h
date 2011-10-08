@@ -143,6 +143,8 @@ namespace JSC {
         bool isHostFunctionNonInline() const;
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);

@@ -64,9 +64,14 @@ bool StringObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
 
 void StringObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
     if (propertyName == exec->propertyNames().length)
         return;
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(cell, exec, propertyName, value, slot);
 }
 
 bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyName)

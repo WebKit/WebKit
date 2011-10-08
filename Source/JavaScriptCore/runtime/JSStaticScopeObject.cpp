@@ -51,6 +51,12 @@ JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
 
 void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);
     if (slot.isStrictMode()) {
         // Double lookup in strict mode, but this only occurs when
         // a) indirectly writing to an exception slot
@@ -60,13 +66,13 @@ void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, J
         // a pointer compare.
         PropertySlot slot;
         bool isWritable = true;
-        symbolTableGet(propertyName, slot, isWritable);
+        thisObject->symbolTableGet(propertyName, slot, isWritable);
         if (!isWritable) {
             throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
             return;
         }
     }
-    if (symbolTablePut(exec->globalData(), propertyName, value))
+    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
         return;
     
     ASSERT_NOT_REACHED();

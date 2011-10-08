@@ -1,3 +1,66 @@
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::put
+        https://bugs.webkit.org/show_bug.cgi?id=69382
+
+        Reviewed by Geoffrey Garen.
+
+        Added static version of both versions of put to all classes that 
+        override them and changed the virtual versions to call the static 
+        versions.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::put):
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::put):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::put):
+        * runtime/Arguments.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::put):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::put):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::put):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/JSObject.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::put):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::put):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::put):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+
 2011-10-07  Gavin Barraclough  <barraclough@apple.com>
 
         Refactor DFG to make for use of callOperation

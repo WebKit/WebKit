@@ -165,16 +165,22 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
 
 void JSActivation::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    put(this, exec, propertyName, value, slot);
+}
 
-    if (symbolTablePut(exec->globalData(), propertyName, value))
+void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSActivation* thisObject = static_cast<JSActivation*>(cell);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
+
+    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
-    ASSERT(!hasGetterSetterProperties());
-    putDirect(exec->globalData(), propertyName, value, 0, true, slot);
+    ASSERT(!thisObject->hasGetterSetterProperties());
+    thisObject->putDirect(exec->globalData(), propertyName, value, 0, true, slot);
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum

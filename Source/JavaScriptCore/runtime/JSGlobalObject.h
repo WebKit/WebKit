@@ -183,6 +183,8 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue value, unsigned attributes);
 
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes);

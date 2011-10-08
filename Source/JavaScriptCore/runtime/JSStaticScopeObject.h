@@ -46,6 +46,8 @@ namespace JSC{
         virtual JSObject* toThisObject(ExecState*) const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+
         void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); }

@@ -65,6 +65,7 @@ namespace JSC {
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
 
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);

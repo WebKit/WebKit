@@ -103,11 +103,17 @@ static void throwSetterError(ExecState* exec)
     throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
 }
 
-// ECMA 8.6.2.2
 void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+// ECMA 8.6.2.2
+void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSObject* thisObject = static_cast<JSObject*>(cell);
     ASSERT(value);
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     JSGlobalData& globalData = exec->globalData();
 
     if (propertyName == exec->propertyNames().underscoreProto) {
@@ -115,23 +121,23 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
         if (!value.isObject() && !value.isNull())
             return;
 
-        if (!isExtensible()) {
+        if (!thisObject->isExtensible()) {
             if (slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
             
-        if (!setPrototypeWithCycleCheck(globalData, value))
+        if (!thisObject->setPrototypeWithCycleCheck(globalData, value))
             throwError(exec, createError(exec, "cyclic __proto__ value"));
         return;
     }
 
     // Check if there are any setters or getters in the prototype chain
     JSValue prototype;
-    for (JSObject* obj = this; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
+    for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
+            if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
@@ -139,13 +145,13 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     
     unsigned attributes;
     JSCell* specificValue;
-    if ((structure()->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
+    if ((thisObject->structure()->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
         if (slot.isStrictMode())
             throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
         return;
     }
 
-    for (JSObject* obj = this; ; obj = asObject(prototype)) {
+    for (JSObject* obj = thisObject; ; obj = asObject(prototype)) {
         if (JSValue gs = obj->getDirect(globalData, propertyName)) {
             if (gs.isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
@@ -160,7 +166,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
                 args.append(value);
 
                 // If this is WebCore's global object then we need to substitute the shell.
-                call(exec, setterFunc, callType, callData, this->toThisObject(exec), args);
+                call(exec, setterFunc, callType, callData, thisObject->toThisObject(exec), args);
                 return;
             }
 
@@ -174,15 +180,20 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
             break;
     }
     
-    if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
+    if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
 
 void JSObject::put(ExecState* exec, unsigned propertyName, JSValue value)
 {
+    put(this, exec, propertyName, value);
+}
+
+void JSObject::put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+{
     PutPropertySlot slot;
-    put(exec, Identifier::from(exec, propertyName), value, slot);
+    static_cast<JSObject*>(cell)->put(exec, Identifier::from(exec, propertyName), value, slot);
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)

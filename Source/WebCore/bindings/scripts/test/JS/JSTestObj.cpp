@@ -763,8 +763,14 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
 
 void JSTestObj::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, this, slot);
+    put(this, exec, propertyName, value, slot);
+}
+
+void JSTestObj::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, thisObject, slot);
 }
 
 void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)

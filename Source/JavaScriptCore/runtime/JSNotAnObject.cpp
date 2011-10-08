@@ -76,12 +76,22 @@ bool JSNotAnObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&,
     return false;
 }
 
-void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue, PutPropertySlot&)
+void JSNotAnObject::put(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
+{
+    put(this, exec, identifier, value, slot);
+}
+
+void JSNotAnObject::put(JSCell*, ExecState* exec, const Identifier& , JSValue, PutPropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }
 
-void JSNotAnObject::put(ExecState* exec, unsigned, JSValue)
+void JSNotAnObject::put(ExecState* exec, unsigned i, JSValue value)
+{
+    put(this, exec, i, value);
+}
+
+void JSNotAnObject::put(JSCell*, ExecState* exec, unsigned, JSValue)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }

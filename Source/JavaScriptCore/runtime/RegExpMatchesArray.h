@@ -66,16 +66,28 @@ namespace JSC {
 
         virtual void put(ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
         {
-            if (subclassData())
-                fillArrayInstance(exec);
-            JSArray::put(exec, propertyName, v, slot);
+            put(this, exec, propertyName, v, slot);
         }
 
+        static void put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
+        {
+            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            if (thisObject->subclassData())
+                thisObject->fillArrayInstance(exec);
+            JSArray::put(thisObject, exec, propertyName, v, slot);
+        }
+        
         virtual void put(ExecState* exec, unsigned propertyName, JSValue v)
         {
-            if (subclassData())
-                fillArrayInstance(exec);
-            JSArray::put(exec, propertyName, v);
+            put(this, exec, propertyName, v);
+        }
+        
+        static void put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v)
+        {
+            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            if (thisObject->subclassData())
+                thisObject->fillArrayInstance(exec);
+            JSArray::put(thisObject, exec, propertyName, v);
         }
 
         virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName)

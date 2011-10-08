@@ -151,15 +151,21 @@ bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void UserObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&)
+void UserObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot& slot)
 {
-    if (!fJSUserObject)
+    put(this, exec, propertyName, value, slot);
+}
+
+void UserObjectImp::put(JSCell* cell, ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&)
+{
+    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    if (!thisObject->fJSUserObject)
         return;
     
     CFStringRef cfPropName = IdentifierToCFString(propertyName);
     JSUserObject *jsValueObj = KJSValueToJSObject(value, exec);
 
-    fJSUserObject->SetProperty(cfPropName, jsValueObj);
+    thisObject->fJSUserObject->SetProperty(cfPropName, jsValueObj);
 
     if (jsValueObj) jsValueObj->Release();
     ReleaseCFType(cfPropName);

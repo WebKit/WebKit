@@ -162,7 +162,12 @@ JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
 
 void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), this, slot);
+    put(this, exec, propertyName, value, slot);
+}
+
+void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), slot);
 }
 
 void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue value)

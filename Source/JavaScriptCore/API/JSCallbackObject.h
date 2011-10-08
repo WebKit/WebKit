@@ -182,6 +182,7 @@ private:
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     
     virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+    static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);

@@ -1,3 +1,32 @@
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::put
+        https://bugs.webkit.org/show_bug.cgi?id=69382
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Added static version of both versions of put to all classes that 
+        override them and changed the virtual versions to call the static 
+        versions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::put):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::put):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::put):
+        * bridge/runtime_object.h:
+
 2011-10-07  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
          https://bugs.webkit.org/show_bug.cgi?id=69471

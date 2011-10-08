@@ -223,6 +223,10 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 {
 }
 
+void ObjcFallbackObjectImp::put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&)
+{
+}
+
 static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();

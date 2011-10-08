@@ -67,7 +67,12 @@ bool DebuggerActivation::getOwnPropertySlot(ExecState* exec, const Identifier& p
 
 void DebuggerActivation::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    m_activation->put(exec, propertyName, value, slot);
+    put(this, exec, propertyName, value, slot);
+}
+
+void DebuggerActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    static_cast<DebuggerActivation*>(cell)->m_activation->put(exec, propertyName, value, slot);
 }
 
 void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)

@@ -289,7 +289,12 @@ JSValue regExpConstructorRightContext(ExecState* exec, JSValue slotBase, const I
 
 void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), this, slot);
+    put(this, exec, propertyName, value, slot);
+}
+
+void RegExpConstructor::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), static_cast<RegExpConstructor*>(cell), slot);
 }
 
 void setRegExpConstructorInput(ExecState* exec, JSObject* baseObject, JSValue value)

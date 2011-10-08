@@ -87,18 +87,29 @@ bool JSByteArray::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Pro
 
 void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
     if (ok) {
-        setIndex(exec, index, value);
+        thisObject->setIndex(exec, index, value);
         return;
     }
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
 void JSByteArray::put(ExecState* exec, unsigned propertyName, JSValue value)
 {
-    setIndex(exec, propertyName, value);
+    put(this, exec, propertyName, value);
+}
+
+void JSByteArray::put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+{
+    static_cast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
 }
 
 void JSByteArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

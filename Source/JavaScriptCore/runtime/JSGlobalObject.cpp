@@ -136,11 +136,17 @@ void JSGlobalObject::init(JSObject* thisValue)
 
 void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    put(this, exec, propertyName, value, slot);
+}
 
-    if (symbolTablePut(exec->globalData(), propertyName, value))
+void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
+
+    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
         return;
-    JSVariableObject::put(exec, propertyName, value, slot);
+    JSVariableObject::put(thisObject, exec, propertyName, value, slot);
 }
 
 void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)

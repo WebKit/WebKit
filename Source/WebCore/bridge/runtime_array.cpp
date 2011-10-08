@@ -132,6 +132,12 @@ bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertyS
 
 void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    put(this, exec, propertyName, value, slot);
+}
+
+void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
         throwError(exec, createRangeError(exec, "Range error"));
         return;
@@ -140,21 +146,27 @@ void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue 
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        getConcreteArray()->setValueAt(exec, index, value);
+        thisObject->getConcreteArray()->setValueAt(exec, index, value);
         return;
     }
     
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
 void RuntimeArray::put(ExecState* exec, unsigned index, JSValue value)
 {
-    if (index >= getLength()) {
+    put(this, exec, index, value);
+}
+
+void RuntimeArray::put(JSCell* cell, ExecState* exec, unsigned index, JSValue value)
+{
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
+    if (index >= thisObject->getLength()) {
         throwError(exec, createRangeError(exec, "Range error"));
         return;
     }
     
-    getConcreteArray()->setValueAt(exec, index, value);
+    thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
 bool RuntimeArray::deleteProperty(ExecState*, const Identifier&)

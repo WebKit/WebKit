@@ -212,12 +212,18 @@ bool RuntimeObject::getOwnPropertyDescriptor(ExecState *exec, const Identifier& 
 
 void RuntimeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    if (!m_instance) {
+    put(this, exec, propertyName, value, slot);
+}
+
+void RuntimeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return;
     }
     
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
     instance->begin();
 
     // Set the value of the property.
@@ -225,7 +231,7 @@ void RuntimeObject::put(ExecState* exec, const Identifier& propertyName, JSValue
     if (aField)
         aField->setValueToInstance(exec, instance.get(), value);
     else if (!instance->setValueOfUndefinedField(exec, propertyName, value))
-        instance->put(this, exec, propertyName, value, slot);
+        instance->put(thisObject, exec, propertyName, value, slot);
 
     instance->end();
 }

@@ -301,17 +301,23 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
 
 void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    if (isHostFunction()) {
-        Base::put(exec, propertyName, value, slot);
+    put(this, exec, propertyName, value, slot);
+}
+
+void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    if (thisObject->isHostFunction()) {
+        Base::put(thisObject, exec, propertyName, value, slot);
         return;
     }
     if (propertyName == exec->propertyNames().prototype) {
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot;
-        getOwnPropertySlot(exec, propertyName, slot);
+        thisObject->getOwnPropertySlot(exec, propertyName, slot);
     }
-    if (jsExecutable()->isStrictMode()) {
+    if (thisObject->jsExecutable()->isStrictMode()) {
         if (propertyName == exec->propertyNames().arguments) {
             throwTypeError(exec, StrictModeArgumentsAccessError);
             return;
@@ -323,7 +329,7 @@ void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue va
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return;
-    Base::put(exec, propertyName, value, slot);
+    Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)

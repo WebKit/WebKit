@@ -77,12 +77,18 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 
 void ObjectPrototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSNonFinalObject::put(exec, propertyName, value, slot);
+    put(this, exec, propertyName, value, slot);
+}
 
-    if (m_hasNoPropertiesWithUInt32Names) {
+void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
+    JSNonFinalObject::put(cell, exec, propertyName, value, slot);
+
+    if (thisObject->m_hasNoPropertiesWithUInt32Names) {
         bool isUInt32;
         propertyName.toUInt32(isUInt32);
-        m_hasNoPropertiesWithUInt32Names = !isUInt32;
+        thisObject->m_hasNoPropertiesWithUInt32Names = !isUInt32;
     }
 }
 
