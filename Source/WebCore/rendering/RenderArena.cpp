@@ -79,7 +79,9 @@ void* RenderArena::allocate(size_t size)
 {
     m_totalSize += size;
 
-#ifndef NDEBUG
+#ifdef ADDRESS_SANITIZER
+    return ::malloc(size);
+#elif !defined(NDEBUG)
     // Use standard malloc so that memory debugging tools work.
     ASSERT(this);
     void* block = ::malloc(debugHeaderSize + size);
@@ -119,7 +121,9 @@ void RenderArena::free(size_t size, void* ptr)
 {
     m_totalSize -= size;
 
-#ifndef NDEBUG
+#ifdef ADDRESS_SANITIZER
+    ::free(ptr);
+#elif !defined(NDEBUG)
     // Use standard free so that memory debugging tools work.
     void* block = static_cast<char*>(ptr) - debugHeaderSize;
     RenderArenaDebugHeader* header = static_cast<RenderArenaDebugHeader*>(block);
