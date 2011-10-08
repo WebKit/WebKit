@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 1: TypeError: '[object DOMWindowConstructor]' is not a function (evaluating 'obj.alert.constructor("return document.body.innerHTML")')
-

@@ -1,3 +1,23 @@
+2011-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [JSC]Two tests fails after r95489 & r95488
+        https://bugs.webkit.org/show_bug.cgi?id=68428
+
+        Move V8-specific results to Chromium and put JSC result in cross-platform directory.
+        Also unskip the tests on Mac.
+
+        * http/tests/security/document-all-expected.txt:
+        * http/tests/security/window-named-proto-expected.txt:
+        * platform/chromium/http/tests/security/document-all-expected.txt: Copied from
+        LayoutTests/http/tests/security/document-all-expected.txt.
+        * platform/chromium/http/tests/security/window-named-proto-expected.txt: Copied from
+        LayoutTests/http/tests/security/window-named-proto-expected.txt.
+        * platform/gtk/http/tests/security/document-all-expected.txt: Removed.
+        * platform/gtk/http/tests/security/window-named-proto-expected.txt: Removed.
+        * platform/mac/Skipped:
+        * platform/qt/http/tests/security/document-all-expected.txt: Removed.
+        * platform/qt/http/tests/security/window-named-proto-expected.txt: Removed.
+
 2011-10-07  Justin Schuh  <jschuh@chromium.org>
 
         Make isXMLMIMEType regex use TLS
