@@ -1,3 +1,19 @@
+2011-10-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Wrong handling of visibility in QTouchWebPage
+        https://bugs.webkit.org/show_bug.cgi?id=69670
+
+        Reviewed by Andreas Kling.
+
+        Replace QTouchWebPage visibility handling by Show/Hide events with use of 
+        QSGItem::visibleChanged signal.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::event):
+        (QTouchWebPage::onVisibleChanged):
+        * UIProcess/API/qt/qtouchwebpage.h:
+
 2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96996.

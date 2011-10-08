@@ -38,6 +38,7 @@ QTouchWebPage::QTouchWebPage(QSGItem* parent)
     // We do the transform from the top left so the viewport can assume the position 0, 0
     // is always where rendering starts.
     setTransformOrigin(TopLeft);
+    connect(this, SIGNAL(visibleChanged()), SLOT(onVisibleChanged()));
 }
 
 QTouchWebPage::~QTouchWebPage()
@@ -91,17 +92,6 @@ QSGNode* QTouchWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 */
 bool QTouchWebPage::event(QEvent* ev)
 {
-    switch (ev->type()) {
-    case QEvent::Show:
-        d->page->setPageIsVisible(true);
-        break;
-    case QEvent::Hide:
-        d->page->setPageIsVisible(false);
-        break;
-    default:
-        break;
-    }
-
     if (d->page->handleEvent(ev))
         return true;
     return QSGItem::event(ev);
@@ -164,6 +154,11 @@ void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
     ASSERT(!this->page);
     ASSERT(page);
     this->page = page;
+}
+
+void QTouchWebPage::onVisibleChanged()
+{
+    d->page->setPageIsVisible(isVisible());
 }
 
 #include "moc_qtouchwebpage.cpp"
