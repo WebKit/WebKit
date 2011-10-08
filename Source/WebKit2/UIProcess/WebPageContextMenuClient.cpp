@@ -74,4 +74,12 @@ void WebPageContextMenuClient::customContextMenuItemSelected(WebPageProxy* page,
     m_client.customContextMenuItemSelected(toAPI(page), toAPI(item.get()), m_client.clientInfo);
 }
 
+void WebPageContextMenuClient::contextMenuDismissed(WebPageProxy* page)
+{
+    if (!m_client.contextMenuDismissed)
+        return;
+    
+    m_client.contextMenuDismissed(toAPI(page), m_client.clientInfo);
+}
+
 } // namespace WebKit

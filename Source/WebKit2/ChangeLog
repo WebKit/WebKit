@@ -1,3 +1,24 @@
+2011-10-07  Jeff Miller  <jeffm@apple.com>
+
+        Add WKPageContextMenuClient callback when context menu is dismissed
+        https://bugs.webkit.org/show_bug.cgi?id=69553
+
+        Add contextMenuDismissed callback to WKPageContextMenuClient, and bump the API
+        version of this client to 1 so we continue to work with old clients.
+
+        * Shared/APIClientTraits.cpp: Added array of interface sizes for WKPageContextMenuClient.
+        * Shared/APIClientTraits.h: Added APIClientTraits for WKPageContextMenuClient.
+
+        * UIProcess/API/C/WKPage.h: Added contextMenuDismissed callback to WKPageContextMenuClient and bumped kWKPageContextMenuClientCurrentVersion.
+
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::contextMenuDismissed): Added.
+
+        * UIProcess/WebPageContextMenuClient.h: Added WebPageContextMenuClient::contextMenuDismissed().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu): Notify client when context menu is dismissed.
+
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods

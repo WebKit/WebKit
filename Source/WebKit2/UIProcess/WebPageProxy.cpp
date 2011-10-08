@@ -2398,6 +2398,8 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
         m_activeContextMenu->showContextMenu(menuLocation, proposedItems);
     else
         m_activeContextMenu->showContextMenu(menuLocation, items);
+    
+    m_contextMenuClient.contextMenuDismissed(this);
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
