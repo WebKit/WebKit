@@ -1,3 +1,9 @@
+2011-10-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed Skiplist update to get bot green.
+
+        * platform/wincairo/Skipped: Turn off a few more tests.
+
 2011-10-07  Ben Wells  <benwells@chromium.org>
 
         CSS text-transform should apply to select elements
