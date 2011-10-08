@@ -82,7 +82,12 @@ void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& pr
 
 bool DebuggerActivation::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
-    return m_activation->deleteProperty(exec, propertyName);
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    return static_cast<DebuggerActivation*>(cell)->m_activation->deleteProperty(exec, propertyName);
 }
 
 void DebuggerActivation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

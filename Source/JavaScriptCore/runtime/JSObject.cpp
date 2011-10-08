@@ -242,20 +242,26 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
-// ECMA 8.6.2.5
 bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+// ECMA 8.6.2.5
+bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    JSObject* thisObject = static_cast<JSObject*>(cell);
     unsigned attributes;
     JSCell* specificValue;
-    if (structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
+    if (thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
         if ((attributes & DontDelete))
             return false;
-        removeDirect(exec->globalData(), propertyName);
+        thisObject->removeDirect(exec->globalData(), propertyName);
         return true;
     }
 
     // Look in the static hashtable of properties
-    const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
+    const HashEntry* entry = thisObject->findPropertyHashEntry(exec, propertyName);
     if (entry && entry->attributes() & DontDelete)
         return false; // this builtin property can't be deleted
 
@@ -271,7 +277,12 @@ bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) c
 
 bool JSObject::deleteProperty(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(exec, Identifier::from(exec, propertyName));
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    return static_cast<JSObject*>(cell)->deleteProperty(exec, Identifier::from(exec, propertyName));
 }
 
 static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)

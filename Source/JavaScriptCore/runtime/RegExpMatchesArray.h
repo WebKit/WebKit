@@ -92,16 +92,28 @@ namespace JSC {
 
         virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName)
         {
-            if (subclassData())
-                fillArrayInstance(exec);
-            return JSArray::deleteProperty(exec, propertyName);
+            return deleteProperty(this, exec, propertyName);
+        }
+
+        static bool deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+        {
+            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            if (thisObject->subclassData())
+                thisObject->fillArrayInstance(exec);
+            return JSArray::deleteProperty(thisObject, exec, propertyName);
         }
 
         virtual bool deleteProperty(ExecState* exec, unsigned propertyName)
         {
-            if (subclassData())
-                fillArrayInstance(exec);
-            return JSArray::deleteProperty(exec, propertyName);
+            return deleteProperty(this, exec, propertyName);
+        }
+
+        static bool deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+        {
+            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            if (thisObject->subclassData())
+                thisObject->fillArrayInstance(exec);
+            return JSArray::deleteProperty(thisObject, exec, propertyName);
         }
 
         virtual void getOwnPropertyNames(ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)

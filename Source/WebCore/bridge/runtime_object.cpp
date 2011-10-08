@@ -236,7 +236,12 @@ void RuntimeObject::put(JSCell* cell, ExecState* exec, const Identifier& propert
     instance->end();
 }
 
-bool RuntimeObject::deleteProperty(ExecState*, const Identifier&)
+bool RuntimeObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool RuntimeObject::deleteProperty(JSCell*, ExecState*, const Identifier&)
 {
     // Can never remove a property of a RuntimeObject.
     return false;

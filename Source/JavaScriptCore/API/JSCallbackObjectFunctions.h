@@ -268,11 +268,18 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, const Identifi
 template <class Parent>
 bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+template <class Parent>
+bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
+    JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
@@ -305,13 +312,19 @@ bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, const Identifier&
         }
     }
     
-    return Parent::deleteProperty(exec, propertyName);
+    return Parent::deleteProperty(thisObject, exec, propertyName);
 }
 
 template <class Parent>
 bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(exec, Identifier::from(exec, propertyName));
+    return deleteProperty(this, exec, propertyName);
+}
+
+template <class Parent>
+bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    return static_cast<JSCallbackObject*>(cell)->deleteProperty(exec, Identifier::from(exec, propertyName));
 }
 
 template <class Parent>

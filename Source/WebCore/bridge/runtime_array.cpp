@@ -169,12 +169,22 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, unsigned index, JSValue va
     thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArray::deleteProperty(ExecState*, const Identifier&)
+bool RuntimeArray::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool RuntimeArray::deleteProperty(JSCell*, ExecState*, const Identifier&)
 {
     return false;
 }
 
-bool RuntimeArray::deleteProperty(ExecState*, unsigned)
+bool RuntimeArray::deleteProperty(ExecState* exec, unsigned propertyName)
+{
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool RuntimeArray::deleteProperty(JSCell*, ExecState*, unsigned)
 {
     return false;
 }

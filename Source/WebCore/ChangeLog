@@ -1,3 +1,26 @@
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::deleteProperty
+        https://bugs.webkit.org/show_bug.cgi?id=69659
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Added static version of both versions of put to all classes that 
+        override them and changed the virtual versions to call the static 
+        versions.  This is the first step in de-virtualizing JSCell::deleteProperty.
+
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::deleteProperty):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::deleteProperty):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::deleteProperty):
+        * bridge/runtime_object.h:
+
 2011-10-07  Justin Schuh  <jschuh@chromium.org>
 
         Make isXMLMIMEType regex use TLS

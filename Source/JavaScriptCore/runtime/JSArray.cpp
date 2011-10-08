@@ -497,32 +497,44 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
 
 bool JSArray::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return deleteProperty(exec, i);
+        return thisObject->deleteProperty(exec, i);
 
     if (propertyName == exec->propertyNames().length)
         return false;
 
-    return JSObject::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
 bool JSArray::deleteProperty(ExecState* exec, unsigned i)
 {
-    checkConsistency();
+    return deleteProperty(this, exec, i);
+}
 
-    ArrayStorage* storage = m_storage;
+bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, unsigned i)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    thisObject->checkConsistency();
+
+    ArrayStorage* storage = thisObject->m_storage;
     
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
         if (!valueSlot) {
-            checkConsistency();
+            thisObject->checkConsistency();
             return false;
         }
         valueSlot.clear();
         --storage->m_numValuesInVector;
-        checkConsistency();
+        thisObject->checkConsistency();
         return true;
     }
 
@@ -531,16 +543,16 @@ bool JSArray::deleteProperty(ExecState* exec, unsigned i)
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->end()) {
                 map->remove(it);
-                checkConsistency();
+                thisObject->checkConsistency();
                 return true;
             }
         }
     }
 
-    checkConsistency();
+    thisObject->checkConsistency();
 
     if (i > MAX_ARRAY_INDEX)
-        return deleteProperty(exec, Identifier::from(exec, i));
+        return thisObject->deleteProperty(exec, Identifier::from(exec, i));
 
     return false;
 }

@@ -95,7 +95,9 @@ namespace JSC {
         static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
         
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
+        static bool deleteProperty(JSCell*, ExecState*, unsigned propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
 

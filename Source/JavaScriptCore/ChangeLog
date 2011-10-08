@@ -1,5 +1,55 @@
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Add static version of JSCell::deleteProperty
+        https://bugs.webkit.org/show_bug.cgi?id=69659
+
+        Reviewed by Geoffrey Garen.
+
+        Added static version of both versions of put to all classes that 
+        override them and changed the virtual versions to call the static 
+        versions.  This is the first step in de-virtualizing JSCell::deleteProperty.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::deleteProperty):
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::deleteProperty):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deleteProperty):
+        * runtime/Arguments.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::deleteProperty):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::deleteProperty):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deleteProperty):
+        * runtime/JSFunction.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::deleteProperty):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        * runtime/JSObject.h:
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::deleteProperty):
+        * runtime/JSVariableObject.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::deleteProperty):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::deleteProperty):
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::deleteProperty):
+        * runtime/StringObject.h:
+
+2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Remove getCallDataVirtual methods
         https://bugs.webkit.org/show_bug.cgi?id=69186
 

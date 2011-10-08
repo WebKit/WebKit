@@ -201,10 +201,15 @@ void JSActivation::putWithAttributes(ExecState* exec, const Identifier& property
 
 bool JSActivation::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
     if (propertyName == exec->propertyNames().arguments)
         return false;
 
-    return Base::deleteProperty(exec, propertyName);
+    return Base::deleteProperty(cell, exec, propertyName);
 }
 
 JSObject* JSActivation::toThisObject(ExecState* exec) const

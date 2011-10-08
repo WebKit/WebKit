@@ -76,13 +76,19 @@ void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& property
 
 bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    StringObject* thisObject = static_cast<StringObject*>(cell);
     if (propertyName == exec->propertyNames().length)
         return false;
     bool isStrictUInt32;
     unsigned i = propertyName.toUInt32(isStrictUInt32);
-    if (isStrictUInt32 && internalValue()->canGetIndex(i))
+    if (isStrictUInt32 && thisObject->internalValue()->canGetIndex(i))
         return false;
-    return JSObject::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
 void StringObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

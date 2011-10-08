@@ -59,7 +59,9 @@ public:
     static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
     
     virtual bool deleteProperty(ExecState* exec, const Identifier &propertyName);
+    static bool deleteProperty(JSCell*, ExecState*, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState* exec, unsigned propertyName);
+    static bool deleteProperty(JSCell*, ExecState*, unsigned propertyName);
     
     unsigned getLength() const { return getConcreteArray()->getLength(); }
     

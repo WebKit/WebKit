@@ -42,6 +42,7 @@ public:
     }
 
     virtual bool deleteProperty(ExecState*, const Identifier&);
+    static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
     virtual JSObject* toThisObject(ExecState*) const;
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)

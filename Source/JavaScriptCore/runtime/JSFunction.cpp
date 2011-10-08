@@ -329,11 +329,17 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
 
 bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
-    if (isHostFunction())
-        return Base::deleteProperty(exec, propertyName);
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    if (thisObject->isHostFunction())
+        return Base::deleteProperty(thisObject, exec, propertyName);
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return false;
-    return Base::deleteProperty(exec, propertyName);
+    return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
 // ECMA 13.2.2 [[Construct]]

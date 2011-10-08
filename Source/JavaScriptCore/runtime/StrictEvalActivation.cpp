@@ -35,7 +35,12 @@ StrictEvalActivation::StrictEvalActivation(ExecState* exec)
 {
 }
 
-bool StrictEvalActivation::deleteProperty(ExecState*, const Identifier&)
+bool StrictEvalActivation::deleteProperty(ExecState* exec, const Identifier& identifier)
+{
+    return deleteProperty(this, exec, identifier);
+}
+
+bool StrictEvalActivation::deleteProperty(JSCell*, ExecState*, const Identifier&)
 {
     return false;
 }

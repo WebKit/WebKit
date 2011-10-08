@@ -318,52 +318,64 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
 
 bool Arguments::deleteProperty(ExecState* exec, unsigned i) 
 {
-    if (i < d->numArguments) {
-        if (!d->deletedArguments) {
-            d->deletedArguments = adoptArrayPtr(new bool[d->numArguments]);
-            memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
+    return deleteProperty(this, exec, i);
+}
+
+bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, unsigned i) 
+{
+    Arguments* thisObject = static_cast<Arguments*>(cell);
+    if (i < thisObject->d->numArguments) {
+        if (!thisObject->d->deletedArguments) {
+            thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
+            memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
         }
-        if (!d->deletedArguments[i]) {
-            d->deletedArguments[i] = true;
+        if (!thisObject->d->deletedArguments[i]) {
+            thisObject->d->deletedArguments[i] = true;
             return true;
         }
     }
 
-    return JSObject::deleteProperty(exec, Identifier(exec, UString::number(i)));
+    return JSObject::deleteProperty(thisObject, exec, Identifier(exec, UString::number(i)));
 }
 
 bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName) 
 {
+    return deleteProperty(this, exec, propertyName);
+}
+
+bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName) 
+{
+    Arguments* thisObject = static_cast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < d->numArguments) {
-        if (!d->deletedArguments) {
-            d->deletedArguments = adoptArrayPtr(new bool[d->numArguments]);
-            memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
+    if (isArrayIndex && i < thisObject->d->numArguments) {
+        if (!thisObject->d->deletedArguments) {
+            thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
+            memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
         }
-        if (!d->deletedArguments[i]) {
-            d->deletedArguments[i] = true;
+        if (!thisObject->d->deletedArguments[i]) {
+            thisObject->d->deletedArguments[i] = true;
             return true;
         }
     }
 
-    if (propertyName == exec->propertyNames().length && !d->overrodeLength) {
-        d->overrodeLength = true;
+    if (propertyName == exec->propertyNames().length && !thisObject->d->overrodeLength) {
+        thisObject->d->overrodeLength = true;
         return true;
     }
 
-    if (propertyName == exec->propertyNames().callee && !d->overrodeCallee) {
-        if (!d->isStrictMode) {
-            d->overrodeCallee = true;
+    if (propertyName == exec->propertyNames().callee && !thisObject->d->overrodeCallee) {
+        if (!thisObject->d->isStrictMode) {
+            thisObject->d->overrodeCallee = true;
             return true;
         }
-        createStrictModeCalleeIfNecessary(exec);
+        thisObject->createStrictModeCalleeIfNecessary(exec);
     }
     
-    if (propertyName == exec->propertyNames().caller && !d->isStrictMode)
-        createStrictModeCallerIfNecessary(exec);
+    if (propertyName == exec->propertyNames().caller && !thisObject->d->isStrictMode)
+        thisObject->createStrictModeCallerIfNecessary(exec);
 
-    return JSObject::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
 } // namespace JSC
