@@ -1,3 +1,12 @@
+2011-10-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening.
+
+        * platform/qt-4.8/editing/deleting/merge-whitespace-pre-expected.txt: Updated after 96886.
+        * platform/qt/Skipped: Skip http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml - http://webkit.org/b/69700
+        * platform/qt/fast/css/text-transform-select-expected.png: Added after r96987.
+        * platform/qt/fast/css/text-transform-select-expected.txt: Added after r96987.
+
 2011-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         [JSC]Two tests fails after r95489 & r95488
