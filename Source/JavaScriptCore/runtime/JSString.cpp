@@ -315,15 +315,21 @@ JSObject* JSString::toThisObject(ExecState* exec) const
 
 bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSString* thisObject = static_cast<JSString*>(cell);
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
     // This function should only be called by JSValue::get.
-    if (getStringPropertySlot(exec, propertyName, slot))
+    if (thisObject->getStringPropertySlot(exec, propertyName, slot))
         return true;
     if (propertyName == exec->propertyNames().underscoreProto) {
         slot.setValue(exec->lexicalGlobalObject()->stringPrototype());
         return true;
     }
-    slot.setBase(this);
+    slot.setBase(thisObject);
     JSObject* object;
     for (JSValue prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype.isNull(); prototype = object->prototype()) {
         object = asObject(prototype);
@@ -363,11 +369,17 @@ bool JSString::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prope
 
 bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    JSString* thisObject = static_cast<JSString*>(cell);
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
     // This function should only be called by JSValue::get.
-    if (getStringPropertySlot(exec, propertyName, slot))
+    if (thisObject->getStringPropertySlot(exec, propertyName, slot))
         return true;
-    return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    return JSString::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
 } // namespace JSC

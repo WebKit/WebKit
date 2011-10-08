@@ -1,3 +1,36 @@
+2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=69593
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Added static version of getOwnPropertySlot to every class that overrides
+        JSCell::getOwnPropertySlot.  The virtual versions now call the static versions.
+        This is the first step in de-virtualizing JSCell::getOwnPropertySlot.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getOwnPropertySlot):
+        * bindings/js/JSDOMWindowShell.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getOwnPropertySlot):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::getOwnPropertySlot):
+        (JSC::Bindings::QtRuntimeConnectionMethod::getOwnPropertySlot):
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        * bridge/runtime_object.h:
+
 2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Implement drag and drop support in WebKit2

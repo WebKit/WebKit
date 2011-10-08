@@ -94,14 +94,25 @@ void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& prope
 
 bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    if (m_hasNoPropertiesWithUInt32Names)
-        return false;
-    return JSNonFinalObject::getOwnPropertySlot(exec, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
-bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), this, propertyName, slot);
+    ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
+    if (thisObject->m_hasNoPropertiesWithUInt32Names)
+        return false;
+    return JSNonFinalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+}
+
+bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), static_cast<ObjectPrototype*>(cell), propertyName, slot);
 }
 
 bool ObjectPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

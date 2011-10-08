@@ -98,6 +98,11 @@ bool JSBoundFunction::hasInstance(ExecState* exec, JSValue value, JSValue)
 
 bool JSBoundFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSBoundFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
     if (propertyName == exec->propertyNames().arguments) {
         throwTypeError(exec, StrictModeArgumentsAccessError);
         slot.setValue(jsNull());
@@ -110,7 +115,7 @@ bool JSBoundFunction::getOwnPropertySlot(ExecState* exec, const Identifier& prop
         return true;
     }
 
-    return Base::getOwnPropertySlot(exec, propertyName, slot);
+    return Base::getOwnPropertySlot(cell, exec, propertyName, slot);
 }
 
 bool JSBoundFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

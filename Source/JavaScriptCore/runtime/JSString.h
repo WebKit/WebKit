@@ -508,7 +508,9 @@ namespace JSC {
 
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         static const unsigned s_maxInternalRopeLength = 3;

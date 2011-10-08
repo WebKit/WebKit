@@ -130,25 +130,31 @@ JSValue UserObjectImp::userObjectGetter(ExecState*, JSValue slotBase, const Iden
 
 bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (!fJSUserObject)
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool UserObjectImp::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    if (!thisObject->fJSUserObject)
         return false;
 
     CFStringRef cfPropName = IdentifierToCFString(propertyName);
-    JSUserObject *jsResult = fJSUserObject->CopyProperty(cfPropName);
+    JSUserObject* jsResult = thisObject->fJSUserObject->CopyProperty(cfPropName);
     ReleaseCFType(cfPropName);
     if (jsResult) {
-        slot.setCustom(this, userObjectGetter);
+        slot.setCustom(thisObject, userObjectGetter);
         jsResult->Release();
         return true;
     } else {
-        JSValue kjsValue = toPrimitive(exec);
+        JSValue kjsValue = thisObject->toPrimitive(exec);
         if (!kjsValue.isUndefinedOrNull()) {
             JSObject* kjsObject = kjsValue.toObject(exec);
             if (kjsObject->getPropertySlot(exec, propertyName, slot))
                 return true;
         }
     }
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 void UserObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot& slot)

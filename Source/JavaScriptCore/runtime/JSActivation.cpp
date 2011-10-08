@@ -143,23 +143,29 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSActivation* thisObject = static_cast<JSActivation*>(cell);
     if (propertyName == exec->propertyNames().arguments) {
-        slot.setCustom(this, getArgumentsGetter());
+        slot.setCustom(thisObject, thisObject->getArgumentsGetter());
         return true;
     }
 
-    if (symbolTableGet(propertyName, slot))
+    if (thisObject->symbolTableGet(propertyName, slot))
         return true;
 
-    if (WriteBarrierBase<Unknown>* location = getDirectLocation(exec->globalData(), propertyName)) {
+    if (WriteBarrierBase<Unknown>* location = thisObject->getDirectLocation(exec->globalData(), propertyName)) {
         slot.setValue(location->get());
         return true;
     }
 
     // We don't call through to JSObject because there's no way to give an 
     // activation object getter properties or a prototype.
-    ASSERT(!hasGetterSetterProperties());
-    ASSERT(prototype().isNull());
+    ASSERT(!thisObject->hasGetterSetterProperties());
+    ASSERT(thisObject->prototype().isNull());
     return false;
 }
 

@@ -1,3 +1,18 @@
+2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=69593
+
+        Reviewed by Geoffrey Garen.
+
+        Added static version of getOwnPropertySlot to every class that overrides
+        JSCell::getOwnPropertySlot.  The virtual versions now call the static versions.
+        This is the first step in de-virtualizing JSCell::getOwnPropertySlot.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-10-03  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Implement drag and drop support in WebKit2

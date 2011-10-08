@@ -56,13 +56,19 @@ Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject
 
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
-    if (ok && canAccessIndex(index)) {
-        slot.setValue(getIndex(exec, index));
+    if (ok && thisObject->canAccessIndex(index)) {
+        slot.setValue(thisObject->getIndex(exec, index));
         return true;
     }
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -78,11 +84,17 @@ bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
 
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    if (canAccessIndex(propertyName)) {
-        slot.setValue(getIndex(exec, propertyName));
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
+    if (thisObject->canAccessIndex(propertyName)) {
+        slot.setValue(thisObject->getIndex(exec, propertyName));
         return true;
     }
-    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
 void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

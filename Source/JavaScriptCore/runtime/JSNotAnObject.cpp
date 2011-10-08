@@ -57,14 +57,24 @@ UString JSNotAnObject::toString(ExecState* exec) const
     return "";
 }
 
+bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+{
+    return getOwnPropertySlot(this, exec, identifier, slot);
+}
+
 // JSObject methods
-bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier&, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, const Identifier&, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;
 }
 
-bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, unsigned, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;

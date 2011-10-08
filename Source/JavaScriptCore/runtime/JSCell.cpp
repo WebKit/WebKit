@@ -71,10 +71,15 @@ ConstructType JSCell::getConstructData(ConstructData&)
 
 bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, identifier, slot);
+}
+
+bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+{
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.
     // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = toObject(exec, exec->lexicalGlobalObject());
+    JSObject* object = cell->toObject(exec, exec->lexicalGlobalObject());
     slot.setBase(object);
     if (!object->getPropertySlot(exec, identifier, slot))
         slot.setUndefined();
@@ -83,10 +88,15 @@ bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, P
 
 bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, identifier, slot);
+}
+
+bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned identifier, PropertySlot& slot)
+{
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.
     // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = toObject(exec, exec->lexicalGlobalObject());
+    JSObject* object = cell->toObject(exec, exec->lexicalGlobalObject());
     slot.setBase(object);
     if (!object->getPropertySlot(exec, identifier, slot))
         slot.setUndefined();

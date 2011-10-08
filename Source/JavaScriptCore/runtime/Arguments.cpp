@@ -147,15 +147,21 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 
 bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
-        if (i < d->numParameters) {
-            slot.setValue(d->registers[d->firstParameterIndex + i].get());
+    return getOwnPropertySlot(this, exec, i, slot);
+}
+
+bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+{
+    Arguments* thisObject = static_cast<Arguments*>(cell);
+    if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        if (i < thisObject->d->numParameters) {
+            slot.setValue(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get());
         } else
-            slot.setValue(d->extraArguments[i - d->numParameters].get());
+            slot.setValue(thisObject->d->extraArguments[i - thisObject->d->numParameters].get());
         return true;
     }
 
-    return JSObject::getOwnPropertySlot(exec, Identifier(exec, UString::number(i)), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier(exec, UString::number(i)), slot);
 }
     
 void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)

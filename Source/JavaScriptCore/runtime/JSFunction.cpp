@@ -204,50 +204,56 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
 
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (isHostFunction())
-        return Base::getOwnPropertySlot(exec, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    if (thisObject->isHostFunction())
+        return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
     if (propertyName == exec->propertyNames().prototype) {
-        WriteBarrierBase<Unknown>* location = getDirectLocation(exec->globalData(), propertyName);
+        WriteBarrierBase<Unknown>* location = thisObject->getDirectLocation(exec->globalData(), propertyName);
 
         if (!location) {
-            JSObject* prototype = constructEmptyObject(exec, globalObject()->emptyObjectStructure());
-            prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, this, DontEnum);
+            JSObject* prototype = constructEmptyObject(exec, thisObject->globalObject()->emptyObjectStructure());
+            prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, thisObject, DontEnum);
             PutPropertySlot slot;
-            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum, false, slot);
-            location = getDirectLocation(exec->globalData(), exec->propertyNames().prototype);
+            thisObject->putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum, false, slot);
+            location = thisObject->getDirectLocation(exec->globalData(), exec->propertyNames().prototype);
         }
 
-        slot.setValue(this, location->get(), offsetForLocation(location));
+        slot.setValue(thisObject, location->get(), thisObject->offsetForLocation(location));
     }
 
     if (propertyName == exec->propertyNames().arguments) {
-        if (jsExecutable()->isStrictMode()) {
+        if (thisObject->jsExecutable()->isStrictMode()) {
             throwTypeError(exec, StrictModeArgumentsAccessError);
             slot.setValue(jsNull());
             return true;
         }
    
-        slot.setCacheableCustom(this, argumentsGetter);
+        slot.setCacheableCustom(thisObject, argumentsGetter);
         return true;
     }
 
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(this, lengthGetter);
+        slot.setCacheableCustom(thisObject, lengthGetter);
         return true;
     }
 
     if (propertyName == exec->propertyNames().caller) {
-        if (jsExecutable()->isStrictMode()) {
+        if (thisObject->jsExecutable()->isStrictMode()) {
             throwTypeError(exec, StrictModeCallerAccessError);
             slot.setValue(jsNull());
             return true;
         }
-        slot.setCacheableCustom(this, callerGetter);
+        slot.setCacheableCustom(thisObject, callerGetter);
         return true;
     }
 
-    return Base::getOwnPropertySlot(exec, propertyName, slot);
+    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

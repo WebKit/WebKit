@@ -118,12 +118,18 @@ JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, const Ide
 
 bool RuntimeObject::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (!m_instance) {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return false;
     }
     
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
 
     instance->begin();
     
@@ -133,7 +139,7 @@ bool RuntimeObject::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         // See if the instance has a field with the specified name.
         Field *aField = aClass->fieldNamed(propertyName, instance.get());
         if (aField) {
-            slot.setCustom(this, fieldGetter);
+            slot.setCustom(thisObject, thisObject->fieldGetter);
             instance->end();
             return true;
         } else {
@@ -141,7 +147,7 @@ bool RuntimeObject::getOwnPropertySlot(ExecState *exec, const Identifier& proper
             // that method.
             MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
             if (methodList.size() > 0) {
-                slot.setCustom(this, methodGetter);
+                slot.setCustom(thisObject, thisObject->methodGetter);
                 
                 instance->end();
                 return true;
@@ -150,7 +156,7 @@ bool RuntimeObject::getOwnPropertySlot(ExecState *exec, const Identifier& proper
 
         // Try a fallback object.
         if (!aClass->fallbackObject(exec, instance.get(), propertyName).isUndefined()) {
-            slot.setCustom(this, fallbackObjectGetter);
+            slot.setCustom(thisObject, thisObject->fallbackObjectGetter);
             instance->end();
             return true;
         }
@@ -158,7 +164,7 @@ bool RuntimeObject::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         
     instance->end();
     
-    return instance->getOwnPropertySlot(this, exec, propertyName, slot);
+    return instance->getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool RuntimeObject::getOwnPropertyDescriptor(ExecState *exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

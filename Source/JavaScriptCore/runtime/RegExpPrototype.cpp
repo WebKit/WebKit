@@ -69,7 +69,12 @@ RegExpPrototype::RegExpPrototype(JSGlobalObject* globalObject, Structure* struct
 
 bool RegExpPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool RegExpPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), static_cast<RegExpPrototype*>(cell), propertyName, slot);
 }
 
 bool RegExpPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

@@ -93,7 +93,12 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), propertyName, slot);
 }
 
 bool RegExpObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

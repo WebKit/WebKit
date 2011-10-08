@@ -180,6 +180,7 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);

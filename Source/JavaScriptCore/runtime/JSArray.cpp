@@ -247,15 +247,21 @@ JSArray::~JSArray()
 
 bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    ArrayStorage* storage = m_storage;
+    return getOwnPropertySlot(this, exec, i, slot);
+}
+
+bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    ArrayStorage* storage = thisObject->m_storage;
     
     if (i >= storage->m_length) {
         if (i > MAX_ARRAY_INDEX)
-            return getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
+            return thisObject->getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
         return false;
     }
 
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         JSValue value = storage->m_vector[i].get();
         if (value) {
             slot.setValue(value);
@@ -271,22 +277,28 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot
         }
     }
 
-    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
 }
 
 bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setValue(jsNumber(length()));
+        slot.setValue(jsNumber(thisObject->length()));
         return true;
     }
 
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return JSArray::getOwnPropertySlot(exec, i, slot);
+        return JSArray::getOwnPropertySlot(thisObject, exec, i, slot);
 
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

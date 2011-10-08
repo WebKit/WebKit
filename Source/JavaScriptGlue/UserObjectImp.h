@@ -56,6 +56,7 @@ public:
 
     virtual JSValue callAsFunction(ExecState *exec);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 

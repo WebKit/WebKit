@@ -1501,18 +1501,24 @@ CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
 
 bool QtRuntimeMetaMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
     if (propertyName == "connect") {
-        slot.setCustom(this, connectGetter);
+        slot.setCustom(thisObject, thisObject->connectGetter);
         return true;
     } else if (propertyName == "disconnect") {
-        slot.setCustom(this, disconnectGetter);
+        slot.setCustom(thisObject, thisObject->disconnectGetter);
         return true;
     } else if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
+    return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -1747,12 +1753,18 @@ CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
 
 bool QtRuntimeConnectionMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    QtRuntimeConnectionMethod* thisObject = static_cast<QtRuntimeConnectionMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
+    return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

@@ -43,16 +43,28 @@ void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
 
 bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (internalValue()->getStringPropertySlot(exec, propertyName, slot))
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    StringObject* thisObject = static_cast<StringObject*>(cell);
+    if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
     
 bool StringObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    if (internalValue()->getStringPropertySlot(exec, propertyName, slot))
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    StringObject* thisObject = static_cast<StringObject*>(cell);
+    if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;    
-    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
 bool StringObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

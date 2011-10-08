@@ -1,3 +1,110 @@
+2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=69593
+
+        Reviewed by Geoffrey Garen.
+
+        Added static version of getOwnPropertySlot to every class that overrides
+        JSCell::getOwnPropertySlot.  The virtual versions now call the static versions.
+        This is the first step in de-virtualizing JSCell::getOwnPropertySlot.
+
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlot):
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertySlot):
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertySlot):
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertySlot):
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        * runtime/ErrorPrototype.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSArray.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::getOwnPropertySlot):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertySlot):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertySlot):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertySlot):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertySlot):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnPropertySlot):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::getOwnPropertySlot):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot):
+        * runtime/JSString.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertySlot):
+        * runtime/MathObject.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertySlot):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getOwnPropertySlot):
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::getOwnPropertySlot):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        * runtime/RegExpPrototype.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getOwnPropertySlot):
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertySlot):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertySlot):
+        * runtime/StringPrototype.h:
+
 2011-10-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         JSVALUE32_64 DFG JIT - GetLocal should produce a cell result for Array predictions

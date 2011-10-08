@@ -91,7 +91,12 @@ void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectP
 
 bool ObjectConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool ObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), static_cast<ObjectConstructor*>(cell), propertyName, slot);
 }
 
 bool ObjectConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

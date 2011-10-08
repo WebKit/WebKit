@@ -40,6 +40,7 @@ public:
     static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const Identifier&);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
     virtual bool hasInstance(ExecState*, JSValue value, JSValue proto);

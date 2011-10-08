@@ -95,7 +95,12 @@ UString JSObject::className() const
 
 bool JSObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    return static_cast<JSObject*>(cell)->getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
 static void throwSetterError(ExecState* exec)

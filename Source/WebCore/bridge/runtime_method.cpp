@@ -71,12 +71,18 @@ JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, const Identifi
 
 bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    RuntimeMethod* thisObject = static_cast<RuntimeMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(this, lengthGetter);
+        slot.setCacheableCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
     
-    return InternalFunction::getOwnPropertySlot(exec, propertyName, slot);
+    return InternalFunction::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool RuntimeMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor &descriptor)

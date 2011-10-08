@@ -422,9 +422,15 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 
 bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (getStaticFunctionSlot<JSVariableObject>(exec, ExecState::globalObjectTable(exec), this, propertyName, slot))
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    if (getStaticFunctionSlot<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, slot))
         return true;
-    return symbolTableGet(propertyName, slot);
+    return thisObject->symbolTableGet(propertyName, slot);
 }
 
 bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

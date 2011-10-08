@@ -80,21 +80,27 @@ void RuntimeArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& prope
 
 bool RuntimeArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(this, lengthGetter);
+        slot.setCacheableCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
     
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        if (index < getLength()) {
-            slot.setCustomIndex(this, index, indexGetter);
+        if (index < thisObject->getLength()) {
+            slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
             return true;
         }
     }
     
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -122,12 +128,18 @@ bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
 
 bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
 {
-    if (index < getLength()) {
-        slot.setCustomIndex(this, index, indexGetter);
+    return getOwnPropertySlot(this, exec, index, slot);
+}
+
+bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState *exec, unsigned index, PropertySlot& slot)
+{
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
+    if (index < thisObject->getLength()) {
+        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
         return true;
     }
     
-    return JSObject::getOwnPropertySlot(exec, index, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, index, slot);
 }
 
 void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

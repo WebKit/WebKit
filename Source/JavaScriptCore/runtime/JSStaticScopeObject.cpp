@@ -91,9 +91,14 @@ bool JSStaticScopeObject::isDynamicScope(bool&) const
     return false;
 }
 
-bool JSStaticScopeObject::getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot& slot)
+bool JSStaticScopeObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return symbolTableGet(propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, const Identifier& propertyName, PropertySlot& slot)
+{
+    return static_cast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);
 }
 
 }
