@@ -662,6 +662,17 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
+        if (isArrayPrediction(prediction)) {
+            m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
+
+            // Like cellResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node.virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
+            m_generationInfo[virtualRegister].initCell(m_compileIndex, node.refCount(), result.gpr());
+            break;
+        }
+
         GPRTemporary tag(this);
         m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
         m_jit.load32(JITCompiler::tagFor(node.local()), tag.gpr());
@@ -672,14 +683,7 @@ void SpeculativeJIT::compile(Node& node)
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
         m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
 
-        DataFormat format;
-        if (isArrayPrediction(prediction))
-            format = DataFormatJSCell;
-        else if (isBooleanPrediction(prediction))
-            format = DataFormatJSBoolean;
-        else
-            format = DataFormatJS;
-
+        DataFormat format = isBooleanPrediction(prediction) ? DataFormatJSBoolean : DataFormatJS;
         m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), tag.gpr(), result.gpr(), format);
         break;
     }

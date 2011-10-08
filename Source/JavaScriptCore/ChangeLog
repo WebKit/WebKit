@@ -1,5 +1,17 @@
 2011-10-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        JSVALUE32_64 DFG JIT - GetLocal should produce a cell result for Array predictions
+        https://bugs.webkit.org/show_bug.cgi?id=69699
+
+        Reviewed by Filip Pizlo.
+
+        It should match SetLocal where only payload is stored for array predictions.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-10-08  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         JSVALUE32_64 DFG JIT - Bug fixes for Branch and LogicalNot
         https://bugs.webkit.org/show_bug.cgi?id=69702
 
