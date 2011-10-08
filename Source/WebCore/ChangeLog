@@ -1,3 +1,15 @@
+2011-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96847.
+        http://trac.webkit.org/changeset/96847
+        https://bugs.webkit.org/show_bug.cgi?id=69684
+
+        may have caused memory regression on win chromium (Requested
+        by simonjam on #webkit).
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods
