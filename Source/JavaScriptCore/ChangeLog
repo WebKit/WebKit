@@ -1,3 +1,16 @@
+2011-10-07  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        bug fixes for ArrayPush and ArrayPop in 32_64 DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69696
+
+        Reviewed by Filip Pizlo.
+
+        On 32-bit, we should use TimesEight (8) instead of ScalePtr (4)
+        to compute the address of a JS array element.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::deleteProperty
