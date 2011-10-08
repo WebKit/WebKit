@@ -452,15 +452,17 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(NodeIndex nodeIndex, void* v
     
     MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
     speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valuePayloadGPR), MacroAssembler::TrustedImmPtr(vptr)));
-    m_jit.move(TrustedImm32(1), resultPayloadGPR);
+    m_jit.move(TrustedImm32(0), resultPayloadGPR);
     MacroAssembler::Jump done = m_jit.jump();
     
     notCell.link(&m_jit);
-    
-    m_jit.move(valueTagGPR, resultPayloadGPR);
-    m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), resultPayloadGPR);
-    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, resultPayloadGPR, TrustedImm32(JSValue::UndefinedTag)));
-    m_jit.move(TrustedImm32(0), resultPayloadGPR);
+ 
+    MacroAssembler::Jump isNull = m_jit.branch32(MacroAssembler::Equal, valueTagGPR, TrustedImm32(JSValue::NullTag));
+    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::UndefinedTag)));
+
+    isNull.link(&m_jit);
+
+    m_jit.move(TrustedImm32(1), resultPayloadGPR);
     
     done.link(&m_jit);
     
@@ -554,8 +556,11 @@ void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex tak
     
     notCell.link(&m_jit);
     
-    m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), valueTagGPR);
+    MacroAssembler::Jump isNull = m_jit.branch32(MacroAssembler::Equal, valueTagGPR, TrustedImm32(JSValue::NullTag));
     speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::UndefinedTag)));
+
+    isNull.link(&m_jit);
+
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
     
