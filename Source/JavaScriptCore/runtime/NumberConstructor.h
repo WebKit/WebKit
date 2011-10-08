@@ -58,6 +58,7 @@ namespace JSC {
     private:
         NumberConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
     };
 

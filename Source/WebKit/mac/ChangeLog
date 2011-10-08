@@ -1,3 +1,15 @@
+2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96996.
+        http://trac.webkit.org/changeset/96996
+        https://bugs.webkit.org/show_bug.cgi?id=69697
+
+        It broke all tests on the Qt bot (Requested by Ossy_night on
+        #webkit).
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+
 2011-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods

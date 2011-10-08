@@ -164,6 +164,11 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_executable);
 }
 
+CallType JSFunction::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);

@@ -50,6 +50,7 @@ namespace JSC {
 
     private:
         FunctionPrototype(JSGlobalObject*, Structure*);
+        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
     };
 

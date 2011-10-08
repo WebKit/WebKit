@@ -70,6 +70,11 @@ static EncodedJSValue JSC_HOST_CALL callBooleanConstructor(ExecState* exec)
     return JSValue::encode(jsBoolean(exec->argument(0).toBoolean(exec)));
 }
 
+CallType BooleanConstructor::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 CallType BooleanConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callBooleanConstructor;

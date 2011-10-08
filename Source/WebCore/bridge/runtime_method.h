@@ -62,6 +62,7 @@ protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::MethodList&);
     void finishCreation(JSGlobalData&, const Identifier&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+    virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
 
 private:

@@ -74,8 +74,7 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
         if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return jsNontrivialString(callFrame, "undefined");
         CallData callData;
-        JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (asObject(v)->getCallDataVirtual(callData) != CallTypeNone)
             return jsNontrivialString(callFrame, "function");
     }
     return jsNontrivialString(callFrame, "object");
@@ -93,8 +92,7 @@ bool jsIsObjectType(JSValue v)
         if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return false;
         CallData callData;
-        JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (asObject(v)->getCallDataVirtual(callData) != CallTypeNone)
             return false;
     }
     return true;
@@ -104,8 +102,7 @@ bool jsIsFunctionType(JSValue v)
 {
     if (v.isObject()) {
         CallData callData;
-        JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+        if (asObject(v)->getCallDataVirtual(callData) != CallTypeNone)
             return true;
     }
     return false;

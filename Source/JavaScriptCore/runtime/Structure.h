@@ -49,6 +49,8 @@ namespace JSC {
     class StructureChain;
     class SlotVisitor;
 
+    struct ClassInfo;
+
     enum EnumerationMode {
         ExcludeDontEnumProperties,
         IncludeDontEnumProperties
@@ -305,7 +307,7 @@ namespace JSC {
         PropertyMapEntry* entry = m_propertyTable->findWithString(name.impl()).first;
         return entry ? entry->offset : notFound;
     }
-    
+
     inline bool JSCell::isObject() const
     {
         return m_structure->isObject();

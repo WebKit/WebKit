@@ -197,6 +197,7 @@ private:
     virtual UString toString(ExecState*) const;
 
     virtual ConstructType getConstructData(ConstructData&);
+    virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
 
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)

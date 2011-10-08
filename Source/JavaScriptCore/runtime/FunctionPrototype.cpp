@@ -34,12 +34,12 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 
-const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };
-
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState*);
+
+const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };
 
 FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
@@ -70,6 +70,11 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)
 {
     return JSValue::encode(jsUndefined());
+}
+
+CallType FunctionPrototype::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
 }
 
 // ECMA 15.3.4

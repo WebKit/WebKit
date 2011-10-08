@@ -1,3 +1,100 @@
+2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96996.
+        http://trac.webkit.org/changeset/96996
+        https://bugs.webkit.org/show_bug.cgi?id=69697
+
+        It broke all tests on the Qt bot (Requested by Ossy_night on
+        #webkit).
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::getCallDataVirtual):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getCallDataVirtual):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getCallDataVirtual):
+        * runtime/ArrayConstructor.h:
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::getCallDataVirtual):
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getCallDataVirtual):
+        * runtime/DateConstructor.h:
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        (JSC::StrictModeTypeErrorFunction::create):
+        (JSC::StrictModeTypeErrorFunction::constructThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getConstructData):
+        (JSC::StrictModeTypeErrorFunction::callThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getCallDataVirtual):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        (JSC::StrictModeTypeErrorFunction::createStructure):
+        (JSC::createTypeErrorFunction):
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::getCallDataVirtual):
+        * runtime/ErrorConstructor.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::getCallDataVirtual):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::getCallDataVirtual):
+        * runtime/FunctionPrototype.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallDataVirtual):
+        * runtime/JSCell.h:
+        (JSC::getCallData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getCallDataVirtual):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/JSObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::getCallDataVirtual):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getCallDataVirtual):
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getCallDataVirtual):
+        * runtime/ObjectConstructor.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getCallDataVirtual):
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getCallDataVirtual):
+        * runtime/StringConstructor.h:
+        * runtime/Structure.h:
+
 2011-10-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT - only Array predictions can result in unboxed cells in register file

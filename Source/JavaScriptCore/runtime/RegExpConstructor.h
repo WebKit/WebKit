@@ -100,6 +100,7 @@ namespace JSC {
     private:
         RegExpConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
 
         OwnPtr<RegExpConstructorPrivate> d;

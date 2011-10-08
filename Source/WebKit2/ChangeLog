@@ -1,3 +1,19 @@
+2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96996.
+        http://trac.webkit.org/changeset/96996
+        https://bugs.webkit.org/show_bug.cgi?id=69697
+
+        It broke all tests on the Qt bot (Requested by Ossy_night on
+        #webkit).
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::getCallDataVirtual):
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getCallDataVirtual):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-10-07  Jeff Miller  <jeffm@apple.com>
 
         Add WKPageContextMenuClient callback when context menu is dismissed

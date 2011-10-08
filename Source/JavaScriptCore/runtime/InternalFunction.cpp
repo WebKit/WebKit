@@ -50,7 +50,6 @@ void InternalFunction::finishCreation(JSGlobalData& globalData, const Identifier
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
-    ASSERT(methodTable()->getCallData != InternalFunction::s_info.methodTable.getCallData);
     putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
@@ -67,12 +66,6 @@ const UString InternalFunction::displayName(ExecState* exec)
         return asString(displayName)->tryGetValue();
     
     return UString();
-}
-
-CallType InternalFunction::getCallData(JSCell*, CallData&)
-{
-    ASSERT_NOT_REACHED();
-    return CallTypeNone;
 }
 
 const UString InternalFunction::calculatedDisplayName(ExecState* exec)

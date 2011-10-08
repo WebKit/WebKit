@@ -62,6 +62,7 @@ private:
         return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 
+    virtual JSC::CallType getCallDataVirtual(JSC::CallData&);
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
     
     NPIdentifier m_npIdentifier;

@@ -270,6 +270,11 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeObject(ExecState* exec)
     return JSValue::encode(result);
 }
 
+CallType RuntimeObject::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 CallType RuntimeObject::getCallData(JSCell* cell, CallData& callData)
 {
     RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);

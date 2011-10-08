@@ -177,7 +177,7 @@ CallType runtimeObjectGetCallData(JSHTMLElement* element, CallData& callData)
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
         CallData scriptObjectCallData;
         
-        if (scriptObject->methodTable()->getCallData(scriptObject, scriptObjectCallData) == CallTypeNone)
+        if (scriptObject->getCallDataVirtual(scriptObjectCallData) == CallTypeNone)
             return CallTypeNone;
 
         callData.native.function = callPlugin;

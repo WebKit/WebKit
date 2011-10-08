@@ -1,3 +1,51 @@
+2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96996.
+        http://trac.webkit.org/changeset/96996
+        https://bugs.webkit.org/show_bug.cgi?id=69697
+
+        It broke all tests on the Qt bot (Requested by Ossy_night on
+        #webkit).
+
+        * WebCore.exp.in:
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::JSHTMLAllCollection::getCallDataVirtual):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::getCallDataVirtual):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::getCallDataVirtual):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::getCallDataVirtual):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::evaluate):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectGetCallData):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getCallDataVirtual):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::getCallDataVirtual):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::getCallDataVirtual):
+        (JSC::Bindings::isJavaScriptFunction):
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getCallDataVirtual):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getCallDataVirtual):
+        * bridge/runtime_object.h:
+
 2011-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Snow Leopard build fix after r96976. Apparently we just need a full rebuild.

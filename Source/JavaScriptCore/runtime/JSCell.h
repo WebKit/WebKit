@@ -73,6 +73,7 @@ namespace JSC {
         JSObject* getObject(); // NULL if not an object
         const JSObject* getObject() const; // NULL if not an object
         
+        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
         virtual ConstructType getConstructData(ConstructData&);
 
@@ -139,7 +140,7 @@ namespace JSC {
         
         WriteBarrier<Structure> m_structure;
     };
-    
+
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
         : m_structure(globalData, this, structure)
     {
@@ -230,6 +231,13 @@ namespace JSC {
     inline JSObject* JSValue::getObject() const
     {
         return isCell() ? asCell()->getObject() : 0;
+    }
+
+    inline CallType getCallData(JSValue value, CallData& callData)
+    {
+        CallType result = value.isCell() ? value.asCell()->getCallDataVirtual(callData) : CallTypeNone;
+        ASSERT(result == CallTypeNone || value.isValidCallee());
+        return result;
     }
 
     inline ConstructType getConstructData(JSValue value, ConstructData& constructData)

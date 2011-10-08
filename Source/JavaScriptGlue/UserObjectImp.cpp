@@ -46,6 +46,11 @@ UserObjectImp::~UserObjectImp()
         fJSUserObject->Release();
 }
 
+CallType UserObjectImp::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 CallType UserObjectImp::getCallData(JSCell* cell, CallData& callData)
 {
     UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);

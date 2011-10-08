@@ -109,6 +109,11 @@ static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec)
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args));
 }
 
+CallType ArrayConstructor::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 {
     // equivalent to 'new Array(....)'
