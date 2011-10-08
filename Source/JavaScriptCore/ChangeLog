@@ -1,3 +1,16 @@
+2011-10-08  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT - only Array predictions can result in unboxed cells in register file
+        https://bugs.webkit.org/show_bug.cgi?id=69695
+
+        Reviewed by Filip Pizlo.
+
+        In current DFG JIT, only array predictions can result in unboxed cells
+        in register file, not for the other cell predictions.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueSource::forPrediction):
+
 2011-10-07  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         bug fixes for ArrayPush and ArrayPop in 32_64 DFG JIT
