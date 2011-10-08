@@ -456,6 +456,7 @@ private:
     void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr);
     void emitBranch(Node&);
     
+    void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine

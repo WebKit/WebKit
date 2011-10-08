@@ -342,7 +342,11 @@ private:
                 changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
-            
+
+        case StringCharCodeAt: {
+            changed |= mergePrediction(PredictInt32);
+        }
+
         case ArithMod: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
@@ -534,7 +538,8 @@ private:
             changed |= setPrediction(PredictObjectOther);
             break;
         }
-            
+        
+        case StringCharAt:
         case StrCat: {
             changed |= setPrediction(PredictString);
             break;
@@ -1270,6 +1275,8 @@ private:
         case ArithSqrt:
         case GetCallee:
         case GetStringLength:
+        case StringCharAt:
+        case StringCharCodeAt:
             setReplacement(pureCSE(node));
             break;
             

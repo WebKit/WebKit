@@ -347,6 +347,10 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ArrayPop, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
+    /* Optimizations for string access */ \
+    macro(StringCharCodeAt, NodeResultInt32) \
+    macro(StringCharAt, NodeResultJS) \
+    \
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \

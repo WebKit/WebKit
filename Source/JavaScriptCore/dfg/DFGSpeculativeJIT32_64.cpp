@@ -1251,6 +1251,17 @@ void SpeculativeJIT::compile(Node& node)
             return;
         break;
 
+    case StringCharCodeAt: {
+        compileGetCharCodeAt(node);
+        break;
+    }
+
+    case StringCharAt: {
+        // Relies on StringCharAt node having same basic layout as GetByVal
+        compileGetByValOnString(node);
+        break;
+    }
+
     case GetByVal: {
         if (at(node.child1()).prediction() == PredictString) {
             compileGetByValOnString(node);

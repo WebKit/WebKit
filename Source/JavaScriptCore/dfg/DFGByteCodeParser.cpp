@@ -740,7 +740,27 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             set(resultOperand, arrayPop);
         return true;
     }
+
+    case CharCodeAtIntrinsic: {
+        if (firstArg + 1 != lastArg)
+            return false;
+
+        NodeIndex charCode = addToGraph(StringCharCodeAt, get(firstArg), getToInt32(firstArg + 1));
+        if (usesResult)
+            set(resultOperand, charCode);
+        return true;
+    }
+
+    case CharAtIntrinsic: {
+        if (firstArg + 1 != lastArg)
+            return false;
         
+        NodeIndex charCode = addToGraph(StringCharAt, get(firstArg), getToInt32(firstArg + 1));
+        if (usesResult)
+            set(resultOperand, charCode);
+        return true;
+    }
+
     default:
         ASSERT(intrinsic == NoIntrinsic);
         return false;

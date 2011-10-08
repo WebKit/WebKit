@@ -280,9 +280,11 @@ sub output() {
         my $intrinsic = "DFG::NoIntrinsic";
         if ($key eq "charCodeAt") {
             $thunkGenerator = "charCodeAtThunkGenerator";
+            $intrinsic = "DFG::CharCodeAtIntrinsic";
         }
         if ($key eq "charAt") {
             $thunkGenerator = "charAtThunkGenerator";
+            $intrinsic = "DFG::CharAtIntrinsic";
         }
         if ($key eq "fromCharCode") {
             $thunkGenerator = "fromCharCodeThunkGenerator";
