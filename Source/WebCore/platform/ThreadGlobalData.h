@@ -43,6 +43,7 @@ namespace WebCore {
 
     class EventNames;
     class ThreadTimers;
+    class XMLMIMETypeRegExp;
 
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
@@ -56,6 +57,7 @@ namespace WebCore {
 
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
+        XMLMIMETypeRegExp& xmlTypeRegExp() { return *m_xmlTypeRegExp; }
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
@@ -68,6 +70,7 @@ namespace WebCore {
     private:
         EventNames* m_eventNames;
         ThreadTimers* m_threadTimers;
+        XMLMIMETypeRegExp* m_xmlTypeRegExp;
 
 #ifndef NDEBUG
         bool m_isMainThread;

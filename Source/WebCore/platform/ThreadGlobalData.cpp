@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ThreadGlobalData.h"
 
+#include "DOMImplementation.h"
 #include "EventNames.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
@@ -59,6 +60,7 @@ ThreadGlobalData* ThreadGlobalData::staticData;
 ThreadGlobalData::ThreadGlobalData()
     : m_eventNames(new EventNames)
     , m_threadTimers(new ThreadTimers)
+    , m_xmlTypeRegExp(new XMLMIMETypeRegExp)
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
@@ -98,6 +100,8 @@ void ThreadGlobalData::destroy()
     m_eventNames = 0;
     delete m_threadTimers;
     m_threadTimers = 0;
+    delete m_xmlTypeRegExp;
+    m_xmlTypeRegExp = 0;
 }
 
 } // namespace WebCore

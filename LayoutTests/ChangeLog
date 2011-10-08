@@ -1,3 +1,13 @@
+2011-10-07  Justin Schuh  <jschuh@chromium.org>
+
+        Make isXMLMIMEType regex use TLS
+        https://bugs.webkit.org/show_bug.cgi?id=69665
+
+        Reviewed by Adam Barth.
+
+        * fast/workers/worker-multi-startup-expected.txt: Added.
+        * fast/workers/worker-multi-startup.html: Added.
+
 2011-10-07  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Allow failure of another Mac Skia test.
