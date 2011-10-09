@@ -3487,6 +3487,7 @@ BUGWK66577 LEOPARD : fast/events/touch/multi-touch-grouped-targets.html = TIMEOU
 BUGWK66577 LEOPARD : fast/events/touch/touch-gesture-scroll.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/touch-target-limited.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
+BUGWK66577 LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
 
 BUGV8_1634 : fast/js/const.html = TEXT
 
@@ -3789,7 +3790,6 @@ BUGWK69124 WIN LINUX GPU : platform/chromium/compositing/3d-corners.html = TEXT
 
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-rotation-hit.html = IMAGE
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-scaling-hit.html = IMAGE
-BUGWK48544 MAC LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
 
 // New test in http://trac.webkit.org/changeset/96470
 BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
