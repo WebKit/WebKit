@@ -1,5 +1,5 @@
 <?xml-stylesheet type="text/xsl" href="xss-DENIED-xsl-document-securityOrigin.xml"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
 <html>
 <head>
@@ -23,7 +23,7 @@ window.onload = function()
 		url = location.href;
 		blank = document.body.appendChild(document.createElement("iframe"));
 		blank.contentWindow.eval("parent.document.open()");
-		location = "javascript:(\"<?xml version='1.0'?><?xml-stylesheet type='text/xsl' href='" + url + "'?><root/>\")";
+		location = "javascript:(\"\x3C?xml-stylesheet type='text/xsl' href='" + url + "'?\x3E\x3Croot/\x3E\")";
 	} else {
 		victim = opener;
 		open("javascript:void(0)", "_self");
