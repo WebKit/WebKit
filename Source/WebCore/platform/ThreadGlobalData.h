@@ -68,20 +68,20 @@ namespace WebCore {
 #endif
 
     private:
-        EventNames* m_eventNames;
-        ThreadTimers* m_threadTimers;
-        XMLMIMETypeRegExp* m_xmlTypeRegExp;
+        OwnPtr<EventNames> m_eventNames;
+        OwnPtr<ThreadTimers> m_threadTimers;
+        OwnPtr<XMLMIMETypeRegExp> m_xmlTypeRegExp;
 
 #ifndef NDEBUG
         bool m_isMainThread;
 #endif
 
 #if USE(ICU_UNICODE)
-        ICUConverterWrapper* m_cachedConverterICU;
+        OwnPtr<ICUConverterWrapper> m_cachedConverterICU;
 #endif
 
 #if PLATFORM(MAC)
-        TECConverterWrapper* m_cachedConverterTEC;
+        OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 
 #if ENABLE(WORKERS)

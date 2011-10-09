@@ -1,3 +1,18 @@
+2011-10-08  Justin Schuh  <jschuh@chromium.org>
+
+        Make ThreadGlobalData members use OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=69710
+
+        Reviewed by Adam Barth.
+
+        No functional changes. No new tests required.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        * platform/ThreadGlobalData.h:
+
 2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::getConstructData

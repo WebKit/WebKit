@@ -58,17 +58,17 @@ ThreadGlobalData* ThreadGlobalData::staticData;
 #endif
 
 ThreadGlobalData::ThreadGlobalData()
-    : m_eventNames(new EventNames)
-    , m_threadTimers(new ThreadTimers)
-    , m_xmlTypeRegExp(new XMLMIMETypeRegExp)
+    : m_eventNames(adoptPtr(new EventNames))
+    , m_threadTimers(adoptPtr(new ThreadTimers))
+    , m_xmlTypeRegExp(adoptPtr(new XMLMIMETypeRegExp))
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
 #if USE(ICU_UNICODE)
-    , m_cachedConverterICU(new ICUConverterWrapper)
+    , m_cachedConverterICU(adoptPtr(new ICUConverterWrapper))
 #endif
 #if PLATFORM(MAC)
-    , m_cachedConverterTEC(new TECConverterWrapper)
+    , m_cachedConverterTEC(adoptPtr(new TECConverterWrapper))
 #endif
 {
     // This constructor will have been called on the main thread before being called on
@@ -81,27 +81,21 @@ ThreadGlobalData::ThreadGlobalData()
 
 ThreadGlobalData::~ThreadGlobalData()
 {
-    destroy();
 }
 
 void ThreadGlobalData::destroy()
 {
 #if PLATFORM(MAC)
-    delete m_cachedConverterTEC;
-    m_cachedConverterTEC = 0;
+    m_cachedConverterTEC.clear();
 #endif
 
 #if USE(ICU_UNICODE)
-    delete m_cachedConverterICU;
-    m_cachedConverterICU = 0;
+    m_cachedConverterICU.clear();
 #endif
 
-    delete m_eventNames;
-    m_eventNames = 0;
-    delete m_threadTimers;
-    m_threadTimers = 0;
-    delete m_xmlTypeRegExp;
-    m_xmlTypeRegExp = 0;
+    m_eventNames.clear();
+    m_threadTimers.clear();
+    m_xmlTypeRegExp.clear();
 }
 
 } // namespace WebCore
