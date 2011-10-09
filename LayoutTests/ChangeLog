@@ -1,5 +1,13 @@
 2011-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed weekend gardening, skip failing tests
+
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
+2011-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed weekend gardening.
 
         * platform/qt/fast/images/color-jpeg-with-color-profile-expected.png: Added after r96970.

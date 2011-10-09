@@ -5138,3 +5138,6 @@ fast/ruby/ruby-text-before-after-content.html
 fast/table/quote-text-around-iframe.html 
 fast/text/complex-synthetic-bold-space-width.html
 inspector/styles/styles-disable-then-delete.html
+
+# Qt specific result was added by r97008, but it fails on Qt-Mac platform
+fast/css/text-transform-select.html
