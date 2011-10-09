@@ -1383,6 +1383,21 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case GetByVal: {
+        PredictedType basePrediction = at(node.child2()).prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            JSValueOperand base(this, node.child1());
+            JSValueOperand property(this, node.child2());
+            GPRReg baseGPR = base.gpr();
+            GPRReg propertyGPR = property.gpr();
+            
+            flushRegisters();
+            GPRResult result(this);
+            callOperation(operationGetByVal, result.gpr(), baseGPR, propertyGPR);
+            
+            jsValueResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        
         if (at(node.child1()).prediction() == PredictString) {
             compileGetByValOnString(node);
             if (!m_compileOkay)
@@ -1424,6 +1439,22 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutByVal: {
+        PredictedType basePrediction = at(node.child2()).prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            JSValueOperand arg1(this, node.child1());
+            JSValueOperand arg2(this, node.child2());
+            JSValueOperand arg3(this, node.child3());
+            GPRReg arg1GPR = arg1.gpr();
+            GPRReg arg2GPR = arg2.gpr();
+            GPRReg arg3GPR = arg3.gpr();
+            flushRegisters();
+            
+            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+            
+            noResult(m_compileIndex);
+            break;
+        }
+
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         JSValueOperand value(this, node.child3());
@@ -1488,6 +1519,9 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutByValAlias: {
+        PredictedType basePrediction = at(node.child2()).prediction();
+        ASSERT_UNUSED(basePrediction, (basePrediction & PredictInt32) || !basePrediction);
+            
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         JSValueOperand value(this, node.child3());

@@ -263,6 +263,26 @@ EncodedJSValue DFG_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     return JSValue::encode(baseValue.get(exec, ident));
 }
 
+EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState* exec, JSCell* base, EncodedJSValue encodedProperty)
+{
+    JSValue property = JSValue::decode(encodedProperty);
+
+    if (property.isUInt32())
+        return getByVal(exec, base, property.asUInt32());
+    if (property.isDouble()) {
+        double propertyAsDouble = property.asDouble();
+        uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
+        if (propertyAsUInt32 == propertyAsDouble)
+            return getByVal(exec, base, propertyAsUInt32);
+    } else if (property.isString()) {
+        if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+            return JSValue::encode(result);
+    }
+
+    Identifier ident(exec, property.toString(exec));
+    return JSValue::encode(JSValue(base).get(exec, ident));
+}
+
 EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -364,6 +384,16 @@ void DFG_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encod
 void DFG_OPERATION operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     operationPutByValInternal<false>(exec, encodedBase, encodedProperty, encodedValue);
+}
+
+void DFG_OPERATION operationPutByValCellStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+{
+    operationPutByValInternal<true>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
+}
+
+void DFG_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+{
+    operationPutByValInternal<false>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
 void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)

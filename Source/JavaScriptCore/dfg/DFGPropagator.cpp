@@ -880,6 +880,12 @@ private:
         return isBooleanPrediction(prediction) || !prediction;
     }
     
+    bool byValHasIntBase(Node& node)
+    {
+        PredictedType prediction = m_graph[node.child2()].prediction();
+        return (prediction & PredictInt32) || !prediction;
+    }
+    
     bool clobbersWorld(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
@@ -897,6 +903,8 @@ private:
             return !isPredictedNumerical(node);
         case LogicalNot:
             return !logicalNotIsPure(node);
+        case GetByVal:
+            return !byValHasIntBase(node);
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
@@ -1011,10 +1019,13 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                // PutByVal currently always speculates that it's accessing an array with an
-                // integer index, which means that it's impossible for it to cause a structure
-                // change.
-                break;
+                if (byValHasIntBase(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return NoNode;
                 
             case ArrayPush:
             case ArrayPop:
@@ -1076,10 +1087,13 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                // PutByVal currently always speculates that it's accessing an array with an
-                // integer index, which means that it's impossible for it to cause a structure
-                // change.
-                break;
+                if (byValHasIntBase(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return false;
                 
             default:
                 if (clobbersWorld(index))
@@ -1116,10 +1130,13 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                // PutByVal currently always speculates that it's accessing an array with an
-                // integer index, which means that it's impossible for it to cause a structure
-                // change.
-                break;
+                if (byValHasIntBase(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return NoNode;
                 
             default:
                 if (clobbersWorld(index))
@@ -1149,10 +1166,13 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                // PutByVal currently always speculates that it's accessing an array with an
-                // integer index, which means that it's impossible for it to cause a structure
-                // change.
-                break;
+                if (byValHasIntBase(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return NoNode;
                 
             default:
                 if (clobbersWorld(index))
@@ -1321,11 +1341,12 @@ private:
             break;
             
         case GetByVal:
-            setReplacement(getByValLoadElimination(node.child1(), node.child2()));
+            if (byValHasIntBase(node))
+                setReplacement(getByValLoadElimination(node.child1(), node.child2()));
             break;
             
         case PutByVal:
-            if (getByValLoadElimination(node.child1(), node.child2()) != NoNode)
+            if (byValHasIntBase(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
                 node.op = PutByValAlias;
             break;
             

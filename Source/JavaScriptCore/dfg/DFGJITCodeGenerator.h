@@ -1154,6 +1154,14 @@ protected:
         appendCallWithExceptionCheck(operation);
         m_jit.move(GPRInfo::returnValueGPR, result);
     }
+    void callOperation(J_DFGOperation_ECJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        setupStubArguments(arg1, arg2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
     void callOperation(V_DFGOperation_EJJP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
         setupStubArguments(arg1, arg2);
@@ -1167,6 +1175,13 @@ protected:
         callOperation((V_DFGOperation_EJJP)operation, arg1, arg2, identifier);
     }
     void callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        setupStubArguments(arg1, arg2, arg3);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        appendCallWithExceptionCheck(operation);
+    }
+    void callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         setupStubArguments(arg1, arg2, arg3);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1328,6 +1343,16 @@ protected:
         appendCallWithExceptionCheck(operation);
         setupResults(resultTag, resultPayload);
     }
+    void callOperation(J_DFGOperation_ECJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload)
+    {
+        m_jit.push(arg2Tag);
+        m_jit.push(arg2Payload);
+        m_jit.push(arg1);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        setupResults(resultTag, resultPayload);
+    }
     void callOperation(V_DFGOperation_EJJP operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, void* pointer)
     {
         m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
@@ -1351,6 +1376,17 @@ protected:
         m_jit.push(arg2Payload);
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+    }
+    void callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
+    {
+        m_jit.push(arg3Tag);
+        m_jit.push(arg3Payload);
+        m_jit.push(arg2Tag);
+        m_jit.push(arg2Payload);
+        m_jit.push(arg1);
         m_jit.push(GPRInfo::callFrameRegister);
 
         appendCallWithExceptionCheck(operation);

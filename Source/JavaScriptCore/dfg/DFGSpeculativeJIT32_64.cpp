@@ -1272,6 +1272,23 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case GetByVal: {
+        PredictedType basePrediction = at(node.child2()).prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            SpeculateCellOperand base(this, node.child1()); // Save a register, speculate cell. We'll probably be right.
+            JSValueOperand property(this, node.child2());
+            GPRReg baseGPR = base.gpr();
+            GPRReg propertyTagGPR = property.tagGPR();
+            GPRReg propertyPayloadGPR = property.payloadGPR();
+            
+            flushRegisters();
+            GPRResult2 resultTag(this);
+            GPRResult resultPayload(this);
+            callOperation(operationGetByValCell, resultTag.gpr(), resultPayload.gpr(), baseGPR, propertyTagGPR, propertyPayloadGPR);
+            
+            jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
+            break;
+        }
+
         if (at(node.child1()).prediction() == PredictString) {
             compileGetByValOnString(node);
             if (!m_compileOkay)
@@ -1314,6 +1331,24 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutByVal: {
+        PredictedType basePrediction = at(node.child2()).prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            SpeculateCellOperand base(this, node.child1()); // Save a register, speculate cell. We'll probably be right.
+            JSValueOperand property(this, node.child2());
+            JSValueOperand value(this, node.child3());
+            GPRReg baseGPR = base.gpr();
+            GPRReg propertyTagGPR = property.tagGPR();
+            GPRReg propertyPayloadGPR = property.payloadGPR();
+            GPRReg valueTagGPR = value.tagGPR();
+            GPRReg valuePayloadGPR = value.payloadGPR();
+            
+            flushRegisters();
+            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValCellStrict : operationPutByValCellNonStrict, baseGPR, propertyTagGPR, propertyPayloadGPR, valueTagGPR, valuePayloadGPR);
+            
+            noResult(m_compileIndex);
+            break;
+        }
+
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         JSValueOperand value(this, node.child3());
