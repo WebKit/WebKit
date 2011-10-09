@@ -37,7 +37,7 @@
 using namespace std;
 
 // This is a view whose sole purpose is to tell AppKit that it's flipped.
-@interface WebCoreFlippedView : NSView
+@interface WebCoreFlippedView : NSControl
 @end
 
 @implementation WebCoreFlippedView
