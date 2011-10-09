@@ -1,3 +1,19 @@
+2011-10-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not compare the first glyph to itself in Font::drawGlyphBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=69715
+
+        Reviewed by Andreas Kling.
+
+        When looking for glyphs with similar properties, we should
+        skip the first one since the comparison of fontData 
+        and offset will always fail.
+
+        This is covered by the existing tests.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::drawGlyphBuffer):
+
 2011-10-08  Justin Schuh  <jschuh@chromium.org>
 
         Make ThreadGlobalData members use OwnPtr

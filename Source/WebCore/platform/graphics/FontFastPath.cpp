@@ -383,9 +383,9 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
     FloatSize offset = glyphBuffer.offsetAt(0);
     FloatPoint startPoint(point);
-    float nextX = startPoint.x();
+    float nextX = startPoint.x() + glyphBuffer.advanceAt(0);
     int lastFrom = 0;
-    int nextGlyph = 0;
+    int nextGlyph = 1;
 #if ENABLE(SVG_FONTS)
     TextRun::RenderingContext* renderingContext = run.renderingContext();
 #endif
