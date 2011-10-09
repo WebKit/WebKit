@@ -1,3 +1,17 @@
+2011-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening.
+
+        * platform/qt/fast/images/color-jpeg-with-color-profile-expected.png: Added after r96970.
+        * platform/qt/fast/images/color-jpeg-with-color-profile-expected.txt: Added after r96970.
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-securityOrigin-expected.txt: Added after r97021.
+        * platform/qt/svg/clip-path/clip-path-transform-1-expected.png: Added after r96712.
+        * platform/qt/svg/clip-path/clip-path-transform-1-expected.txt: Added after r96712.
+        * platform/qt/svg/clip-path/clip-path-transform-2-expected.png: Added after r96712.
+        * platform/qt/svg/clip-path/clip-path-transform-2-expected.txt: Added after r96712.
+        * platform/qt/svg/custom/grayscale-gradient-mask-2-expected.png: Added after r96470.
+        * platform/qt/svg/custom/grayscale-gradient-mask-2-expected.txt: Added after r96470.
+
 2011-10-09  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         [Qt] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml fails

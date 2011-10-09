@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (20,20) size 200x200
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGPath {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=10.00]
+    RenderSVGPath {circle} at (21,21) size 198x198 [fill={[type=SOLID] [color=#FF0000]}] [cx=120.00] [cy=120.00] [r=99.00]
+    RenderSVGContainer {a} at (20,20) size 200x200
+      RenderSVGPath {rect} at (20,20) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=220.00] [height=220.00]
+        [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (20,20) size 200x200
