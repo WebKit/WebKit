@@ -60,7 +60,8 @@ void ValueProfile::computeStatistics(const ClassInfo* classInfo, Statistics& sta
 void ValueProfile::computeStatistics(Statistics& statistics) const
 {
     for (unsigned i = 0; i < numberOfBuckets; ++i) {
-        if (!m_buckets[i]) {
+        JSValue value = JSValue::decode(m_buckets[i]);
+        if (!value) {
             WeakBucket weakBucket = m_weakBuckets[i];
             if (!!weakBucket) {
                 statistics.samples++;
@@ -72,7 +73,6 @@ void ValueProfile::computeStatistics(Statistics& statistics) const
         
         statistics.samples++;
         
-        JSValue value = JSValue::decode(m_buckets[i]);
         if (value.isInt32())
             statistics.int32s++;
         else if (value.isDouble())

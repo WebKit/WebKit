@@ -573,7 +573,12 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
                     && argumentRegister == -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters)
                     m_codeBlock->addValueProfile(-1);
                 else {
+#if USE(JSVALUE64)
                     loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
+#elif USE(JSVALUE32_64)
+                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#endif
                     emitValueProfilingSite(FirstProfilingSite);
                 }
             }

@@ -55,8 +55,8 @@ struct ValueProfile {
     
     const ClassInfo* classInfo(unsigned bucket) const
     {
-        if (!!m_buckets[bucket]) {
-            JSValue value = JSValue::decode(m_buckets[bucket]);
+        JSValue value = JSValue::decode(m_buckets[bucket]);
+        if (!!value) {
             if (!value.isCell())
                 return 0;
             return value.asCell()->structure()->classInfo();
@@ -68,7 +68,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] || !!m_weakBuckets[i])
+            if (!!JSValue::decode(m_buckets[i]) || !!m_weakBuckets[i])
                 result++;
         }
         return result;
@@ -82,7 +82,7 @@ struct ValueProfile {
     bool isLive() const
     {
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] || !!m_weakBuckets[i])
+            if (!!JSValue::decode(m_buckets[i]) || !!m_weakBuckets[i])
                 return true;
         }
         return false;
@@ -99,7 +99,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] && JSValue::decode(m_buckets[i]).isInt32())
+            if (JSValue::decode(m_buckets[i]).isInt32())
                 result++;
         }
         return result;
@@ -109,7 +109,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] && JSValue::decode(m_buckets[i]).isDouble())
+            if (JSValue::decode(m_buckets[i]).isDouble())
                 result++;
         }
         return result;
@@ -170,7 +170,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] && JSValue::decode(m_buckets[i]).isBoolean())
+            if (JSValue::decode(m_buckets[i]).isBoolean())
                 result++;
         }
         return result;
@@ -238,7 +238,8 @@ struct ValueProfile {
                 predictionToString(m_prediction), m_numberOfSamplesInPrediction);
         bool first = true;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!m_buckets[i] || !!m_weakBuckets[i]) {
+            JSValue value = JSValue::decode(m_buckets[i]);
+            if (!!value || !!m_weakBuckets[i]) {
                 if (first) {
                     fprintf(out, ": ");
                     first = false;
@@ -246,8 +247,8 @@ struct ValueProfile {
                     fprintf(out, ", ");
             }
             
-            if (!!m_buckets[i])
-                fprintf(out, "%s", JSValue::decode(m_buckets[i]).description());
+            if (!!value)
+                fprintf(out, "%s", value.description());
             
             if (!!m_weakBuckets[i])
                 fprintf(out, "DeadCell");

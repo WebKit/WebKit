@@ -1,5 +1,38 @@
 2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        Fix value profiling in 32_64 JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69717
+
+        Reviewed by Filip Pizlo.
+
+        Current value profiling for 32_64 JIT is broken and cannot record
+        correct predicated types, which results in many speculation failures
+        in the 32_64 DFG JIT, fallbacks to baseline JIT, and re-optimizations
+        again and again. 
+        With this fix 32_64 DFG JIT can demonstrate real performance gains.
+
+        * bytecode/ValueProfile.cpp:
+        (JSC::ValueProfile::computeStatistics):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::classInfo):
+        (JSC::ValueProfile::numberOfSamples):
+        (JSC::ValueProfile::isLive):
+        (JSC::ValueProfile::numberOfInt32s):
+        (JSC::ValueProfile::numberOfDoubles):
+        (JSC::ValueProfile::numberOfBooleans):
+        (JSC::ValueProfile::dump):
+            Empty value check should be performed on decoded JSValue,
+            as for 32_64 empty value is not identical to encoded 0.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::callWithValueProfiling):
+            Record the right profiling result for 32_64.
+
+2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         Remove 32 bit restrictions in DFG JIT
         https://bugs.webkit.org/show_bug.cgi?id=69711
 

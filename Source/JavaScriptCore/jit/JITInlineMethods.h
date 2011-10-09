@@ -471,7 +471,13 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
         add32(Imm32(3), bucketCounterRegister);
     and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
     move(ImmPtr(valueProfile->m_buckets), scratch);
+#if USE(JSVALUE64)
     storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
+#elif USE(JSVALUE32_64)
+    const RegisterID valueTag = regT1;
+    store32(value, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+    store32(valueTag, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+#endif
 }
 #endif
 
