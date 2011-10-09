@@ -1368,18 +1368,6 @@ protected:
     {
         callOperation((V_DFGOperation_EJJP)operation, arg1Tag, arg1Payload, arg2Tag, arg2Payload, identifier);
     }
-    void callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
-    {
-        m_jit.push(arg3Tag);
-        m_jit.push(arg3Payload);
-        m_jit.push(arg2Tag);
-        m_jit.push(arg2Payload);
-        m_jit.push(arg1Tag);
-        m_jit.push(arg1Payload);
-        m_jit.push(GPRInfo::callFrameRegister);
-
-        appendCallWithExceptionCheck(operation);
-    }
     void callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
     {
         m_jit.push(arg3Tag);
