@@ -33,13 +33,6 @@ namespace JSC { namespace DFG {
 
 #define ENABLE_DFG_RESTRICTIONS 1
 
-#if USE(JSVALUE64)
-#define ENABLE_DFG_32BIT_RESTRICTIONS 0
-#else
-#define ENABLE_DFG_32BIT_RESTRICTIONS 1
-#endif
-
-
 #if ENABLE(DFG_JIT)
 // Fast check functions; if they return true it is still necessary to
 // check opcodes.
@@ -131,6 +124,8 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_to_primitive:
     case op_throw:
     case op_throw_reference_error:
+    case op_call:
+    case op_construct:
         return true;
         
     // Opcodes we support conditionally. Enabling these opcodes currently results in
@@ -146,17 +141,6 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
         return true;
 #endif
       
-    // Opcodes we support conditionally on 32-bit builds. Enabling these opcodes
-    // currently results in crashes, which are still being investigated.
-        
-    case op_call:
-    case op_construct:
-#if ENABLE(DFG_32BIT_RESTRICTIONS)
-        return false;
-#else
-        return true;
-#endif
-
     default:
         return false;
     }

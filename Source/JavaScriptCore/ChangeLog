@@ -1,3 +1,18 @@
+2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Remove 32 bit restrictions in DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=69711
+
+        Reviewed by Filip Pizlo.
+
+        op_call/op_construct support was disabled for 32 bit DFG JIT because
+        there was regression in javascriptcore tests. Now the bugs are fixed
+        and there should be no regression. This makes 32 bit DFG have the same
+        capability as 64 bit DFG, and improves the coverage.
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+
 2011-10-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::getConstructData
