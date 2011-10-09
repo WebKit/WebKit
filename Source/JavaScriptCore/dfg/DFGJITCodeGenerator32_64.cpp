@@ -242,7 +242,7 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
             m_jit.emitLoad(nodeIndex, tagGPR, payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(tagGPR, payloadGPR, spillFormat);
+            info.fillJSValue(tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
         }
 
         return true;
