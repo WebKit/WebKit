@@ -95,7 +95,6 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
         didAddHorizontalScrollbar(m_horizontalScrollbar.get());
         m_horizontalScrollbar->styleChanged();
     } else if (!hasBar && m_horizontalScrollbar) {
-        m_horizontalScrollbar->invalidate();
         willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
         removeChild(m_horizontalScrollbar.get());
         m_horizontalScrollbar = 0;
@@ -114,7 +113,6 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
         didAddVerticalScrollbar(m_verticalScrollbar.get());
         m_verticalScrollbar->styleChanged();
     } else if (!hasBar && m_verticalScrollbar) {
-        m_verticalScrollbar->invalidate();
         willRemoveVerticalScrollbar(m_verticalScrollbar.get());
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
@@ -497,6 +495,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (m_scrollOrigin.y() && !newHasHorizontalScrollbar)
                 m_scrollOrigin.setY(m_scrollOrigin.y() - m_horizontalScrollbar->height());
+            if (m_horizontalScrollbar)
+                m_horizontalScrollbar->invalidate();
             setHasHorizontalScrollbar(newHasHorizontalScrollbar);
             sendContentResizedNotification = true;
         }
@@ -504,6 +504,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         if (hasVerticalScrollbar != newHasVerticalScrollbar && (hasVerticalScrollbar || !avoidScrollbarCreation())) {
             if (m_scrollOrigin.x() && !newHasVerticalScrollbar)
                 m_scrollOrigin.setX(m_scrollOrigin.x() - m_verticalScrollbar->width());
+            if (m_verticalScrollbar)
+                m_verticalScrollbar->invalidate();
             setHasVerticalScrollbar(newHasVerticalScrollbar);
             sendContentResizedNotification = true;
         }

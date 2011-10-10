@@ -1,3 +1,25 @@
+2011-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(96070) 25% intl1 PLT regression from scrollbar invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=69238
+
+        Reviewed by Darin Adler.
+
+        Fix PLT regression from additional scrollbars invalidations.
+        
+        Don't invalidate the scrollbar rect from setHasHorizontalScrollbar()
+        and setHasVerticalScrollbar(), because this is called during FrameView
+        teardown, at which point the invalidation is redundant.
+        
+        Instead, invalidate from ScrollView::updateScrollbars(), which is
+        called only when scrollbars change because of size or layout
+        changes.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        (WebCore::ScrollView::updateScrollbars):
+
 2011-10-10  Abhishek Arya  <inferno@chromium.org>
 
         Style for updated due to inability to locate
