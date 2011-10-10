@@ -56,6 +56,7 @@ WebInspector.DebuggerPresentationModel = function()
 WebInspector.DebuggerPresentationModel.Events = {
     UISourceCodeAdded: "source-file-added",
     UISourceCodeReplaced: "source-file-replaced",
+    UISourceCodeRemoved: "source-file-removed",
     ConsoleMessageAdded: "console-message-added",
     ConsoleMessagesCleared: "console-messages-cleared",
     BreakpointAdded: "breakpoint-added",
@@ -430,8 +431,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _debuggerReset: function()
     {
-        for (var id in this._rawSourceCode)
+        for (var id in this._rawSourceCode) {
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._rawSourceCode[id].sourceMapping.uiSourceCode);
             this._rawSourceCode[id].removeAllListeners();
+        }
         this._rawSourceCode = {};
         this._presentationCallFrames = [];
         this._selectedCallFrame = null;

@@ -1,3 +1,17 @@
+2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: small memory leak in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=69744
+
+        Scripts panel doesn't clean the list of child views.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+
 2011-10-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow to start WorkerContext paused

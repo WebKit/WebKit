@@ -171,6 +171,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
@@ -251,6 +252,13 @@ WebInspector.ScriptsPanel.prototype = {
             WebInspector.settings.lastViewedScriptFile.set(lastViewedURL);
         } else if (uiSourceCode.url === lastViewedURL)
             this._showSourceFrameAndAddToHistory(uiSourceCode);
+    },
+
+    _uiSourceCodeRemoved: function(event)
+    {
+        var uiSourceCode = event.data;
+        if (uiSourceCode._sourceFrame)
+            this.removeChildView(uiSourceCode._sourceFrame);
     },
 
     _showScriptFoldersSettingChanged: function()
