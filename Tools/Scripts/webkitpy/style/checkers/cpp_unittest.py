@@ -4429,6 +4429,7 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('typedef struct _Ecore_Pipe Ecore_Pipe;', '')
         self.assert_lint('typedef struct _Eina_Rectangle Eina_Rectangle;', '')
         self.assert_lint('typedef struct _Evas_Object Evas_Object;', '')
+        self.assert_lint('typedef struct _Ewk_History_Item Ewk_History_Item;', '')
 
         # NPAPI functions that start with NPN_, NPP_ or NP_ are allowed.
         self.assert_lint('void NPN_Status(NPP, const char*)', '')

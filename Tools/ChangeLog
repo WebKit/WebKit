@@ -1,3 +1,21 @@
+2011-10-10  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        check-webkit-style: Add readability exception for Ewk_* data types.
+        https://bugs.webkit.org/show_bug.cgi?id=69763
+
+        Reviewed by David Levin.
+
+        Many EFL-related files (such as EditorClientEfl.h or
+        DumpRenderTreeSupportEfl.h) need to have declarations such as "typedef
+        struct _Ewk_Foo Ewk_Foo", which currently produce false positives in
+        check-webkit-style.
+
+        Add an exception for them, just like there are exceptions for
+        Evas_*, Ecore_* and others.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-10-10  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] Get rid of WebAccessibilityCache.
