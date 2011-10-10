@@ -1,3 +1,15 @@
+2011-10-10  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Add baselines for new tests. Update baselines for 10.6 debug and rolled out v8 change.
+
+        Unreviewed.
+
+        * platform/chromium-mac-snowleopard/fast/lists/inline-before-content-after-list-marker-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/runin/runin-between-list-marker-and-before-content-expected.png: Added.
+        * platform/chromium-win/fast/lists/inline-before-content-after-list-marker-expected.png: Added.
+        * platform/chromium-win/fast/runin/runin-between-list-marker-and-before-content-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-10  Jeremy Apthorp  <jeremya@chromium.org>
 
         Exiting fullscreen shouldn't crash if the element that was fullscreened

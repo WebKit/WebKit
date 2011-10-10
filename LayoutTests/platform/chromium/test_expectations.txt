@@ -2785,7 +2785,7 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 // Flaky
 BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
-BUGCR76716 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
+BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN RELEASE : inspector/console/console-dirxml.html = PASS TEXT
 BUGCR76979 SLOW LINUX WIN DEBUG : inspector/console/console-dirxml.html = PASS
 
@@ -2937,7 +2937,7 @@ BUGCR79853 : animations/combo-transform-translate+scale.html = PASS TEXT
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
 // Flaky on debug
-BUGCR79855 LINUX WIN SNOWLEOPARD DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
+BUGCR79855 LINUX WIN DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
 
 // Flaky on debug
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
@@ -2955,7 +2955,7 @@ BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = PASS CRASH
-BUGWK60096 LINUX WIN SNOWLEOPARD DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
+BUGWK60096 LINUX WIN DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS TEXT
 
 // Looks like some uninitialized memory at the bottom.
@@ -2992,7 +2992,7 @@ BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
-BUGDPRANKE LINUX WIN SNOWLEOPARD DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
+BUGDPRANKE LINUX WIN DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -3076,7 +3076,7 @@ BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = PASS CRASH
 
 // flakiness on the deps bots (noted r~83476)
-BUGWK60105 LINUX WIN SNOWLEOPARD DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
+BUGWK60105 LINUX WIN DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
 BUGWK59782 LINUX WIN : fast/box-shadow/single-pixel-shadow.html = IMAGE
 
@@ -3326,7 +3326,7 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = PAS
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
-BUGCR88311 LINUX WIN SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
+BUGCR88311 LINUX WIN DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
 
@@ -3659,6 +3659,16 @@ BUGWK68270 LEOPARD CPU GPU : tables = PASS FAIL
 BUGWK68270 LEOPARD CPU GPU : transforms = PASS FAIL
 BUGWK68270 LEOPARD CPU GPU : transitions = PASS FAIL
 
+// These should fall under BUGWK68270, but they were listed as flaky elsewhere
+// in the file. Once BUGWK68270 is fixed, these should return to being flaky as
+// below:
+// BUGCR76716 SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
+// BUGWK60096 SNOWLEOPARD DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
+// BUGCR88311 SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
+// BUGWK60105 SNOWLEOPARD DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
+// BUGCR79855 SNOWLEOPARD DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
+// BUGDPRANKE SNOWLEOPARD DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
+
 // Temporarily allowing many failures for Mac10.6 with Skia graphics, while we work out kinks.
 // epoger promises to remove these expectations by 10 October 2011.
 BUGWK69279 SNOWLEOPARD CPU GPU : animations = PASS FAIL
@@ -3803,9 +3813,3 @@ BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 
 BUGWK69587 : editing/pasteboard/smart-paste-008.html = IMAGE+TEXT
-
-// Broken with V8 roll to 3.6.5.1.
-BUG_RICOW : fast/js/array-functions-non-arrays.html = TEXT
-BUG_RICOW : fast/js/array-prototype-properties.html = TEXT
-BUG_RICOW : fast/js/kde/RegExp.html = TEXT
-BUG_RICOW : fast/js/toString-overrides.html = TEXT
