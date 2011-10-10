@@ -774,9 +774,9 @@ protected:
     void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
     bool nonSpeculativeCompareNull(Node&, NodeIndex operand, bool invert = false);
     
-    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
-    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
-    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
+    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
+    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node&, NodeIndex branchNodeIndex, bool invert = false);
     void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
@@ -1061,6 +1061,10 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg result, GPRReg arg1, void* pointer)
+    {
+        return callOperation((J_DFGOperation_EPP)operation, result, arg1, pointer);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg result, Identifier* identifier)
     {
         return callOperation((J_DFGOperation_EP)operation, result, identifier);
@@ -1085,6 +1089,7 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    // This also handles J_DFGOperation_EPP!
     JITCompiler::Call callOperation(J_DFGOperation_EJP operation, GPRReg result, GPRReg arg1, void* pointer)
     {
         m_jit.move(arg1, GPRInfo::argumentGPR1);
@@ -1122,14 +1127,14 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    JITCompiler::Call callOperation(B_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(B_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         setupStubArguments(arg1, arg2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1169,6 +1174,17 @@ protected:
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
         return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_DFGOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        setupStubArguments(arg1, arg2, arg3);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_DFGOperation_EAZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        return callOperation((V_DFGOperation_EPZJ)operation, arg1, arg2, arg3);
     }
     JITCompiler::Call callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
@@ -1214,6 +1230,18 @@ protected:
         m_jit.push(GPRInfo::callFrameRegister);
 
         return appendCallWithExceptionCheckSetResult(operation, resultTag, resultPayload);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, void* pointer)
+    {
+        m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(pointer)));
+        m_jit.push(arg1);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        return appendCallWithExceptionCheckSetResult(operation, resultTag, resultPayload);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, void* pointer)
+    {
+        return callOperation((J_DFGOperation_EPP)operation, resultTag, resultPayload, arg1, pointer);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
     {
@@ -1293,7 +1321,7 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
+    JITCompiler::Call callOperation(B_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
@@ -1301,7 +1329,7 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
+    JITCompiler::Call callOperation(B_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
         m_jit.push(arg2Tag);
         m_jit.push(arg2Payload);
@@ -1355,6 +1383,20 @@ protected:
         m_jit.push(GPRInfo::callFrameRegister);
 
         return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_DFGOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
+    {
+        m_jit.push(arg3Tag);
+        m_jit.push(arg3Payload);
+        m_jit.push(arg2);
+        m_jit.push(arg1);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_DFGOperation_EAZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
+    {
+        return callOperation((V_DFGOperation_EPZJ)operation, arg1, arg2, arg3Tag, arg3Payload);
     }
 
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)

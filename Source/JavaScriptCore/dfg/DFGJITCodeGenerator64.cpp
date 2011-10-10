@@ -1189,7 +1189,7 @@ bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, 
     return false;
 }
 
-void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
+void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, B_DFGOperation_EJJ helperFunction)
 {
     Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
@@ -1259,7 +1259,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         addBranch(m_jit.jump(), notTaken);
 }
 
-void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
+void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, B_DFGOperation_EJJ helperFunction)
 {
     JSValueOperand arg1(this, node.child1());
     JSValueOperand arg2(this, node.child2());

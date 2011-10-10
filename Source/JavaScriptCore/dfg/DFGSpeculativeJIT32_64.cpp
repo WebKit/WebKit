@@ -374,7 +374,7 @@ void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr)
 }
 
 // Returns true if the compare is fused with a subsequent branch.
-bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, Z_DFGOperation_EJJ operation)
+bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, B_DFGOperation_EJJ operation)
 {
     if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
         return true;
@@ -1380,12 +1380,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Code to handle put beyond array bounds.
         silentSpillAllRegisters(scratchReg);
-        m_jit.push(valueTagReg);
-        m_jit.push(valuePayloadReg);
-        m_jit.push(propertyReg);
-        m_jit.push(baseReg);
-        m_jit.push(GPRInfo::callFrameRegister);
-        JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationPutByValBeyondArrayBounds);
+        JITCompiler::Call functionCall = callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueTagReg, valuePayloadReg);
         silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 
@@ -2325,11 +2320,7 @@ void SpeculativeJIT::compile(Node& node)
 
         structuresNotMatch.link(&m_jit);
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(&m_jit.codeBlock()->identifier(data.identifierNumber))));
-        m_jit.push(resolveInfoGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationResolveGlobal);
-        setupResults(resultTagGPR, resultPayloadGPR);
+        JITCompiler::Call functionCall = callOperation(operationResolveGlobal, resultTagGPR, resultPayloadGPR, resolveInfoGPR, &m_jit.codeBlock()->identifier(data.identifierNumber));
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
 
         wasFast.link(&m_jit);

@@ -1,3 +1,34 @@
+2011-10-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Switch last calls from DFGSpeculativeJIT to use callOperation.
+        https://bugs.webkit.org/show_bug.cgi?id=69780
+
+        Reviewed by Oliver Hunt.
+
+        Also, rename type in operations for booleans from Z to B, since Z is the mathematical symbol for integers.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * wtf/Platform.h:
+
 2011-10-10  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         JSVALUE32_64 DFG JIT - bug fix for V8 benchmark cases "crypto" and "raytrace"

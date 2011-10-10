@@ -444,8 +444,8 @@ private:
         }
     }
     
-    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
-    bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
+    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, B_DFGOperation_EJJ);
+    bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, B_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);

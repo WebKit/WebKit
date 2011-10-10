@@ -50,6 +50,20 @@ extern "C" {
 
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
+/*
+    Key:
+    V: void
+    J: JSValue
+    P: pointer (void*)
+    C: JSCell*
+    A: JSArray*
+    S: size_t
+    Z: int32_t
+    D: double
+    B: Boolean
+    I: Identifier*
+    G: GlobalResolveInfo*
+*/
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
@@ -60,15 +74,19 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJ)(ExecState*, EncodedJSV
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EP)(ExecState*, void*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPP)(ExecState*, void*, void*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EGI)(ExecState*, GlobalResolveInfo*, Identifier*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EI)(ExecState*, Identifier*);
-typedef RegisterSizedBoolean DFG_OPERATION (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef RegisterSizedBoolean DFG_OPERATION (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef RegisterSizedBoolean DFG_OPERATION (*B_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef RegisterSizedBoolean DFG_OPERATION (*B_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJI)(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*);
+typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
 typedef double (*D_DFGOperation_DD)(double, double); // Using default calling conventions!
 typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
