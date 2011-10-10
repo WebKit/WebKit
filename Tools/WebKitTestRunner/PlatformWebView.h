@@ -26,6 +26,8 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
+#include <WebKit2/WKRetainPtr.h>
+
 #if defined(BUILDING_QT__)
 class QDesktopWebView;
 typedef QDesktopWebView* PlatformWKView;
@@ -76,6 +78,8 @@ public:
     void makeWebViewFirstResponder();
     void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
     bool windowIsKey() const { return m_windowIsKey; }
+    
+    WKRetainPtr<WKImageRef> windowSnapshotImage();
 
 private:
     PlatformWKView m_view;

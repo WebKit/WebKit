@@ -45,7 +45,12 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace WTR {
 
-static CGContextRef createCGContextFromImage(WKImageRef wkImage)
+enum FlipGraphicsContextOrNot {
+    DontFlipGraphicsContext,
+    FlipGraphicsContext
+};
+
+static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsContextOrNot flip = DontFlipGraphicsContext)
 {
     RetainPtr<CGImageRef> image(AdoptCF, WKImageCreateCGImage(wkImage));
 
@@ -58,7 +63,15 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage)
     CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     CGColorSpaceRelease(colorSpace);
     
+    if (flip == FlipGraphicsContext) {
+        CGContextSaveGState(context);
+        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM(context, 0, -pixelsHigh);
+    }
+    
     CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
+    if (flip == FlipGraphicsContext)
+        CGContextRestoreGState(context);
 
     return context;
 }
@@ -144,16 +157,23 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects)
 {
-    CGContextRef context = createCGContextFromImage(image);
+    PlatformWebView* webView = TestController::shared().mainWebView();
+    WKRetainPtr<WKImageRef> windowSnapshot = webView->windowSnapshotImage();
+
+    RetainPtr<CGContextRef> context;
+    if (windowSnapshot)
+        context.adoptCF(createCGContextFromImage(windowSnapshot.get(), FlipGraphicsContext));
+    else
+        context.adoptCF(createCGContextFromImage(image));
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)
-        paintRepaintRectOverlay(context, image, repaintRects);
+        paintRepaintRectOverlay(context.get(), image, repaintRects);
 
     char actualHash[33];
-    computeMD5HashStringForContext(context, actualHash);
+    computeMD5HashStringForContext(context.get(), actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
-        dumpBitmap(context, actualHash);
+        dumpBitmap(context.get(), actualHash);
 }
 
 } // namespace WTR

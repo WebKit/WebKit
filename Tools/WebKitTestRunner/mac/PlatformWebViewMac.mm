@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "PlatformWebView.h"
+
+#import <WebKit2/WKImageCG.h>
+#import <wtf/RetainPtr.h>
 
 @interface WebKitTestRunnerWindow : NSWindow {
     WTR::PlatformWebView* _platformWebView;
@@ -122,6 +126,13 @@ void PlatformWebView::removeChromeInputField()
 void PlatformWebView::makeWebViewFirstResponder()
 {
     [m_window makeFirstResponder:m_view];
+}
+
+WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
+{
+    [m_view display];
+    RetainPtr<CGImageRef> windowSnapshotImage(AdoptCF, CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
+    return WKImageCreateFromCGImage(windowSnapshotImage.get(), 0);
 }
 
 } // namespace WTR
