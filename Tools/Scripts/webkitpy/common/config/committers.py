@@ -178,6 +178,7 @@ committers_unable_to_review = [
     Committer("Diego Gonzalez", ["diegohcg@webkit.org", "diego.gonzalez@openbossa.org"], "diegohcg"),
     Committer("Dmitry Lomov", ["dslomov@google.com", "dslomov@chromium.org"], "dslomov"),
     Committer("Dominic Cooney", ["dominicc@chromium.org", "dominicc@google.com"], "dominicc"),
+    Committer("Dominic Mazzoni", ["dmazzoni@chromium.org", "dmazzoni@google.com"], "dmazzoni"),
     Committer("Drew Wilson", "atwilson@chromium.org", "atwilson"),
     Committer("Eli Fidler", ["eli@staikos.net", "efidler@rim.com"], "efidler"),
     Committer("Emil A Eklund", "eae@chromium.org", "eae"),
