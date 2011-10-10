@@ -24,12 +24,14 @@ function test()
         var cookie = InspectorTest.timer.start("network-append-30-requests");
         originalRefresh.call(this);
         InspectorTest.timer.finish(cookie);
+        WebInspector.panels.network._networkLogView._reset();
+        // In real life this array is cleaning up at navigation event.
+        WebInspector.networkLog._resources = [];
         InspectorTest.timer.done();
     }
 
     function test(timer)
     {
-        WebInspector.panels.network._networkLogView._reset();
         InspectorTest.evaluateInPage("makeXHRRequests(30)");
     }
 

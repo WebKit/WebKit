@@ -1,3 +1,9 @@
+2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for the test. The amount of used memory was calculated incorrectly.
+
+        * inspector/performance/resources/network-append-30-requests.html:
+
 2011-09-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: RawSourceCode could be mapped to multiple sources.
