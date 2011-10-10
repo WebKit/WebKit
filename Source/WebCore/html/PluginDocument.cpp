@@ -78,7 +78,7 @@ void PluginDocumentParser::createDocumentStructure()
     RefPtr<Element> body = document()->createElement(bodyTag, false);
     body->setAttribute(marginwidthAttr, "0");
     body->setAttribute(marginheightAttr, "0");
-    body->setAttribute(bgcolorAttr, "rgb(38,38,38)");
+    body->setAttribute(styleAttr, "background-color: rgb(38,38,38)");
 
     rootElement->appendChild(body, ec);
         

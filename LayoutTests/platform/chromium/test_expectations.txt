@@ -638,6 +638,8 @@ BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PAS
 // Other
 // -----------------------------------------------------------------
 
+BUGWK69791 WIN LINUX : plugins/iframe-plugin-bgcolor.html = TEXT
+
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
 // We don't intend to copy this feature (at least not for Beta).

@@ -1,3 +1,14 @@
+2011-10-10  Nico Weber  <thakis@chromium.org>
+
+        PluginDocumentParser uses incorrect syntax for background color
+        https://bugs.webkit.org/show_bug.cgi?id=69694
+
+        Reviewed by Adam Barth.
+
+        * platform/mac/plugins/iframe-plugin-bgcolor-expected.txt: Added
+        * plugins/iframe-plugin-bgcolor.html: Added.
+        * plugins/iframe-plugin-bgcolor-expected.png: Added.
+
 2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r96870): editing/pasteboard/smart-paste-008.html fails on non-Mac
