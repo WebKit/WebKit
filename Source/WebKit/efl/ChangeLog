@@ -1,3 +1,24 @@
+2011-10-10  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not cache a frame's contents size.
+        https://bugs.webkit.org/show_bug.cgi?id=69772
+
+        Reviewed by Antonio Gomes.
+
+        As part of the process of experimenting with having scrollbars with
+        an actual size, it became clear that setting the contents size via
+        ChromeClient::contentsSizeChanged() and keeping the value around does
+        not work.
+
+        Case in point: FrameView::adjustViewSize() can result in nested
+        ScrollView::updateScrollbars() calls in which the innermost ones run
+        ChromeClient::contentsSizeChanged() before the outermost ones. This
+        means the ewk_frame's smart data will store an old value.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_contents_size_get):
+        (ewk_frame_contents_size_changed):
+
 2011-10-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Refactor zoom related APIs.
