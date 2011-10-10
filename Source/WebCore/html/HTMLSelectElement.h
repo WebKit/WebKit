@@ -143,33 +143,16 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    // FIXME: Fold some of the following functions.
-    static void saveLastSelection(SelectElementData&, Element*);
-    static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
-    static void setActiveSelectionEndIndex(SelectElementData&, int index);
-    static void updateListBoxSelection(SelectElementData&, Element*, bool deselectOtherOptions);
-    static void listBoxOnChange(SelectElementData&, Element*);
-    static void menuListOnChange(SelectElementData&, Element*);
-    static void scrollToSelection(SelectElementData&, Element*);
-    static void setRecalcListItems(SelectElementData&, Element*);
     static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
-    static int selectedIndex(const SelectElementData&, const Element*);
-    static void setSelectedIndex(SelectElementData&, Element*, int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
-    static int optionToListIndex(const SelectElementData&, const Element*, int optionIndex);
-    static int listToOptionIndex(const SelectElementData&, const Element*, int listIndex);
-    static void deselectItems(SelectElementData&, Element*, Element* excludeElement = 0);
+    void setSelectedIndexInternal(int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
+    void deselectItemsWithoutValidation(Element* excludeElement = 0);
     void parseMultipleAttribute(const Attribute*);
-    static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static int lastSelectedListIndex(const SelectElementData&, const Element*);
-    static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
-    static void insertedIntoTree(SelectElementData&, Element*);
-
-    static void updateSelectedState(SelectElementData&, Element*, int listIndex, bool multi, bool shift);
- 
-    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static bool platformHandleKeydownEvent(SelectElementData&, Element*, KeyboardEvent*);
-    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
-    static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
+    int lastSelectedListIndex() const;
+    void updateSelectedState(int listIndex, bool multi, bool shift);
+    void menuListDefaultEventHandler(Event*);
+    bool platformHandleKeydownEvent(KeyboardEvent*);
+    void listBoxDefaultEventHandler(Event*);
+    void setOptionsChangedOnRenderer();
     friend class SelectElementData;
 
     SelectElementData m_data;

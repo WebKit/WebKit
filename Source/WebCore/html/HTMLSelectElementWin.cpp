@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool HTMLSelectElement::platformHandleKeydownEvent(SelectElementData& data, Element* element, KeyboardEvent* event)
+bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
     // Allow (Shift) F4 and (Ctrl/Shift) Alt/AltGr + Up/Down arrow to pop the menu, matching Firefox.
     bool eventShowsMenu = (!event->altKey() && !event->ctrlKey() && event->keyIdentifier() == "F4")
@@ -42,14 +42,14 @@ bool HTMLSelectElement::platformHandleKeydownEvent(SelectElementData& data, Elem
 
     // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
     // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
-    saveLastSelection(data, element);
-    if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
+    saveLastSelection();
+    if (RenderMenuList* menuList = toRenderMenuList(renderer()))
         menuList->showPopup();
 
-    int index = selectedIndex(data, element);
+    int index = selectedIndex();
     ASSERT(index >= 0);
-    ASSERT(index < data.listItems(element).size());
-    setSelectedIndex(data, element, index);
+    ASSERT(index < m_data.listItems(this).size());
+    setSelectedIndexInternal(index);
     event->setDefaultHandled();
     return true;
 }

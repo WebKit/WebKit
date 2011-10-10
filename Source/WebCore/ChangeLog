@@ -1,3 +1,64 @@
+2011-10-09  Kent Tamura  <tkent@chromium.org>
+
+        Remove redundant code of HTMLSelectElement.
+        https://bugs.webkit.org/show_bug.cgi?id=69701
+
+        Reviewed by Darin Adler.
+
+        No new tests, just a refactoring.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::deselectItems):
+        Rename inner deselectItems() to deselectItemsWithoutValidation().
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        Rename a callsite of another setSelectedIndex() to setSelectedIndexInternal().
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser):
+        ditto, and update a callsite of updateSelectedState().
+        (WebCore::HTMLSelectElement::listBoxSelectItem):
+        Update a callsite of updateSelectedState().
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex):
+        Update a callsite of lastSelectedListIndex().
+        (WebCore::HTMLSelectElement::selectAll):
+        Update callsites of functions which are changed to non-static.
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        Merge a static function and a non-static function.
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex): ditto.
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex): ditto.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): ditto.
+        (WebCore::HTMLSelectElement::listBoxOnChange): ditto.
+        (WebCore::HTMLSelectElement::menuListOnChange): ditto.
+        (WebCore::HTMLSelectElement::scrollToSelection): ditto.
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer): Made this non-static.
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        Merge a static function and a non-static function.
+        (WebCore::HTMLSelectElement::selectedIndex): ditto.
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal):
+        Made this non-static, and renamed from setSelectedIndex() because
+        of conflict with an existing function.
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        Merge a static function and a non-static function.
+        (WebCore::HTMLSelectElement::listToOptionIndex): ditto.
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        Update a callsite of function which is changed to no-staic.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): ditto.
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        Made this non-static, and renamed from deselectItems() to avoid conflict.
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        Update a callsite of function which is changed to no-staic.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent): Made this non-static.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::updateSelectedState): ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        Merged a static function and a non-static function.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): Made this non-static.
+        (WebCore::HTMLSelectElement::typeAheadFind): ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): ditto.
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElementWin.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent): Made this non-static.
+
 2011-10-09  Adam Barth  <abarth@webkit.org>
 
         CSP should log unrecognized directives to the console
