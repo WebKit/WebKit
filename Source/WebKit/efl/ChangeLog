@@ -1,3 +1,41 @@
+2011-10-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Refactor zoom related APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=62842
+
+        Current zoom apis can't support the case of using both page zoom and text
+        zoom.
+
+        As a first step to refactor, this split ewk_{view|frame}_zoom_{get|set}
+        to use both page_zoom and text zoom individually.
+        In addition, introduce ewk_view_scale_{get|set} to support proportional scaling.
+
+        ewk_view_zoom_{get|set} will remain unchanged until the behavior of smart_zoom
+        was changed.
+
+        Reviewed by Antonio Gomes.
+
+        * ewk/ewk_frame.cpp: Remove ewk_frame_zoom_text_only_{get|set}.
+        (ewk_frame_page_zoom_get): Renamed from ewk_frame_zoom_get().
+        (ewk_frame_page_zoom_set): Renamed from ewk_frame_zoom_set().
+        (ewk_frame_text_zoom_get): Extracted from ewk_frame_zoom_get().
+        (ewk_frame_text_zoom_set): Extracted from ewk_frame_zoom_set().
+        * ewk/ewk_frame.h:
+        * ewk/ewk_view.cpp: Remove ewk_view_zoom_text_only_{get|set}
+        (_ewk_view_smart_zoom_set): Change ewk_frame_zoom_get() to ewk_frame_page_zoom_get().
+        (ewk_view_zoom_get): Change ewk_frame_zoom_get() to ewk_frame_page_zoom_get().
+        (ewk_view_page_zoom_get): Extracted from ewk_view_zoom_get().
+        (ewk_view_page_zoom_set): Extracted from ewk_view_zoom_set().
+        (ewk_view_scale_get): Added.
+        (ewk_view_scale_set): Added.
+        (ewk_view_text_zoom_get): Extracted from ewk_view_zoom_get().
+        (ewk_view_text_zoom_set): Extracted from ewk_view_zoom_set().
+        (ewk_view_zoom_weak_set): Change ewk_frame_zoom_get to ewk_frame_page_zoom_get().
+        (ewk_view_zoom_animated_set): Change ewk_frame_zoom_get() to ewk_frame_page_zoom_get().
+        (ewk_view_pre_render_region): Change ewk_frame_zoom_get() to ewk_frame_page_zoom_get().
+        (ewk_view_pre_render_relative_radius): Change ewk_frame_zoom_get() to ewk_frame_page_zoom_get().
+        * ewk/ewk_view.h:
+
 2011-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Change data type of parameter in ewk_view_viewport_attributes_get().

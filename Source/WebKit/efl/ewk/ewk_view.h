@@ -972,6 +972,65 @@ EAPI Eina_Bool    ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable);
 EAPI Ewk_History *ewk_view_history_get(const Evas_Object *o);
 
 /**
+ * Gets the current page zoom level of the main frame.
+ *
+ * @param o view object to get the zoom level
+ *
+ * @return current zoom level in use on success or @c -1.0 on failure
+ */
+EAPI float        ewk_view_page_zoom_get(const Evas_Object *o);
+
+/**
+ * Sets the current page zoom level of the main frame.
+ *
+ * @param o view object to set the zoom level
+ * @param page_zoom_factor a new level to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_page_zoom_set(Evas_Object *o, float page_zoom_factor);
+
+/**
+ * Gets the current scale factor of the page.
+ *
+ * @param o view object to get the scale factor 
+ *
+ * @return current scale factor in use on success or @c -1.0 on failure
+ */
+EAPI float        ewk_view_scale_get(const Evas_Object *o);
+
+/**
+ * Scales the current page, centered at the given point.
+ *
+ * @param o view object to set the zoom level
+ * @param scale_factor a new level to set
+ * @param cx x of center coordinate
+ * @param cy y of center coordinate
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_scale_set(Evas_Object *o, float scale_factor, Evas_Coord cx, Evas_Coord cy);
+
+/**
+ * Gets the current text zoom level of the main frame.
+ *
+ * @param o view object to get the zoom level
+ *
+ * @return current zoom level in use on success or @c -1.0 on failure
+ */
+EAPI float        ewk_view_text_zoom_get(const Evas_Object *o);
+
+/**
+ * Sets the current text zoom level of the main frame.
+ *
+ * @param o view object to set the zoom level
+ * @param textZoomFactor a new level to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_text_zoom_set(Evas_Object *o, float text_zoom_factor);
+
+/**
  * Gets the current zoom level of the main frame.
  *
  * @param o view object to get the zoom level
@@ -1136,25 +1195,6 @@ EAPI Eina_Bool    ewk_view_zoom_animated_mark_stop(Evas_Object *o);
  *            because zoom is too small/big
  */
 EAPI Eina_Bool    ewk_view_zoom_animated_set(Evas_Object *o, float zoom, float duration, Evas_Coord cx, Evas_Coord cy);
-
-/**
- * Queries if zoom level just applies to text only and not other elements.
- *
- * @param o view to query zoom level for text only
- *
- * @return @c EINA_TRUE if zoom level is applied to text only, @c EINA_FALSE if not or on failure
- */
-EAPI Eina_Bool    ewk_view_zoom_text_only_get(const Evas_Object *o);
-
-/**
- * Sets if zoom level just applies to text only and not other elements.
- *
- * @param o view to apply zoom level for text only
- * @param setting @c EINA_TRUE if zoom level should be applied to text only, @c EINA_FALSE if not
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
- */
-EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
 
 /**
  * Asks engine to pre-render region.

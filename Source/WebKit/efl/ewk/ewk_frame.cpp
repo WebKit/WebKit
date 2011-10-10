@@ -75,7 +75,6 @@ struct Ewk_Frame_Smart_Data {
     struct {
         Evas_Coord w, h;
     } contents_size;
-    Eina_Bool textZoom : 1;
     Eina_Bool editable : 1;
 };
 
@@ -612,46 +611,33 @@ Eina_Bool ewk_frame_navigate_possible(Evas_Object* o, int steps)
     return page->canGoBackOrForward(steps);
 }
 
-float ewk_frame_zoom_get(const Evas_Object* o)
+float ewk_frame_page_zoom_get(const Evas_Object* ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, -1.0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1.0);
-
-    if (sd->textZoom)
-        return sd->frame->textZoomFactor();
     return sd->frame->pageZoomFactor();
 }
 
-Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
+Eina_Bool ewk_frame_page_zoom_set(Evas_Object* ewkFrame, float pageZoomFactor)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    if (sd->textZoom)
-        sd->frame->setTextZoomFactor(zoom);
-    else
-        sd->frame->setPageZoomFactor(zoom);
+    sd->frame->setPageZoomFactor(pageZoomFactor);
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_frame_zoom_text_only_get(const Evas_Object* o)
+float ewk_frame_text_zoom_get(const Evas_Object* ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    return sd->textZoom;
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, -1.0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1.0);
+    return sd->frame->textZoomFactor();
 }
 
-Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
+Eina_Bool ewk_frame_text_zoom_set(Evas_Object* ewkFrame, float textZoomFactor)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    if (sd->textZoom == setting)
-        return EINA_TRUE;
-
-    float zoom_level = sd->textZoom ? sd->frame->textZoomFactor() : sd->frame->pageZoomFactor();
-    sd->textZoom = setting;
-    if (sd->textZoom)
-        sd->frame->setPageAndTextZoomFactors(1, zoom_level);
-    else
-        sd->frame->setPageAndTextZoomFactors(zoom_level, 1);
+    sd->frame->setTextZoomFactor(textZoomFactor);
     return EINA_TRUE;
 }
 

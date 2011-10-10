@@ -44,6 +44,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSLock.h"
+#include "LayoutTypes.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
@@ -935,7 +936,7 @@ static Eina_Bool _ewk_view_smart_zoom_set(Ewk_View_Smart_Data* sd, float zoom, E
     else
         py = 0.0;
 
-    ret = ewk_frame_zoom_set(sd->main_frame, zoom);
+    ret = ewk_frame_page_zoom_set(sd->main_frame, zoom);
 
     ewk_frame_scroll_size_get(sd->main_frame, &w, &h);
     x = (w + sd->view.w) * px - cx;
@@ -1537,10 +1538,10 @@ Ewk_History* ewk_view_history_get(const Evas_Object* o)
     return priv->history;
 }
 
-float ewk_view_zoom_get(const Evas_Object* o)
+float ewk_view_zoom_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
-    return ewk_frame_zoom_get(sd->main_frame);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
+    return ewk_frame_page_zoom_get(sd->main_frame);
 }
 
 Eina_Bool ewk_view_zoom_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy)
@@ -1567,6 +1568,55 @@ Eina_Bool ewk_view_zoom_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coor
 
     _ewk_view_zoom_animated_mark_stop(sd);
     return sd->api->zoom_set(sd, zoom, cx, cy);
+}
+
+float ewk_view_page_zoom_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
+    return ewk_frame_page_zoom_get(sd->main_frame);
+}
+
+Eina_Bool ewk_view_page_zoom_set(Evas_Object* ewkView, float pageZoomFactor)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
+    return ewk_frame_page_zoom_set(sd->main_frame, pageZoomFactor);
+}
+
+float ewk_view_scale_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
+    return priv->page->pageScaleFactor();
+}
+
+Eina_Bool ewk_view_scale_set(Evas_Object* ewkView, float scaleFactor, Evas_Coord cx, Evas_Coord cy)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+
+    float currentScaleFactor = ewk_view_scale_get(ewkView);
+    if (currentScaleFactor == -1)
+        return EINA_FALSE;
+
+    int x, y;
+    ewk_frame_scroll_pos_get(sd->main_frame, &x, &y);
+
+    x = static_cast<int>(((x + cx) / currentScaleFactor) * scaleFactor) - cx;
+    y = static_cast<int>(((y + cy) / currentScaleFactor) * scaleFactor) - cy;
+    priv->page->setPageScaleFactor(scaleFactor, WebCore::LayoutPoint(x, y));
+    return EINA_TRUE;
+}
+
+float ewk_view_text_zoom_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
+    return ewk_frame_text_zoom_get(sd->main_frame);
+}
+
+Eina_Bool ewk_view_text_zoom_set(Evas_Object* ewkView, float textZoomFactor)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
+    return ewk_frame_text_zoom_set(sd->main_frame, textZoomFactor);
 }
 
 Eina_Bool ewk_view_zoom_weak_smooth_scale_get(const Evas_Object* o)
@@ -1609,7 +1659,7 @@ Eina_Bool ewk_view_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas
         return EINA_FALSE;
     }
 
-    sd->animated_zoom.zoom.start = ewk_frame_zoom_get(sd->main_frame);
+    sd->animated_zoom.zoom.start = ewk_frame_page_zoom_get(sd->main_frame);
     sd->animated_zoom.zoom.end = zoom;
     sd->animated_zoom.zoom.current = zoom;
     return sd->api->zoom_weak_set(sd, zoom, cx, cy);
@@ -1668,7 +1718,7 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
     if (priv->animated_zoom.animator)
         priv->animated_zoom.zoom.start = _ewk_view_zoom_animated_current(priv);
     else {
-        priv->animated_zoom.zoom.start = ewk_frame_zoom_get(sd->main_frame);
+        priv->animated_zoom.zoom.start = ewk_frame_page_zoom_get(sd->main_frame);
         _ewk_view_zoom_animation_start(sd);
     }
 
@@ -1692,18 +1742,6 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_zoom_text_only_get(const Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    return ewk_frame_zoom_text_only_get(sd->main_frame);
-}
-
-Eina_Bool ewk_view_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    return ewk_frame_zoom_text_only_set(sd->main_frame, setting);
-}
-
 Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1718,7 +1756,7 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y,
     if (priv->animated_zoom.animator)
         return EINA_FALSE;
 
-    cur_zoom = ewk_frame_zoom_get(sd->main_frame);
+    cur_zoom = ewk_frame_page_zoom_get(sd->main_frame);
 
     if (cur_zoom < 0.00001)
         return EINA_FALSE;
@@ -1757,7 +1795,7 @@ Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* o, unsigned int n)
     if (priv->animated_zoom.animator)
         return EINA_FALSE;
 
-    cur_zoom = ewk_frame_zoom_get(sd->main_frame);
+    cur_zoom = ewk_frame_page_zoom_get(sd->main_frame);
     return sd->api->pre_render_relative_radius(sd, n, cur_zoom);
 }
 

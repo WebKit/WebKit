@@ -520,44 +520,50 @@ EAPI Eina_Bool    ewk_frame_forward_possible(Evas_Object *o);
 EAPI Eina_Bool    ewk_frame_navigate_possible(Evas_Object *o, int steps);
 
 /**
- * Gets the current zoom level used by this frame.
+ * Gets the current page zoom level used by this frame.
  *
  * @param o frame object to get zoom level
  *
- * @return zoom level for the frame or @c -1.0 on failure
+ * @return page zoom level for the frame or @c -1.0 on failure
+ *
+ * @see ewk_frame_text_zoom_get()
  */
-EAPI float        ewk_frame_zoom_get(const Evas_Object *o);
+EAPI float        ewk_frame_page_zoom_get(const Evas_Object *o);
 
 /**
- * Sets the current zoom level used by this frame.
+ * Sets the current page zoom level used by this frame.
  *
  * @param o frame object to change zoom level
- * @param zoom a new zoom level
+ * @param page_zoom_factor a new zoom level
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  *
- * @see ewk_frame_zoom_text_only_set()
+ * @see ewk_frame_text_zoom_set()
  */
-EAPI Eina_Bool    ewk_frame_zoom_set(Evas_Object *o, float zoom);
+EAPI Eina_Bool    ewk_frame_page_zoom_set(Evas_Object *o, float page_zoom_factor);
 
 /**
- * Queries if zoom level just applies to text only and not other elements.
+ * Gets the current text zoom level used by this frame.
  *
- * @param o frame to query zoom level for text only
+ * @param o frame object to get zoom level
  *
- * @return @c EINA_TRUE if zoom level is applied to text only, @c EINA_FALSE if not or on failure
+ * @return text zoom level for the frame or @c -1.0 on failure
+ *
+ * @see ewk_frame_page_zoom_get()
  */
-EAPI Eina_Bool    ewk_frame_zoom_text_only_get(const Evas_Object *o);
+EAPI float        ewk_frame_text_zoom_get(const Evas_Object *o);
 
 /**
- * Sets if zoom level just applies to text only and not other elements.
+ * Sets the current text zoom level used by this frame.
  *
- * @param o frame to apply zoom level for text only
- * @param setting @c EINA_TRUE if zoom level should be applied to text only, @c EINA_FALSE if not
+ * @param o frame object to change zoom level
+ * @param textZoomFactor a new zoom level
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_frame_page_zoom_set()
  */
-EAPI Eina_Bool    ewk_frame_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
+EAPI Eina_Bool    ewk_frame_text_zoom_set(Evas_Object *o, float text_zoom_factor);
 
 /**
  * Frees hit test instance created by ewk_frame_hit_test_new().
