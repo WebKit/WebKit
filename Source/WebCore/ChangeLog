@@ -1,3 +1,10 @@
+2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed test fix for r97050.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+
 2011-10-10  Andreas Kling  <kling@webkit.org>
 
         Shrink RenderListItem on 64-bit.

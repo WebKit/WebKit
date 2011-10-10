@@ -432,7 +432,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _debuggerReset: function()
     {
         for (var id in this._rawSourceCode) {
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._rawSourceCode[id].sourceMapping.uiSourceCode);
+            if (this._rawSourceCode[id].sourceMapping && this._rawSourceCode[id].sourceMapping.uiSourceCode)
+                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._rawSourceCode[id].sourceMapping.uiSourceCode);
             this._rawSourceCode[id].removeAllListeners();
         }
         this._rawSourceCode = {};
