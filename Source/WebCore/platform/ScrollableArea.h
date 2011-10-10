@@ -43,6 +43,8 @@ class GraphicsLayer;
 
 class ScrollableArea {
 public:
+    enum ZoomAnimationState { ZoomAnimationContinuing, ZoomAnimationFinishing };
+
     ScrollableArea();
     virtual ~ScrollableArea();
 
@@ -51,6 +53,8 @@ public:
     void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
     void scrollToXOffsetWithoutAnimation(float x);
     void scrollToYOffsetWithoutAnimation(float x);
+
+    virtual void zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)

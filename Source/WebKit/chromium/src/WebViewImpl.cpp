@@ -92,6 +92,7 @@
 #include "ProgressTracker.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
+#include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SpeechInputClientImpl.h"
@@ -2562,8 +2563,9 @@ void WebViewImpl::setRootLayerNeedsDisplay()
 {
     if (m_layerTreeHost) {
         TransformationMatrix zoomMatrix;
-        zoomMatrix.translate(m_page->settings()->zoomAnimatorPosX(), m_page->settings()->zoomAnimatorPosY());
-        zoomMatrix.scale(m_page->settings()->zoomAnimatorScale());
+        FloatPoint trans = m_page->mainFrame()->view()->scrollAnimator()->zoomTranslation();
+        zoomMatrix.translate(trans.x(), trans.y());
+        zoomMatrix.scale(m_page->mainFrame()->view()->scrollAnimator()->zoomScale());
         m_layerTreeHost->setZoomAnimatorTransform(zoomMatrix);
     }
     if (m_layerTreeHost)

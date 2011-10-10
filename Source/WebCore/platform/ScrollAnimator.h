@@ -47,6 +47,8 @@ class PlatformGestureEvent;
 
 class ScrollAnimator {
 public:
+    enum ZoomAnimationState { ZoomAnimationContinuing, ZoomAnimationFinishing };
+
     static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
 
     virtual ~ScrollAnimator();
@@ -87,14 +89,24 @@ public:
     virtual void didAddHorizontalScrollbar(Scrollbar*) { }
     virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
+    float zoomScale() const { return m_currentZoomScale; }
+    FloatPoint zoomTranslation() const;
+    virtual void resetZoom();
+    virtual void setZoomParametersForTest(float, float, float);
+
 protected:
     ScrollAnimator(ScrollableArea*);
 
     virtual void notifyPositionChanged();
+    virtual void notifyZoomChanged(ZoomAnimationState);
 
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
+
+    float m_currentZoomScale;
+    float m_currentZoomTransX;
+    float m_currentZoomTransY;
 };
 
 } // namespace WebCore

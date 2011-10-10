@@ -32,6 +32,7 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -40,9 +41,15 @@
 #include "IntRect.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#if ENABLE(SMOOTH_SCROLLING)
+#include "ScrollAnimator.h"
+#endif
 #include "Settings.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
@@ -238,15 +245,51 @@ void Internals::setForceCompositingMode(Document* document, bool enabled, Except
     document->settings()->setForceCompositingMode(enabled);
 }
 
-void Internals::setZoomAnimatorTransform(Document *document, double scale, double tx, double ty, ExceptionCode& ec)
+void Internals::setEnableScrollAnimator(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
-    document->settings()->setZoomAnimatorScale(static_cast<float>(scale));
-    document->settings()->setZoomAnimatorPosition(static_cast<float>(tx), static_cast<float>(ty));
+#if ENABLE(SMOOTH_SCROLLING)
+    document->settings()->setEnableScrollAnimator(enabled);
+#endif
+}
+
+void Internals::setZoomAnimatorTransform(Document *document, float scale, float tx, float ty, ExceptionCode& ec)
+{
+    if (!document || !document->view() || !document->view()->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(GESTURE_EVENTS)
+    PlatformGestureEvent pge(PlatformGestureEvent::DoubleTapType, IntPoint(tx, ty), IntPoint(tx, ty), 0, scale, 0.f, 0, 0, 0, 0);
+    document->view()->frame()->eventHandler()->handleGestureEvent(pge);
+#endif
+}
+
+float Internals::getPageScaleFactor(Document *document, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->page()->pageScaleFactor();
+}
+
+void Internals::setZoomParameters(Document* document, float scale, float x, float y, ExceptionCode& ec)
+{
+    if (!document || !document->view() || !document->view()->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(SMOOTH_SCROLLING)
+    document->view()->scrollAnimator()->setZoomParametersForTest(scale, x, y);
+#endif
 }
 
 void Internals::setPasswordEchoEnabled(Document* document, bool enabled, ExceptionCode& ec)

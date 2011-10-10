@@ -67,6 +67,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
 #endif
 
 #if ENABLE(SVG)
@@ -1218,6 +1221,26 @@ void FrameView::removeWidgetToUpdate(RenderEmbeddedObject* object)
         return;
 
     m_widgetUpdateSet->remove(object);
+}
+
+void FrameView::zoomAnimatorTransformChanged(double scale, double x, double y, ZoomAnimationState state)
+{
+    if (state == ZoomAnimationFinishing) {
+        m_page->setPageScaleFactor(m_page->pageScaleFactor() * scale,
+                                   LayoutPoint(scale * scrollX() - x, scale * scrollY() - y));
+        scrollAnimator()->resetZoom();
+    }
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = rootRenderer(this)) {
+        if (root->usesCompositing()) {
+            root->compositor()->scheduleLayerFlush();
+#if PLATFORM(CHROMIUM)
+            TRACE_EVENT("FrameView::zoomAnimatorTransformChanged", this, 0);
+#endif
+        }
+    }
+#endif
 }
 
 void FrameView::setMediaType(const String& mediaType)

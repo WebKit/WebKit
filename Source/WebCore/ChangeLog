@@ -1,3 +1,54 @@
+2011-10-09  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Zoom animator front-end
+        https://bugs.webkit.org/show_bug.cgi?id=68035
+
+        Adds necessary components to ScrollAnimatorNone to support a zoom animation
+        feature. Includes test infrastructure via testing/Internals to capture
+        in-progress texture scaling (zoom-animator-scale-test.html) as well as a
+        final view --- after pageScaleFactor has been applied --- in zoom-animator-scale-test2.html.
+
+        Removes temporary test fields from Settings.
+
+        Reviewed by Kenneth Russell.
+
+        Test: platform/chromium/compositing/zoom-animator-scale-test2.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::zoomAnimatorTransformChanged):
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::notifyZoomChanged):
+        (WebCore::ScrollAnimator::zoomTranslation):
+        (WebCore::ScrollAnimator::resetZoom):
+        (WebCore::ScrollAnimator::setZoomParametersForTest):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::zoomScale):
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::ZoomData::ZoomData):
+        (WebCore::ScrollAnimatorNone::ZoomData::animateZoom):
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::zoom):
+        (WebCore::ScrollAnimatorNone::handleGestureEvent):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+        * platform/ScrollAnimatorNone.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::zoomAnimatorTransformChanged):
+        * platform/ScrollableArea.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setEnableScrollAnimator):
+        (WebCore::Internals::setZoomAnimatorTransform):
+        (WebCore::Internals::getPageScaleFactor):
+        (WebCore::Internals::setZoomParameters):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-10-09  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9484496> REGRESSION (WebKit2): Checkboxes and radio buttons are drawn 1 pixel too high, not repainted properly

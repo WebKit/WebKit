@@ -3,7 +3,7 @@
     <script>
         if (window.internals) {
             window.internals.setForceCompositingMode(document, true);
-            window.internals.setZoomAnimatorTransform(document, 1.25, -25.0, -25.0);
+            window.internals.setZoomParameters(document, 1.25, 100, 100);
         }
         if (window.layoutTestController) {
             window.layoutTestController.dumpAsText(true);

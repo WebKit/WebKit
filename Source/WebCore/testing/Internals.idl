@@ -50,7 +50,10 @@ module window {
         Range markerRangeForNode(in Node node, in unsigned long index) raises(DOMException);
 
         void setForceCompositingMode(in Document document, in boolean enabled) raises(DOMException);
-        void setZoomAnimatorTransform(in Document document, in double scale, in double tx, in double ty) raises(DOMException);
+        void setEnableScrollAnimator(in Document document, in boolean enabled) raises(DOMException);
+        void setZoomAnimatorTransform(in Document document, in float scale, in float tx, in float ty) raises(DOMException);
+        float getPageScaleFactor(in Document document) raises(DOMException);
+        void setZoomParameters(in Document document, in float scale, in float x, in float y) raises(DOMException);
 
         void setPasswordEchoEnabled(in Document document, in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);

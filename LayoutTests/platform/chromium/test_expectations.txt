@@ -2663,6 +2663,9 @@ BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html =
 BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
 BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
 
+// Take new baselines from the bots when 68035 lands.
+BUGWK69624 MAC WIN GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE
+
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
