@@ -76,7 +76,14 @@ ui.onebar = base.extends('div', {
     },
     tabNamed: function(tabName)
     {
-        return $('#' + tabName, this)[0];
+        tab = document.getElementById(tabName);
+        // We perform this sanity check below to make sure getElementById
+        // hasn't given us a node in some other unrelated part of the document.
+        // that shouldn't happen normally, but it could happen if an attacker
+        // has somehow sneakily added a node to our document.
+        if (tab.parentNode != this)
+            return null;
+        return tab;
     },
     summary: function()
     {
@@ -130,9 +137,9 @@ ui.MessageBox = base.extends('div',  {
         document.body.appendChild(this);
         $(this).dialog({
             resizable: false,
-            title: title,
             width: $(window).width() * 0.80,  // FIXME: We should have CSS do this work for us.
         });
+        $('.ui-dialog-title', this.parentNode).text(title);
         $(this).bind('dialogclose', function() {
             $(this).detach();
         }.bind(this));

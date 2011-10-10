@@ -34,6 +34,19 @@ var kOpenStatuses = {
     REOPENED: true,
 };
 
+function createDetachedFragment(htmlFragment)
+{
+    // Step 1: Create a detached Document to perform the parsing.
+    var detachedDocument = document.implementation.createHTMLDocument();
+
+    // Step 2: Create a detached Element associated with the detached Document.
+    var container = detachedDocument.createElement('div');
+
+    // Step 3: Pull the trigger.
+    container.innerHTML = htmlFragment;
+    return container;
+}
+
 var g_searchCache = new base.AsynchronousCache(function(query, callback) {
     var url = config.kBugzillaURL + '/buglist.cgi?' + $.param({
         ctype: 'rss',
@@ -44,10 +57,9 @@ var g_searchCache = new base.AsynchronousCache(function(query, callback) {
     net.get(url, function(responseXML) {
         var entries = responseXML.getElementsByTagName('entry');
         var results = Array.prototype.map.call(entries, function(entry) {
-            var container = document.createElement('div');
-            // FIXME: Is this an XSS risk?
-            container.innerHTML = entry.getElementsByTagName('summary')[0].textContent;
-            var statusRow = container.querySelector('tr.bz_feed_bug_status');
+            var htmlFragment = entry.getElementsByTagName('summary')[0].textContent;
+            var fragment = createDetachedFragment(htmlFragment);
+            var statusRow = fragment.querySelector('tr.bz_feed_bug_status');
             return {
                 title: entry.getElementsByTagName('title')[0].textContent,
                 url: entry.getElementsByTagName('id')[0].textContent,
