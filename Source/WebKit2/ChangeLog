@@ -1,3 +1,21 @@
+2011-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add methods to reload the view to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69613
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_reload):
+        (webkit_web_view_reload_bypass_cache):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/testloading.c:
+        (loadReloadProvisionalLoadStarted):
+        (loadReloadLoadFinished):
+        (testLoadTimeoutFinishLoop):
+        (testLoadReload):
+        (main):
+
 2011-10-09  Luke Macpherson   <macpherson@chromium.org>
 
         Fix Lion, Leopard and Snow Leopard builds after changeset 97034 <http://trac.webkit.org/changeset/97034>

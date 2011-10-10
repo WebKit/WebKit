@@ -252,6 +252,34 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
 }
 
 /**
+ * webkit_web_view_reload:
+ * @web_view: a #WebKitWebView
+ *
+ * Reloads the current contents of @web_view.
+ * See also webkit_web_view_reload_bypass_cache().
+ */
+void webkit_web_view_reload(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WKPageReload(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
+ * webkit_web_view_reload_bypass_cache:
+ * @webView: a #WebKitWebView
+ *
+ * Reloads the current contents of @web_view without
+ * using any cached data.
+ */
+void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WKPageReloadFromOrigin(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
  * webkit_web_view_go_back:
  * @web_view: a #WebKitWebView
  *

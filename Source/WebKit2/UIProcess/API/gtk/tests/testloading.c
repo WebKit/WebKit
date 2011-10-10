@@ -285,6 +285,65 @@ static void testLoadProgress(WebLoadingFixture *fixture, gconstpointer data)
     g_main_loop_run(fixture->loop);
 }
 
+static gboolean loadReloadProvisionalLoadStarted(WebKitWebLoaderClient *client, WebLoadingFixture *fixture)
+{
+    g_assert(!fixture->hasBeenProvisional);
+    fixture->hasBeenProvisional = TRUE;
+
+    return TRUE;
+}
+
+static gboolean loadReloadLoadFinished(WebKitWebLoaderClient *client, WebLoadingFixture *fixture)
+{
+    g_assert(!fixture->hasBeenFinished);
+    fixture->hasBeenFinished = TRUE;
+    g_main_loop_quit(fixture->loop);
+
+    return TRUE;
+}
+
+static gboolean testLoadTimeoutFinishLoop(WebLoadingFixture *fixture)
+{
+    g_main_loop_quit(fixture->loop);
+
+    return FALSE;
+}
+
+static void testLoadReload(WebLoadingFixture *fixture, gconstpointer data)
+{
+    char *uriString;
+    WebKitWebLoaderClient *client = webkit_web_view_get_loader_client(fixture->webView);
+
+    g_signal_connect(client, "provisional-load-started", G_CALLBACK(loadReloadProvisionalLoadStarted), fixture);
+    g_signal_connect(client, "load-finished", G_CALLBACK(loadReloadLoadFinished), fixture);
+
+    /* Check nothing happens when there's nothing to reload */
+    webkit_web_view_reload(fixture->webView);
+    g_timeout_add_seconds(1, (GSourceFunc)testLoadTimeoutFinishLoop, fixture);
+    g_main_loop_run(fixture->loop);
+
+    g_assert(!fixture->hasBeenProvisional);
+    g_assert(!fixture->hasBeenFinished);
+
+    uriString = getURIForPath("/");
+    webkit_web_view_load_uri(fixture->webView, uriString);
+    g_free(uriString);
+
+    g_main_loop_run(fixture->loop);
+
+    g_assert(fixture->hasBeenProvisional);
+    g_assert(fixture->hasBeenFinished);
+
+    fixture->hasBeenProvisional = FALSE;
+    fixture->hasBeenFinished = FALSE;
+
+    webkit_web_view_reload(fixture->webView);
+    g_main_loop_run(fixture->loop);
+
+    g_assert(fixture->hasBeenProvisional);
+    g_assert(fixture->hasBeenFinished);
+}
+
 int main(int argc, char **argv)
 {
     SoupServer *server;
@@ -322,6 +381,11 @@ int main(int argc, char **argv)
                WebLoadingFixture, NULL,
                webLoadingFixtureSetup,
                testLoadProgress,
+               webLoadingFixtureTeardown);
+    g_test_add("/webkit2/loading/reload",
+               WebLoadingFixture, NULL,
+               webLoadingFixtureSetup,
+               testLoadReload,
                webLoadingFixtureTeardown);
 
     return g_test_run();
