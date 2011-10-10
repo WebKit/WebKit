@@ -171,6 +171,10 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (this.sidebarTree.selectedTreeElement)
             this.sidebarTree.selectedTreeElement.deselect();
+
+        var childViews = this.childViews();
+        for (var i = 0; i < childViews.length; ++i)
+            this.removeChildView(childViews[i]);
     },
 
     _populateResourceTree: function()

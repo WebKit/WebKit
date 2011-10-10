@@ -155,6 +155,11 @@ WebInspector.View.prototype = {
         view._detach();
     },
 
+    childViews: function()
+    {
+        return this._children.slice();
+    },
+
     onResize: function()
     {
     },
