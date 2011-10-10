@@ -533,6 +533,12 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
 }
 
+void ContentSecurityPolicy::logUnrecognizedDirective(const String& name) const
+{
+    String message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
+    m_scriptExecutionContext->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+}
+
 bool ContentSecurityPolicy::checkEval(CSPDirective* directive) const
 {
     return !directive || directive->allowEval();
@@ -774,6 +780,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_connectSrc = createCSPDirective(name, value);
     else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
+    else
+        logUnrecognizedDirective(name);
 }
 
 }

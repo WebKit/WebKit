@@ -1,2 +1,4 @@
+CONSOLE MESSAGE: line 1: Unrecognized Content-Security-Policy directive 'allow'.
+
 ALERT: PASS
 

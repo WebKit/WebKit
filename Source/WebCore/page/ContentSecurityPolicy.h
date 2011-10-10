@@ -77,6 +77,7 @@ private:
 
     CSPDirective* operativeDirective(CSPDirective*) const;
     void reportViolation(const String& directiveText, const String& consoleMessage) const;
+    void logUnrecognizedDirective(const String& name) const;
     bool checkEval(CSPDirective*) const;
 
     bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage) const;

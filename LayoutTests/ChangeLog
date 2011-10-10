@@ -1,3 +1,21 @@
+2011-10-09  Adam Barth  <abarth@webkit.org>
+
+        CSP should log unrecognized directives to the console
+        https://bugs.webkit.org/show_bug.cgi?id=69728
+
+        Reviewed by Sam Weinig.
+
+        Update expected results to include new console message about unrecognized directives.
+
+        * http/tests/security/contentSecurityPolicy/directive-parsing-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-loads-with-img-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-none-expected.txt:
+
 2011-10-09  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Zoom animator front-end

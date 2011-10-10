@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: Unrecognized Content-Security-Policy directive 'options'.
+
 CONSOLE MESSAGE: line 1: Refused to execute inline script because of Content-Security-Policy.
 
 CONSOLE MESSAGE: line 1: Refused to execute inline event handler because of Content-Security-Policy.
