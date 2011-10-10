@@ -1,3 +1,12 @@
+2011-10-10  Andreas Kling  <kling@webkit.org>
+
+        Shrink BorderValue.
+        https://bugs.webkit.org/show_bug.cgi?id=69521
+
+        Reviewed by Antti Koivisto.
+
+        * config.h: Touch to force full rebuild.
+
 2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Improve Null or Undefined test in 32_64 DFG

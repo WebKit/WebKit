@@ -1,3 +1,77 @@
+2011-10-06  Andreas Kling  <kling@webkit.org>
+
+        Shrink BorderValue.
+        https://bugs.webkit.org/show_bug.cgi?id=69521
+
+        Reviewed by Antti Koivisto.
+
+        Unroll BorderValue's Color member so we can pack the color's validity flag
+        in BorderValue's bitfield.
+
+        This shrinks BorderValue by 32 bit, which in turn shrinks BorderData by
+        16 bytes. This reduces memory consumption by 760 kB when loading the full
+        HTML5 spec.
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+
+            Allow construction of Color objects with specific validity.
+
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::isTransparent):
+        (WebCore::BorderValue::operator==):
+        (WebCore::BorderValue::setColor):
+        (WebCore::BorderValue::color):
+        * rendering/style/OutlineValue.h:
+        (WebCore::OutlineValue::operator==):
+
+            Unroll m_color into BorderValue by splitting it into an RGBA32 and a bool.
+            Made those variables private and added color(), setColor() accessors.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBorderLeftColor):
+        (WebCore::InheritedFlags::setBorderRightColor):
+        (WebCore::InheritedFlags::setBorderTopColor):
+        (WebCore::InheritedFlags::setBorderBottomColor):
+        (WebCore::InheritedFlags::setOutlineColor):
+        (WebCore::InheritedFlags::setColumnRuleColor):
+
+            Added a SET_BORDERVALUE_COLOR macro and use that instead of SET_VAR
+            when setting BorderValue colors.
+
+        (WebCore::InheritedFlags::fillPaintColor):
+        (WebCore::InheritedFlags::strokePaintColor):
+        (WebCore::InheritedFlags::borderLeftColor):
+        (WebCore::InheritedFlags::borderRightColor):
+        (WebCore::InheritedFlags::borderTopColor):
+        (WebCore::InheritedFlags::borderBottomColor):
+        (WebCore::InheritedFlags::backgroundColor):
+        (WebCore::InheritedFlags::color):
+        (WebCore::InheritedFlags::columnRuleColor):
+        (WebCore::InheritedFlags::outlineColor):
+        (WebCore::InheritedFlags::textEmphasisColor):
+        (WebCore::InheritedFlags::textFillColor):
+        (WebCore::InheritedFlags::textStrokeColor):
+        (WebCore::InheritedFlags::stopColor):
+        (WebCore::InheritedFlags::floodColor):
+        (WebCore::InheritedFlags::lightingColor):
+
+            Made color getters return "Color" instead of "const Color&" since
+            BorderValue no longer has an actual object to return the reference to.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyColor::applyInheritValue):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperColor::PropertyWrapperColor):
+        (WebCore::PropertyWrapperColor::blend):
+        (WebCore::PropertyWrapperMaybeInvalidColor::PropertyWrapperMaybeInvalidColor):
+        (WebCore::PropertyWrapperSVGPaint::PropertyWrapperSVGPaint):
+        (WebCore::AnimationBase::ensurePropertyMap):
+
+            Adapt to RenderStyle color getters now returning "Color" instead of
+            "const Color&".
+
 2011-10-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Missing m_notificationPresenter initialization in WorkerThread constructor
