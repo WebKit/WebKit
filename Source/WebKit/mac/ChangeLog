@@ -1,3 +1,23 @@
+2011-10-10  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Extract WebOpenPanelResultListener out into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=69575
+
+        Reviewed by David Kilzer.
+
+        Extract the WebOpenPanelResultListener class out into
+        its own file. No functional change.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebOpenPanelResultListener.h: Added.
+        * WebCoreSupport/WebOpenPanelResultListener.mm: Added.
+        (-[WebOpenPanelResultListener dealloc]):
+        (-[WebOpenPanelResultListener finalize]):
+        (-[WebOpenPanelResultListener cancel]):
+        (-[WebOpenPanelResultListener chooseFilename:]):
+        (-[WebOpenPanelResultListener chooseFilenames:]):
+        * WebView/WebUIDelegate.h:
+
 2011-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96996.

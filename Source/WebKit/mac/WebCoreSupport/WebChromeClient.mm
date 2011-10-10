@@ -41,6 +41,7 @@
 #import "WebKitPrefix.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
+#import "WebOpenPanelResultListener.h"
 #import "WebPlugin.h"
 #import "WebQuotaManager.h"
 #import "WebSecurityOriginInternal.h"
@@ -125,13 +126,6 @@ NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 @end
 
 using namespace WebCore;
-
-@interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener>
-{
-    FileChooser* _chooser;
-}
-- (id)initWithChooser:(PassRefPtr<FileChooser>)chooser;
-@end
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -982,72 +976,6 @@ void WebChromeClient::fullScreenRendererChanged(RenderBox* renderer)
     else
         [m_webView _fullScreenRendererChanged:renderer];
 }
-
-#endif
-
-@implementation WebOpenPanelResultListener
-
-- (id)initWithChooser:(PassRefPtr<FileChooser>)chooser
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _chooser = chooser.releaseRef();
-    return self;
-}
-
-#ifndef NDEBUG
-
-- (void)dealloc
-{
-    ASSERT(!_chooser);
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(!_chooser);
-    [super finalize];
-}
-
-#endif
-
-- (void)cancel
-{
-    ASSERT(_chooser);
-    if (!_chooser)
-        return;
-    _chooser->deref();
-    _chooser = 0;
-}
-
-- (void)chooseFilename:(NSString *)filename
-{
-    ASSERT(_chooser);
-    if (!_chooser)
-        return;
-    _chooser->chooseFile(filename);
-    _chooser->deref();
-    _chooser = 0;
-}
-
-- (void)chooseFilenames:(NSArray *)filenames
-{
-    ASSERT(_chooser);
-    if (!_chooser)
-        return;
-    int count = [filenames count]; 
-    Vector<String> names(count);
-    for (int i = 0; i < count; i++)
-        names[i] = [filenames objectAtIndex:i];
-    _chooser->chooseFiles(names);
-    _chooser->deref();
-    _chooser = 0;
-}
-
-@end
-
-#if ENABLE(FULLSCREEN_API)
 
 @implementation WebKitFullScreenListener
 

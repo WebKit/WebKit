@@ -137,6 +137,8 @@ typedef enum {
 
 @end
 
+@class WebFrame;
+@class WebFrameView;
 @class WebView;
 
 /*!

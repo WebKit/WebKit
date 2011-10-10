@@ -320,6 +320,8 @@
 		A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */; };
 		A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5687BD9135B791A0074CBCB /* WebNodeHighlighter.mm */; };
 		A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A57E2F22120749E600048DF3 /* WebQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A58A5799143E727000125F50 /* WebOpenPanelResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */; };
+		A58A579A143E727000125F50 /* WebOpenPanelResultListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */; };
 		A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */; };
 		A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */; };
 		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -629,6 +631,8 @@
 		A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlighter.h; sourceTree = "<group>"; };
 		A5687BD9135B791A0074CBCB /* WebNodeHighlighter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNodeHighlighter.mm; sourceTree = "<group>"; };
 		A57E2F22120749E600048DF3 /* WebQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebQuotaManager.h; sourceTree = "<group>"; };
+		A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelResultListener.h; sourceTree = "<group>"; };
+		A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebOpenPanelResultListener.mm; sourceTree = "<group>"; };
 		A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
 		A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginInternal.h; sourceTree = "<group>"; };
 		A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
@@ -1303,6 +1307,8 @@
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */,
+				A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */,
+				A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
 				A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */,
@@ -1614,6 +1620,7 @@
 				BC42D324131ED1E00075FA4B /* WebLocalizableStringsInternal.h in Headers */,
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
 				A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */,
+				A58A5799143E727000125F50 /* WebOpenPanelResultListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1995,6 +2002,7 @@
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
+				A58A579A143E727000125F50 /* WebOpenPanelResultListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

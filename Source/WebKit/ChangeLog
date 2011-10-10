@@ -1,3 +1,12 @@
+2011-10-10  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Extract WebOpenPanelResultListener out into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=69575
+
+        Reviewed by David Kilzer.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-10-06  Anders Carlsson  <andersca@apple.com>
 
         When building with clang, enable -Wglobal-constructors and -Wexit-time-destructors
