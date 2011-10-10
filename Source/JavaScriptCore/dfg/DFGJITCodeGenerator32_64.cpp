@@ -1171,17 +1171,14 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
     m_jit.test8(invert ? JITCompiler::Zero : JITCompiler::NonZero, JITCompiler::Address(resultPayloadGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), resultPayloadGPR);
     
     if (!isKnownCell(operand)) {
-        JITCompiler::JumpList done;
-        done.append(m_jit.jump());
+        JITCompiler::Jump done = m_jit.jump();
         
         notCell.link(&m_jit);
         // null or undefined?
-        JITCompiler::Jump checkUndefined = m_jit.branch32(invert ? JITCompiler::Equal: JITCompiler::NotEqual, argTagGPR, JITCompiler::TrustedImm32(JSValue::NullTag));
-        m_jit.move(JITCompiler::TrustedImm32(1), resultPayloadGPR);
-        done.append(m_jit.jump());
-
-        checkUndefined.link(&m_jit);
-        m_jit.compare32(invert ? JITCompiler::NotEqual: JITCompiler::Equal, argTagGPR, JITCompiler::TrustedImm32(JSValue::UndefinedTag), resultPayloadGPR);
+        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+        m_jit.move(argTagGPR, resultPayloadGPR);
+        m_jit.or32(TrustedImm32(1), resultPayloadGPR);
+        m_jit.compare32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultPayloadGPR, TrustedImm32(JSValue::NullTag), resultPayloadGPR);
 
         done.link(&m_jit);
     }

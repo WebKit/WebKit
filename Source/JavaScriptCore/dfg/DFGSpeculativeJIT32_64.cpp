@@ -457,11 +457,10 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(NodeIndex nodeIndex, void* v
     
     notCell.link(&m_jit);
  
-    MacroAssembler::Jump isNull = m_jit.branch32(MacroAssembler::Equal, valueTagGPR, TrustedImm32(JSValue::NullTag));
-    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::UndefinedTag)));
-
-    isNull.link(&m_jit);
-
+    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+    m_jit.move(valueTagGPR, resultPayloadGPR);
+    m_jit.or32(TrustedImm32(1), resultPayloadGPR);
+    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, resultPayloadGPR, TrustedImm32(JSValue::NullTag)));
     m_jit.move(TrustedImm32(1), resultPayloadGPR);
     
     done.link(&m_jit);
@@ -547,8 +546,10 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
 void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr)
 {
     JSValueOperand value(this, nodeIndex);
+    GPRTemporary scratch(this, value);
     GPRReg valueTagGPR = value.tagGPR();
     GPRReg valuePayloadGPR = value.payloadGPR();
+    GPRReg scratchGPR = scratch.gpr();
     
     MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
     speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valuePayloadGPR), MacroAssembler::TrustedImmPtr(vptr)));
@@ -556,10 +557,10 @@ void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex tak
     
     notCell.link(&m_jit);
     
-    MacroAssembler::Jump isNull = m_jit.branch32(MacroAssembler::Equal, valueTagGPR, TrustedImm32(JSValue::NullTag));
-    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::UndefinedTag)));
-
-    isNull.link(&m_jit);
+    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+    m_jit.move(valueTagGPR, scratchGPR);
+    m_jit.or32(TrustedImm32(1), scratchGPR);
+    speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::NullTag)));
 
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
