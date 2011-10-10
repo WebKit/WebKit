@@ -32,7 +32,6 @@
 #include "AccessibilityController.h"
 
 #include "TestShell.h"
-#include "WebAccessibilityCache.h"
 #include "WebAccessibilityObject.h"
 #include "WebFrame.h"
 #include "WebString.h"
@@ -57,7 +56,7 @@ AccessibilityController::AccessibilityController(TestShell* shell)
 
 void AccessibilityController::bindToJavascript(WebFrame* frame, const WebString& classname)
 {
-    WebAccessibilityCache::enableAccessibility();
+    WebAccessibilityObject::enableAccessibility();
     CppBoundClass::bindToJavascript(frame, classname);
 }
 
