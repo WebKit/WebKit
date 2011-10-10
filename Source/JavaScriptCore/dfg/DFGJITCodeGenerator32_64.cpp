@@ -1220,8 +1220,10 @@ void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeI
         
         notCell.link(&m_jit);
         // null or undefined?
-        addBranch(m_jit.branch32(invert ? JITCompiler::NotEqual: JITCompiler::Equal, argTagGPR, JITCompiler::TrustedImm32(JSValue::NullTag)), taken);
-        addBranch(m_jit.branch32(invert ? JITCompiler::NotEqual: JITCompiler::Equal, argTagGPR, JITCompiler::TrustedImm32(JSValue::UndefinedTag)), taken);
+        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+        m_jit.move(argTagGPR, resultGPR);
+        m_jit.or32(TrustedImm32(1), resultGPR);
+        addBranch(m_jit.branch32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(JSValue::NullTag)), taken);
     }
     
     if (notTaken != (m_block + 1))
