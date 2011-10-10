@@ -1,3 +1,29 @@
+2011-10-10  Kent Tamura  <tkent@chromium.org>
+
+        Make static functions in HTMLSelectElement.cpp member functions of HTMLSelectElement class
+        https://bugs.webkit.org/show_bug.cgi?id=69755
+
+        Reviewed by Ryosuke Niwa.
+
+        
+        No new tests, just a refactoring.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::nextValidIndex):
+        Make this a static member function of HTMLSelectElement.
+        (WebCore::HTMLSelectElement::nextSelectableListIndex):
+        Make this a member function of HTMLSelectElement.
+        (WebCore::HTMLSelectElement::previousSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::firstSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::lastSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway): ditto.
+        (WebCore::HTMLSelectElement::selectAll): Update callsite of the above functions.
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal): ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): ditto.
+        * html/HTMLSelectElement.h:
+         - Add the above function declarations.
+         - Move SkipDirection definition from HTMLSelectElement.cpp.
+
 2011-10-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: annotate DOMAgent, Debugger(Presentation)Model with types.

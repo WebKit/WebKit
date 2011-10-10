@@ -74,11 +74,6 @@ static const unsigned maxSelectItems = 10000;
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-enum SkipDirection {
-    SkipBackwards = -1,
-    SkipForwards = 1
-};
-
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
 {
@@ -443,7 +438,7 @@ bool HTMLSelectElement::isRequiredFormControl() const
 // Otherwise, it returns the valid item closest to that boundary which is past |listIndex| if there is one.
 // Otherwise, it returns |listIndex|.
 // Valid means that it is enabled and an option element.
-static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection direction, int skip)
+int HTMLSelectElement::nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection direction, int skip)
 {
     ASSERT(direction == -1 || direction == 1);
     int lastGoodIndex = listIndex;
@@ -459,40 +454,40 @@ static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, Skip
     return lastGoodIndex;
 }
 
-static int nextSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
+int HTMLSelectElement::nextSelectableListIndex(int startIndex) const
 {
-    return nextValidIndex(data.listItems(element), startIndex, SkipForwards, 1);
+    return nextValidIndex(m_data.listItems(this), startIndex, SkipForwards, 1);
 }
 
-static int previousSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
+int HTMLSelectElement::previousSelectableListIndex(int startIndex) const
 {
     if (startIndex == -1)
-        startIndex = data.listItems(element).size();
-    return nextValidIndex(data.listItems(element), startIndex, SkipBackwards, 1);
+        startIndex = m_data.listItems(this).size();
+    return nextValidIndex(m_data.listItems(this), startIndex, SkipBackwards, 1);
 }
 
-static int firstSelectableListIndex(SelectElementData& data, Element* element)
+int HTMLSelectElement::firstSelectableListIndex() const
 {
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     int index = nextValidIndex(items, items.size(), SkipBackwards, INT_MAX);
     if (static_cast<unsigned>(index) == items.size())
         return -1;
     return index;
 }
 
-static int lastSelectableListIndex(SelectElementData& data, Element* element)
+int HTMLSelectElement::lastSelectableListIndex() const
 {
-    return nextValidIndex(data.listItems(element), -1, SkipForwards, INT_MAX);
+    return nextValidIndex(m_data.listItems(this), -1, SkipForwards, INT_MAX);
 }
 
 // Returns the index of the next valid item one page away from |startIndex| in direction |direction|.
-static int nextSelectableListIndexPageAway(SelectElementData& data, Element* element, int startIndex, SkipDirection direction)
+int HTMLSelectElement::nextSelectableListIndexPageAway(int startIndex, SkipDirection direction) const
 {
-    const Vector<Element*>& items = data.listItems(element);
+    const Vector<Element*>& items = m_data.listItems(this);
     // Can't use data->size() because renderer forces a minimum size.
     int pageSize = 0;
-    if (element->renderer()->isListBox())
-        pageSize = toRenderListBox(element->renderer())->size() - 1; // -1 so we still show context
+    if (renderer()->isListBox())
+        pageSize = toRenderListBox(renderer())->size() - 1; // -1 so we still show context
 
     // One page away, but not outside valid bounds.
     // If there is a valid option item one page away, the index is chosen.
@@ -513,8 +508,8 @@ void HTMLSelectElement::selectAll()
     saveLastSelection();
 
     m_data.setActiveSelectionState(true);
-    setActiveSelectionAnchorIndex(nextSelectableListIndex(m_data, this, -1));
-    setActiveSelectionEndIndex(previousSelectableListIndex(m_data, this, -1));
+    setActiveSelectionAnchorIndex(nextSelectableListIndex(-1));
+    setActiveSelectionEndIndex(previousSelectableListIndex(-1));
 
     updateListBoxSelection(false);
     listBoxOnChange();
@@ -730,7 +725,7 @@ int HTMLSelectElement::selectedIndex() const
 void HTMLSelectElement::setSelectedIndexInternal(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange)
 {
     if (optionIndex == -1 && !deselect && !m_data.multiple())
-        optionIndex = nextSelectableListIndex(m_data, this, -1);
+        optionIndex = nextSelectableListIndex(-1);
     if (!m_data.multiple())
         deselect = true;
 
@@ -1194,38 +1189,38 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
                 int startIndex = lastSelectedListIndex();
                 handled = true;
                 if (keyIdentifier == "Down")
-                    endIndex = nextSelectableListIndex(m_data, this, startIndex);
+                    endIndex = nextSelectableListIndex(startIndex);
                 else
-                    endIndex = nextSelectableListIndexPageAway(m_data, this, startIndex, SkipForwards);
+                    endIndex = nextSelectableListIndexPageAway(startIndex, SkipForwards);
             } else if (keyIdentifier == "Up" || keyIdentifier == "PageUp") {
                 int startIndex = optionToListIndex(selectedIndex());
                 handled = true;
                 if (keyIdentifier == "Up")
-                    endIndex = previousSelectableListIndex(m_data, this, startIndex);
+                    endIndex = previousSelectableListIndex(startIndex);
                 else
-                    endIndex = nextSelectableListIndexPageAway(m_data, this, startIndex, SkipBackwards);
+                    endIndex = nextSelectableListIndexPageAway(startIndex, SkipBackwards);
             }
         } else {
             // Set the end index based on the current end index
             if (keyIdentifier == "Down") {
-                endIndex = nextSelectableListIndex(m_data, this, m_data.activeSelectionEndIndex());
+                endIndex = nextSelectableListIndex(m_data.activeSelectionEndIndex());
                 handled = true;
             } else if (keyIdentifier == "Up") {
-                endIndex = previousSelectableListIndex(m_data, this, m_data.activeSelectionEndIndex());
+                endIndex = previousSelectableListIndex(m_data.activeSelectionEndIndex());
                 handled = true;
             } else if (keyIdentifier == "PageDown") {
-                endIndex = nextSelectableListIndexPageAway(m_data, this, m_data.activeSelectionEndIndex(), SkipForwards);
+                endIndex = nextSelectableListIndexPageAway(m_data.activeSelectionEndIndex(), SkipForwards);
                 handled = true;
             } else if (keyIdentifier == "PageUp") {
-                endIndex = nextSelectableListIndexPageAway(m_data, this, m_data.activeSelectionEndIndex(), SkipBackwards);
+                endIndex = nextSelectableListIndexPageAway(m_data.activeSelectionEndIndex(), SkipBackwards);
                 handled = true;
             }
         }
         if (keyIdentifier == "Home") {
-            endIndex = firstSelectableListIndex(m_data, this);
+            endIndex = firstSelectableListIndex();
             handled = true;
         } else if (keyIdentifier == "End") {
-            endIndex = lastSelectableListIndex(m_data, this);
+            endIndex = lastSelectableListIndex();
             handled = true;
         }
 

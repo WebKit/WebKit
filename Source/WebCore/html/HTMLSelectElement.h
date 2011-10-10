@@ -155,6 +155,17 @@ private:
     void setOptionsChangedOnRenderer();
     friend class SelectElementData;
 
+    enum SkipDirection {
+        SkipBackwards = -1,
+        SkipForwards = 1
+    };
+    static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection, int skip);
+    int nextSelectableListIndex(int startIndex) const;
+    int previousSelectableListIndex(int startIndex) const;
+    int firstSelectableListIndex() const;
+    int lastSelectableListIndex() const;
+    int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
+
     SelectElementData m_data;
     CollectionCache m_collectionInfo;
 };
