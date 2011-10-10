@@ -46,6 +46,9 @@ public:
         , m_includeLogicalLeftEdge(false)
         , m_includeLogicalRightEdge(false)
         , m_descendantsHaveSameLineHeightAndBaseline(true)
+        , m_baselineType(AlphabeticBaseline)
+        , m_hasAnnotationsBefore(false)
+        , m_hasAnnotationsAfter(false)
 #ifndef NDEBUG
         , m_hasBadChildList(false)
 #endif
@@ -296,7 +299,23 @@ protected:
     bool m_hasTextDescendants : 1;
     bool m_descendantsHaveSameLineHeightAndBaseline : 1;
 
+    // The following members are only used by RootInlineBox but moved here to keep the bits packed.
+
+    // Whether or not this line uses alphabetic or ideographic baselines by default.
+    unsigned m_baselineType : 1; // FontBaseline
+
+    // If the line contains any ruby runs, then this will be true.
+    bool m_hasAnnotationsBefore : 1;
+    bool m_hasAnnotationsAfter : 1;
+
+    unsigned m_lineBreakBidiStatusEor : 5; // WTF::Unicode::Direction
+    unsigned m_lineBreakBidiStatusLastStrong : 5; // WTF::Unicode::Direction
+    unsigned m_lineBreakBidiStatusLast : 5; // WTF::Unicode::Direction
+
+    // End of RootInlineBox-specific members.
+
 #ifndef NDEBUG
+private:
     bool m_hasBadChildList;
 #endif
 };

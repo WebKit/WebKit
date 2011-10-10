@@ -184,10 +184,12 @@ private:
 
     int beforeAnnotationsAdjustment() const;
 
+    // This folds into the padding at the end of InlineFlowBox on 64-bit.
+    unsigned m_lineBreakPos;
+
     // Where this line ended.  The exact object and the position within that object are stored so that
     // we can create an InlineIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
-    unsigned m_lineBreakPos;
     RefPtr<BidiContext> m_lineBreakContext;
 
     LayoutUnit m_lineTop;
@@ -202,17 +204,6 @@ private:
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.
     OwnPtr<Vector<RenderBox*> > m_floats;
-
-    // Whether or not this line uses alphabetic or ideographic baselines by default.
-    unsigned m_baselineType : 1; // FontBaseline
-    
-    // If the line contains any ruby runs, then this will be true.
-    bool m_hasAnnotationsBefore : 1;
-    bool m_hasAnnotationsAfter : 1;
-
-    WTF::Unicode::Direction m_lineBreakBidiStatusEor : 5;
-    WTF::Unicode::Direction m_lineBreakBidiStatusLastStrong : 5;
-    WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
 };
 
 } // namespace WebCore

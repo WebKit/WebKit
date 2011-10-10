@@ -1,3 +1,27 @@
+2011-10-10  Andreas Kling  <kling@webkit.org>
+
+        Shrink RootInlineBox.
+        https://bugs.webkit.org/show_bug.cgi?id=69707
+
+        Reviewed by Antti Koivisto.
+
+        Move the bitfields from RootInlineBox up into its base class (InlineFlowBox.)
+        This shrinks RootInlineBox by one CPU word without growing InlineFlowBox.
+        Enum bitfields were changed to "unsigned" for the MSVC signedness quirk.
+
+        Also move one 32-bit member to the head of RootInlineBox so it falls into the
+        padding at the end of InlineFlowBox on 64-bit.
+
+        This reduces memory consumption by 780 kB (on 64-bit) when loading the full
+        HTML5 spec.
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::lineBreakBidiStatus):
+        * rendering/RootInlineBox.h:
+
 2011-10-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, attempt to fix chromium mac build after r97034.
