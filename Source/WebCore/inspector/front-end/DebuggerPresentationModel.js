@@ -610,8 +610,10 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
 
     reset: function()
     {
-        for (var id in this._anchorsForRawSourceCode)
-            this._model._rawSourceCode[id].removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._updateSourceAnchors, this);
+        for (var id in this._anchorsForRawSourceCode) {
+            if (this._model._rawSourceCode[id]) // In case of navigation the list of rawSourceCodes is empty.
+                this._model._rawSourceCode[id].removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._updateSourceAnchors, this);
+        }
         this._anchorsForRawSourceCode = {};
     },
 
