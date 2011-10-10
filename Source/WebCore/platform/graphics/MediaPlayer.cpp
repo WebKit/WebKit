@@ -494,6 +494,11 @@ bool MediaPlayer::supportsSave() const
     return m_private->supportsSave();
 }
 
+bool MediaPlayer::supportsScanning() const
+{
+    return m_private->supportsScanning();
+}
+
 IntSize MediaPlayer::naturalSize()
 {
     return m_private->naturalSize();

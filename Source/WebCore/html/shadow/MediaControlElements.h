@@ -259,12 +259,17 @@ protected:
 
 private:
     virtual bool isForwardButton() const = 0;
+    virtual void setActive(bool /*flag*/ = true, bool /*pause*/ = false);
 
-    virtual void detach();
+    void startTimer();
+    void stopTimer();
+    float nextRate() const;
     void seekTimerFired(Timer<MediaControlSeekButtonElement>*);
 
-    bool m_seeking;
-    bool m_capturing;
+    enum ActionType { Nothing, Play, Pause };
+    ActionType m_actionOnStop;
+    enum SeekType { Skip, Scan };
+    SeekType m_seekType;
     Timer<MediaControlSeekButtonElement> m_seekTimer;
 };
 

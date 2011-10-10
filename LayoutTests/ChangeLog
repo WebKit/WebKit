@@ -1,3 +1,14 @@
+2011-09-20  Jer Noble  <jer.noble@apple.com>
+
+        MediaControlSeekButtonElement should support seeking by changing the playback rate.
+        https://bugs.webkit.org/show_bug.cgi?id=63595
+
+        Reviewed by Eric Carlson.
+
+        * media/video-controls-scanning-expected.txt: Added.
+        * media/video-controls-scanning.html: Added.
+        * platform/mac/media/video-controls-scanning-expected.txt: Added.
+
 2011-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSIoN (r95399): Web process hangs when opening documents on Google Docs

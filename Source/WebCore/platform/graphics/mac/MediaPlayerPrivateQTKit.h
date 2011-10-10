@@ -93,6 +93,7 @@ private:
     bool hasVideo() const;
     bool hasAudio() const;
     bool supportsFullscreen() const;
+    virtual bool supportsScanning() const { return true; }
     
     void load(const String& url);
     void cancelLoad();

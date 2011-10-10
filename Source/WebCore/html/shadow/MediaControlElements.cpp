@@ -64,9 +64,10 @@ HTMLMediaElement* toParentMediaElement(Node* node)
 }
 
 // FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
-static const float cSeekRepeatDelay = 0.1f;
-static const float cStepTime = 0.07f;
-static const float cSeekTime = 0.2f;
+static const float cSkipRepeatDelay = 0.1f;
+static const float cSkipTime = 0.2f;
+static const float cScanRepeatDelay = 1.5f;
+static const float cScanMaximumRate = 8;
 
 // ----------------------------
 
@@ -535,57 +536,81 @@ const AtomicString& MediaControlPlayButtonElement::shadowPseudoId() const
 
 inline MediaControlSeekButtonElement::MediaControlSeekButtonElement(HTMLMediaElement* mediaElement, MediaControlElementType displayType)
     : MediaControlInputElement(mediaElement, displayType)
-    , m_seeking(false)
-    , m_capturing(false)
+    , m_actionOnStop(Nothing)
+    , m_seekType(Skip)
     , m_seekTimer(this, &MediaControlSeekButtonElement::seekTimerFired)
 {
 }
 
 void MediaControlSeekButtonElement::defaultEventHandler(Event* event)
 {
-    if (event->type() == eventNames().mousedownEvent) {
-        if (Frame* frame = document()->frame()) {
-            m_capturing = true;
-            frame->eventHandler()->setCapturingMouseEventsNode(this);
-        }
-        mediaElement()->pause();
-        m_seekTimer.startRepeating(cSeekRepeatDelay);
+    // Set the mousedown and mouseup events as defaultHandled so they
+    // do not trigger drag start or end actions in MediaControlPanelElement.
+    if (event->type() == eventNames().mousedownEvent || event->type() == eventNames().mouseupEvent)
         event->setDefaultHandled();
-    } else if (event->type() == eventNames().mouseupEvent) {
-        if (m_capturing)
-            if (Frame* frame = document()->frame()) {
-                m_capturing = false;
-                frame->eventHandler()->setCapturingMouseEventsNode(0);
-            }
-        ExceptionCode ec;
-        if (m_seeking || m_seekTimer.isActive()) {
-            if (!m_seeking) {
-                float stepTime = isForwardButton() ? cStepTime : -cStepTime;
-                mediaElement()->setCurrentTime(mediaElement()->currentTime() + stepTime, ec);
-            }
-            m_seekTimer.stop();
-            m_seeking = false;
-            event->setDefaultHandled();
-        }
+}
+
+void MediaControlSeekButtonElement::setActive(bool flag, bool pause)
+{
+    if (flag == active())
+        return;
+
+    if (flag)
+        startTimer();
+    else
+        stopTimer();
+
+    MediaControlInputElement::setActive(flag, pause);
+}
+
+void MediaControlSeekButtonElement::startTimer()
+{
+    m_seekType = mediaElement()->supportsScanning() ? Scan : Skip;
+
+    if (m_seekType == Skip) {
+        // Seeking by skipping requires the video to be paused during seeking.
+        m_actionOnStop = mediaElement()->isPlaying() ? Play : Nothing;
+        mediaElement()->pause();
+    } else {
+        // Seeking by scanning requires the video to be playing during seeking.
+        m_actionOnStop = mediaElement()->paused() ? Pause : Nothing;
+        mediaElement()->play();
+        mediaElement()->setPlaybackRate(nextRate());
     }
-    HTMLInputElement::defaultEventHandler(event);
+
+    m_seekTimer.start(0, m_seekType == Skip ? cSkipRepeatDelay : cScanRepeatDelay);
+}
+
+void MediaControlSeekButtonElement::stopTimer()
+{
+    if (m_seekType == Scan)
+        mediaElement()->setPlaybackRate(mediaElement()->defaultPlaybackRate());
+
+    if (m_actionOnStop == Play)
+        mediaElement()->play();
+    else if (m_actionOnStop == Pause)
+        mediaElement()->pause();
+
+    if (m_seekTimer.isActive())
+        m_seekTimer.stop();
+}
+
+float MediaControlSeekButtonElement::nextRate() const
+{
+    float rate = std::min(cScanMaximumRate, fabsf(mediaElement()->playbackRate() * 2));
+    if (!isForwardButton())
+        rate *= -1;
+    return rate;
 }
 
 void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>*)
 {
-    ExceptionCode ec;
-    m_seeking = true;
-    float seekTime = isForwardButton() ? cSeekTime : -cSeekTime;
-    mediaElement()->setCurrentTime(mediaElement()->currentTime() + seekTime, ec);
-}
-
-void MediaControlSeekButtonElement::detach()
-{
-    if (m_capturing) {
-        if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);      
-    }
-    MediaControlInputElement::detach();
+    if (m_seekType == Skip) {
+        ExceptionCode ec;
+        float skipTime = isForwardButton() ? cSkipTime : -cSkipTime;
+        mediaElement()->setCurrentTime(mediaElement()->currentTime() + skipTime, ec);
+    } else
+        mediaElement()->setPlaybackRate(nextRate());
 }
 
 // ----------------------------

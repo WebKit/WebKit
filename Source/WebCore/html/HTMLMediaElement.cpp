@@ -1250,6 +1250,11 @@ bool HTMLMediaElement::supportsSave() const
     return m_player ? m_player->supportsSave() : false;
 }
 
+bool HTMLMediaElement::supportsScanning() const
+{
+    return m_player ? m_player->supportsScanning() : false;
+}
+
 void HTMLMediaElement::prepareToPlay()
 {
     LOG(Media, "HTMLMediaElement::prepareToPlay(%p)", this);

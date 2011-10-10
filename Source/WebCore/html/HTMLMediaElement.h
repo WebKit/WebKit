@@ -73,6 +73,7 @@ public:
     virtual bool supportsFullscreen() const { return false; };
 
     virtual bool supportsSave() const;
+    virtual bool supportsScanning() const;
     
     PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)

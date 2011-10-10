@@ -155,6 +155,7 @@ protected:
     virtual float mediaTimeForTimeValue(float) const = 0;
 
     virtual bool supportsFullscreen() const;
+    virtual bool supportsScanning() const { return true; }
 
     // Required interfaces for concrete derived classes.
     virtual void createAVAssetForURL(const String&) = 0;

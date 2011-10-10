@@ -190,6 +190,7 @@ public:
 
     bool supportsFullscreen() const;
     bool supportsSave() const;
+    bool supportsScanning() const;
     PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;

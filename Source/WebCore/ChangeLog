@@ -1,3 +1,58 @@
+2011-09-20  Jer Noble  <jer.noble@apple.com>
+
+        MediaControlSeekButtonElement should support seeking by changing the playback rate.
+        https://bugs.webkit.org/show_bug.cgi?id=63595
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-controls-scanning.html
+
+        Add a new property to HTMLMediaElement, supportsScanning(), which returns whether the
+        element is capable of playing its media at a rate greater than 1x. HTMLMediaElement passes
+        this call through to MediaPlayer and MediaPlayerPrivate. If this property returns true, the
+        built-in scanning controls can prefer to scan by changing the playbackRate, rather than by
+        repeatedly seeking small amounts of time. Unless overridden by specific media engines, this
+        property defaults to "false".
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::supportsScanning): Added.  Calls through to MediaPlayer.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsScanning): Added. Calls through to MediaPlayerPrivate.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsScanning): Added. Defaults to "false".
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::supportsScanning): Added.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (WebCore::MediaPlayerPrivateQTKit::supportsScanning): Added.
+
+        MediaControlSeekButtonElement now queries HTMLMediaElement::supportsScanning() to see if the
+        media element can implement its seeking behavior by scanning the media at greater than 1x
+        rate. Note whether the media was playing or paused when the seek begins, so that the playing
+        state can be restored when seeking ends.  Instead of capturing the mouse after mouseDown, 
+        the seek button now responds to setActive() and begins seeking when the button is active
+        and stops when it becomes inactive.
+
+        Some behaviors have changed: clicking on the seek button no longer causes the media element
+        to pause; the media will end in the same state it began after the click.  cStepTime has been
+        eliminated; Clicking the seek button will always skip by at least cSeekTime, or 0.2s.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement): Initialize new 
+            ivars.
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler): Mark mouseDown and mouseUp
+            as defaultHandled, so as not to trigger drag start and drag end actions.
+        (WebCore::MediaControlSeekButtonElement::setActive): Call startTimer or stopTimer based
+            on whether the button is active or not.
+        (WebCore::MediaControlSeekButtonElement::startTimer): Determine whether to scan or skip
+            and start the seekTimer.
+        (WebCore::MediaControlSeekButtonElement::stopTimer): Restore the playing state and
+            stop the timer.
+        (WebCore::MediaControlSeekButtonElement::seekTimerFired): Depending on whether we're 
+            scanning or skipping, jump ahead or change the playback rate.
+        * html/shadow/MediaControlElements.h:
+
 2011-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods
