@@ -1,3 +1,16 @@
+2011-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSIoN (r95399): Web process hangs when opening documents on Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=69412
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-min-max-expected.txt: Added.
+        * fast/js/dfg-min-max.html: Added.
+        * fast/js/script-tests/dfg-min-max.js: Added.
+        (doMin):
+        (doMax):
+
 2011-10-10  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Add baselines for new tests. Update baselines for 10.6 debug and rolled out v8 change.

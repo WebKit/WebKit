@@ -1087,8 +1087,10 @@ namespace JSC {
 #if ENABLE(VALUE_PROFILER)
         bool m_canBeOptimized;
 #endif
-#if ENABLE(DFG_JIT)
+#if ENABLE(DFG_JIT) || ENABLE(JIT_VERBOSE)
         Label m_startOfCode;
+#endif
+#if ENABLE(DFG_JIT)
         CompactJITCodeMap::Encoder m_jitCodeMapEncoder;
 #endif
     } JIT_CLASS_ALIGNMENT;

@@ -536,9 +536,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if ENABLE(VALUE_PROFILER)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
 #endif
-#if ENABLE(DFG_JIT)
-    if (m_canBeOptimized)
-        m_startOfCode = label();
+#if ENABLE(DFG_JIT) || ENABLE(JIT_VERBOSE)
+    m_startOfCode = label();
 #endif
     
     // Just add a little bit of randomness to the codegen

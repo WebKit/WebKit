@@ -1293,7 +1293,7 @@ void SpeculativeJIT::compile(Node& node)
         MacroAssembler::Jump op1Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleLessThan : MacroAssembler::DoubleGreaterThan, op1.fpr(), op2.fpr());
         
         // op2 is eather the lesser one or one of then is NaN
-        MacroAssembler::Jump op2Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleGreaterThan : MacroAssembler::DoubleLessThan, op1.fpr(), op2.fpr());
+        MacroAssembler::Jump op2Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleGreaterThanOrEqual : MacroAssembler::DoubleLessThanOrEqual, op1.fpr(), op2.fpr());
         
         // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding 
         // op1 + op2 and putting it into result.

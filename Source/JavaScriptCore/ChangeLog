@@ -1,3 +1,18 @@
+2011-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSIoN (r95399): Web process hangs when opening documents on Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=69412
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+
 2011-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods
