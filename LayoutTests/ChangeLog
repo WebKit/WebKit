@@ -1,3 +1,15 @@
+2011-10-10  Abhishek Arya  <inferno@chromium.org>
+
+        Handle insertion into an anonymous table part that
+        is followed by a non-anonymous block correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=69536
+
+        Reviewed by Dan Bernstein.
+
+        * fast/table/table-insert-before-non-anonymous-block-expected.png: Added.
+        * fast/table/table-insert-before-non-anonymous-block-expected.txt: Added.
+        * fast/table/table-insert-before-non-anonymous-block.html: Added.
+
 2011-10-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: annotate DOMAgent, Debugger(Presentation)Model with types.

@@ -117,6 +117,15 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
             return;
         }
 
+        if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
+            RenderObject* row = beforeChild->previousSibling();
+            if (row && row->isTableRow()) {
+                ASSERT(row->isAnonymous());
+                row->addChild(child);
+                return;
+            }
+        }
+
         // If beforeChild is inside an anonymous cell/row, insert into the cell or into
         // the anonymous row containing it, if there is one.
         RenderObject* lastBox = last;
@@ -1178,6 +1187,8 @@ void RenderTableSection::appendColumn(int pos)
 
 void RenderTableSection::splitColumn(int pos, int first)
 {
+    ASSERT(!m_needsCellRecalc);
+
     if (m_cCol > pos)
         m_cCol++;
     for (int row = 0; row < m_gridRows; ++row) {

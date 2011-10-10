@@ -184,6 +184,15 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         return;
     }
 
+    if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
+        RenderObject* section = beforeChild->previousSibling();
+        if (section && section->isTableSection()) {
+            ASSERT(section->isAnonymous());
+            section->addChild(child);
+            return;
+        }
+    }
+
     RenderObject* lastBox = beforeChild;
     while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION && lastBox->style()->display() != TABLE_COLUMN_GROUP)
         lastBox = lastBox->parent();
