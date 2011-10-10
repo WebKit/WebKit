@@ -1,3 +1,12 @@
+2011-10-10  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed gardening after r96958.
+        https://bugs.webkit.org/show_bug.cgi?id=69757
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2011-10-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix test after r97056.

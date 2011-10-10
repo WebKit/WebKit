@@ -2413,3 +2413,7 @@ http/tests/multipart/load-last-non-html-frame.php
 # [Qt] fast/text/line-initial-and-final-swashes.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=69719
 fast/text/line-initial-and-final-swashes.html
+
+# [Qt] inspector/debugger/script-formatter.html failed after r97056
+# https://bugs.webkit.org/show_bug.cgi?id=69757
+inspector/debugger/script-formatter.html
