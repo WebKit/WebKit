@@ -1,3 +1,17 @@
+2011-10-07  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT: callOperation should return the Call.
+        https://bugs.webkit.org/show_bug.cgi?id=69682
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        (JSC::DFG::appendCallWithExceptionCheckSetResult):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCall):
+        * wtf/Platform.h:
+
 2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97045.

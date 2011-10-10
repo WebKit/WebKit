@@ -216,10 +216,12 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    void appendCall(const FunctionPtr& function)
+    Call appendCall(const FunctionPtr& function)
     {
-        m_calls.append(CallRecord(call(), function));
+        Call functionCall = call();
+        m_calls.append(CallRecord(functionCall, function));
         // FIXME: should be able to JIT_ASSERT here that globalData->exception is null on return back to JIT code.
+        return functionCall;
     }
 
     // Add a call out from JIT code, with an exception check.
