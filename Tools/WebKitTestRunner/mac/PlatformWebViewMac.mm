@@ -54,7 +54,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     [m_window setColorSpace:[NSColorSpace genericRGBColorSpace]];
     [[m_window contentView] addSubview:m_view];
     [m_window orderBack:nil];
-    [m_window setAutodisplay:NO];
     [m_window setReleasedWhenClosed:NO];
 }
 
