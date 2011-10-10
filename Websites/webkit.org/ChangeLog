@@ -1,3 +1,14 @@
+2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Style guide should mandate use of pass-by-reference for out arguments
+        https://bugs.webkit.org/show_bug.cgi?id=69766
+
+        Reviewed by Darin Adler.
+
+        This matches the convention used throughout WebCore.
+
+        * coding/coding-style.html:
+
 2011-10-06  Amruth Raj  <amruthraj@motorola.com>
 
         Add Motorola Mobility to team.html

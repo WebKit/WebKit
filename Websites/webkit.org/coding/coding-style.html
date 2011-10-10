@@ -575,6 +575,17 @@ size_t getCount();
 </pre>
 </li>
 
+<li>Precede getters that return values through out arguments with the word "get".</li>
+<h4 class="right">Right:</h4>
+<pre class="code">
+void getInlineBoxAndOffset(InlineBox*&amp;, int&amp; caretOffset) const;
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+void inlineBoxAndOffset(InlineBox*&amp;, int&amp; caretOffset) const;
+</pre>
+
 <li>Use descriptive verbs in function names.
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -697,6 +708,11 @@ MyClass::MyClass(Document* doc) : MySuperClass()
 
 MyOtherClass::MyOtherClass() : MySuperClass() {}
 </pre>
+</ol>
+
+<h3>Pointers and References</h3>
+
+<ol>
 
 <li>Pointer types in non-C++ code &mdash; Pointer types should be written with a space between the
 type and the * (so the * is adjacent to the following identifier if any).
@@ -718,6 +734,32 @@ Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
 {
     SVGStyledElement *element = static_cast&lt;SVGStyledElement *>(node());
     const KCDashArray &amp;dashes = dashArray();
+</pre>
+
+<li>An out argument of a function should be passed by reference except rare cases where
+it is optional in which case it should be passed by pointer.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+void MyClass::getSomeValue(OutArgumentType&amp; outArgument) const
+{
+    outArgument = m_value;
+}
+
+void MyClass::doSomething(OutArgumentType* outArgument) const
+{
+    doSomething();
+    if (outArgument)
+        outArgument = m_value;
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+void MyClass::getSomeValue(OutArgumentType* outArgument) const
+{
+    *outArgument = m_value;
+}
 </pre>
 
 </ol>
