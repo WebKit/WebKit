@@ -1,3 +1,11 @@
+2011-10-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix test after r97056.
+
+        * inspector/debugger/script-formatter-expected.txt:
+        * inspector/debugger/script-formatter.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: saving JavaScript after live edit resets scroller position.

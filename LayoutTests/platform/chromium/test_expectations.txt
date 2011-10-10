@@ -156,7 +156,6 @@ WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/ = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/ = PASS TIMEOUT FAIL
-WONTFIX SKIP : inspector/debugger/script-formatter.html = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
 

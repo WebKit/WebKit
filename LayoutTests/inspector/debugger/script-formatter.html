@@ -54,12 +54,12 @@ var test = function()
             InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
             function didShowScriptSource(sourceFrame)
             {
-                formatter.formatContent("text/javascript", sourceFrame._content, didFormatContent);
+                formatter.formatContent("text/javascript", sourceFrame._textModel.text, didFormatContent);
             }
 
             function didFormatContent(content, mapping)
             {
-                var source = WebInspector.panels.scripts.visibleView._content;
+                var source = WebInspector.panels.scripts.visibleView._textModel.text;
                 var formattedSource = content;
 
                 function testMapping(string)
@@ -125,7 +125,7 @@ var test = function()
 
             function pausedInF1(callFrames)
             {
-                InspectorTest.captureStackTrace(callFrames);
+                InspectorTest.assertEquals("f1", callFrames[0].functionName);
                 InspectorTest.resumeExecution(resumed);
             }
 
@@ -163,7 +163,7 @@ var test = function()
 
             function pausedInF2(callFrames)
             {
-                InspectorTest.captureStackTrace(callFrames);
+                InspectorTest.assertEquals("f2", callFrames[0].functionName);
                 panel._toggleFormatSource();
                 InspectorTest.resumeExecution(next);
             }

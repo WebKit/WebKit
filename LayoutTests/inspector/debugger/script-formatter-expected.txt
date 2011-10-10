@@ -18,18 +18,12 @@ function g() {
 
 Running: testBreakpointsInOriginalAndFormattedSource
 Script execution paused.
-Call stack:
-    0) f1 (script-formatter.html:12)
-    1)  (script-formatter.html:1)
 Script execution resumed.
 Page reloaded.
 Navigated to test-navigation.html
 Page reloaded.
 Navigated back to test page.
 Script execution paused.
-Call stack:
-    0) f2 (script-formatter.html:17)
-    1)  (script-formatter.html:1)
 Script execution resumed.
 
 Running: testConsoleMessagesForFormattedScripts
