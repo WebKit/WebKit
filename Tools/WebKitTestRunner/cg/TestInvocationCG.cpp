@@ -29,7 +29,6 @@
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <ImageIO/CGImageDestination.h>
 #include <WebKit2/WKImageCG.h>
 #include <wtf/MD5.h>
@@ -46,15 +45,21 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace WTR {
 
-static CGContextRef createBitmapCGContext(size_t width, size_t height)
+static CGContextRef createCGContextFromImage(WKImageRef wkImage)
 {
-    size_t rowBytes = (4 * width + 63) & ~63;
-    void* buffer = calloc(height, rowBytes);
+    RetainPtr<CGImageRef> image(AdoptCF, WKImageCreateCGImage(wkImage));
+
+    size_t pixelsWide = CGImageGetWidth(image.get());
+    size_t pixelsHigh = CGImageGetHeight(image.get());
+    size_t rowBytes = (4 * pixelsWide + 63) & ~63;
+    void* buffer = calloc(pixelsHigh, rowBytes);
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(buffer, width, height, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     CGColorSpaceRelease(colorSpace);
     
+    CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
+
     return context;
 }
 
@@ -139,23 +144,16 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects)
 {
-    // We don't use the image passed from the WebProcess, because it doesn't correctly capture compositing layers. Instead, snapshot
-    // the window via CGWindowListCreateImage.
-    PlatformWebView* webView = TestController::shared().mainWebView();
-    [webView->platformView() display];
-    RetainPtr<CGImageRef> windowSnapshotImage(AdoptCF, CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [webView->platformWindow() windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
-
-    RetainPtr<CGContextRef> context(AdoptCF, createBitmapCGContext(CGImageGetWidth(windowSnapshotImage.get()), CGImageGetHeight(windowSnapshotImage.get())));
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, CGImageGetWidth(windowSnapshotImage.get()), CGImageGetHeight(windowSnapshotImage.get())), windowSnapshotImage.get());
+    CGContextRef context = createCGContextFromImage(image);
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)
-        paintRepaintRectOverlay(context.get(), image, repaintRects);
+        paintRepaintRectOverlay(context, image, repaintRects);
 
     char actualHash[33];
-    computeMD5HashStringForContext(context.get(), actualHash);
+    computeMD5HashStringForContext(context, actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
-        dumpBitmap(context.get(), actualHash);
+        dumpBitmap(context, actualHash);
 }
 
 } // namespace WTR
