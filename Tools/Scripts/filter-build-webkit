@@ -147,7 +147,7 @@ while (my $line = <>) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(PhaseScriptExecution|CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze) ("[^"]+"|\S+)/) {
+    } elsif ($line =~ /^(PhaseScriptExecution|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze) ("[^"]+"|\S+)/) {
         my ($command, $path) = ($1, basename($2));
         printLine("$command $path", STYLE_PLAIN);
     } else {

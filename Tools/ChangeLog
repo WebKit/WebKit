@@ -1,3 +1,12 @@
+2011-10-10  Adam Klein  <adamk@chromium.org>
+
+        Support Distributed-CompileC as an action name in filter-build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=69783
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/filter-build-webkit:
+
 2011-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         3D transforms are flattened in WebKit2 snapshots
