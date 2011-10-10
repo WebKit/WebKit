@@ -107,7 +107,7 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_components:18:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_components:15:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMBreakpointsSidebarPane.js \
@@ -118,9 +118,6 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
-        --js Source/WebCore/inspector/front-end/SourceCSSTokenizer.js \
-        --js Source/WebCore/inspector/front-end/SourceHTMLTokenizer.js \
-        --js Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
         --js Source/WebCore/inspector/front-end/SourceTokenizer.js \
         --js Source/WebCore/inspector/front-end/TimelineAgent.js \
@@ -171,7 +168,11 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/AuditResultView.js \
         --js Source/WebCore/inspector/front-end/AuditRules.js \
         --js Source/WebCore/inspector/front-end/AuditsPanel.js
-    
+#     --module jsmodule_tokenizers:3:jsmodule_components \
+#        --js Source/WebCore/inspector/front-end/SourceCSSTokenizer.js \
+#        --js Source/WebCore/inspector/front-end/SourceHTMLTokenizer.js \
+#        --js Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.js \
+
 
 # To be compiled...
 # 

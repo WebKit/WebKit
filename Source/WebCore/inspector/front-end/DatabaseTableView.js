@@ -38,7 +38,7 @@ WebInspector.DatabaseTableView = function(database, tableName)
     this.element.addStyleClass("table");
 
     this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
-    this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+    this.refreshButton.addEventListener("click", this._refreshButtonClicked, this);
 }
 
 WebInspector.DatabaseTableView.prototype = {

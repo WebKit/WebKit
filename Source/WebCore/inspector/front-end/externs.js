@@ -66,7 +66,7 @@ WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipT
 
 /**
  * @param {string} url
- * @param {number} lineNumber
+ * @param {number=} lineNumber
  */
 WebInspector.formatLinkText = function(url, lineNumber) {}
 

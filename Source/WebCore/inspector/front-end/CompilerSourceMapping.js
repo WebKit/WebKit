@@ -29,27 +29,32 @@
  */
 
 /**
- * @constructor
+ * @interface
  */
 WebInspector.CompilerSourceMapping = function()
 {
 }
 
 WebInspector.CompilerSourceMapping.prototype = {
-    compiledLocationToSourceLocation: function(lineNumber, columnNumber)
-    {
-        // Should be implemented by subclasses.
-    },
+    /**
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {Object}
+     */
+    compiledLocationToSourceLocation: function(lineNumber, columnNumber) { },
 
-    sourceLocationToCompiledLocation: function(sourceURL, lineNumber, columnNumber)
-    {
-        // Should be implemented by subclasses.
-    },
+    /**
+     * @param {string} sourceURL
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {Object}
+     */
+    sourceLocationToCompiledLocation: function(sourceURL, lineNumber, columnNumber) { },
 
-    sources: function()
-    {
-        // Should be implemented by subclasses.
-    }
+    /**
+     * @return {Array.<string>}
+     */
+    sources: function() { }
 }
 
 /**
@@ -64,7 +69,7 @@ WebInspector.ClosureCompilerSourceMappingPayload = function()
 /**
  * Implements Source Map V3 consumer. See http://code.google.com/p/closure-compiler/wiki/SourceMaps
  * for format description.
- * @extends {WebInspector.CompilerSourceMapping}
+ * @implements {WebInspector.CompilerSourceMapping}
  * @constructor
  * @param {WebInspector.ClosureCompilerSourceMappingPayload} mappingPayload
  */
@@ -86,6 +91,11 @@ WebInspector.ClosureCompilerSourceMapping = function(mappingPayload)
 }
 
 WebInspector.ClosureCompilerSourceMapping.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {Object}
+     */
     compiledLocationToSourceLocation: function(lineNumber, columnNumber)
     {
         var mapping = this._findMapping(lineNumber, columnNumber);
@@ -102,6 +112,9 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         }
     },
 
+    /**
+     * @return {Array.<string>}
+     */
     sources: function()
     {
         return this._sources;

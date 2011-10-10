@@ -91,7 +91,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
     this.nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
-    this.nodeSearchButton.addEventListener("click", this.toggleSearchingForNode.bind(this), false);
+    this.nodeSearchButton.addEventListener("click", this.toggleSearchingForNode, this);
 
     this.element.appendChild(this.contentElement);
     this.element.appendChild(this.sidebarElement);
@@ -194,6 +194,7 @@ WebInspector.ElementsPanel.prototype = {
             this.sidebarPanes.domBreakpoints.restoreBreakpoints();
 
         /**
+         * @this {WebInspector.ElementsPanel}
          * @param {WebInspector.DOMNode=} candidateFocusNode
          */
         function selectNode(candidateFocusNode)
@@ -215,7 +216,7 @@ WebInspector.ElementsPanel.prototype = {
                 // Focused node has been explicitly set while reaching out for the last selected node.
                 return;
             }
-            var node = nodeId ? WebInspector.domAgent.nodeForId(nodeId) : 0;
+            var node = nodeId ? WebInspector.domAgent.nodeForId(nodeId) : null;
             selectNode.call(this, node);
         }
 
@@ -389,6 +390,9 @@ WebInspector.ElementsPanel.prototype = {
         return this.treeOutline.selectedDOMNode();
     },
 
+    /**
+     * @param {boolean=} focus
+     */
     selectDOMNode: function(node, focus)
     {
         this.treeOutline.selectDOMNode(node, focus);

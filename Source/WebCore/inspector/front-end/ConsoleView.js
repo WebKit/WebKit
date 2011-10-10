@@ -42,7 +42,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.messages = [];
 
     this._clearConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear console log."), "clear-status-bar-item");
-    this._clearConsoleButton.addEventListener("click", this._requestClearMessages.bind(this), false);
+    this._clearConsoleButton.addEventListener("click", this._requestClearMessages, this);
 
     this._contextSelectElement = document.createElement("select");
     this._contextSelectElement.id = "console-context";
@@ -365,7 +365,7 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && WebInspector.panels.scripts.paused)
             WebInspector.panels.scripts.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
-            this.evalInInspectedWindow(expressionString, "completion", true, true, undefined, evaluated.bind(this));
+            this.evalInInspectedWindow(expressionString, "completion", true, true, false, evaluated.bind(this));
 
         function evaluated(result, wasThrown)
         {
@@ -401,10 +401,10 @@ WebInspector.ConsoleView.prototype = {
             if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(getCompletions, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
-                this.evalInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", undefined, true, true, receivedPropertyNamesFromEval.bind(this));
+                this.evalInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEval.bind(this));
         }
 
-        function receivedPropertyNamesFromEval(result, wasThrown)
+        function receivedPropertyNamesFromEval(notRelevant, wasThrown, result)
         {
             if (result && !wasThrown)
                 receivedPropertyNames.call(this, result.value);
@@ -564,6 +564,14 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
+    /**
+     * @param {string} expression
+     * @param {string} objectGroup
+     * @param {boolean} includeCommandLineAPI
+     * @param {boolean} doNotPauseOnExceptions
+     * @param {boolean} returnByValue
+     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
+     */
     evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, returnByValue, callback)
     {
         if (WebInspector.panels.scripts.paused) {
@@ -580,12 +588,12 @@ WebInspector.ConsoleView.prototype = {
         {
             if (error) {
                 console.error(error);
-                callback(null);
+                callback(null, false);
                 return;
             }
 
-            if (returnByValue && !wasThrown)
-                callback(result, wasThrown);
+            if (returnByValue)
+                callback(null, wasThrown, wasThrown ? null : result);
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
@@ -623,7 +631,7 @@ WebInspector.ConsoleView.prototype = {
 
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }
-        this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult.bind(this));
+        this.evalInInspectedWindow(str, "console", true, false, false, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },

@@ -39,10 +39,10 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 
     this._deleteButton = new WebInspector.StatusBarButton(WebInspector.UIString("Delete"), "delete-storage-status-bar-item");
     this._deleteButton.visible = false;
-    this._deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
+    this._deleteButton.addEventListener("click", this._deleteButtonClicked, this);
 
     this._refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
-    this._refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+    this._refreshButton.addEventListener("click", this._refreshButtonClicked, this);
 
     this._treeElement = treeElement;
     this._cookieDomain = cookieDomain;

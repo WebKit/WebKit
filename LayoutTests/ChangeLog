@@ -1,3 +1,12 @@
+2011-10-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: annotate DOMAgent, Debugger(Presentation)Model with types.
+        https://bugs.webkit.org/show_bug.cgi?id=69726
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/raw-source-code.html:
+
 2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed fix for the test. The amount of used memory was calculated incorrectly.

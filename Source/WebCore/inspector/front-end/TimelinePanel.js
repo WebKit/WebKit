@@ -231,16 +231,16 @@ WebInspector.TimelinePanel.prototype = {
     _createStatusbarButtons: function()
     {
         this.toggleTimelineButton = new WebInspector.StatusBarButton(WebInspector.UIString("Record"), "record-profile-status-bar-item");
-        this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked.bind(this), false);
+        this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked, this);
 
         this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
-        this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
+        this.clearButton.addEventListener("click", this._clearPanel, this);
 
         this.toggleFilterButton = new WebInspector.StatusBarButton(this._hideShortRecordsTitleText, "timeline-filter-status-bar-item");
-        this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked.bind(this), false);
+        this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked, this);
 
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
-        this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked.bind(this), false);
+        this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";

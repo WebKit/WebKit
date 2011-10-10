@@ -11,7 +11,7 @@ function test()
         var lineCount = source.lineEndings().length;
         var endLine = startLine + lineCount - 1;
         var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
-        var script = new WebInspector.Script(null, url, startLine, startColumn, endLine, endColumn, undefined, undefined, isContentScript);
+        var script = new WebInspector.Script(null, url, startLine, startColumn, endLine, endColumn, isContentScript);
         script.requestSource = function(callback) { callback(source); };
         return script;
     }

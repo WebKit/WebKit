@@ -46,7 +46,7 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
 }
 
 WebInspector.CSSStyleModel.Events = {
-    StyleSheetChanged: 0
+    StyleSheetChanged: "StyleSheetChanged"
 }
 
 WebInspector.CSSStyleModel.prototype = {

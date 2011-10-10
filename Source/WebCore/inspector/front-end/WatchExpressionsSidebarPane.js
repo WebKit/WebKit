@@ -199,7 +199,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             if (!expression)
                 continue;
 
-            WebInspector.consoleView.evalInInspectedWindow(expression, this._watchObjectGroupId, false, true, undefined, appendResult.bind(this, expression, i));
+            WebInspector.consoleView.evalInInspectedWindow(expression, this._watchObjectGroupId, false, true, false, appendResult.bind(this, expression, i));
         }
 
         if (!propertyCount) {

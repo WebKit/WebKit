@@ -624,14 +624,14 @@ WebInspector.NetworkLogView.prototype = {
     _createStatusbarButtons: function()
     {
         this._preserveLogToggle = new WebInspector.StatusBarButton(WebInspector.UIString("Preserve Log upon Navigation"), "record-profile-status-bar-item");
-        this._preserveLogToggle.addEventListener("click", this._onPreserveLogClicked.bind(this), false);
+        this._preserveLogToggle.addEventListener("click", this._onPreserveLogClicked, this);
 
         this._clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
-        this._clearButton.addEventListener("click", this._reset.bind(this), false);
+        this._clearButton.addEventListener("click", this._reset, this);
 
         this._largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "network-larger-resources-status-bar-item");
         this._largerResourcesButton.toggled = WebInspector.settings.resourcesLargeRows.get();
-        this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
+        this._largerResourcesButton.addEventListener("click", this._toggleLargerResources, this);
     },
 
     _onLoadEventFired: function(event)

@@ -37,11 +37,11 @@ WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
     // FIXME: Needs better tooltip. (Localized)
     this.deleteButton = new WebInspector.StatusBarButton(WebInspector.UIString("Delete"), "delete-storage-status-bar-item");
     this.deleteButton.visible = false;
-    this.deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
+    this.deleteButton.addEventListener("click", this._deleteButtonClicked, this);
 
     // FIXME: Needs better tooltip. (Localized)
     this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
-    this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+    this.refreshButton.addEventListener("click", this._refreshButtonClicked, this);
 
     if (Preferences.onlineDetectionEnabled) {
         this.connectivityIcon = document.createElement("img");

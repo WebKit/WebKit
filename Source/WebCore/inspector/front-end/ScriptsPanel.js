@@ -83,7 +83,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
     this.toggleBreakpointsButton.toggled = true;
-    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked.bind(this), false);
+    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked, this);
     this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
 
     this.debuggerStatusElement = document.createElement("div");
@@ -148,16 +148,16 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.element.appendChild(this.sidebarResizeElement);
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
-    this.enableToggleButton.addEventListener("click", this._toggleDebugging.bind(this), false);
+    this.enableToggleButton.addEventListener("click", this._toggleDebugging, this);
     if (Preferences.debuggerAlwaysEnabled)
         this.enableToggleButton.element.addStyleClass("hidden");
 
     this._pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
-    this._pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
+    this._pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions, this);
 
     this._toggleFormatSourceButton = new WebInspector.StatusBarButton(WebInspector.UIString("Pretty print"), "scripts-toggle-pretty-print-status-bar-item");
     this._toggleFormatSourceButton.toggled = false;
-    this._toggleFormatSourceButton.addEventListener("click", this._toggleFormatSource.bind(this), false);
+    this._toggleFormatSourceButton.addEventListener("click", this._toggleFormatSource, this);
 
     this._scriptViewStatusBarItemsContainer = document.createElement("div");
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
@@ -446,13 +446,23 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.jsBreakpoints.removeBreakpoint(breakpoint.uiSourceCode, breakpoint.lineNumber);
     },
 
+    /**
+     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
+     */
     evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
-        function didEvaluate()
+        /**
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean} wasThrown
+         */
+        function didEvaluate(result, wasThrown)
         {
             if (objectGroup === "console")
                 this.sidebarPanes.scopechain.update(this._presentationModel.selectedCallFrame);
-            callback.apply(null, arguments);
+            if (returnByValue)
+                callback(null, wasThrown, wasThrown ? null : result);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
         var selectedCallFrame = this._presentationModel.selectedCallFrame;
         selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));

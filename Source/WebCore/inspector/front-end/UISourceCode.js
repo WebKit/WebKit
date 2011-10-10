@@ -31,6 +31,11 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {string} id
+ * @param {string} url
+ * @param {boolean} isContentScript
+ * @param {WebInspector.RawSourceCode} rawSourceCode
+ * @param {WebInspector.ContentProvider} contentProvider
  */
 WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, contentProvider)
 {
@@ -39,6 +44,9 @@ WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, co
     this._isContentScript = isContentScript;
     this._rawSourceCode = rawSourceCode;
     this._contentProvider = contentProvider;
+    /**
+     * @type Array.<function(string,string)>
+     */
     this._requestContentCallbacks = [];
 }
 
@@ -47,26 +55,41 @@ WebInspector.UISourceCode.Events = {
 }
 
 WebInspector.UISourceCode.prototype = {
+    /**
+     * @return {string}
+     */
     get id()
     {
         return this._id;
     },
 
+    /**
+     * @return {string}
+     */
     get url()
     {
         return this._url;
     },
 
+    /**
+     * @return {boolean}
+     */
     get isContentScript()
     {
         return this._isContentScript;
     },
 
+    /**
+     * @return {WebInspector.RawSourceCode}
+     */
     get rawSourceCode()
     {
         return this._rawSourceCode;
     },
 
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         if (this._contentLoaded) {
@@ -79,6 +102,9 @@ WebInspector.UISourceCode.prototype = {
             this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
+    /**
+     * @param {string} newContent
+     */
     contentChanged: function(newContent)
     {
         console.assert(this._contentLoaded);
@@ -86,6 +112,10 @@ WebInspector.UISourceCode.prototype = {
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged);
     },
 
+    /**
+     * @param {string} mimeType
+     * @param {string} content
+     */
     _didRequestContent: function(mimeType, content)
     {
         this._contentLoaded = true;
@@ -104,6 +134,24 @@ WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;
  */
 WebInspector.ContentProvider = function() { }
 WebInspector.ContentProvider.prototype = {
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback) { },
+
+    /**
+     * @param {string} query
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
     searchInContent: function(query, callback) { }
+}
+
+/**
+ * @constructor
+ * @param {number} lineNumber
+ * @param {string} lineContent
+ */
+WebInspector.ContentProvider.SearchMatch = function(lineNumber, lineContent) {
+    this.lineNumber = lineNumber;
+    this.lineContent = lineContent;
 }

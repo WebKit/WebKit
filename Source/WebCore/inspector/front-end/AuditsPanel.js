@@ -50,7 +50,7 @@ WebInspector.AuditsPanel = function()
     this.auditResultsTreeElement.expand();
 
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear audit results."), "clear-status-bar-item");
-    this.clearResultsButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
+    this.clearResultsButton.addEventListener("click", this._clearButtonClicked, this);
 
     this.viewsContainerElement = document.createElement("div");
     this.viewsContainerElement.id = "audit-views";

@@ -1,3 +1,98 @@
+2011-10-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: annotate DOMAgent, Debugger(Presentation)Model with types.
+        https://bugs.webkit.org/show_bug.cgi?id=69726
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._breakpointResolved):
+        * inspector/front-end/CSSStyleModel.js:
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.CompilerSourceMapping.prototype.compiledLocationToSourceLocation):
+        (WebInspector.CompilerSourceMapping.prototype.sourceLocationToCompiledLocation):
+        (WebInspector.CompilerSourceMapping.prototype.sources):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._completions.evaluated):
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertyNamesFromEval):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.isXMLNode):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable.onDocumentAvailable):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable):
+        (WebInspector.DOMDispatcher.prototype.characterDataModified):
+        (WebInspector.DOMDispatcher.prototype.childNodeCountUpdated):
+        (WebInspector.DOMDispatcher.prototype.childNodeInserted):
+        (WebInspector.DOMDispatcher.prototype.childNodeRemoved):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerPausedDetails):
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerModel.prototype.get callFrames):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerModel.prototype._resumedScript):
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.scriptParsed):
+        (WebInspector.DebuggerDispatcher.prototype.breakpointResolved):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceMappingUpdated):
+        (WebInspector.DebuggerPresentationModel.prototype._updateBreakpointsAfterLiveEdit):
+        (WebInspector.DebuggerPresentationModel.prototype._consoleMessageAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._createPresentationMessage):
+        (WebInspector.PresentationConsoleMessage):
+        (WebInspector.PresentationCallFrame.prototype.evaluate):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype._updateSourceAnchors):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._documentUpdated.selectLastSelectedNode):
+        (WebInspector.ElementsPanel.prototype._documentUpdated):
+        * inspector/front-end/NetworkPanel.js:
+        * inspector/front-end/Object.js:
+        (WebInspector.Object.prototype.dispatchEventToListeners):
+        (WebInspector.Event):
+        (WebInspector.Event.prototype.stopPropagation):
+        (WebInspector.Event.prototype.preventDefault):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.SourceMapping):
+        (WebInspector.RawSourceCode.SourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.SourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.PlainSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.PlainSourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.FormattedSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.CompilerSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.CompilerSourceMapping.prototype.uiLocationToRawLocation):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.requestSource):
+        (WebInspector.Script.prototype.searchInContent):
+        (WebInspector.Script.prototype.editSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.ContentProvider.SearchMatch):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        * inspector/front-end/externs.js:
+        * inspector/generate-protocol-externs:
+
 2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Linkifier.reset throw an exception if it is called after reset of debuggerPresentationModel.
