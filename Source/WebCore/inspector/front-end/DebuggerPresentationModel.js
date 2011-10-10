@@ -190,7 +190,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             if (resource)
                 resource.addRevision(newSource);
 
-            rawSourceCode.contentEdited();
+            uiSourceCode.contentChanged(newSource);
 
             if (WebInspector.debuggerModel.callFrames)
                 this._debuggerPaused();

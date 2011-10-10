@@ -181,39 +181,6 @@ function test()
             }
         },
 
-        function testContentEdited(next)
-        {
-            var script = createScriptMock("foo.js", 0, 0, true, "<script source>");
-            var resource = createFinishedResourceMock("script", "<resource content>");
-            var rawSourceCode = createRawSourceCode(script, resource);
-
-            var sourceMapping = rawSourceCode.sourceMapping;
-            var uiSourceCode = sourceMapping.uiSourceCode;
-            uiSourceCode.requestContent(didRequestContent);
-
-            function didRequestContent(mimeType, content)
-            {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
-
-                waitForSourceMappingEvent(rawSourceCode, mappingReadyAfterEdit);
-                resource.content = "<edited resource content>";
-                rawSourceCode.contentEdited();
-            }
-
-            function mappingReadyAfterEdit()
-            {
-                rawSourceCode.sourceMapping.uiSourceCode.requestContent(didRequestContentAfterEdit);
-            }
-
-            function didRequestContentAfterEdit(mimeType, content)
-            {
-                InspectorTest.assertEquals(mimeType, "text/javascript");
-                InspectorTest.assertEquals("<edited resource content>", content);
-                next();
-            }
-        },
-
         function testForceUpdateSourceMapping(next)
         {
             var script1 = createScriptMock("index.html", 0, 10, false, "<script source 1>");

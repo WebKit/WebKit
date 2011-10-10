@@ -41,6 +41,10 @@ WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, co
     this._requestContentCallbacks = [];
 }
 
+WebInspector.UISourceCode.Events = {
+    ContentChanged: "content-changed"
+}
+
 WebInspector.UISourceCode.prototype = {
     get id()
     {
@@ -74,6 +78,13 @@ WebInspector.UISourceCode.prototype = {
             this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
+    contentChanged: function(newContent)
+    {
+        console.assert(this._contentLoaded);
+        this._content = newContent;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged);
+    },
+
     _didRequestContent: function(mimeType, content)
     {
         this._contentLoaded = true;
@@ -84,6 +95,8 @@ WebInspector.UISourceCode.prototype = {
             this._requestContentCallbacks[i](mimeType, content);
     }
 }
+
+WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @interface

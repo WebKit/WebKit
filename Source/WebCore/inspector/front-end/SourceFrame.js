@@ -101,6 +101,7 @@ WebInspector.SourceFrame.prototype = {
         if (this._popoverHelper)
             this._popoverHelper.hidePopover();
         this._clearLineHighlight();
+        this._textViewer.readOnly = true;
     },
 
     get statusBarItems()
@@ -110,7 +111,7 @@ WebInspector.SourceFrame.prototype = {
 
     get loaded()
     {
-        return !!this._content;
+        return this._loaded;
     },
 
     hasContent: function()
@@ -296,7 +297,7 @@ WebInspector.SourceFrame.prototype = {
     {
         this._textViewer.mimeType = mimeType;
 
-        this._content = content;
+        this._loaded = true;
         this._textModel.setText(null, content);
 
         var element = this._textViewer.element;
@@ -894,6 +895,13 @@ WebInspector.SourceFrame.prototype = {
         WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
         if (readOnly)
             this._delegate.setScriptSourceIsBeingEdited(false);
+    },
+
+    contentChanged: function()
+    {
+        if (!this._contentRequested || !this._textViewer.readOnly)
+            return;
+        this._delegate.requestContent(this._initializeTextViewer.bind(this));
     }
 }
 

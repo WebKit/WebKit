@@ -28,6 +28,7 @@ function test()
             },
             messages: []
         };
+        uiSourceCode.__proto__ = WebInspector.Object.prototype;
         model.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
         return uiSourceCode;
     }

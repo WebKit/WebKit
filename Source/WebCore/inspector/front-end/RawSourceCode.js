@@ -86,11 +86,6 @@ WebInspector.RawSourceCode.prototype = {
         this._updateSourceMapping();
     },
 
-    contentEdited: function()
-    {
-        this._updateSourceMapping();
-    },
-
     _resourceFinished: function()
     {
         if (this._compilerSourceMappingProvider)

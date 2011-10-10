@@ -39,6 +39,8 @@ WebInspector.JavaScriptSourceFrame = function(delegate, uiSourceCode)
     // FIXME: move all SourceFrame methods related to JavaScript debugging here and
     // get rid of SourceFrame._delegate.
     WebInspector.SourceFrame.call(this, delegate, uiSourceCode.url);
+
+    uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this.contentChanged, this);
 }
 
 WebInspector.JavaScriptSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;

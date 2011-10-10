@@ -1,3 +1,16 @@
+2011-10-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: saving JavaScript after live edit resets scroller position.
+        https://bugs.webkit.org/show_bug.cgi?id=69340
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/raw-source-code-expected.txt:
+        * inspector/debugger/raw-source-code.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/ui-source-code-expected.txt:
+        * inspector/debugger/ui-source-code.html:
+
 2011-10-09  Adam Barth  <abarth@webkit.org>
 
         CSP should log unrecognized directives to the console

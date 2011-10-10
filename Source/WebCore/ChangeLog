@@ -1,3 +1,25 @@
+2011-10-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: saving JavaScript after live edit resets scroller position.
+        https://bugs.webkit.org/show_bug.cgi?id=69340
+
+        Do not recreate SourceFrame when content is changed. Instead, update text model in existing SourceFrame.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype.setCompilerSourceMappingProvider):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._setReadOnly):
+        (WebInspector.SourceFrame.prototype.contentChanged):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.contentChanged):
+
 2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed test fix for r97050.
