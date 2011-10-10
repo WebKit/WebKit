@@ -69,6 +69,7 @@ private:
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_view(new QDesktopWebView(contextRef, pageGroupRef))
     , m_window(new WrapperWindow(m_view))
+    , m_windowIsKey(true)
 {
 }
 

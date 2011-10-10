@@ -34,13 +34,13 @@ typedef QSGView* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;
-@class NSWindow;
+@class WebKitTestRunnerWindow;
 #else
 class WKView;
-class NSWindow;
+class WebKitTestRunnerWindow;
 #endif
 typedef WKView* PlatformWKView;
-typedef NSWindow* PlatformWindow;
+typedef WebKitTestRunnerWindow* PlatformWindow;
 #elif defined(WIN32) || defined(_WIN32)
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
@@ -74,10 +74,13 @@ public:
     void addChromeInputField();
     void removeChromeInputField();
     void makeWebViewFirstResponder();
+    void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
+    bool windowIsKey() const { return m_windowIsKey; }
 
 private:
     PlatformWKView m_view;
     PlatformWindow m_window;
+    bool m_windowIsKey;
 };
 
 } // namespace WTR

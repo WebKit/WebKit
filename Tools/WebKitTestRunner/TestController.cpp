@@ -128,14 +128,29 @@ static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurit
 
 void TestController::runModal(WKPageRef page, const void* clientInfo)
 {
-    runModal(static_cast<PlatformWebView*>(const_cast<void*>(clientInfo)));
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    view->setWindowIsKey(false);
+    runModal(view);
+    view->setWindowIsKey(true);
 }
 
 static void closeOtherPage(WKPageRef page, const void* clientInfo)
 {
     WKPageClose(page);
-    const PlatformWebView* view = static_cast<const PlatformWebView*>(clientInfo);
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
     delete view;
+}
+
+static void focus(WKPageRef page, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    view->setWindowIsKey(true);
+}
+
+static void unfocus(WKPageRef page, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    view->setWindowIsKey(false);
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
@@ -152,8 +167,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // showPage
         closeOtherPage,
         0, // takeFocus
-        0, // focus
-        0, // unfocus
+        focus,
+        unfocus,
         0, // runJavaScriptAlert        
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
@@ -350,7 +365,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame
-        0, // didCommitLoadForFrame
+        didCommitLoadForFrame,
         0, // didFinishDocumentLoadForFrame
         didFinishLoadForFrame,
         0, // didFailLoadWithErrorForFrame
@@ -608,6 +623,11 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
 
 // WKPageLoaderClient
 
+void TestController::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didCommitLoadForFrame(page, frame);
+}
+
 void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
@@ -616,6 +636,14 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
 void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
+}
+
+void TestController::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    mainWebView()->focus();
 }
 
 void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)

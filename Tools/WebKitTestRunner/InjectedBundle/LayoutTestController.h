@@ -181,6 +181,8 @@ public:
     void addChromeInputField(JSValueRef);
     void removeChromeInputField(JSValueRef);
     void focusWebView(JSValueRef);
+    void setWindowIsKey(bool);
+
     void callAddChromeInputFieldCallback();
     void callRemoveChromeInputFieldCallback();
     void callFocusWebViewCallback();

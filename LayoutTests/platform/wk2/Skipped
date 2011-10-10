@@ -642,7 +642,9 @@ fast/dom/HTMLScriptElement/nested-execution.html
 
 # WebKitTestRunner needs layoutTestController.setMainFrameIsFirstResponder
 # <https://bugs.webkit.org/show_bug.cgi?id=42685>
+editing/selection/caret-and-focus-ring.html
 editing/selection/designmode-no-caret.html
+editing/selection/selection-background.html
 fast/dom/Window/window-onFocus.html
 platform/mac/scrollbars/key-window-not-first-responder.html
 
@@ -654,15 +656,9 @@ fast/encoding/idn-security.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42687>
 fast/events/keypress-insert-tab.html
 
-# WebKitTestRunner needs layoutTestController.setWindowIsKey
-# <https://bugs.webkit.org/show_bug.cgi?id=42688>
-editing/selection/4975120.html
-editing/selection/caret-and-focus-ring.html
-editing/selection/selection-background.html
-fast/events/blur-focus-window-should-blur-focus-element.html
+# WebKitTestRunner needs layoutTestController.abortModal
+# <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html
-fast/flexbox/horizontal-box-float-crash.html
-plugins/netscape-plugin-setwindow-size-2.html
 
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
@@ -672,6 +668,7 @@ editing/deleting/whitespace-pre-1.html
 editing/selection/after-line-break.html
 editing/selection/rtl-move-selection-right-left.html
 editing/selection/5195166-1.html
+editing/selection/collapse-selection-in-bidi.html
 editing/selection/context-menu-text-selection.html
 editing/selection/directionality-after-undo-replace.html
 editing/selection/programmatic-selection-on-mac-is-directionless.html

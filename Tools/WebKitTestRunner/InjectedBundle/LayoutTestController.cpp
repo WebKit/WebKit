@@ -525,8 +525,17 @@ static CallbackMap& callbackMap()
     return map;
 }
 
+enum {
+    AddChromeInputFieldCallbackID,
+    RemoveChromeInputFieldCallbackID,
+    FocusWebViewCallbackID
+};
+
 static void cacheLayoutTestControllerCallback(unsigned index, JSValueRef callback)
 {
+    if (!callback)
+        return;
+
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(context, callback);
@@ -546,35 +555,40 @@ static void callLayoutTestControllerCallback(unsigned index)
 
 void LayoutTestController::addChromeInputField(JSValueRef callback)
 {
-    cacheLayoutTestControllerCallback(1, callback);
+    cacheLayoutTestControllerCallback(AddChromeInputFieldCallbackID, callback);
     InjectedBundle::shared().postAddChromeInputField();
 }
 
 void LayoutTestController::removeChromeInputField(JSValueRef callback)
 {
-    cacheLayoutTestControllerCallback(2, callback);
+    cacheLayoutTestControllerCallback(RemoveChromeInputFieldCallbackID, callback);
     InjectedBundle::shared().postRemoveChromeInputField();
 }
 
 void LayoutTestController::focusWebView(JSValueRef callback)
 {
-    cacheLayoutTestControllerCallback(3, callback);
+    cacheLayoutTestControllerCallback(FocusWebViewCallbackID, callback);
     InjectedBundle::shared().postFocusWebView();
+}
+
+void LayoutTestController::setWindowIsKey(bool isKey)
+{
+    InjectedBundle::shared().postSetWindowIsKey(isKey);
 }
 
 void LayoutTestController::callAddChromeInputFieldCallback()
 {
-    callLayoutTestControllerCallback(1);
+    callLayoutTestControllerCallback(AddChromeInputFieldCallbackID);
 }
 
 void LayoutTestController::callRemoveChromeInputFieldCallback()
 {
-    callLayoutTestControllerCallback(2);
+    callLayoutTestControllerCallback(RemoveChromeInputFieldCallbackID);
 }
 
 void LayoutTestController::callFocusWebViewCallback()
 {
-    callLayoutTestControllerCallback(3);
+    callLayoutTestControllerCallback(FocusWebViewCallbackID);
 }
 
 } // namespace WTR

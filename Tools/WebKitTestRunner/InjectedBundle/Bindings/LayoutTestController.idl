@@ -127,6 +127,7 @@ module WTR {
         void addChromeInputField(in object callback);
         void removeChromeInputField(in object callback);
         void focusWebView(in object callback);
+        void setWindowIsKey(in boolean isKey);
     };
 
 }

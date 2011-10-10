@@ -1,3 +1,60 @@
+2011-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitTestRunner needs layoutTestController.setWindowIsKey
+        https://bugs.webkit.org/show_bug.cgi?id=42688
+
+        Reviewed by Anders Carlsson.
+
+        Implement layoutTestController.setWindowIsKey() in WebKitTestRunner.
+        This sets a flag that the platform layer uses to indicate that
+        the window is the key window, which fixes focus ring drawing
+        in pixel results.
+        
+        Also focus the web view when we get a 'didCommitLoad' for the main
+        frame, as DumpRenderTree does.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::postSetWindowIsKey):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::cacheLayoutTestControllerCallback): Replace some magic numbers with an enum.
+        (WTR::LayoutTestController::addChromeInputField):
+        (WTR::LayoutTestController::removeChromeInputField):
+        (WTR::LayoutTestController::focusWebView):
+        (WTR::LayoutTestController::setWindowIsKey):
+        (WTR::LayoutTestController::callAddChromeInputFieldCallback):
+        (WTR::LayoutTestController::callRemoveChromeInputFieldCallback):
+        (WTR::LayoutTestController::callFocusWebViewCallback):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/PlatformWebView.h: Add an NSWindow subclass
+        so that we can override -isKeyWindow. Use a boolean member variable
+        to track window key status.
+        (WTR::PlatformWebView::setWindowIsKey):
+        (WTR::PlatformWebView::windowIsKey):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runModal): Change the window key status when showing a modal alert, as DRT does.
+        (WTR::closeOtherPage): Use the same cast as other functions.
+        (WTR::focus): Implement to call setWindowIsKey(true)
+        (WTR::unfocus): Implement to call setWindowIsKey(false)
+        (WTR::TestController::createOtherPage): Add page callbacks for focus and unfocus.
+        (WTR::TestController::initialize):
+        (WTR::TestController::didCommitLoadForFrame): Hook up callback to focus the web view, as DRT does.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[WebKitTestRunnerWindow isKeyWindow]):
+        (WTR::PlatformWebView::PlatformWebView): Make a WebKitTestRunnerWindow.
+        (WTR::PlatformWebView::~PlatformWebView): Clean up the back pointer on the NSWindow subclass, in case it outlives us.
+        (WTR::PlatformWebView::focus): Set the view as the first responder, and the window as the key window, as DRT does.
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-10-10  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         check-webkit-style: Add readability exception for Ewk_* data types.

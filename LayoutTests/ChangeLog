@@ -1,3 +1,15 @@
+2011-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitTestRunner needs layoutTestController.setWindowIsKey
+        https://bugs.webkit.org/show_bug.cgi?id=42688
+
+        Reviewed by Anders Carlsson.
+
+        Adjust the Skipped list for WebKit2, unskipping some tests, but
+        keeping others skipped for new reasons.
+
+        * platform/wk2/Skipped:
+
 2011-10-10  Abhishek Arya  <inferno@chromium.org>
 
         Style for updated due to inability to locate

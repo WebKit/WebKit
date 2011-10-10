@@ -71,6 +71,7 @@ private:
     void platformInitialize();
     void platformInitializeContext();
     void platformRunUntil(bool& done, double timeout);
+    void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 
@@ -83,8 +84,11 @@ private:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
     // WKPageLoaderClient
-    static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void*);
-    void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame);
+    static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void*);
+    void didCommitLoadForFrame(WKPageRef, WKFrameRef);
+
+    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void*);
+    void didFinishLoadForFrame(WKPageRef, WKFrameRef);
 
     static void processDidCrash(WKPageRef, const void* clientInfo);
     void processDidCrash();

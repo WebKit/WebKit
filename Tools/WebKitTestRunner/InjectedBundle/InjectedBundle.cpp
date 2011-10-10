@@ -277,4 +277,11 @@ void InjectedBundle::postFocusWebView()
     WKBundlePostMessage(m_bundle, messageName.get(), 0);
 }
 
+void InjectedBundle::postSetWindowIsKey(bool isKey)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetWindowIsKey"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(isKey));
+    WKBundlePostSynchronousMessage(m_bundle, messageName.get(), messageBody.get(), 0);
+}
+
 } // namespace WTR

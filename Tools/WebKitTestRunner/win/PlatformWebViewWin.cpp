@@ -49,6 +49,7 @@ static void registerWindowClass()
 }
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+    : m_windowIsKey(true)
 {
     registerWindowClass();
 

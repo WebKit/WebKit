@@ -79,6 +79,7 @@ public:
     void postAddChromeInputField();
     void postRemoveChromeInputField();
     void postFocusWebView();
+    void postSetWindowIsKey(bool);
 
 private:
     InjectedBundle();
