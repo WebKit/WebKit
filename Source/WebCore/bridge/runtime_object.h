@@ -53,7 +53,6 @@ public:
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
-    virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
     virtual ConstructType getConstructData(ConstructData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);

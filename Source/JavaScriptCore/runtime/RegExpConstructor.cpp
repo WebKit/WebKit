@@ -372,11 +372,6 @@ static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
     return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
-CallType RegExpConstructor::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType RegExpConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callRegExpConstructor;

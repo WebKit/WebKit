@@ -264,11 +264,6 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType ObjcFallbackObjectImp::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
 {
     ObjcFallbackObjectImp* thisObject = static_cast<ObjcFallbackObjectImp*>(cell);

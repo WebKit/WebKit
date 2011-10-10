@@ -59,7 +59,6 @@ public:
     static JSValueRef valueOfCallback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 private:
-    virtual CallType getCallDataVirtual(CallData&);
     static CallType getCallData(JSCell*, CallData&);
 
     static EncodedJSValue JSC_HOST_CALL call(ExecState*);

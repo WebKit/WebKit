@@ -54,11 +54,6 @@ const JSObject* JSCell::getObject() const
     return isObject() ? static_cast<const JSObject*>(this) : 0;
 }
 
-CallType JSCell::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType JSCell::getCallData(JSCell*, CallData&)
 {
     return CallTypeNone;

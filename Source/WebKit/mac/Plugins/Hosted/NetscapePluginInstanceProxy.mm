@@ -942,7 +942,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     ExecState* exec = frame->script()->globalObject(pluginWorld())->globalExec();
     JSLock lock(SilenceAssertionsOnly);    
     CallData callData;
-    CallType callType = object->getCallDataVirtual(callData);
+    CallType callType = object->methodTable()->getCallData(object, callData);
     if (callType == CallTypeNone)
         return false;
 

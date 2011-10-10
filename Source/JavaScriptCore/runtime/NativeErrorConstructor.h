@@ -70,7 +70,6 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | InternalFunction::StructureFlags;
         virtual ConstructType getConstructData(ConstructData&);
         static ConstructType getConstructData(JSCell*, ConstructData&);
-        virtual CallType getCallDataVirtual(CallData&);
         static CallType getCallData(JSCell*, CallData&);
         static void visitChildren(JSCell*, SlotVisitor&);
 

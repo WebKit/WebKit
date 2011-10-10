@@ -164,7 +164,7 @@ JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj
         }
 
         CallData callData;
-        CallType callType = objValue->getCallDataVirtual(callData);
+        CallType callType = objValue->methodTable()->getCallData(objValue, callData);
         if (callType == CallTypeNone)
             return 0;
         JSValue  resultValue = call(exec, objValue, callType, callData, ksjThisObj, listArgs);

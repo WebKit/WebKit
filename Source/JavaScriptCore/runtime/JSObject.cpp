@@ -166,7 +166,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
                 }
                 
                 CallData callData;
-                CallType callType = setterFunc->getCallDataVirtual(callData);
+                CallType callType = setterFunc->methodTable()->getCallData(setterFunc, callData);
                 MarkedArgumentBuffer args;
                 args.append(value);
 

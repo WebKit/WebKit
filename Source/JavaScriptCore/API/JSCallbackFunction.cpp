@@ -78,11 +78,6 @@ EncodedJSValue JSCallbackFunction::call(ExecState* exec)
     return JSValue::encode(toJS(exec, result));
 }
 
-CallType JSCallbackFunction::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = call;

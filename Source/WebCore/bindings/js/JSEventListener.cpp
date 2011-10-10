@@ -101,7 +101,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     CallType callType = getCallData(handleEventFunction, callData);
     if (callType == CallTypeNone) {
         handleEventFunction = JSValue();
-        callType = jsFunction->getCallDataVirtual(callData);
+        callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
     }
 
     if (callType != CallTypeNone) {

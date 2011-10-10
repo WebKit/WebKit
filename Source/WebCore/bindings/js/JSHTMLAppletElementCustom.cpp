@@ -48,11 +48,6 @@ bool JSHTMLAppletElement::putDelegate(ExecState* exec, const Identifier& propert
     return runtimeObjectCustomPut(exec, propertyName, value, this, slot);
 }
 
-CallType JSHTMLAppletElement::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
 CallType JSHTMLAppletElement::getCallData(JSCell* cell, CallData& callData)
 {
     return runtimeObjectGetCallData(static_cast<JSHTMLAppletElement*>(cell), callData);

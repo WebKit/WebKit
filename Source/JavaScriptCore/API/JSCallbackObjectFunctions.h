@@ -399,12 +399,6 @@ bool JSCallbackObject<Parent>::hasInstance(ExecState* exec, JSValue value, JSVal
 }
 
 template <class Parent>
-CallType JSCallbackObject<Parent>::getCallDataVirtual(CallData& callData)
-{
-    return getCallData(this, callData);
-}
-
-template <class Parent>
 CallType JSCallbackObject<Parent>::getCallData(JSCell* cell, CallData& callData)
 {
     JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
