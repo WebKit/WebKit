@@ -184,35 +184,10 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
-EncodedJSValue DFG_OPERATION operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    double num1 = JSValue::decode(encodedOp1).asNumber();
-    double num2 = JSValue::decode(encodedOp2).asNumber();
-    return JSValue::encode(jsNumber(num1 + num2));
-}
-
-EncodedJSValue DFG_OPERATION operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    double num1 = JSValue::decode(encodedOp1).asNumber();
-    double num2 = JSValue::decode(encodedOp2).asNumber();
-    return JSValue::encode(jsNumber(num1 - num2));
-}
-
-EncodedJSValue DFG_OPERATION operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    double num1 = JSValue::decode(encodedOp1).asNumber();
-    double num2 = JSValue::decode(encodedOp2).asNumber();
-    return JSValue::encode(jsNumber(num1 * num2));
-}
-
-EncodedJSValue DFG_OPERATION operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    double num1 = JSValue::decode(encodedOp1).asNumber();
-    double num2 = JSValue::decode(encodedOp2).asNumber();
-    return JSValue::encode(jsNumber(num1 / num2));
-}
-
-EncodedJSValue DFG_OPERATION operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+// FIMXE: This method is deprecated, we should switch the 32_64 DFG JIT over to call fmod directly!
+// ExecState* isn't really required, but passed to save adding a J_DFGOperation_JJ type, since this
+// does not have long to live!
+EncodedJSValue DFG_OPERATION operationArithMod(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     double num1 = JSValue::decode(encodedOp1).asNumber();
     double num2 = JSValue::decode(encodedOp2).asNumber();

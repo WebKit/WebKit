@@ -554,16 +554,10 @@ void JITCodeGenerator::nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex
         notNumber.link(&m_jit);
             
         silentSpillAllRegisters(resultGPR);
-        if (commute) {
-            m_jit.move(regArgGPR, GPRInfo::argumentGPR2);
-            m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR1);
-        } else {
-            m_jit.move(regArgGPR, GPRInfo::argumentGPR1);
-            m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR2);
-        }
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationValueAddNotNumber);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        if (commute)
+            callOperation(operationValueAddNotNumber, resultGPR, MacroAssembler::Imm32(imm), regArgGPR);
+        else
+            callOperation(operationValueAddNotNumber, resultGPR, regArgGPR, MacroAssembler::Imm32(imm));
         silentFillAllRegisters(resultGPR);
             
         doneCaseWasNumber.link(&m_jit);
@@ -738,10 +732,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         notNumbers.link(&m_jit);
             
         silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationValueAddNotNumber);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationValueAddNotNumber, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
 
         doneCaseWasNumber.link(&m_jit);
@@ -1204,8 +1195,8 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         arg2.use();
     
         flushRegisters();
-
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
+
         addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
     } else {
         GPRTemporary result(this, arg2);
@@ -1227,10 +1218,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
             slowPath.link(&m_jit);
     
             silentSpillAllRegisters(resultGPR);
-            setupStubArguments(arg1GPR, arg2GPR);
-            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-            appendCallWithExceptionCheck(helperFunction);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
             silentFillAllRegisters(resultGPR);
         
             addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
@@ -1258,7 +1246,6 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         arg2.use();
     
         flushRegisters();
-        
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
         
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
@@ -1283,10 +1270,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
             slowPath.link(&m_jit);
         
             silentSpillAllRegisters(resultGPR);
-            setupStubArguments(arg1GPR, arg2GPR);
-            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-            appendCallWithExceptionCheck(helperFunction);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
             silentFillAllRegisters(resultGPR);
         
             m_jit.andPtr(TrustedImm32(1), resultGPR);
@@ -1332,10 +1316,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         addBranch(m_jit.branchPtr(JITCompiler::Equal, arg1GPR, arg2GPR), invert ? notTaken : taken);
         
         silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationCompareStrictEqCell);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCompareStrictEqCell, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
         addBranch(m_jit.branchTest8(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultGPR), taken);
@@ -1355,10 +1336,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         numberCase.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationCompareStrictEq);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCompareStrictEq, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
         addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR), taken);
@@ -1393,10 +1371,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         notEqualCase.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationCompareStrictEqCell);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCompareStrictEqCell, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultGPR);
@@ -1425,10 +1400,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         notEqualCase.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationCompareStrictEq);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        callOperation(operationCompareStrictEq, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultGPR);

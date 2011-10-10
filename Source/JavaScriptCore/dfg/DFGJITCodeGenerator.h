@@ -1149,6 +1149,22 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::Imm32 imm)
+    {
+        m_jit.move(arg1, GPRInfo::argumentGPR1);
+        m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), GPRInfo::argumentGPR2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::Imm32 imm, GPRReg arg2)
+    {
+        m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), GPRInfo::argumentGPR1);
+        m_jit.move(arg2, GPRInfo::argumentGPR2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         setupStubArguments(arg1, arg2);
@@ -1345,6 +1361,26 @@ protected:
         m_jit.push(arg2Payload);
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        return appendCallWithExceptionCheckSetResult(operation, resultTag, resultPayload);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, MacroAssembler::Imm32 imm)
+    {
+        m_jit.push(MacroAssembler::TrustedImm32(JSValue::Int32Tag));
+        m_jit.push(imm);
+        m_jit.push(arg1Tag);
+        m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        return appendCallWithExceptionCheckSetResult(operation, resultTag, resultPayload);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, MacroAssembler::Imm32 imm, GPRReg arg2Tag, GPRReg arg2Payload)
+    {
+        m_jit.push(arg2Tag);
+        m_jit.push(arg2Payload);
+        m_jit.push(MacroAssembler::TrustedImm32(JSValue::Int32Tag));
+        m_jit.push(imm);
         m_jit.push(GPRInfo::callFrameRegister);
 
         return appendCallWithExceptionCheckSetResult(operation, resultTag, resultPayload);

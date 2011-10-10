@@ -569,18 +569,10 @@ void JITCodeGenerator::nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex
         notInt.link(&m_jit);
             
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        if (commute) {
-            m_jit.push(regArgTagGPR);
-            m_jit.push(regArgPayloadGPR);
-            m_jit.push(MacroAssembler::Imm32(imm));
-        } else {
-            m_jit.push(MacroAssembler::Imm32(imm));
-            m_jit.push(regArgTagGPR);
-            m_jit.push(regArgPayloadGPR);
-        }
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationValueAddNotNumber);
-        setupResults(resultTagGPR, resultPayloadGPR);
+        if (commute)
+            callOperation(operationValueAddNotNumber, resultTagGPR, resultPayloadGPR, MacroAssembler::Imm32(imm), regArgTagGPR, regArgPayloadGPR);
+        else
+            callOperation(operationValueAddNotNumber, resultTagGPR, resultPayloadGPR, regArgTagGPR, regArgPayloadGPR, MacroAssembler::Imm32(imm));
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
             
         doneCaseWasNumber.link(&m_jit);
@@ -813,13 +805,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         notNumbers.link(&m_jit);
             
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        m_jit.push(arg2TagGPR);
-        m_jit.push(arg2PayloadGPR);
-        m_jit.push(arg1TagGPR);
-        m_jit.push(arg1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationValueAddNotNumber);
-        setupResults(resultTagGPR, resultPayloadGPR);
+        callOperation(operationValueAddNotNumber, resultTagGPR, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
 
         doneCaseWasNumber.link(&m_jit);
@@ -883,13 +869,7 @@ void JITCodeGenerator::nonSpeculativeArithMod(Node& node)
     if (!isKnownInteger(node.child1()) || !isKnownInteger(node.child2())) {
         slow.link(&m_jit);
         silentSpillAllRegisters(X86Registers::eax, X86Registers::edx);
-        m_jit.push(op2TagGPR);
-        m_jit.push(op2PayloadGPR);
-        m_jit.push(op1TagGPR);
-        m_jit.push(op1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationArithMod);
-        setupResults(X86Registers::eax, X86Registers::edx);
+        callOperation(operationArithMod, X86Registers::eax, X86Registers::edx, op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
         silentFillAllRegisters(X86Registers::eax, X86Registers::edx);
     }
         
@@ -1264,8 +1244,8 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         arg2.use();
 
         flushRegisters();
-
         callOperation(helperFunction, resultGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
+
         addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
     } else {
         GPRTemporary result(this);
@@ -1287,13 +1267,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
             slowPath.link(&m_jit);
     
             silentSpillAllRegisters(resultGPR);
-            m_jit.push(arg2TagGPR);
-            m_jit.push(arg2PayloadGPR);
-            m_jit.push(arg1TagGPR);
-            m_jit.push(arg1PayloadGPR);
-            m_jit.push(GPRInfo::callFrameRegister);
-            appendCallWithExceptionCheck(helperFunction);
-            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            callOperation(helperFunction, resultGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
             silentFillAllRegisters(resultGPR);
         
             addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
@@ -1325,7 +1299,6 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         arg2.use();
 
         flushRegisters();
-        
         callOperation(helperFunction, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         
         m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
@@ -1352,13 +1325,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
             slowPath.link(&m_jit);
         
             silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-            m_jit.push(arg2TagGPR);
-            m_jit.push(arg2PayloadGPR);
-            m_jit.push(arg1TagGPR);
-            m_jit.push(arg1PayloadGPR);
-            m_jit.push(GPRInfo::callFrameRegister);
-            appendCallWithExceptionCheck(helperFunction);
-            m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+            callOperation(helperFunction, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
             silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
         
             m_jit.andPtr(TrustedImm32(1), resultPayloadGPR);
@@ -1405,13 +1372,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         addBranch(m_jit.branchPtr(JITCompiler::Equal, arg1PayloadGPR, arg2PayloadGPR), invert ? notTaken : taken);
         
         silentSpillAllRegisters(resultPayloadGPR);
-        m_jit.push(arg2TagGPR);
-        m_jit.push(arg2PayloadGPR);
-        m_jit.push(arg1TagGPR);
-        m_jit.push(arg1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationCompareStrictEqCell);
-        m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+        callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultPayloadGPR);
         
         addBranch(m_jit.branchTest8(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultPayloadGPR), taken);
@@ -1419,13 +1380,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         // FIXME: Add fast paths for twoCells, number etc.
 
         silentSpillAllRegisters(resultPayloadGPR);
-        m_jit.push(arg2TagGPR);
-        m_jit.push(arg2PayloadGPR);
-        m_jit.push(arg1TagGPR);
-        m_jit.push(arg1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationCompareStrictEq);
-        m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+        callOperation(operationCompareStrictEq, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultPayloadGPR);
         
         addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultPayloadGPR), taken);
@@ -1463,13 +1418,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         notEqualCase.link(&m_jit);
         
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        m_jit.push(arg2TagGPR);
-        m_jit.push(arg2PayloadGPR);
-        m_jit.push(arg1TagGPR);
-        m_jit.push(arg1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationCompareStrictEqCell);
-        m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+        callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
@@ -1479,13 +1428,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         // FIXME: Add fast paths.
 
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        m_jit.push(arg2TagGPR);
-        m_jit.push(arg2PayloadGPR);
-        m_jit.push(arg1TagGPR);
-        m_jit.push(arg1PayloadGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
-        appendCallWithExceptionCheck(operationCompareStrictEq);
-        m_jit.move(GPRInfo::returnValueGPR, resultPayloadGPR);
+        callOperation(operationCompareStrictEq, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
