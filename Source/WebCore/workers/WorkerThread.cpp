@@ -88,6 +88,9 @@ WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode))
+#if ENABLE(NOTIFICATIONS)
+    , m_notificationPresenter(0)
+#endif
 {
     MutexLocker lock(threadCountMutex());
     m_threadCount++;

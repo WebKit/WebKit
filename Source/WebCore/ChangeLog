@@ -1,3 +1,15 @@
+2011-10-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Missing m_notificationPresenter initialization in WorkerThread constructor
+        https://bugs.webkit.org/show_bug.cgi?id=69741
+
+        Added missing m_notificationPresenter(0)
+
+        Reviewed by Pavel Feldman.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+
 2011-10-09  Daniel Bates  <dbates@webkit.org>
 
         Another attempt to fix the Leopard Intel Debug build after changeset 97034 <http://trac.webkit.org/changeset/97034>
