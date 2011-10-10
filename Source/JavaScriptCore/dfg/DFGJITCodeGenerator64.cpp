@@ -968,6 +968,8 @@ void JITCodeGenerator::nonSpeculativeInstanceOf(Node& node)
 
 JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
+    ASSERT(nodeType == GetById || nodeType == GetMethod);
+
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
@@ -984,24 +986,7 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(resultGPR);
-    m_jit.move(baseGPR, GPRInfo::argumentGPR1);
-    m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR2);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    JITCompiler::Call functionCall;
-    switch (nodeType) {
-    case GetById:
-        functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
-        break;
-        
-    case GetMethod:
-        functionCall = appendCallWithExceptionCheck(operationGetMethodOptimize);
-        break;
-        
-    default:
-        ASSERT_NOT_REACHED();
-        return JITCompiler::Call();
-    }
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+    JITCompiler::Call functionCall = callOperation(nodeType == GetById ? operationGetByIdOptimize : operationGetMethodOptimize, resultGPR, baseGPR, identifier(identifierNumber));
     silentFillAllRegisters(resultGPR);
     
     done.link(&m_jit);
@@ -1043,10 +1028,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex 
     JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(InvalidGPRReg);
-    setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(valueGPR, baseGPR);
-    m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR3);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    V_DFGOperation_EJJI optimizedCall;
+    V_DFGOperation_EJCI optimizedCall;
     if (m_jit.codeBlock()->isStrictMode()) {
         if (putKind == Direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;
@@ -1058,7 +1040,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex 
         else
             optimizedCall = operationPutByIdNonStrictOptimize;
     }
-    JITCompiler::Call functionCall = appendCallWithExceptionCheck(optimizedCall);
+    JITCompiler::Call functionCall = callOperation(optimizedCall, valueGPR, baseGPR, identifier(identifierNumber));
     silentFillAllRegisters(InvalidGPRReg);
 
     done.link(&m_jit);

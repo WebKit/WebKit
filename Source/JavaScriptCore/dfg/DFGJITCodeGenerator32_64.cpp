@@ -1019,6 +1019,8 @@ void JITCodeGenerator::nonSpeculativeInstanceOf(Node& node)
 
 JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
+    ASSERT(nodeType == GetById || nodeType == GetMethod);
+
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
@@ -1036,25 +1038,7 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg basePayloadGPR, GPRReg 
     JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-    m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(identifier(identifierNumber))));
-    m_jit.push(TrustedImm32(JSValue::CellTag));
-    m_jit.push(basePayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    JITCompiler::Call functionCall;
-    switch (nodeType) {
-    case GetById:
-        functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
-        break;
-        
-    case GetMethod:
-        functionCall = appendCallWithExceptionCheck(operationGetMethodOptimize);
-        break;
-        
-    default:
-        ASSERT_NOT_REACHED();
-        return JITCompiler::Call();
-    }
-    setupResults(resultTagGPR, resultPayloadGPR);
+    JITCompiler::Call functionCall = callOperation(nodeType == GetById ? operationGetByIdOptimize : operationGetMethodOptimize, resultTagGPR, resultPayloadGPR, basePayloadGPR, identifier(identifierNumber));
     silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
     
     done.link(&m_jit);
@@ -1094,13 +1078,7 @@ void JITCodeGenerator::cachedPutById(GPRReg basePayloadGPR, GPRReg valueTagGPR, 
     JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(InvalidGPRReg);
-    m_jit.push(JITCompiler::TrustedImm32(reinterpret_cast<int>(identifier(identifierNumber))));
-    m_jit.push(TrustedImm32(JSValue::CellTag));
-    m_jit.push(basePayloadGPR);
-    m_jit.push(valueTagGPR);
-    m_jit.push(valuePayloadGPR);
-    m_jit.push(GPRInfo::callFrameRegister);
-    V_DFGOperation_EJJI optimizedCall;
+    V_DFGOperation_EJCI optimizedCall;
     if (m_jit.codeBlock()->isStrictMode()) {
         if (putKind == Direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;
@@ -1112,7 +1090,7 @@ void JITCodeGenerator::cachedPutById(GPRReg basePayloadGPR, GPRReg valueTagGPR, 
         else
             optimizedCall = operationPutByIdNonStrictOptimize;
     }
-    JITCompiler::Call functionCall = appendCallWithExceptionCheck(optimizedCall);
+    JITCompiler::Call functionCall = callOperation(optimizedCall, valueTagGPR, valuePayloadGPR, basePayloadGPR, identifier(identifierNumber));
     silentFillAllRegisters(InvalidGPRReg);
 
     done.link(&m_jit);

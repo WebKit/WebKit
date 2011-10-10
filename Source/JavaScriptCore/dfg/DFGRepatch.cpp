@@ -473,7 +473,7 @@ void dfgBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const Identifi
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static V_DFGOperation_EJJI appropriatePutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+static V_DFGOperation_EJCI appropriatePutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
     if (slot.isStrictMode()) {
         if (putKind == Direct)
