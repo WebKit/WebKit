@@ -66,10 +66,10 @@ public:
     void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
 
     void setVerticalScrollElasticity(ScrollElasticity scrollElasticity) { m_verticalScrollElasticity = scrollElasticity; }
-    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
+    ScrollElasticity verticalScrollElasticity() const { return static_cast<ScrollElasticity>(m_verticalScrollElasticity); }
 
     void setHorizontalScrollElasticity(ScrollElasticity scrollElasticity) { m_horizontalScrollElasticity = scrollElasticity; }
-    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
+    ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
     bool inLiveResize() const { return m_inLiveResize; }
     void willStartLiveResize();
@@ -82,7 +82,7 @@ public:
 
     bool hasOverlayScrollbars() const;
     virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
-    ScrollbarOverlayStyle scrollbarOverlayStyle() const { return m_scrollbarOverlayStyle; }
+    ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
 
     ScrollAnimator* scrollAnimator() const;
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
@@ -165,21 +165,6 @@ public:
     // NOTE: Only called from Internals for testing.
     void setScrollOffsetFromInternals(const IntPoint&);
 
-private:
-    // NOTE: Only called from the ScrollAnimator.
-    friend class ScrollAnimator;
-    void setScrollOffsetFromAnimation(const IntPoint&);
-
-    mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
-    bool m_constrainsScrollingToContentEdge;
-
-    bool m_inLiveResize;
-
-    ScrollElasticity m_verticalScrollElasticity;
-    ScrollElasticity m_horizontalScrollElasticity;
-
-    ScrollbarOverlayStyle m_scrollbarOverlayStyle;
-
 protected:
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
@@ -208,6 +193,21 @@ protected:
     // vertical-rl / ltr            YES                     NO
     // vertical-rl / rtl            YES                     YES
     IntPoint m_scrollOrigin;
+
+private:
+    // NOTE: Only called from the ScrollAnimator.
+    friend class ScrollAnimator;
+    void setScrollOffsetFromAnimation(const IntPoint&);
+
+    mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
+    bool m_constrainsScrollingToContentEdge : 1;
+
+    bool m_inLiveResize : 1;
+
+    unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
+    unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity
+
+    unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
 };
 
 } // namespace WebCore

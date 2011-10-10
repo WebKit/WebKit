@@ -697,6 +697,43 @@ private:
     }
 
 protected:
+    // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
+
+    // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
+    bool m_inResizeMode : 1;
+
+    bool m_scrollDimensionsDirty : 1;
+    bool m_zOrderListsDirty : 1;
+    bool m_normalFlowListDirty: 1;
+    bool m_isNormalFlowOnly : 1;
+
+    bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
+                                 // we ended up painting this layer or any descendants (and therefore need to
+                                 // blend).
+    bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
+    bool m_inOverflowRelayout : 1;
+    bool m_needsFullRepaint : 1;
+
+    bool m_overflowStatusDirty : 1;
+    bool m_horizontalOverflow : 1;
+    bool m_verticalOverflow : 1;
+    bool m_visibleContentStatusDirty : 1;
+    bool m_hasVisibleContent : 1;
+    bool m_visibleDescendantStatusDirty : 1;
+    bool m_hasVisibleDescendant : 1;
+
+    bool m_isPaginated : 1; // If we think this layer is split by a multi-column ancestor, then this bit will be set.
+
+    bool m_3DTransformedDescendantStatusDirty : 1;
+    bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
+                                            // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
+#if USE(ACCELERATED_COMPOSITING)
+    bool m_hasCompositingDescendant : 1; // In the z-order tree.
+    bool m_mustOverlapCompositedLayers : 1;
+#endif
+
+    bool m_containsDirtyOverlayScrollbars : 1;
+
     RenderBoxModelObject* m_renderer;
 
     RenderLayer* m_parent;
@@ -744,41 +781,6 @@ protected:
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot;   // Root layer used to compute clip rects.
 #endif
-
-    // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
-    bool m_inResizeMode : 1;
-
-    bool m_scrollDimensionsDirty : 1;
-    bool m_zOrderListsDirty : 1;
-    bool m_normalFlowListDirty: 1;
-    bool m_isNormalFlowOnly : 1;
-
-    bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
-                                 // we ended up painting this layer or any descendants (and therefore need to
-                                 // blend).
-    bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
-    bool m_inOverflowRelayout : 1;
-    bool m_needsFullRepaint : 1;
-
-    bool m_overflowStatusDirty : 1;
-    bool m_horizontalOverflow : 1;
-    bool m_verticalOverflow : 1;
-    bool m_visibleContentStatusDirty : 1;
-    bool m_hasVisibleContent : 1;
-    bool m_visibleDescendantStatusDirty : 1;
-    bool m_hasVisibleDescendant : 1;
-
-    bool m_isPaginated : 1; // If we think this layer is split by a multi-column ancestor, then this bit will be set.
-
-    bool m_3DTransformedDescendantStatusDirty : 1;
-    bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
-                                            // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
-#if USE(ACCELERATED_COMPOSITING)
-    bool m_hasCompositingDescendant : 1; // In the z-order tree.
-    bool m_mustOverlapCompositedLayers : 1;
-#endif
-
-    bool m_containsDirtyOverlayScrollbars : 1;
 
     LayoutPoint m_cachedOverlayScrollbarOffset;
 

@@ -129,24 +129,10 @@ void ClipRects::destroy(RenderArena* renderArena)
 }
 
 RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
-    : m_renderer(renderer)
-    , m_parent(0)
-    , m_previous(0)
-    , m_next(0)
-    , m_first(0)
-    , m_last(0)
-    , m_posZOrderList(0)
-    , m_negZOrderList(0)
-    , m_normalFlowList(0)
-    , m_clipRects(0) 
-#ifndef NDEBUG    
-    , m_clipRectsRoot(0)
-#endif
-    , m_inResizeMode(false)
+    : m_inResizeMode(false)
     , m_scrollDimensionsDirty(true)
     , m_zOrderListsDirty(true)
     , m_normalFlowListDirty(true)
-    , m_isNormalFlowOnly(shouldBeNormalFlowOnly())
     , m_usedTransparency(false)
     , m_paintingInsideReflection(false)
     , m_inOverflowRelayout(false)
@@ -164,6 +150,19 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_mustOverlapCompositedLayers(false)
 #endif
     , m_containsDirtyOverlayScrollbars(false)
+    , m_renderer(renderer)
+    , m_parent(0)
+    , m_previous(0)
+    , m_next(0)
+    , m_first(0)
+    , m_last(0)
+    , m_posZOrderList(0)
+    , m_negZOrderList(0)
+    , m_normalFlowList(0)
+    , m_clipRects(0)
+#ifndef NDEBUG
+    , m_clipRectsRoot(0)
+#endif
     , m_marquee(0)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
@@ -172,6 +171,8 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_resizer(0)
     , m_scrollableAreaPage(0)
 {
+    m_isNormalFlowOnly = shouldBeNormalFlowOnly();
+
     ScrollableArea::setConstrainsScrollingToContentEdge(false);
 
     if (!renderer->firstChild() && renderer->style()) {
