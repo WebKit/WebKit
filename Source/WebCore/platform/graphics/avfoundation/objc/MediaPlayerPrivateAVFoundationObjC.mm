@@ -430,8 +430,9 @@ float MediaPlayerPrivateAVFoundationObjC::currentTime() const
         return 0;
 
     CMTime itemTime = [m_avPlayerItem.get() currentTime];
-    if (CMTIME_IS_NUMERIC(itemTime))
-        return narrowPrecisionToFloat(CMTimeGetSeconds(itemTime));
+    if (CMTIME_IS_NUMERIC(itemTime)) {
+        return max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
+    }
 
     return 0;
 }

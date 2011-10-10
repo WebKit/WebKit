@@ -1,3 +1,18 @@
+2011-10-06  Jer Noble  <jer.noble@apple.com>
+
+        media/video-loop.html is failing on Lion because of negative currentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=69468
+
+        Reviewed by Darin Adler.
+
+        No new tests. Covered by media/video-loop.html test.
+
+        AVFoundation will occasionally return small, negative current times during loop operations.
+        Clean up these negative times before returning the currentTime.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTime):
+
 2011-10-10  Jeremy Apthorp  <jeremya@chromium.org>
 
         Exiting fullscreen shouldn't crash if the element that was fullscreened
