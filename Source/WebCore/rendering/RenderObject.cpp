@@ -373,7 +373,7 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren() const
     return o;
 }
 
-RenderObject* RenderObject::nextInPreOrder(RenderObject* stayWithin) const
+RenderObject* RenderObject::nextInPreOrder(const RenderObject* stayWithin) const
 {
     if (RenderObject* o = firstChild())
         return o;
@@ -381,7 +381,7 @@ RenderObject* RenderObject::nextInPreOrder(RenderObject* stayWithin) const
     return nextInPreOrderAfterChildren(stayWithin);
 }
 
-RenderObject* RenderObject::nextInPreOrderAfterChildren(RenderObject* stayWithin) const
+RenderObject* RenderObject::nextInPreOrderAfterChildren(const RenderObject* stayWithin) const
 {
     if (this == stayWithin)
         return 0;

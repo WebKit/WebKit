@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<!-- Test passes if you see RUNIN between list marker and ABCD. All text should be of same 40px size. -->
+<html>
+<body style="font-family: ahem; font-size: 10px; -webkit-font-smoothing: none;">
+<style>
+li:before { content: "AB"; }
+</style>
+<div style="display: run-in; color: green">RUNIN</div>
+<li style="color: blue">CD</li>
+<script>
+document.body.offsetTop;
+document.body.style.fontSize = "40px";
+</script>
+</body>
+</html>

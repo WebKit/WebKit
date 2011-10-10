@@ -171,9 +171,9 @@ public:
     virtual const RenderObjectChildList* virtualChildren() const { return 0; }
 
     RenderObject* nextInPreOrder() const;
-    RenderObject* nextInPreOrder(RenderObject* stayWithin) const;
+    RenderObject* nextInPreOrder(const RenderObject* stayWithin) const;
     RenderObject* nextInPreOrderAfterChildren() const;
-    RenderObject* nextInPreOrderAfterChildren(RenderObject* stayWithin) const;
+    RenderObject* nextInPreOrderAfterChildren(const RenderObject* stayWithin) const;
     RenderObject* previousInPreOrder() const;
     RenderObject* childAt(unsigned) const;
 

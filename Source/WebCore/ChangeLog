@@ -1,5 +1,35 @@
 2011-10-10  Abhishek Arya  <inferno@chromium.org>
 
+        Style for updated due to inability to locate
+        :before content in presence of listmarkers and runins.
+        https://bugs.webkit.org/show_bug.cgi?id=68624
+
+        Reviewed by Dan Bernstein.
+
+        Tests: fast/lists/inline-before-content-after-list-marker.html
+               fast/runin/runin-between-list-marker-and-before-content.html
+               fast/runin/runin-into-div-with-float-child.html
+               fast/runin/runin-not-go-into-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild): Fix as per spec that
+        we should not be skipping over floating/positioned renderers to
+        push runins into neighbouring block. This matches Opera renderings.
+        * rendering/RenderObject.cpp: Add const to parameter variable
+        to make call from beforePseudoElementRenderer easier. Also matches
+        CounterNode.h definition.
+        (WebCore::RenderObject::nextInPreOrder):
+        (WebCore::RenderObject::nextInPreOrderAfterChildren):
+        * rendering/RenderObject.h: Same const addition.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::beforePseudoElementRenderer):
+        Remove skipping of floating/positioned renderers, similar to
+        handleRunIn. Revert code change in r94857 and add better next
+        sibling iterator. This addresses the layouttest in r94857 where
+        :before content is in its own anonymous rendertable.
+
+2011-10-10  Abhishek Arya  <inferno@chromium.org>
+
         Handle insertion into an anonymous table part that
         is followed by a non-anonymous block correctly.
         https://bugs.webkit.org/show_bug.cgi?id=69536
