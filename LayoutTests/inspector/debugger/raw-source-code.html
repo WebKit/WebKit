@@ -106,7 +106,8 @@ function test()
             var rawSourceCode = createRawSourceCode(script, null);
 
             var sourceMapping = rawSourceCode.sourceMapping;
-            var uiSourceCode = sourceMapping.uiSourceCode;
+            InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+            var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
             InspectorTest.assertEquals("foo.js", uiSourceCode.url);
             InspectorTest.assertEquals(true, uiSourceCode.isContentScript);
             InspectorTest.assertEquals(rawSourceCode, uiSourceCode.rawSourceCode);
@@ -136,7 +137,9 @@ function test()
             function mappingReady(event)
             {
                 InspectorTest.assertTrue(!event.data.oldSourceCode);
-                var uiSourceCode = rawSourceCode.sourceMapping.uiSourceCode;
+                var sourceMapping = rawSourceCode.sourceMapping;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
                 InspectorTest.assertEquals("index.html", uiSourceCode.url);
                 InspectorTest.assertEquals(false, uiSourceCode.isContentScript);
                 uiSourceCode.requestContent(didRequestContent);
@@ -161,7 +164,8 @@ function test()
             var rawSourceCode = createRawSourceCode(script1, resource);
 
             var sourceMapping = rawSourceCode.sourceMapping;
-            var uiSourceCode = sourceMapping.uiSourceCode;
+            InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+            var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
             InspectorTest.assertEquals("index.html", uiSourceCode.url);
             InspectorTest.assertEquals(false, uiSourceCode.isContentScript);
             uiSourceCode.requestContent(didRequestContent);
@@ -195,7 +199,10 @@ function test()
 
             function requestContent()
             {
-                rawSourceCode.sourceMapping.uiSourceCode.requestContent(didRequestContentOneScript);
+                var sourceMapping = rawSourceCode.sourceMapping;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
+                uiSourceCode.requestContent(didRequestContentOneScript);
             }
 
             function didRequestContentOneScript(mimeType, content)
@@ -211,7 +218,10 @@ function test()
 
             function requestContentTwoScripts()
             {
-                rawSourceCode.sourceMapping.uiSourceCode.requestContent(didRequestContentTwoScripts);
+                var sourceMapping = rawSourceCode.sourceMapping;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
+                uiSourceCode.requestContent(didRequestContentTwoScripts);
             }
 
             function didRequestContentTwoScripts(mimeType, content)
@@ -226,7 +236,10 @@ function test()
 
             function requestContentResource()
             {
-                rawSourceCode.sourceMapping.uiSourceCode.requestContent(didRequestContentResource);
+                var sourceMapping = rawSourceCode.sourceMapping;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
+                uiSourceCode.requestContent(didRequestContentResource);
             }
 
             function didRequestContentResource(mimeType, content)
@@ -248,7 +261,8 @@ function test()
             var rawSourceCode = createRawSourceCode(script, resource, false);
 
             var sourceMapping = rawSourceCode.sourceMapping;
-            var uiSourceCode = sourceMapping.uiSourceCode;
+            InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+            var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
             checkUILocation(uiSourceCode, 1, 2, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
             checkRawLocation(script, 2, 0, sourceMapping.uiLocationToRawLocation(uiSourceCode, 2));
             uiSourceCode.requestContent(didRequestContent);
@@ -266,7 +280,8 @@ function test()
             function requestFormattedContent()
             {
                 var sourceMapping = rawSourceCode.sourceMapping;
-                var uiSourceCode = sourceMapping.uiSourceCode;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
                 checkUILocation(uiSourceCode, 2, 4, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
                 checkRawLocation(script, 1, 0, sourceMapping.uiLocationToRawLocation(uiSourceCode, 2));
                 uiSourceCode.requestContent(didRequestFormattedContent);
@@ -284,7 +299,8 @@ function test()
             function requestNotFormattedContent()
             {
                 var sourceMapping = rawSourceCode.sourceMapping;
-                var uiSourceCode = sourceMapping.uiSourceCode;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
                 checkUILocation(uiSourceCode, 1, 2, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
                 checkRawLocation(script, 2, 0, sourceMapping.uiLocationToRawLocation(uiSourceCode, 2));
                 uiSourceCode.requestContent(didRequestNotFormattedContent);
@@ -313,7 +329,8 @@ function test()
             function checkMapping()
             {
                 var sourceMapping = rawSourceCode.sourceMapping;
-                var uiSourceCode = sourceMapping.uiSourceCode;
+                InspectorTest.assertEquals(1, sourceMapping.uiSourceCodeList().length);
+                var uiSourceCode = sourceMapping.uiSourceCodeList()[0];
                 checkUILocation(uiSourceCode, 2, 4, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
                 checkRawLocation(script, 1, 0, sourceMapping.uiLocationToRawLocation(uiSourceCode, 2));
                 next();

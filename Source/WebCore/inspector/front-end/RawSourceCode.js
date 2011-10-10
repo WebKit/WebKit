@@ -190,11 +190,11 @@ WebInspector.RawSourceCode.prototype = {
 
     _saveSourceMapping: function(sourceMapping)
     {
-        var oldUISourceCode;
+        var oldSourceMapping;
         if (this._sourceMapping)
-            oldUISourceCode = this._sourceMapping.uiSourceCode;
+            oldSourceMapping = this._sourceMapping;
         this._sourceMapping = sourceMapping;
-        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.SourceMappingUpdated, { oldUISourceCode: oldUISourceCode });
+        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.SourceMappingUpdated, { oldSourceMapping: oldSourceMapping });
     }
 }
 
@@ -207,26 +207,26 @@ WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
 WebInspector.RawSourceCode.PlainSourceMapping = function(rawSourceCode, uiSourceCode)
 {
     this._rawSourceCode = rawSourceCode;
-    this._uiSourceCode = uiSourceCode;
+    this._uiSourceCodeList = [uiSourceCode];
 }
 
 WebInspector.RawSourceCode.PlainSourceMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
-        return new WebInspector.UILocation(this._uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
+        return new WebInspector.UILocation(this._uiSourceCodeList[0], rawLocation.lineNumber, rawLocation.columnNumber);
     },
 
     uiLocationToRawLocation: function(uiSourceCode, lineNumber)
     {
-        console.assert(uiSourceCode === this._uiSourceCode);
+        console.assert(uiSourceCode === this._uiSourceCodeList[0]);
         var rawLocation = { lineNumber: lineNumber, columnNumber: 0 };
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
 
-    get uiSourceCode()
+    uiSourceCodeList: function()
     {
-        return this._uiSourceCode;
+        return this._uiSourceCodeList;
     }
 }
 
@@ -236,7 +236,7 @@ WebInspector.RawSourceCode.PlainSourceMapping.prototype = {
 WebInspector.RawSourceCode.FormattedSourceMapping = function(rawSourceCode, uiSourceCode, mapping)
 {
     this._rawSourceCode = rawSourceCode;
-    this._uiSourceCode = uiSourceCode;
+    this._uiSourceCodeList = [uiSourceCode];
     this._mapping = mapping;
 }
 
@@ -244,20 +244,20 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var location = this._mapping.originalToFormatted(rawLocation);
-        return new WebInspector.UILocation(this._uiSourceCode, location.lineNumber, location.columnNumber);
+        return new WebInspector.UILocation(this._uiSourceCodeList[0], location.lineNumber, location.columnNumber);
     },
 
     uiLocationToRawLocation: function(uiSourceCode, lineNumber)
     {
-        console.assert(uiSourceCode === this._uiSourceCode);
+        console.assert(uiSourceCode === this._uiSourceCodeList[0]);
         var rawLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: 0 });
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
 
-    get uiSourceCode()
+    uiSourceCodeList: function()
     {
-        return this._uiSourceCode;
+        return this._uiSourceCodeList;
     }
 }
 

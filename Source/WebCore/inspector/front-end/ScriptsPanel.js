@@ -696,8 +696,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _uiSourceCodeReplaced: function(event)
     {
-        var oldUISourceCode = event.data.oldUISourceCode;
-        var uiSourceCode = event.data.uiSourceCode;
+        // FIXME: support multiple entries.
+        var oldUISourceCode = event.data.oldUISourceCodeList[0];
+        var uiSourceCode = event.data.uiSourceCodeList[0];
 
         // Re-bind file select option from old source file to new one.
         var option = oldUISourceCode._option;

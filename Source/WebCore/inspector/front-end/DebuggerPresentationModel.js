@@ -123,40 +123,48 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _sourceMappingUpdated: function(event)
     {
         var rawSourceCode = event.target;
-        var oldUISourceCode = event.data.oldUISourceCode;
-        this._updateSourceMapping(rawSourceCode, oldUISourceCode);
+        var oldSourceMapping = event.data.oldSourceMapping;
+        this._updateSourceMapping(rawSourceCode, oldSourceMapping);
     },
 
-    _updateSourceMapping: function(rawSourceCode, oldUISourceCode)
+    _updateSourceMapping: function(rawSourceCode, oldSourceMapping)
     {
-        if (oldUISourceCode) {
-            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(oldUISourceCode);
-            for (var lineNumber in breakpoints) {
-                var breakpoint = breakpoints[lineNumber];
-                this._breakpointRemoved(breakpoint);
-                delete breakpoint.uiSourceCode;
+        if (oldSourceMapping) {
+            var oldUISourceCodeList = oldSourceMapping.uiSourceCodeList();
+            for (var i = 0; i < oldUISourceCodeList.length; ++i) {
+                var breakpoints = this._breakpointManager.breakpointsForUISourceCode(oldUISourceCodeList[i]);
+                for (var lineNumber in breakpoints) {
+                    var breakpoint = breakpoints[lineNumber];
+                    this._breakpointRemoved(breakpoint);
+                    delete breakpoint.uiSourceCode;
+                }
             }
         }
 
         this._restoreBreakpoints(rawSourceCode);
         this._restoreConsoleMessages(rawSourceCode);
 
-        var uiSourceCode = rawSourceCode.sourceMapping.uiSourceCode;
-        if (!oldUISourceCode)
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
-        else {
-            var eventData = { uiSourceCode: uiSourceCode, oldUISourceCode: oldUISourceCode };
+        if (!oldSourceMapping) {
+            var uiSourceCodeList = rawSourceCode.sourceMapping.uiSourceCodeList();
+            for (var i = 0; i < uiSourceCodeList.length; ++i)
+                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCodeList[i]);
+        } else {
+            var eventData = { uiSourceCodeList: rawSourceCode.sourceMapping.uiSourceCodeList(), oldUISourceCodeList: oldSourceMapping.uiSourceCodeList() };
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, eventData);
         }
     },
 
     _restoreBreakpoints: function(rawSourceCode)
     {
-        var uiSourceCode = rawSourceCode.sourceMapping.uiSourceCode;
-        this._breakpointManager.uiSourceCodeAdded(uiSourceCode);
-        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
-        for (var lineNumber in breakpoints)
-            this._breakpointAdded(breakpoints[lineNumber]);
+        var uiSourceCodeList = rawSourceCode.sourceMapping.uiSourceCodeList();
+        for (var i = 0; i < uiSourceCodeList.length; ++i) {
+            var uiSourceCode = uiSourceCodeList[i];
+            this._breakpointManager.uiSourceCodeAdded(uiSourceCode);
+            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
+            for (var lineNumber in breakpoints)
+                this._breakpointAdded(breakpoints[lineNumber]);
+        }
+
     },
 
     _restoreConsoleMessages: function(rawSourceCode)
@@ -432,9 +440,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _debuggerReset: function()
     {
         for (var id in this._rawSourceCode) {
-            if (this._rawSourceCode[id].sourceMapping && this._rawSourceCode[id].sourceMapping.uiSourceCode)
-                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._rawSourceCode[id].sourceMapping.uiSourceCode);
-            this._rawSourceCode[id].removeAllListeners();
+            var rawSourceCode = this._rawSourceCode[id];
+            if (rawSourceCode.sourceMapping) {
+                var uiSourceCodeList = rawSourceCode.sourceMapping.uiSourceCodeList();
+                for (var i = 0; i < uiSourceCodeList.length; ++i)
+                    this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, uiSourceCodeList[i]);
+            }
+            rawSourceCode.removeAllListeners();
         }
         this._rawSourceCode = {};
         this._presentationCallFrames = [];
@@ -530,7 +542,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
         var rawSourceCode = this._presentationModel._rawSourceCodeForScriptWithURL(resource.url)
         if (!rawSourceCode)
             return false;
-        return this._presentationModel.canEditScriptSource(rawSourceCode.sourceMapping.uiSourceCode);
+        return this._presentationModel.canEditScriptSource(rawSourceCode.sourceMapping.uiSourceCodeList()[0]);
     },
 
     setContent: function(resource, content, majorChange, userCallback)
@@ -544,7 +556,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
             return;
         }
 
-        resource.requestContent(this._setContentWithInitialContent.bind(this, rawSourceCode.sourceMapping.uiSourceCode, content, userCallback));
+        resource.requestContent(this._setContentWithInitialContent.bind(this, rawSourceCode.sourceMapping.uiSourceCodeList()[0], content, userCallback));
     },
 
     _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent)

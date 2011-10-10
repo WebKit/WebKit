@@ -1,3 +1,31 @@
+2011-09-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: RawSourceCode could be mapped to multiple sources.
+        https://bugs.webkit.org/show_bug.cgi?id=68526
+
+        Replace SourceMapping.uiSourceCode with SourceMapping.uiSourceCodeList as there could be more
+        then one UISourceCode associated with a RawSourceCode.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._sourceMappingUpdated):
+        (WebInspector.DebuggerPresentationModel.prototype._updateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.PresentationCallFrame.prototype.get url):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.canSetContent):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.setContent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeReplaced):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode.prototype._saveSourceMapping):
+        (WebInspector.RawSourceCode.PlainSourceMapping):
+        (WebInspector.RawSourceCode.PlainSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.PlainSourceMapping.prototype.uiSourceCodeList):
+        (WebInspector.RawSourceCode.FormattedSourceMapping):
+        (WebInspector.RawSourceCode.FormattedSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.FormattedSourceMapping.prototype.uiSourceCodeList):
+
 2011-10-10  Andreas Kling  <kling@webkit.org>
 
         Shrink RenderLayer and ScrollableArea.

@@ -30,6 +30,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  */
 WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, contentProvider)
 {
