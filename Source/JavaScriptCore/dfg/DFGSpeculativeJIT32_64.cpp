@@ -1759,9 +1759,10 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg thisValueTagGPR = thisValue.tagGPR();
             GPRReg scratchGPR = scratch.gpr();
             
+            COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
             m_jit.move(thisValueTagGPR, scratchGPR);
-            m_jit.and32(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), scratchGPR);
-            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::UndefinedTag)));
+            m_jit.or32(TrustedImm32(1), scratchGPR);
+            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::NullTag)));
             
             m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), scratchGPR);
             cellResult(scratchGPR, m_compileIndex);

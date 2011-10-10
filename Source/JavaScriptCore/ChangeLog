@@ -1,5 +1,15 @@
 2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        JSVALUE32_64 DFG JIT - Bug fix for ConvertThis
+        https://bugs.webkit.org/show_bug.cgi?id=69721
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-10-09  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         Remove unused callOperation code of DFG JIT on X86
         https://bugs.webkit.org/show_bug.cgi?id=69722
 
