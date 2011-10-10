@@ -1,3 +1,22 @@
+2011-10-10  Cary Clark  <caryclark@google.com>
+
+        [Skia on Chromium Mac] Set canExpandAroundIdeographsInComplexText to true
+        https://bugs.webkit.org/show_bug.cgi?id=69656
+        https://bugs.webkit.org/show_bug.cgi?id=62987
+        https://bugs.webkit.org/show_bug.cgi?id=62889
+
+        Reviewed by Stephen White.
+
+        Skia on Linux and Windows uses different font engines from
+        Skia on Mac. After determining that the underlying CoreText
+        can handle it, enabling this allows justification to work
+        correctly.
+
+        Tests: fast/text/justify-ideograph-complex.html
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText):
+
 2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: memory leak in Resource panel.

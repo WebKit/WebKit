@@ -49,12 +49,9 @@ bool Font::canReturnFallbackFontsForComplexText()
     return true;
 }
 
-// FIXME: Determine if the Mac port of Chromium using Skia can expand around
-// ideographs in complex text. (The Windows and Linux ports for Chromium can't.)
-// This issue is tracked in https://bugs.webkit.org/show_bug.cgi?id=62987
 bool Font::canExpandAroundIdeographsInComplexText()
 {
-    return false;
+    return true;
 }
 
 static bool isCanvasMultiLayered(SkCanvas* canvas)
