@@ -352,7 +352,7 @@ void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr)
     SpeculateCellOperand op1(this, node.child1());
     SpeculateCellOperand op2(this, node.child2());
     GPRTemporary resultTag(this, op1);
-    GPRTemporary resultPayload(this, op1);
+    GPRTemporary resultPayload(this, op2);
     
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();

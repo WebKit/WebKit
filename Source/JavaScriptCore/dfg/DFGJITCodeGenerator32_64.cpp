@@ -1139,6 +1139,7 @@ void JITCodeGenerator::cachedGetMethod(GPRReg basePayloadGPR, GPRReg resultTagGP
     JITCompiler::Jump wrongProtoStructure = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(resultPayloadGPR, JSCell::structureOffset()), protoStructToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
     putFunction = m_jit.moveWithPatch(JITCompiler::TrustedImmPtr(0), resultPayloadGPR);
+    m_jit.move(TrustedImm32(JSValue::CellTag), resultTagGPR);
     
     JITCompiler::Jump done = m_jit.jump();
     
