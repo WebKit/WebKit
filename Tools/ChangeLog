@@ -1,3 +1,14 @@
+2011-10-10  David Levin  <levin@chromium.org>
+
+        Quick fix for watchlist unit test failures when using Python 2.7+
+        Reviewed by Adam Barth.
+
+        Filed bug https://bugs.webkit.org/show_bug.cgi?id=69789 about a
+        better fix.
+
+        * Scripts/webkitpy/common/webkitunittest.py: Always use our
+        version of assertRaisesRegexp.
+
 2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97082.
