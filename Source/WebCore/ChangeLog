@@ -1,3 +1,9 @@
+2011-10-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, attempt to fix chromium mac build after r97034.
+
+        * platform/ScrollAnimatorNone.h:
+
 2011-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: small memory leak in scripts panel.

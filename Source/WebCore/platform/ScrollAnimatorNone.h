@@ -150,7 +150,7 @@ protected:
         double m_desiredTransY;
     };
 
-    friend class ZoomData;
+    friend struct ZoomData;
 
     void animationTimerFired(Timer<ScrollAnimatorNone>*);
     void stopAnimationTimerIfNeeded();
