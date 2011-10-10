@@ -75,8 +75,8 @@ private:
     void updateValueNow() const;
     void explicitValueChanged();
 
-    RenderListMarker* m_marker;
     int m_explicitValue;
+    RenderListMarker* m_marker;
     mutable int m_value;
 
     bool m_hasExplicitValue : 1;
