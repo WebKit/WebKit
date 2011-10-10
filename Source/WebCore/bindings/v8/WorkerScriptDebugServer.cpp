@@ -39,6 +39,7 @@
 #include "V8SharedWorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include "WorkerDebuggerAgent.h"
 #include "WorkerThread.h"
 #include <v8.h>
 #include <wtf/MessageQueue.h>
@@ -64,8 +65,6 @@ static WorkerContext* retrieveWorkerContext(v8::Handle<v8::Context> context)
     ASSERT_NOT_REACHED();
     return 0;
 }
-
-const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
 
 WorkerScriptDebugServer::WorkerScriptDebugServer()
     : ScriptDebugServer()
@@ -134,7 +133,7 @@ void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context> cont
 
     MessageQueueWaitResult result;
     do {
-        result = workerThread->runLoop().runInMode(workerContext, debuggerTaskMode);
+        result = workerThread->runLoop().runInMode(workerContext, WorkerDebuggerAgent::debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && isPaused());
     m_pausedWorkerContext = 0;

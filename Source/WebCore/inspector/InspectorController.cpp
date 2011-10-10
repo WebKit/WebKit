@@ -72,8 +72,8 @@ namespace {
 
 class PageRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
-        : InspectorRuntimeAgent(injectedScriptManager)
+    PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+        : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
         , m_inspectedPage(page)
         , m_pageAgent(pageAgent) { }
     virtual ~PageRuntimeAgent() { }
@@ -110,7 +110,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page)))
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
-    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager.get(), page, m_pageAgent.get())))
+    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), page, m_pageAgent.get())))
     , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()))

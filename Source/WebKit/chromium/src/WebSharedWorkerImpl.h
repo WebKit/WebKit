@@ -56,6 +56,8 @@ public:
     virtual void terminateWorkerContext();
     virtual void clientDestroyed();
 
+    virtual void pauseWorkerContextOnStart();
+    virtual void resumeWorkerContext();
     virtual void attachDevTools();
     virtual void reattachDevTools(const WebString& savedState);
     virtual void detachDevTools();
@@ -74,6 +76,7 @@ private:
     static void connectTask(WebCore::ScriptExecutionContext*, PassOwnPtr<WebCore::MessagePortChannel>);
 
     WebCommonWorkerClient* m_client;
+    bool m_pauseWorkerContextOnStart;
 };
 
 } // namespace WebKit

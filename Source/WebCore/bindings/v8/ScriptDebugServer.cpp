@@ -149,10 +149,11 @@ void ScriptDebugServer::setPauseOnNextStatement(bool pause)
 {
     if (isPaused())
         return;
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     if (pause)
-        v8::Debug::DebugBreak();
+        v8::Debug::DebugBreak(isolate);
     else
-        v8::Debug::CancelDebugBreak();
+        v8::Debug::CancelDebugBreak(isolate);
 }
 
 void ScriptDebugServer::breakProgram()

@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-PassRefPtr<DedicatedWorkerThread> DedicatedWorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
+PassRefPtr<DedicatedWorkerThread> DedicatedWorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode)
 {
-    return adoptRef(new DedicatedWorkerThread(scriptURL, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy));
+    return adoptRef(new DedicatedWorkerThread(scriptURL, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode));
 }
 
-DedicatedWorkerThread::DedicatedWorkerThread(const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
-    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy)
+DedicatedWorkerThread::DedicatedWorkerThread(const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode)
+    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode)
     , m_workerObjectProxy(workerObjectProxy)
 {
 }

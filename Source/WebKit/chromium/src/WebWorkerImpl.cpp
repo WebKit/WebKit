@@ -42,8 +42,8 @@
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "SubstituteData.h"
+#include "WorkerDebuggerAgent.h"
 #include "WorkerInspectorController.h"
-#include "WorkerScriptDebugServer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
@@ -109,7 +109,7 @@ void WebWorkerImpl::startWorkerContext(const WebURL& scriptUrl,
                                        const WebString& sourceCode)
 {
     initializeLoader(scriptUrl);
-    setWorkerThread(DedicatedWorkerThread::create(scriptUrl, userAgent, sourceCode, *this, *this));
+    setWorkerThread(DedicatedWorkerThread::create(scriptUrl, userAgent, sourceCode, *this, *this, DontPauseWorkerContextOnStart));
     // Worker initialization means a pending activity.
     reportPendingActivity(true);
     workerThread()->start();
@@ -172,7 +172,7 @@ static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* con
 
 void WebWorkerImpl::detachDevTools()
 {
-    workerThread()->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerScriptDebugServer::debuggerTaskMode);
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
@@ -183,7 +183,7 @@ static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, cons
 
 void WebWorkerImpl::dispatchDevToolsMessage(const WebString& message)
 {
-    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerScriptDebugServer::debuggerTaskMode);
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 #else

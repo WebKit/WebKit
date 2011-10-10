@@ -40,7 +40,7 @@ namespace WebCore {
 
     class DedicatedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<DedicatedWorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
+        static PassRefPtr<DedicatedWorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode);
         WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
         ~DedicatedWorkerThread();
 
@@ -49,7 +49,7 @@ namespace WebCore {
         virtual void runEventLoop();
 
     private:
-        DedicatedWorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
+        DedicatedWorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode);
 
         WorkerObjectProxy& m_workerObjectProxy;
     };

@@ -78,6 +78,8 @@ public:
     // Notification when the WebCommonWorkerClient is destroyed.
     virtual void clientDestroyed() = 0;
 
+    virtual void pauseWorkerContextOnStart() { }
+    virtual void resumeWorkerContext() { }
     virtual void attachDevTools() { }
     virtual void reattachDevTools(const WebString& savedState) { }
     virtual void detachDevTools() { }

@@ -31,6 +31,7 @@
 #include "WorkerThread.h"
 
 #include "DedicatedWorkerContext.h"
+#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
@@ -64,30 +65,32 @@ unsigned WorkerThread::workerThreadCount()
 struct WorkerThreadStartupData {
     WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+    static PassOwnPtr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
     {
-        return adoptPtr(new WorkerThreadStartupData(scriptURL, userAgent, sourceCode));
+        return adoptPtr(new WorkerThreadStartupData(scriptURL, userAgent, sourceCode, startMode));
     }
 
     KURL m_scriptURL;
     String m_userAgent;
     String m_sourceCode;
+    WorkerThreadStartMode m_startMode;
 private:
-    WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode);
+    WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode);
 };
 
-WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
     : m_scriptURL(scriptURL.copy())
     , m_userAgent(userAgent.crossThreadString())
     , m_sourceCode(sourceCode.crossThreadString())
+    , m_startMode(startMode)
 {
 }
 
-WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy)
+WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode)
     : m_threadID(0)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
-    , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode))
+    , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode, startMode))
 #if ENABLE(NOTIFICATIONS)
     , m_notificationPresenter(0)
 #endif
@@ -135,6 +138,7 @@ void* WorkerThread::workerThread()
     }
 
     WorkerScriptController* script = m_workerContext->script();
+    InspectorInstrumentation::willEvaluateWorkerScript(workerContext(), m_startupData->m_startMode);
     script->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL));
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
     // all ref/derefs of these objects are happening on the thread at this point). Note that

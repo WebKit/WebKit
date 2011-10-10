@@ -87,7 +87,7 @@ WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker
 
 void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
 {
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this);
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, DontPauseWorkerContextOnStart);
     m_proxy->workerThreadCreated(thread);
     thread->start();
 }
@@ -138,8 +138,9 @@ void WebWorkerClientImpl::postMessageToPageInspector(const String& message)
     m_proxy->postMessageToPageInspector(message);
 }
 
-void WebWorkerClientImpl::updateInspectorStateCookie(const String&)
+void WebWorkerClientImpl::updateInspectorStateCookie(const String& cookie)
 {
+    m_proxy->updateInspectorStateCookie(cookie);
 }
 #endif // ENABLE(INSPECTOR)
 

@@ -56,8 +56,8 @@ namespace {
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
-        : InspectorRuntimeAgent(injectedScriptManager)
+    WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
+        : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
         , m_workerContext(workerContext) { }
     virtual ~WorkerRuntimeAgent() { }
 
@@ -113,7 +113,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get()))
 #endif
-    , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_injectedScriptManager.get(), workerContext)))
+    , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), workerContext)))
 {
     m_injectedScriptManager->injectedScriptHost()->init(0
         , 0
@@ -208,6 +208,11 @@ void WorkerInspectorController::dispatchMessageFromFrontend(const String& messag
 {
     if (m_backendDispatcher)
         m_backendDispatcher->dispatch(message);
+}
+
+void WorkerInspectorController::resume()
+{
+    m_runtimeAgent->resume();
 }
 
 }

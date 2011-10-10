@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
+
 PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
 {
     return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));

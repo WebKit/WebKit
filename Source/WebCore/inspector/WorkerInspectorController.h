@@ -66,6 +66,7 @@ public:
     void disconnectFrontend();
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
     void dispatchMessageFromFrontend(const String&);
+    void resume();
 
 private:
     friend InstrumentingAgents* instrumentationForWorkerContext(WorkerContext*);

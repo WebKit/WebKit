@@ -60,6 +60,7 @@ class ScriptCallStack;
 class ScriptExecutionContext;
 class ScriptProfile;
 class StorageArea;
+class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
 
@@ -180,6 +181,7 @@ public:
     static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
     static void workerContextTerminated(ScriptExecutionContext*, WorkerContextProxy*);
+    static void willEvaluateWorkerScript(WorkerContext*, int workerThreadStartMode);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

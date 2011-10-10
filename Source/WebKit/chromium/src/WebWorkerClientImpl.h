@@ -51,7 +51,7 @@ namespace WebKit {
 class WebWorker;
 class WebFrameImpl;
 
-// This class provides chromium implementation for WorkerContextProxt, WorkerObjectProxy amd WorkerLoaderProxy
+// This class provides chromium implementation for WorkerContextProxy, WorkerObjectProxy amd WorkerLoaderProxy
 // for in-proc dedicated workers. It also acts as a bridge for workers to chromium implementation of file systems,
 // databases and other related functionality.
 //

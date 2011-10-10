@@ -1,3 +1,58 @@
+2011-10-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow to start WorkerContext paused
+        https://bugs.webkit.org/show_bug.cgi?id=69635
+
+        Allow to pause WorkerContext on start.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setPauseOnNextStatement):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::runMessageLoopOnPause):
+        * bindings/v8/WorkerScriptDebugServer.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::~InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::pauseWorkerContext): this method will start
+        running worker message loop in "debug" mode, i.e. it will process only inspector
+        tasks until method InspectorRuntimeAgent::resume is called.
+        (WebCore::InspectorRuntimeAgent::resume):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerDebuggerAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::resume): method which is called from WebKit layer
+        when it is known that inspector state was restored and it is OK to resume worker execution.
+        * inspector/WorkerInspectorController.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create):
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        * workers/DedicatedWorkerThread.h:
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        * workers/SharedWorkerThread.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread): WorkerThread is passed a booleand flag indicating
+        whether the context should be paused and wait for explicit resume command before it
+        starts running its script.
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+
 2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97045.

@@ -44,6 +44,8 @@ namespace WebCore {
     class WorkerReportingProxy;
     struct WorkerThreadStartupData;
 
+    enum WorkerThreadStartMode { DontPauseWorkerContextOnStart, PauseWorkerContextOnStart };
+
     class WorkerThread : public RefCounted<WorkerThread> {
     public:
         virtual ~WorkerThread();
@@ -65,7 +67,7 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&);
+        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode);
 
         // Factory method for creating a new worker context for the thread.
         virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL& url, const String& userAgent) = 0;

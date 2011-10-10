@@ -1,3 +1,38 @@
+2011-10-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow to start WorkerContext paused
+        https://bugs.webkit.org/show_bug.cgi?id=69635
+
+        Expose methods for pausing shared worker on start.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebSharedWorker.h:
+        (WebKit::WebSharedWorker::pauseWorkerContextOnStart): specifies that the worker
+        context should be paused and weit for explicit call to resumeWorkerContext before
+        running its script.
+        (WebKit::WebSharedWorker::resumeWorkerContext):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::startWorkerContext):
+        (WebKit::WebSharedWorkerImpl::pauseWorkerContextOnStart):
+        (WebKit::resumeWorkerContextTask):
+        (WebKit::WebSharedWorkerImpl::resumeWorkerContext):
+        (WebKit::WebSharedWorkerImpl::attachDevTools):
+        (WebKit::reconnectToWorkerContextInspectorTask):
+        (WebKit::WebSharedWorkerImpl::reattachDevTools):
+        (WebKit::WebSharedWorkerImpl::detachDevTools):
+        (WebKit::WebSharedWorkerImpl::dispatchDevToolsMessage):
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+        (WebKit::WebWorkerClientImpl::updateInspectorStateCookie):
+        * src/WebWorkerClientImpl.h:
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::startWorkerContext):
+        (WebKit::WebWorkerImpl::detachDevTools):
+        (WebKit::WebWorkerImpl::dispatchDevToolsMessage):
+
 2011-10-09  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Zoom animator front-end

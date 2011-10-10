@@ -50,12 +50,15 @@
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
+#include "InspectorRuntimeAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
+#include "WorkerContext.h"
+#include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -797,6 +800,17 @@ void InspectorInstrumentation::didDestroyWorkerImpl(InstrumentingAgents* instrum
 {
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         inspectorAgent->didDestroyWorker(id);
+}
+
+void InspectorInstrumentation::willEvaluateWorkerScript(WorkerContext* workerContext, int workerThreadStartMode)
+{
+    if (workerThreadStartMode != PauseWorkerContextOnStart)
+        return;
+    InstrumentingAgents* instrumentingAgents = instrumentationForWorkerContext(workerContext);
+    if (!instrumentingAgents)
+        return;
+    if (InspectorRuntimeAgent* runtimeAgent = instrumentingAgents->inspectorRuntimeAgent())
+        runtimeAgent->pauseWorkerContext(workerContext);
 }
 
 void InspectorInstrumentation::workerContextTerminatedImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* proxy)
