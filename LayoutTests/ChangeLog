@@ -1,3 +1,13 @@
+2011-10-10  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        ScriptController::executeIfJavaScriptURL gets confused by synchronous frame loads
+        https://bugs.webkit.org/show_bug.cgi?id=69777
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url-expected.txt: Added.
+        * http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html: Added.
+
 2011-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitTestRunner needs layoutTestController.setWindowIsKey
