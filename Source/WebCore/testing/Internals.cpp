@@ -254,6 +254,8 @@ void Internals::setEnableScrollAnimator(Document* document, bool enabled, Except
 
 #if ENABLE(SMOOTH_SCROLLING)
     document->settings()->setEnableScrollAnimator(enabled);
+#else
+    UNUSED_PARAM(enabled);
 #endif
 }
 
@@ -267,6 +269,10 @@ void Internals::setZoomAnimatorTransform(Document *document, float scale, float 
 #if ENABLE(GESTURE_EVENTS)
     PlatformGestureEvent pge(PlatformGestureEvent::DoubleTapType, IntPoint(tx, ty), IntPoint(tx, ty), 0, scale, 0.f, 0, 0, 0, 0);
     document->view()->frame()->eventHandler()->handleGestureEvent(pge);
+#else
+    UNUSED_PARAM(scale);
+    UNUSED_PARAM(tx);
+    UNUSED_PARAM(ty);
 #endif
 }
 
@@ -289,6 +295,10 @@ void Internals::setZoomParameters(Document* document, float scale, float x, floa
 
 #if ENABLE(SMOOTH_SCROLLING)
     document->view()->scrollAnimator()->setZoomParametersForTest(scale, x, y);
+#else
+    UNUSED_PARAM(scale);
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
 #endif
 }
 

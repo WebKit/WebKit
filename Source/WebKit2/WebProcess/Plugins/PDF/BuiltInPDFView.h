@@ -85,6 +85,8 @@ private:
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
     
+    virtual void zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState) { }
+
     virtual bool handleMouseEvent(const WebMouseEvent&);
     virtual bool handleWheelEvent(const WebWheelEvent&);
     virtual bool handleMouseEnterEvent(const WebMouseEvent&);
