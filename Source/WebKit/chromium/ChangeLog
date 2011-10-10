@@ -1,3 +1,10 @@
+2011-10-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, mark CCThreadTest.startPostAndWaitOnCondition as flaky on win and mac.
+
+        * tests/CCThreadTest.cpp:
+        (WebKit::TEST):
+
 2011-10-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow to start WorkerContext paused
