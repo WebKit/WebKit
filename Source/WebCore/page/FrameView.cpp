@@ -1226,8 +1226,9 @@ void FrameView::removeWidgetToUpdate(RenderEmbeddedObject* object)
 void FrameView::zoomAnimatorTransformChanged(double scale, double x, double y, ZoomAnimationState state)
 {
     if (state == ZoomAnimationFinishing) {
-        // FIXME: We lose precision when converting from a double to an int. Is this acceptable? See <https://bugs.webkit.org/show_bug.cgi?id=69739>.
-        m_page->setPageScaleFactor(m_page->pageScaleFactor() * scale,
+        // FIXME: We lose precision when converting from a double to an int and an double to a float.
+        // Is this acceptable? See <https://bugs.webkit.org/show_bug.cgi?id=69739>.
+        m_page->setPageScaleFactor(static_cast<float>(m_page->pageScaleFactor() * scale),
                                    LayoutPoint(static_cast<int>(scale * scrollX() - x), static_cast<int>(scale * scrollY() - y)));
         scrollAnimator()->resetZoom();
     }
