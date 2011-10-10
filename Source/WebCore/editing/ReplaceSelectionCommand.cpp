@@ -1149,17 +1149,18 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
 
     Position startDownstream = startOfInsertedContent.deepEquivalent().downstream();
     Node* startNode = startDownstream.computeNodeAfterPosition();
-    if (startDownstream.anchorType() == Position::PositionIsOffsetInAnchor)
+    unsigned startOffset = 0;
+    if (startDownstream.anchorType() == Position::PositionIsOffsetInAnchor) {
         startNode = startDownstream.containerNode();
+        startOffset = startDownstream.offsetInContainerNode();
+    }
 
     bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) && !isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style()->collapseWhiteSpace();
         if (startNode->isTextNode()) {
-            Text* text = static_cast<Text*>(startNode);
-            // FIXME: we shouldn't always be inserting the space at the beginning
-            insertTextIntoNode(text, 0, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-            if (m_endOfInsertedContent.containerNode() == text && m_endOfInsertedContent.offsetInContainerNode())
+            insertTextIntoNode(static_cast<Text*>(startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
             RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
