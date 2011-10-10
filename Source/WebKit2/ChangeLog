@@ -1,3 +1,14 @@
+2011-10-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build with qreal == float on MeeGo 1.2 Harmattan
+
+        Reviewed by Andreas Kling.
+
+        Explicitly choose the qreal variant of qMin, since QPointF is using qreal.
+
+        * UIProcess/qt/ViewportInteractionEngine.cpp:
+        (WebKit::ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded):
+
 2011-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add methods to reload the view to WebKit2 GTK+ API

@@ -260,7 +260,7 @@ void ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
     if (contentGeometry.width() < m_viewport->width())
         newPos.setX((m_viewport->width() - contentGeometry.width()) / 2);
     else {
-        newPos.setX(qMin(0., newPos.x()));
+        newPos.setX(qMin<qreal>(0., newPos.x()));
         const qreal rightSideGap = m_viewport->boundingRect().right() - contentGeometry.right();
         if (rightSideGap > 0.)
             newPos.setX(newPos.x() + rightSideGap);
@@ -270,7 +270,7 @@ void ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
     if (contentGeometry.height() < m_viewport->height())
         newPos.setY(0);
     else {
-        newPos.setY(qMin(0., newPos.y()));
+        newPos.setY(qMin<qreal>(0., newPos.y()));
         const qreal bottomSideGap = m_viewport->boundingRect().bottom() - contentGeometry.bottom();
         if (bottomSideGap > 0.)
             newPos.setY(newPos.y() + bottomSideGap);
