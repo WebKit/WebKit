@@ -39,6 +39,7 @@
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
+#include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBRequest.h"
 #include "Page.h"
@@ -95,6 +96,19 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     GroupSettings* groupSettings = document->page()->group().groupSettings();
     m_factoryBackend->open(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath(), groupSettings->indexedDBQuotaBytes(), IDBFactoryBackendInterface::DefaultBackingStore);
     return request;
+}
+
+short IDBFactory::cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, ExceptionCode& ec)
+{
+    ASSERT(first);
+    ASSERT(second);
+
+    if (first->type() == IDBKey::NullType || second->type() == IDBKey::NullType) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }    
+    
+    return static_cast<short>(first->compare(second.get()));
 }
 
 } // namespace WebCore

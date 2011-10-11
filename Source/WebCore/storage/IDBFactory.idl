@@ -32,6 +32,9 @@ module storage {
 
         [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name)
             raises (IDBDatabaseException);
+
+        short cmp(in IDBKey first, in IDBKey second)
+            raises (IDBDatabaseException);
     };
 
 }

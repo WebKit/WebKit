@@ -1,3 +1,20 @@
+2011-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: implement IDBFactory.cmp method
+        https://bugs.webkit.org/show_bug.cgi?id=62293
+
+        Reviewed by Tony Chang.
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        * storage/IDBFactory.h:
+        * storage/IDBFactory.idl:
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::compare):
+        (WebCore::IDBKey::isLessThan):
+        (WebCore::IDBKey::isEqual):
+        * storage/IDBKey.h:
+
 2011-10-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] TextureMapperGL leaves GL in a modified state.

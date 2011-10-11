@@ -1,3 +1,17 @@
+2011-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: implement IDBFactory.cmp method
+        https://bugs.webkit.org/show_bug.cgi?id=62293
+
+        Reviewed by Tony Chang.
+
+        Check for IDBFactory.deleteDatabase (NYI) marked as FAIL. crbug.com/72002
+        Tests for array keys (NYI) marked as FAIL. crbug.com/99876
+        Tests for invalid key exception types marked as FAIL. crbug.com/98930
+
+        * storage/indexeddb/factory-basics-expected.txt:
+        * storage/indexeddb/factory-basics.html:
+
 2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Unbarf Win testers after ambiguous expectations were added in r97149.

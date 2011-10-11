@@ -5,6 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
 PASS indexedDB == null is false
+PASS typeof indexedDB.open === 'function' is true
+PASS typeof indexedDB.cmp === 'function' is true
+PASS typeof indexedDB.getDatabaseNames === 'function' is true
+deleteDatabase API is not yet implemented, so this will fail:
+FAIL typeof indexedDB.deleteDatabase === 'function' should be true. Was false.
 indexedDB.getDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false

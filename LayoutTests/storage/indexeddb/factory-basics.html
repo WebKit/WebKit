@@ -14,11 +14,17 @@ description("Test the basics of IndexedDB's IDBFactory.");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
-
 function test()
 {
     indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
     shouldBeFalse("indexedDB == null");
+
+    shouldBeTrue("typeof indexedDB.open === 'function'");
+    shouldBeTrue("typeof indexedDB.cmp === 'function'");
+    shouldBeTrue("typeof indexedDB.getDatabaseNames === 'function'");
+
+    debug("deleteDatabase API is not yet implemented, so this will fail:");
+    shouldBeTrue("typeof indexedDB.deleteDatabase === 'function'");
 
     name = 'storage/indexeddb/factory-basics';
     description = "My Test Database";
@@ -55,7 +61,7 @@ function getDatabaseNamesSuccess2()
     shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
 
     // FIXME: test indexedDB.deleteDatabase(databaseName)
-    // FIXME: test indexedDB.cmp(key1, key2)
+
     done();
 }
 

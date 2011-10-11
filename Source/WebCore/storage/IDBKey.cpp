@@ -39,47 +39,41 @@ IDBKey::~IDBKey()
 {
 }
 
-bool IDBKey::isLessThan(const IDBKey* other) const
+int IDBKey::compare(const IDBKey* other) const
 {
     ASSERT(other);
-    if (other->m_type < m_type)
-        return true;
-    if (other->m_type > m_type)
-        return false;
+    if (m_type != other->m_type)
+        return m_type > other->m_type ? -1 : 1;
 
     switch (m_type) {
     case StringType:
-        return codePointCompare(other->m_string, m_string) > 0;
+        return -codePointCompare(other->m_string, m_string);
     case DateType:
-        return other->m_date > m_date;
+        return (m_date < other->m_date) ? -1 :
+                (m_date > other->m_date) ? 1 : 0;
     case NumberType:
-        return other->m_number > m_number;
+        return (m_number < other->m_number) ? -1 :
+                (m_number > other-> m_number) ? 1 : 0;
     case NullType:
-        return true;
+        return 0;
     }
 
     ASSERT_NOT_REACHED();
-    return false;
+    return 0;
+}
+
+bool IDBKey::isLessThan(const IDBKey* other) const
+{
+    ASSERT(other);
+    return compare(other) == -1;
 }
 
 bool IDBKey::isEqual(const IDBKey* other) const
 {
-    if (!other || other->m_type != m_type)
+    if (!other)
         return false;
 
-    switch (m_type) {
-    case StringType:
-        return other->m_string == m_string;
-    case DateType:
-        return other->m_date == m_date;
-    case NumberType:
-        return other->m_number == m_number;
-    case NullType:
-        return true;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    return !compare(other);
 }
 
 } // namespace WebCore

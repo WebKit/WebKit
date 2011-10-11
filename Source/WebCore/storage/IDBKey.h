@@ -97,6 +97,7 @@ public:
         return m_number;
     }
 
+    int compare(const IDBKey* other) const;
     bool isLessThan(const IDBKey* other) const;
     bool isEqual(const IDBKey* other) const;
 
