@@ -27,7 +27,11 @@
 
 namespace WebCore {
 
+#ifdef GTK_API_VERSION_2
 static GtkWidget* addEntryToTable(GtkTable* table, int row, const char* labelText)
+#else
+static GtkWidget* addEntryToGrid(GtkGrid* grid, int row, const char* labelText)
+#endif
 {
     GtkWidget* label = gtk_label_new(labelText);
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
@@ -35,8 +39,17 @@ static GtkWidget* addEntryToTable(GtkTable* table, int row, const char* labelTex
     GtkWidget* entry = gtk_entry_new();
     gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
+#ifdef GTK_API_VERSION_2
     gtk_table_attach(table, label, 0, 1, row, row + 1, GTK_FILL, static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL), 0, 0);
     gtk_table_attach_defaults(table, entry, 1, 2, row, row + 1);
+#else
+    gtk_grid_attach(grid, label, 0, row, 1, 1);
+    gtk_widget_set_hexpand(label, TRUE);
+
+    gtk_grid_attach(grid, entry, 1, row, 1, 1);
+    gtk_widget_set_hexpand(entry, TRUE);
+    gtk_widget_set_vexpand(entry, TRUE);
+#endif
 
     return entry;
 }
@@ -129,25 +142,49 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
     // Checking that realm is not an empty string.
     bool hasRealm = (realm && realm[0] != '\0');
 
+#ifdef GTK_API_VERSION_2
     GtkWidget* table = gtk_table_new(hasRealm ? 3 : 2, 2, FALSE);
     gtk_table_set_col_spacings(GTK_TABLE(table), 12);
     gtk_table_set_row_spacings(GTK_TABLE(table), 6);
     gtk_container_add(GTK_CONTAINER(entryContainer), table);
+#else
+    GtkWidget* grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
+    gtk_container_add(GTK_CONTAINER(entryContainer), grid);
+#endif
 
     if (hasRealm) {
         GtkWidget* serverMessageDescriptionLabel = gtk_label_new(_("Server message:"));
         gtk_misc_set_alignment(GTK_MISC(serverMessageDescriptionLabel), 0.0, 0.5);
         gtk_label_set_line_wrap(GTK_LABEL(serverMessageDescriptionLabel), TRUE);
+#ifdef GTK_API_VERSION_2
         gtk_table_attach_defaults(GTK_TABLE(table), serverMessageDescriptionLabel, 0, 1, 0, 1);
-
+#else
+        gtk_grid_attach(GTK_GRID(grid), serverMessageDescriptionLabel, 0, 0, 1, 1);
+        gtk_widget_set_hexpand(serverMessageDescriptionLabel, TRUE);
+        gtk_widget_set_vexpand(serverMessageDescriptionLabel, TRUE);
+#endif
         GtkWidget* serverMessageLabel = gtk_label_new(realm);
         gtk_misc_set_alignment(GTK_MISC(serverMessageLabel), 0.0, 0.5);
         gtk_label_set_line_wrap(GTK_LABEL(serverMessageLabel), TRUE);
+#ifdef GTK_API_VERSION_2
         gtk_table_attach_defaults(GTK_TABLE(table), serverMessageLabel, 1, 2, 0, 1);
+#else
+        gtk_grid_attach(GTK_GRID(grid), serverMessageLabel, 1, 0, 1, 1);
+        gtk_widget_set_hexpand(serverMessageLabel, TRUE);
+        gtk_widget_set_vexpand(serverMessageLabel, TRUE);
+#endif
     }
 
+#ifdef GTK_API_VERSION_2
     m_loginEntry = addEntryToTable(GTK_TABLE(table), hasRealm ? 1 : 0, _("Username:"));
     m_passwordEntry = addEntryToTable(GTK_TABLE(table), hasRealm ? 2 : 1, _("Password:"));
+#else
+    m_loginEntry = addEntryToGrid(GTK_GRID(grid), hasRealm ? 1 : 0, _("Username:"));
+    m_passwordEntry = addEntryToGrid(GTK_GRID(grid), hasRealm ? 2 : 1, _("Password:"));
+#endif
+
     gtk_entry_set_visibility(GTK_ENTRY(m_passwordEntry), FALSE);
 
     if (sessionCanSavePasswords(m_session)) {
