@@ -92,6 +92,7 @@ ui.notifications.FailingTestGroup = base.extends('li', {
     init: function(groupName, testNameList)
     {
         var link = this.appendChild(document.createElement('a'));
+        link.target = '_blank';
         link.href = ui.urlForFlakinessDashboard(testNameList);
         link.textContent = groupName;
     }

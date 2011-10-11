@@ -1,5 +1,18 @@
 2011-10-11  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic links to flakiness dashboard should open in a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=69864
+
+        Reviewed by Dimitri Glazkov.
+
+        This bug was obvious in the first five minutes of using this new
+        feature.  :)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
         Tweak the Content-Security-Policy for garden-o-matic.  It turns out
         that * doesn't really mean "all".  I've emailed the W3C working group
         about changing the spec.
