@@ -1,3 +1,9 @@
+2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Mark more flakes as flakes.
+
+        * platform/chromium/test_expectations.txt: Marked flakes.
+
 2011-10-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: implement IDBFactory.cmp method
