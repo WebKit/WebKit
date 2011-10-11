@@ -750,7 +750,7 @@ void MyClass::doSomething(OutArgumentType* outArgument) const
 {
     doSomething();
     if (outArgument)
-        outArgument = m_value;
+        *outArgument = m_value;
 }
 </pre>
 
