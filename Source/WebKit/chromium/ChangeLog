@@ -1,3 +1,9 @@
+2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, roll chromium revision to pick HTML speech input images update.
+
+        * DEPS:
+
 2011-10-11  Antoine Labour  <piman@chromium.org>
 
         Expose WebLayer::isNull
