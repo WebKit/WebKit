@@ -1,5 +1,14 @@
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac rebaseline after r96610.
+
+        * platform/chromium/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt: Copied from
+        LayoutTests/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt.
+        * platform/mac/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt: Copied from
+        LayoutTests/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt.
+
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac rebaseline after r96675.
 
         * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
