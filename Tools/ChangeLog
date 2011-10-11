@@ -1,5 +1,17 @@
 2011-10-11  Adam Barth  <abarth@webkit.org>
 
+        test-webkitpy fails on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=69873
+
+        Reviewed by Eric Seidel.
+
+        This patch fixes one of the two failures.  I'll need to track down the
+        other failure another time.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should warn me when run-webkit-tests errors out (e.g., due to python screw-ups)
         https://bugs.webkit.org/show_bug.cgi?id=65230
 

@@ -51,7 +51,7 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
 
     def test_versions(self):
         port = chromium_mac.ChromiumMacPort()
-        self.assertTrue(port.name() in ('chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac-future'))
+        self.assertTrue(port.name() in ('chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac-lion', 'chromium-mac-future'))
 
         self.assert_name(None, '10.5.3', 'chromium-mac-leopard')
         self.assert_name('chromium-mac', '10.5.3', 'chromium-mac-leopard')
