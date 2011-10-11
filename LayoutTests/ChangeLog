@@ -1,5 +1,21 @@
 2011-10-10  James Simonsen  <simonjam@chromium.org>
 
+        [Chromium] Fix expectations from r97120.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.txt: Removed.
+        * platform/chromium-linux/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/smart-paste-008-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-win/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-win/editing/pasteboard/smart-paste-008-expected.txt: Copied from LayoutTests/platform/chromium/editing/pasteboard/smart-paste-008-expected.txt.
+        * platform/chromium/editing/pasteboard/smart-paste-008-expected.txt:
+
+2011-10-10  James Simonsen  <simonjam@chromium.org>
+
         [Chromium] Rebaselines for r97102 and r97114. Pass 2 more tests.
 
         Unreviewed.
