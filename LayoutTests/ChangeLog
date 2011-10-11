@@ -1,3 +1,14 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move test expectations added by r96987 to Chromium Linux directory,
+        and add the baseline for Mac port.
+
+        * fast/css/text-transform-select-expected.txt: Removed.
+        * platform/chromium-linux/fast/css/text-transform-select-expected.txt: Copied from
+        LayoutTests/fast/css/text-transform-select-expected.txt.
+        * platform/mac/fast/css/text-transform-select-expected.png: Added.
+        * platform/mac/fast/css/text-transform-select-expected.txt: Added.
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AccessibilityMenuList should fire change notification when popup is not open.
