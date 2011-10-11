@@ -448,8 +448,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
 
     // First handle non-integers
     silentSpillAllRegisters(resultGPR);
-    callOperation(dfgConvertJSValueToInt32, GPRInfo::returnValueGPR, jsValueGpr);
-    m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, resultGPR);
+    callOperation(dfgConvertJSValueToInt32, resultGPR, jsValueGpr);
     silentFillAllRegisters(resultGPR);
     JITCompiler::Jump hasCalledToInt32 = m_jit.jump();
 
@@ -986,7 +985,7 @@ bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, 
     return false;
 }
 
-void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, B_DFGOperation_EJJ helperFunction)
+void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
     Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
@@ -1053,7 +1052,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         addBranch(m_jit.jump(), notTaken);
 }
 
-void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, B_DFGOperation_EJJ helperFunction)
+void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
     JSValueOperand arg1(this, node.child1());
     JSValueOperand arg2(this, node.child2());

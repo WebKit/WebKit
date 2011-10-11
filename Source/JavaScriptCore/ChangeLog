@@ -1,3 +1,48 @@
+2011-10-11  Gavin Barraclough  <baraclough@apple.com>
+
+        Switch RegisterSizedBoolean/dfgConvertJSValueToInt32 return type to size_t
+        https://bugs.webkit.org/show_bug.cgi?id=69821
+
+        Reviewed by Filip Pizlo.
+
+        Operations returning types Z (int32_t) and B (RegisterSizedBoolean - implemented as an
+        intptr_t) are indistinguishable on 32-bit Linux, preventing the DFG JIT from building.
+
+        dfgConvertJSValueToInt32 would be better returning a value known to be register sized, for
+        JSVALUE64 (we currently zero-extend in JIT code, potentially introducing an unnecessary
+        move), so by switching all associated operations to return a size_t we can fix the type
+        problem on Linux & make it a small tweak that removes an unnecessary instruction.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+            - comparisons now return a size_t.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+            - Removed Z_DFGOperation_EJ form.
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+            - comparisons now return a size_t.
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+            - comparisons now return a size_t.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+            - Change return types for comparison operations & dfgConvertJSValueToInt32 to size_t,
+              Both need to return values zero extended to fill a register.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+            - comparisons now return a size_t.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+            - comparisons now return a size_t.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+            - comparisons now return a size_t.
+
 2011-10-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove all references to QTDIR_build and standalone_package

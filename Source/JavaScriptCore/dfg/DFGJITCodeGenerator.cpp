@@ -345,7 +345,7 @@ void JITCodeGenerator::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex va
 #endif
 }
 
-bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::RelationalCondition cond, B_DFGOperation_EJJ helperFunction)
+bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
     NodeIndex branchNodeIndex = detectPeepHoleBranch();
     if (branchNodeIndex != NoNode) {

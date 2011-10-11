@@ -38,8 +38,6 @@ namespace DFG {
 
 enum PutKind { Direct, NotDirect };
 
-typedef intptr_t RegisterSizedBoolean;
-
 extern "C" {
 
 #if CALLING_CONVENTION_IS_CDECL
@@ -60,7 +58,6 @@ extern "C" {
     S: size_t
     Z: int32_t
     D: double
-    B: Boolean
     I: Identifier*
     G: GlobalResolveInfo*
 */
@@ -79,8 +76,8 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EGI)(ExecState*, GlobalRes
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EI)(ExecState*, Identifier*);
-typedef RegisterSizedBoolean DFG_OPERATION (*B_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef RegisterSizedBoolean DFG_OPERATION (*B_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef size_t DFG_OPERATION (*S_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
@@ -89,7 +86,6 @@ typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, En
 typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
 typedef double (*D_DFGOperation_DD)(double, double); // Using default calling conventions!
 typedef double DFG_OPERATION (*D_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef int32_t DFG_OPERATION (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
@@ -129,13 +125,14 @@ void DFG_OPERATION operationPutByIdStrictOptimize(ExecState*, EncodedJSValue enc
 void DFG_OPERATION operationPutByIdNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
 void DFG_OPERATION operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
 void DFG_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
-RegisterSizedBoolean DFG_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean DFG_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+// These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
+size_t DFG_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 void* DFG_OPERATION operationVirtualCall(ExecState*);
 void* DFG_OPERATION operationLinkCall(ExecState*);
 void* DFG_OPERATION operationVirtualConstruct(ExecState*);
@@ -157,8 +154,9 @@ DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState*, ReturnAddressPtr fau
 
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
-int32_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
-RegisterSizedBoolean DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
+// This conversion returns an int32_t within a size_t such that the value is zero extended to fill the register.
+size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
+size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
 #if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
 void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*);

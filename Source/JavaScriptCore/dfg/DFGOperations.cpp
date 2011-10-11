@@ -495,32 +495,32 @@ void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(Retu
         stubInfo.seen = true;
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
@@ -531,7 +531,7 @@ RegisterSizedBoolean DFG_OPERATION operationCompareStrictEqCell(ExecState* exec,
     return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
 }
 
-RegisterSizedBoolean DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+size_t DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
@@ -817,12 +817,13 @@ double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue v
     return JSValue::decode(value).toNumber(exec);
 }
 
-int32_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
+size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
 {
-    return JSValue::decode(value).toInt32(exec);
+    // toInt32/toUInt32 return the same value; we want the value zero extended to fill the register.
+    return JSValue::decode(value).toUInt32(exec);
 }
 
-RegisterSizedBoolean DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
+size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
 {
     return JSValue::decode(encodedOp).toBoolean(exec);
 }

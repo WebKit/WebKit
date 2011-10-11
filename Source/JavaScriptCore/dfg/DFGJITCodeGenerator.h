@@ -747,9 +747,9 @@ protected:
     void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
     bool nonSpeculativeCompareNull(Node&, NodeIndex operand, bool invert = false);
     
-    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
-    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
-    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, B_DFGOperation_EJJ helperFunction);
+    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
+    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
+    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node&, NodeIndex branchNodeIndex, bool invert = false);
     void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
@@ -1100,14 +1100,14 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(B_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    JITCompiler::Call callOperation(S_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(B_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         setupStubArguments(arg1, arg2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -1181,13 +1181,6 @@ protected:
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
         return appendCallWithExceptionCheck(operation);
-    }
-    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-
-        return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1)
     {
@@ -1326,7 +1319,7 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(B_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
+    JITCompiler::Call callOperation(S_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
         m_jit.push(arg1Tag);
         m_jit.push(arg1Payload);
@@ -1334,7 +1327,7 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(B_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
+    JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
         m_jit.push(arg2Tag);
         m_jit.push(arg2Payload);
@@ -1423,14 +1416,6 @@ protected:
         return callOperation((V_DFGOperation_EPZJ)operation, arg1, arg2, arg3Tag, arg3Payload);
     }
 
-    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
-    {
-        m_jit.push(arg1Tag);
-        m_jit.push(arg1Payload);
-        m_jit.push(GPRInfo::callFrameRegister);
-
-        return appendCallWithExceptionCheckSetResult(operation, result);
-    }
     JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
         m_jit.push(arg1Tag);
