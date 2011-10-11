@@ -1,5 +1,39 @@
 2011-10-11  Gavin Barraclough  <baraclough@apple.com>
 
+        DFG JIT 32_64 - Switch to cdecl calling convention.
+        https://bugs.webkit.org/show_bug.cgi?id=69863
+
+        Reviewed by Oliver Hunt.
+
+        This makes it easier to keep the stack correctly aligned, which is required on OS X.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+            - Provide default FunctionPtr constructors for CDECL functions on STDCALL platforms.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+            - Switch calls to poke arguments rather than pushing them.
+        (JSC::DFG::resetCallArguments):
+        (JSC::DFG::addCallArgument):
+        (JSC::DFG::addCallArgumentBoxed):
+            - Helper functions to stack up call arguments on X86.
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+            - Don't push, poke!
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+            - Don't push, poke!
+        * dfg/DFGOperations.cpp:
+            - Switch ReturnAddress wrappers to push return address last, update asm trampolines.
+        * dfg/DFGOperations.h:
+            - switch DFG_OPERATION to assert CDECL on STDCALL platforms.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::fmodWithCDecl):
+        (JSC::DFG::SpeculativeJIT::compile):
+            - On STDCALL platforms wrap fmod, since DFG_OPERATION wrappers are CDECL.
+
+2011-10-11  Gavin Barraclough  <baraclough@apple.com>
+
         Switch RegisterSizedBoolean/dfgConvertJSValueToInt32 return type to size_t
         https://bugs.webkit.org/show_bug.cgi?id=69821
 

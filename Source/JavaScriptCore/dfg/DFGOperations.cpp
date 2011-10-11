@@ -43,6 +43,7 @@
 #endif
 
 #if CPU(X86_64)
+
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
     asm( \
     ".globl " SYMBOL_STRING(function) "\n" \
@@ -50,18 +51,37 @@
         "mov (%rsp), %" STRINGIZE(register) "\n" \
         "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
     );
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
+
 #elif CPU(X86)
-#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, offset) \
     asm( \
     ".globl " SYMBOL_STRING(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
-        "push (%esp)\n" \
+        "mov (%esp), %eax\n" \
+        "mov %eax, " STRINGIZE(offset) "(%esp)\n" \
         "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
     );
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8)
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 16)
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 24)
+
 #endif
-#define FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
-#define FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
-#define FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
+
+#define P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
+void* DFG_OPERATION function##WithReturnAddress(ExecState*, ReturnAddressPtr); \
+FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)
+
+#define J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
+EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr); \
+FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)
+
+#define V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+void DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr); \
+FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function)
 
 namespace JSC { namespace DFG {
 
@@ -255,15 +275,8 @@ EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, JSCell* base, Ide
     return JSValue::encode(baseValue.get(exec, *propertyName, slot));
 }
 
-#if CPU(X86_64)
-EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
+J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetMethodOptimize);
 EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
-EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
@@ -278,15 +291,8 @@ EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ReturnA
     return JSValue::encode(result);
 }
 
-#if CPU(X86_64)
-EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
+J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetByIdBuildList);
 EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr, ExecState*, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdBuildList);
-EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
@@ -298,15 +304,8 @@ EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ReturnAd
     return JSValue::encode(result);
 }
 
-#if CPU(X86_64)
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
+J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetByIdProtoBuildList);
 EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr, ExecState*, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
@@ -318,15 +317,8 @@ EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(Ret
     return JSValue::encode(result);
 }
 
-#if CPU(X86_64)
-EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
+J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetByIdOptimize);
 EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
-EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
@@ -403,15 +395,8 @@ void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSVal
     JSValue(base).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-#if CPU(X86_64)
-void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdStrictOptimize);
 void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, EncodedJSValue, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
-void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
@@ -426,15 +411,8 @@ void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ReturnAddress
         stubInfo.seen = true;
 }
 
-#if CPU(X86_64)
-void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdNonStrictOptimize);
 void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, EncodedJSValue, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
-void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
@@ -449,15 +427,8 @@ void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ReturnAddr
         stubInfo.seen = true;
 }
 
-#if CPU(X86_64)
-void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictOptimize);
 void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, EncodedJSValue, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
-void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
@@ -472,15 +443,8 @@ void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ReturnA
         stubInfo.seen = true;
 }
 
-#if CPU(X86_64)
-void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictOptimize);
 void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr, ExecState*, EncodedJSValue, JSCell*, Identifier*);
-FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
-void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
-#endif
 {
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
@@ -552,10 +516,7 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
-    "mov (%esp), %ecx\n"
-    "mov %edi, (%esp)\n"
-    "lea -4(%esp), %esp\n"
-    "mov %ecx, (%esp)\n"
+    "mov %edi, 4(%esp)\n"
     "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
@@ -659,28 +620,14 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
     return codePtr.executableAddress();
 }
 
-#if CPU(X86_64)
-void* DFG_OPERATION operationLinkCallWithReturnAddress(ExecState*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
+P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(operationLinkCall);
 void* DFG_OPERATION operationLinkCallWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void* DFG_OPERATION operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
-FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkCall);
-void* DFG_OPERATION operationLinkCallWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
-#endif
 {
     return linkFor(execCallee, returnAddress, CodeForCall);
 }
 
-#if CPU(X86_64)
-void* DFG_OPERATION operationLinkConstructWithReturnAddress(ExecState*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
+P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(operationLinkConstruct);
 void* DFG_OPERATION operationLinkConstructWithReturnAddress(ExecState* execCallee, ReturnAddressPtr returnAddress)
-#elif CPU(X86)
-void* DFG_OPERATION operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee);
-FUNCTION_WRAPPER_WITH_ARG2_RETURN_ADDRESS(operationLinkConstruct);
-void* DFG_OPERATION operationLinkConstructWithReturnAddress(ReturnAddressPtr returnAddress, ExecState* execCallee)
-#endif
 {
     return linkFor(execCallee, returnAddress, CodeForConstruct);
 }

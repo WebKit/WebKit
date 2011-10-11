@@ -40,8 +40,8 @@ enum PutKind { Direct, NotDirect };
 
 extern "C" {
 
-#if CALLING_CONVENTION_IS_CDECL
-#define DFG_OPERATION __attribute__ ((stdcall))
+#if CALLING_CONVENTION_IS_STDCALL
+#define DFG_OPERATION CDECL
 #else
 #define DFG_OPERATION
 #endif
@@ -84,7 +84,7 @@ typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, En
 typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, Identifier*);
 typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
-typedef double (*D_DFGOperation_DD)(double, double); // Using default calling conventions!
+typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
 typedef double DFG_OPERATION (*D_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 

@@ -33,6 +33,16 @@
 
 namespace JSC { namespace DFG {
 
+// On Windows we need to wrap fmod; on other platforms we can call it directly.
+#if CALLING_CONVENTION_IS_STDCALL
+static double CDECL fmodWithCDecl(double x, double y)
+{
+    return fmod(x, y);
+}
+#else
+#define fmodWithCDecl fmod
+#endif
+
 #if USE(JSVALUE32_64)
 
 template<bool strict>
@@ -1095,7 +1105,7 @@ void SpeculativeJIT::compile(Node& node)
             
             FPRResult result(this);
 
-            callOperation(fmod, result.fpr(), op1FPR, op2FPR);
+            callOperation(fmodWithCDecl, result.fpr(), op1FPR, op2FPR);
             
             doubleResult(result.fpr(), m_compileIndex);
             break;

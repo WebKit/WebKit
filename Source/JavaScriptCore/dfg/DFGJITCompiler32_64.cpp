@@ -535,8 +535,8 @@ void JITCompiler::compileBody()
         // of the call out from JIT code that threw the exception; this is still
         // available on the stack, just below the stack pointer!
         peek(GPRInfo::argumentGPR1, -1);
-        push(GPRInfo::argumentGPR1);
-        push(GPRInfo::callFrameRegister);
+        poke(GPRInfo::callFrameRegister);
+        poke(GPRInfo::argumentGPR1, 1);
         m_calls.append(CallRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
         // and the address of the handler in returnValueGPR2.
