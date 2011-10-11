@@ -1,3 +1,13 @@
+2011-10-11  Antoine Labour  <piman@chromium.org>
+
+        Expose WebLayer::isNull
+        https://bugs.webkit.org/show_bug.cgi?id=69813
+
+        Reviewed by Darin Fisher.
+
+        * public/WebLayer.h:
+        (WebKit::WebLayer::isNull):
+
 2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97087.

@@ -49,6 +49,7 @@ public:
         assign(layer);
         return *this;
     }
+    bool isNull() { return m_private.isNull(); }
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebLayer&);
     WEBKIT_EXPORT bool equals(const WebLayer&) const;
