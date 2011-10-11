@@ -46,14 +46,20 @@ public:
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
+    static v8::Handle<v8::Object> existingWrapper(TestSerializedScriptValueInterface*);
+
 private:
     static v8::Handle<v8::Object> wrapSlow(TestSerializedScriptValueInterface*);
 };
 
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::existingWrapper(TestSerializedScriptValueInterface* impl)
+{
+    return getDOMObjectMap().get(impl);
+}
 
 v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerializedScriptValueInterface* impl)
 {
-        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestSerializedScriptValueInterface::wrapSlow(impl);

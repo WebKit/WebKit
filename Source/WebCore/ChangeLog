@@ -1,3 +1,24 @@
+2011-10-10  Adam Barth  <abarth@webkit.org>
+
+        Update test results.
+
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::existingWrapper):
+        (WebCore::V8TestInterface::wrap):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::existingWrapper):
+        (WebCore::V8TestMediaQueryListListener::wrap):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::readOnlyTestObjAttrAttrGetter):
+        (WebCore::TestObjInternal::cachedAttribute1AttrGetter):
+        (WebCore::TestObjInternal::cachedAttribute2AttrGetter):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::V8TestObj::existingWrapper):
+        (WebCore::V8TestObj::wrap):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::existingWrapper):
+        (WebCore::V8TestSerializedScriptValueInterface::wrap):
+
 2011-10-10  Abhishek Arya  <inferno@chromium.org>
 
         Style not updated on text fragment in :first-letter

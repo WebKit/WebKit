@@ -49,14 +49,20 @@ public:
     static v8::Handle<v8::Value> customAttrAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
     static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
+    static v8::Handle<v8::Object> existingWrapper(TestObj*);
+
 private:
     static v8::Handle<v8::Object> wrapSlow(TestObj*);
 };
 
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestObj::existingWrapper(TestObj* impl)
+{
+    return getDOMObjectMap().get(impl);
+}
 
 v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
 {
-        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestObj::wrapSlow(impl);
