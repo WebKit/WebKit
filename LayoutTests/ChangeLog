@@ -1,3 +1,15 @@
+2011-10-11  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r96770-r96777): fast/dom/Window/window-properties.html, fast/dom/prototype-inheritance-2.html, fast/js/global-constructors.html failing on SnowLeopard Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=69800
+
+        Reviewed by Csaba Osztrogonác.
+
+        Rebaseline after r96774.
+
+        * platform/mac/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+
 2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Update test expectation after r96712.

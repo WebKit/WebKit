@@ -588,6 +588,10 @@ static void resetDefaultsToConsistentValues()
     [preferences setAsynchronousSpellCheckingEnabled:NO];
     [preferences setHixie76WebSocketProtocolEnabled:YES];
 
+#if ENABLE(WEB_AUDIO)
+    [preferences setWebAudioEnabled:YES];
+#endif
+
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
     
     LayoutTestController::setSerializeHTTPLoads(false);
