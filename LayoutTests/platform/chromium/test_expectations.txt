@@ -3871,4 +3871,6 @@ BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 
 // Suddenly crash sporadically.
-BUGCR99899 MAC CPU-CG : fast/parser/document-write-onload-ordering.html = CRASH PASS
+BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
+BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
+BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH PASS
