@@ -8,7 +8,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -27,11 +27,7 @@ layer at (0,0) size 800x600
           text run at (522,0) width 250: "Spaces should surround the pasted word."
       RenderBlock {DIV} at (0,92) size 784x20
         RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 4x19
-            text run at (0,0) width 4: "f"
-          RenderText {#text} at (4,0) size 24x19
-            text run at (4,0) width 24: " foo"
-          RenderText {#text} at (28,0) size 24x19
-            text run at (28,0) width 24: " bar"
+          RenderText {#text} at (0,0) size 52x19
+            text run at (0,0) width 52: "f foo bar"
         RenderBlock (anonymous) at (0,20) size 784x0
-caret: position 4 of child 1 {#text} of child 0 {DIV} of child 4 {DIV} of body
+caret: position 5 of child 0 {#text} of child 0 {DIV} of child 4 {DIV} of body
