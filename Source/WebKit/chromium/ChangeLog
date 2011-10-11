@@ -1,3 +1,14 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        WebAccessibilityObject needs titleUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=69869
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::titleUIElement):
+
 2011-10-10  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Add stub implementation of WebKitMutationObserver

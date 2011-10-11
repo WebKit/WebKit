@@ -632,6 +632,15 @@ WebString WebAccessibilityObject::title() const
     return m_private->title();
 }
 
+WebAccessibilityObject WebAccessibilityObject::titleUIElement() const
+{
+    if (m_private.isNull())
+        return WebAccessibilityObject();
+
+    m_private->updateBackingStore();
+    return WebAccessibilityObject(m_private->titleUIElement());
+}
+
 WebURL WebAccessibilityObject::url() const
 {
     if (m_private.isNull())
