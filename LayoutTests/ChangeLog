@@ -1,3 +1,12 @@
+2011-10-11  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        [Qt] Update test expectation after r97109.
+
+        Unreviewed gardening.
+
+        * platform/qt/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/qt/fast/css-generated-content/table-parts-before-and-after-expected.txt: Added.
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         Enable accessibility tests on chromium and update test expectations.
