@@ -350,9 +350,7 @@ void JITCodeGenerator::nonSpeculativeValueToNumber(Node& node)
     // Next handle cells (& other JS immediates)
     nonNumeric.link(&m_jit);
     silentSpillAllRegisters(gpr);
-    m_jit.move(jsValueGpr, GPRInfo::argumentGPR1);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    appendCallWithExceptionCheck(dfgConvertJSValueToNumber);
+    callOperation(dfgConvertJSValueToNumber, FPRInfo::returnValueFPR, jsValueGpr);
     boxDouble(FPRInfo::returnValueFPR, gpr);
     silentFillAllRegisters(gpr);
     JITCompiler::Jump hasCalledToNumber = m_jit.jump();
@@ -410,9 +408,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
 
     // First handle non-integers
     silentSpillAllRegisters(resultGPR);
-    m_jit.move(jsValueGpr, GPRInfo::argumentGPR1);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    appendCallWithExceptionCheck(dfgConvertJSValueToInt32);
+    callOperation(dfgConvertJSValueToInt32, GPRInfo::returnValueGPR, jsValueGpr);
     m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, resultGPR);
     silentFillAllRegisters(resultGPR);
     JITCompiler::Jump hasCalledToInt32 = m_jit.jump();

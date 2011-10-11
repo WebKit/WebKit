@@ -1,5 +1,22 @@
 2011-10-10  Gavin Barraclough  <baraclough@apple.com>
 
+        DFG JIT switch dfgConvert methods to use callOperation
+        https://bugs.webkit.org/show_bug.cgi?id=69806
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        * dfg/DFGOperations.h:
+
+2011-10-10  Gavin Barraclough  <baraclough@apple.com>
+
         Remove some unused methods from the DFG JIT.
 
         Rubber stamped by Oliver Hunt

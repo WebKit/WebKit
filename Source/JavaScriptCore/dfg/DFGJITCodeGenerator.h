@@ -1179,6 +1179,22 @@ protected:
 
         return appendCallWithExceptionCheck(operation);
     }
+    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.move(arg1, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1)
+    {
+        m_jit.move(arg1, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        JITCompiler::Call call = appendCallWithExceptionCheck(operation);
+        m_jit.moveDouble(FPRInfo::returnValueFPR, result);
+        return call;
+    }
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
@@ -1404,6 +1420,25 @@ protected:
         return callOperation((V_DFGOperation_EPZJ)operation, arg1, arg2, arg3Tag, arg3Payload);
     }
 
+    JITCompiler::Call callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
+    {
+        m_jit.push(arg1Tag);
+        m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
+    {
+        m_jit.push(arg1Tag);
+        m_jit.push(arg1Payload);
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        JITCompiler::Call call = appendCallWithExceptionCheck(operation);
+        m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
+        m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
+        return call;
+    }
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         m_jit.subPtr(TrustedImm32(2 * sizeof(double)), JITCompiler::stackPointerRegister);
