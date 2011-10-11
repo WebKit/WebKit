@@ -1,3 +1,49 @@
+2011-10-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Synchronize tiling with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=69151
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable "externally managed" tiles in TextureMapperNodes.
+        Currently, TextureMapperNodes manage tiles themselves, the tiles being there only to
+        overcome the 2k texture size limitation. For WebKit2, we want those tiles to be managed
+        externally, namely through the web process via the remote tile backend for
+        TiledBackingStore.
+
+        This patch adds a store for those externally managed tiles, and adds the necessary code to
+        paint them instead of the owned tiles when appropriate.
+
+        In addition, in order to support externally managed remote tiles, we have to calculate per-
+        layer visible rects and pass them to the web process. The new collectVisibleContentRects
+        does this - and is directly tied to the externally-managed tile approach.
+
+        Code is disabled for now, but covered by existing compositing tests.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::computeTiles):
+        (WebCore::clampRect):
+        (WebCore::TextureMapperNode::collectVisibleContentRects):
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::targetRectForTileRect):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::createContentsTile):
+        (WebCore::TextureMapperNode::removeContentsTile):
+        (WebCore::TextureMapperNode::setTileBackBufferTextureForDirectlyCompositedImage):
+        (WebCore::TextureMapperNode::clearAllDirectlyCompositedImageTiles):
+        (WebCore::TextureMapperNode::setContentsTileBackBuffer):
+        (WebCore::TextureMapperNode::swapContentsBuffers):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperNode::size):
+        (WebCore::TextureMapperNode::setTileOwnership):
+        (WebCore::TextureMapperNode::setID):
+        (WebCore::TextureMapperNode::id):
+        (WebCore::TextureMapperNode::texture):
+        (WebCore::TextureMapperNode::ExternallyManagedTile::ExternallyManagedTile):
+        (WebCore::TextureMapperNode::State::State):
+
 2011-10-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] GtkAuthenticationDialog: use GtkGrid instead of GtkTable

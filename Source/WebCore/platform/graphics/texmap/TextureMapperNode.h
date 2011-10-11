@@ -24,6 +24,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "Image.h"
+#include "IntPointHash.h"
 #include "TextureMapper.h"
 #include "Timer.h"
 #include "TransformOperations.h"
@@ -103,8 +104,16 @@ public:
     };
 
     enum SyncOptions {
-        TraverseDescendants = 1
+        TraverseDescendants = 1,
+        ComputationsOnly = 2
     };
+
+    enum TileOwnership {
+        OwnedTiles,
+        ExternallyManagedTiles
+    };
+
+    typedef HashMap<TextureMapperNode*, FloatRect> NodeRectMap;
 
     // The compositor lets us special-case images and colors, so we try to do so.
     enum ContentType { HTMLContentType, DirectImageContentType, ColorContentType, MediaContentType, Canvas3DContentType};
@@ -132,7 +141,7 @@ public:
 
     void syncCompositingState(GraphicsLayerTextureMapper*, int syncOptions = 0);
     void syncCompositingState(GraphicsLayerTextureMapper*, TextureMapper*, int syncOptions = 0);
-    IntSize size() const { return IntSize(m_size.width() + .5, m_size.height() + .5); }
+    IntSize size() const { return IntSize(m_size.width(), m_size.height()); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
@@ -140,19 +149,30 @@ public:
 
     void paint();
 
-    bool needsToComputeBoundingRect() const;
+#if ENABLE(TILED_BACKING_STORE)
+    void setTileOwnership(TileOwnership ownership) { m_state.tileOwnership = ownership; }
+    int createContentsTile(float scale);
+    void removeContentsTile(int id);
+    void setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, void* bits, BitmapTexture::PixelFormat);
+    void setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture*);
+    void clearAllDirectlyCompositedImageTiles();
+    bool collectVisibleContentsRects(NodeRectMap&, const FloatRect&);
+#endif
+    void setID(int id) { m_id = id; }
+    int id() const { return m_id; }
 
     const TextureMapperPlatformLayer* media() const { return m_currentContent.media; }
 
 private:
     TextureMapperNode* rootLayer();
     void computeAllTransforms();
+    void computeVisibleRect(const FloatRect& rootVisibleRect);
     void computePerspectiveTransformIfNeeded();
     void computeReplicaTransformIfNeeded();
     void computeOverlapsIfNeeded();
     void computeLocalTransformIfNeeded();
-    void computeBoundingRectFromRootIfNeeded();
     void computeTiles();
+    void swapContentsBuffers();
     int countDescendantsWithContent() const;
     FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
     void invalidateViewport(const FloatRect&);
@@ -162,7 +182,7 @@ private:
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperNode* >& array, int first, int last);
 
-    BitmapTexture* texture() { return m_tiles.isEmpty() ? 0 : m_tiles[0].texture.get(); }
+    BitmapTexture* texture() { return m_ownedTiles.isEmpty() ? 0 : m_ownedTiles[0].texture.get(); }
 
     void paintRecursive(TextureMapperPaintOptions);
     bool paintReflection(const TextureMapperPaintOptions&, BitmapTexture* surface);
@@ -185,10 +205,7 @@ private:
         TransformationMatrix local;
         TransformationMatrix base;
         TransformationMatrix perspective;
-        FloatRect targetBoundingRect;
         float centerZ;
-        FloatRect boundingRectFromRoot;
-        FloatRect boundingRectFromRootForDescendants;
         TransformData() { }
     };
 
@@ -208,13 +225,38 @@ private:
     {
         return m_currentContent.contentType == DirectImageContentType && m_currentContent.image ? m_currentContent.image->size() : m_size;
     }
-    struct Tile {
+    struct OwnedTile {
         FloatRect rect;
         RefPtr<BitmapTexture> texture;
         bool needsReset;
     };
 
-    Vector<Tile> m_tiles;
+    Vector<OwnedTile> m_ownedTiles;
+
+#if ENABLE(TILED_BACKING_STORE)
+    struct ExternallyManagedTileBuffer {
+        FloatRect sourceRect;
+        FloatRect targetRect;
+        RefPtr<BitmapTexture> texture;
+    };
+
+    struct ExternallyManagedTile {
+        bool isBackBufferUpdated;
+        bool isDirectlyCompositedImage;
+        float scale;
+        ExternallyManagedTileBuffer frontBuffer;
+        ExternallyManagedTileBuffer backBuffer;
+
+        ExternallyManagedTile(float scale = 1.0)
+            : isBackBufferUpdated(false)
+            , isDirectlyCompositedImage(false)
+            , scale(scale)
+        {
+        }
+    };
+
+    HashMap<int, ExternallyManagedTile> m_externallyManagedTiles;
+#endif
 
     ContentData m_currentContent;
 
@@ -224,6 +266,7 @@ private:
     FloatSize m_size;
     float m_opacity;
     String m_name;
+    int m_id;
 
     struct State {
         FloatPoint pos;
@@ -245,10 +288,11 @@ private:
         bool needsReset: 1;
         bool mightHaveOverlaps : 1;
         bool needsRepaint;
-        FloatRect visibleRect;
-        FloatRect rootVisibleRect;
+        IntRect visibleRect;
         float contentScale;
-
+#if ENABLE(TILED_BACKING_STORE)
+        TileOwnership tileOwnership;
+#endif
         State()
             : opacity(1.f)
             , maskLayer(0)
@@ -261,7 +305,11 @@ private:
             , visible(true)
             , needsReset(false)
             , mightHaveOverlaps(false)
+            , needsRepaint(false)
             , contentScale(1.0f)
+#if ENABLE(TILED_BACKING_STORE)
+            , tileOwnership(OwnedTiles)
+#endif
         {
         }
     };
