@@ -1,3 +1,20 @@
+2011-10-10  Adam Barth  <abarth@webkit.org>
+
+        [V8] CodeGeneratorV8 shouldn't hardcode the list of ActiveDOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=69792
+
+        Reviewed by Nate Chapin.
+
+        We used to hard code the list of active DOM objects in the code
+        generator, but now we have an IDL attribute.  This patch switches the
+        code generator over to using the IDL attribute.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateImplementation):
+        (GetDomMapFunction):
+
 2011-10-10  Nico Weber  <thakis@chromium.org>
 
         PluginDocumentParser uses incorrect syntax for background color

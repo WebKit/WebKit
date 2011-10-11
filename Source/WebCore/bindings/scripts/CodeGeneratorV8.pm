@@ -265,7 +265,7 @@ sub GenerateHeader
     # EventTarget.
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
 
-    my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || IsActiveDomType($interfaceName) || $className =~ /SVG/;
+    my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"} || $className =~ /SVG/;
     if (!$hasDependentLifetime) {
         foreach (@{$dataNode->parents}) {
             my $parent = $codeGenerator->StripModule($_);
@@ -349,7 +349,7 @@ sub GenerateHeader
     static void derefObject(void*);
     static WrapperTypeInfo info;
 END
-    if (IsActiveDomType($implClassName)) {
+    if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@headerContent, "    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);\n");
     }
 
@@ -420,6 +420,8 @@ END
     }
 
     push(@headerContent, <<END);
+    static v8::Handle<v8::Object> existingWrapper(${nativeType}*);
+
 private:
     static v8::Handle<v8::Object> wrapSlow(${nativeType}*);
 };
@@ -427,14 +429,20 @@ private:
 END
 
     push(@headerContent, <<END);
+ALWAYS_INLINE v8::Handle<v8::Object> ${className}::existingWrapper(${nativeType}* impl)
+{
+END
+    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getWrapper(impl)" : "${domMapFunction}.get(impl)";
+    push(@headerContent, <<END);
+    return ${getWrapper};
+}
 
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput})
 {
 END
     push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
-    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getWrapper(impl)" : "${domMapFunction}.get(impl)";
     push(@headerContent, <<END);
-        v8::Handle<v8::Object> wrapper = ${getWrapper};
+        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
 END
@@ -880,11 +888,10 @@ END
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))) {
         AddIncludesForType($returnType);
-        my $domMapFunction = GetDomMapFunction(0, $returnType);
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
-        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Value>();\n");
+        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? V8${returnType}::existingWrapper(result.get()) : v8::Handle<v8::Object>();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
@@ -1916,7 +1923,7 @@ sub GenerateImplementation
 
     AddIncludesForType($interfaceName);
 
-    my $toActive = IsActiveDomType($interfaceName) ? "${className}::toActiveDOMObject" : "0";
+    my $toActive = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "${className}::toActiveDOMObject" : "0";
 
     # Find the super descriptor.
     my $parentClass = "";
@@ -2442,7 +2449,7 @@ bool ${className}::HasInstance(v8::Handle<v8::Value> value)
 
 END
 
-    if (IsActiveDomType($interfaceName)) {
+    if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         # MessagePort is handled like an active dom object even though it doesn't inherit
         # from ActiveDOMObject, so don't try to cast it to ActiveDOMObject.
         my $returnValue = $interfaceName eq "MessagePort" ? "0" : "toNative(object)";
@@ -2852,26 +2859,9 @@ sub GetDomMapFunction
     my $dataNode = shift;
     my $type = shift;
     return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
-    return "getDOMNodeMap()" if ($dataNode && IsNodeSubType($dataNode));
-    return "getActiveDOMObjectMap()" if IsActiveDomType($type);
+    return "getDOMNodeMap()" if (IsNodeSubType($dataNode));
+    return "getActiveDOMObjectMap()" if $dataNode->extendedAttributes->{"ActiveDOMObject"};
     return "getDOMObjectMap()";
-}
-
-sub IsActiveDomType
-{
-    # FIXME: Consider making this an .idl attribute.
-    my $type = shift;
-    return 1 if $type eq "EventSource";
-    return 1 if $type eq "MessagePort";
-    return 1 if $type eq "XMLHttpRequest";
-    return 1 if $type eq "WebSocket";
-    return 1 if $type eq "Worker";
-    return 1 if $type eq "SharedWorker";
-    return 1 if $type eq "IDBRequest";
-    return 1 if $type eq "IDBTransaction";
-    return 1 if $type eq "FileReader";
-    return 1 if $type eq "FileWriter";
-    return 0;
 }
 
 sub GetNativeTypeForConversions
