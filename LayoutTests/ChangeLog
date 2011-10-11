@@ -1,3 +1,18 @@
+2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Update test expectations after r96987, r97088 and r97114.
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/gtk/fast/css-generated-content/table-parts-before-and-after-expected.txt: Added.
+        * platform/gtk/fast/css/text-transform-select-expected.png: Added.
+        * platform/gtk/fast/css/text-transform-select-expected.txt: Added.
+        * platform/gtk/fullscreen/full-screen-render-inline-expected.png: Added.
+        * platform/gtk/fullscreen/full-screen-render-inline-expected.txt: Added.
+        * platform/gtk/fullscreen/parent-flow-inline-with-block-child-expected.png: Added.
+        * platform/gtk/fullscreen/parent-flow-inline-with-block-child-expected.txt: Added.
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] Skip mac- and win-specific accessibility tests in Chromium.
