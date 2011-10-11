@@ -1,3 +1,28 @@
+2011-10-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Should be able to display multi-page PDFs in subframes
+        https://bugs.webkit.org/show_bug.cgi?id=69804
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::updateScrollbars): Page step should be exactly one page, so that
+        one could step over the document page by page. It certainly shouldn't be a portion of the
+        whole document.
+        (WebKit::BuiltInPDFView::pdfDocumentDidLoad): Moved duplicated code from load callbacks here.
+        (WebKit::BuiltInPDFView::calculateSizes): Calculate document size including gutters, and
+        remember page boxes.
+        (WebKit::BuiltInPDFView::paint): Split into separate functions.
+        (WebKit::BuiltInPDFView::paintBackground): Just paint gray background for the whole dirty rect.
+        (WebKit::BuiltInPDFView::paintContent): Paint pages and shadow under them. This code is still
+        fairly naive, as it doesn't understand annotations or page rotation.
+        Constants for shadows roughly match PDFView, but not quite, since it draws entirely custom
+        shadows.
+        (WebKit::BuiltInPDFView::paintControls): Moved scrollbar and scroll corner painting here.
+        (WebKit::BuiltInPDFView::streamDidFinishLoading): Moved common code into pdfDocumentDidLoad().
+        (WebKit::BuiltInPDFView::manualStreamDidFinishLoading): Ditto.
+
 2011-10-11  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] WebProcess using proxy settings for localhost as well

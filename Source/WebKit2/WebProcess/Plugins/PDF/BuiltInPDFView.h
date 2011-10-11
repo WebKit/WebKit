@@ -53,18 +53,21 @@ private:
     PluginView* pluginView();
     const PluginView* pluginView() const;
 
-    void calculateDocumentSize();
     void updateScrollbars();
     void didAddHorizontalScrollbar(WebCore::Scrollbar*);
     void willRemoveHorizontalScrollbar(WebCore::Scrollbar*);
     PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
     void pdfDocumentDidLoad();
+    void calculateSizes();
+    void paintBackground(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    void paintContent(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    void paintControls(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
 
     // Plug-in methods
     virtual bool initialize(const Parameters&);
     virtual void destroy();
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates);
     virtual void updateControlTints(WebCore::GraphicsContext*);
     virtual PassRefPtr<ShareableBitmap> snapshot();
 #if PLATFORM(MAC)
@@ -136,6 +139,7 @@ private:
 
     RetainPtr<CFMutableDataRef> m_dataBuffer;
     RetainPtr<CGPDFDocumentRef> m_pdfDocument;
+    Vector<WebCore::IntRect> m_pageBoxes;
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
 
     RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;

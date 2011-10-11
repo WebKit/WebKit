@@ -48,6 +48,11 @@ namespace WebKit {
 
 const uint64_t pdfDocumentRequestID = 1; // PluginController supports loading multiple streams, but we only need one for PDF.
 
+const int gutterHeight = 10;
+const int shadowOffsetX = 0;
+const int shadowOffsetY = -2;
+const int shadowSize = 7;
+
 PassRefPtr<BuiltInPDFView> BuiltInPDFView::create(Page* page)
 {
     return adoptRef(new BuiltInPDFView(page));
@@ -94,18 +99,6 @@ const PluginView* BuiltInPDFView::pluginView() const
     return static_cast<const PluginView*>(controller());
 }
 
-void BuiltInPDFView::calculateDocumentSize()
-{
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), 1); // FIXME: Draw all pages of a document.
-    if (!pdfPage)
-        return;
-
-    CGRect box = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
-    if (CGRectIsEmpty(box))
-        box = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
-    m_pdfDocumentSize = IntSize(box.size);
-}
-
 void BuiltInPDFView::updateScrollbars()
 {
     if (m_horizontalScrollbar) {
@@ -123,9 +116,7 @@ void BuiltInPDFView::updateScrollbars()
     int horizontalScrollbarHeight = (m_horizontalScrollbar && !m_horizontalScrollbar->isOverlayScrollbar()) ? m_horizontalScrollbar->height() : 0;
     int verticalScrollbarWidth = (m_verticalScrollbar && !m_verticalScrollbar->isOverlayScrollbar()) ? m_verticalScrollbar->width() : 0;
 
-    // FIXME: Use document page size for PageDown step.
-    int clientHeight = m_pdfDocumentSize.height();
-    int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
+    int pageStep = m_pageBoxes.isEmpty() ? 0 : m_pageBoxes[0].height();
 
     if (m_horizontalScrollbar) {
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
@@ -189,10 +180,30 @@ void BuiltInPDFView::destroyScrollbar(ScrollbarOrientation orientation)
 
 void BuiltInPDFView::pdfDocumentDidLoad()
 {
-    calculateDocumentSize();
+    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_dataBuffer.get()));
+    m_pdfDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
+
+    calculateSizes();
     updateScrollbars();
 
     controller()->invalidate(IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
+}
+
+void BuiltInPDFView::calculateSizes()
+{
+    size_t pageCount = CGPDFDocumentGetNumberOfPages(m_pdfDocument.get());
+    for (size_t i = 0; i < pageCount; ++i) {
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), i + 1);
+        ASSERT(pdfPage);
+
+        CGRect box = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+        if (CGRectIsEmpty(box))
+            box = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
+        m_pageBoxes.append(IntRect(box));
+        m_pdfDocumentSize.setWidth(max(m_pdfDocumentSize.width(), static_cast<int>(box.size.width)));
+        m_pdfDocumentSize.expand(0, box.size.height);
+    }
+    m_pdfDocumentSize.expand(0, gutterHeight * (m_pageBoxes.size() - 1));
 }
 
 bool BuiltInPDFView::initialize(const Parameters& parameters)
@@ -210,41 +221,79 @@ void BuiltInPDFView::destroy()
 
 void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRectInWindowCoordinates)
 {
-    if (!m_pdfDocument) // FIXME: Draw background and loading progress.
-        return;
-
-    // FIXME: This function just draws the fist page of a document at top left corner.
-    // We should show the whole document, centering small ones.
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), 1);
-    if (!pdfPage)
-        return;
-
     scrollAnimator()->contentAreaWillPaint();
 
-    CGContextRef context = graphicsContext->platformContext();
+    paintBackground(graphicsContext, dirtyRectInWindowCoordinates);
+
+    if (!m_pdfDocument) // FIXME: Draw loading progress.
+        return;
+
     GraphicsContextStateSaver stateSaver(*graphicsContext);
-    graphicsContext->clip(dirtyRectInWindowCoordinates);
-    graphicsContext->setImageInterpolationQuality(InterpolationHigh);
-    graphicsContext->setShouldAntialias(true);
-    graphicsContext->setShouldSmoothFonts(true);
 
-    CGRect pageBox = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
-    if (CGRectIsEmpty(pageBox))
-        pageBox = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
-
-    CGContextClipToRect(context, CGRectMake(m_frameRect.x(), m_frameRect.y(), m_pdfDocumentSize.width() - m_scrollOffset.width(), m_pdfDocumentSize.height() - m_scrollOffset.height()));
-    CGContextTranslateCTM(context, m_frameRect.x() - pageBox.origin.x - m_scrollOffset.width(), m_frameRect.y() + pageBox.origin.y + m_pdfDocumentSize.height() - m_scrollOffset.height());
-
-    CGContextScaleCTM(context, 1, -1);
-    CGContextDrawPDFPage(context, pdfPage);
-
-    stateSaver.restore();
-
-    stateSaver.save();
     // Undo translation to window coordinates performed by PluginView::paint().
     IntRect dirtyRect = pluginView()->parent()->windowToContents(dirtyRectInWindowCoordinates);
     IntPoint documentOriginInWindowCoordinates = pluginView()->parent()->windowToContents(IntPoint());
     graphicsContext->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
+
+    paintContent(graphicsContext, dirtyRect);
+    paintControls(graphicsContext, dirtyRect);
+}
+
+void BuiltInPDFView::paintBackground(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
+{
+    GraphicsContextStateSaver stateSaver(*graphicsContext);
+    graphicsContext->setFillColor(Color::gray, ColorSpaceDeviceRGB);
+    graphicsContext->fillRect(dirtyRect);
+}
+
+void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
+{
+    GraphicsContextStateSaver stateSaver(*graphicsContext);
+    CGContextRef context = graphicsContext->platformContext();
+
+    graphicsContext->setImageInterpolationQuality(InterpolationHigh);
+    graphicsContext->setShouldAntialias(true);
+    graphicsContext->setShouldSmoothFonts(true);
+    graphicsContext->setFillColor(Color::white, ColorSpaceDeviceRGB);
+
+    graphicsContext->clip(dirtyRect);
+    IntRect contentRect(dirtyRect);
+    contentRect.moveBy(-pluginView()->location());
+    contentRect.moveBy(IntPoint(m_scrollOffset));
+    graphicsContext->translate(pluginView()->x() - m_scrollOffset.width(), pluginView()->y() - m_scrollOffset.height());
+
+    CGContextScaleCTM(context, 1, -1);
+
+    int pageTop = 0;
+    for (size_t i = 0; i < m_pageBoxes.size(); ++i) {
+        IntRect pageBox = m_pageBoxes[i];
+        if (pageTop > contentRect.maxY())
+            break;
+        if (pageTop + pageBox.height() >= contentRect.y()) {
+            CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), i + 1);
+
+            float extraOffsetForCenteringX = max((m_frameRect.width() - pageBox.width()) / 2.0f, 0.0f);
+            float extraOffsetForCenteringY = (m_pageBoxes.size() == 1) ? max((m_frameRect.height() - pageBox.height() + shadowOffsetY) / 2.0f, 0.0f) : 0;
+
+            graphicsContext->save();
+            graphicsContext->translate(extraOffsetForCenteringX - pageBox.x(), -extraOffsetForCenteringY - pageBox.y() - pageBox.height());
+
+            graphicsContext->setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowSize, Color::black, ColorSpaceDeviceRGB);
+            graphicsContext->fillRect(pageBox);
+            graphicsContext->clearShadow();
+
+            graphicsContext->clip(pageBox);
+
+            CGContextDrawPDFPage(context, pdfPage);
+            graphicsContext->restore();
+        }
+        pageTop += pageBox.height() + gutterHeight;
+        CGContextTranslateCTM(context, 0, -pageBox.height() - gutterHeight);
+    }
+}
+
+void BuiltInPDFView::paintControls(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
+{
     if (m_horizontalScrollbar)
         m_horizontalScrollbar->paint(graphicsContext, dirtyRect);
     if (m_verticalScrollbar)
@@ -334,9 +383,6 @@ void BuiltInPDFView::streamDidFinishLoading(uint64_t streamID)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
-    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_dataBuffer.get()));
-    m_pdfDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
-
     pdfDocumentDidLoad();
 }
 
@@ -361,9 +407,6 @@ void BuiltInPDFView::manualStreamDidReceiveData(const char* bytes, int length)
 
 void BuiltInPDFView::manualStreamDidFinishLoading()
 {
-    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_dataBuffer.get()));
-    m_pdfDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
-
     pdfDocumentDidLoad();
 }
 
