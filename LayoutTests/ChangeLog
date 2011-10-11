@@ -1,3 +1,21 @@
+2011-10-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: implement CompilerSourceMappingProvider.
+        https://bugs.webkit.org/show_bug.cgi?id=69423
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/compiler-source-mapping-provider-expected.txt: Added.
+        * http/tests/inspector/compiler-source-mapping-provider.html: Added.
+        * http/tests/inspector/resources/compiler-source-mapping-provider/app-map: Added.
+        * http/tests/inspector/resources/compiler-source-mapping-provider/app-map.html: Added.
+        * http/tests/inspector/resources/compiler-source-mapping-provider/app.js: Added.
+        (window.onload):
+        (handleClick):
+        * http/tests/inspector/resources/compiler-source-mapping-provider/foo.js: Added.
+        (ClickHandler):
+        (ClickHandler.prototype.handle):
+
 2011-10-11  Mike Reed  <reed@google.com>
 
         re-add support for GDI text behind a compile flag

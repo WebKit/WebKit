@@ -1,0 +1,8 @@
+{
+"version":3,
+"file":"./app-map",
+"lineCount":2,
+"mappings":"AACAA,MAAAC,OAAA,CAAwBC,QAAA,EACxB,CACI,IAAIC,EAAMC,QAAAC,cAAsB,CAAC,KAAD,CAChCF,EAAAG,YAAA,CAAkB,KAClBH,EAAAI,iBAAoB,CAAC,OAAD,CAAUC,WAAV,CAAuB,CAAA,CAAvB,CACpBJ,SAAAK,KAAAC,YAAyB,CAACP,CAAD,CAErBQ,EAAAA,CAAMP,QAAAC,cAAsB,CAAC,KAAD,CAChCM,EAAAL,YAAA,CAAkB,ocAClBF;QAAAK,KAAAC,YAAyB,CAACC,CAAD,CAR7B,CAWSH,SAAAA,YAAW,CAACI,CAAD,CACpB,CAEIC,CAD8BC,IAAZC,YAClBF,QAAc,CAACD,CAAD,CAFlB,CCbSG,QAAAA,aAAY,EACrB,EAGAA,YAAAC,UAAAH,OAAA,CAAwCI,QAAA,CAACL,CAAD,CACxC,CACI,IAAIM,EAAUd,QAAAC,cAAsB,CAAC,KAAD,CACpCa,EAAAZ,YAAA,CAAsBM,CAAAO,UACtBf,SAAAK,KAAAC,YAAyB,CAACQ,CAAD,CAH7B;",
+"sources":["app.js","foo.js"],
+"names":["window","onload","window.onload","foo","document","createElement","textContent","addEventListener","handleClick","body","appendChild","bar","event","handle","handler","ClickHandler","prototype","ClickHandler.prototype.handle","element","timeStamp"]
+}

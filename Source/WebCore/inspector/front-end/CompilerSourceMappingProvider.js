@@ -30,19 +30,102 @@
 
 /**
  * @constructor
+ * @param {string} sourceMappingURL
  */
-WebInspector.CompilerSourceMappingProvider = function()
+WebInspector.CompilerSourceMappingProvider = function(sourceMappingURL)
 {
+    if (!this._initialized) {
+        window.addEventListener("message", this._onMessage, true);
+        WebInspector.CompilerSourceMappingProvider.prototype._initialized = true;
+    }
+    this._sourceMappingURL = sourceMappingURL;
+    this._frameURL = this._sourceMappingURL + ".html";
 }
 
 WebInspector.CompilerSourceMappingProvider.prototype = {
+    /**
+     * @param {function(WebInspector.CompilerSourceMapping)} callback
+     */
     loadSourceMapping: function(callback)
     {
-        // FIXME: load the map from source map server.
+        this._frame = document.createElement("iframe");
+        this._frame.src = this._frameURL;
+        function frameLoaded()
+        {
+            function didLoadData(error, result)
+            {
+                if (error) {
+                    console.log(error);
+                    callback(null);
+                    return;
+                }
+
+                var payload;
+                try {
+                    payload = JSON.parse(result);
+                } catch (e) {
+                    console.log("Failed to parse JSON.");
+                }
+
+                if (payload)
+                    callback(new WebInspector.ClosureCompilerSourceMapping(payload));
+                else
+                    callback(null);
+            }
+            this._sendRequest("loadData", [this._sourceMappingURL], didLoadData);
+        }
+        this._frame.addEventListener("load", frameLoaded.bind(this), true);
+        // FIXME: remove iframe from the document when it is not needed anymore.
+        document.body.appendChild(this._frame);
     },
 
-    loadSourceCode: function(sourceURL, callback)
+    /**
+     * @param {string} sourceURL
+     * @param {function(string)} callback
+     * @param {number} timeout
+     */
+    loadSourceCode: function(sourceURL, callback, timeout)
     {
-        // FIXME: load source code from source map server.
-    }
+        function didSendRequest(error, result)
+        {
+            if (error) {
+                console.log(error);
+                callback("");
+                return;
+            }
+            callback(result);
+        }
+        this._sendRequest("loadData", [sourceURL], didSendRequest, timeout);
+    },
+
+    _sendRequest: function(method, parameters, callback, timeout)
+    {
+        var requestId = this._requestId++;
+        var timerId = setTimeout(this._cancelRequest.bind(this, requestId), timeout || 50);
+        this._requests[requestId] = { callback: callback, timerId: timerId };
+        var requestData = { id: requestId, method: method, params: parameters };
+        this._frame.contentWindow.postMessage(requestData, this._frameURL);
+    },
+
+    _onMessage: function(event)
+    {
+        var requestId = event.data.id;
+        var requests = WebInspector.CompilerSourceMappingProvider.prototype._requests;
+        var request = requests[requestId];
+        if (!request)
+            return;
+        delete requests[requestId];
+        clearTimeout(request.timerId);
+        request.callback(event.data.error, event.data.result);
+    },
+
+    _cancelRequest: function(requestId)
+    {
+        var request = this._requests[requestId];
+        delete this._requests[requestId];
+        request.callback("Request timed out.", null);
+    },
+
+    _requestId: 0,
+    _requests: {}
 }

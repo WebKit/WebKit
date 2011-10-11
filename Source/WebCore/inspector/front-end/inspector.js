@@ -1330,3 +1330,11 @@ WebInspector.PanelHistory.prototype = {
         this._historyIterator = this._history.length - 1;
     }
 }
+
+WebInspector.installSourceMappingForTest = function(url)
+{
+    // FIXME: remove this method when it's possible to set compiler source mappings via UI.
+    var provider = new WebInspector.CompilerSourceMappingProvider(url);
+    var uiSourceCode = WebInspector.panels.scripts.visibleView._delegate._uiSourceCode;
+    uiSourceCode.rawSourceCode.setCompilerSourceMappingProvider(provider);
+}
