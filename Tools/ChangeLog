@@ -1,5 +1,19 @@
 2011-10-11  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should warn me when run-webkit-tests errors out (e.g., due to python screw-ups)
+        https://bugs.webkit.org/show_bug.cgi?id=65230
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch causes us to treat crashed or hung run-webkit-tests runs
+        similarly to how we treat compile failures.  In some sense, they're
+        similar because they prevent us from getting test coverage.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
         Failing builder display in garden-o-matic should have the same visual style as the failure grid
         https://bugs.webkit.org/show_bug.cgi?id=69876
 

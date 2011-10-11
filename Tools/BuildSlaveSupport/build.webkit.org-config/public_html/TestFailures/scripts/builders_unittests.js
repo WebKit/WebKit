@@ -309,6 +309,279 @@ var kExampleBuildInfoJSON = {
     "times": [1312444299.10216, 1312444970.459138]
 };
 
+var kExampleBuildInfoWithWebKitTestCrashJSON = {
+    "blame": ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"],
+    "builderName": "Webkit Win (deps)(dbg)(2)",
+    "currentStep": null,
+    "eta": null,
+    "logs": [
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+    ],
+    "number": 7653,
+    "properties": [
+        ["blamelist", ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"], "Build"],
+        ["branch", "src", "Build"],
+        ["buildername", "Webkit Win (deps)(dbg)(2)", "Builder"],
+        ["buildnumber", 7653, "Build"],
+        ["got_revision", "104939", "Source"],
+        ["gtest_filter", null, "Factory"],
+        ["mastername", "chromium.webkit", "master.cfg"],
+        ["project", "", "Build"],
+        ["repository", "svn://svn-mirror.golo.chromium.org/chrome/trunk", "Build"],
+        ["revision", "104939", "Build"],
+        ["scheduler", "s1_chromium_dbg_dep", "Scheduler"],
+        ["slavename", "vm114-m1", "BuildSlave"]
+    ],
+    "reason": "downstream",
+    "results": 2,
+    "slave": "vm114-m1",
+    "sourceStamp": {
+        "branch": "src",
+        "changes": [{
+            "at": "Tue 11 Oct 2011 12:18:40",
+            "branch": "src",
+            "category": null,
+            "comments": "Disable prefs.PrefsTest.testGeolocationPref on win\n\nTBR=dennisjeffrey@chromium.org\nBUG=99865\nTEST=\n\nReview URL: http://codereview.chromium.org/8234007",
+            "files": [{
+                "name": "chrome/test/functional/PYAUTO_TESTS",
+                "url": null
+            }],
+            "number": 1397,
+            "project": "",
+            "properties": [],
+            "repository": "svn://svn-mirror.golo.chromium.org/chrome/trunk",
+            "rev": "104936",
+            "revision": "104936",
+            "revlink": "http://src.chromium.org/viewvc/chrome?view=rev&revision=104936",
+            "when": 1318360720,
+            "who": "nirnimesh@chromium.org"
+        }, {
+            "at": "Tue 11 Oct 2011 12:23:11",
+            "branch": "src",
+            "category": null,
+            "comments": "aura: Get rid of some unneeded stubs.\n\nMost of these are for dialogs that already had WebUI\nimplementations.\n\nBUG=99718\nTEST=built with use_aura=1\n\nReview URL: http://codereview.chromium.org/8218027",
+            "files": [{
+                "name": "chrome/browser/ui/login/login_prompt_ui.cc",
+                "url": null
+            }, {
+                "name": "chrome/browser/ui/views/stubs_aura.cc",
+                "url": null
+            }, {
+                "name": "chrome/chrome_browser.gypi",
+                "url": null
+            }, {
+                "name": "chrome/common/url_constants.cc",
+                "url": null
+            }, {
+                "name": "chrome/common/url_constants.h",
+                "url": null
+            }],
+            "number": 1398,
+            "project": "",
+            "properties": [],
+            "repository": "svn://svn-mirror.golo.chromium.org/chrome/trunk",
+            "rev": "104937",
+            "revision": "104937",
+            "revlink": "http://src.chromium.org/viewvc/chrome?view=rev&revision=104937",
+            "when": 1318360991,
+            "who": "derat@chromium.org"
+        }, {
+            "at": "Tue 11 Oct 2011 12:34:10",
+            "branch": "src",
+            "category": null,
+            "comments": "Add Windows manifest for views_examples.\n\nThis allows views_examples to use themed controls and fixes\na problem with combo box drop down menus not being shown.\n\nManifest file copied from chrome/app/chrome.exe.manifest.\n\nBUG=none\nTEST=manual\n\nReview URL: http://codereview.chromium.org/8227017",
+            "files": [{
+                "name": "views/examples/views_examples.exe.manifest",
+                "url": null
+            }, {
+                "name": "views/views.gyp",
+                "url": null
+            }],
+            "number": 1400,
+            "project": "",
+            "properties": [],
+            "repository": "svn://svn-mirror.golo.chromium.org/chrome/trunk",
+            "rev": "104939",
+            "revision": "104939",
+            "revlink": "http://src.chromium.org/viewvc/chrome?view=rev&revision=104939",
+            "when": 1318361650,
+            "who": "asvitkine@chromium.org"
+        }],
+        "hasPatch": false,
+        "project": "",
+        "repository": "svn://svn-mirror.golo.chromium.org/chrome/trunk",
+        "revision": "104939"
+    },
+    "steps": [{
+        "eta": null,
+        "expectations": [
+            ["output", 1444, 1444.0]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"]
+        ],
+        "name": "svnkill",
+        "results": [0, []],
+        "statistics": {},
+        "step_number": 0,
+        "text": ["svnkill"],
+        "times": [1318364210.0697701, 1318364210.463649],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 2916, 2757.1580967830819]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"]
+        ],
+        "name": "update_scripts",
+        "results": [0, []],
+        "statistics": {},
+        "step_number": 1,
+        "text": ["update_scripts"],
+        "times": [1318364210.464299, 1318364234.741575],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 4544, 4543.9687499691299]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"]
+        ],
+        "name": "taskkill",
+        "results": [0, []],
+        "statistics": {},
+        "step_number": 2,
+        "text": ["taskkill"],
+        "times": [1318364234.742265, 1318364245.842006],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 1019773, 22826.104572568838]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"]
+        ],
+        "name": "update",
+        "results": [0, []],
+        "statistics": {},
+        "step_number": 3,
+        "text": ["update", "r104939"],
+        "times": [1318364245.843008, 1318366370.946759],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 19829, 19620.437500003842]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"]
+        ],
+        "name": "extract_build",
+        "results": [1, []],
+        "statistics": {},
+        "step_number": 4,
+        "text": ["extract_build", "warning"],
+        "times": [1318366370.94771, 1318366404.552783],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 2685, 1320624.4817683753]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"]
+        ],
+        "name": "webkit_tests",
+        "results": [2, ["webkit_tests"]],
+        "statistics": {},
+        "step_number": 5,
+        "text": ["webkit_tests", "?? fixable", "(0 skipped)", "crashed or hung"],
+        "times": [1318366404.5537021, 1318366405.2564809],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 3736, 606747.58321854263]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"]
+        ],
+        "name": "archive_webkit_tests_results",
+        "results": [2, ["archive_webkit_tests_results"]],
+        "statistics": {},
+        "step_number": 6,
+        "text": ["archived webkit_tests results", "failed"],
+        "times": [1318366405.2573731, 1318366406.505815],
+        "urls": {
+            "layout test results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Win__deps__dbg__2_\r/0\rNone"
+        }
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 2751, 124434.9266140602]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"]
+        ],
+        "name": "webkit_gpu_tests",
+        "results": [2, ["webkit_gpu_tests"]],
+        "statistics": {},
+        "step_number": 7,
+        "text": ["webkit_gpu_tests", "?? fixable", "(0 skipped)", "crashed or hung"],
+        "times": [1318366406.506711, 1318366407.179585],
+        "urls": {}
+    }, {
+        "eta": null,
+        "expectations": [
+            ["output", 3760, 35709.407800958375]
+        ],
+        "isFinished": true,
+        "isStarted": true,
+        "logs": [
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+        ],
+        "name": "archive_webkit_tests_gpu_results",
+        "results": [2, ["archive_webkit_tests_gpu_results"]],
+        "statistics": {},
+        "step_number": 8,
+        "text": ["archived webkit_tests gpu results", "failed"],
+        "times": [1318366407.1804891, 1318366408.071501],
+        "urls": {
+            "layout test gpu results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Win__deps__dbg__2__-_GPU\r/0\rNone"
+        }
+    }],
+    "text": ["failed", "webkit_tests", "archive_webkit_tests_results", "webkit_gpu_tests", "archive_webkit_tests_gpu_results"],
+    "times": [1318364210.066524, 1318366408.0732119]
+};
+
 test("buildersFailingStepRequredForTestCoverage", 3, function() {
     var simulator = new NetworkSimulator();
 
@@ -344,6 +617,45 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
       "http://build.chromium.org/p/chromium.webkit/json/builders",
       "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/11461",
       "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Mac10.6%20(CG)/builds/11460",
+    ]);
+});
+
+test("buildersFailingStepRequredForTestCoverage (run-webkit-tests crash)", 3, function() {
+    var simulator = new NetworkSimulator();
+
+    var builderStatusJSON = JSON.parse(JSON.stringify(kExampleBuilderStatusJSON));
+    delete builderStatusJSON['Webkit Mac10.6 (CG)'];
+    builderStatusJSON['Webkit Linux'].cachedBuilds = [21460];
+    builderStatusJSON['Webkit Linux'].currentBuilds = [];
+
+    var failingBuildInfoJSON = JSON.parse(JSON.stringify(kExampleBuildInfoWithWebKitTestCrashJSON));
+    failingBuildInfoJSON.number = 21460;
+
+    var requestedURLs = [];
+    simulator.get = function(url, callback)
+    {
+        requestedURLs.push(url);
+        simulator.scheduleCallback(function() {
+            if (/\/json\/builders$/.exec(url))
+                callback(builderStatusJSON);
+            else if (/Webkit%20Linux/.exec(url))
+                callback(failingBuildInfoJSON);
+            else {
+                ok(false, "Unexpected URL: " + url);
+                callback();
+            }
+        });
+    };
+
+    simulator.runTest(function() {
+        builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
+            deepEqual(builderNameList, ["Webkit Linux"]);
+        });
+    });
+
+    deepEqual(requestedURLs, [
+      "http://build.chromium.org/p/chromium.webkit/json/builders",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/21460",
     ]);
 });
 

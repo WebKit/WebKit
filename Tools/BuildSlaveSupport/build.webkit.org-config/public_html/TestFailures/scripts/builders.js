@@ -32,6 +32,9 @@ var kChromiumBuildBotURL = 'http://build.chromium.org/p/chromium.webkit';
 var kUpdateStepName = 'update';
 var kUpdateScriptsStepName = 'update_scripts';
 var kCompileStepName = 'compile';
+var kWebKitTestsStepName = 'webkit_tests';
+
+var kCrashedOrHungOutputMarker = 'crashed or hung';
 
 function urlForBuildInfo(builderName, buildNumber)
 {
@@ -44,6 +47,7 @@ function isStepRequredForTestCoverage(step)
     case kUpdateStepName:
     case kUpdateScriptsStepName:
     case kCompileStepName:
+    case kWebKitTestsStepName:
         return true;
     default:
         return false;
@@ -52,6 +56,10 @@ function isStepRequredForTestCoverage(step)
 
 function didFail(step)
 {
+    if (step.name == kWebKitTestsStepName) {
+        // run-webkit-tests fails to generate test coverage when it crashes or hangs.
+        return step.text.indexOf(kCrashedOrHungOutputMarker) != -1;
+    }
     // FIXME: Is this the correct way to test for failure?
     return step.results[0] > 0;
 }
