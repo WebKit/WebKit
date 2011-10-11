@@ -28,8 +28,8 @@
 #include "CachedCSSStyleSheet.h"
 
 #include "MemoryCache.h"
-#include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "CachedStyleSheetClient.h"
 #include "HTTPParsers.h"
 #include "TextResourceDecoder.h"
 #include "SharedBuffer.h"
@@ -53,7 +53,7 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 {
     if (!isLoading())
-        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
+        static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::allClientsRemoved()
@@ -113,7 +113,7 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
-        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
+        static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::error(CachedResource::Status status)

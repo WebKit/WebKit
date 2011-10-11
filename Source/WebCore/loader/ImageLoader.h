@@ -23,7 +23,7 @@
 #ifndef ImageLoader_h
 #define ImageLoader_h
 
-#include "CachedResourceClient.h"
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include <wtf/text/AtomicString.h>
 
@@ -33,7 +33,7 @@ class Element;
 class ImageLoadEventSender;
 class RenderImageResource;
 
-class ImageLoader : public CachedResourceClient {
+class ImageLoader : public CachedImageClient {
 public:
     ImageLoader(Element*);
     virtual ~ImageLoader();

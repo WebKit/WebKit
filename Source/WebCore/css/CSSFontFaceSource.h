@@ -26,7 +26,7 @@
 #ifndef CSSFontFaceSource_h
 #define CSSFontFaceSource_h
 
-#include "CachedResourceClient.h"
+#include "CachedFont.h"
 #include "CachedResourceHandle.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -45,7 +45,7 @@ class SVGFontFaceElement;
 #endif
 
 
-class CSSFontFaceSource : public CachedResourceClient {
+class CSSFontFaceSource : public CachedFontClient {
 public:
     CSSFontFaceSource(const String&, CachedFont* = 0);
     virtual ~CSSFontFaceSource();

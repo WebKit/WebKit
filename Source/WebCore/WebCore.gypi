@@ -596,6 +596,7 @@
             'loader/cache/CachedResourceHandle.h',
             'loader/cache/CachedResourceLoader.h',
             'loader/cache/CachedResourceRequest.h',
+            'loader/cache/CachedStyleSheetClient.h',
             'loader/cache/MemoryCache.h',
             'loader/icon/IconController.h',
             'loader/icon/IconDatabase.h',

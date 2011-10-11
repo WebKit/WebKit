@@ -26721,6 +26721,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedStyleSheetClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedXSLStyleSheet.cpp"
 					>
 				</File>

@@ -23,8 +23,8 @@
 #define CSSImportRule_h
 
 #include "CSSRule.h"
-#include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedStyleSheetClient.h"
 #include "MediaList.h"
 #include "PlatformString.h"
 
@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 
-class CSSImportRule : public CSSRule, private CachedResourceClient {
+class CSSImportRule : public CSSRule, private CachedStyleSheetClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)

@@ -30,10 +30,9 @@
 #ifndef ClipboardChromium_h
 #define ClipboardChromium_h
 
+#include "CachedImage.h"
 #include "ChromiumDataObject.h"
 #include "Clipboard.h"
-
-#include "CachedResourceClient.h"
 
 namespace WebCore {
 
@@ -42,7 +41,7 @@ namespace WebCore {
     class Frame;
     class IntPoint;
 
-    class ClipboardChromium : public Clipboard, public CachedResourceClient {
+    class ClipboardChromium : public Clipboard, public CachedImageClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         ~ClipboardChromium() {}

@@ -29,43 +29,16 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+class CachedResource;
 
-    class CachedCSSStyleSheet;
-    class CachedFont;
-    class CachedResource;
-    class CachedImage;
-    class Image;
-    class IntRect;
-    class KURL;
-
-    /**
-     * @internal
-     *
-     * a client who wants to load stylesheets, images or scripts from the web has to
-     * inherit from this class and overload one of the 3 functions
-     *
-     */
-    class CachedResourceClient {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual ~CachedResourceClient() { }
-
-        // Called whenever a frame of an image changes, either because we got more data from the network or
-        // because we are animating. If not null, the IntRect is the changed rect of the image.
-        virtual void imageChanged(CachedImage*, const IntRect* = 0) { };
-        
-        // Called to find out if this client wants to actually display the image.  Used to tell when we
-        // can halt animation.  Content nodes that hold image refs for example would not render the image,
-        // but RenderImages would (assuming they have visibility: visible and their render tree isn't hidden
-        // e.g., in the b/f cache or in a background tab).
-        virtual bool willRenderImage(CachedImage*) { return false; }
-
-        virtual void setCSSStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* charset */, const CachedCSSStyleSheet*) { }
-        virtual void setXSLStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* sheet */) { }
-        virtual void fontLoaded(CachedFont*) {};
-        virtual void notifyFinished(CachedResource*) { }
-    };
-
+class CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual ~CachedResourceClient() { }
+    virtual void notifyFinished(CachedResource*) { }
+protected:
+    CachedResourceClient() { }
+};
 }
 
 #endif

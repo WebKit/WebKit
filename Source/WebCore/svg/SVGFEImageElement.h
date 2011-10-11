@@ -22,7 +22,7 @@
 #define SVGFEImageElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "CachedResourceClient.h"
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "ImageBuffer.h"
 #include "SVGAnimatedBoolean.h"
@@ -39,7 +39,7 @@ class SVGFEImageElement : public SVGFilterPrimitiveStandardAttributes,
                           public SVGURIReference,
                           public SVGLangSpace,
                           public SVGExternalResourcesRequired,
-                          public CachedResourceClient {
+                          public CachedImageClient {
 public:
     static PassRefPtr<SVGFEImageElement> create(const QualifiedName&, Document*);
 

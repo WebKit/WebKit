@@ -28,7 +28,8 @@
 #include "HTMLDocument.h"
 
 namespace WebCore {
-    
+
+class CachedImage;
 class ImageDocumentElement;
 
 class ImageDocument : public HTMLDocument {

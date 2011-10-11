@@ -22,8 +22,8 @@
 #ifndef ProcessingInstruction_h
 #define ProcessingInstruction_h
 
-#include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedStyleSheetClient.h"
 #include "ContainerNode.h"
 
 namespace WebCore {
@@ -31,7 +31,7 @@ namespace WebCore {
 class StyleSheet;
 class CSSStyleSheet;
 
-class ProcessingInstruction : public ContainerNode, private CachedResourceClient {
+class ProcessingInstruction : public ContainerNode, private CachedStyleSheetClient {
 public:
     static PassRefPtr<ProcessingInstruction> create(Document*, const String& target, const String& data);
     virtual ~ProcessingInstruction();

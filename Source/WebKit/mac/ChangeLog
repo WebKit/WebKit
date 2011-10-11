@@ -1,3 +1,14 @@
+2011-10-10  Nate Chapin  <japhet@chromium.org>
+
+        Use a CachedImageClient instead of CachedResourceClient
+        in WebHTMLView.
+        https://bugs.webkit.org/show_bug.cgi?id=69790
+
+        Reviewed by Adam Barth.
+
+        * WebView/WebHTMLView.mm:
+        (promisedDataClient):
+
 2011-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods

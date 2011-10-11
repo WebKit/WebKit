@@ -26,7 +26,7 @@
 #ifndef RenderObject_h
 #define RenderObject_h
 
-#include "CachedResourceClient.h"
+#include "CachedImage.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -120,7 +120,7 @@ const int showTreeCharacterOffset = 39;
 #endif
 
 // Base class for all rendering tree objects.
-class RenderObject : public CachedResourceClient {
+class RenderObject : public CachedImageClient {
     friend class LayoutRepainter;
     friend class RenderBlock;
     friend class RenderBox;

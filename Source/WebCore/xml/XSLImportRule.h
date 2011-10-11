@@ -25,8 +25,8 @@
 
 #if ENABLE(XSLT)
 
-#include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedStyleSheetClient.h"
 #include "StyleBase.h"
 #include "XSLStyleSheet.h"
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CachedXSLStyleSheet;
 
-class XSLImportRule : public StyleBase, private CachedResourceClient {
+class XSLImportRule : public StyleBase, private CachedStyleSheetClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<XSLImportRule> create(XSLStyleSheet* parentSheet, const String& href)
@@ -57,7 +57,6 @@ private:
 
     virtual bool isImportRule() const { return true; }
 
-    // from CachedResourceClient
     virtual void setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet);
     
     String m_strHref;

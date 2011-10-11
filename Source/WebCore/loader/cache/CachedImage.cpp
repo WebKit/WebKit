@@ -100,7 +100,7 @@ void CachedImage::didAddClient(CachedResourceClient* c)
     }
 
     if (m_image && !m_image->isNull())
-        c->imageChanged(this);
+        static_cast<CachedImageClient*>(c)->imageChanged(this);
 
     CachedResource::didAddClient(c);
 }
@@ -230,7 +230,7 @@ void CachedImage::notifyObservers(const IntRect* changeRect)
 {
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient* c = w.next())
-        c->imageChanged(this, changeRect);
+        static_cast<CachedImageClient*>(c)->imageChanged(this, changeRect);
 }
 
 void CachedImage::checkShouldPaintBrokenImage()
@@ -373,7 +373,7 @@ bool CachedImage::shouldPauseAnimation(const Image* image)
     
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient* c = w.next()) {
-        if (c->willRenderImage(this))
+        if (static_cast<CachedImageClient*>(c)->willRenderImage(this))
             return false;
     }
 

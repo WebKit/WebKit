@@ -26,7 +26,7 @@
 #ifndef ClipboardMac_h
 #define ClipboardMac_h
 
-#include "CachedResourceClient.h"
+#include "CachedImage.h"
 #include "Clipboard.h"
 #include <wtf/RetainPtr.h>
 
@@ -43,7 +43,7 @@ namespace WebCore {
 class Frame;
 class FileList;
 
-class ClipboardMac : public Clipboard, public CachedResourceClient {
+class ClipboardMac : public Clipboard, public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame* frame)

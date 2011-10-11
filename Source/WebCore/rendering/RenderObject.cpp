@@ -176,7 +176,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
 
 RenderObject::RenderObject(Node* node)
-    : CachedResourceClient()
+    : CachedImageClient()
     , m_style(0)
     , m_node(node)
     , m_parent(0)

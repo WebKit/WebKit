@@ -354,9 +354,9 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = 2;
 @end
 
 // We need this to be able to safely reference the CachedImage for the promised drag data
-static CachedResourceClient* promisedDataClient()
+static CachedImageClient* promisedDataClient()
 {
-    static CachedResourceClient* staticCachedResourceClient = new CachedResourceClient;
+    static CachedImageClient* staticCachedResourceClient = new CachedImageClient;
     return staticCachedResourceClient;
 }
 

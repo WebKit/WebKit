@@ -211,9 +211,9 @@ void WebDragClient::dragEnded()
 
 @implementation WKPasteboardOwner
 
-static CachedResourceClient* promisedDataClient()
+static CachedImageClient* promisedDataClient()
 {
-    static CachedResourceClient* client = new CachedResourceClient;
+    static CachedImageClient* client = new CachedImageClient;
     return client;
 }
 

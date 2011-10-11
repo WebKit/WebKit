@@ -25,7 +25,7 @@
 #define HTMLLinkElement_h
 
 #include "CSSStyleSheet.h"
-#include "CachedResourceClient.h"
+#include "CachedStyleSheetClient.h"
 #include "CachedResourceHandle.h"
 #include "DOMSettableTokenList.h"
 #include "HTMLElement.h"
@@ -37,11 +37,9 @@
 
 namespace WebCore {
 
-class CachedCSSStyleSheet;
-class CachedResource;
 class KURL;
 
-class HTMLLinkElement : public HTMLElement, public CachedResourceClient, public LinkLoaderClient {
+class HTMLLinkElement : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
 public:
     static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~HTMLLinkElement();
