@@ -394,10 +394,10 @@ void LayoutTestController::startSpeechInput(JSContextRef inputElement)
 
 void LayoutTestController::setIconDatabaseEnabled(bool enabled)
 {
-    if (!enabled) {
-        ewk_settings_icon_database_path_set(0);
+    ewk_settings_icon_database_path_set(0);
+
+    if (!enabled)
         return;
-    }
 
     String databasePath;
     const char* tempDir = getenv("TMPDIR");

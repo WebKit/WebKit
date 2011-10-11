@@ -1,3 +1,13 @@
+2011-10-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Make sure IconDatabase is closed before trying to open it again.
+        https://bugs.webkit.org/show_bug.cgi?id=69769
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setIconDatabaseEnabled):
+
 2011-10-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove all references to QTDIR_build and standalone_package
