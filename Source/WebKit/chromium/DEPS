@@ -44,6 +44,8 @@ deps = {
     Var('chromium_svn')+'/build@'+Var('chromium_rev'),
   'tools/gyp':
     From('chromium_deps', 'src/tools/gyp'),
+  'tools/clang':
+    Var('chromium_svn')+'/tools/clang@'+Var('chromium_rev'),
 
   # Basic tools
   'base':

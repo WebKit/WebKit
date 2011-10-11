@@ -1,3 +1,12 @@
+2011-10-10  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Pull tools/clang from upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=69797
+
+        Reviewed by Adam Barth.
+
+        * DEPS:
+
 2011-10-10  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         ScriptController::executeIfJavaScriptURL gets confused by synchronous frame loads
