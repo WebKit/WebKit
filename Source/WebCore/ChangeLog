@@ -1,3 +1,55 @@
+2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97121.
+        http://trac.webkit.org/changeset/97121
+        https://bugs.webkit.org/show_bug.cgi?id=69815
+
+        Many layout tests failed (Requested by tkent on #webkit).
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElementData::SelectElementData):
+        (WebCore::SelectElementData::checkListItems):
+        (WebCore::SelectElementData::listItems):
+        * dom/SelectElement.h:
+        (WebCore::SelectElementData::shouldRecalcListItems):
+        (WebCore::SelectElementData::setShouldRecalcListItems):
+        (WebCore::SelectElementData::rawListItems):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::recalcListItemsIfNeeded):
+        (WebCore::HTMLSelectElement::nextSelectableListIndex):
+        (WebCore::HTMLSelectElement::previousSelectableListIndex):
+        (WebCore::HTMLSelectElement::firstSelectableListIndex):
+        (WebCore::HTMLSelectElement::lastSelectableListIndex):
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        (WebCore::HTMLSelectElement::insertedIntoTree):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::listItems):
+        * html/HTMLSelectElementWin.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+
 2011-10-10  Kent Tamura  <tkent@chromium.org>
 
         Move m_listItems and m_recalcListItems from SelectElementData to HTMLSelectElement
