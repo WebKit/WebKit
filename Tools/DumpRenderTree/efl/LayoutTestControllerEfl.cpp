@@ -290,7 +290,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 
 int LayoutTestController::windowCount()
 {
-    return 1;
+    return browser->extraViews().size() + 1; // + 1 for the main view.
 }
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool flag)

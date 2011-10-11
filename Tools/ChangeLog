@@ -1,3 +1,17 @@
+2011-10-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Return the right window count in LayoutTestController.
+        https://bugs.webkit.org/show_bug.cgi?id=69764
+
+        Reviewed by Antonio Gomes.
+
+        Follow-up to r96943: now that we have DumpRenderTreeChrome and
+        DumpRenderTreeView in the tree, we can correctly count the number of
+        open windows in DRT.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::windowCount):
+
 2011-10-11  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r96770-r96777): fast/dom/Window/window-properties.html, fast/dom/prototype-inheritance-2.html, fast/js/global-constructors.html failing on SnowLeopard Intel Release (Tests)
