@@ -1,3 +1,13 @@
+2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Skip test crashing due to bug 60931.
+        https://bugs.webkit.org/show_bug.cgi?id=60931
+
+        Unreviewed gardening.
+
+        * platform/gtk/Skipped: Skipped
+        http/tests/security/cookies/cookie-theft-with-javascript-doc.html
+
 2011-10-11  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Support multipart responses is not implemented.
