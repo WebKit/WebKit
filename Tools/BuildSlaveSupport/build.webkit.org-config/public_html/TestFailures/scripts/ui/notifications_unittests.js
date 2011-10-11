@@ -209,7 +209,7 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
                 '</tbody>' +
@@ -250,11 +250,11 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="">' +
                         '<td>BUILDING</td>' +
-                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
                         '<td></td>' +
                     '</tr>' +
                 '</tbody>' +
@@ -318,7 +318,7 @@ test('FailingTestsSummary (grouping)', 1, function() {
 
 test('BuildersFailing', 1, function() {
     var builderFailing = new ui.notifications.BuildersFailing();
-    builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
+    builderFailing.setFailingBuilders(['Webkit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
         '<div class="how">' +
             '<time class="relative"></time>' +
@@ -326,8 +326,8 @@ test('BuildersFailing', 1, function() {
         '<div class="what">' +
             '<div class="problem">Build Failed:' +
                 '<ul class="effects">' +
-                    '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=WebKit+Linux">WebKit Linux</a></li>' +
-                    '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Vista">Vista</a></li>' +
+                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span></a></li>' +
+                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Vista"><span class="version">vista</span></a></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +

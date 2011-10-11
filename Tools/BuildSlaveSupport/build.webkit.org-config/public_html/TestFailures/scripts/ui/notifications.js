@@ -255,11 +255,8 @@ ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     {
         $(this._effects).empty().append(builderNameList.map(function(builderName) {
             var effect = document.createElement('li');
-            effect.className = 'builder-name';
-            var link = effect.appendChild(document.createElement('a'));
-            link.target = '_blank';
-            link.href = ui.displayURLForBuilder(builderName);
-            link.textContent = ui.displayNameForBuilder(builderName);
+            effect.className = 'builder';
+            effect.appendChild(new ui.failures.Builder(builderName));
             return effect;
         }));
     }

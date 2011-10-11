@@ -26,3 +26,28 @@
 .failures .BUILDING {
     opacity: 0.5;
 }
+
+a.failing-builder {
+    display: inline-block;
+    border: 1px solid Gray;
+    margin: 0 0 2px 0;
+    padding: 1px;
+    color: Black;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+    a.failing-builder>span.version {
+        text-transform: uppercase;
+        background-color: #555;
+        color: White;
+        padding: 0 2px;
+    }
+
+    a.failing-builder>span.architecture {
+        padding: 0 2px;
+    }
+
+    a.failing-builder>span.graphics {
+        padding: 0 2px;
+    }

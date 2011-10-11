@@ -1,3 +1,26 @@
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
+        Failing builder display in garden-o-matic should have the same visual style as the failure grid
+        https://bugs.webkit.org/show_bug.cgi?id=69876
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch generalizes the view we use for failing builders in the
+        FailureGrid so that we can use it for the list of builders that aren't
+        compiling.
+
+        One downside of this patch is that it makes it harder to tell when
+        debug builders are failing (as opposed to release builders) because
+        that information isn't presented in this view.  A future patch will
+        improve this aspect.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/failures.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css:
+
 2011-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         Some API tests are timing out in Release
