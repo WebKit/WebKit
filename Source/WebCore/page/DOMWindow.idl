@@ -809,6 +809,8 @@ module window {
         readonly attribute [EnabledAtRuntime=Quota] StorageInfo webkitStorageInfo;
 #endif
 
+        attribute [Conditional=MUTATION_OBSERVERS] WebKitMutationObserverConstructor WebKitMutationObserver;
+
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING

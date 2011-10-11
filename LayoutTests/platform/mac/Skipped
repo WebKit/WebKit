@@ -407,6 +407,9 @@ compositing/rtl/rtl-iframe-relative.html
 # For now, Web Audio API is disabled
 webaudio/
 
+# MutationObservers are net yet enabled. http://webkit.org/b/68729
+fast/mutation
+
 # Tests for WebVTT parser for <track>.  Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=43668
 media/track/

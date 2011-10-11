@@ -5461,6 +5461,16 @@
 		C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F08FBA1430FE8F00685849 /* MutationRecord.h */; };
 		C6F08FC91431000D00685849 /* JSMutationRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F08FC71431000D00685849 /* JSMutationRecord.cpp */; };
 		C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F08FC81431000D00685849 /* JSMutationRecord.h */; };
+		C6F0900A14327B6100685849 /* MutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900114327B6100685849 /* MutationCallback.h */; };
+		C6F0900E14327B6100685849 /* WebKitMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */; };
+		C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900614327B6100685849 /* WebKitMutationObserver.h */; };
+		C6F0901114327B6100685849 /* MutationObserverOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900814327B6100685849 /* MutationObserverOptions.h */; };
+		C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902014327D4F00685849 /* JSMutationCallback.cpp */; };
+		C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902114327D4F00685849 /* JSMutationCallback.h */; };
+		C6F0902C14327D4F00685849 /* JSWebKitMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902414327D4F00685849 /* JSWebKitMutationObserver.cpp */; };
+		C6F0902D14327D4F00685849 /* JSWebKitMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902514327D4F00685849 /* JSWebKitMutationObserver.h */; };
+		C6F0917F143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0917E143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp */; };
+		C6F09185143A6C3B00685849 /* JSMutationCallbackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */; };
 		C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F41046130C6E8900393DE4 /* EntryBase.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12748,6 +12758,18 @@
 		C6F08FBB1430FE8F00685849 /* MutationRecord.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationRecord.idl; sourceTree = "<group>"; };
 		C6F08FC71431000D00685849 /* JSMutationRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationRecord.cpp; sourceTree = "<group>"; };
 		C6F08FC81431000D00685849 /* JSMutationRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationRecord.h; sourceTree = "<group>"; };
+		C6F0900114327B6100685849 /* MutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationCallback.h; sourceTree = "<group>"; };
+		C6F0900214327B6100685849 /* MutationCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationCallback.idl; sourceTree = "<group>"; };
+		C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMutationObserver.cpp; sourceTree = "<group>"; };
+		C6F0900614327B6100685849 /* WebKitMutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitMutationObserver.h; sourceTree = "<group>"; };
+		C6F0900714327B6100685849 /* WebKitMutationObserver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitMutationObserver.idl; sourceTree = "<group>"; };
+		C6F0900814327B6100685849 /* MutationObserverOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverOptions.h; sourceTree = "<group>"; };
+		C6F0902014327D4F00685849 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
+		C6F0902114327D4F00685849 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
+		C6F0902414327D4F00685849 /* JSWebKitMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitMutationObserver.cpp; sourceTree = "<group>"; };
+		C6F0902514327D4F00685849 /* JSWebKitMutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitMutationObserver.h; sourceTree = "<group>"; };
+		C6F0917E143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitMutationObserverCustom.cpp; sourceTree = "<group>"; };
+		C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallbackCustom.cpp; sourceTree = "<group>"; };
 		C6F41046130C6E8900393DE4 /* EntryBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryBase.cpp; path = fileapi/EntryBase.cpp; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
@@ -18222,6 +18244,8 @@
 				49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */,
 				49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */,
 				49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */,
+				C6F0902014327D4F00685849 /* JSMutationCallback.cpp */,
+				C6F0902114327D4F00685849 /* JSMutationCallback.h */,
 				C6F08FC71431000D00685849 /* JSMutationRecord.cpp */,
 				C6F08FC81431000D00685849 /* JSMutationRecord.h */,
 				BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */,
@@ -18256,6 +18280,8 @@
 				75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
+				C6F0902414327D4F00685849 /* JSWebKitMutationObserver.cpp */,
+				C6F0902514327D4F00685849 /* JSWebKitMutationObserver.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -19605,6 +19631,7 @@
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */,
+				C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
 				A9C6E6480D7465D8006442E9 /* JSNavigatorCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
@@ -19637,6 +19664,7 @@
 				E1AD14C41297354900ACA989 /* JSWebKitCSSKeyframeRuleCustom.cpp */,
 				E1AD14B4129734CA00ACA989 /* JSWebKitCSSKeyframesRuleCustom.cpp */,
 				BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */,
+				C6F0917E143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp */,
 				BC275B7811C5D1C300C9206C /* JSWebKitPointCustom.cpp */,
 				518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */,
@@ -21084,9 +21112,12 @@
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
 				85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */,
 				85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */,
+				C6F0900114327B6100685849 /* MutationCallback.h */,
+				C6F0900214327B6100685849 /* MutationCallback.idl */,
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
+				C6F0900814327B6100685849 /* MutationObserverOptions.h */,
 				C6F08FB91430FE8F00685849 /* MutationRecord.cpp */,
 				C6F08FBA1430FE8F00685849 /* MutationRecord.h */,
 				C6F08FBB1430FE8F00685849 /* MutationRecord.idl */,
@@ -21225,6 +21256,9 @@
 				31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */,
 				31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */,
 				31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */,
+				C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */,
+				C6F0900614327B6100685849 /* WebKitMutationObserver.h */,
+				C6F0900714327B6100685849 /* WebKitMutationObserver.idl */,
 				31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */,
 				31C0FF1F0E4CEB6E007D6FE5 /* WebKitTransitionEvent.h */,
 				31C0FF200E4CEB6E007D6FE5 /* WebKitTransitionEvent.idl */,
@@ -23216,6 +23250,7 @@
 				898785B7122CA2A7003AABDA /* JSMetadata.h in Headers */,
 				898785B9122CA2A7003AABDA /* JSMetadataCallback.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
+				C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
@@ -23456,6 +23491,7 @@
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
 				898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */,
 				93F1D5C112D5335600832BEC /* JSWebKitLoseContext.h in Headers */,
+				C6F0902D14327D4F00685849 /* JSWebKitMutationObserver.h in Headers */,
 				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
 				5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */,
@@ -23589,7 +23625,9 @@
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
 				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
+				C6F0900A14327B6100685849 /* MutationCallback.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
+				C6F0901114327B6100685849 /* MutationObserverOptions.h in Headers */,
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
@@ -24457,6 +24495,7 @@
 				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
 				89878566122CA064003AABDA /* WebKitFlags.h in Headers */,
 				93F1D5BB12D532C400832BEC /* WebKitLoseContext.h in Headers */,
+				C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
@@ -26250,6 +26289,8 @@
 				898785B6122CA2A7003AABDA /* JSMetadata.cpp in Sources */,
 				898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
+				C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */,
+				C6F09185143A6C3B00685849 /* JSMutationCallbackCustom.cpp in Sources */,
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				C6F08FC91431000D00685849 /* JSMutationRecord.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
@@ -26522,6 +26563,8 @@
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */,
 				93F1D5C012D5335600832BEC /* JSWebKitLoseContext.cpp in Sources */,
+				C6F0902C14327D4F00685849 /* JSWebKitMutationObserver.cpp in Sources */,
+				C6F0917F143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp in Sources */,
 				494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */,
 				BC275B7911C5D1C300C9206C /* JSWebKitPointCustom.cpp in Sources */,
 				31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */,
@@ -27324,6 +27367,7 @@
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
 				93F1D5BA12D532C400832BEC /* WebKitLoseContext.cpp in Sources */,
+				C6F0900E14327B6100685849 /* WebKitMutationObserver.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,
 				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,

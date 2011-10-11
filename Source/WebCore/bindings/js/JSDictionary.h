@@ -52,6 +52,9 @@ public:
     template <typename T, typename Result>
     bool tryGetProperty(const char* propertyName, T* context, void (*setter)(T* context, const Result&));
 
+    template <typename T>
+    bool tryGetProperty(const char* propertyName, T& context, void (T::*setter)(bool));
+
 private:
     enum GetPropertyResult {
         ExceptionThrown,
@@ -94,6 +97,30 @@ bool JSDictionary::tryGetProperty(const char* propertyName, T* context, void (*s
             return false;
     
         setter(context, result);
+        break;
+    }
+    case NoPropertyFound:
+        break;
+    }
+
+    return true;
+}
+
+template <typename T>
+bool JSDictionary::tryGetProperty(const char* propertyName, T& context, void (T::*setter)(bool))
+{
+    JSC::JSValue value;
+    switch (tryGetProperty(propertyName, value)) {
+    case ExceptionThrown:
+        return false;
+    case PropertyFound: {
+        bool result;
+        convertValue(m_exec, value, result);
+
+        if (m_exec->hadException())
+            return false;
+
+        (context.*setter)(result);
         break;
     }
     case NoPropertyFound:

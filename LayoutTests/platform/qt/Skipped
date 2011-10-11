@@ -158,6 +158,9 @@ fast/regions
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
 
+# ENABLE(MUTATION_OBSERVERS) is not yet enabled. http://webkit.org/b/68729
+fast/mutation
+
 # USE(V8)
 
 # v8 i18n extension.

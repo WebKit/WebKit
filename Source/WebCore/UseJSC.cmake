@@ -95,6 +95,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
+    bindings/js/JSMutationCallbackCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
     bindings/js/JSNavigatorCustom.cpp
     bindings/js/JSNodeCustom.cpp
@@ -122,6 +123,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
+    bindings/js/JSWebKitMutationObserverCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp

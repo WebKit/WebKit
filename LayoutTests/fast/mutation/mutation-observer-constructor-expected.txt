@@ -1,0 +1,14 @@
+Test the constructor of WebKitMutationObserver
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.WebKitMutationObserver is non-null.
+PASS typeof WebKitMutationObserver.prototype.observe is "function"
+PASS typeof WebKitMutationObserver.prototype.disconnect is "function"
+PASS typeof observer.observe is "function"
+PASS typeof observer.disconnect is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

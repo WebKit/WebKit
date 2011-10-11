@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p id=description></p>
+<div id="console"></div>
+<script>
+
+function runTest() {
+    window.observer = new WebKitMutationObserver(function(mutations) { });
+    shouldThrow('observer.observe()');
+    shouldThrow('observer.observe(null)');
+    shouldThrow('observer.observe(undefined)');
+    shouldThrow('observer.observe(document.body)');
+    shouldThrow('observer.observe(document.body, null)');
+    shouldThrow('observer.observe(document.body, undefined)');
+}
+
+description('Test that WebKitMutationObserver.observe throws exceptions appropriately');
+
+if (!window.WebKitMutationObserver)
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+else
+    runTest();
+
+var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

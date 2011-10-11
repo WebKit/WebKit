@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p id=description></p>
+<div id="console"></div>
+<script>
+
+function runTest() {
+    shouldBeNonNull('window.WebKitMutationObserver');
+    shouldBeEqualToString('typeof WebKitMutationObserver.prototype.observe', 'function');
+    shouldBeEqualToString('typeof WebKitMutationObserver.prototype.disconnect', 'function');
+    window.observer = new WebKitMutationObserver(function(mutations) { });
+    shouldBeEqualToString('typeof observer.observe', 'function');
+    shouldBeEqualToString('typeof observer.disconnect', 'function');
+}
+
+description('Test the constructor of WebKitMutationObserver');
+
+if (!window.WebKitMutationObserver)
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+else
+    runTest();
+
+var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

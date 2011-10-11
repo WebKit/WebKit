@@ -474,6 +474,9 @@ webaudio
 # CSS Filters is disabled
 css3/filters
 
+# MutationObservers are net yet enabled. http://webkit.org/b/68729
+fast/mutation
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

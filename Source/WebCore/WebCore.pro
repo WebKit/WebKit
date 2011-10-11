@@ -192,6 +192,7 @@ v8 {
         bindings/v8/custom/V8MessageChannelConstructor.cpp \
         bindings/v8/custom/V8MessagePortCustom.cpp \
         bindings/v8/custom/V8MessageEventCustom.cpp \
+        bindings/v8/custom/V8MutationCallbackCustom.cpp \
         bindings/v8/custom/V8NamedNodeMapCustom.cpp \
         bindings/v8/custom/V8NamedNodesCollection.cpp \
         bindings/v8/custom/V8NodeCustom.cpp \
@@ -206,6 +207,7 @@ v8 {
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \
         bindings/v8/custom/V8WebKitAnimationCustom.cpp \
+        bindings/v8/custom/V8WebKitMutationObserverCustom.cpp \
         bindings/v8/custom/V8WebKitPointConstructor.cpp \
         bindings/v8/custom/V8WorkerContextCustom.cpp \
         bindings/v8/custom/V8WorkerCustom.cpp \
@@ -317,6 +319,7 @@ v8 {
         bindings/js/JSMessageEventCustom.cpp \
         bindings/js/JSMessagePortCustom.cpp \
         bindings/js/JSMessagePortCustom.h \
+        bindings/js/JSMutationCallbackCustom.cpp \
         bindings/js/JSNamedNodeMapCustom.cpp \
         bindings/js/JSNavigatorCustom.cpp  \
         bindings/js/JSNodeCustom.cpp \
@@ -343,6 +346,7 @@ v8 {
         bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
         bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
         bindings/js/JSWebKitCSSMatrixCustom.cpp \
+        bindings/js/JSWebKitMutationObserverCustom.cpp \
         bindings/js/JSWebKitPointCustom.cpp \
         bindings/js/JSXMLHttpRequestCustom.cpp \
         bindings/js/JSXMLHttpRequestUploadCustom.cpp \
@@ -568,6 +572,7 @@ SOURCES += \
     dom/UserTypingGestureIndicator.cpp \
     dom/ViewportArguments.cpp \
     dom/WebKitAnimationEvent.cpp \
+    dom/WebKitMutationObserver.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
     dom/WindowEventContext.cpp \
@@ -1532,7 +1537,9 @@ HEADERS += \
     dom/MessagePort.h \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
+    dom/MutationCallback.h \
     dom/MutationEvent.h \
+    dom/MutationObserverOptions.h \
     dom/MutationRecord.h \
     dom/NamedNodeMap.h \
     dom/NameNodeList.h \
@@ -1583,6 +1590,7 @@ HEADERS += \
     dom/UserGestureIndicator.h \
     dom/ViewportArguments.h \
     dom/WebKitAnimationEvent.h \
+    dom/WebKitMutationObserver.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
     editing/AppendNodeCommand.h \

@@ -1,3 +1,12 @@
+2011-10-10  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Add stub implementation of WebKitMutationObserver
+        https://bugs.webkit.org/show_bug.cgi?id=68949
+
+        Reviewed by Ryosuke Niwa, Oliver Hunt, and Dimitri Glazkov.
+
+        * features.gypi: Added 'enable_mutation_observers' variable.
+
 2011-10-11  Mike Reed  <reed@google.com>
 
         re-add support for GDI text behind a compile flag

@@ -297,6 +297,7 @@ DOM_CLASSES = \
     Metadata \
     MetadataCallback \
     MouseEvent \
+    MutationCallback \
     MutationEvent \
     MutationRecord \
     NamedNodeMap \
@@ -553,6 +554,7 @@ DOM_CLASSES = \
     WebKitCSSTransformValue \
     WebKitFlags \
     WebKitLoseContext \
+    WebKitMutationObserver \
     WebKitPoint \
     WebKitTransitionEvent \
     WebSocket \

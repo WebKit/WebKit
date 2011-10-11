@@ -163,6 +163,7 @@ SET(WebCore_IDL_FILES
     dom/MessageEvent.idl
     dom/MessagePort.idl
     dom/MouseEvent.idl
+    dom/MutationCallback.idl
     dom/MutationEvent.idl
     dom/MutationRecord.idl
     dom/NamedNodeMap.idl
@@ -186,6 +187,7 @@ SET(WebCore_IDL_FILES
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
+    dom/WebKitMutationObserver.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
@@ -604,6 +606,7 @@ SET(WebCore_SOURCES
     dom/UserTypingGestureIndicator.cpp
     dom/ViewportArguments.cpp
     dom/WebKitAnimationEvent.cpp
+    dom/WebKitMutationObserver.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
     dom/WindowEventContext.cpp
