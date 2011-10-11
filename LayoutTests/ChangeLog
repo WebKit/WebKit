@@ -1,3 +1,10 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline after r96675.
+
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+
 2011-10-11  Abhishek Arya  <inferno@chromium.org>
 
         Generalize r95461 change to include table-cell and
