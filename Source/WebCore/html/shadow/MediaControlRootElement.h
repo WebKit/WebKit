@@ -132,7 +132,6 @@ private:
     MediaControlFullscreenVolumeSliderElement* m_fullScreenVolumeSlider;
     MediaControlFullscreenVolumeMaxButtonElement* m_fullScreenMaxVolumeButton;
     MediaControlPanelElement* m_panel;
-    bool m_opaque;
     bool m_isMouseOverControls;
     Timer<MediaControlRootElement> m_hideFullscreenControlsTimer;
 };

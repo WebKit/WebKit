@@ -101,6 +101,8 @@ public:
 
     void setCanBeDragged(bool);
     void resetPosition();
+    void makeOpaque();
+    void makeTransparent();
 
 private:
     MediaControlPanelElement(HTMLMediaElement*);
@@ -116,6 +118,7 @@ private:
 
     bool m_canBeDragged;
     bool m_isBeingDragged;
+    bool m_opaque;
     LayoutPoint m_dragStartPosition;
     LayoutPoint m_dragStartEventLocation;
 };

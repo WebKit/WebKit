@@ -77,25 +77,14 @@ MediaControlElement::MediaControlElement(HTMLMediaElement* mediaElement)
 {
 }
 
-static const String& displayString()
-{
-    DEFINE_STATIC_LOCAL(String, s, ("display"));
-    return s;
-}
-
 void MediaControlElement::show()
 {
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    style()->removeProperty(displayString(), ec);
+    getInlineStyleDecl()->removeProperty(CSSPropertyDisplay);
 }
 
 void MediaControlElement::hide()
 {
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    DEFINE_STATIC_LOCAL(String, none, ("none"));
-    style()->setProperty(displayString(), none, ec);
+    getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 // ----------------------------
@@ -104,6 +93,7 @@ inline MediaControlPanelElement::MediaControlPanelElement(HTMLMediaElement* medi
     : MediaControlElement(mediaElement)
     , m_canBeDragged(false)
     , m_isBeingDragged(false)
+    , m_opaque(true)
 {
 }
 
@@ -193,6 +183,32 @@ void MediaControlPanelElement::resetPosition()
     style->removeProperty(CSSPropertyTop);
     style->removeProperty(CSSPropertyMarginLeft);
     style->removeProperty(CSSPropertyMarginTop);
+}
+
+void MediaControlPanelElement::makeOpaque()
+{
+    if (m_opaque)
+        return;
+    
+    CSSMutableStyleDeclaration* style = getInlineStyleDecl();
+    style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
+    style->setProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeInDuration(), CSSPrimitiveValue::CSS_S);
+    style->setProperty(CSSPropertyOpacity, 1.0, CSSPrimitiveValue::CSS_NUMBER);
+
+    m_opaque = true;
+}
+
+void MediaControlPanelElement::makeTransparent()
+{
+    if (!m_opaque)
+        return;
+
+    CSSMutableStyleDeclaration* style = getInlineStyleDecl();
+    style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
+    style->setProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeOutDuration(), CSSPrimitiveValue::CSS_S);
+    style->setProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
+
+    m_opaque = false;
 }
 
 void MediaControlPanelElement::defaultEventHandler(Event* event)
@@ -397,15 +413,12 @@ MediaControlInputElement::MediaControlInputElement(HTMLMediaElement* mediaElemen
 
 void MediaControlInputElement::show()
 {
-    ExceptionCode ec;
-    style()->removeProperty(displayString(), ec);
+    getInlineStyleDecl()->removeProperty(CSSPropertyDisplay);
 }
 
 void MediaControlInputElement::hide()
 {
-    ExceptionCode ec;
-    DEFINE_STATIC_LOCAL(String, none, ("none"));
-    style()->setProperty(displayString(), none, ec);
+    getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 

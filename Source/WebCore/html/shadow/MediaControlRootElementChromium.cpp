@@ -132,50 +132,14 @@ void MediaControlRootElementChromium::hide()
     m_panel->hide();
 }
 
-static const String& webkitTransitionString()
-{
-    DEFINE_STATIC_LOCAL(String, s, ("-webkit-transition"));
-    return s;
-}
-
-static const String& opacityString()
-{
-    DEFINE_STATIC_LOCAL(String, s, ("opacity"));
-    return s;
-}
-
 void MediaControlRootElementChromium::makeOpaque()
 {
-    if (m_opaque)
-        return;
-
-    DEFINE_STATIC_LOCAL(String, transitionValue, ());
-    if (transitionValue.isNull())
-        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeInDuration());
-    DEFINE_STATIC_LOCAL(String, opacityValue, ("1"));
-
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
-    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
-    m_opaque = true;
+    m_panel->makeOpaque();
 }
 
 void MediaControlRootElementChromium::makeTransparent()
 {
-    if (!m_opaque)
-        return;
-
-    DEFINE_STATIC_LOCAL(String, transitionValue, ());
-    if (transitionValue.isNull())
-        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeOutDuration());
-    DEFINE_STATIC_LOCAL(String, opacityValue, ("0"));
-
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
-    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
-    m_opaque = false;
+    m_panel->makeTransparent();
 }
 
 void MediaControlRootElementChromium::reset()

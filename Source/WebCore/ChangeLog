@@ -1,3 +1,37 @@
+2011-10-11  Arun Patole  <BMF834@motorola.com>
+
+        Need more efficient ways to set inline CSS styles
+        https://bugs.webkit.org/show_bug.cgi?id=58157
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests added as this is just a code optimization.
+
+        Code optimization:
+          -Used CSSPropertyNames, CSSValues and CSSPrimitiveValues instead of Strings.
+          -Removed displayString(), webkitTransitionString(), opacityString() functions as they will no longer be needed after this change.
+          -Moved makeOpaque and makeTransparent functionality to MediaControlPanelElement from MediaControlRootElement.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::show):
+        (WebCore::MediaControlElement::hide):
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        (WebCore::MediaControlInputElement::show):
+        (WebCore::MediaControlInputElement::hide):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement):
+        (WebCore::MediaControlRootElement::makeOpaque):
+        (WebCore::MediaControlRootElement::makeTransparent):
+        * html/shadow/MediaControlRootElement.h:
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::makeOpaque):
+        (WebCore::MediaControlRootElementChromium::makeTransparent):
+
 2011-10-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make Extensions component compile.

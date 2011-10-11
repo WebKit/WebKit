@@ -64,7 +64,6 @@ MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
     , m_fullScreenVolumeSlider(0)
     , m_fullScreenMaxVolumeButton(0)
     , m_panel(0)
-    , m_opaque(true)
     , m_isMouseOverControls(false)
     , m_hideFullscreenControlsTimer(this, &MediaControlRootElement::hideFullscreenControlsTimerFired)
 {
@@ -228,50 +227,14 @@ void MediaControlRootElement::hide()
     m_panel->hide();
 }
 
-static const String& webkitTransitionString()
-{
-    DEFINE_STATIC_LOCAL(String, s, ("-webkit-transition"));
-    return s;
-}
-
-static const String& opacityString()
-{
-    DEFINE_STATIC_LOCAL(String, s, ("opacity"));
-    return s;
-}
-
 void MediaControlRootElement::makeOpaque()
 {
-    if (m_opaque)
-        return;
-
-    DEFINE_STATIC_LOCAL(String, transitionValue, ());
-    if (transitionValue.isNull())
-        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeInDuration());
-    DEFINE_STATIC_LOCAL(String, opacityValue, ("1"));
-
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
-    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
-    m_opaque = true;
+    m_panel->makeOpaque();
 }
 
 void MediaControlRootElement::makeTransparent()
 {
-    if (!m_opaque)
-        return;
-
-    DEFINE_STATIC_LOCAL(String, transitionValue, ());
-    if (transitionValue.isNull())
-        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeOutDuration());
-    DEFINE_STATIC_LOCAL(String, opacityValue, ("0"));
-
-    ExceptionCode ec;
-    // FIXME: Make more efficient <http://webkit.org/b/58157>
-    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
-    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
-    m_opaque = false;
+    m_panel->makeTransparent();
 }
 
 void MediaControlRootElement::reset()
