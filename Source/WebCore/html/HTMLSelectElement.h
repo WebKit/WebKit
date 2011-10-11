@@ -30,6 +30,7 @@
 #include "Event.h"
 #include "HTMLFormControlElement.h"
 #include "SelectElement.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ public:
     void setRecalcListItems();
     void recalcListItemsIfNeeded();
 
-    const Vector<Element*>& listItems() const { return m_data.listItems(this); }
+    const Vector<Element*>& listItems() const;
 
     virtual void accessKeyAction(bool sendToAnyElement);
     void accessKeySetSelectedIndex(int);
@@ -143,7 +144,8 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
+    void checkListItems() const;
+    void recalcListItemsInternal(bool updateSelectedStates = true);
     void setSelectedIndexInternal(int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
     void deselectItemsWithoutValidation(Element* excludeElement = 0);
     void parseMultipleAttribute(const Attribute*);
@@ -153,7 +155,6 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event*);
     void setOptionsChangedOnRenderer();
-    friend class SelectElementData;
 
     enum SkipDirection {
         SkipBackwards = -1,
@@ -168,6 +169,8 @@ private:
 
     SelectElementData m_data;
     CollectionCache m_collectionInfo;
+    Vector<Element*> m_listItems;
+    bool m_recalcListItems;
 };
 
 HTMLSelectElement* toSelectElement(Element*);

@@ -76,6 +76,7 @@ static const DOMTimeStamp typeAheadTimeout = 1000;
 
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
+    , m_recalcListItems(false)
 {
     ASSERT(hasTagName(selectTag));
 }
@@ -314,12 +315,12 @@ PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 {
-    recalcListItems(const_cast<SelectElementData&>(m_data), this, updateSelectedStates);
+    const_cast<HTMLSelectElement*>(this)->recalcListItemsInternal(updateSelectedStates);
 }
 
 void HTMLSelectElement::recalcListItemsIfNeeded()
 {
-    if (m_data.shouldRecalcListItems())
+    if (m_recalcListItems)
         recalcListItems();
 }
 
@@ -456,19 +457,19 @@ int HTMLSelectElement::nextValidIndex(const Vector<Element*>& listItems, int lis
 
 int HTMLSelectElement::nextSelectableListIndex(int startIndex) const
 {
-    return nextValidIndex(m_data.listItems(this), startIndex, SkipForwards, 1);
+    return nextValidIndex(listItems(), startIndex, SkipForwards, 1);
 }
 
 int HTMLSelectElement::previousSelectableListIndex(int startIndex) const
 {
     if (startIndex == -1)
-        startIndex = m_data.listItems(this).size();
-    return nextValidIndex(m_data.listItems(this), startIndex, SkipBackwards, 1);
+        startIndex = listItems().size();
+    return nextValidIndex(listItems(), startIndex, SkipBackwards, 1);
 }
 
 int HTMLSelectElement::firstSelectableListIndex() const
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int index = nextValidIndex(items, items.size(), SkipBackwards, INT_MAX);
     if (static_cast<unsigned>(index) == items.size())
         return -1;
@@ -477,13 +478,13 @@ int HTMLSelectElement::firstSelectableListIndex() const
 
 int HTMLSelectElement::lastSelectableListIndex() const
 {
-    return nextValidIndex(m_data.listItems(this), -1, SkipForwards, INT_MAX);
+    return nextValidIndex(listItems(), -1, SkipForwards, INT_MAX);
 }
 
 // Returns the index of the next valid item one page away from |startIndex| in direction |direction|.
 int HTMLSelectElement::nextSelectableListIndexPageAway(int startIndex, SkipDirection direction) const
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     // Can't use data->size() because renderer forces a minimum size.
     int pageSize = 0;
     if (renderer()->isListBox())
@@ -526,7 +527,7 @@ void HTMLSelectElement::saveLastSelection()
     Vector<bool>& lastOnChangeSelection = m_data.lastOnChangeSelection(); 
     lastOnChangeSelection.clear();
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
         lastOnChangeSelection.append(optionElement && optionElement->selected());
@@ -542,7 +543,7 @@ void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
     Vector<bool>& cachedStateForActiveSelection = m_data.cachedStateForActiveSelection(); 
     cachedStateForActiveSelection.clear();
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
         cachedStateForActiveSelection.append(optionElement && optionElement->selected());
@@ -557,13 +558,13 @@ void HTMLSelectElement::setActiveSelectionEndIndex(int index)
 void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 {
     ASSERT(renderer() && (renderer()->isListBox() || m_data.multiple()));
-    ASSERT(!m_data.listItems(this).size() || m_data.activeSelectionAnchorIndex() >= 0);
+    ASSERT(!listItems().size() || m_data.activeSelectionAnchorIndex() >= 0);
 
     unsigned start = min(m_data.activeSelectionAnchorIndex(), m_data.activeSelectionEndIndex());
     unsigned end = max(m_data.activeSelectionAnchorIndex(), m_data.activeSelectionEndIndex());
     Vector<bool>& cachedStateForActiveSelection = m_data.cachedStateForActiveSelection();
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
         if (!optionElement || items[i]->disabled())
@@ -586,7 +587,7 @@ void HTMLSelectElement::listBoxOnChange()
     ASSERT(!m_data.usesMenuList() || m_data.multiple());
 
     Vector<bool>& lastOnChangeSelection = m_data.lastOnChangeSelection(); 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
 
     // If the cached selection list is empty, or the size has changed, then fire
     // dispatchFormControlChangeEvent, and return early.
@@ -640,9 +641,28 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
     }
 }
 
+void HTMLSelectElement::checkListItems() const
+{
+#if !ASSERT_DISABLED
+    Vector<Element*> items = m_listItems;
+    const_cast<HTMLSelectElement*>(this)->recalcListItemsInternal(false);
+    ASSERT(items == m_listItems);
+#endif
+}
+
+const Vector<Element*>& HTMLSelectElement::listItems() const
+{
+    if (m_recalcListItems)
+        const_cast<HTMLSelectElement*>(this)->recalcListItemsInternal(false);
+    else
+        checkListItems();
+
+    return m_listItems;
+}
+
 void HTMLSelectElement::setRecalcListItems()
 {
-    m_data.setShouldRecalcListItems(true);
+    m_recalcListItems = true;
     // Manual selection anchor is reset when manipulating the select programmatically.
     m_data.setActiveSelectionAnchorIndex(-1);
     setOptionsChangedOnRenderer();
@@ -651,17 +671,16 @@ void HTMLSelectElement::setRecalcListItems()
         m_collectionInfo.reset();
 }
 
-void HTMLSelectElement::recalcListItems(SelectElementData& data, const Element* element, bool updateSelectedStates)
+void HTMLSelectElement::recalcListItemsInternal(bool updateSelectedStates)
 {
-    Vector<Element*>& listItems = data.rawListItems();
-    listItems.clear();
+    m_listItems.clear();
 
-    data.setShouldRecalcListItems(false);
+    m_recalcListItems = false;
 
     OptionElement* foundSelected = 0;
-    for (Node* currentNode = element->firstChild(); currentNode;) {
+    for (Node* currentNode = this->firstChild(); currentNode;) {
         if (!currentNode->isElementNode()) {
-            currentNode = currentNode->traverseNextSibling(element);
+            currentNode = currentNode->traverseNextSibling(this);
             continue;
         }
 
@@ -671,7 +690,7 @@ void HTMLSelectElement::recalcListItems(SelectElementData& data, const Element* 
         // flatten the tree automatically, so we follow suit.
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
         if (isOptionGroupElement(current)) {
-            listItems.append(current);
+            m_listItems.append(current);
             if (current->firstChild()) {
                 currentNode = current->firstChild();
                 continue;
@@ -679,10 +698,10 @@ void HTMLSelectElement::recalcListItems(SelectElementData& data, const Element* 
         }
 
         if (OptionElement* optionElement = toOptionElement(current)) {
-            listItems.append(current);
+            m_listItems.append(current);
 
-            if (updateSelectedStates && !data.multiple()) {
-                if (!foundSelected && (data.size() <= 1 || optionElement->selected())) {
+            if (updateSelectedStates && !m_data.multiple()) {
+                if (!foundSelected && (m_data.size() <= 1 || optionElement->selected())) {
                     foundSelected = optionElement;
                     foundSelected->setSelectedState(true);
                 } else if (foundSelected && optionElement->selected()) {
@@ -693,7 +712,7 @@ void HTMLSelectElement::recalcListItems(SelectElementData& data, const Element* 
         }
 
         if (current->hasTagName(HTMLNames::hrTag))
-            listItems.append(current);
+            m_listItems.append(current);
 
         // In conforming HTML code, only <optgroup> and <option> will be found
         // within a <select>. We call traverseNextSibling so that we only step
@@ -701,7 +720,7 @@ void HTMLSelectElement::recalcListItems(SelectElementData& data, const Element* 
         // with the case where odd tags like a <div> have been added but we
         // handle this because such tags have already been removed from the
         // <select>'s subtree at this point.
-        currentNode = currentNode->traverseNextSibling(element);
+        currentNode = currentNode->traverseNextSibling(this);
     }
 }
 
@@ -710,7 +729,7 @@ int HTMLSelectElement::selectedIndex() const
     unsigned index = 0;
 
     // return the number of the first option selected
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (size_t i = 0; i < items.size(); ++i) {
         if (OptionElement* optionElement = toOptionElement(items[i])) {
             if (optionElement->selected())
@@ -729,7 +748,7 @@ void HTMLSelectElement::setSelectedIndexInternal(int optionIndex, bool deselect,
     if (!m_data.multiple())
         deselect = true;
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
 
     Element* excludeElement = 0;
@@ -772,7 +791,7 @@ void HTMLSelectElement::setSelectedIndexInternal(int optionIndex, bool deselect,
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int listSize = static_cast<int>(items.size());
     if (optionIndex < 0 || optionIndex >= listSize)
         return -1;
@@ -791,7 +810,7 @@ int HTMLSelectElement::optionToListIndex(int optionIndex) const
 
 int HTMLSelectElement::listToOptionIndex(int listIndex) const
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     if (listIndex < 0 || listIndex >= static_cast<int>(items.size()) || !isOptionElement(items[listIndex]))
         return -1;
 
@@ -826,7 +845,7 @@ void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 
 void HTMLSelectElement::deselectItemsWithoutValidation(Element* excludeElement)
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         if (items[i] == excludeElement)
             continue;
@@ -838,7 +857,7 @@ void HTMLSelectElement::deselectItemsWithoutValidation(Element* excludeElement)
 
 bool HTMLSelectElement::saveFormControlState(String& value) const
 {
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int length = items.size();
 
     // FIXME: Change this code to use the new StringImpl::createUninitialized code path.
@@ -855,9 +874,9 @@ bool HTMLSelectElement::saveFormControlState(String& value) const
 
 void HTMLSelectElement::restoreFormControlState(const String& state)
 {
-    recalcListItems(m_data, this);
+    recalcListItems();
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int length = items.size();
 
     for (int i = 0; i < length; ++i) {
@@ -885,7 +904,7 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
         return false;
 
     bool successful = false;
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
 
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
@@ -906,7 +925,7 @@ void HTMLSelectElement::reset()
     OptionElement* firstOption = 0;
     OptionElement* selectedOption = 0;
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
         if (!optionElement)
@@ -980,7 +999,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
         const String& keyIdentifier = static_cast<KeyboardEvent*>(event)->keyIdentifier();
         bool handled = true;
-        const Vector<Element*>& listItems = m_data.listItems(this);
+        const Vector<Element*>& listItems = this->listItems();
         int listIndex = optionToListIndex(selectedIndex());
 
         if (keyIdentifier == "Down" || keyIdentifier == "Right")
@@ -1108,7 +1127,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     bool shiftSelect = m_data.multiple() && shift;
     bool multiSelect = m_data.multiple() && multi && !shift;
 
-    Element* clickedElement = m_data.listItems(this)[listIndex];
+    Element* clickedElement = listItems()[listIndex];
     OptionElement* option = toOptionElement(clickedElement);
     if (option) {
         // Keep track of whether an active selection (like during drag
@@ -1148,7 +1167,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
 
 void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 {
-    const Vector<Element*>& listItems = m_data.listItems(this);
+    const Vector<Element*>& listItems = this->listItems();
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         focus();
@@ -1306,7 +1325,7 @@ int HTMLSelectElement::lastSelectedListIndex() const
     // FIXME: We should iterate the listItems in the reverse order.
     unsigned index = 0;
     bool found = false;
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (size_t i = 0; i < items.size(); ++i) {
         if (OptionElement* optionElement = toOptionElement(items[i])) {
             if (optionElement->selected()) {
@@ -1362,7 +1381,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         }
     }
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int itemCount = items.size();
     if (itemCount < 1)
         return;
@@ -1400,7 +1419,7 @@ void HTMLSelectElement::insertedIntoTree(bool deep)
     // When the element is created during document parsing, it won't have any
     // items yet - but for innerHTML and related methods, this method is called
     // after the whole subtree is constructed.
-    recalcListItems(m_data, this, true);
+    recalcListItems(true);
     HTMLFormControlElementWithState::insertedIntoTree(deep);
 }
 
@@ -1411,7 +1430,7 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
         accessKeyAction(false);
     
     // if this index is already selected, unselect. otherwise update the selected index
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     int listIndex = optionToListIndex(index);
     if (OptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
         if (optionElement->selected())
@@ -1432,7 +1451,7 @@ unsigned HTMLSelectElement::length() const
 {
     unsigned options = 0;
 
-    const Vector<Element*>& items = m_data.listItems(this);
+    const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         if (isOptionElement(items[i]))
             ++options;

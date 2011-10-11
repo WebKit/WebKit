@@ -73,13 +73,6 @@ public:
 
     Vector<bool>& cachedStateForActiveSelection() { return m_cachedStateForActiveSelection; }
 
-    bool shouldRecalcListItems() const { return m_recalcListItems; }
-    void setShouldRecalcListItems(bool value) { m_recalcListItems = value; }
-
-    Vector<Element*>& rawListItems() { return m_listItems; }
-    Vector<Element*>& listItems(const Element*);
-    const Vector<Element*>& listItems(const Element*) const;
-
     UChar repeatingChar() const { return m_repeatingChar; }
     void setRepeatingChar(const UChar& value) { m_repeatingChar = value; }
 
@@ -92,7 +85,6 @@ public:
 private:
     void checkListItems(const Element*) const;
 
-    Vector<Element*> m_listItems;
     Vector<bool> m_lastOnChangeSelection;
     Vector<bool> m_cachedStateForActiveSelection;
 
@@ -109,7 +101,6 @@ private:
     bool m_userDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;
-    bool m_recalcListItems;
 };
 
 }
