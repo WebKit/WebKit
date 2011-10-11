@@ -1,5 +1,24 @@
 2011-10-11  Adam Barth  <abarth@webkit.org>
 
+        sheriffbot takes too long to acknowledge rollout commands
+        https://bugs.webkit.org/show_bug.cgi?id=69871
+
+        Reviewed by Eric Seidel.
+
+        We used to update the working copy before acknowledging the command
+        because we wanted to ping all the relevant IRC nicks.  That's caused a
+        bunch of frustration because folks don't know whether the bot has heard
+        their commands.
+
+        This patch makes the bot reply immediately before updating the working
+        copy.  All the relevenat folks are still pinged when the bot finishes
+        preparing the rollout.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
         test-webkitpy fails on Lion
         https://bugs.webkit.org/show_bug.cgi?id=69873
 
