@@ -1,3 +1,9 @@
+2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Gardening flakey test expectations.
+
+        * platform/chromium/test_expectations.txt: Updated for recent flakes.
+
 2011-10-10  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Add stub implementation of WebKitMutationObserver

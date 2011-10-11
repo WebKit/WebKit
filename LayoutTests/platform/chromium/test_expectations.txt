@@ -2931,7 +2931,7 @@ BUGWK60094 : fast/encoding/parser-tests-50.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-60.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-70.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-80.html = PASS TIMEOUT
-BUGWK60094 : fast/encoding/parser-tests-90.html = PASS TIMEOUT
+BUGWK60094 : fast/encoding/parser-tests-90.html = PASS TIMEOUT CRASH
 BUGWK60094 : fast/encoding/parser-tests-100.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-110.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-120.html = PASS TIMEOUT
@@ -3639,7 +3639,7 @@ BUGCR96220 MAC : fast/borders/border-image-outset-in-shorthand.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/border-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/border-image-outset.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = IMAGE+TEXT
-BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = IMAGE
+BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = IMAGE CRASH
 BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
 
@@ -3756,7 +3756,7 @@ BUGWK68270 LEOPARD CPU DEBUG : fast/css/empty-pseudo-class.html = IMAGE IMAGE+TE
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-child-pseudo-class.html = IMAGE IMAGE+TEXT
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-child-pseudo-class.html = IMAGE IMAGE+TEXT
-BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE IMAGE+TEXT PASS
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT
 
