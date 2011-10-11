@@ -106,6 +106,15 @@ static void setLogFontAndStyle(HFONT hfont, LOGFONT *logfont, int *style)
         *style = getStyleFromLogfont(logfont);
 }
 
+static bool canUseGlyphIndex(const SCRIPT_ITEM& run)
+{
+    // On early version of Uniscribe, ScriptShape() sets run.a.fNoGlyphIndex
+    // to TRUE when it can't shape the run with glyph indexes. This could
+    // occur when we use CFF webfonts(See http://crbug.com/39017).
+    // We don't use the font in that case and try to use fallback fonts.
+    return !run.a.fNoGlyphIndex;
+}
+
 UniscribeHelper::UniscribeHelper(const UChar* input,
                                 int inputLength,
                                 bool isRtl,
@@ -594,6 +603,7 @@ bool UniscribeHelper::shape(const UChar* input,
         shaping.m_visualAttributes.resize(numGlyphs);
         charProps.resize(itemLength);
         glyphProps.resize(numGlyphs);
+        run.a.fNoGlyphIndex = FALSE;
 
 #ifdef PURIFY
         // http://code.google.com/p/chromium/issues/detail?id=5309
@@ -639,7 +649,7 @@ bool UniscribeHelper::shape(const UChar* input,
         } else if (hr == E_OUTOFMEMORY) {
             numGlyphs *= 2;
             continue;
-        } else if (SUCCEEDED(hr) && (lastFallbackTried || !containsMissingGlyphs(shaping, run, fontProperties)))
+        } else if (SUCCEEDED(hr) && (lastFallbackTried || !containsMissingGlyphs(shaping, run, fontProperties) && canUseGlyphIndex(run)))
             break;
 
         // The current font can't render this run. clear DC and try

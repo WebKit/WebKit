@@ -1,3 +1,22 @@
+2011-10-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Complex script code path breaks on Windows XP when a CFF font is used
+        https://bugs.webkit.org/show_bug.cgi?id=69497
+
+        Reviewed by Kent Tamura.
+
+        Don't use CFF webfonts when ScriptShape() can't handle it.
+        ScriptShape() indicates us the case by setting fNoGlyphIndex to TRUE.
+        If it's TRUE, we don't use the font. This could happen with early
+        version of Uniscribe on WinXP.
+
+        No new tests because the version of Uniscribe depends on environment.
+        One can install newer version of Uniscribe on WinXP.
+
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::canUseGlyphIndex): Added.
+        (WebCore::UniscribeHelper::shape): Don't use the shape result when canUseGlyphIndex() returns false.
+
 2011-10-11  John Bauman  <jbauman@chromium.org>
 
         Fix crash with toDataURL to JPEG
