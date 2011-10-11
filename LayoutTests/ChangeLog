@@ -1,3 +1,11 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        [Chromium] Skip mac- and win-specific accessibility tests in Chromium.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-11  Oliver Varga  <voliver@inf.u-szeged.hu>
 
         [Qt] Update test expectation after r97109.

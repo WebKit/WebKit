@@ -948,6 +948,8 @@ BUGWK66386 : svg/custom/repaint-shadow.svg = PASS IMAGE
 // AccessibilityController and AccessibilityUIElement are only
 // partially finished - about half the tests can't run yet.
 
+BUGCR10322 SKIP : platform/mac/accessibility = PASS FAIL
+BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 BUGCR10322 SKIP : accessibility/aria-activedescendant-crash.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-combobox.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-controls-with-tabs.html = TEXT
