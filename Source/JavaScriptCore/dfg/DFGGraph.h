@@ -32,6 +32,7 @@
 #include "DFGNode.h"
 #include "PredictionTracker.h"
 #include "RegisterFile.h"
+#include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
@@ -291,7 +292,7 @@ public:
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
-    unsigned m_preservedVars;
+    BitVector m_preservedVars;
     unsigned m_localVars;
     unsigned m_parameterSlots;
 private:

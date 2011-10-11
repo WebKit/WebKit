@@ -1402,6 +1402,11 @@ private:
     
     void allocateVirtualRegisters()
     {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Preserved vars: ");
+        m_graph.m_preservedVars.dump(stdout);
+        printf("\n");
+#endif
         ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
         unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
         for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
@@ -1440,9 +1445,12 @@ private:
         // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
         // for the function (and checked for on entry). Since we perform a new and
         // different allocation of temporaries, more registers may now be required.
-        unsigned calleeRegisters = scoreBoard.allocatedCount() + m_graph.m_preservedVars + m_graph.m_parameterSlots;
+        unsigned calleeRegisters = scoreBoard.highWatermark() + m_graph.m_parameterSlots;
         if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
             m_codeBlock->m_numCalleeRegisters = calleeRegisters;
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Num callee registers: %u\n", calleeRegisters);
+#endif
     }
     
     Graph& m_graph;

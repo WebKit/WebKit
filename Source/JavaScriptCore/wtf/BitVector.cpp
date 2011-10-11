@@ -32,13 +32,9 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
-BitVector::BitVector(const BitVector& other)
-    : m_bitsOrPointer(makeInlineBits(0))
-{
-    (*this) = other;
-}
+namespace WTF {
 
-BitVector& BitVector::operator=(const BitVector& other)
+void BitVector::setSlow(const BitVector& other)
 {
     uintptr_t newBitsOrPointer;
     if (other.isInline())
@@ -51,7 +47,6 @@ BitVector& BitVector::operator=(const BitVector& other)
     if (!isInline())
         OutOfLineBits::destroy(outOfLineBits());
     m_bitsOrPointer = newBitsOrPointer;
-    return *this;
 }
 
 void BitVector::resize(size_t numBits)
@@ -94,9 +89,32 @@ void BitVector::resizeOutOfLine(size_t numBits)
 {
     ASSERT(numBits > maxInlineBits());
     OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
-    memcpy(newOutOfLineBits->bits(), bits(), byteCount(std::min(size(), numBits)));
-    if (!isInline())
+    if (isInline()) {
+        // Make sure that all of the bits are zero in case we do a no-op resize.
+        *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
+    } else {
+        if (numBits > size()) {
+            size_t oldNumWords = outOfLineBits()->numWords();
+            size_t newNumWords = newOutOfLineBits->numWords();
+            memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), oldNumWords * sizeof(void*));
+            memset(newOutOfLineBits->bits() + oldNumWords, 0, (newNumWords - oldNumWords) * sizeof(void*));
+        } else
+            memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords() * sizeof(void*));
         OutOfLineBits::destroy(outOfLineBits());
+    }
     m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits);
 }
 
+#ifndef NDEBUG
+void BitVector::dump(FILE* out)
+{
+    for (size_t i = 0; i < size(); ++i) {
+        if (get(i))
+            fprintf(out, "1");
+        else
+            fprintf(out, "-");
+    }
+}
+#endif
+
+} // namespace WTF

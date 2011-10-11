@@ -45,7 +45,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     exit.m_check.link(this);
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
-    fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x   ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
+    fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x  ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
     exit.dump(stderr);
 #endif
 #if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
@@ -160,6 +160,23 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             break;
         }
     }
+    
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "  ");
+    if (numberOfPoisonedVirtualRegisters)
+        fprintf(stderr, "Poisoned=%u ", numberOfPoisonedVirtualRegisters);
+    if (numberOfDisplacedVirtualRegisters)
+        fprintf(stderr, "Displaced=%u ", numberOfDisplacedVirtualRegisters);
+    if (haveUnboxedInt32s)
+        fprintf(stderr, "UnboxedInt32 ");
+    if (haveFPRs)
+        fprintf(stderr, "FPR ");
+    if (haveConstants)
+        fprintf(stderr, "Constants ");
+    if (haveUndefined)
+        fprintf(stderr, "Undefined ");
+    fprintf(stderr, " ");
+#endif
     
     EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * (numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
 
@@ -485,7 +502,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     jump(GPRInfo::regT1);
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
-    fprintf(stderr, "   -> %p\n", jumpTarget);
+    fprintf(stderr, "-> %p\n", jumpTarget);
 #endif
 }
 

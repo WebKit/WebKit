@@ -82,7 +82,7 @@ public:
         uintptr_t result = 0;
         for (unsigned subIndex = 0; subIndex < bitCount; ++subIndex) {
             result <<= 1;
-            result |= (m_bits.get(index * bitCount + subIndex) ? 1 : 0);
+            result |= (m_bits.quickGet(index * bitCount + subIndex) ? 1 : 0);
         }
         return static_cast<T>(result);
     }
@@ -98,7 +98,7 @@ public:
         ASSERT((myValue & mask()) == myValue);
         
         for (unsigned subIndex = bitCount; subIndex-- > 0;) {
-            m_bits.set(index * bitCount + subIndex, !!(myValue & 1));
+            m_bits.quickSet(index * bitCount + subIndex, !!(myValue & 1));
             myValue >>= 1;
         }
         

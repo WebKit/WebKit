@@ -60,6 +60,9 @@ public:
         , m_globalResolveNumber(0)
     {
         ASSERT(m_profiledBlock);
+        
+        for (int i = 0; i < codeBlock->m_numVars; ++i)
+            m_preservedVars.set(i);
     }
 
     // Parse a full CodeBlock of bytecode.
@@ -137,7 +140,7 @@ private:
 
         // Check for reads of temporaries from prior blocks,
         // expand m_preservedVars to cover these.
-        m_preservedVars = std::max(m_preservedVars, operand + 1);
+        m_preservedVars.set(operand);
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
         
@@ -617,10 +620,10 @@ private:
     unsigned m_numArguments;
     // The number of locals (vars + temporaries) used in the function.
     unsigned m_numLocals;
-    // The number of registers we need to preserve across BasicBlock boundaries;
-    // typically equal to the number vars, but we expand this to cover all
+    // The set of registers we need to preserve across BasicBlock boundaries;
+    // typically equal to the set of vars, but we expand this to cover all
     // temporaries that persist across blocks (dues to ?:, &&, ||, etc).
-    unsigned m_preservedVars;
+    BitVector m_preservedVars;
     // The number of slots (in units of sizeof(Register)) that we need to
     // preallocate for calls emanating from this frame. This includes the
     // size of the CallFrame, only if this is not a leaf function.  (I.e.

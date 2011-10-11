@@ -1,3 +1,58 @@
+2011-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG virtual register allocator should be more aggressive in
+        reusing temporary slots
+        https://bugs.webkit.org/show_bug.cgi?id=69868
+
+        Reviewed by Oliver Hunt.
+        
+        1.2% win on V8, neutral elsewhere. The win is probably because it
+        increases precision of GC conservative scans.
+        
+        This required making the DFG::ScoreBoard operate over a bitvector
+        of preserved variables, rather than just a preserved variable
+        threshold. To do this, I improved the WTF::BitVector class to make
+        it more user-friendly. It still retains all previous functionality.
+        Also made changes to PackedIntVector to accomodate those changes.
+        Finally, this adds more debugging to the virtual register allocator
+        and to the OSR exit code, as this was necessary to track down bugs
+        in an earlier version of this patch.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::allocateVirtualRegisters):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::ScoreBoard):
+        (JSC::DFG::ScoreBoard::~ScoreBoard):
+        (JSC::DFG::ScoreBoard::allocate):
+        (JSC::DFG::ScoreBoard::use):
+        (JSC::DFG::ScoreBoard::highWatermark):
+        (JSC::DFG::ScoreBoard::dump):
+        (JSC::DFG::ScoreBoard::max):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueRecovery::dump):
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::resizeOutOfLine):
+        (WTF::BitVector::dump):
+        * wtf/BitVector.h:
+        (WTF::BitVector::BitVector):
+        (WTF::BitVector::operator=):
+        (WTF::BitVector::quickGet):
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        (WTF::BitVector::get):
+        (WTF::BitVector::set):
+        (WTF::BitVector::clear):
+        * wtf/PackedIntVector.h:
+        (WTF::PackedIntVector::get):
+        (WTF::PackedIntVector::set):
+
 2011-10-11  Gavin Barraclough  <baraclough@apple.com>
 
         DFG JIT 32_64 - Switch to cdecl calling convention.

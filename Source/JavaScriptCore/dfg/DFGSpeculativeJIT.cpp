@@ -82,6 +82,12 @@ void ValueRecovery::dump(FILE* out) const
     case DisplacedInRegisterFile:
         fprintf(out, "*%d", virtualRegister());
         break;
+    case Int32DisplacedInRegisterFile:
+        fprintf(out, "*int32(%d)", virtualRegister());
+        break;
+    case DoubleDisplacedInRegisterFile:
+        fprintf(out, "*double(%d)", virtualRegister());
+        break;
     case Constant:
         fprintf(out, "[%s]", constant().description());
         break;
