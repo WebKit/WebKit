@@ -1,3 +1,12 @@
+2011-10-10  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Fix expectations from r97120. (again)
+
+        Unreviewed.
+
+        * platform/chromium-linux/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png:
+
 2011-10-10  Abhishek Arya  <inferno@chromium.org>
 
         Style not updated on text fragment in :first-letter
