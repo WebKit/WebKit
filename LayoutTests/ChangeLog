@@ -1,5 +1,14 @@
 2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [Gtk] Update test expectation after r96970.
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * platform/gtk/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+
+2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [Gtk] Update test expectation after r97103.
 
         Unreviewed gardening.
