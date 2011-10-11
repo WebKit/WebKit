@@ -1,3 +1,16 @@
+2011-10-11  Abhishek Arya  <inferno@chromium.org>
+
+        Generalize r95461 change to include table-cell and 
+        allow splitting between :before, :after content.
+        https://bugs.webkit.org/show_bug.cgi?id=69854
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/table/table-row-before-after-content-around-table-cell.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AccessibilityMenuList should fire change notification when popup is not open.

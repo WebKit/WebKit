@@ -277,7 +277,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
     RenderObject* beforeContent = 0;
     bool beforeChildHasBeforeAndAfterContent = false;
-    if (beforeChild && (beforeChild->isTable() || beforeChild->isTableSection() || beforeChild->isTableRow())) {
+    if (beforeChild && (beforeChild->isTable() || beforeChild->isTableSection() || beforeChild->isTableRow() || beforeChild->isTableCell())) {
         beforeContent = beforeChild->findBeforeContentRenderer();
         RenderObject* afterContent = beforeChild->findAfterContentRenderer();
         if (beforeContent && afterContent) {

@@ -1,3 +1,38 @@
+2011-10-05  Abhishek Arya  <inferno@chromium.org>
+
+        Style for updated due to inability to locate
+        :before content in presence of listmarkers and runins.
+        https://bugs.webkit.org/show_bug.cgi?id=68624
+
+        Reviewed by Eric Seidel.
+
+        * fast/lists/inline-before-content-after-list-marker-expected.png: Added.
+        * fast/lists/inline-before-content-after-list-marker-expected.txt: Added.
+        * fast/lists/inline-before-content-after-list-marker.html: Added.
+        * fast/runin/runin-between-list-marker-and-before-content-expected.png: Added.
+        * fast/runin/runin-between-list-marker-and-before-content-expected.txt: Added.
+        * fast/runin/runin-between-list-marker-and-before-content.html: Added.
+        * fast/runin/runin-into-div-with-float-child-expected.png: Added.
+        * fast/runin/runin-into-div-with-float-child-expected.txt: Added.
+        * fast/runin/runin-into-div-with-float-child.html: Added.
+        * fast/runin/runin-not-go-into-float-expected.png: Added.
+        * fast/runin/runin-not-go-into-float-expected.txt: Added.
+        * fast/runin/runin-not-go-into-float.html: Added.
+
+<<<<<<< .mine
+2011-10-11  Abhishek Arya  <inferno@chromium.org>
+
+        Generalize r95461 change to include table-cell and
+        allow splitting between :before, :after content.
+        https://bugs.webkit.org/show_bug.cgi?id=69854
+
+        Reviewed by Eric Seidel.
+
+        * fast/table/table-row-before-after-content-around-table-cell-expected.png: Added.
+        * fast/table/table-row-before-after-content-around-table-cell-expected.txt: Added.
+        * fast/table/table-row-before-after-content-around-table-cell.html: Added.
+
+=======
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r96958.
@@ -27,6 +62,7 @@
         * accessibility/menu-list-sends-change-notification.html: Added.
         * platform/chromium/accessibility/menu-list-sends-change-notification-expected.txt: Added.
 
+>>>>>>> .r97177
 2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Suddenly, things are crashing sporadically.
