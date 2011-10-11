@@ -89,9 +89,11 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
 });
 
 ui.notifications.FailingTestGroup = base.extends('li', {
-    init: function(testGroup)
+    init: function(groupName, testNameList)
     {
-        this.textContent = testGroup;
+        var link = this.appendChild(document.createElement('a'));
+        link.href = ui.urlForFlakinessDashboard(testNameList);
+        link.textContent = groupName;
     }
 });
 
@@ -172,8 +174,8 @@ ui.notifications.FailingTests = base.extends(ui.notifications.Failure, {
             return false;
         this._testNameList.push(failureAnalysis.testName);
         $(this._effects).empty();
-        this._forEachTestGroup(function (testGroup) {
-            this._effects.appendChild(new ui.notifications.FailingTestGroup(testGroup))
+        this._forEachTestGroup(function(groupName, testNameList) {
+            this._effects.appendChild(new ui.notifications.FailingTestGroup(groupName, testNameList))
         }.bind(this));
         return true;
     },
@@ -193,9 +195,11 @@ ui.notifications.FailingTests = base.extends(ui.notifications.Failure, {
                 individualTests = individualTests.concat(testsInDirectory);
                 return;
             }
-            callback(directory + ' (' + count + ' tests)');
+            callback(directory + ' (' + count + ' tests)', testsInDirectory);
         });
-        individualTests.forEach(callback);
+        individualTests.forEach(function(testName) {
+            callback(testName, [testName]);
+        });
     }
 });
 

@@ -44,6 +44,12 @@ ui.urlForTest = function(testName)
     return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
 }
 
+ui.urlForFlakinessDashboard = function(testNameList)
+{
+    var testsParameter = testNameList.join(',');
+    return 'http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=' + encodeURIComponent(testsParameter);
+}
+
 ui.rolloutReasonForTestNameList = function(testNameList)
 {
     return 'Broke:\n' + testNameList.map(function(testName) {

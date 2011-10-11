@@ -77,9 +77,9 @@ test('Info', 2, function() {
 });
 
 test('FailingTestGroup', 2, function() {
-    var failingTest = new ui.notifications.FailingTestGroup('test');
+    var failingTest = new ui.notifications.FailingTestGroup('test', ['test.html']);
     equal(failingTest.tagName, 'LI');
-    equal(failingTest.innerHTML, 'test');
+    equal(failingTest.innerHTML, '<a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test.html">test</a>');
 });
 
 test('SuspiciousCommit', 2, function() {
@@ -130,7 +130,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>test</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -153,7 +153,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>test</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -178,7 +178,7 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>test</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -218,8 +218,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>test</li>' +
-                    '<li>foo</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=foo">foo</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -263,8 +263,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>test</li>' +
-                    '<li>foo</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=foo">foo</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -304,8 +304,8 @@ test('FailingTestsSummary (grouping)', 1, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li>path/to (4 tests)</li>' +
-                    '<li>path/another/test.html</li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=path%2Fto%2Ftest1.html%2Cpath%2Fto%2Ftest2.html%2Cpath%2Fto%2Ftest3.html%2Cpath%2Fto%2Ftest4.html">path/to (4 tests)</a></li>' +
+                    '<li><a href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=path%2Fanother%2Ftest.html">path/another/test.html</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -314,7 +314,6 @@ test('FailingTestsSummary (grouping)', 1, function() {
             '</div>' +
             '<ul class="causes"></ul>' +
         '</div>');
-
 });
 
 test('BuildersFailing', 1, function() {

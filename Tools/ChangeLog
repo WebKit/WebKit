@@ -1,3 +1,18 @@
+2011-10-11  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should link to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=69862
+
+        Reviewed by Dimitri Glazkov.
+
+        The flakiness dashboard has lots of great information about the failure
+        history of each test.  This patch adds a link from garden-o-matic to
+        the flakiness dashboard so the gardener can look at this information.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
 2011-10-11  David Levin  <levin@chromium.org>
 
         watchlist: assertRaisesRegexp implementation should be compatible with python 2.7.
