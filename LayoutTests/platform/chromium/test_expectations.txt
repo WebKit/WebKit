@@ -971,6 +971,7 @@ BUGCR10322 SKIP : accessibility/document-attributes.html = TEXT
 BUGCR10322 SKIP : accessibility/editable-webarea-context-menu-point.html = TEXT
 BUGCR10322 SKIP : accessibility/iframe-bastardization.html = TEXT
 BUGCR10322 SKIP : accessibility/image-link.html = TEXT
+BUGCR10322 SKIP : accessibility/image-map-update-parent-crash.html = TIMEOUT
 BUGCR10322 SKIP : accessibility/image-map2.html = TEXT
 BUGCR10322 SKIP : accessibility/internal-link-anchors2.html = TEXT
 BUGCR10322 SKIP : accessibility/label-for-control-hittest.html = TEXT
@@ -1001,10 +1002,6 @@ BUGCR10322 SKIP : accessibility/textbox-role-reports-selection.html = TEXT
 BUGCR10322 SKIP : accessibility/th-as-title-ui.html = TEXT
 BUGCR10322 SKIP : accessibility/transformed-element.html = TEXT
 BUGCR10322 SKIP : accessibility/visible-elements.html = TEXT
-
-// Started to fail after r97128.
-BUGWK69827 LINUX MAC DEBUG : accessibility/image-map-update-parent-crash.html = TIMEOUT
-BUGWK69827 MAC : accessibility/aria-roles.html = TEXT
 
 // -----------------------------------------------------------------
 // Test failures with Skia GPU rendering of canvas 2D

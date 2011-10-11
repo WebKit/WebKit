@@ -1,3 +1,20 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        [Chromium] Fix expectations for two accessibility tests.
+        https://bugs.webkit.org/show_bug.cgi?id=69827
+
+        These tests were never run on Chromium before, so they're not new
+        failures. aria-roles had different expectations on different Mac
+        platforms, but on Chromium the results will always be the same, so
+        added Chromium-specific expectations. image-map-update-parent is
+        timing out, the cause here is unclear but it was never running before
+        so there's no new bug.
+
+        Unreviewed.
+
+        * platform/chromium/accessibility/aria-roles-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Gardening flakey test expectations.
