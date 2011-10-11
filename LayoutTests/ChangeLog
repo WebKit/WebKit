@@ -1,5 +1,11 @@
 2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] fast/js/regexp-overflow.html is slow everywhere.
+
+        * platform/chromium/test_expectations.txt: Widened platform specifiers.
+
+2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Mark more flakes as flakes.
 
         * platform/chromium/test_expectations.txt: Marked flakes.

@@ -10,7 +10,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/css/large-list-of-rules-crash.html = PA
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
-BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
+BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
@@ -3869,3 +3869,6 @@ BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 
 // Need rebaseline
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
+
+// Suddenly crash sporadically.
+BUGCR99899 MAC CPU-CG : fast/parser/document-write-onload-ordering.html = CRASH PASS
