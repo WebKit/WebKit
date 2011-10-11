@@ -383,8 +383,8 @@ protected:
             return;
         }
         
-        if (info.spillFormat() != DataFormatNone) {
-            // it was already spilled previously, which means we need unboxing.
+        if (info.spillFormat() != DataFormatNone && info.spillFormat() != DataFormatDouble) {
+            // it was already spilled previously and not as a double, which means we need unboxing.
             ASSERT(info.spillFormat() & DataFormatJS);
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), canTrample);
             unboxDouble(canTrample, info.fpr());
@@ -506,17 +506,20 @@ protected:
 
 #if USE(JSVALUE64)
         case DataFormatDouble: {
-            // All values are spilled as JSValues, so box the double via a temporary gpr.
-            GPRReg gpr = boxDouble(info.fpr());
-            m_jit.storePtr(gpr, JITCompiler::addressFor(spillMe));
-            unlock(gpr);
-            info.spill(DataFormatJSDouble);
+            m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
+            info.spill(DataFormatDouble);
+            return;
+        }
+            
+        case DataFormatInteger: {
+            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            info.spill(DataFormatInteger);
             return;
         }
 
         default:
             // The following code handles JSValues, int32s, and cells.
-            ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat & DataFormatJS);
+            ASSERT(spillFormat == DataFormatCell || spillFormat & DataFormatJS);
             
             GPRReg reg = info.gpr();
             // We need to box int32 and cell values ...

@@ -367,7 +367,7 @@ public:
         // pointers. This is not true anymore, but we still assume, in the fill code,
         // that any spill slot for a JS value is boxed. For storage pointers, there is
         // nothing we can do to box them, so we allow that to be an exception.
-        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatStorage);
+        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatStorage || spillFormat == DataFormatInteger || spillFormat == DataFormatDouble);
 
         m_registerFormat = DataFormatNone;
         m_spillFormat = spillFormat;

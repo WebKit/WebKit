@@ -112,6 +112,8 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
         const ValueRecovery& recovery = exit.valueRecovery(index);
         switch (recovery.technique()) {
+        case Int32DisplacedInRegisterFile:
+        case DoubleDisplacedInRegisterFile:
         case DisplacedInRegisterFile:
             numberOfDisplacedVirtualRegisters++;
             ASSERT((int)recovery.virtualRegister() >= 0);
@@ -249,17 +251,43 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             unsigned displacementIndex = 0;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                    loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    break;
+                    
+                case Int32DisplacedInRegisterFile: {
+                    GPRReg gpr = GPRInfo::toRegister(displacementIndex++);
+                    load32(addressFor(recovery.virtualRegister()), gpr);
+                    orPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                    break;
+                }
+                    
+                case DoubleDisplacedInRegisterFile: {
+                    GPRReg gpr = GPRInfo::toRegister(displacementIndex++);
+                    loadPtr(addressFor(recovery.virtualRegister()), gpr);
+                    subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                    break;
+                }
+                    
+                default:
+                    break;
+                }
             }
         
             displacementIndex = 0;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                storePtr(GPRInfo::toRegister(displacementIndex++), addressFor((VirtualRegister)exit.operandForIndex(index)));
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                case Int32DisplacedInRegisterFile:
+                case DoubleDisplacedInRegisterFile:
+                    storePtr(GPRInfo::toRegister(displacementIndex++), addressFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                    
+                default:
+                    break;
+                }
             }
         } else {
             // FIXME: This should use the shuffling algorithm that we use
@@ -281,19 +309,46 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-                storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                    loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    break;
+                    
+                case Int32DisplacedInRegisterFile: {
+                    load32(addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+                    storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    break;
+                }
+                    
+                case DoubleDisplacedInRegisterFile: {
+                    loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    subPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+                    storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    break;
+                }
+                    
+                default:
+                    break;
+                }
             }
         
             scratchIndex = numberOfPoisonedVirtualRegisters;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
-                storePtr(GPRInfo::regT0, addressFor((VirtualRegister)exit.operandForIndex(index)));
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                case Int32DisplacedInRegisterFile:
+                case DoubleDisplacedInRegisterFile:
+                    loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
+                    storePtr(GPRInfo::regT0, addressFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                    
+                default:
+                    break;
+                }
             }
         
             ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters + numberOfDisplacedVirtualRegisters);

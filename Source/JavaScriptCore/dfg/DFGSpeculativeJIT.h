@@ -158,6 +158,9 @@ enum ValueRecoveryTechnique {
     InFPR,
     // It's in the register file, but at a different location.
     DisplacedInRegisterFile,
+    // It's in the register file, at a different location, and it's unboxed.
+    Int32DisplacedInRegisterFile,
+    DoubleDisplacedInRegisterFile,
     // It's a constant.
     Constant,
     // Don't know how to recover it.
@@ -226,10 +229,23 @@ public:
         return result;
     }
     
-    static ValueRecovery displacedInRegisterFile(VirtualRegister virtualReg)
+    static ValueRecovery displacedInRegisterFile(VirtualRegister virtualReg, DataFormat dataFormat)
     {
         ValueRecovery result;
-        result.m_technique = DisplacedInRegisterFile;
+        switch (dataFormat) {
+        case DataFormatInteger:
+            result.m_technique = Int32DisplacedInRegisterFile;
+            break;
+            
+        case DataFormatDouble:
+            result.m_technique = DoubleDisplacedInRegisterFile;
+            break;
+
+        default:
+            ASSERT(dataFormat != DataFormatNone && dataFormat != DataFormatStorage);
+            result.m_technique = DisplacedInRegisterFile;
+            break;
+        }
         result.m_source.virtualReg = virtualReg;
         return result;
     }
@@ -272,7 +288,7 @@ public:
     
     VirtualRegister virtualRegister() const
     {
-        ASSERT(m_technique == DisplacedInRegisterFile);
+        ASSERT(m_technique == DisplacedInRegisterFile || m_technique == Int32DisplacedInRegisterFile || m_technique == DoubleDisplacedInRegisterFile);
         return m_source.virtualReg;
     }
     

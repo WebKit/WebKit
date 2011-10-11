@@ -516,7 +516,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             return ValueRecovery::inGPR(infoPtr->gpr(), infoPtr->registerFormat());
         }
         if (infoPtr->spillFormat() != DataFormatNone)
-            return ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(nodePtr->virtualRegister()));
+            return ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(nodePtr->virtualRegister()), infoPtr->spillFormat());
     
         ASSERT_NOT_REACHED();
         return ValueRecovery();

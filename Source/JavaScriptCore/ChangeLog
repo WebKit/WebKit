@@ -1,3 +1,40 @@
+2011-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JSVALUE64 spill/fill code should not box integers and doubles
+        https://bugs.webkit.org/show_bug.cgi?id=69782
+
+        Reviewed by Oliver Hunt.
+        
+        Added the notion of DataFormatInteger and DataFormatDouble to the spillFormat.
+        This required changing all of the places that spill registers (both silently
+        and not) and filling registers (both silently and on demand). It also required
+        changing OSR exit to recognize that a spilled value (DisplacedInRegisterFile)
+        may have the wrong format for the old JIT (unboxed int or double).
+        
+        This is a slight win on Kraken (0.25%) and neutral elsewhere.
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::spill):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::spill):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueRecovery::displacedInRegisterFile):
+        (JSC::DFG::ValueRecovery::virtualRegister):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+
 2011-10-10  Gavin Barraclough  <baraclough@apple.com>
 
         DFG JIT switch dfgConvert methods to use callOperation

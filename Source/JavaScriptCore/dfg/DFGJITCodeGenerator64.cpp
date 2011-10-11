@@ -61,6 +61,11 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
                 JSValue jsValue = valueOfJSConstant(nodeIndex);
                 m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             }
+        } else if (info.spillFormat() == DataFormatInteger) {
+            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+            m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
+            // Tag it, since fillInteger() is used when we want a boxed integer.
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr);
         } else {
             ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInteger);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
@@ -116,9 +121,9 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     if (info.registerFormat() == DataFormatNone) {
-        GPRReg gpr = allocate();
-
         if (node.hasConstant()) {
+            GPRReg gpr = allocate();
+        
             if (isInt32Constant(nodeIndex)) {
                 // FIXME: should not be reachable?
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
@@ -145,11 +150,35 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
             }
         } else {
             DataFormat spillFormat = info.spillFormat();
-            ASSERT(spillFormat & DataFormatJS);
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(gpr, spillFormat);
-            unlock(gpr);
+            switch (spillFormat) {
+            case DataFormatDouble: {
+                FPRReg fpr = fprAllocate();
+                m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
+                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+                info.fillDouble(fpr);
+                return fpr;
+            }
+                
+            case DataFormatInteger: {
+                GPRReg gpr = allocate();
+                
+                m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+                m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
+                info.fillInteger(gpr);
+                unlock(gpr);
+                break;
+            }
+
+            default:
+                GPRReg gpr = allocate();
+        
+                ASSERT(spillFormat & DataFormatJS);
+                m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+                m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+                info.fillJSValue(gpr, spillFormat);
+                unlock(gpr);
+                break;
+            }
         }
     }
 
@@ -263,9 +292,20 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
         } else {
             DataFormat spillFormat = info.spillFormat();
-            ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            if (spillFormat == DataFormatInteger) {
+                m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
+                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                spillFormat = DataFormatJSInteger;
+            } else {
+                m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+                if (spillFormat == DataFormatDouble) {
+                    // Need to box the double, since we want a JSValue.
+                    m_jit.subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                    spillFormat = DataFormatJSDouble;
+                } else
+                    ASSERT(spillFormat & DataFormatJS);
+            }
             info.fillJSValue(gpr, spillFormat);
         }
         return gpr;

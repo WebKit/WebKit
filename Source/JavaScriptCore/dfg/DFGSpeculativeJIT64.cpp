@@ -44,7 +44,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (node.hasConstant() && !isInt32Constant(nodeIndex)) {
+        if ((node.hasConstant() && !isInt32Constant(nodeIndex)) || info.spillFormat() == DataFormatDouble) {
             terminateSpeculativeExecution();
             returnFormat = DataFormatInteger;
             return allocate();
@@ -62,11 +62,12 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         }
         
         DataFormat spillFormat = info.spillFormat();
-        ASSERT(spillFormat & DataFormatJS);
+        
+        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
-        if (spillFormat == DataFormatJSInteger) {
+        if (spillFormat == DataFormatJSInteger || spillFormat == DataFormatInteger) {
             // If we know this was spilled as an integer we can fill without checking.
             if (strict) {
                 m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
@@ -74,7 +75,11 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
                 returnFormat = DataFormatInteger;
                 return gpr;
             }
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            if (spillFormat == DataFormatInteger) {
+                m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
+                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr);
+            } else
+                m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
             info.fillJSValue(gpr, DataFormatJSInteger);
             returnFormat = DataFormatJSInteger;
             return gpr;
@@ -175,9 +180,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
     if (info.registerFormat() == DataFormatNone) {
-        GPRReg gpr = allocate();
-
         if (node.hasConstant()) {
+            GPRReg gpr = allocate();
+
             if (isInt32Constant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
                 m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(static_cast<double>(valueOfInt32Constant(nodeIndex))))), gpr);
@@ -203,11 +208,35 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         }
         
         DataFormat spillFormat = info.spillFormat();
-        ASSERT(spillFormat & DataFormatJS);
-        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-        info.fillJSValue(gpr, spillFormat);
-        unlock(gpr);
+        switch (spillFormat) {
+        case DataFormatDouble: {
+            FPRReg fpr = fprAllocate();
+            m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
+            m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+            info.fillDouble(fpr);
+            return fpr;
+        }
+            
+        case DataFormatInteger: {
+            GPRReg gpr = allocate();
+            
+            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+            m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
+            info.fillInteger(gpr);
+            unlock(gpr);
+            break;
+        }
+
+        default:
+            GPRReg gpr = allocate();
+
+            ASSERT(spillFormat & DataFormatJS);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            info.fillJSValue(gpr, spillFormat);
+            unlock(gpr);
+            break;
+        }
     }
 
     switch (info.registerFormat()) {
@@ -300,6 +329,11 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
+        if (info.spillFormat() == DataFormatInteger || info.spillFormat() == DataFormatDouble) {
+            terminateSpeculativeExecution();
+            return allocate();
+        }
+        
         GPRReg gpr = allocate();
 
         if (node.hasConstant()) {
@@ -368,6 +402,11 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
+        if (info.spillFormat() == DataFormatInteger || info.spillFormat() == DataFormatDouble) {
+            terminateSpeculativeExecution();
+            return allocate();
+        }
+        
         GPRReg gpr = allocate();
 
         if (node.hasConstant()) {
