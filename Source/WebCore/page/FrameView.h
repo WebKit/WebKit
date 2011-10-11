@@ -170,7 +170,7 @@ public:
     virtual void repaintFixedElementsAfterScrolling();
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
 
-    virtual void zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState);
+    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 
     String mediaType() const;
     void setMediaType(const String&);

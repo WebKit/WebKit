@@ -123,7 +123,7 @@ void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
     scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), y));
 }
 
-void ScrollableArea::zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState)
+void ScrollableArea::zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState)
 {
     // Requires FrameView to override this.
 }

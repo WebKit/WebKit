@@ -1,3 +1,22 @@
+2011-10-11  W. James MacLean  <wjmaclean@chromium.org>
+
+        Loss of precision when converting from double to int and double to float in FrameView::zoomAnimatorTransformChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=69739
+
+        Reviewed by Simon Fraser.
+
+        Change 'double' parameters in FrameView:: & ScrollableArea::zoomAnimatorTransformChanged()
+        to 'float' to avoid loss of precision warnings when invoking setPageScalefactor.
+
+        Test coverage provided by existing zoom-animator tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::zoomAnimatorTransformChanged):
+        * page/FrameView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::zoomAnimatorTransformChanged):
+        * platform/ScrollableArea.h:
+
 2011-10-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Unreviewed build fix, unbreaking the Qt minimal bot.

@@ -1,3 +1,15 @@
+2011-10-11  W. James MacLean  <wjmaclean@chromium.org>
+
+        Loss of precision when converting from double to int and double to float in FrameView::zoomAnimatorTransformChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=69739
+
+        Change 'double' parameters to 'float' to match changes in FrameView.
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (WebKit::BuiltInPDFView::zoomAnimatorTransformChanged):
+
 2011-10-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Small embedded PDFs are not fully repainted when scrolling

@@ -87,8 +87,8 @@ private:
     virtual void manualStreamDidReceiveData(const char* bytes, int length);
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
-    
-    virtual void zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState) { }
+
+    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState) { }
 
     virtual bool handleMouseEvent(const WebMouseEvent&);
     virtual bool handleWheelEvent(const WebWheelEvent&);

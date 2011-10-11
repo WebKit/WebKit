@@ -54,7 +54,7 @@ public:
     void scrollToXOffsetWithoutAnimation(float x);
     void scrollToYOffsetWithoutAnimation(float x);
 
-    virtual void zoomAnimatorTransformChanged(double, double, double, ZoomAnimationState);
+    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
