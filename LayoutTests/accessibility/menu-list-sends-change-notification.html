@@ -1,0 +1,54 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    function runTest() {
+        description("This tests that changing the value of a menu list sends a notification even when it's not popped open.");
+
+        var menulist = document.getElementById("menulist");
+        menulist.focus();
+        var accessibleMenulist = accessibilityController.focusedElement;
+
+        function listener(notification) {
+            document.getElementById("console").innerText += "Got notification: " + notification + "\n";
+            accessibleMenulist.removeNotificationListener(listener);
+            debug('<br /><span class="pass">TEST COMPLETE</span>');
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+        accessibleMenulist.addNotificationListener(listener);
+
+        // Change the selected index.
+        menulist.selectedIndex = 1;
+
+        // Make the test finish quickly whether we get the notification or not.
+        window.setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 10);
+    }
+
+    if (window.layoutTestController && window.accessibilityController) {
+        window.addEventListener('load', function() {
+            setTimeout(runTest, 10);
+        }, false);
+    }
+</script>
+</head>
+<body>
+
+<select id="menulist">
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+</body>
+</html>

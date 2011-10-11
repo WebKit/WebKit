@@ -1,3 +1,15 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AccessibilityMenuList should fire change notification when popup is not open.
+        https://bugs.webkit.org/show_bug.cgi?id=69440
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/menu-list-sends-change-notification.html
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+
 2011-10-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: implement IDBFactory.cmp method

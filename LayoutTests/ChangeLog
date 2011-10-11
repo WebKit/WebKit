@@ -1,3 +1,13 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AccessibilityMenuList should fire change notification when popup is not open.
+        https://bugs.webkit.org/show_bug.cgi?id=69440
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/menu-list-sends-change-notification.html: Added.
+        * platform/chromium/accessibility/menu-list-sends-change-notification-expected.txt: Added.
+
 2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Suddenly, things are crashing sporadically.
