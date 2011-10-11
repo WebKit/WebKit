@@ -1,5 +1,13 @@
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac rebaseline after r96958.
+
+        * platform/mac/fast/forms/input-disabled-color-expected.png:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/test_expectations.txt:
+
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Move test expectations added by r96987 to Chromium Linux directory,
         and add the baseline for Mac port.
 
