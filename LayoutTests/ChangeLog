@@ -1,3 +1,12 @@
+2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Update test expectation after r97103.
+
+        Unreviewed gardening.
+
+        * platform/gtk/plugins/iframe-plugin-bgcolor-expected.png: Added.
+        * platform/gtk/plugins/iframe-plugin-bgcolor-expected.txt: Added.
+
 2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, mark two accessibility tests as failing on chromium.
