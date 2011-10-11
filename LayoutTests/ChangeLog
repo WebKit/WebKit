@@ -1,3 +1,17 @@
+2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Chromium rebaseline after r97102.
+
+        * platform/chromium-cg-mac-snowleopard/fast/events/ondragenter-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/events/ondragenter-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-008-expected.txt: Removed.
+        * platform/chromium-win/fast/events/ondragenter-expected.txt: Removed.
+        * platform/chromium/fast/events/ondragenter-expected.txt: Copied from
+        LayoutTests/platform/chromium-win/fast/events/ondragenter-expected.txt.
+        * platform/chromium/fast/events/smart-paste-008-expected.txt: Copied from
+        LayoutTests/platform/chromium-win/editing/pasteboard/smart-paste-008-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10246137> Duplicate ::after content when both ::before and ::after are styled as table parts
