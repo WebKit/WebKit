@@ -449,6 +449,14 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                     ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER);
                 }
             }
+
+            // Update style on the remaining text fragment after the first-letter.
+            if (beforeAfterParent->style()->styleType() == FIRST_LETTER) {
+                if (RenderObject* nextSibling = beforeAfterParent->nextSibling()) {
+                    if (nextSibling->isText() && nextSibling->style()->styleType() == child->style()->styleType())
+                        nextSibling->setStyle(pseudoElementStyle);
+                }
+            }
         }
         return; // We've updated the generated content. That's all we needed to do.
     }

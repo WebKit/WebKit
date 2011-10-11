@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x266
+  RenderBlock {HTML} at (0,0) size 800x266
+    RenderBody {BODY} at (8,8) size 784x250 [color=#0000FF]
+      RenderBlock {DIV} at (0,0) size 784x100
+        RenderTable at (0,0) size 100x50
+          RenderTableSection (anonymous) at (0,0) size 100x50
+            RenderTableRow (anonymous) at (0,0) size 100x50
+              RenderTableCell (anonymous) at (0,0) size 100x50 [r=0 c=0 rs=1 cs=1]
+                RenderInline (generated) at (0,0) size 50x50 [color=#008000]
+                  RenderText at (0,0) size 50x50
+                    text run at (0,0) width 50: "A"
+                RenderText at (50,0) size 50x50
+                  text run at (50,0) width 50: "B"
+        RenderBlock (anonymous) at (0,50) size 784x50
+          RenderText {#text} at (0,0) size 50x50
+            text run at (0,0) width 50: "C"
+      RenderBlock {DIV} at (0,100) size 784x100
+        RenderBlock (anonymous) at (0,0) size 784x50
+          RenderInline (generated) at (0,0) size 50x50 [color=#008000]
+            RenderText {#text} at (0,0) size 50x50
+              text run at (0,0) width 50: "D"
+          RenderText {#text} at (0,0) size 0x0
+        RenderTable at (0,50) size 100x50
+          RenderTableSection (anonymous) at (0,0) size 100x50
+            RenderTableRow (anonymous) at (0,0) size 100x50
+              RenderTableCell (anonymous) at (0,0) size 100x50 [r=0 c=0 rs=1 cs=1]
+                RenderText at (0,0) size 100x50
+                  text run at (0,0) width 100: "EF"
+      RenderBlock {DIV} at (0,200) size 784x50
+        RenderTable at (0,0) size 100x50
+          RenderTableSection (anonymous) at (0,0) size 100x50
+            RenderTableRow (anonymous) at (0,0) size 100x50
+              RenderTableCell (anonymous) at (0,0) size 100x50 [r=0 c=0 rs=1 cs=1]
+                RenderInline (generated) at (0,0) size 50x50 [color=#008000]
+                  RenderText at (0,0) size 50x50
+                    text run at (0,0) width 50: "E"
+                RenderText at (50,0) size 50x50
+                  text run at (50,0) width 50: "F"
