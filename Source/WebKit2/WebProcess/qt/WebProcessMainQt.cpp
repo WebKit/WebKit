@@ -104,9 +104,13 @@ bool EnvHttpProxyFactory::initializeFromEnvironment()
 QList<QNetworkProxy> EnvHttpProxyFactory::queryProxy(const QNetworkProxyQuery& query)
 {
     QString protocol = query.protocolTag().toLower();
-    if (protocol == QLatin1String("http"))
+    bool localHost = false;
+
+    if (!query.peerHostName().compare(QLatin1String("localhost"), Qt::CaseInsensitive) || !query.peerHostName().compare(QLatin1String("127.0.0.1"), Qt::CaseInsensitive))
+        localHost = true;
+    if (protocol == QLatin1String("http") && !localHost)
         return m_httpProxy;
-    else if (protocol == QLatin1String("https"))
+    if (protocol == QLatin1String("https") && !localHost)
         return m_httpsProxy;
 
     QList<QNetworkProxy> proxies;
