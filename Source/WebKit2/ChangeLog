@@ -1,5 +1,17 @@
 2011-10-11  Alexey Proskuryakov  <ap@apple.com>
 
+        Embedding of PDF's with <object> or <embed> fails when there is no MIME type specified
+        https://bugs.webkit.org/show_bug.cgi?id=64934
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::createPlugin): Check URL extension, too,
+        like GetPluginPath does in UI process. One difference is that UI process additionally tries
+        platform specific extension to MIME type mapping, but that doesn't matter for PDF, which
+        does not have other standard extensions.
+
+2011-10-11  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] Should be able to display multi-page PDFs in subframes
         https://bugs.webkit.org/show_bug.cgi?id=69804
 

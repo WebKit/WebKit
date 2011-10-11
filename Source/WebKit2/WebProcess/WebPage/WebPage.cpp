@@ -332,7 +332,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 
     if (pluginPath.isNull()) {
 #if PLATFORM(MAC)
-        if (parameters.mimeType == "application/pdf")
+        if (parameters.mimeType == "application/pdf"
+            || (parameters.mimeType.isEmpty() && parameters.url.path().lower().endsWith(".pdf")))
             return BuiltInPDFView::create(m_page.get());
 #endif
         return 0;
