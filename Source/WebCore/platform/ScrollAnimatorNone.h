@@ -51,8 +51,10 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
+#if ENABLE(GESTURE_EVENTS)
     virtual void zoom(const PlatformGestureEvent&);
     virtual void handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
     virtual void willEndLiveResize();
     virtual void didAddVerticalScrollbar(Scrollbar*);

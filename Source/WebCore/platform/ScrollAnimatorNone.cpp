@@ -462,6 +462,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
     notifyPositionChanged();
 }
 
+#if ENABLE(GESTURE_EVENTS)
 void ScrollAnimatorNone::zoom(const PlatformGestureEvent& pge)
 {
     ASSERT(pge.type() == PlatformGestureEvent::DoubleTapType);
@@ -503,7 +504,6 @@ void ScrollAnimatorNone::zoom(const PlatformGestureEvent& pge)
     }
 }
 
-#if ENABLE(GESTURE_EVENTS)
 void ScrollAnimatorNone::handleGestureEvent(const PlatformGestureEvent& pge)
 {
     TRACE_EVENT("ScrollAnimatorNone::handleGestureEvent", this, 0);
