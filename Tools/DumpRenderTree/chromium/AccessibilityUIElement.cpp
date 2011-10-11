@@ -33,6 +33,7 @@
 
 #include "WebAccessibilityObject.h"
 #include "WebCString.h"
+#include "WebRect.h"
 #include "WebString.h"
 #include <wtf/Assertions.h>
 
@@ -214,6 +215,18 @@ string getDescription(const WebAccessibilityObject& object)
     return description.insert(0, "AXDescription: ");
 }
 
+string getHelpText(const WebAccessibilityObject& object)
+{
+    string helpText = object.helpText().utf8();
+    return helpText.insert(0, "AXHelp: ");
+}
+
+string getStringValue(const WebAccessibilityObject& object)
+{
+    string value = object.stringValue().utf8();
+    return value.insert(0, "AXValue: ");
+}
+
 string getRole(const WebAccessibilityObject& object)
 {
     return roleToString(object.roleValue());
@@ -223,6 +236,14 @@ string getTitle(const WebAccessibilityObject& object)
 {
     string title = object.title().utf8();
     return title.insert(0, "AXTitle: ");
+}
+
+string getOrientation(const WebAccessibilityObject& object)
+{
+    if (object.isVertical())
+        return "AXOrientation: AXVerticalOrientation";
+
+    return "AXOrientation: AXHorizontalOrientation";
 }
 
 string getAttributes(const WebAccessibilityObject& object)
@@ -261,81 +282,265 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
 
     ASSERT(factory);
 
+    //
+    // Properties
+    //
+
+    bindProperty("role", &AccessibilityUIElement::roleGetterCallback);
+    bindProperty("title", &AccessibilityUIElement::titleGetterCallback);
+    bindProperty("description", &AccessibilityUIElement::descriptionGetterCallback);
+    bindProperty("helpText", &AccessibilityUIElement::helpTextGetterCallback);
+    bindProperty("stringValue", &AccessibilityUIElement::stringValueGetterCallback);
+    bindProperty("x", &AccessibilityUIElement::xGetterCallback);
+    bindProperty("y", &AccessibilityUIElement::yGetterCallback);
+    bindProperty("width", &AccessibilityUIElement::widthGetterCallback);
+    bindProperty("height", &AccessibilityUIElement::heightGetterCallback);
+    bindProperty("intValue", &AccessibilityUIElement::intValueGetterCallback);
+    bindProperty("minValue", &AccessibilityUIElement::minValueGetterCallback);
+    bindProperty("maxValue", &AccessibilityUIElement::maxValueGetterCallback);
+    bindProperty("childrenCount", &AccessibilityUIElement::childrenCountGetterCallback);
+    bindProperty("insertionPointLineNumber", &AccessibilityUIElement::insertionPointLineNumberGetterCallback);
+    bindProperty("selectedTextRange", &AccessibilityUIElement::selectedTextRangeGetterCallback);
+    bindProperty("isEnabled", &AccessibilityUIElement::isEnabledGetterCallback);
+    bindProperty("isRequired", &AccessibilityUIElement::isRequiredGetterCallback);
+    bindProperty("isFocused", &AccessibilityUIElement::isFocusedGetterCallback);
+    bindProperty("isFocusable", &AccessibilityUIElement::isFocusableGetterCallback);
+    bindProperty("isSelected", &AccessibilityUIElement::isSelectedGetterCallback);
+    bindProperty("isSelectable", &AccessibilityUIElement::isSelectableGetterCallback);
+    bindProperty("isMultiSelectable", &AccessibilityUIElement::isMultiSelectableGetterCallback);
+    bindProperty("isExpanded", &AccessibilityUIElement::isExpandedGetterCallback);
+    bindProperty("isChecked", &AccessibilityUIElement::isCheckedGetterCallback);
+    bindProperty("isVisible", &AccessibilityUIElement::isVisibleGetterCallback);
+    bindProperty("isOffScreen", &AccessibilityUIElement::isOffScreenGetterCallback);
+    bindProperty("isCollapsed", &AccessibilityUIElement::isCollapsedGetterCallback);
+    bindProperty("hasPopup", &AccessibilityUIElement::hasPopupGetterCallback);
+    bindProperty("isValid", &AccessibilityUIElement::isValidGetterCallback);
+    bindProperty("orientation", &AccessibilityUIElement::orientationGetterCallback);
+
+    //
+    // Methods
+    //
+
     bindMethod("allAttributes", &AccessibilityUIElement::allAttributesCallback);
-    bindMethod("attributesOfLinkedUIElements",
-               &AccessibilityUIElement::attributesOfLinkedUIElementsCallback);
-    bindMethod("attributesOfDocumentLinks",
-               &AccessibilityUIElement::attributesOfDocumentLinksCallback);
-    bindMethod("attributesOfChildren",
-               &AccessibilityUIElement::attributesOfChildrenCallback);
-    bindMethod("parameterizedAttributeNames",
-               &AccessibilityUIElement::parametrizedAttributeNamesCallback);
+    bindMethod("attributesOfLinkedUIElements", &AccessibilityUIElement::attributesOfLinkedUIElementsCallback);
+    bindMethod("attributesOfDocumentLinks", &AccessibilityUIElement::attributesOfDocumentLinksCallback);
+    bindMethod("attributesOfChildren", &AccessibilityUIElement::attributesOfChildrenCallback);
     bindMethod("lineForIndex", &AccessibilityUIElement::lineForIndexCallback);
     bindMethod("boundsForRange", &AccessibilityUIElement::boundsForRangeCallback);
     bindMethod("stringForRange", &AccessibilityUIElement::stringForRangeCallback);
     bindMethod("childAtIndex", &AccessibilityUIElement::childAtIndexCallback);
     bindMethod("elementAtPoint", &AccessibilityUIElement::elementAtPointCallback);
-    bindMethod("attributesOfColumnHeaders",
-               &AccessibilityUIElement::attributesOfColumnHeadersCallback);
-    bindMethod("attributesOfRowHeaders",
-               &AccessibilityUIElement::attributesOfRowHeadersCallback);
-    bindMethod("attributesOfColumns",
-               &AccessibilityUIElement::attributesOfColumnsCallback);
-    bindMethod("attributesOfRows",
-               &AccessibilityUIElement::attributesOfRowsCallback);
-    bindMethod("attributesOfVisibleCells",
-               &AccessibilityUIElement::attributesOfVisibleCellsCallback);
-    bindMethod("attributesOfHeader",
-               &AccessibilityUIElement::attributesOfHeaderCallback);
+    bindMethod("attributesOfColumnHeaders", &AccessibilityUIElement::attributesOfColumnHeadersCallback);
+    bindMethod("attributesOfRowHeaders", &AccessibilityUIElement::attributesOfRowHeadersCallback);
+    bindMethod("attributesOfColumns", &AccessibilityUIElement::attributesOfColumnsCallback);
+    bindMethod("attributesOfRows", &AccessibilityUIElement::attributesOfRowsCallback);
+    bindMethod("attributesOfVisibleCells", &AccessibilityUIElement::attributesOfVisibleCellsCallback);
+    bindMethod("attributesOfHeader", &AccessibilityUIElement::attributesOfHeaderCallback);
     bindMethod("indexInTable", &AccessibilityUIElement::indexInTableCallback);
     bindMethod("rowIndexRange", &AccessibilityUIElement::rowIndexRangeCallback);
-    bindMethod("columnIndexRange",
-               &AccessibilityUIElement::columnIndexRangeCallback);
-    bindMethod("cellForColumnAndRow",
-               &AccessibilityUIElement::cellForColumnAndRowCallback);
+    bindMethod("columnIndexRange", &AccessibilityUIElement::columnIndexRangeCallback);
+    bindMethod("cellForColumnAndRow", &AccessibilityUIElement::cellForColumnAndRowCallback);
     bindMethod("titleUIElement", &AccessibilityUIElement::titleUIElementCallback);
-    bindMethod("setSelectedTextRange",
-               &AccessibilityUIElement::setSelectedTextRangeCallback);
+    bindMethod("setSelectedTextRange", &AccessibilityUIElement::setSelectedTextRangeCallback);
     bindMethod("attributeValue", &AccessibilityUIElement::attributeValueCallback);
-    bindMethod("isAttributeSettable",
-               &AccessibilityUIElement::isAttributeSettableCallback);
-    bindMethod("isActionSupported",
-               &AccessibilityUIElement::isActionSupportedCallback);
+    bindMethod("isAttributeSettable", &AccessibilityUIElement::isAttributeSettableCallback);
+    bindMethod("isActionSupported", &AccessibilityUIElement::isActionSupportedCallback);
     bindMethod("parentElement", &AccessibilityUIElement::parentElementCallback);
     bindMethod("increment", &AccessibilityUIElement::incrementCallback);
     bindMethod("decrement", &AccessibilityUIElement::decrementCallback);
-
-    bindProperty("role", &AccessibilityUIElement::roleGetterCallback);
-    bindProperty("subrole", &m_subrole);
-    bindProperty("title", &AccessibilityUIElement::titleGetterCallback);
-    bindProperty("description",
-                 &AccessibilityUIElement::descriptionGetterCallback);
-    bindProperty("language", &m_language);
-    bindProperty("x", &m_x);
-    bindProperty("y", &m_y);
-    bindProperty("width", &m_width);
-    bindProperty("height", &m_height);
-    bindProperty("clickPointX", &m_clickPointX);
-    bindProperty("clickPointY", &m_clickPointY);
-    bindProperty("intValue", &m_intValue);
-    bindProperty("minValue", &m_minValue);
-    bindProperty("maxValue", &m_maxValue);
-    bindProperty("childrenCount",
-                 &AccessibilityUIElement::childrenCountGetterCallback);
-    bindProperty("insertionPointLineNumber", &m_insertionPointLineNumber);
-    bindProperty("selectedTextRange", &m_selectedTextRange);
-    bindProperty("isEnabled", &AccessibilityUIElement::isEnabledGetterCallback);
-    bindProperty("isRequired", &m_isRequired);
-    bindProperty("isSelected", &AccessibilityUIElement::isSelectedGetterCallback);
-    bindProperty("valueDescription", &m_valueDescription);
+    bindMethod("showMenu", &AccessibilityUIElement::showMenuCallback);
+    bindMethod("press", &AccessibilityUIElement::pressCallback);
+    bindMethod("isEqual", &AccessibilityUIElement::isEqualCallback);
+    bindMethod("addNotificationListener", &AccessibilityUIElement::addNotificationListenerCallback);
+    bindMethod("removeNotificationListener", &AccessibilityUIElement::removeNotificationListenerCallback);
+    bindMethod("takeFocus", &AccessibilityUIElement::takeFocusCallback);
 
     bindFallbackMethod(&AccessibilityUIElement::fallbackCallback);
 }
 
 AccessibilityUIElement* AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
-    return m_factory->create(accessibilityObject().childAt(index));
+    return m_factory->getOrCreate(accessibilityObject().childAt(index));
 }
+
+bool AccessibilityUIElement::isEqual(const WebKit::WebAccessibilityObject& other)
+{
+    return accessibilityObject().equals(other);
+}
+
+void AccessibilityUIElement::notificationReceived(const char* notificationName)
+{
+    size_t callbackCount = m_notificationCallbacks.size();
+    for (size_t i = 0; i < callbackCount; i++) {
+        CppVariant notificationNameArgument;
+        notificationNameArgument.set(notificationName);
+        CppVariant invokeResult;
+        m_notificationCallbacks[i].invokeDefault(&notificationNameArgument, 1, invokeResult);
+    }
+}
+
+//
+// Properties
+//
+
+void AccessibilityUIElement::roleGetterCallback(CppVariant* result)
+{
+    result->set(getRole(accessibilityObject()));
+}
+
+void AccessibilityUIElement::titleGetterCallback(CppVariant* result)
+{
+    result->set(getTitle(accessibilityObject()));
+}
+
+void AccessibilityUIElement::descriptionGetterCallback(CppVariant* result)
+{
+    result->set(getDescription(accessibilityObject()));
+}
+
+void AccessibilityUIElement::helpTextGetterCallback(CppVariant* result)
+{
+    result->set(getHelpText(accessibilityObject()));
+}
+
+void AccessibilityUIElement::stringValueGetterCallback(CppVariant* result)
+{
+    result->set(getStringValue(accessibilityObject()));
+}
+
+void AccessibilityUIElement::xGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().boundingBoxRect().x);
+}
+
+void AccessibilityUIElement::yGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().boundingBoxRect().y);
+}
+
+void AccessibilityUIElement::widthGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().boundingBoxRect().width);
+}
+
+void AccessibilityUIElement::heightGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().boundingBoxRect().height);
+}
+
+void AccessibilityUIElement::intValueGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().valueForRange());
+}
+
+void AccessibilityUIElement::minValueGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().minValueForRange());
+}
+
+void AccessibilityUIElement::maxValueGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().maxValueForRange());
+}
+
+void AccessibilityUIElement::childrenCountGetterCallback(CppVariant* result)
+{
+    int count = 1; // Root object always has only one child, the WebView.
+    if (!isRoot())
+        count = accessibilityObject().childCount();
+    result->set(count);
+}
+
+void AccessibilityUIElement::insertionPointLineNumberGetterCallback(CppVariant* result)
+{
+    // FIXME: Implement this.
+    result->set(0);
+}
+
+void AccessibilityUIElement::selectedTextRangeGetterCallback(CppVariant* result)
+{
+    // FIXME: Implement this.
+    result->set(std::string());
+}
+
+void AccessibilityUIElement::isEnabledGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isEnabled());
+}
+
+void AccessibilityUIElement::isRequiredGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isRequired());
+}
+
+void AccessibilityUIElement::isFocusedGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isFocused());
+}
+
+void AccessibilityUIElement::isFocusableGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().canSetFocusAttribute());
+}
+
+void AccessibilityUIElement::isSelectedGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isSelected());
+}
+
+void AccessibilityUIElement::isSelectableGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().canSetSelectedAttribute());
+}
+
+void AccessibilityUIElement::isMultiSelectableGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isMultiSelectable());
+}
+
+void AccessibilityUIElement::isExpandedGetterCallback(CppVariant* result)
+{
+    result->set(!accessibilityObject().isCollapsed());
+}
+
+void AccessibilityUIElement::isCheckedGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isChecked());
+}
+
+void AccessibilityUIElement::isVisibleGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isVisible());
+}
+
+void AccessibilityUIElement::isOffScreenGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isOffScreen());
+}
+
+void AccessibilityUIElement::isCollapsedGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isCollapsed());
+}
+
+void AccessibilityUIElement::hasPopupGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().ariaHasPopup());
+}
+
+void AccessibilityUIElement::isValidGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isValid());
+}
+
+void AccessibilityUIElement::orientationGetterCallback(CppVariant* result)
+{
+    result->set(getOrientation(accessibilityObject()));
+}
+
+//
+// Methods
+//
 
 void AccessibilityUIElement::allAttributesCallback(const CppArgumentList&, CppVariant* result)
 {
@@ -503,45 +708,55 @@ void AccessibilityUIElement::decrementCallback(const CppArgumentList&, CppVarian
     result->setNull();
 }
 
-void AccessibilityUIElement::fallbackCallback(const CppArgumentList &, CppVariant* result)
+void AccessibilityUIElement::showMenuCallback(const CppArgumentList&, CppVariant* result)
+{
+    result->setNull();
+}
+
+void AccessibilityUIElement::pressCallback(const CppArgumentList&, CppVariant* result)
+{
+    accessibilityObject().performDefaultAction();
+    result->setNull();
+}
+
+void AccessibilityUIElement::isEqualCallback(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 1 || !arguments[0].isObject()) {
+        result->setNull();
+        return;
+    }
+
+    result->set(arguments[0].isEqual(*getAsCppVariant()));
+}
+
+void AccessibilityUIElement::addNotificationListenerCallback(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 1 || !arguments[0].isObject()) {
+        result->setNull();
+        return;
+    }
+
+    m_notificationCallbacks.push_back(arguments[0]);
+    result->setNull();
+}
+
+void AccessibilityUIElement::removeNotificationListenerCallback(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement this.
     result->setNull();
 }
 
-void AccessibilityUIElement::childrenCountGetterCallback(CppVariant* result)
+void AccessibilityUIElement::takeFocusCallback(const CppArgumentList&, CppVariant* result)
 {
-    int count = 1; // Root object always has only one child, the WebView.
-    if (!isRoot())
-        count = accessibilityObject().childCount();
-    result->set(count);
-}
-
-void AccessibilityUIElement::descriptionGetterCallback(CppVariant* result)
-{
-    result->set(getDescription(accessibilityObject()));
-}
-
-void AccessibilityUIElement::isEnabledGetterCallback(CppVariant* result)
-{
-    result->set(accessibilityObject().isEnabled());
-}
-
-void AccessibilityUIElement::isSelectedGetterCallback(CppVariant* result)
-{
+    accessibilityObject().setFocused(true);
     result->setNull();
 }
 
-void AccessibilityUIElement::roleGetterCallback(CppVariant* result)
+void AccessibilityUIElement::fallbackCallback(const CppArgumentList &, CppVariant* result)
 {
-    result->set(getRole(accessibilityObject()));
+    // FIXME: Implement this.
+    result->setNull();
 }
-
-void AccessibilityUIElement::titleGetterCallback(CppVariant* result)
-{
-    result->set(getTitle(accessibilityObject()));
-}
-
 
 RootAccessibilityUIElement::RootAccessibilityUIElement(const WebAccessibilityObject &object, Factory *factory)
     : AccessibilityUIElement(object, factory) { }
@@ -551,7 +766,7 @@ AccessibilityUIElement* RootAccessibilityUIElement::getChildAtIndex(unsigned ind
     if (index)
         return 0;
 
-    return factory()->create(accessibilityObject());
+    return factory()->getOrCreate(accessibilityObject());
 }
 
 
@@ -567,10 +782,16 @@ void AccessibilityUIElementList::clear()
     m_elements.clear();
 }
 
-AccessibilityUIElement* AccessibilityUIElementList::create(const WebAccessibilityObject& object)
+AccessibilityUIElement* AccessibilityUIElementList::getOrCreate(const WebAccessibilityObject& object)
 {
     if (object.isNull())
         return 0;
+
+    size_t elementCount = m_elements.size();
+    for (size_t i = 0; i < elementCount; i++) {
+        if (m_elements[i]->isEqual(object))
+            return m_elements[i];
+    }
 
     AccessibilityUIElement* element = new AccessibilityUIElement(object, this);
     m_elements.append(element);

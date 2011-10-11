@@ -40,20 +40,56 @@ public:
     class Factory {
     public:
         virtual ~Factory() { }
-        virtual AccessibilityUIElement* create(const WebKit::WebAccessibilityObject&) = 0;
+        virtual AccessibilityUIElement* getOrCreate(const WebKit::WebAccessibilityObject&) = 0;
     };
 
     AccessibilityUIElement(const WebKit::WebAccessibilityObject&, Factory*);
 
     virtual AccessibilityUIElement* getChildAtIndex(unsigned);
     virtual bool isRoot() const { return false; }
+    virtual bool isEqual(const WebKit::WebAccessibilityObject&);
+
+    virtual void notificationReceived(const char *notificationName);
 
 protected:
     const WebKit::WebAccessibilityObject& accessibilityObject() const { return m_accessibilityObject; }
+
     Factory* factory() const { return m_factory; }
 
 private:
-    // Bound methods and properties.
+    // Bound properties.
+    void roleGetterCallback(CppVariant*);
+    void titleGetterCallback(CppVariant*);
+    void descriptionGetterCallback(CppVariant*);
+    void helpTextGetterCallback(CppVariant*);
+    void stringValueGetterCallback(CppVariant*);
+    void xGetterCallback(CppVariant*);
+    void yGetterCallback(CppVariant*);
+    void widthGetterCallback(CppVariant*);
+    void heightGetterCallback(CppVariant*);
+    void intValueGetterCallback(CppVariant*);
+    void minValueGetterCallback(CppVariant*);
+    void maxValueGetterCallback(CppVariant*);
+    void childrenCountGetterCallback(CppVariant*);
+    void insertionPointLineNumberGetterCallback(CppVariant*);
+    void selectedTextRangeGetterCallback(CppVariant*);
+    void isEnabledGetterCallback(CppVariant*);
+    void isRequiredGetterCallback(CppVariant*);
+    void isFocusedGetterCallback(CppVariant*);
+    void isFocusableGetterCallback(CppVariant*);
+    void isSelectedGetterCallback(CppVariant*);
+    void isSelectableGetterCallback(CppVariant*);
+    void isMultiSelectableGetterCallback(CppVariant*);
+    void isExpandedGetterCallback(CppVariant*);
+    void isCheckedGetterCallback(CppVariant*);
+    void isVisibleGetterCallback(CppVariant*);
+    void isOffScreenGetterCallback(CppVariant*);
+    void isCollapsedGetterCallback(CppVariant*);
+    void hasPopupGetterCallback(CppVariant*);
+    void isValidGetterCallback(CppVariant*);
+    void orientationGetterCallback(CppVariant*);
+
+    // Bound methods.
     void allAttributesCallback(const CppArgumentList&, CppVariant*);
     void attributesOfLinkedUIElementsCallback(const CppArgumentList&, CppVariant*);
     void attributesOfDocumentLinksCallback(const CppArgumentList&, CppVariant*);
@@ -82,34 +118,18 @@ private:
     void parentElementCallback(const CppArgumentList&, CppVariant*);
     void incrementCallback(const CppArgumentList&, CppVariant*);
     void decrementCallback(const CppArgumentList&, CppVariant*);
+    void showMenuCallback(const CppArgumentList&, CppVariant*);
+    void pressCallback(const CppArgumentList&, CppVariant*);
+    void isEqualCallback(const CppArgumentList&, CppVariant*);
+    void addNotificationListenerCallback(const CppArgumentList&, CppVariant*);
+    void removeNotificationListenerCallback(const CppArgumentList&, CppVariant*);
+    void takeFocusCallback(const CppArgumentList&, CppVariant*);
+
     void fallbackCallback(const CppArgumentList&, CppVariant*);
-
-    void childrenCountGetterCallback(CppVariant*);
-    void descriptionGetterCallback(CppVariant*);
-    void isEnabledGetterCallback(CppVariant*);
-    void isSelectedGetterCallback(CppVariant*);
-    void roleGetterCallback(CppVariant*);
-    void titleGetterCallback(CppVariant*);
-
-    CppVariant m_subrole;
-    CppVariant m_language;
-    CppVariant m_x;
-    CppVariant m_y;
-    CppVariant m_width;
-    CppVariant m_height;
-    CppVariant m_clickPointX;
-    CppVariant m_clickPointY;
-    CppVariant m_intValue;
-    CppVariant m_minValue;
-    CppVariant m_maxValue;
-    CppVariant m_childrenCount;
-    CppVariant m_insertionPointLineNumber;
-    CppVariant m_selectedTextRange;
-    CppVariant m_isRequired;
-    CppVariant m_valueDescription;
 
     WebKit::WebAccessibilityObject m_accessibilityObject;
     Factory* m_factory;
+    std::vector<CppVariant> m_notificationCallbacks;
 };
 
 
@@ -131,7 +151,7 @@ public:
     virtual ~AccessibilityUIElementList();
 
     void clear();
-    virtual AccessibilityUIElement* create(const WebKit::WebAccessibilityObject&);
+    virtual AccessibilityUIElement* getOrCreate(const WebKit::WebAccessibilityObject&);
     AccessibilityUIElement* createRoot(const WebKit::WebAccessibilityObject&);
 
 private:

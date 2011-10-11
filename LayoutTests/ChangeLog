@@ -1,3 +1,16 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Enable accessibility tests on chromium and update test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=69676
+
+        Reviewed by Chris Fleizach.
+
+        * platform/chromium/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt: Added.
+        * platform/chromium/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * platform/chromium/accessibility/div-within-anchors-causes-crash-expected.txt: Added.
+        * platform/chromium/accessibility/platform-name-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-10  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Fix expectations from r97120. (again)

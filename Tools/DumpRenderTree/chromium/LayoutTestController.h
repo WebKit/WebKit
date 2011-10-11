@@ -642,6 +642,9 @@ private:
     // Bound variable tracking the directionality of the <title> tag.
     CppVariant m_titleTextDirection;
 
+    // Bound variable to return the name of this platform (chromium).
+    CppVariant m_platformName;
+
     WebKit::WebURL m_userStyleSheetLocation;
 
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;

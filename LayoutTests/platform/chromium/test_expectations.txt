@@ -945,16 +945,60 @@ BUGWK66386 : svg/custom/repaint-shadow.svg = PASS IMAGE
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
-// In addition to WebCore, these are meant to exercise platform APIs
-// (MSAA, NSAccessibility, ATK). Since we don't have access to these in the
-// sandbox, making these tests pass involves faking interactions with these APIs
-// and doesn't seem like a good use of our time.
-// We need to identify a good testing strategy for Chromium accessibility.
-// It is possible we won't use these at all.
+// AccessibilityController and AccessibilityUIElement are only
+// partially finished - about half the tests can't run yet.
 
-BUGCR10322 SKIP : accessibility = PASS FAIL
-BUGCR10322 SKIP : platform/mac/accessibility = PASS FAIL
-BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
+BUGCR10322 SKIP : accessibility/aria-activedescendant-crash.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-combobox.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-controls-with-tabs.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-fallback-roles.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-hidden-update.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-hidden-with-elements.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-labelledby-overrides-label.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-link-supports-press.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-list-and-listitem.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-menubar-menuitems.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-option-role.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-tab-roles.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-tables.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-text-role.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-used-on-image-maps.html = TEXT
+BUGCR10322 SKIP : accessibility/button-press-action.html = TEXT
+BUGCR10322 SKIP : accessibility/deleting-iframe-destroys-axcache.html = TEXT
+BUGCR10322 SKIP : accessibility/document-attributes.html = TEXT
+BUGCR10322 SKIP : accessibility/editable-webarea-context-menu-point.html = TEXT
+BUGCR10322 SKIP : accessibility/iframe-bastardization.html = TEXT
+BUGCR10322 SKIP : accessibility/image-link.html = TEXT
+BUGCR10322 SKIP : accessibility/image-map2.html = TEXT
+BUGCR10322 SKIP : accessibility/internal-link-anchors2.html = TEXT
+BUGCR10322 SKIP : accessibility/label-for-control-hittest.html = TEXT
+BUGCR10322 SKIP : accessibility/language-attribute.html = TEXT
+BUGCR10322 SKIP : accessibility/legend.html = TEXT
+BUGCR10322 SKIP : accessibility/lists.html = TEXT
+BUGCR10322 SKIP : accessibility/media-element.html = TIMEOUT
+BUGCR10322 SKIP : accessibility/non-data-table-cell-title-ui-element.html = TEXT
+BUGCR10322 SKIP : accessibility/onclick-handlers.html = TEXT
+BUGCR10322 SKIP : accessibility/placeholder.html = TEXT
+BUGCR10322 SKIP : accessibility/plugin.html = TEXT
+BUGCR10322 SKIP : accessibility/radio-button-checkbox-size.html = TEXT
+BUGCR10322 SKIP : accessibility/radio-button-group-members.html = TEXT
+BUGCR10322 SKIP : accessibility/radio-button-title-label.html = TEXT
+BUGCR10322 SKIP : accessibility/secure-textfield-title-ui.html = TEXT
+BUGCR10322 SKIP : accessibility/table-attributes.html = TEXT
+BUGCR10322 SKIP : accessibility/table-cell-spans.html = TEXT
+BUGCR10322 SKIP : accessibility/table-cells.html = TEXT
+BUGCR10322 SKIP : accessibility/table-detection.html = TEXT
+BUGCR10322 SKIP : accessibility/table-one-cell.html = TEXT
+BUGCR10322 SKIP : accessibility/table-sections.html = TEXT
+BUGCR10322 SKIP : accessibility/table-with-aria-role.html = TEXT
+BUGCR10322 SKIP : accessibility/table-with-rules.html = TEXT
+BUGCR10322 SKIP : accessibility/textarea-insertion-point-line-number.html = TEXT
+BUGCR10322 SKIP : accessibility/textarea-line-for-index.html = TEXT
+BUGCR10322 SKIP : accessibility/textarea-selected-text-range.html = TEXT
+BUGCR10322 SKIP : accessibility/textbox-role-reports-selection.html = TEXT
+BUGCR10322 SKIP : accessibility/th-as-title-ui.html = TEXT
+BUGCR10322 SKIP : accessibility/transformed-element.html = TEXT
+BUGCR10322 SKIP : accessibility/visible-elements.html = TEXT
 
 // -----------------------------------------------------------------
 // Test failures with Skia GPU rendering of canvas 2D

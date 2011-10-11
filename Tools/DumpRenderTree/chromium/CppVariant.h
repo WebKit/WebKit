@@ -128,6 +128,14 @@ public:
     // CppVariant specified by result.
     bool invoke(const std::string&, const CppVariant* arguments,
                 uint32_t argumentCount, CppVariant& result) const;
+
+    // Invoke an object's default method with the supplied arguments.
+    // The first argument should be the object on which the method is to be
+    // invoked. Returns whether the method was successfully invoked. If the
+    // method was invoked successfully, any return value is stored in the
+    // CppVariant specified by result.
+    bool invokeDefault(const CppVariant* arguments,
+                       uint32_t argumentCount, CppVariant& result) const;
 };
 
 #endif // CppVariant_h

@@ -308,3 +308,14 @@ bool CppVariant::invoke(const string& method, const CppVariant* arguments,
     result.set(r);
     return status;
 }
+
+bool CppVariant::invokeDefault(const CppVariant* arguments, uint32_t argumentCount,
+                               CppVariant& result) const
+{
+    ASSERT(isObject());
+    NPObject* npObject = value.objectValue;
+    NPVariant r;
+    bool status = WebBindings::invokeDefault(0, npObject, arguments, argumentCount, &r);
+    result.set(r);
+    return status;
+}

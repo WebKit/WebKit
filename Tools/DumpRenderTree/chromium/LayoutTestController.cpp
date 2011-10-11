@@ -239,6 +239,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
     bindProperty("titleTextDirection", &m_titleTextDirection);
+    bindProperty("platformName", &m_platformName);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -618,6 +619,7 @@ void LayoutTestController::reset()
     m_globalFlag.set(false);
     m_webHistoryItemCount.set(0);
     m_titleTextDirection.set("ltr");
+    m_platformName.set("chromium");
     m_userStyleSheetLocation = WebURL();
 
     webkit_support::SetAcceptAllCookies(false);

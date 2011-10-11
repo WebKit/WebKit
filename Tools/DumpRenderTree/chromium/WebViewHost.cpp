@@ -550,58 +550,62 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
     if (notification == WebAccessibilityNotificationFocusedUIElementChanged)
         m_shell->accessibilityController()->setFocusedElement(obj);
 
-    if (m_shell->accessibilityController()->shouldDumpAccessibilityNotifications()) {
-        printf("AccessibilityNotification - ");
+    const char* notificationName;
+    switch (notification) {
+    case WebAccessibilityNotificationActiveDescendantChanged:
+        notificationName = "ActiveDescendantChanged";
+        break;
+    case WebAccessibilityNotificationCheckedStateChanged:
+        notificationName = "CheckedStateChanged";
+        break;
+    case WebAccessibilityNotificationChildrenChanged:
+        notificationName = "ChildrenChanged";
+        break;
+    case WebAccessibilityNotificationFocusedUIElementChanged:
+        notificationName = "FocusedUIElementChanged";
+        break;
+    case WebAccessibilityNotificationLayoutComplete:
+        notificationName = "LayoutComplete";
+        break;
+    case WebAccessibilityNotificationLoadComplete:
+        notificationName = "LoadComplete";
+        break;
+    case WebAccessibilityNotificationSelectedChildrenChanged:
+        notificationName = "SelectedChildrenChanged";
+        break;
+    case WebAccessibilityNotificationSelectedTextChanged:
+        notificationName = "SelectedTextChanged";
+        break;
+    case WebAccessibilityNotificationValueChanged:
+        notificationName = "ValueChanged";
+        break;
+    case WebAccessibilityNotificationScrolledToAnchor:
+        notificationName = "ScrolledToAnchor";
+        break;
+    case WebAccessibilityNotificationLiveRegionChanged:
+        notificationName = "LiveRegionChanged";
+        break;
+    case WebAccessibilityNotificationMenuListValueChanged:
+        notificationName = "MenuListValueChanged";
+        break;
+    case WebAccessibilityNotificationRowCountChanged:
+        notificationName = "RowCountChanged";
+        break;
+    case WebAccessibilityNotificationRowCollapsed:
+        notificationName = "RowCollapsed";
+        break;
+    case WebAccessibilityNotificationRowExpanded:
+        notificationName = "RowExpanded";
+        break;
+    default:
+        notificationName = "UnknownNotification";
+        break;
+    }
 
-        switch (notification) {
-        case WebAccessibilityNotificationActiveDescendantChanged:
-            printf("ActiveDescendantChanged");
-            break;
-        case WebAccessibilityNotificationCheckedStateChanged:
-            printf("CheckedStateChanged");
-            break;
-        case WebAccessibilityNotificationChildrenChanged:
-            printf("ChildrenChanged");
-            break;
-        case WebAccessibilityNotificationFocusedUIElementChanged:
-            printf("FocusedUIElementChanged");
-            break;
-        case WebAccessibilityNotificationLayoutComplete:
-            printf("LayoutComplete");
-            break;
-        case WebAccessibilityNotificationLoadComplete:
-            printf("LoadComplete");
-            break;
-        case WebAccessibilityNotificationSelectedChildrenChanged:
-            printf("SelectedChildrenChanged");
-            break;
-        case WebAccessibilityNotificationSelectedTextChanged:
-            printf("SelectedTextChanged");
-            break;
-        case WebAccessibilityNotificationValueChanged:
-            printf("ValueChanged");
-            break;
-        case WebAccessibilityNotificationScrolledToAnchor:
-            printf("ScrolledToAnchor");
-            break;
-        case WebAccessibilityNotificationLiveRegionChanged:
-            printf("LiveRegionChanged");
-            break;
-        case WebAccessibilityNotificationMenuListValueChanged:
-            printf("MenuListValueChanged");
-            break;
-        case WebAccessibilityNotificationRowCountChanged:
-            printf("RowCountChanged");
-            break;
-        case WebAccessibilityNotificationRowCollapsed:
-            printf("RowCollapsed");
-            break;
-        case WebAccessibilityNotificationRowExpanded:
-            printf("RowExpanded");
-            break;
-        default:
-            break;
-        }
+    m_shell->accessibilityController()->notificationReceived(obj, notificationName);
+
+    if (m_shell->accessibilityController()->shouldLogAccessibilityEvents()) {
+        printf("AccessibilityNotification - %s", notificationName);
 
         WebKit::WebNode node = obj.node();
         if (!node.isNull() && node.isElementNode()) {

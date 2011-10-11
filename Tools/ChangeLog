@@ -1,3 +1,80 @@
+2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Update Chromium accessibility support in DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=69676
+
+        Reviewed by Chris Fleizach.
+
+        Adds several missing properties and methods to enable more
+        tests to pass, and in particular adds support for notification
+        callbacks.
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::reset):
+        (AccessibilityController::getFocusedElement):
+        (AccessibilityController::shouldLogAccessibilityEvents):
+        (AccessibilityController::notificationReceived):
+        (AccessibilityController::logAccessibilityEventsCallback):
+        * DumpRenderTree/chromium/AccessibilityController.h:
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        (getHelpText):
+        (getStringValue):
+        (getOrientation):
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::isEqual):
+        (AccessibilityUIElement::notificationReceived):
+        (AccessibilityUIElement::roleGetterCallback):
+        (AccessibilityUIElement::titleGetterCallback):
+        (AccessibilityUIElement::descriptionGetterCallback):
+        (AccessibilityUIElement::helpTextGetterCallback):
+        (AccessibilityUIElement::stringValueGetterCallback):
+        (AccessibilityUIElement::xGetterCallback):
+        (AccessibilityUIElement::yGetterCallback):
+        (AccessibilityUIElement::widthGetterCallback):
+        (AccessibilityUIElement::heightGetterCallback):
+        (AccessibilityUIElement::intValueGetterCallback):
+        (AccessibilityUIElement::minValueGetterCallback):
+        (AccessibilityUIElement::maxValueGetterCallback):
+        (AccessibilityUIElement::childrenCountGetterCallback):
+        (AccessibilityUIElement::insertionPointLineNumberGetterCallback):
+        (AccessibilityUIElement::selectedTextRangeGetterCallback):
+        (AccessibilityUIElement::isEnabledGetterCallback):
+        (AccessibilityUIElement::isRequiredGetterCallback):
+        (AccessibilityUIElement::isFocusedGetterCallback):
+        (AccessibilityUIElement::isFocusableGetterCallback):
+        (AccessibilityUIElement::isSelectedGetterCallback):
+        (AccessibilityUIElement::isSelectableGetterCallback):
+        (AccessibilityUIElement::isMultiSelectableGetterCallback):
+        (AccessibilityUIElement::isExpandedGetterCallback):
+        (AccessibilityUIElement::isCheckedGetterCallback):
+        (AccessibilityUIElement::isVisibleGetterCallback):
+        (AccessibilityUIElement::isOffScreenGetterCallback):
+        (AccessibilityUIElement::isCollapsedGetterCallback):
+        (AccessibilityUIElement::hasPopupGetterCallback):
+        (AccessibilityUIElement::isValidGetterCallback):
+        (AccessibilityUIElement::orientationGetterCallback):
+        (AccessibilityUIElement::showMenuCallback):
+        (AccessibilityUIElement::pressCallback):
+        (AccessibilityUIElement::isEqualCallback):
+        (AccessibilityUIElement::addNotificationListenerCallback):
+        (AccessibilityUIElement::removeNotificationListenerCallback):
+        (AccessibilityUIElement::takeFocusCallback):
+        (AccessibilityUIElement::fallbackCallback):
+        (RootAccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElementList::getOrCreate):
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+        * DumpRenderTree/chromium/CppVariant.cpp:
+        (CppVariant::invokeDefault):
+        * DumpRenderTree/chromium/CppVariant.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postAccessibilityNotification):
+
 2011-10-10  Adam Klein  <adamk@chromium.org>
 
         Support Distributed-CompileC as an action name in filter-build-webkit
