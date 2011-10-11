@@ -94,7 +94,7 @@ enum StyleChangeType {
     SyntheticStyleChange = 3 << nodeStyleChangeShift
 };
 
-class Node : public EventTarget, public TreeShared<ContainerNode>, public ScriptWrappable {
+class Node : public EventTarget, public ScriptWrappable, public TreeShared<ContainerNode> {
     friend class Document;
     friend class TreeScope;
 
@@ -703,11 +703,11 @@ private:
 
     void trackForDebugging();
 
+    mutable uint32_t m_nodeFlags;
     Document* m_document;
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;
-    mutable uint32_t m_nodeFlags;
 
 protected:
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }

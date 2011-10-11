@@ -1417,11 +1417,11 @@ inline bool Node::isDocumentNode() const
 }
 
 inline Node::Node(Document* document, ConstructionType type)
-    : m_document(document)
+    : m_nodeFlags(type)
+    , m_document(document)
     , m_previous(0)
     , m_next(0)
     , m_renderer(0)
-    , m_nodeFlags(type)
 {
     if (m_document)
         m_document->guardRef();

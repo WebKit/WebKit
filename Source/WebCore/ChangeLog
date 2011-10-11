@@ -1,3 +1,20 @@
+2011-10-10  Andreas Kling  <kling@webkit.org>
+
+        Shrink WebCore::Node on 64-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=69768
+
+        Reviewed by Antti Koivisto.
+
+        Rearrange TreeShared and Node members so that the node flags fall
+        into the padding at the end of TreeShared on 64-bit, reducing the
+        size of Node (and all subclasses) by 8 bytes.
+
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::TreeShared):
+
 2011-10-11  Kent Tamura  <tkent@chromium.org>
 
         Move m_listItems and m_recalcListItems from SelectElementData to HTMLSelectElement
