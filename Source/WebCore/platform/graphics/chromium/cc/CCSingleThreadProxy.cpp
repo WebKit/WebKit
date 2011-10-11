@@ -198,6 +198,12 @@ void CCSingleThreadProxy::compositeImmediately()
 bool CCSingleThreadProxy::recreateContextIfNeeded()
 {
     ASSERT(CCProxy::isMainThread());
+
+    if (!m_graphicsContextLost && m_layerTreeHostImpl->isContextLost()) {
+        m_graphicsContextLost = true;
+        m_numFailedRecreateAttempts = 0;
+    }
+
     if (!m_graphicsContextLost)
         return true;
     RefPtr<GraphicsContext3D> context;

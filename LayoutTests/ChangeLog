@@ -1,3 +1,17 @@
+2011-10-11  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Check for lost context at beginning of compositor's execution
+        https://bugs.webkit.org/show_bug.cgi?id=69776
+
+        Reviewed by James Robinson.
+
+        Added test case which asserts when run in Chrome with dynamic GPU
+        switching enabled and without the fix in this patch.
+
+        * platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Added.
+        * platform/chromium/compositing/webgl-loses-compositor-context-expected.txt: Added.
+        * platform/chromium/compositing/webgl-loses-compositor-context.html: Added.
+
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r96610.
