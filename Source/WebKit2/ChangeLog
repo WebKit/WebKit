@@ -1,3 +1,19 @@
+2011-10-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69874
+        WebKit2 snapshot APIs should take the device scale factor into account 
+        -and corresponding-
+        <rdar://problem/10269112>
+
+        Reviewed by Darin Adler.
+
+        Add the deviceScaleFactor as a scale on the snapshot's context to create a 
+        snapshot of the appropriate resolution. This matches the manner in which we scale 
+        the context in DrawingAreaImpl::display().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates):
+
 2011-10-11  W. James MacLean  <wjmaclean@chromium.org>
 
         Loss of precision when converting from double to int and double to float in FrameView::zoomAnimatorTransformChanged()

@@ -915,11 +915,16 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     if (!frameView)
         return 0;
 
-    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
+    IntSize bitmapSize = rect.size();
+    float deviceScaleFactor = corePage()->deviceScaleFactor();
+    bitmapSize.scale(deviceScaleFactor);
+
+    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, options);
     if (!snapshot->bitmap())
         return 0;
     
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
     graphicsContext->translate(-rect.x(), -rect.y());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
@@ -938,13 +943,14 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
     if (!frameView)
         return 0;
 
-    IntSize size(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
+    float combinedScaleFactor = scaleFactor * corePage()->deviceScaleFactor();
+    IntSize size(ceil(rect.width() * combinedScaleFactor), ceil(rect.height() * combinedScaleFactor));
     RefPtr<WebImage> snapshot = WebImage::create(size, options);
     if (!snapshot->bitmap())
         return 0;
 
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
+    graphicsContext->scale(FloatSize(combinedScaleFactor, combinedScaleFactor));
     graphicsContext->translate(-rect.x(), -rect.y());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
