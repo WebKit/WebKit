@@ -179,7 +179,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         return;
     }
 
-    if (!beforeChild && lastChild() && lastChild()->isTableSection() && lastChild()->isAnonymous()) {
+    if (!beforeChild && lastChild() && lastChild()->isTableSection() && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
         lastChild()->addChild(child);
         return;
     }

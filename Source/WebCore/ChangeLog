@@ -1,3 +1,18 @@
+2011-10-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10246137> Duplicate ::after content when both ::before and ::after are styled as table parts
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/css-generated-content/table-parts-before-and-after.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild): Prevented table part childern after a ::before table from being merged
+        into it.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Prevented children after a ::before table section from being merged
+        into it.
+
 2011-10-10  Nate Chapin  <japhet@chromium.org>
 
         Most of the functions in CachedResourceClient are specific

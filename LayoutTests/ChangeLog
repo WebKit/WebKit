@@ -1,3 +1,13 @@
+2011-10-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10246137> Duplicate ::after content when both ::before and ::after are styled as table parts
+
+        Reviewed by Sam Weinig.
+
+        * fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * fast/css-generated-content/table-parts-before-and-after-expected.txt: Added.
+        * fast/css-generated-content/table-parts-before-and-after.html: Added.
+
 2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r97102.
