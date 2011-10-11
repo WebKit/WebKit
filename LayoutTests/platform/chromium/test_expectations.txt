@@ -2221,7 +2221,6 @@ BUGCR98248 WIN : fast/text/stroking-decorations.html = IMAGE
 BUGCR98248 WIN : fast/text/stroking.html = IMAGE
 BUGCR98248 WIN : fast/transforms/shadows.html = IMAGE
 BUGCR98248 WIN : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR98248 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
 BUGCR98248 WIN : svg/css/group-with-shadow.svg = IMAGE
 BUGCR98248 WIN : svg/css/text-gradient-shadow.svg = IMAGE
 
@@ -2688,7 +2687,7 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE+TEXT // See "SVG tests" section too
+BUGWK54322 SNOWLEOPARD DEBUG SLOW : http/tests/misc/acid3.html = IMAGE+TEXT // See "SVG tests" section too
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT

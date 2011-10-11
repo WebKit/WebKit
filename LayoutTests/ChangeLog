@@ -1,3 +1,19 @@
+2011-10-10  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Rebaselines for r97102 and r97114. Pass 2 more tests.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/smart-paste-008-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/smart-paste-008-expected.png.
+        * platform/chromium-win/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-win/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix r97115. smart-paste-008.html is in editing/paste, not in fast/events.
