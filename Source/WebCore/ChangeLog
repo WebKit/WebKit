@@ -1,3 +1,9 @@
+2011-10-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * WebCore.exp.in: Export GraphicsContext::clearShadow().
+
 2011-10-10  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Add stub implementation of WebKitMutationObserver
