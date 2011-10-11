@@ -752,6 +752,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
     GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
     stencilIndex <<= 1;
     glStencilFunc(stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, stencilIndex - 1, stencilIndex - 1);
+    GL_CMD(glDisableVertexAttribArray(programInfo.vertexAttrib))
 }
 
 void TextureMapperGL::endClip()
