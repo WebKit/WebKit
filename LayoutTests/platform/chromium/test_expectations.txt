@@ -1002,6 +1002,10 @@ BUGCR10322 SKIP : accessibility/th-as-title-ui.html = TEXT
 BUGCR10322 SKIP : accessibility/transformed-element.html = TEXT
 BUGCR10322 SKIP : accessibility/visible-elements.html = TEXT
 
+// Started to fail after r97128.
+BUGWK69827 LINUX MAC DEBUG : accessibility/image-map-update-parent-crash.html = TIMEOUT
+BUGWK69827 MAC : accessibility/aria-roles.html = TEXT
+
 // -----------------------------------------------------------------
 // Test failures with Skia GPU rendering of canvas 2D
 // -----------------------------------------------------------------

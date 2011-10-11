@@ -1,5 +1,11 @@
 2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, mark two accessibility tests as failing on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, rebaseline test expectations after r104864 (chromium).
 
         * platform/chromium-cg-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
