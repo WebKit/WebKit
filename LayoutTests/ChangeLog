@@ -1,5 +1,16 @@
 2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [Gtk] Update test expectation after r96712.
+
+        Unreviewed gardening.
+
+        * platform/gtk/svg/clip-path/clip-path-transform-1-expected.png: Added.
+        * platform/gtk/svg/clip-path/clip-path-transform-1-expected.txt: Added.
+        * platform/gtk/svg/clip-path/clip-path-transform-2-expected.png: Added.
+        * platform/gtk/svg/clip-path/clip-path-transform-2-expected.txt: Added.
+
+2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [Gtk] Skip test crashing due to bug 60931.
         https://bugs.webkit.org/show_bug.cgi?id=60931
 
