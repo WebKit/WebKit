@@ -225,6 +225,11 @@ css3/font-feature-settings-rendering.html
 # CSS Filters is disabled
 css3/filters
 
+# Support multipart responses is not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=47060
+# https://bugs.webkit.org/show_bug.cgi?id=47059
+http/tests/multipart
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
@@ -377,14 +382,6 @@ http/tests/media
 http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
-
-# QtWebKit has no multipart support
-# https://bugs.webkit.org/show_bug.cgi?id=47059
-# https://webkit.org/b/47060
-http/tests/multipart/invalid-image-data.html
-http/tests/multipart/invalid-image-data-standalone.html
-http/tests/misc/timer-vs-loading.html
-http/tests/multipart/policy-ignore-crash.php
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
@@ -2390,10 +2387,6 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 # https://bugs.webkit.org/show_bug.cgi?id=68854
 editing/selection/select-bidi-run.html
 
-# http/tests/multipart/stop-crash.html fails on Qt and GTK
-# https://bugs.webkit.org/show_bug.cgi?id=68979
-http/tests/multipart/stop-crash.html
-
 # [Qt] inspector/styles/styles-disable-inherited.html make the next test fail after r96257
 # https://bugs.webkit.org/show_bug.cgi?id=69257
 inspector/styles/styles-disable-inherited.html
@@ -2405,10 +2398,6 @@ svg/as-image/svg-nested.html
 # REGRESSION(r96870): editing/pasteboard/smart-paste-008.html fails on non-Mac
 # https://bugs.webkit.org/show_bug.cgi?id=69587
 editing/pasteboard/smart-paste-008.html
-
-# new test introduced in in r96856, but fails on Qt
-# https://bugs.webkit.org/show_bug.cgi?id=69615
-http/tests/multipart/load-last-non-html-frame.php
 
 # [Qt] fast/text/line-initial-and-final-swashes.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=69719

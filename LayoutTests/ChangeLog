@@ -1,3 +1,14 @@
+2011-10-11  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Support multipart responses is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=47060
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+         - Skip multipart tests.
+         - Unskip http/tests/misc/timer-vs-loading.htm, because it isn't multipart test and it passes.
+
 2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Update test expectation after r96970.
