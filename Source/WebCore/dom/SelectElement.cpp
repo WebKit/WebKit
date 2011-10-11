@@ -63,43 +63,11 @@ SelectElementData::SelectElementData()
     , m_userDrivenChange(false)
     , m_multiple(false)
     , m_activeSelectionState(false)
-    , m_recalcListItems(false)
 {
 }
 
 SelectElementData::~SelectElementData()
 {
-}
-
-void SelectElementData::checkListItems(const Element* element) const
-{
-#if !ASSERT_DISABLED
-    Vector<Element*> items = m_listItems;
-    HTMLSelectElement::recalcListItems(*const_cast<SelectElementData*>(this), element, false);
-    ASSERT(items == m_listItems);
-#else
-    UNUSED_PARAM(element);
-#endif
-}
-
-Vector<Element*>& SelectElementData::listItems(const Element* element)
-{
-    if (m_recalcListItems)
-        HTMLSelectElement::recalcListItems(*this, element);
-    else
-        checkListItems(element);
-
-    return m_listItems;
-}
-
-const Vector<Element*>& SelectElementData::listItems(const Element* element) const
-{
-    if (m_recalcListItems)
-        HTMLSelectElement::recalcListItems(*const_cast<SelectElementData*>(this), element);
-    else
-        checkListItems(element);
-
-    return m_listItems;
 }
 
 }

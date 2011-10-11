@@ -1,3 +1,83 @@
+2011-10-11  Kent Tamura  <tkent@chromium.org>
+
+        Move m_listItems and m_recalcListItems from SelectElementData to HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=69812
+
+        Reviewed by Ryosuke Niwa.
+
+        Move SelectElementData::m_recalcListItems,
+        SelectElementData::m_listItems, and related functions of
+        SelectElementData class to HTMLSelectElement.
+
+        Non-const listItems() was removed because it is used only in
+        recalcListItemsInternal() and it can access m_listItems diretly.
+
+        Static recalcListItems() is changed to non-static, and renamed to
+        recalcListItemsInternal() in order to avoid confusion with the
+        existing recalcListItems().
+
+        No new tests, just a refactoring.
+
+        * dom/SelectElement.cpp:
+        Move checkListItems() and listItems() to HTMLSelectElement.
+        (WebCore::SelectElementData::SelectElementData):
+        Remove Initialization of m_recalcListItems.
+        * dom/SelectElement.h:
+        Move m_recalcListItems, m_listItems, and related functions to HTMLSelectElement.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        Initializes m_recalcListItems.
+        (WebCore::HTMLSelectElement::recalcListItems):
+        Rename the static recalcListItems() to recalcListItemsInternal().
+        (WebCore::HTMLSelectElement::recalcListItemsIfNeeded):
+        Use m_recalcListItems directly.
+        (WebCore::HTMLSelectElement::nextSelectableListIndex):
+        Update a listItems() callsite.
+        (WebCore::HTMLSelectElement::previousSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::firstSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::lastSelectableListIndex): ditto.
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway): ditto.
+        (WebCore::HTMLSelectElement::saveLastSelection): ditto.
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex): ditto.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): ditto.
+        (WebCore::HTMLSelectElement::listBoxOnChange): ditto.
+        (WebCore::HTMLSelectElement::checkListItems):
+        Moved from SelectElementData.
+        (WebCore::HTMLSelectElement::listItems): ditto.
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        Use m_recalcListItems directly.
+        (WebCore::HTMLSelectElement::recalcListItemsInternal):
+        - Make this non-static.
+        - Renamed from recalcListItems() to avoid confilct with another recalcListItems().
+        - Use m_recalcListItems and m_listItems directly.
+        (WebCore::HTMLSelectElement::selectedIndex):
+        Update a listItems() callsite.
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal): ditto.
+        (WebCore::HTMLSelectElement::optionToListIndex): ditto.
+        (WebCore::HTMLSelectElement::listToOptionIndex): ditto.
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation): ditto.
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        Update callsites of listItems() and recalcListItems().
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        Update a listItems() callsite.
+        (WebCore::HTMLSelectElement::appendFormData): ditto.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::updateSelectedState): ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): ditto.
+        (WebCore::HTMLSelectElement::typeAheadFind): ditto.
+        (WebCore::HTMLSelectElement::insertedIntoTree):
+        Update a recalcListItems() callsite.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        Update a listItems() callsite.
+        (WebCore::HTMLSelectElement::length): ditto.
+        * html/HTMLSelectElement.h:
+        Move m_recalcListItems, m_listItems, and related functions from SelectElementData.
+        * html/HTMLSelectElementWin.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        Update a listItems() callsite.
+
 2011-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Complex script code path breaks on Windows XP when a CFF font is used
