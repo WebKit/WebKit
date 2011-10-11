@@ -1,5 +1,15 @@
 2011-10-11  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac] Small embedded PDFs are not fully repainted when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=69861
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: (WebKit::BuiltInPDFView::paintContent):
+        Account for vertical centering when deciding which pages to paint.
+
+2011-10-11  Alexey Proskuryakov  <ap@apple.com>
+
         Embedding of PDF's with <object> or <embed> fails when there is no MIME type specified
         https://bugs.webkit.org/show_bug.cgi?id=64934
 
