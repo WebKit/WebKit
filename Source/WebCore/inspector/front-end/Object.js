@@ -84,11 +84,12 @@ WebInspector.Object.prototype = {
     /**
      * @param {string} eventType
      * @param {*=} eventData
+     * @return {boolean}
      */
     dispatchEventToListeners: function(eventType, eventData)
     {
         if (!this._listeners || !this._listeners[eventType])
-            return;
+            return false;
 
         var event = new WebInspector.Event(this, eventType, eventData);
         var listeners = this._listeners[eventType].slice(0);

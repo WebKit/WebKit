@@ -29,6 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @param {*} object
+ * @param {Array.<*>} array
+ * @param {function(*, *)} comparator
+ */
 function binarySearch(object, array, comparator)
 {
     var first = 0;
@@ -55,6 +60,11 @@ Object.defineProperty(Array.prototype, "binaryIndexOf", { value: function(value,
     return result >= 0 ? result : -1;
 }});
 
+/**
+ * @param {*} anObject
+ * @param {Array.<*>} aList
+ * @param {function(*, *)} aFunction
+ */
 function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunction)
 {
     var index = binarySearch(anObject, aList, aFunction);

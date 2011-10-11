@@ -63,6 +63,9 @@ defineCommonExtensionSymbols(apiPrivate);
 // by Foo consutrctor to re-bind publicly exported members to an instance
 // of Foo.
 
+/**
+ * @constructor
+ */
 function EventSinkImpl(type, customDispatch)
 {
     this._type = type;
@@ -111,6 +114,9 @@ EventSinkImpl.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function InspectorExtensionAPI()
 {
     this.audits = new Audits();
@@ -124,6 +130,9 @@ function InspectorExtensionAPI()
     this.onReset = new EventSink("reset");
 }
 
+/**
+ * @constructor
+ */
 InspectorExtensionAPI.prototype = {
     log: function(message)
     {
@@ -131,6 +140,9 @@ InspectorExtensionAPI.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function Console()
 {
     this.onMessageAdded = new EventSink("console-message-added");
@@ -151,8 +163,11 @@ Console.prototype = {
     {
         return apiPrivate.console.Severity;
     }
-};
+}
 
+/**
+ * @constructor
+ */
 function Network()
 {
     function dispatchRequestEvent(message)
@@ -183,10 +198,13 @@ Network.prototype = {
 
     addRequestHeaders: function(headers)
     {
-        return extensionServer.sendRequest({ command: "addRequestHeaders", headers: headers, extensionId: location.hostname });
+        return extensionServer.sendRequest({ command: "addRequestHeaders", headers: headers, extensionId: window.location.hostname });
     }
 }
 
+/**
+ * @constructor
+ */
 function RequestImpl(id)
 {
     this._id = id;
@@ -201,8 +219,11 @@ RequestImpl.prototype = {
         }
         extensionServer.sendRequest({ command: "getRequestContent", id: this._id }, callback && callbackWrapper);
     }
-};
+}
 
+/**
+ * @constructor
+ */
 function Panels()
 {
     var panels = {
@@ -250,6 +271,9 @@ Panels.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function PanelImpl(id)
 {
     this._id = id;
@@ -257,6 +281,10 @@ function PanelImpl(id)
     this.onHidden = new EventSink("panel-hidden-" + id);
 }
 
+/**
+ * @constructor
+ * @extends {PanelImpl}
+ */
 function PanelWithSidebarImpl(id)
 {
     PanelImpl.call(this, id);
@@ -282,6 +310,10 @@ PanelWithSidebarImpl.prototype = {
 
 PanelWithSidebarImpl.prototype.__proto__ = PanelImpl.prototype;
 
+/**
+ * @constructor
+ * @extends {PanelWithSidebar}
+ */
 function ElementsPanel()
 {
     var id = "elements";
@@ -289,12 +321,19 @@ function ElementsPanel()
     this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
 }
 
+/**
+ * @constructor
+ * @extends {Panel}
+ */
 function ExtensionPanel(id)
 {
     Panel.call(this, id);
     this.onSearch = new EventSink("panel-search-" + id);
 }
 
+/**
+ * @constructor
+ */
 function ExtensionSidebarPaneImpl(id)
 {
     this._id = id;
@@ -323,6 +362,9 @@ ExtensionSidebarPaneImpl.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function Audits()
 {
 }
@@ -336,6 +378,9 @@ Audits.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function AuditCategoryImpl(id)
 {
     function dispatchAuditEvent(request)
@@ -352,6 +397,9 @@ function AuditCategoryImpl(id)
     this.onAuditStarted = new EventSink("audit-started-" + id, dispatchAuditEvent);
 }
 
+/**
+ * @constructor
+ */
 function AuditResultImpl(id)
 {
     this._id = id;
@@ -367,7 +415,7 @@ AuditResultImpl.prototype = {
     {
         // shorthand for specifying details directly in addResult().
         if (details && !(details instanceof AuditResultNode))
-            details = details instanceof Array ? this.createNode.apply(this, details) : this.createNode(details);
+            details = new AuditResultNode(details instanceof Array ? details : [details]);
 
         var request = {
             command: "addAuditResult",
@@ -382,9 +430,7 @@ AuditResultImpl.prototype = {
 
     createResult: function()
     {
-        var node = new AuditResultNode();
-        node.contents = Array.prototype.slice.call(arguments);
-        return node;
+        return new AuditResultNode(Array.prototype.slice.call(arguments));
     },
 
     done: function()
@@ -406,6 +452,9 @@ AuditResultImpl.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function AuditResultNode(contents)
 {
     this.contents = contents;
@@ -416,12 +465,15 @@ function AuditResultNode(contents)
 AuditResultNode.prototype = {
     addChild: function()
     {
-        var node = AuditResultImpl.prototype.createResult.apply(null, arguments);
+        var node = new AuditResultNode(Array.prototype.slice.call(arguments));
         this.children.push(node);
         return node;
     }
 };
 
+/**
+ * @constructor
+ */
 function InspectedWindow()
 {
     function dispatchResourceEvent(message)
@@ -468,6 +520,9 @@ InspectedWindow.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function ResourceImpl(resourceData)
 {
     this._url = resourceData.url
@@ -499,13 +554,19 @@ ResourceImpl.prototype = {
     {
         return extensionServer.sendRequest({ command: "setResourceContent", url: this._url, content: content, commit: commit }, callback);
     }
-};
+}
 
+/**
+ * @constructor
+ */
 function TimelineImpl()
 {
     this.onEventRecorded = new EventSink("timeline-event-recorded");
 }
 
+/**
+ * @constructor
+ */
 function ExtensionServerClient()
 {
     this._callbacks = {};
@@ -576,7 +637,10 @@ ExtensionServerClient.prototype = {
     }
 }
 
-function bind(func, thisObject)
+/**
+ * @param {...*} vararg
+ */
+function bind(func, thisObject, vararg)
 {
     var args = Array.prototype.slice.call(arguments, 2);
     return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))); };
@@ -638,9 +702,9 @@ var Timeline = declareInterfaceClass(TimelineImpl);
 
 var extensionServer = new ExtensionServerClient();
 
-webInspector = new InspectorExtensionAPI();
-experimental = window.experimental || {};
-experimental.webInspector = webInspector;
+window.webInspector = new InspectorExtensionAPI();
+window.experimental = window.experimental || {};
+window.experimental.webInspector = window.webInspector;
 
 }
 

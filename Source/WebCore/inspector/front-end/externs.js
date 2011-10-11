@@ -29,9 +29,12 @@
  */
 
 var console = {}
-console.warn = function(message) {}
-/** @param {string=} message */
-console.assert = function(expr, message) {}
+/** @param {...*} vararg */
+console.warn = function(vararg) {}
+/** @param {...*} vararg */
+console.assert = function(vararg) {}
+/** @param {...*} vararg */
+console.error = function(vararg) {}
 
 var WebInspector = {}
 
@@ -87,6 +90,7 @@ WebInspector.completeURL = function(url, href) {}
  */
 WebInspector.UIString = function(str, varArgs) {}
 var InspectorBackend = {}
+InspectorBackend.runAfterPendingDispatches = function(message) {}
 
 var JSON = {}
 /** @param {string} str */
@@ -227,3 +231,40 @@ WebInspector.queryParamsObject = {}
 WebInspector.Events = {
     InspectorClosing: "InspectorClosing"
 }
+
+/** Extensions API */
+
+/** @constructor */
+function AuditCategory() {}
+/** @constructor */
+function AuditResult() {}
+/** @constructor */
+function EventSink() {}
+/** @constructor */
+function ExtensionSidebarPane() {}
+/** @constructor */
+function Panel() {}
+/** @constructor */
+function PanelWithSidebar() {}
+/** @constructor */
+function Request() {}
+/** @constructor */
+function Resource() {}
+/** @constructor */
+function Timeline() {}
+
+/** @type {string} */
+Location.prototype.origin = "";
+
+/**
+ * @constructor
+ */
+function ExtensionDescriptor() {
+    this.startPage = "";
+    this.name = "";
+}
+
+/**
+ * @type {WebInspector.HandlerRegistry}
+ */
+WebInspector.openAnchorLocationRegistry = null;

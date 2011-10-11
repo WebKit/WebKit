@@ -167,12 +167,22 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/AuditLauncherView.js \
         --js Source/WebCore/inspector/front-end/AuditResultView.js \
         --js Source/WebCore/inspector/front-end/AuditRules.js \
-        --js Source/WebCore/inspector/front-end/AuditsPanel.js
+        --js Source/WebCore/inspector/front-end/AuditsPanel.js \
+    --module jsmodule_extensions:5:jsmodule_components \
+        --js Source/WebCore/inspector/front-end/ExtensionAPI.js \
+        --js Source/WebCore/inspector/front-end/ExtensionAuditCategory.js \
+        --js Source/WebCore/inspector/front-end/ExtensionPanel.js \
+        --js Source/WebCore/inspector/front-end/ExtensionRegistryStub.js \
+        --js Source/WebCore/inspector/front-end/ExtensionServer.js \
+    --module jsmodule_inspector:1:jsmodule_components,jsmodule_extensions \
+        --js Source/WebCore/inspector/front-end/SettingsScreen.js \
+    --module jsmodule_tests:1:jsmodule_components \
+        --js Source/WebCore/inspector/front-end/TestController.js
+
 #     --module jsmodule_tokenizers:3:jsmodule_components \
 #        --js Source/WebCore/inspector/front-end/SourceCSSTokenizer.js \
 #        --js Source/WebCore/inspector/front-end/SourceHTMLTokenizer.js \
-#        --js Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.js \
-
+#        --js Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.js
 
 # To be compiled...
 # 
@@ -189,16 +199,8 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
 # ProfileView
 # TopDownProfileDataGridTree
 #
-# [Extensions]
-# ExtensionAPI
-# ExtensionAuditCategory
-# ExtensionPanel
-# ExtensionRegistryStub
-# ExtensionServer
-#
 # [Misc]
 # inspector
 # SettingsScreen
-# TestController
 # JavaScriptFormatter
 # ScriptFormatterWorker

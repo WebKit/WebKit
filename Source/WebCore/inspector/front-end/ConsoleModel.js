@@ -64,6 +64,9 @@ WebInspector.ConsoleModel.prototype = {
         }
     },
 
+    /**
+     * @param {WebInspector.ConsoleMessage} msg
+     */
     addMessage: function(msg)
     {
         this.messages.push(msg);
@@ -73,6 +76,9 @@ WebInspector.ConsoleModel.prototype = {
         this._interruptRepeatCount = false;
     },
 
+    /**
+     * @param {WebInspector.ConsoleMessage} msg
+     */
     _incrementErrorWarningCount: function(msg)
     {
         switch (msg.level) {
@@ -143,6 +149,9 @@ WebInspector.ConsoleMessage = function()
 }
 
 WebInspector.ConsoleMessage.prototype = {
+    /**
+     * @return {number}
+     */
     get totalRepeatCount()
     {
         return this._totalRepeatCount;
@@ -228,6 +237,9 @@ WebInspector.ConsoleDispatcher = function(console)
 }
 
 WebInspector.ConsoleDispatcher.prototype = {
+    /**
+     * @param {ConsoleAgent.ConsoleMessage} payload
+     */
     messageAdded: function(payload)
     {
         var consoleMessage = WebInspector.ConsoleMessage.create(
@@ -244,6 +256,9 @@ WebInspector.ConsoleDispatcher.prototype = {
         this._console.addMessage(consoleMessage);
     },
 
+    /**
+     * @param {number} count
+     */
     messageRepeatCountUpdated: function(count)
     {
         this._console._messageRepeatCountUpdated(count);

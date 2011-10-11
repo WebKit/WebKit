@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.TestController = function()
 {
 }
@@ -45,15 +48,10 @@ WebInspector.evaluateForTestInFrontend = function(callId, script)
     function invokeMethod()
     {
         try {
-            var result;
-            if (window[script] && typeof window[script] === "function")
-                result = window[script].call(WebInspector, controller);
-            else
-                result = window.eval(script);
-
+            var result = window.eval(script);
             WebInspector.TestController.prototype.notifyDone(callId, result);
         } catch (e) {
-            WebInspector.testController.prototype.notifyDone(callId, e.toString());
+            WebInspector.TestController.prototype.notifyDone(callId, e.toString());
         }
     }
     InspectorBackend.runAfterPendingDispatches(invokeMethod);

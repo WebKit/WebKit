@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.ExtensionAuditCategory = function(id, displayName, ruleCount)
 {
     this._id = id;
@@ -58,6 +61,9 @@ WebInspector.ExtensionAuditCategory.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.ExtensionAuditCategoryResults = function(category, callback)
 {
     this._category = category;

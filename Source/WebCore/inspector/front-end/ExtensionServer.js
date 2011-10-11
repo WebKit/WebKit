@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.ExtensionServer = function()
 {
     this._clientObjects = {};
@@ -121,7 +124,10 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("resource-content-committed", this._makeResource(resource), content);
     },
 
-    _postNotification: function(type, details)
+    /**
+     * @param {...*} vararg
+     */
+    _postNotification: function(type, vararg)
     {
         var subscribers = this._subscribers[type];
         if (!subscribers)
@@ -169,10 +175,10 @@ WebInspector.ExtensionServer.prototype = {
             extensionHeaders = {};
             this._extraHeaders[id] = extensionHeaders;
         }
-        for (name in message.headers)
+        for (var name in message.headers)
             extensionHeaders[name] = message.headers[name];
-        var allHeaders = {};
-        for (extension in this._extraHeaders) {
+        var allHeaders = /** @type NetworkAgent.Headers */ {};
+        for (var extension in this._extraHeaders) {
             var headers = this._extraHeaders[extension];
             for (name in headers) {
                 if (typeof headers[name] === "string")
@@ -301,7 +307,7 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, result);
         }
         var evalExpression = "JSON.stringify(eval(unescape('" + escape(message.expression) + "')));";
-        RuntimeAgent.evaluate(evalExpression, "", true, callback.bind(this));
+        RuntimeAgent.evaluate(evalExpression, "", true, undefined, undefined, undefined, callback.bind(this));
     },
 
     _onGetConsoleMessages: function()
@@ -545,6 +551,9 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("timeline-event-recorded", event.data);
     },
 
+    /**
+     * @param {Array.<ExtensionDescriptor>} extensions
+     */
     _addExtensions: function(extensions)
     {
         // See ExtensionAPI.js and ExtensionCommon.js for details.
@@ -590,7 +599,7 @@ WebInspector.ExtensionServer.prototype = {
     _registerExtension: function(origin, port)
     {
         if (!this._registeredExtensions.hasOwnProperty(origin)) {
-            if (origin !== location.origin) // Just ignore inspector frames.
+            if (origin !== window.location.origin) // Just ignore inspector frames.
                 console.error("Ignoring unauthorized client request from " + origin);
             return;
         }
@@ -658,23 +667,14 @@ WebInspector.ExtensionServer.prototype = {
     }
 }
 
-WebInspector.ExtensionServer._statuses =
-{
-    OK: "",
-    E_EXISTS: "Object already exists: %s",
-    E_BADARG: "Invalid argument %s: %s",
-    E_BADARGTYPE: "Invalid type for argument %s: got %s, expected %s",
-    E_NOTFOUND: "Object not found: %s",
-    E_NOTSUPPORTED: "Object does not support requested operation: %s",
-    E_FAILED: "Operation failed: %s"
-}
-
+/**
+ * @constructor
+ */
 WebInspector.ExtensionStatus = function()
 {
-    function makeStatus(code)
+    function makeStatus(code, description)
     {
-        var description = WebInspector.ExtensionServer._statuses[code] || code;
-        var details = Array.prototype.slice.call(arguments, 1);
+        var details = Array.prototype.slice.call(arguments, 2);
         var status = { code: code, description: description, details: details };
         if (code !== "OK") {
             status.isError = true;
@@ -682,8 +682,14 @@ WebInspector.ExtensionStatus = function()
         }
         return status;
     }
-    for (status in WebInspector.ExtensionServer._statuses)
-        this[status] = makeStatus.bind(null, status);
+
+    this.OK = makeStatus.bind(null, "OK", "OK");
+    this.E_EXISTS = makeStatus.bind(null, "E_EXISTS", "Object already exists: %s");
+    this.E_BADARG = makeStatus.bind(null, "E_BADARG", "Invalid argument %s: %s");
+    this.E_BADARGTYPE = makeStatus.bind(null, "E_BADARGTYPE", "Invalid type for argument %s: got %s, expected %s");
+    this.E_NOTFOUND = makeStatus.bind(null, "E_NOTFOUND", "Object not found: %s");
+    this.E_NOTSUPPORTED = makeStatus.bind(null, "E_NOTSUPPORTED", "Object does not support requested operation: %s");
+    this.E_FAILED = makeStatus.bind(null, "E_FAILED", "Operation failed: %s");
 }
 
 WebInspector.addExtensions = function(extensions)

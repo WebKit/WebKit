@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.HelpScreen}
+ */
 WebInspector.SettingsScreen = function()
 {
     WebInspector.HelpScreen.call(this, WebInspector.UIString("Settings"));
@@ -73,6 +77,10 @@ WebInspector.SettingsScreen = function()
 }
 
 WebInspector.SettingsScreen.prototype = {
+    /**
+     * @param {string} name
+     * @param {boolean=} right
+     */
     _appendSection: function(name, right)
     {
         var p = document.createElement("p");

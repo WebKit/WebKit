@@ -28,6 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Panel}
+ * @param {string} id
+ * @param {string} label
+ * @param {string} iconURL
+ */
 WebInspector.ExtensionPanel = function(id, label, iconURL)
 {
     this._toolbarItemLabel = label;
@@ -83,6 +90,12 @@ WebInspector.ExtensionPanel.prototype = {
 
 WebInspector.ExtensionPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ * @param {string} title
+ * @param {string} id
+ */
 WebInspector.ExtensionSidebarPane = function(title, id)
 {
     WebInspector.SidebarPane.call(this, title);
@@ -97,7 +110,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
 
     setExpression: function(expression, title)
     {
-        RuntimeAgent.evaluate(expression, "extension-watch", true, this._onEvaluate.bind(this, title));
+        RuntimeAgent.evaluate(expression, "extension-watch", true, undefined, undefined, undefined, this._onEvaluate.bind(this, title));
     },
 
     setPage: function(url)
