@@ -1415,7 +1415,7 @@ BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
 // Disable these while we're back to using GDI for text drawing. These give slightly
 // different results than with Skia. When we switch back to Skia, we can
 // reenable these.
-BUGCR99500 WIN : media/audio-repaint.html = IMAGE
+BUGCR99500 WIN RELEASE : media/audio-repaint.html = IMAGE
 BUGCR99500 WIN : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGCR99500 WIN : svg/batik/text/textStyles.svg = IMAGE
 BUGCR99500 WIN : svg/custom/simple-text-double-shadow.svg = IMAGE

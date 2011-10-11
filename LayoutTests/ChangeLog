@@ -1,3 +1,9 @@
+2011-10-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Unbarf Win testers after ambiguous expectations were added in r97149.
+
+        * platform/chromium/test_expectations.txt: Made expectation more specific.
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] Fix expectations for two accessibility tests.
