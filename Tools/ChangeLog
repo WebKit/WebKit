@@ -1,3 +1,19 @@
+2011-10-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Do not abort() when an unknown key is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=69856
+
+        Reviewed by Antonio Gomes.
+
+        A lot of tests crash due to the previous behaviour. Just using the
+        received name of the pressed key works most of the time, and when it
+        does not the failing tests should tell us.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+        (keyDownCallback):
+
 2011-10-11  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] [WK2] NRWT failed to launch MiniBrowser after test run

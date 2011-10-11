@@ -327,10 +327,7 @@ static const char* keyPadNameFromJSValue(JSStringRef character)
     if (equals(character, "delete"))
         return "KP_Delete";
 
-    // If we get some other key specified with the numpad location,
-    // crash here, so we add it sooner rather than later.
-    fprintf(stderr, "numeric pad key not handled: %s\n", character->ustring().utf8().data());
-    abort();
+    return 0;
 }
 
 static const char* keyNameFromJSValue(JSStringRef character)
@@ -392,10 +389,7 @@ static const char* keyNameFromJSValue(JSStringRef character)
     if (charCode == '\x8')
         return "BackSpace";
 
-    // FIXME: See other implementations and obtain the key name by
-    // the Unicode character code.
-    fprintf(stderr, "key not handled: %s\n", character->ustring().utf8().data());
-    abort();
+    return 0;
 }
 
 static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -421,7 +415,12 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (argumentCount >= 2)
         setEvasModifiers(evas, modifiersFromJSValue(context, arguments[1]));
 
+    const CString cCharacter = character.get()->ustring().utf8();
     const char* keyName = (location == DomKeyLocationNumpad) ? keyPadNameFromJSValue(character.get()) : keyNameFromJSValue(character.get());
+
+    if (!keyName)
+        keyName = cCharacter.data();
+
     evas_event_feed_key_down(evas, keyName, keyName, 0, 0, 0, 0);
     evas_event_feed_key_up(evas, keyName, keyName, 0, 0, 1, 0);
 
