@@ -49,8 +49,19 @@
 #include <WebKit2/WebKit2.h>
 #endif
 
+#ifdef __clang__
+// Work around the less strict coding standards of the gtest framework.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#endif
+
 #ifdef __cplusplus
 #include <gtest/gtest.h>
+#endif
+
+#ifdef __clang__
+// Finish working around the less strict coding standards of the gtest framework.
+#pragma clang diagnostic pop
 #endif
 
 #if PLATFORM(MAC) && defined(__OBJC__)
