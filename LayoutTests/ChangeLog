@@ -1,3 +1,45 @@
+2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rebaseline test expectations after r104864 (chromium).
+
+        * platform/chromium-cg-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-cg-mac-snowleopard/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-cg-mac/fast/speech/input-appearance-numberandspeech-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/speech/input-appearance-searchandspeech-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/speech/input-appearance-speechbutton-expected.png: Removed.
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-linux/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt: Removed.
+        * platform/chromium-mac/fast/speech/speech-bidi-rendering-expected.png: Removed.
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium/fast/speech/input-appearance-numberandspeech-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/speech/input-appearance-numberandspeech-expected.txt.
+        * platform/chromium/fast/speech/input-appearance-searchandspeech-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/speech/input-appearance-searchandspeech-expected.txt.
+        * platform/chromium/fast/speech/input-appearance-speechbutton-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/speech/input-appearance-speechbutton-expected.txt.
+
 2011-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Update test expectations after r96987, r97088 and r97114.
