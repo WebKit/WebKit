@@ -100,7 +100,8 @@ class QtPort(WebKitPort):
     # FIXME: We should find a way to share this implmentation with Gtk,
     # or teach run-launcher how to call run-safari and move this down to WebKitPort.
     def show_results_html_file(self, results_filename):
-        run_launcher_args = ["file://%s" % results_filename]
+        run_launcher_args = []
         if self.get_option('webkit_test_runner'):
-            run_launcher_args.append('--webkit-test-runner')
+            run_launcher_args.append('-2')
+        run_launcher_args.append("file://%s" % results_filename)
         self._run_script("run-launcher", run_launcher_args)
