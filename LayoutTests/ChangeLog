@@ -1,5 +1,13 @@
 2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix r97115. smart-paste-008.html is in editing/paste, not in fast/events.
+
+        * platform/chromium/editing/pasteboard/smart-paste-008-expected.txt: Copied from
+        LayoutTests/platform/chromium/fast/events/smart-paste-008-expected.txt.
+        * platform/chromium/fast/events/smart-paste-008-expected.txt: Removed.
+
+2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another Chromium rebaseline after r97102.
 
         * platform/chromium-cg-mac-snowleopard/fast/events/ondragenter-expected.txt: Removed.
