@@ -47,10 +47,12 @@ public:
 
     // This is only called by ScriptController::executeIfJavaScriptURL
     // and always contains the result of evaluating a javascript: url.
-    void replaceDocument(const String&, Document* ownerDocument);
+    void replaceDocument(const String&);
+
+    enum SecurityOriginSource { CreateNewSecurityOrigin, InheritSecurityOrigin };
 
     void begin();
-    void begin(const KURL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = 0);
+    void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOriginSource = CreateNewSecurityOrigin);
     void addData(const char* bytes, size_t length);
     void end();
     void endIfNotLoadingMainResource();

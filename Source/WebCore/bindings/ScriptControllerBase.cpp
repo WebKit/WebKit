@@ -93,7 +93,6 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     // We need to hold onto the Frame here because executing script can
     // destroy the frame.
     RefPtr<Frame> protector(m_frame);
-    RefPtr<Document> ownerDocument(m_frame->document());
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
@@ -126,7 +125,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
         // DocumentWriter::replaceDocument can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.
         if (RefPtr<DocumentLoader> loader = m_frame->document()->loader())
-            loader->writer()->replaceDocument(scriptResult, ownerDocument.get());
+            loader->writer()->replaceDocument(scriptResult);
     }
     return true;
 }

@@ -1,3 +1,15 @@
+2011-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97087.
+        http://trac.webkit.org/changeset/97087
+        https://bugs.webkit.org/show_bug.cgi?id=69805
+
+        failing assert on debug builds (Requested by simonjam on
+        #webkit).
+
+        * http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url-expected.txt: Removed.
+        * http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html: Removed.
+
 2011-10-10  Nico Weber  <thakis@chromium.org>
 
         PluginDocumentParser uses incorrect syntax for background color
