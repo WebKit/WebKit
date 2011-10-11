@@ -730,36 +730,6 @@ protected:
     void nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
     void nonSpeculativeBasicArithOp(NodeType op, Node&);
     
-    // Handles both ValueAdd and ArithAdd.
-    void nonSpeculativeAdd(NodeType op, Node& node)
-    {
-        if (isInt32Constant(node.child1())) {
-            nonSpeculativeKnownConstantArithOp(op, node.child2(), node.child1(), true);
-            return;
-        }
-        
-        if (isInt32Constant(node.child2())) {
-            nonSpeculativeKnownConstantArithOp(op, node.child1(), node.child2(), false);
-            return;
-        }
-        
-        nonSpeculativeBasicArithOp(op, node);
-    }
-    
-    void nonSpeculativeArithSub(Node& node)
-    {
-        if (isInt32Constant(node.child2())) {
-            nonSpeculativeKnownConstantArithOp(ArithSub, node.child1(), node.child2(), false);
-            return;
-        }
-        
-        nonSpeculativeBasicArithOp(ArithSub, node);
-    }
-    
-    void nonSpeculativeArithMod(Node&);
-    void nonSpeculativeCheckHasInstance(Node&);
-    void nonSpeculativeInstanceOf(Node&);
-
 #if USE(JSVALUE64)
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg base, GPRReg value, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());

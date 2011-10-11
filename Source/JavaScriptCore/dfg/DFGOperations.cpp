@@ -184,16 +184,6 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
-// FIMXE: This method is deprecated, we should switch the 32_64 DFG JIT over to call fmod directly!
-// ExecState* isn't really required, but passed to save adding a J_DFGOperation_JJ type, since this
-// does not have long to live!
-EncodedJSValue DFG_OPERATION operationArithMod(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    double num1 = JSValue::decode(encodedOp1).asNumber();
-    double num2 = JSValue::decode(encodedOp2).asNumber();
-    return JSValue::encode(jsNumber(fmod(num1, num2)));
-}
-
 static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
     JSGlobalData* globalData = &exec->globalData();
@@ -727,32 +717,6 @@ void* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
     return virtualFor(execCallee, CodeForConstruct);
 }
 
-EncodedJSValue DFG_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, EncodedJSValue encodedPrototype)
-{
-    JSValue value = JSValue::decode(encodedValue);
-    JSValue base = JSValue::decode(encodedBase);
-    JSValue prototype = JSValue::decode(encodedPrototype);
-
-    // Otherwise CheckHasInstance should have failed.
-    ASSERT(base.isCell());
-    // At least one of these checks must have failed to get to the slow case.
-    ASSERT(!value.isCell()
-        || !prototype.isCell()
-        || !prototype.isObject()
-        || !base.asCell()->structure()->typeInfo().implementsDefaultHasInstance());
-
-
-    // ECMA-262 15.3.5.3:
-    // Throw an exception either if base is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
-    TypeInfo typeInfo(UnspecifiedType);
-    if (!base.isObject() || !(typeInfo = asObject(base)->structure()->typeInfo()).implementsHasInstance()) {
-        throwError(exec, createInvalidParamError(exec, "instanceof", base));
-        return JSValue::encode(jsUndefined());
-    }
-
-    return JSValue::encode(jsBoolean(asObject(base)->hasInstance(exec, value, prototype)));
-}
-
 EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName)
 {
     ScopeChainNode* scopeChain = exec->scopeChain();
@@ -833,16 +797,6 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     }
     
     return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
-}
-
-void DFG_OPERATION operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
-{
-    JSValue base = JSValue::decode(encodedBase);
-
-    // We should only call this function if base is not an object, or if it does not implement 'HasInstance'.
-    ASSERT(!base.isObject() || !asObject(base)->structure()->typeInfo().implementsHasInstance());
-
-    throwError(exec, createInvalidParamError(exec, "instanceof", base));
 }
 
 DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
