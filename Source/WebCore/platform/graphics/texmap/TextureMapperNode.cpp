@@ -173,8 +173,10 @@ void TextureMapperNode::computeAllTransforms()
 
 void TextureMapperNode::computeTiles()
 {
+#if ENABLE(TILED_BACKING_STORE)
     if (m_state.tileOwnership == ExternallyManagedTiles)
         return;
+#endif
     if (m_currentContent.contentType == HTMLContentType && !m_state.drawsContent) {
         m_ownedTiles.clear();
         return;
@@ -233,6 +235,7 @@ void TextureMapperNode::computeTiles()
         m_ownedTiles.remove(tilesToRemove[i]);
 }
 
+#if ENABLE(TILED_BACKING_STORE)
 static void clampRect(IntRect& rect, int dimension)
 {
     rect.shiftXEdgeTo(rect.x() - rect.x() % dimension);
@@ -276,11 +279,15 @@ bool TextureMapperNode::collectVisibleContentsRects(NodeRectMap& rectMap, const 
 
     return true;
 }
+#endif
 
 void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
 {
+#if ENABLE(TILED_BACKING_STORE)
     if (m_state.tileOwnership == ExternallyManagedTiles)
         return;
+#endif
+
     if (m_size.isEmpty() || !layer || (!m_state.drawsContent && m_currentContent.contentType == HTMLContentType)) {
         m_ownedTiles.clear();
         return;
@@ -386,8 +393,8 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
         return;
     }
 
+#if ENABLE(TILED_BACKING_STORE)
     Vector<ExternallyManagedTile> tilesToPaint;
-
 
     if (m_state.tileOwnership == ExternallyManagedTiles) {
         // Sort tiles, with current scale factor last.
@@ -424,6 +431,7 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
         }
         return;
     }
+#endif
 
     // Now we paint owned tiles, if we're in OwnedTileMode.
     for (size_t i = 0; i < m_ownedTiles.size(); ++i) {

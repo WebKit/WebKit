@@ -1,3 +1,13 @@
+2011-10-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Unreviewed build fix, unbreaking the Qt minimal bot.
+        Some #ifdef ENABLED(TILED_BACKING_STORE) clauses were missing.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::computeTiles):
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::paintSelf):
+
 2011-10-11  Abhishek Arya  <inferno@chromium.org>
 
         Generalize r95461 change to include table-cell and 
