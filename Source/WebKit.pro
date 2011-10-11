@@ -4,8 +4,9 @@ CONFIG += ordered
 include(WebKit.pri)
 
 !v8 {
-    exists($$PWD/JavaScriptCore/JavaScriptCore.pro): SUBDIRS += JavaScriptCore/JavaScriptCore.pro
-    exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
+    SUBDIRS += \
+        JavaScriptCore/JavaScriptCore.pro \
+        JavaScriptCore/jsc.pro
 }
 
 webkit2 {
@@ -14,7 +15,8 @@ webkit2 {
         message("Read http://www.mail-archive.com/webkit-qt@lists.webkit.org/msg01674.html for more information.")
         error("Aborting build.")
     }
-    exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
+
+    SUBDIRS += WebKit2/WebKit2.pro
 }
 
 qt5 {
@@ -28,9 +30,10 @@ SUBDIRS += WebCore
 SUBDIRS += WebKit/qt/QtWebKit.pro
 
 webkit2 {
-    exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
-    exists($$PWD/WebKit2/UIProcess/API/qt/tests): SUBDIRS += WebKit2/UIProcess/API/qt/tests
-    SUBDIRS += WebKit2/UIProcess/API/qt/qmlplugin
+    SUBDIRS += \
+        WebKit2/WebProcess.pro \
+        WebKit2/UIProcess/API/qt/tests \
+        WebKit2/UIProcess/API/qt/qmlplugin
 }
 
 exists($$PWD/WebKit/qt/declarative) {
@@ -41,7 +44,7 @@ exists($$PWD/WebKit/qt/declarative) {
     }
 }
 
-exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
+SUBDIRS += WebKit/qt/tests
 
 build-qtscript {
     SUBDIRS += \

@@ -19,11 +19,7 @@ else: WEBCORE_TARGET = webcore
 CONFIG(debug, debug|release) : WEBCORE_DESTDIR = debug
 else: WEBCORE_DESTDIR = release
 
-CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
-} else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/WebCore/generated
-}
+isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/WebCore/generated
 
 V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
 V8_LIB_DIR = "$$[QT_INSTALL_PREFIX]/src/script/v8"
@@ -157,14 +153,8 @@ symbian {
     # Symbian plugin support
     LIBS += -lefsrv
 
-    !CONFIG(QTDIR_build) {
-        # Test if symbian OS comes with sqlite
-        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
-    } else:!symbian-abld:!symbian-sbsv2 {
-        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
-        # necessary, but on non-mmp based ones we need to specify this ourselves.
-        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
-    }
+    # Test if symbian OS comes with sqlite
+    exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
 }
 
 contains(DEFINES, ENABLE_XSLT=1) {
@@ -185,14 +175,8 @@ contains(DEFINES, ENABLE_SQLITE=1) {
             DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
             CONFIG(release, debug|release): DEFINES *= NDEBUG
     } else {
-        # Use sqlite3 from the underlying OS
-        CONFIG(QTDIR_build) {
-            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
-            LIBS *= $$QT_LFLAGS_SQLITE
-        } else {
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            LIBS += -lsqlite3
-        }
+        INCLUDEPATH += $${SQLITE3SRCDIR}
+        LIBS += -lsqlite3
     }
     wince*:DEFINES += HAVE_LOCALTIME_S=0
 }
@@ -278,24 +262,16 @@ contains(CONFIG, texmap) {
     }
 }
 
-!CONFIG(webkit-debug):CONFIG(QTDIR_build) {
-    # Remove the following 2 lines if you want debug information in WebCore
-    CONFIG -= separate_debug_info
-    CONFIG += no_debug_info
+win32-*|wince* {
+    DLLDESTDIR = $$OUTPUT_DIR/bin
+    isEmpty(QT_SOURCE_TREE):build_pass: TARGET = $$qtLibraryTarget($$TARGET)
+
+    dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
+    dlltarget.CONFIG = no_path
+    INSTALLS += dlltarget
 }
-
-!CONFIG(QTDIR_build) {
-    win32-*|wince* {
-        DLLDESTDIR = $$OUTPUT_DIR/bin
-        isEmpty(QT_SOURCE_TREE):build_pass: TARGET = $$qtLibraryTarget($$TARGET)
-
-        dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
-        dlltarget.CONFIG = no_path
-        INSTALLS += dlltarget
-    }
-    mac {
-        LIBS += -framework Carbon -framework AppKit
-    }
+mac {
+    LIBS += -framework Carbon -framework AppKit
 }
 
 win32-* {

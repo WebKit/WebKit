@@ -2,11 +2,7 @@
 
 include(features.pri)
 
-CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated
-} else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
-}
+isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
 
 ## Derived source generators
 MATHML_NAMES = $$PWD/mathml/mathtags.in

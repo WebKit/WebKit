@@ -1,3 +1,20 @@
+2011-10-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove all references to QTDIR_build and standalone_package
+
+        Qt is now modularized, which means we no longer import WebKit into
+        the Qt source tree. Instead we use git submodules, and building
+        QtWebKit as "part of Qt" is really building QtWebKit as from trunk.
+
+        To decrease the number of buildsystem configurations we also remove
+        the standalone_package code-path used when we were providing tarballs
+        with the derived sources pre-generated.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/WebKit.pri:
+        * Source/WebKit.pro:
+
 2011-10-06  Fady Samuel  <fsamuel@chromium.org>
 
         Code clean-up: Make RenderObject::absoluteBoundingBoxRect and associated methods const and make its parameter useTransforms no longer default to false

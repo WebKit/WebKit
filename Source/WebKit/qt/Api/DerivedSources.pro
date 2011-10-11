@@ -40,15 +40,9 @@ for(HEADER, WEBKIT_API_HEADERS) {
     HEADER_TARGET = "qtheader-$${HEADER_TARGET}"
 
     # 2. Create forwarding header files for qwebframe.h, etc.
-    # Normally they contain absolute paths, for package builds we make the path relative so that
-    # the package sources are relocatable.
-
-    PATH_TO_HEADER = $$HEADER
-    CONFIG(standalone_package): PATH_TO_HEADER = ../../WebKit/qt/Api/$$basename(HEADER)
-
     eval($${HEADER_TARGET}.target = $${DESTDIR}/$${HEADER_NAME})
     eval($${HEADER_TARGET}.depends = $$HEADER)
-    eval($${HEADER_TARGET}.commands = echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$PATH_TO_HEADER\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${HEADER_TARGET}.target))
+    eval($${HEADER_TARGET}.commands = echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$HEADER\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${HEADER_TARGET}.target))
 
     QMAKE_EXTRA_TARGETS += $$HEADER_TARGET
     qtheader_module.depends += $$eval($${HEADER_TARGET}.target)

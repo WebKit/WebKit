@@ -15,7 +15,7 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include($$PWD/../WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/bin
-!CONFIG(standalone_package): CONFIG -= app_bundle
+CONFIG -= app_bundle
 
 QT += network
 macx:QT+=xml

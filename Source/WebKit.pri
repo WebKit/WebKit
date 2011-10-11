@@ -5,29 +5,18 @@ contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 # For convenience
 greaterThan(QT_MAJOR_VERSION, 4): CONFIG += qt5
 
-# Detect that we are building as a standalone package by the presence of
-# either the generated files directory or as part of the Qt package through
-# QTDIR_build
-CONFIG(QTDIR_build) {
-    CONFIG += standalone_package
-    # Make sure we compile both debug and release on mac when inside Qt.
-    # This line was extracted from qbase.pri instead of including the whole file
-    win32|mac:!macx-xcode:CONFIG += debug_and_release
-} else {
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-        DEFINES *= NDEBUG
-    }
-    exists($$PWD/WebCore/generated):CONFIG += standalone_package
-    # Make sure that build_all follows the build_all config in WebCore
-    mac:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework):!build_pass:CONFIG += build_all
+!CONFIG(release, debug|release) {
+    OBJECTS_DIR = obj/debug
+} else { # Release
+    OBJECTS_DIR = obj/release
+    DEFINES *= NDEBUG
 }
+
+# Make sure that build_all follows the build_all config in WebCore
+mac:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework):!build_pass:CONFIG += build_all
+
 #We don't want verify and other platform macros to pollute the namespace
 mac: DEFINES += __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0
-
-CONFIG(standalone_package): DEFINES *= NDEBUG
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD
@@ -36,34 +25,30 @@ DEFINES += BUILDING_QT__=1
 building-libs {
     win32-msvc*|win32-icc: INCLUDEPATH += $$PWD/JavaScriptCore/os-win32
 } else {
-    CONFIG(QTDIR_build) {
-        QT += webkit
+    QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
+    QTWEBKITLIBNAME = QtWebKit
+    mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+        LIBS += -framework $$QTWEBKITLIBNAME
+        QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
     } else {
-        QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
-        QTWEBKITLIBNAME = QtWebKit
-        mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
-            LIBS += -framework $$QTWEBKITLIBNAME
-            QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
+        build_pass: win32-*|wince* {
+            !CONFIG(release, debug|release): QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}d
+            QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}$${QT_MAJOR_VERSION}
+            win32-g++*: LIBS += -l$$QTWEBKITLIBNAME
+            else: LIBS += $${QTWEBKITLIBNAME}.lib
         } else {
-            build_pass: win32-*|wince* {
-                !CONFIG(release, debug|release): QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}d
-                QTWEBKITLIBNAME = $${QTWEBKITLIBNAME}$${QT_MAJOR_VERSION}
-                win32-g++*: LIBS += -l$$QTWEBKITLIBNAME
-                else: LIBS += $${QTWEBKITLIBNAME}.lib
-            } else {
-                LIBS += -lQtWebKit
-                symbian {
-                    TARGET.EPOCSTACKSIZE = 0x14000 // 80 kB
-                    # For EXEs only: set heap to usable value
-                    TARGET.EPOCHEAPSIZE =
-                    heapSizeRule = \
-                    "$${LITERAL_HASH}ifdef WINSCW" \
-                        "EPOCHEAPSIZE  0x40000 0x2000000 // Min 256kB, Max 32MB" \
-                    "$${LITERAL_HASH}else" \
-                        "EPOCHEAPSIZE  0x40000 0x10000000 // Min 256kB, Max 256MB" \
-                    "$${LITERAL_HASH}endif"
-                    MMP_RULES += heapSizeRule
-                }
+            LIBS += -lQtWebKit
+            symbian {
+                TARGET.EPOCSTACKSIZE = 0x14000 // 80 kB
+                # For EXEs only: set heap to usable value
+                TARGET.EPOCHEAPSIZE =
+                heapSizeRule = \
+                "$${LITERAL_HASH}ifdef WINSCW" \
+                    "EPOCHEAPSIZE  0x40000 0x2000000 // Min 256kB, Max 32MB" \
+                "$${LITERAL_HASH}else" \
+                    "EPOCHEAPSIZE  0x40000 0x10000000 // Min 256kB, Max 256MB" \
+                "$${LITERAL_HASH}endif"
+                MMP_RULES += heapSizeRule
             }
         }
     }

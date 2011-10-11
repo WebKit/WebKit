@@ -28,7 +28,7 @@ INCLUDEPATH += \
 
 
 DESTDIR = $$OUTPUT_DIR/bin
-!CONFIG(standalone_package): CONFIG -= app_bundle
+CONFIG -= app_bundle
 
 QT += network declarative
 macx:QT+=xml

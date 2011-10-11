@@ -2,11 +2,7 @@ TEMPLATE = lib
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 
-CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../../../Source/WebCore/generated
-} else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../Source/WebCore/generated
-}
+isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../Source/WebCore/generated
 
 QT += declarative widgets
 
@@ -86,7 +82,7 @@ unix:!mac:!symbian:!embedded {
 
 TARGET = WTRInjectedBundle
 DESTDIR = $$OUTPUT_DIR/lib
-!CONFIG(standalone_package): CONFIG -= app_bundle
+CONFIG -= app_bundle
 linux-* {
     QMAKE_LFLAGS += -Wl,--no-undefined
 }

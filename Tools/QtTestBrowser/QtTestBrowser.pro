@@ -38,7 +38,7 @@ include(../../Source/WebKit.pri)
 INCLUDEPATH += ../../Source/WebKit/qt/WebCoreSupport
 
 DESTDIR = $$OUTPUT_DIR/bin
-!CONFIG(standalone_package): CONFIG -= app_bundle
+CONFIG -= app_bundle
 
 QT += network
 macx:QT+=xml

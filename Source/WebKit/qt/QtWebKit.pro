@@ -76,22 +76,14 @@ defineTest(addExtraCompiler) {
 
 include($$SOURCE_DIR/WebCore/CodeGenerators.pri)
 
-CONFIG(release):!CONFIG(standalone_package) {
+CONFIG(release) {
     contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 }
 
-CONFIG(QTDIR_build) {
-    include($$QT_SOURCE_TREE/src/qbase.pri)
-    # The following lines are to prevent qmake from adding the jscore, webcore and webkit2 libs to libQtWebKit's prl dependencies.
-    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit and QtScript
-    # statically in applications (which isn't used often because, among other things, of licensing obstacles).
-    CONFIG -= explicitlib
-    CONFIG -= staticlib
-} else {
-    DESTDIR = $$OUTPUT_DIR/lib
-    symbian: TARGET =$$TARGET$${QT_LIBINFIX}
-}
+
+DESTDIR = $$OUTPUT_DIR/lib
+symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 
 moduleFile=$$PWD/qt_webkit_version.pri
 isEmpty(QT_BUILD_TREE):include($$moduleFile)
@@ -102,7 +94,6 @@ symbian {
     # DRM and Allfiles capabilites need to be audited to be signed on Symbian
     # For regular users that is not possible, so use the CONFIG(production) flag is added
     # To use all capabilies add CONFIG+=production
-    # If building from QT source tree, also add CONFIG-=QTDIR_build as qbase.pri defaults capabilities to All -Tcb.    
     CONFIG(production) {
         TARGET.CAPABILITY = All -Tcb
     } else {
@@ -121,7 +112,6 @@ symbian {
     webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
     v8:webkitlibs.sources += v8.dll
 
-    CONFIG(QTDIR_build): webkitlibs.sources = $$QMAKE_LIBDIR_QT/$$webkitlibs.sources
     webkitlibs.path = /sys/bin
     vendorinfo = \
         "; Localised Vendor name" \
@@ -323,64 +313,62 @@ contains(CONFIG, texmap) {
     QMAKE_EXTRA_TARGETS += install
 }
 
-!CONFIG(QTDIR_build) {
-    exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
-    WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
+exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
+WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
-    !symbian-abld:!symbian-sbsv2 {
-        headers.files = $$WEBKIT_INSTALL_HEADERS
+!symbian-abld:!symbian-sbsv2 {
+    headers.files = $$WEBKIT_INSTALL_HEADERS
 
-        !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
-        else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+    !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
+    else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
 
-        !isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
-        else: target.path = $$[QT_INSTALL_LIBS]
+    !isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
+    else: target.path = $$[QT_INSTALL_LIBS]
 
-        INSTALLS += target headers
-    } else {
-        # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
-        inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-        inst_headers.input = WEBKIT_INSTALL_HEADERS
-        inst_headers.CONFIG = no_clean no_link target_predeps
+    INSTALLS += target headers
+} else {
+    # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
+    inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
+    inst_headers.input = WEBKIT_INSTALL_HEADERS
+    inst_headers.CONFIG = no_clean no_link target_predeps
 
-        !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-        else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
 
-        QMAKE_EXTRA_COMPILERS += inst_headers
+    QMAKE_EXTRA_COMPILERS += inst_headers
 
-        install.depends += compiler_inst_headers_make_all
-    }
+    install.depends += compiler_inst_headers_make_all
+}
 
-    unix {
-        CONFIG += create_pc create_prl
-        QMAKE_PKGCONFIG_LIBDIR = $$target.path
-        QMAKE_PKGCONFIG_INCDIR = $$headers.path
-        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-        lib_replace.match = $$re_escape($$DESTDIR)
-        lib_replace.replace = $$[QT_INSTALL_LIBS]
-        QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
-    }
+unix {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_LIBDIR = $$target.path
+    QMAKE_PKGCONFIG_INCDIR = $$headers.path
+    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+    lib_replace.match = $$re_escape($$DESTDIR)
+    lib_replace.replace = $$[QT_INSTALL_LIBS]
+    QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
+}
 
-    mac {
-        !static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
-            !build_pass {
-                message("Building QtWebKit as a framework, as that's how Qt was built. You can")
-                message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
+mac {
+    !static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+        !build_pass {
+            message("Building QtWebKit as a framework, as that's how Qt was built. You can")
+            message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
 
-                CONFIG += build_all
-            } else {
-                isEmpty(QT_SOURCE_TREE):debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
-            }
-
-            CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
-            FRAMEWORK_HEADERS.version = Versions
-            FRAMEWORK_HEADERS.files = $${headers.files}
-            FRAMEWORK_HEADERS.path = Headers
-            QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+            CONFIG += build_all
+        } else {
+            isEmpty(QT_SOURCE_TREE):debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
         }
 
-        QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
+        CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
+        FRAMEWORK_HEADERS.version = Versions
+        FRAMEWORK_HEADERS.files = $${headers.files}
+        FRAMEWORK_HEADERS.path = Headers
+        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
     }
+
+    QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
 }
 
 symbian {

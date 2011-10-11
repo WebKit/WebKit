@@ -19,16 +19,10 @@ DEFINES += ENABLE_SQLITE=1
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
 
-## Define default features macros for optional components
-## (look for defs in config.h and included files!)
 # Try to locate sqlite3 source
-CONFIG(QTDIR_build) {
-    SQLITE3SRCDIR = $$QT_SOURCE_TREE/src/3rdparty/sqlite/
-} else {
-    SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
-    isEmpty(SQLITE3SRCDIR) {
-        SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
-    }
+SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+isEmpty(SQLITE3SRCDIR) {
+    SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
 }
 
 contains(CONFIG, use_system_icu) {
@@ -127,7 +121,7 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
 }
 
 # geolocation support if QtMobility exists
-!CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_GEOLOCATION=.) {
+!contains(DEFINES, ENABLE_GEOLOCATION=.) {
     contains(MOBILITY_CONFIG, location) {
        DEFINES += ENABLE_GEOLOCATION=1
        DEFINES += ENABLE_CLIENT_BASED_GEOLOCATION=1
@@ -144,7 +138,7 @@ contains(MOBILITY_CONFIG, sensors) {
 
 # systeminfo support if QtMobility systeminfo module exists, but only for symbian, maemo and meego
 symbian|maemo5|maemo6 {
-    !CONFIG(QTDIR_build):!contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=.) {
+    !contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=.) {
         contains(MOBILITY_CONFIG, systeminfo) {
             DEFINES += WTF_USE_QT_MOBILITY_SYSTEMINFO=1
         }

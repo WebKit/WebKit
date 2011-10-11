@@ -10,11 +10,7 @@ else: JAVASCRIPTCORE_TARGET = jscore
 CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
 else: JAVASCRIPTCORE_DESTDIR = release
 
-CONFIG(standalone_package) {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/generated
-} else {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/JavaScriptCore/generated
-}
+isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/JavaScriptCore/generated
 
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \

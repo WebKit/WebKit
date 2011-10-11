@@ -15,18 +15,8 @@ QT -= gui
 CONFIG += depend_includepath
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
-
-# WebCore adds these config only when in a standalone build.
-# qbase.pri takes care of that when in a QTDIR_build
-# Here we add the config for both cases since we don't include qbase.pri
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
-
-CONFIG(QTDIR_build) {
-    # Remove the following 2 lines if you want debug information in JavaScriptCore
-    CONFIG -= separate_debug_info
-    CONFIG += no_debug_info
-}
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3

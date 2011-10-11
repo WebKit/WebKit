@@ -1,3 +1,23 @@
+2011-10-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove all references to QTDIR_build and standalone_package
+
+        Qt is now modularized, which means we no longer import WebKit into
+        the Qt source tree. Instead we use git submodules, and building
+        QtWebKit as "part of Qt" is really building QtWebKit as from trunk.
+
+        To decrease the number of buildsystem configurations we also remove
+        the standalone_package code-path used when we were providing tarballs
+        with the derived sources pre-generated.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/DerivedSources.pro:
+        * QtWebKit.pro:
+        * declarative/declarative.pro:
+        * docs/webkitsnippets/webelement/webelement.pro:
+        * tests/tests.pri:
+
 2011-10-07  Chang Shu  <cshu@webkit.org>
 
         Remove compile time flag ENABLE_PASSWORD_ECHO
