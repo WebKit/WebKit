@@ -1415,6 +1415,14 @@ BUGCR10430 LINUX WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 // This test also started failing with the merge of March 25th 2009
 BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
 
+// Disable these while we're back to using GDI for text drawing. These give slightly
+// different results than with Skia. When we switch back to Skia, we can
+// reenable these.
+BUGCR99500 WIN : media/audio-repaint.html = IMAGE
+BUGCR99500 WIN : svg/as-background-image/animated-svg-as-background.html = IMAGE
+BUGCR99500 WIN : svg/batik/text/textStyles.svg = IMAGE
+BUGCR99500 WIN : svg/custom/simple-text-double-shadow.svg = IMAGE
+
 // Merge 41768:41807
 // Perhaps just needs new baseline?
 // These tests were rebaselined with failure long ago. We shouldn't do this, and
@@ -2104,7 +2112,6 @@ BUGWK65203 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 
 // On XP, some glyphs show subpixel antialiasing when they shouldn't
 BUGWK65203 XP : fast/text/international/bidi-mirror-he-ar.html = IMAGE
-BUGWK65203 XP : svg/batik/text/textStyles.svg = IMAGE
 
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 

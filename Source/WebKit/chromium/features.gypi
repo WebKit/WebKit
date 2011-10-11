@@ -79,6 +79,7 @@
       'ENABLE_SANDBOX=1',
       'ENABLE_SHARED_WORKERS=1',
       'ENABLE_SKIA_GPU=<(use_skia_gpu)',
+      'ENABLE_SKIA_TEXT=<(enable_skia_text)',
       'ENABLE_SMOOTH_SCROLLING=1',
       'ENABLE_SQL_DATABASE=1',
       'ENABLE_SVG=<(enable_svg)',
@@ -109,6 +110,7 @@
     'variables': {
       'use_accelerated_compositing%': 1,
       'use_threaded_compositing%': 0,
+      'enable_skia_text%': 0,
       'enable_svg%': 1,
       'enable_touch_events%': 1,
       'use_skia_gpu%': 0,
@@ -118,6 +120,7 @@
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'use_threaded_compositing%': '<(use_threaded_compositing)',
+    'enable_skia_text%': '<(enable_skia_text)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
     'use_skia%': '<(use_skia)',
