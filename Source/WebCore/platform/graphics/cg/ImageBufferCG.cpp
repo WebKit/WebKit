@@ -361,10 +361,11 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     RetainPtr<CGImageRef> image;
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
+    RefPtr<ByteArray> arr;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        RefPtr<ByteArray> arr = getPremultipliedImageData(IntRect(IntPoint(0, 0), m_size));
+        arr = getPremultipliedImageData(IntRect(IntPoint(0, 0), m_size));
 
         unsigned char *data = arr->data();
         for (int i = 0; i < width() * height(); i++)

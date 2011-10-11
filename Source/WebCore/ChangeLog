@@ -1,3 +1,16 @@
+2011-10-11  John Bauman  <jbauman@chromium.org>
+
+        Fix crash with toDataURL to JPEG
+        https://bugs.webkit.org/show_bug.cgi?id=69681
+
+        Reviewed by Kenneth Russell.
+
+        Move RefPtr declaration outside if to make sure image data still
+        exists through CGImageToDataURL.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
 2011-10-10  Adam Barth  <abarth@webkit.org>
 
         Update test results.
