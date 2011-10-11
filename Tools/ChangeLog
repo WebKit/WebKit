@@ -1,3 +1,17 @@
+2011-10-11  David Levin  <levin@chromium.org>
+
+        watchlist: assertRaisesRegexp implementation should be compatible with python 2.7.
+        https://bugs.webkit.org/show_bug.cgi?id=69789
+
+        Reviewed by Eric Seidel.
+
+        Made the signature of _assertRaisesRegexp match that of Python 2.7.
+
+        * Scripts/webkitpy/common/watchlist/watchlistloader_unittest.py: Adjusted to be compatible with Python 2.7.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py: Ditto.
+        * Scripts/webkitpy/common/webkitunittest.py: Ditto.
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py: Ditto.
+
 2011-10-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Do not abort() when an unknown key is pressed.

@@ -47,4 +47,4 @@ Message2.
         self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_stderr=expected_stderr)
 
     def test_args_parsing_with_two_bugs(self):
-        self._assertRaisesRegexp('Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])
+        self._assertRaisesRegexp(Exception, 'Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])

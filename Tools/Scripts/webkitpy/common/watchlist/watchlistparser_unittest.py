@@ -39,13 +39,14 @@ class WatchListParserTest(webkitunittest.TestCase):
 
     def test_bad_section(self):
         watch_list_with_bad_section = ('{"FOO": {}}')
-        self.assertRaisesRegexp('Unknown section "FOO" in watch list.',
+        self.assertRaisesRegexp(Exception, 'Unknown section "FOO" in watch list.',
                                 self._watch_list_parser.parse, watch_list_with_bad_section)
 
     def test_section_typo(self):
         watch_list_with_bad_section = ('{"DEFINTIONS": {}}')
-        self.assertRaisesRegexp(r'Unknown section "DEFINTIONS" in watch list\.\s*'
-                              + r'Perhaps it should be DEFINITIONS\.',
+        self.assertRaisesRegexp(Exception,
+                                r'Unknown section "DEFINTIONS" in watch list\.\s*'
+                                + r'Perhaps it should be DEFINITIONS\.',
                                 self._watch_list_parser.parse, watch_list_with_bad_section)
 
     def test_bad_definition(self):
@@ -58,7 +59,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'Invalid character "\|" in definition "WatchList1\|A"\.',
+        self.assertRaisesRegexp(Exception, r'Invalid character "\|" in definition "WatchList1\|A"\.',
                                 self._watch_list_parser.parse, watch_list_with_bad_definition)
 
     def test_bad_match_type(self):
@@ -71,7 +72,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp('Unknown pattern type "nothing_matches_this" in definition "WatchList1".',
+        self.assertRaisesRegexp(Exception, 'Unknown pattern type "nothing_matches_this" in definition "WatchList1".',
                                 self._watch_list_parser.parse, watch_list_with_bad_match_type)
 
     def test_match_type_typo(self):
@@ -84,7 +85,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
+        self.assertRaisesRegexp(Exception, r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
                                 + r'Perhaps it should be filename\.',
                                 self._watch_list_parser.parse, watch_list_with_bad_match_type)
 
@@ -97,7 +98,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'The definition "WatchList1" has no patterns, so it should be deleted.',
+        self.assertRaisesRegexp(Exception, r'The definition "WatchList1" has no patterns, so it should be deleted.',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_empty_cc_rule(self):
@@ -113,7 +114,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'A rule for definition "WatchList1" is empty, so it should be deleted.',
+        self.assertRaisesRegexp(Exception, r'A rule for definition "WatchList1" is empty, so it should be deleted.',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_empty_message_rule(self):
@@ -130,7 +131,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'A rule for definition "WatchList1" is empty, so it should be deleted.',
+        self.assertRaisesRegexp(Exception, r'A rule for definition "WatchList1" is empty, so it should be deleted.',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_unused_defintion(self):
@@ -143,7 +144,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'The following definitions are not used and should be removed: WatchList1',
+        self.assertRaisesRegexp(Exception, r'The following definitions are not used and should be removed: WatchList1',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_cc_rule_with_undefined_defintion(self):
@@ -154,7 +155,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList1',
+        self.assertRaisesRegexp(Exception, r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList1',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_message_rule_with_undefined_defintion(self):
@@ -165,7 +166,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchList1',
+        self.assertRaisesRegexp(Exception, r'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchList1',
                                 self._watch_list_parser.parse, watch_list)
 
     def test_cc_rule_with_undefined_defintion_with_suggestion(self):
@@ -184,6 +185,6 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        self.assertRaisesRegexp(r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList\s*'
+        self.assertRaisesRegexp(Exception, r'In section "CC_RULES", the following definitions are not used and should be removed: WatchList\s*'
                                 r'Perhaps it should be WatchList1\.',
                                 self._watch_list_parser.parse, watch_list)

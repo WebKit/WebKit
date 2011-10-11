@@ -34,13 +34,16 @@ import unittest
 
 class TestCase(unittest.TestCase):
     def setUp(self):
-        # FIXME: Only do this for versions of Python before 2.7.
-        self.assertRaisesRegexp = self._assertRaisesRegexp
+        # For versions of Python before 2.7.
+        if not 'assertRaisesRegexp' in dir(self):
+            self.assertRaisesRegexp = self._assertRaisesRegexp
 
-    def _assertRaisesRegexp(self, regex_message, callable, *args):
+    def _assertRaisesRegexp(self, expected_exception, regex_message, callable, *args):
         try:
             callable(*args)
             self.assertTrue(False, 'No assert raised.')
         except Exception, exception:
+            self.assertTrue(issubclass(exception.__class__, expected_exception),
+                            'Exception type was unexpected.')
             self.assertTrue(re.match(regex_message, exception.__str__()),
                             'Expected regex "%s"\nGot "%s"' % (regex_message, exception.__str__()))
