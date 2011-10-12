@@ -272,6 +272,11 @@ protected:
         frame->loadRequest(urlRequest);
     }
 
+    virtual LayoutRect boundingBoxRect() const
+    {
+        return LayoutRect();
+    }
+
 protected:
     TestWebViewClient m_webviewClient;
     WebViewImpl* m_webView;

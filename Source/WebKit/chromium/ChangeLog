@@ -1,3 +1,10 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium build fix attempt after r97202.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::SelectPopupMenuTest::boundingBoxRect):
+
 2011-10-11  Fady Samuel  <fsamuel@chromium.org>
 
         Towards making PopupMenuClient more testable
