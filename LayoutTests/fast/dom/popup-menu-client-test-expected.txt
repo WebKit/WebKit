@@ -1,0 +1,10 @@
+PASS popupClientPaddingLeft is 4
+PASS popupClientPaddingRight is 2
+FAIL boundingBoxRect.left should be 10. Was 20.
+FAIL boundingBoxRect.top should be 10. Was 20.
+PASS boundingBoxRect.width is boundingClientRect.width
+PASS boundingBoxRect.height is boundingClientRect.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

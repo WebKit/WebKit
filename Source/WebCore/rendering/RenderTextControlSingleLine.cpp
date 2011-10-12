@@ -174,7 +174,7 @@ void RenderTextControlSingleLine::showPopup()
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
-    m_searchPopup->popupMenu()->show(absoluteBoundingBoxRect(), document()->view(), -1);
+    m_searchPopup->popupMenu()->show(boundingBoxRect(), document()->view(), -1);
 }
 
 void RenderTextControlSingleLine::hidePopup()
@@ -611,6 +611,11 @@ PopupMenuStyle RenderTextControlSingleLine::itemStyle(unsigned) const
 PopupMenuStyle RenderTextControlSingleLine::menuStyle() const
 {
     return PopupMenuStyle(style()->visitedDependentColor(CSSPropertyColor), style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->font(), style()->visibility() == VISIBLE, style()->display() == NONE, style()->textIndent(), style()->direction(), style()->unicodeBidi() == Override);
+}
+
+LayoutRect RenderTextControlSingleLine::boundingBoxRect() const
+{
+    return absoluteBoundingBoxRect();
 }
 
 int RenderTextControlSingleLine::clientInsetLeft() const

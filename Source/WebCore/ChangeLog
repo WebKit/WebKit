@@ -1,3 +1,35 @@
+2011-10-11  Fady Samuel  <fsamuel@chromium.org>
+
+        Towards making PopupMenuClient more testable
+        https://bugs.webkit.org/show_bug.cgi?id=69631
+
+        Reviewed by Simon Fraser.
+
+        Added some functions to window.internals to allow testing of parts of PopupMenuClient.
+
+        Test: fast/dom/popup-menu-client-test.html
+
+        * platform/PopupMenuClient.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::boundingBoxRect):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::RenderMenuList::isPopupMenuClient):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isPopupMenuClient):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::boundingBoxRect):
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::isPopupMenuClient):
+        * testing/Internals.cpp:
+        (WebCore::Internals::toPopupMenuClient):
+        (WebCore::Internals::popupClientPaddingLeft):
+        (WebCore::Internals::popupClientPaddingRight):
+        (WebCore::Internals::popupClientBoundingBoxRect):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-10-11  Nate Chapin  <japhet@chromium.org>
 
         Make CachedResourceClientWalker templates, and

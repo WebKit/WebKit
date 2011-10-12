@@ -52,6 +52,7 @@ class InlineBox;
 class InlineFlowBox;
 class OverlapTestRequestClient;
 class Path;
+class PopupMenuClient;
 class Position;
 class RenderBoxModelObject;
 class RenderInline;
@@ -296,6 +297,7 @@ public:
 #if ENABLE(METER_TAG)
     virtual bool isMeter() const { return false; }
 #endif
+    virtual bool isPopupMenuClient() const { return false; }
 #if ENABLE(PROGRESS_TAG)
     virtual bool isProgress() const { return false; }
 #endif

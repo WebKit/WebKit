@@ -39,9 +39,9 @@ namespace WebCore {
 class RenderText;
 
 #if ENABLE(NO_LISTBOX_RENDERING)
-class RenderMenuList : public RenderDeprecatedFlexibleBox, private ListPopupMenuClient {
+class RenderMenuList : public RenderDeprecatedFlexibleBox, public ListPopupMenuClient {
 #else
-class RenderMenuList : public RenderDeprecatedFlexibleBox, private PopupMenuClient {
+class RenderMenuList : public RenderDeprecatedFlexibleBox, public PopupMenuClient {
 #endif
 
 public:
@@ -61,6 +61,7 @@ public:
 
 private:
     virtual bool isMenuList() const { return true; }
+    virtual bool isPopupMenuClient() const { return true; }
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -89,6 +90,7 @@ private:
     virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual PopupMenuStyle menuStyle() const;
+    virtual LayoutRect boundingBoxRect() const;
     virtual int clientInsetLeft() const;
     virtual int clientInsetRight() const;
     virtual int clientPaddingLeft() const;

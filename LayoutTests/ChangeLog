@@ -1,3 +1,13 @@
+2011-10-11  Fady Samuel  <fsamuel@chromium.org>
+
+        Towards making PopupMenuClient more testable
+        https://bugs.webkit.org/show_bug.cgi?id=69631
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/popup-menu-client-test-expected.txt: Added.
+        * fast/dom/popup-menu-client-test.html: Added.
+
 2011-10-11  Kenneth Russell  <kbr@google.com>
 
         [chromium] Check for lost context at beginning of compositor's execution

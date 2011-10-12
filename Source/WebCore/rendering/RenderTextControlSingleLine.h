@@ -56,6 +56,7 @@ public:
 private:
     virtual bool hasControlClip() const;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+    virtual bool isPopupMenuClient() const { return true; }
     virtual bool isTextField() const { return true; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
@@ -100,6 +101,7 @@ private:
     virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual PopupMenuStyle menuStyle() const;
+    virtual LayoutRect boundingBoxRect() const;
     virtual int clientInsetLeft() const;
     virtual int clientInsetRight() const;
     virtual int clientPaddingLeft() const;

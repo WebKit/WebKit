@@ -1,3 +1,16 @@
+2011-10-11  Fady Samuel  <fsamuel@chromium.org>
+
+        Towards making PopupMenuClient more testable
+        https://bugs.webkit.org/show_bug.cgi?id=69631
+
+        Reviewed by Simon Fraser.
+
+        * src/AutofillPopupMenuClient.cpp:
+        (WebKit::AutofillPopupMenuClient::boundingBoxRect):
+        * src/AutofillPopupMenuClient.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+
 2011-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         WebAccessibilityObject needs titleUIElement

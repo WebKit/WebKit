@@ -38,7 +38,9 @@ class ClientRect;
 class Document;
 class Element;
 class Node;
+class PopupMenuClient;
 class Range;
+class RenderObject;
 
 class Internals : public RefCounted<Internals> {
 public:
@@ -91,6 +93,10 @@ public:
     String suggestedValue(Element* inputElement, ExceptionCode&);
     void setSuggestedValue(Element* inputElement, const String&, ExceptionCode&);
     void scrollElementToRect(Element*, long x, long y, long w, long h, ExceptionCode&);
+
+    int popupClientPaddingLeft(Element*, ExceptionCode&);
+    int popupClientPaddingRight(Element*, ExceptionCode&);
+    PassRefPtr<ClientRect> popupClientBoundingBoxRect(Element*, ExceptionCode&);
 
     static const char* internalsId;
 

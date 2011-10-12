@@ -31,6 +31,7 @@
 #ifndef AutofillPopupMenuClient_h
 #define AutofillPopupMenuClient_h
 
+#include "LayoutTypes.h"
 #include "PopupMenuClient.h"
 
 namespace WebCore {
@@ -82,6 +83,7 @@ public:
     virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle menuStyle() const;
+    virtual WebCore::LayoutRect boundingBoxRect() const;
     virtual int clientInsetLeft() const { return 0; }
     virtual int clientInsetRight() const { return 0; }
     virtual int clientPaddingLeft() const;
