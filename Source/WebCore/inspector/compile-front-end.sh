@@ -72,7 +72,8 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:34:jsmodule_common \
+    --module jsmodule_ui:35:jsmodule_common \
+        --js Source/WebCore/inspector/front-end/AdvancedSearchController.js \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/Color.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
@@ -147,11 +148,12 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
         --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
         --js Source/WebCore/inspector/front-end/ResourcesPanel.js \
-    --module jsmodule_scripts:7:jsmodule_components \
+    --module jsmodule_scripts:8:jsmodule_components \
         --js Source/WebCore/inspector/front-end/CallStackSidebarPane.js \
         --js Source/WebCore/inspector/front-end/ScopeChainSidebarPane.js \
         --js Source/WebCore/inspector/front-end/JavaScriptSourceFrame.js \
         --js Source/WebCore/inspector/front-end/ScriptsPanel.js \
+        --js Source/WebCore/inspector/front-end/ScriptsSearchScope.js \
         --js Source/WebCore/inspector/front-end/WatchExpressionsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/WorkerManager.js \
         --js Source/WebCore/inspector/front-end/WorkersSidebarPane.js \

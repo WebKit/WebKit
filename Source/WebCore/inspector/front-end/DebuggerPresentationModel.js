@@ -146,6 +146,20 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    uiSourceCodes: function()
+    {
+        var result = [];
+        for (var id in this._rawSourceCode) {
+            var uiSourceCodeList = this._rawSourceCode[id].sourceMapping.uiSourceCodeList();
+            for (var i = 0; i < uiSourceCodeList.length; ++i)
+                result.push(uiSourceCodeList[i]);
+        }
+        return result;            
+    },
+
+    /**
      * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {WebInspector.RawSourceCode.SourceMapping} oldSourceMapping
      */

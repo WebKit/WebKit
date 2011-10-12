@@ -6228,6 +6228,7 @@
         ],
         'webinspector_files': [
             'inspector/front-end/inspector.html',
+            'inspector/front-end/AdvancedSearchController.js',
             'inspector/front-end/ApplicationCacheItemsView.js',
             'inspector/front-end/AuditCategories.js',
             'inspector/front-end/AuditFormatters.js',
@@ -6334,6 +6335,7 @@
             'inspector/front-end/ScriptFormatter.js',
             'inspector/front-end/ScriptFormatterWorker.js',
             'inspector/front-end/ScriptsPanel.js',
+            'inspector/front-end/ScriptsSearchScope.js',
             'inspector/front-end/SearchController.js',
             'inspector/front-end/ShortcutsScreen.js',
             'inspector/front-end/SettingsScreen.js',

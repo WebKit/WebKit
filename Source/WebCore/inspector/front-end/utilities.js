@@ -837,6 +837,9 @@ function isEnterKey(event) {
 }
 
 /**
+ * @param {Element} element
+ * @param {number} offset
+ * @param {number} length
  * @param {Array.<Object>=} domChanges
  */
 function highlightSearchResult(element, offset, length, domChanges)
@@ -846,9 +849,23 @@ function highlightSearchResult(element, offset, length, domChanges)
 }
 
 /**
+ * @param {Element} element
+ * @param {Array.<Object>} resultRanges
  * @param {Array.<Object>=} changes
  */
 function highlightSearchResults(element, resultRanges, changes)
+{
+    return highlightRangesWithStyleClass(element, resultRanges, "webkit-search-result", changes);
+    
+}
+
+/**
+ * @param {Element} element
+ * @param {Array.<Object>} resultRanges
+ * @param {string} styleClass
+ * @param {Array.<Object>=} changes
+ */
+function highlightRangesWithStyleClass(element, resultRanges, styleClass, changes)
 {
     changes = changes || [];
     var highlightNodes = [];
@@ -887,7 +904,7 @@ function highlightSearchResults(element, resultRanges, changes)
         }
 
         var highlightNode = ownerDocument.createElement("span");
-        highlightNode.className = "webkit-search-result";
+        highlightNode.className = styleClass;
         highlightNode.textContent = lineText.substring(startOffset, endOffset);
 
         var text = textNode.textContent;
@@ -969,6 +986,7 @@ function revertDomChanges(domChanges)
 
 /**
  * @param {string=} extraFlags
+ * @return {RegExp}
  */
 function createSearchRegex(query, extraFlags)
 {
@@ -984,6 +1002,11 @@ function createSearchRegex(query, extraFlags)
     return new RegExp(regex, "i" + (extraFlags || ""));
 }
 
+/**
+ * @param {RegExp} regex
+ * @param {string} content
+ * @return {number}
+ */
 function countRegexMatches(regex, content)
 {
     var text = content;
@@ -995,6 +1018,19 @@ function countRegexMatches(regex, content)
         text = text.substring(match.index + 1);
     }
     return result;
+}
+
+/**
+ * @param {number} value
+ * @param {number} symbolsCount
+ * @return {string}
+ */
+function numberToStringWithSpacesPadding(value, symbolsCount)
+{
+    var numberString = value.toString();
+    var paddingLength = Math.max(0, symbolsCount - numberString.length);
+    var paddingString = Array(paddingLength).join("\u00a0");
+    return paddingString + numberString;
 }
 
 /**

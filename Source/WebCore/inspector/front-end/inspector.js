@@ -479,6 +479,7 @@ WebInspector.doLoadedDone = function()
     this.cssModel = new WebInspector.CSSStyleModel();
 
     this.searchController = new WebInspector.SearchController();
+    this.advancedSearchController = new WebInspector.AdvancedSearchController();
 
     if (Preferences.nativeInstrumentationEnabled)
         this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
@@ -739,6 +740,7 @@ WebInspector.documentKeyDown = function(event)
     }
 
     WebInspector.searchController.handleShortcut(event);
+    WebInspector.advancedSearchController.handleShortcut(event);
     if (event.handled) {
         event.preventDefault();
         return;

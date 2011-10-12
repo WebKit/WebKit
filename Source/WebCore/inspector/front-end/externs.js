@@ -186,6 +186,16 @@ WebInspector.currentFocusElement = null;
 WebInspector.previousFocusElement = null;
 
 /**
+ * @param {WebInspector.View} view
+ */
+WebInspector.showViewInDrawer = function(view) {}
+
+/**
+ * @type {WebInspector.AdvancedSearchController}
+ */
+WebInspector.advancedSearchController = null;
+
+/**
  * @type {string}
  */
 WebInspector.platformFlavor = "";

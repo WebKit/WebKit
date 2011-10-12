@@ -113,6 +113,15 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @param {string} query
+     * @param {function(Array.<Object>)} callback
+     */
+    searchInContent: function(query, callback)
+    {
+        this._contentProvider.searchInContent(query, callback);
+    },
+
+    /**
      * @param {string} mimeType
      * @param {string} content
      */

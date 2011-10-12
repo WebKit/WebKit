@@ -186,6 +186,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
         WebInspector.debuggerModel.enableDebugger();
 
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
+    
+    WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope());
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer

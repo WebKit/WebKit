@@ -1,5 +1,51 @@
 2011-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Searching in multiple scripts in the scripts tab
+        https://bugs.webkit.org/show_bug.cgi?id=38807
+
+        Reviewed by Pavel Feldman.
+
+        Added support for advanced search capabilities in inspector by means
+        of showing the new SearchView in Drawer. Advanced search is activated
+        with Ctrl+Shift+F (Cmd+Shift+F) shortcut.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/AdvancedSearchController.js: Added.
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCodes):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/ScriptsSearchScope.js: Added.
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.searchInContent):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (WebInspector.showViewInDrawer):
+        * inspector/front-end/inspector.css:
+        (.search-view):
+        (.search-view .search-panel):
+        (.search-view .search-results):
+        (#search-results-pane-file-based .search-result):
+        (#search-results-pane-file-based .search-result:first-child):
+        (#search-results-pane-file-based .search-result .search-result-file-name):
+        (#search-results-pane-file-based .search-result .search-result-matches-count):
+        (#search-results-pane-file-based .search-match):
+        (#search-results-pane-file-based .search-match .webkit-line-number.search-match-line-number):
+        (#search-results-pane-file-based .search-match:not(:hover) .webkit-line-number.search-match-line-number):
+        (#search-results-pane-file-based .search-match:hover):
+        (#search-results-pane-file-based .search-match .highlighted-match):
+        (#search-results-pane-file-based a):
+        (#search-results-pane-file-based .search-match .search-match-content):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        * inspector/front-end/utilities.js:
+        ():
+
+2011-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Fix Drawer to make it possible to show views other than Console.
         https://bugs.webkit.org/show_bug.cgi?id=69831
 

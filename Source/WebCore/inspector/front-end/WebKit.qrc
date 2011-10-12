@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/inspector">
     <file>inspector.html</file>
+    <file>AdvancedSearchController.js</file>
     <file>ApplicationCacheItemsView.js</file>
     <file>AuditCategories.js</file>
     <file>AuditFormatters.js</file>
@@ -107,6 +108,7 @@
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptsPanel.js</file>
+    <file>ScriptsSearchScope.js</file>
     <file>SearchController.js</file>
     <file>Section.js</file>
     <file>Settings.js</file>

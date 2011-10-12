@@ -69285,6 +69285,10 @@
 				Name="front-end"
 				>
 				<File
+					RelativePath="..\inspector\front-end\AdvancedSearchController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ApplicationCacheItemsView.js"
 					>
 				</File>
@@ -69766,6 +69770,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ScriptsPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ScriptsSearchScope.js"
 					>
 				</File>
 				<File
