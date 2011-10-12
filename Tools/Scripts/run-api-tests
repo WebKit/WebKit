@@ -58,6 +58,8 @@ my $verbose = 0;
 my $dump = 0;
 my $build = 1;
 my $buildDefault = $build ? "build" : "do not build";
+my @testsFailed;
+my @testsTimedOut;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -118,6 +120,21 @@ sub runAllTests()
         my $failed = runAllTestsInSuite($suite);
         if ($failed) {
             $anyFailures = 1;
+        }
+    }
+    
+    if ($verbose) {
+        if (@testsFailed) {
+            print "Tests that failed:\n";
+            for my $test (@testsFailed) {
+                print "  $test\n";
+            }
+        }
+        if (@testsTimedOut) {
+            print "Tests that timed out:\n";
+            for my $test (@testsTimedOut) {
+                print "  $test\n";
+            }
         }
     }
     return $anyFailures;
@@ -190,7 +207,11 @@ sub runTest($$)
         $timedOut = 1;
     }
 
+    if ($result) {
+        push @testsFailed, "$suite.$test";
+    }
     if ($timedOut) {
+        push @testsTimedOut, "$suite.$test";
         print possiblyColored("bold yellow", "Timeout"), "\n";
     } elsif (!$verbose) {
         if ($result) {
