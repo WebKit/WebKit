@@ -98,7 +98,6 @@ public:
         return PopupMenuStyle(Color::black, Color::white, font, true, false, Length(), TextDirection(), false /* has text direction override */);
     }
     virtual PopupMenuStyle menuStyle() const { return itemStyle(0); }
-    virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
     virtual int clientInsetLeft() const { return 0; }
     virtual int clientInsetRight() const { return 0; }
     virtual int clientPaddingLeft() const { return 0; }
@@ -120,6 +119,7 @@ public:
 
     void setDisabledIndex(unsigned index) { m_disabledIndexSet.insert(index); }
     void setFocusedNode(Node* node) { m_node = node; }
+
 private:
     unsigned m_selectIndex;
     std::set<unsigned> m_disabledIndexSet;

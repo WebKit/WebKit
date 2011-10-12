@@ -303,7 +303,13 @@ void RenderMenuList::showPopup()
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
     m_popupIsVisible = true;
 
-    m_popup->show(boundingBoxRect(), document()->view(), select->optionToListIndex(select->selectedIndex()));
+    // Compute the top left taking transforms into account, but use
+    // the actual width of the element to size the popup.
+    FloatPoint absTopLeft = localToAbsolute(FloatPoint(), false, true);
+    LayoutRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
+    absBounds.setLocation(roundedIntPoint(absTopLeft));
+    m_popup->show(absBounds, document()->view(),
+        select->optionToListIndex(select->selectedIndex()));
 }
 
 void RenderMenuList::hidePopup()
@@ -498,16 +504,6 @@ PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea* scrollable
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
     return widget.release();
-}
-
-LayoutRect RenderMenuList::boundingBoxRect() const
-{
-    // Compute the top left taking transforms into account, but use
-    // the actual width of the element to size the popup.
-    FloatPoint absTopLeft = localToAbsolute(FloatPoint(), false, true);
-    LayoutRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
-    absBounds.setLocation(roundedIntPoint(absTopLeft));
-    return absBounds;
 }
 
 int RenderMenuList::clientInsetLeft() const

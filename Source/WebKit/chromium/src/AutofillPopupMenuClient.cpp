@@ -216,13 +216,6 @@ int AutofillPopupMenuClient::clientPaddingRight() const
     return RenderTheme::defaultTheme()->popupInternalPaddingRight(style);
 }
 
-WebCore::LayoutRect AutofillPopupMenuClient::boundingBoxRect() const
-{
-    if (m_textField)
-        return m_textField->getRect();
-    return WebCore::LayoutRect();
-}
-
 void AutofillPopupMenuClient::popupDidHide()
 {
     WebViewImpl* webView = getWebView();

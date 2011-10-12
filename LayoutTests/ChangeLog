@@ -1,3 +1,16 @@
+2011-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97202, r97207, and r97215.
+        http://trac.webkit.org/changeset/97202
+        http://trac.webkit.org/changeset/97207
+        http://trac.webkit.org/changeset/97215
+        https://bugs.webkit.org/show_bug.cgi?id=69894
+
+        Broke builds (Requested by rniwa on #webkit).
+
+        * fast/dom/popup-menu-client-test-expected.txt: Removed.
+        * fast/dom/popup-menu-client-test.html: Removed.
+
 2011-10-11  Martin Robinson  <mrobinson@igalia.com>
 
         [Soup] ResourceHandleSoup does not handle encodedBlobData

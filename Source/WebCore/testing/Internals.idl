@@ -67,10 +67,6 @@ module window {
         void paintControlTints(in Document document) raises (DOMException);
 
         void scrollElementToRect(in Element element, in long x, in long y, in long w, in long h) raises (DOMException);
-
-        int popupClientPaddingLeft(in Element element) raises (DOMException);
-        int popupClientPaddingRight(in Element element) raises (DOMException);
-        ClientRect popupClientBoundingBoxRect(in Element element) raises (DOMException);
     };
 }
 

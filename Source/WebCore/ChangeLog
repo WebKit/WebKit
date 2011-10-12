@@ -1,3 +1,25 @@
+2011-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97202, r97207, and r97215.
+        http://trac.webkit.org/changeset/97202
+        http://trac.webkit.org/changeset/97207
+        http://trac.webkit.org/changeset/97215
+        https://bugs.webkit.org/show_bug.cgi?id=69894
+
+        Broke builds (Requested by rniwa on #webkit).
+
+        * platform/PopupMenuClient.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        * rendering/RenderTextControlSingleLine.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-10-11  Martin Robinson  <mrobinson@igalia.com>
 
         [Soup] ResourceHandleSoup does not handle encodedBlobData

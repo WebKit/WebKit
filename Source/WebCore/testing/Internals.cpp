@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
 #include "IntRect.h"
@@ -45,9 +44,7 @@
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
 #endif
-#include "PopupMenuClient.h"
 #include "Range.h"
-#include "RenderMenuList.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #if ENABLE(SMOOTH_SCROLLING)
@@ -436,64 +433,6 @@ void Internals::scrollElementToRect(Element* element, long x, long y, long w, lo
     }
     FrameView* frameView = element->document()->view();
     frameView->scrollElementToRect(element, IntRect(x, y, w, h));
-}
-
-static const PopupMenuClient* toPopupMenuClient(RenderObject* object)
-{
-    ASSERT(!object || object->isPopupMenuClient());
-    if (!object)
-        return 0;
-
-    // Special case: RenderMenuList uses multiple inheritance and so,
-    // depending on the compiler, we may end up in a situation where
-    // the first vptr does not point to the PopupMenuClient's vtable,
-    // and so we'd end up calling the wrong method. Thus, we first cast to
-    // RenderMenuList and then to PopupMenuClient which will automagically
-    // take into account thunking if necessary (the casting will actually shift
-    // the pointer over to the PopupMenuClient part of the object).
-    if (object->isMenuList())
-        return static_cast<PopupMenuClient*>(toRenderMenuList(object));
-
-    return reinterpret_cast<PopupMenuClient*>(object);
-}
-
-int Internals::popupClientPaddingLeft(Element* element, ExceptionCode& ec)
-{
-    if (!element || !element->renderer()) {
-      ec = INVALID_ACCESS_ERR;
-      return 0;
-    }
-    element->document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* renderer = element->renderer();
-    if (renderer->isPopupMenuClient())
-        return toPopupMenuClient(renderer)->clientPaddingLeft();
-    return 0;
-}
-
-int Internals::popupClientPaddingRight(Element* element, ExceptionCode& ec)
-{
-    if (!element || !element->renderer()) {
-      ec = INVALID_ACCESS_ERR;
-      return 0;
-    }
-    element->document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* renderer = element->renderer();
-    if (renderer->isPopupMenuClient())
-        return toPopupMenuClient(renderer)->clientPaddingRight();
-    return 0;
-}
-
-PassRefPtr<ClientRect> Internals::popupClientBoundingBoxRect(Element* element, ExceptionCode& ec)
-{
-    if (!element || !element->renderer()) {
-        ec = INVALID_ACCESS_ERR;
-        return ClientRect::create();
-    }
-    element->document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* renderer = element->renderer();
-    if (renderer->isPopupMenuClient())
-        return ClientRect::create(toPopupMenuClient(renderer)->boundingBoxRect());
-    return ClientRect::create();
 }
 
 }
