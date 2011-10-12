@@ -1,3 +1,22 @@
+2011-10-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [Soup] ResourceHandleSoup does not handle encodedBlobData
+        https://bugs.webkit.org/show_bug.cgi?id=52092
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support for sending encoded blob data during requests.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::addFileToSoupMessageBody): Added this helper.
+        (WebCore::blobIsOutOfDate): Ditto.
+        (WebCore::addEncodedBlobItemToSoupMessageBody): Ditto.
+        (WebCore::addEncodedBlobToSoupMessageBody): Ditto.
+        (WebCore::addFormElementsToSoupMessage): No longer flatten form data, as we
+        cannot do this in the case where the form data contains blobs. Now handle
+        the blob case.
+        (WebCore::loadResourceSynchronously): Add blob support for synchronous loading.
+
 2011-10-11  Chris Rogers  <crogers@google.com>
 
         Heap buffer overflow in Webaudio FFTFrame::doFFT

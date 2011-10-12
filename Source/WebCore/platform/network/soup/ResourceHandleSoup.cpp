@@ -58,6 +58,12 @@
 #include <unistd.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(BLOB)
+#include "BlobData.h"
+#include "BlobRegistryImpl.h"
+#include "BlobStorageData.h"
+#endif
+
 namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
@@ -514,20 +520,80 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, 0);
 }
 
-static bool addFormElementsToSoupMessage(SoupMessage* message, const char* contentType, FormData* httpBody, unsigned long& totalBodySize)
+static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNameString, size_t offset, size_t lengthToSend, unsigned long& totalBodySize)
 {
-    size_t numElements = httpBody->elements().size();
-    if (numElements < 2) { // No file upload is the most common case.
-        Vector<char> body;
-        httpBody->flatten(body);
-        totalBodySize = body.size();
-        soup_message_set_request(message, contentType, SOUP_MEMORY_COPY, body.data(), body.size());
+    GOwnPtr<GError> error;
+    CString fileName = fileSystemRepresentation(fileNameString);
+    GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
+    if (error)
+        return false;
+
+    gsize bufferLength = lengthToSend;
+    if (!lengthToSend)
+        bufferLength = g_mapped_file_get_length(fileMapping);
+    totalBodySize += bufferLength;
+
+    SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping) + offset,
+                                                        bufferLength,
+                                                        fileMapping,
+                                                        reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
+    soup_message_body_append_buffer(message->request_body, soupBuffer);
+    soup_buffer_free(soupBuffer);
+    return true;
+}
+
+#if ENABLE(BLOB)
+static bool blobIsOutOfDate(const BlobDataItem& blobItem)
+{
+    ASSERT(blobItem.type == BlobDataItem::File);
+    if (blobItem.expectedModificationTime == BlobDataItem::doNotCheckFileChange)
+        return false;
+
+    time_t fileModificationTime;
+    if (!getFileModificationTime(blobItem.path, fileModificationTime))
+        return true;
+
+    return fileModificationTime != static_cast<time_t>(blobItem.expectedModificationTime);
+}
+
+static bool addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
+{
+    if (blobItem.type == BlobDataItem::Data) {
+        totalBodySize += blobItem.length;
+        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
+                                 blobItem.data->data() + blobItem.offset, blobItem.length);
         return true;
     }
 
-    // We have more than one element to upload, and some may be large files,
-    // which we will want to mmap instead of copying into memory
+    ASSERT(blobItem.type == BlobDataItem::File);
+    if (blobIsOutOfDate(blobItem))
+        return false;
+
+    return addFileToSoupMessageBody(message,
+                                    blobItem.path,
+                                    blobItem.offset,
+                                    blobItem.length == BlobDataItem::toEndOfFile ? 0 : blobItem.length,
+                                    totalBodySize);
+}
+
+static bool addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
+{
+    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+    if (!blobData)
+        return true;
+
+    for (size_t i = 0; i < blobData->items().size(); ++i)
+        if (!addEncodedBlobItemToSoupMessageBody(message, blobData->items()[i], totalBodySize))
+            return false;
+
+    return true;
+}
+#endif // ENABLE(BLOB)
+
+static bool addFormElementsToSoupMessage(SoupMessage* message, const char* contentType, FormData* httpBody, unsigned long& totalBodySize)
+{
     soup_message_body_set_accumulate(message->request_body, FALSE);
+    size_t numElements = httpBody->elements().size();
     for (size_t i = 0; i < numElements; i++) {
         const FormDataElement& element = httpBody->elements()[i];
 
@@ -538,22 +604,22 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char* conte
             continue;
         }
 
-        // This technique is inspired by libsoup's simple-httpd test.
-        GOwnPtr<GError> error;
-        CString fileName = fileSystemRepresentation(element.m_filename);
-        GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
-        if (error)
+        if (element.m_type == FormDataElement::encodedFile) {
+            if (!addFileToSoupMessageBody(message ,
+                                         element.m_filename,
+                                         0 /* offset */,
+                                         0 /* lengthToSend */,
+                                         totalBodySize))
+                return false;
+            continue;
+        }
+
+#if ENABLE(BLOB)
+        ASSERT(element.m_type == FormDataElement::encodedBlob);
+        if (!addEncodedBlobToSoupMessageBody(message, element, totalBodySize))
             return false;
-
-        gsize mappedFileSize = g_mapped_file_get_length(fileMapping);
-        totalBodySize += mappedFileSize;
-        SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
-                                                            mappedFileSize, fileMapping,
-                                                            reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
-        soup_message_body_append_buffer(message->request_body, soupBuffer);
-        soup_buffer_free(soupBuffer);
+#endif
     }
-
     return true;
 }
 
@@ -730,6 +796,13 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
+#if ENABLE(BLOB)
+    if (request.url().protocolIs("blob")) {
+        blobRegistry().loadResourceSynchronously(request, error, response, data);
+        return;
+    }
+#endif
+
     WebCoreSynchronousLoader syncLoader(error, response, data);
     RefPtr<ResourceHandle> handle = create(context, request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/);
     if (!handle)

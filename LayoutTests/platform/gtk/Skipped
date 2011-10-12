@@ -191,9 +191,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # This test crashes whatever test follows it. Perhaps it's related to the previous failure.
 fast/dom/gc-10.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=54234 
-fast/files/apply-blob-url-to-xhr.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=50744
 inspector/debugger/open-close-open.html
 
@@ -391,10 +388,7 @@ http/tests/misc/webtiming-two-redirects.php
 # FileSystem API is not supported.
 fast/filesystem
 http/tests/filesystem
-http/tests/local/fileapi
 http/tests/security/filesystem-iframe-from-remote.html
-http/tests/websocket/tests/hybi/send-file-blob.html
-http/tests/websocket/tests/hybi/send-file-blob-fail.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
@@ -1315,13 +1309,6 @@ http/tests/security/drag-drop-same-unique-origin.html
 # Should recheck it when the above bug is fixed.
 fast/files/workers/worker-apply-blob-url-to-xhr.html
 
-# [Soup] ResourceHandleSoup does not handle encodedBlobData
-# https://bugs.webkit.org/show_bug.cgi?id=52092
-http/tests/local/blob/send-data-blob.html
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/blob/send-sliced-data-blob.html
-http/tests/local/formdata/send-form-data-with-sliced-file.html
-
 # [GTK] Dragging images and links results in a DataTransfer object containing a non-empty files array
 # https://bugs.webkit.org/show_bug.cgi?id=52094
 editing/pasteboard/files-during-page-drags.html
@@ -1689,3 +1676,8 @@ http/tests/multipart/load-last-non-html-frame.php
 # REGRESSION(r96870): editing/pasteboard/smart-paste-008.html fails on non-Mac
 # https://bugs.webkit.org/show_bug.cgi?id=69587
 editing/pasteboard/smart-paste-008.html
+
+# Some tests fail with  "FAIL Unexpected response data received: Wrong method: GET"
+# https://bugs.webkit.org/show_bug.cgi?id=69219
+http/tests/local/fileapi/send-sliced-dragged-file.html  
+http/tests/local/blob/send-hybrid-blob.html
