@@ -581,6 +581,21 @@ TestSuite.prototype.testSharedWorker = function()
 };
 
 
+TestSuite.prototype.testPauseInSharedWorkerInitialization = function()
+{
+    if (WebInspector.debuggerModel.debuggerPausedDetails)
+        return;
+    this._waitForScriptPause(
+        {
+            functionsOnStack: [""],
+            lineNumber: 1,
+            lineText: "debugger;"
+        },
+        this.releaseControl.bind(this));
+    this.takeControl();
+};
+
+
 /**
  * Serializes options collection to string.
  * @param {HTMLOptionsCollection} options
