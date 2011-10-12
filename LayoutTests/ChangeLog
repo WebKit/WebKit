@@ -1,5 +1,11 @@
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Dir attribute is converted into direction property when merging paragraphs
         https://bugs.webkit.org/show_bug.cgi?id=69680
 

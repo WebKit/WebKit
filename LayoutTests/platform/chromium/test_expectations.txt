@@ -1686,9 +1686,6 @@ BUGWK SKIP : http/tests/appcache/origins-with-appcache.html = FAIL
 // LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 BUGWK SKIP : http/tests/appcache/origin-usage.html = FAIL
 
-// New failures from WebKit r51577
-BUGCR29164 : fast/frames/sandboxed-iframe-plugins.html = TEXT
-
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 LINUX WIN CPU : fast/canvas/set-colors.html = TEXT
 
@@ -3873,4 +3870,6 @@ BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
 BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
-BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH PASS
+BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
+// New failures from WebKit r51577
+BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
