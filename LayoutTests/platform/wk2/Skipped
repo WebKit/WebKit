@@ -190,6 +190,10 @@ fast/canvas/webgl/gl-vertex-attrib-zero-issues.html
 fast/events/pagehide-timeout.html
 fast/canvas/webgl/gl-getshadersource.html
 fast/canvas/webgl/tex-sub-image-2d-bad-args.html
+fast/canvas/webgl/WebGLContextEvent.html
+fast/canvas/webgl/renderer-and-vendor-strings.html
+fast/canvas/webgl/shader-deleted-by-accessor.html
+fast/canvas/webgl/uniform-array-length-overflow.html
 fast/overflow/horizontal-scroll-after-back.html
 http/tests/navigation/go-back-to-error-page.html
 http/tests/navigation/ping-cookie.html
@@ -407,6 +411,7 @@ security/block-test-no-port.html
 security/block-test.html
 webarchive/loading/cache-expired-subresource.html
 webarchive/loading/test-loading-archive.html
+webarchive/loading/test-loading-archive-subresource-null-mimetype.html
 
 # WebKitTestRunner needs layoutTestController.clearBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42333>
@@ -437,6 +442,7 @@ http/tests/loading/state-object-security-exception.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html
 svg/text/caret-in-svg-text.xhtml
+editing/inserting/caret-position.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
@@ -456,6 +462,7 @@ platform/mac/editing/input/replace-invalid-range.html
 platform/mac/editing/input/secure-input.html
 platform/mac/editing/input/text-input-controller.html
 platform/mac/editing/input/wrapped-line-char-rect.html
+platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/pasteboard/paste-and-match-style-selector-event.html
 platform/mac/editing/selection/25228.html
 platform/mac/fast/dom/character-index-for-point.html
@@ -484,6 +491,7 @@ storage/quota-tracking.html
 # WebKitTestRunner needs layoutTestController.dumpResourceResponseMIMETypes
 # <https://bugs.webkit.org/show_bug.cgi?id=42543>
 fast/dom/HTMLScriptElement/dont-load-unknown-type.html
+fast/preloader/document-write-noscript.html
 fast/preloader/image.html
 fast/preloader/input.html
 fast/preloader/link.html
@@ -714,7 +722,10 @@ fast/loader/non-deferred-substitute-load.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42778>
 http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/plugins/third-party-cookie-accept-policy.html
+http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+http/tests/security/cookies/third-party-cookie-blocking.html
 
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>

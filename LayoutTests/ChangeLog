@@ -1,3 +1,12 @@
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+       Add some tests to the WK2 skipped list which require layoutTestController or
+       textInputController methods not implemented yet, and remove a WK2-specific
+       result that is not longer correct.
+
+        * platform/mac-wk2/fast/css/pseudo-any-expected.txt: Removed.
+        * platform/wk2/Skipped:
+
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Check in failing test expectation after r95897. The failure is tracked by the bug 69069.
