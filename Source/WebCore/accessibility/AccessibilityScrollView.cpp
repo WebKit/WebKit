@@ -99,8 +99,10 @@ void AccessibilityScrollView::updateChildrenIfNecessary()
 void AccessibilityScrollView::removeChildScrollbar(AccessibilityObject* scrollbar)
 {
     size_t pos = m_children.find(scrollbar);
-    if (pos != WTF::notFound)
+    if (pos != WTF::notFound) {
+        m_children[pos]->detachFromParent();
         m_children.remove(pos);
+    }
 }
     
 AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* scrollbar)

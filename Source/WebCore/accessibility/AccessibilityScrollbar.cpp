@@ -38,7 +38,6 @@ namespace WebCore {
 
 AccessibilityScrollbar::AccessibilityScrollbar(Scrollbar* scrollbar)
     : m_scrollbar(scrollbar)
-    , m_parent(0)
 {
     ASSERT(scrollbar);
 }
