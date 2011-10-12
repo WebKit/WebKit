@@ -402,6 +402,13 @@ struct AbstractValue {
     {
         m_type &= other.predictionFromStructures();
         m_structure.filter(other);
+        
+        // It's possible that prior to the above two statements we had (Foo, TOP), where
+        // Foo is a PredictedType that is disjoint with the passed StructureSet. In that
+        // case, we will now have (None, [someStructure]). In general, we need to make
+        // sure that new information gleaned from the PredictedType needs to be fed back
+        // into the information gleaned from the StructureSet.
+        m_structure.filter(m_type);
     }
     
     void filter(PredictedType type)

@@ -1,3 +1,22 @@
+2011-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Layout tests crashing in DFG JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=69897
+
+        Reviewed by Gavin Barraclough.
+        
+        Abstract value filtration didn't take into account cases where a structure
+        set filter, combined with predicted type knowledge, could lead to a stronger
+        filter for the structure abstract value.
+        
+        This bug would have been benign in release builds; it would have just meant
+        that the analysis was less precise and some optimization opportunities would
+        be missed. I have an ASSERT that is meant to catch such cases, and it was
+        triggering sporadically in one of the LayoutTests.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filter):
+
 2011-10-11  Gavin Barraclough  <baraclough@apple.com>
 
         Unreviewed, temporarily reverted r97216 due to bug #69897.
