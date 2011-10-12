@@ -1,3 +1,9 @@
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] More timeouts after V8 roll.
+
+        * platform/chromium/test_expectations.txt: Updated.
+
 2011-10-12  Cary Clark  <caryclark@google.com>
 
         Update baseline images affected by subpixel test positioning in

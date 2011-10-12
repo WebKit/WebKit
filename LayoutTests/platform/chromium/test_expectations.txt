@@ -3908,3 +3908,23 @@ BUGCR100056 WIN DEBUG : fast/forms/interactive-validation-required-checkbox.html
 BUGCR100056 WIN DEBUG : fast/frames/calculate-fixed.html = TIMEOUT PASS
 BUGCR100056 WIN DEBUG : fast/frames/iframe-reparenting.html = TIMEOUT PASS
 BUGCR100056 WIN DEBUG : fast/frames/viewsource-unfinished-tags.html = TIMEOUT PASS
+
+BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.imageData.create2.basic.html = TIMEOUT
+BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.path.isPointInPath.arc.html = TIMEOUT
+BUGCR100056 MAC DEBUG : dom/html/level1/core/hc_nodeinsertbeforenewchildexists.html = TIMEOUT
+BUGCR100056 MAC DEBUG : dom/html/level2/html/HTMLTableElement06.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/deleting/delete-br-004.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/execCommand/indent-nested-lists-7.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/execCommand/query-font-size.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/pasteboard/merge-start-blockquote.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/style/typing-style-003.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/canvas/webgl/context-lost-restored.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/canvas/webgl/gl-teximage.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/canvas/webgl/texture-npot.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/DeviceOrientation/no-page-cache.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/HTMLDocument/document-special-properties.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/gc-acid3.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/shadow/tree-scope-crash.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/encoding/char-encoding.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/flexbox/016.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/harness/show-modal-dialog.html = TIMEOUT
