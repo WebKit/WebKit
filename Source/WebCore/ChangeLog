@@ -1,3 +1,10 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac build fix after r97227.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+
 2011-10-11  Antoine Labour  <piman@chromium.org>
 
         Separate compositor client thread from webkit's main thread.

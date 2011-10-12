@@ -100,7 +100,7 @@ static ScrollbarPainterMap* scrollbarMap()
     if (theme->isMockTheme())
         return;
 
-    static_cast<ScrollbarThemeChromiumMac*>(isMockTheme)->preferencesChanged();
+    static_cast<ScrollbarThemeChromiumMac*>(theme)->preferencesChanged();
     if (scrollbarMap()->isEmpty())
         return;
     ScrollbarPainterMap::iterator end = scrollbarMap()->end();
