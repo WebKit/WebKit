@@ -2273,6 +2273,8 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
     if (!m_frame->document() || !m_frame->page())
         return;
 
+    RefPtr<Document> ownerDocument(m_frame->document());
+
     // Protect privileged pages against bookmarklets and other javascript manipulations.
     if (SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(m_frame->document()->url().protocol()))
         return;
@@ -2285,7 +2287,7 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
         return;
 
     if (!m_frame->navigationScheduler()->locationChangePending())
-        m_frame->document()->loader()->writer()->replaceDocument(scriptResult);
+        m_frame->document()->loader()->writer()->replaceDocument(scriptResult, ownerDocument.get());
 }
 
 } // namespace WebKit
