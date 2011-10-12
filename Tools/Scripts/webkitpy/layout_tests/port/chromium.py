@@ -597,7 +597,10 @@ class ChromiumDriver(Driver):
         if self._proc.stderr:
             self._proc.stderr.close()
         time_out_ms = self._port.get_option('time_out_ms')
-        kill_timeout_seconds = 3.0 * int(time_out_ms) / Manager.DEFAULT_TEST_TIMEOUT_MS
+        if time_out_ms:
+            kill_timeout_seconds = 3.0 * int(time_out_ms) / Manager.DEFAULT_TEST_TIMEOUT_MS
+        else:
+            kill_timeout_seconds = 3.0
 
         # Closing stdin/stdout/stderr hangs sometimes on OS X,
         # (see __init__(), above), and anyway we don't want to hang

@@ -144,7 +144,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
             '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe',
             port._path_to_driver('Release'))
         self.assertEquals(
-            '/mock-checkout/Source/WebKit/chromium/Debug/DumpRenderTree.exe',
+            '/mock-checkout/Source/WebKit/chromium/build/Debug/DumpRenderTree.exe',
             port._path_to_driver('Debug'))
 
 
