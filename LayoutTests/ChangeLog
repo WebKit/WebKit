@@ -1,3 +1,9 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline after r97225.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Some more WK2 test skipping.
