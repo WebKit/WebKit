@@ -137,6 +137,7 @@ PredictedType predictionFromValue(JSValue value)
         return predictionFromCell(value.asCell());
     if (value.isBoolean())
         return PredictBoolean;
+    ASSERT(value.isUndefinedOrNull());
     return PredictOther;
 }
 

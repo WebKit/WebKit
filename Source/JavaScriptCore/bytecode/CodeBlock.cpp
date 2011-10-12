@@ -1527,8 +1527,6 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
-    bool handleWeakReferences = false;
-    
     if (!!m_alternative)
         m_alternative->visitAggregate(visitor);
     visitor.append(&m_globalObject);
@@ -1580,61 +1578,8 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #endif
 
 #if ENABLE(VALUE_PROFILER)
-    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex) {
-        ValueProfile* profile = valueProfile(profileIndex);
-        
-        for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
-            if (!profile->m_buckets[index]) {
-                if (!!profile->m_weakBuckets[index])
-                    handleWeakReferences = true;
-                continue;
-            }
-            
-            if (!JSValue::decode(profile->m_buckets[index]).isCell()) {
-                profile->m_weakBuckets[index] = ValueProfile::WeakBucket();
-                continue;
-            }
-            
-            handleWeakReferences = true;
-        }
-    }
-#endif
-    
-    if (handleWeakReferences)
-        visitor.addWeakReferenceHarvester(this);
-}
-
-void CodeBlock::visitWeakReferences(SlotVisitor&)
-{
-#if ENABLE(VALUE_PROFILER)
-    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex) {
-        ValueProfile* profile = valueProfile(profileIndex);
-        
-        for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
-            if (!!profile->m_buckets[index]) {
-                JSValue value = JSValue::decode(profile->m_buckets[index]);
-                if (!value.isCell())
-                    continue;
-                
-                JSCell* cell = value.asCell();
-                if (Heap::isMarked(cell))
-                    continue;
-                
-                profile->m_buckets[index] = JSValue::encode(JSValue());
-                profile->m_weakBuckets[index] = cell->structure();
-            }
-            
-            ValueProfile::WeakBucket weak = profile->m_weakBuckets[index];
-            if (!weak || weak.isClassInfo())
-                continue;
-            
-            ASSERT(weak.isStructure());
-            if (Heap::isMarked(weak.asStructure()))
-                continue;
-            
-            profile->m_weakBuckets[index] = weak.asStructure()->classInfo();
-        }
-    }
+    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
+        valueProfile(profileIndex)->computeUpdatedPrediction();
 #endif
 }
 

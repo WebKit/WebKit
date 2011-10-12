@@ -43,7 +43,6 @@
 #include "PredictionTracker.h"
 #include "RegExpObject.h"
 #include "UString.h"
-#include "WeakReferenceHarvester.h"
 #include "ValueProfile.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -232,7 +231,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock: public WeakReferenceHarvester {
+    class CodeBlock {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
     protected:
@@ -248,7 +247,6 @@ namespace JSC {
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         
         void visitAggregate(SlotVisitor&);
-        void visitWeakReferences(SlotVisitor&);
 
         static void dumpStatistics();
 

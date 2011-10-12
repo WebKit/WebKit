@@ -1,3 +1,32 @@
+2011-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueProfile::computeUpdatedPrediction doesn't merge statistics correctly
+        https://bugs.webkit.org/show_bug.cgi?id=69906
+
+        Reviewed by Gavin Barraclough.
+        
+        It turns out that the simplest fix is to switch computeUpdatedPredictions()
+        to using predictionFromValue() combined with mergePrediction(). Doing so
+        allowed me to kill off weakBuckets and visitWeakReferences(). Hence this
+        not only fixes a performance bug but kills off a lot of code that I never
+        liked to begin with.
+        
+        This appears to be a 1% win on V8.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionFromValue):
+        * bytecode/ValueProfile.cpp:
+        (JSC::ValueProfile::computeStatistics):
+        (JSC::ValueProfile::computeUpdatedPrediction):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::classInfo):
+        (JSC::ValueProfile::numberOfSamples):
+        (JSC::ValueProfile::isLive):
+        (JSC::ValueProfile::dump):
+
 2011-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::toString

@@ -61,14 +61,14 @@ struct ValueProfile {
                 return 0;
             return value.asCell()->structure()->classInfo();
         }
-        return m_weakBuckets[bucket].getClassInfo();
+        return 0;
     }
     
     unsigned numberOfSamples() const
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!JSValue::decode(m_buckets[i]) || !!m_weakBuckets[i])
+            if (!!JSValue::decode(m_buckets[i]))
                 result++;
         }
         return result;
@@ -82,7 +82,7 @@ struct ValueProfile {
     bool isLive() const
     {
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!JSValue::decode(m_buckets[i]) || !!m_weakBuckets[i])
+            if (!!JSValue::decode(m_buckets[i]))
                 return true;
         }
         return false;
@@ -239,19 +239,14 @@ struct ValueProfile {
         bool first = true;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
-            if (!!value || !!m_weakBuckets[i]) {
+            if (!!value) {
                 if (first) {
                     fprintf(out, ": ");
                     first = false;
                 } else
                     fprintf(out, ", ");
-            }
-            
-            if (!!value)
                 fprintf(out, "%s", value.description());
-            
-            if (!!m_weakBuckets[i])
-                fprintf(out, "DeadCell");
+            }
         }
     }
 #endif
@@ -290,70 +285,6 @@ struct ValueProfile {
     unsigned m_numberOfSamplesInPrediction;
     
     EncodedJSValue m_buckets[numberOfBuckets];
-    
-    class WeakBucket {
-    public:
-        WeakBucket()
-            : m_value(0)
-        {
-        }
-        
-        WeakBucket(Structure* structure)
-            : m_value(reinterpret_cast<uintptr_t>(structure))
-        {
-        }
-        
-        WeakBucket(const ClassInfo* classInfo)
-            : m_value(reinterpret_cast<uintptr_t>(classInfo) | 1)
-        {
-        }
-        
-        bool operator!() const
-        {
-            return !m_value;
-        }
-        
-        bool isEmpty() const
-        {
-            return !m_value;
-        }
-        
-        bool isClassInfo() const
-        {
-            return !!(m_value & 1);
-        }
-        
-        bool isStructure() const
-        {
-            return !isEmpty() && !isClassInfo();
-        }
-        
-        Structure* asStructure() const
-        {
-            ASSERT(isStructure());
-            return reinterpret_cast<Structure*>(m_value);
-        }
-        
-        const ClassInfo* asClassInfo() const
-        {
-            ASSERT(isClassInfo());
-            return reinterpret_cast<ClassInfo*>(m_value & ~static_cast<uintptr_t>(1));
-        }
-        
-        const ClassInfo* getClassInfo() const
-        {
-            if (isEmpty())
-                return 0;
-            if (isClassInfo())
-                return asClassInfo();
-            return asStructure()->classInfo();
-        }
-        
-    private:
-        uintptr_t m_value;
-    };
-    
-    WeakBucket m_weakBuckets[numberOfBuckets]; // this is not covered by a write barrier because it is only set from GC
 };
 
 inline int getValueProfileBytecodeOffset(ValueProfile* valueProfile)
