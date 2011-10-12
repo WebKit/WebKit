@@ -161,6 +161,15 @@ svg/custom/use-events-crash.svg
 svg/text/selection-tripleclick.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 
+# [WK2] [Qt] Support drag in mouse events for WebKit2 EventSender
+# <https://bugs.webkit.org/show_bug.cgi?id=69946>
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+editing/selection/select-across-readonly-input-1.html
+editing/selection/select-across-readonly-input-2.html
+editing/selection/select-across-readonly-input-3.html
+editing/selection/select-across-readonly-input-4.html
+editing/selection/select-across-readonly-input-5.html
+
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 # Get accelerated compositing working with webkit2
@@ -760,11 +769,6 @@ http/tests/security/contentSecurityPolicy/eval-blocked.html
 http/tests/uri/css-href.php
 
 # unskipped by r88152, but fail on Qt-WK2 platform
-editing/selection/select-across-readonly-input-1.html
-editing/selection/select-across-readonly-input-2.html
-editing/selection/select-across-readonly-input-3.html
-editing/selection/select-across-readonly-input-4.html
-editing/selection/select-across-readonly-input-5.html
 svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg
 svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg
 svg/W3C-SVG-1.1-SE/struct-use-14-f.svg

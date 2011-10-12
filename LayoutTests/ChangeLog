@@ -1,3 +1,15 @@
+2011-10-12  Chang Shu  <cshu@webkit.org>
+
+        Selection is not collapsed in some WK2 editing tests
+        https://bugs.webkit.org/show_bug.cgi?id=69889
+
+        Skip tests for known reason.
+
+        Unreviewed.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] More timeouts after V8 roll.
