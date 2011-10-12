@@ -99,7 +99,7 @@ void CachedImage::didAddClient(CachedResourceClient* c)
         m_image->setData(m_data, true);
     }
 
-    if (m_image && !m_image->isNull())
+    if (m_image && !m_image->isNull() && c->type() == CachedImageClient::expectedType())
         static_cast<CachedImageClient*>(c)->imageChanged(this);
 
     CachedResource::didAddClient(c);
@@ -228,9 +228,9 @@ IntRect CachedImage::imageRect(float multiplier) const
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
 {
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient* c = w.next())
-        static_cast<CachedImageClient*>(c)->imageChanged(this, changeRect);
+    CachedResourceClientWalker<CachedImageClient> w(m_clients);
+    while (CachedImageClient* c = w.next())
+        c->imageChanged(this, changeRect);
 }
 
 void CachedImage::checkShouldPaintBrokenImage()
@@ -371,9 +371,9 @@ bool CachedImage::shouldPauseAnimation(const Image* image)
     if (image != m_image)
         return false;
     
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient* c = w.next()) {
-        if (static_cast<CachedImageClient*>(c)->willRenderImage(this))
+    CachedResourceClientWalker<CachedImageClient> w(m_clients);
+    while (CachedImageClient* c = w.next()) {
+        if (c->willRenderImage(this))
             return false;
     }
 

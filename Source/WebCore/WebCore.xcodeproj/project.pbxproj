@@ -5202,7 +5202,6 @@
 		BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C030979C3BD00467741 /* CachedImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedResource.cpp */; };
 		BCB16C200979C3BD00467741 /* CachedResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCB16C210979C3BD00467741 /* CachedResourceClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */; };
 		BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */; };
 		BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C0A0979C3BD00467741 /* CachedScript.cpp */; };
 		BCB16C240979C3BD00467741 /* CachedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C0B0979C3BD00467741 /* CachedScript.h */; };
@@ -12473,7 +12472,6 @@
 		BCB16C030979C3BD00467741 /* CachedImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedImage.h; sourceTree = "<group>"; };
 		BCB16C060979C3BD00467741 /* CachedResource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResource.cpp; sourceTree = "<group>"; };
 		BCB16C070979C3BD00467741 /* CachedResource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResource.h; sourceTree = "<group>"; };
-		BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceClientWalker.cpp; sourceTree = "<group>"; };
 		BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClientWalker.h; sourceTree = "<group>"; };
 		BCB16C0A0979C3BD00467741 /* CachedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedScript.cpp; sourceTree = "<group>"; };
 		BCB16C0B0979C3BD00467741 /* CachedScript.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedScript.h; sourceTree = "<group>"; };
@@ -18439,7 +18437,6 @@
 				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
 				BCB16C070979C3BD00467741 /* CachedResource.h */,
 				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
-				BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */,
 				BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */,
 				E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */,
 				E47B4BE60E71241600038854 /* CachedResourceHandle.h */,
@@ -25078,7 +25075,6 @@
 				5101846A0B08602A004A825F /* CachedPage.cpp in Sources */,
 				D0EDA774143E303C0028E383 /* CachedRawResource.cpp in Sources */,
 				BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */,
-				BCB16C210979C3BD00467741 /* CachedResourceClientWalker.cpp in Sources */,
 				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
 				BCB16C290979C3BD00467741 /* CachedResourceLoader.cpp in Sources */,
 				D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */,

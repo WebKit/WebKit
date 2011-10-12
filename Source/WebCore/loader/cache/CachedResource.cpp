@@ -145,7 +145,7 @@ void CachedResource::checkNotify()
     if (isLoading())
         return;
 
-    CachedResourceClientWalker w(m_clients);
+    CachedResourceClientWalker<CachedResourceClient> w(m_clients);
     while (CachedResourceClient* c = w.next())
         c->notifyFinished(this);
 }

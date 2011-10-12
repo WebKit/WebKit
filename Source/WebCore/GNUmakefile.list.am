@@ -2109,7 +2109,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedImage.cpp \
 	Source/WebCore/loader/cache/CachedImage.h \
 	Source/WebCore/loader/cache/CachedResourceClient.h \
-	Source/WebCore/loader/cache/CachedResourceClientWalker.cpp \
 	Source/WebCore/loader/cache/CachedResourceClientWalker.h \
 	Source/WebCore/loader/cache/CachedRawResource.cpp \
 	Source/WebCore/loader/cache/CachedRawResource.h \

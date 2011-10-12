@@ -950,7 +950,6 @@ SET(WebCore_SOURCES
     loader/cache/CachedImage.cpp
     loader/cache/CachedRawResource.cpp
     loader/cache/CachedResource.cpp
-    loader/cache/CachedResourceClientWalker.cpp
     loader/cache/CachedResourceHandle.cpp
     loader/cache/CachedResourceLoader.cpp
     loader/cache/CachedResourceRequest.cpp

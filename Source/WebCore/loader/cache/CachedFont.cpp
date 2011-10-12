@@ -79,7 +79,7 @@ void CachedFont::load(CachedResourceLoader*, const ResourceLoaderOptions& option
 
 void CachedFont::didAddClient(CachedResourceClient* c)
 {
-    if (!isLoading())
+    if (!isLoading() && c->type() == CachedFontClient::expectedType())
         static_cast<CachedFontClient*>(c)->fontLoaded(this);
 }
 
@@ -192,9 +192,9 @@ void CachedFont::checkNotify()
     if (isLoading())
         return;
     
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient *c = w.next())
-         static_cast<CachedFontClient*>(c)->fontLoaded(this);
+    CachedResourceClientWalker<CachedFontClient> w(m_clients);
+    while (CachedFontClient* c = w.next())
+         c->fontLoaded(this);
 }
 
 

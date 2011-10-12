@@ -26793,10 +26793,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\loader\cache\CachedResourceClientWalker.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\loader\cache\CachedResourceClientWalker.h"
 					>
 				</File>

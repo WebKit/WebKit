@@ -2841,7 +2841,6 @@
             'loader/cache/CachedImage.cpp',
             'loader/cache/CachedRawResource.cpp',
             'loader/cache/CachedResource.cpp',
-            'loader/cache/CachedResourceClientWalker.cpp',
             'loader/cache/CachedResourceClientWalker.h',
             'loader/cache/CachedResourceHandle.cpp',
             'loader/cache/CachedResourceLoader.cpp',

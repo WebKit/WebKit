@@ -34,8 +34,19 @@ class CachedResource;
 class CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum CachedResourceClientType {
+        BaseResourceType,
+        ImageType,
+        FontType,
+        StyleSheetType
+    };
+
     virtual ~CachedResourceClient() { }
     virtual void notifyFinished(CachedResource*) { }
+    
+    static CachedResourceClientType expectedType() { return BaseResourceType; }
+    virtual CachedResourceClientType type() { return expectedType(); }
+
 protected:
     CachedResourceClient() { }
 };

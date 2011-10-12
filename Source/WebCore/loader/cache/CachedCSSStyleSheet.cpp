@@ -50,9 +50,9 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
 }
 
-void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
+void CachedCSSStyleSheet::didAddClient(CachedResourceClient* c)
 {
-    if (!isLoading())
+    if (!isLoading() && c->type() == CachedStyleSheetClient::expectedType())
         static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
@@ -111,9 +111,9 @@ void CachedCSSStyleSheet::checkNotify()
     if (isLoading())
         return;
 
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient *c = w.next())
-        static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
+    CachedResourceClientWalker<CachedStyleSheetClient> w(m_clients);
+    while (CachedStyleSheetClient* c = w.next())
+        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::error(CachedResource::Status status)
