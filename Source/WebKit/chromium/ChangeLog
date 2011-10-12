@@ -1,5 +1,13 @@
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Second attempt to fix Chromium Windows build after r97202.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::boundingBoxRect):
+        (WebKit::TestPopupMenuClient::setFocusedNode):
+
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium build fix attempt after r97202.
 
         * tests/PopupMenuTest.cpp:
