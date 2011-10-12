@@ -1958,6 +1958,25 @@ template<> inline CSSPrimitiveValue::operator ETextAlign() const
     }
 }
 
+template<> inline CSSPrimitiveValue::operator ETextDecoration() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return TDNONE;
+    case CSSValueUnderline:
+        return UNDERLINE;
+    case CSSValueOverline:
+        return OVERLINE;
+    case CSSValueLineThrough:
+        return LINE_THROUGH;
+    case CSSValueBlink:
+        return BLINK;
+    default:
+        ASSERT_NOT_REACHED();
+        return TDNONE;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

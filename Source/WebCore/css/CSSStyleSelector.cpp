@@ -2963,35 +2963,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyTextDecoration: {
         // list of ident
         HANDLE_INHERIT_AND_INITIAL(textDecoration, TextDecoration)
-        int t = RenderStyle::initialTextDecoration();
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
-            // do nothing
-        } else {
-            if (!value->isValueList())
-                return;
-            for (CSSValueListIterator i = value; i.hasMore(); i.advance())
-            {
-                CSSValue* item = i.value();
-                if (!item->isPrimitiveValue())
-                    continue;
-                primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                switch (primitiveValue->getIdent()) {
-                    case CSSValueNone:
-                        t = TDNONE; break;
-                    case CSSValueUnderline:
-                        t |= UNDERLINE; break;
-                    case CSSValueOverline:
-                        t |= OVERLINE; break;
-                    case CSSValueLineThrough:
-                        t |= LINE_THROUGH; break;
-                    case CSSValueBlink:
-                        t |= BLINK; break;
-                    default:
-                        return;
-                }
-            }
+        ETextDecoration t = RenderStyle::initialTextDecoration();
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* item = i.value();
+            ASSERT(item->isPrimitiveValue());
+            t |= *static_cast<CSSPrimitiveValue*>(item);
         }
-
         m_style->setTextDecoration(t);
         return;
     }

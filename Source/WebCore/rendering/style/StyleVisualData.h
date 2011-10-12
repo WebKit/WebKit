@@ -26,6 +26,7 @@
 #define StyleVisualData_h
 
 #include "LengthBox.h"
+#include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
@@ -48,7 +49,7 @@ public:
 
     LengthBox clip;
     bool hasClip : 1;
-    unsigned textDecoration : 4; // Text decorations defined *only* by this element.
+    unsigned textDecoration : ETextDecorationBits; // Text decorations defined *only* by this element.
     
     float m_zoom;
 

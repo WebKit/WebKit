@@ -334,9 +334,12 @@ enum ETextTransform {
     CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
 };
 
+static const size_t ETextDecorationBits = 4;
 enum ETextDecoration {
     TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
 };
+inline ETextDecoration operator|(ETextDecoration a, ETextDecoration b) { return ETextDecoration(int(a) | int(b)); }
+inline ETextDecoration& operator|=(ETextDecoration& a, ETextDecoration b) { return a = a | b; }
 
 enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID

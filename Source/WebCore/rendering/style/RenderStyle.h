@@ -198,7 +198,7 @@ protected:
         unsigned _visibility : 2; // EVisibility
         unsigned _text_align : 4; // ETextAlign
         unsigned _text_transform : 2; // ETextTransform
-        unsigned _text_decorations : 4;
+        unsigned _text_decorations : ETextDecorationBits;
         unsigned _cursor_style : 6; // ECursor
         unsigned _direction : 1; // TextDirection
         unsigned _border_collapse : 1; // EBorderCollapse
@@ -522,8 +522,8 @@ public:
     Length textIndent() const { return rareInheritedData->indent; }
     ETextAlign textAlign() const { return static_cast<ETextAlign>(inherited_flags._text_align); }
     ETextTransform textTransform() const { return static_cast<ETextTransform>(inherited_flags._text_transform); }
-    int textDecorationsInEffect() const { return inherited_flags._text_decorations; }
-    int textDecoration() const { return visual->textDecoration; }
+    ETextDecoration textDecorationsInEffect() const { return static_cast<ETextDecoration>(inherited_flags._text_decorations); }
+    ETextDecoration textDecoration() const { return static_cast<ETextDecoration>(visual->textDecoration); }
     int wordSpacing() const { return inherited->font.wordSpacing(); }
     int letterSpacing() const { return inherited->font.letterSpacing(); }
 
@@ -994,9 +994,9 @@ public:
     void setTextIndent(Length v) { SET_VAR(rareInheritedData, indent, v) }
     void setTextAlign(ETextAlign v) { inherited_flags._text_align = v; }
     void setTextTransform(ETextTransform v) { inherited_flags._text_transform = v; }
-    void addToTextDecorationsInEffect(int v) { inherited_flags._text_decorations |= v; }
-    void setTextDecorationsInEffect(int v) { inherited_flags._text_decorations = v; }
-    void setTextDecoration(int v) { SET_VAR(visual, textDecoration, v); }
+    void addToTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations |= v; }
+    void setTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations = v; }
+    void setTextDecoration(ETextDecoration v) { SET_VAR(visual, textDecoration, v); }
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length v) { SET_VAR(inherited, line_height, v) }
     bool setZoom(float);

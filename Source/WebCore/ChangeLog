@@ -1,3 +1,38 @@
+2011-10-12  Luke Macpherson   <macpherson@chromium.org>
+
+        Clean up CSSPropertyTextDecoration implementation and ETextDecoration usage.
+        https://bugs.webkit.org/show_bug.cgi?id=67625
+
+        Reviewed by Eric Seidel.
+
+        No new tests - no functionality changed.
+
+        The implementation of CSSPropertyTextDecoration is simlified because
+        1) CSSValueListIterator produces a valid iterator when no results available.
+        2) CSSParser only allows CSSValueNone or a list of appropriate idents.
+        3) CSSParser will treat a zero-length list as invalid at parse time.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator ETextDecoration):
+        Implement cast from CSSPrimitiveValue to ETextDecoration.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        Use ETextDecoration enum instead of int throughout.
+        (WebCore::InheritedFlags::textDecorationsInEffect):
+        (WebCore::InheritedFlags::textDecoration):
+        (WebCore::InheritedFlags::addToTextDecorationsInEffect):
+        (WebCore::InheritedFlags::setTextDecorationsInEffect):
+        (WebCore::InheritedFlags::setTextDecoration):
+        * rendering/style/RenderStyleConstants.h:
+        Introduce constant for number of bits required to represent enum.
+        (WebCore::operator|):
+        Implement | operator for bitfield enum.
+        (WebCore::operator|=):
+        Implement |= operator for bitfield enum.
+        * rendering/style/StyleVisualData.h:
+        Use ETextDecoration instead of int.
+
 2011-10-12  Tony Chang  <tony@chromium.org>
 
         Implement -webkit-flex-align for cross axis alignment in flex-flow: row
