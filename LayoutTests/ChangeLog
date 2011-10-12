@@ -1,3 +1,17 @@
+2011-10-06  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-conflict-style-079
+        https://bugs.webkit.org/show_bug.cgi?id=69551
+
+        Reviewed by Antonio Gomes.
+
+        * css2.1/20110323/border-conflict-style-079.htm: Added.
+        * css2.1/20110323/border-conflict-style-088.htm: Added.
+        * platform/chromium-linux/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/border-conflict-style-079-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/border-conflict-style-088-expected.txt: Added.
+
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Fix expectation ambiguities.

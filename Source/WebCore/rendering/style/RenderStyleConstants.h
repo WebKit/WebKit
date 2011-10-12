@@ -87,7 +87,7 @@ enum EBorderCollapse { BSEPARATE = 0, BCOLLAPSE = 1 };
 
 // These have been defined in the order of their precedence for border-collapsing. Do
 // not change this order!
-enum EBorderStyle { BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE };
+enum EBorderStyle { BNONE, BHIDDEN, INSET, GROOVE, OUTSET, RIDGE, DOTTED, DASHED, SOLID, DOUBLE };
 
 enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
 

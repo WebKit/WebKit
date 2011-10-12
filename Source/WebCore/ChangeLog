@@ -1,3 +1,14 @@
+2011-10-06  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-conflict-style-079
+        https://bugs.webkit.org/show_bug.cgi?id=69551
+
+        Reviewed by Antonio Gomes.
+
+        * css/CSSValueKeywords.in: ridge and outset were the wrong way round
+        * rendering/style/RenderStyleConstants.h: ditto
+
+
 2011-10-12  Jian Li  <jianli@chromium.org>
 
         Support passing optional filename when FormData.append() is used to
