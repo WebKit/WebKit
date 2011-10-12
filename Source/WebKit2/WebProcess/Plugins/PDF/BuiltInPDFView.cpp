@@ -61,18 +61,10 @@ PassRefPtr<BuiltInPDFView> BuiltInPDFView::create(Page* page)
 BuiltInPDFView::BuiltInPDFView(Page* page)
     : m_page(page)
 {
-    m_page->addScrollableArea(this);
 }
 
 BuiltInPDFView::~BuiltInPDFView()
 {
-    if (m_page)
-        m_page->removeScrollableArea(this);
-
-    if (m_horizontalScrollbar)
-        willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
-    if (m_verticalScrollbar)
-        willRemoveVerticalScrollbar(m_verticalScrollbar.get());
 }
 
 PluginInfo BuiltInPDFView::pluginInfo()
@@ -208,6 +200,8 @@ void BuiltInPDFView::calculateSizes()
 
 bool BuiltInPDFView::initialize(const Parameters& parameters)
 {
+    m_page->addScrollableArea(this);
+
     // Load the src URL if needed.
     if (!parameters.loadManually && !parameters.url.isEmpty())
         controller()->loadURL(pdfDocumentRequestID, "GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
@@ -217,6 +211,13 @@ bool BuiltInPDFView::initialize(const Parameters& parameters)
 
 void BuiltInPDFView::destroy()
 {
+    if (m_page)
+        m_page->removeScrollableArea(this);
+
+    if (m_horizontalScrollbar)
+        willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
+    if (m_verticalScrollbar)
+        willRemoveVerticalScrollbar(m_verticalScrollbar.get());
 }
 
 void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRectInWindowCoordinates)

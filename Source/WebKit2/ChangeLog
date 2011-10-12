@@ -5,6 +5,21 @@
 
         Reviewed by Darin Adler.
 
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::BuiltInPDFView):
+        (WebKit::BuiltInPDFView::~BuiltInPDFView):
+        (WebKit::BuiltInPDFView::initialize):
+        (WebKit::BuiltInPDFView::destroy):
+        Moved initialization and destruction code from C++ constructor and destructor to designated
+        functions. Not part of the fix, but seems related enough to fix.
+
+2011-10-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Crash when opening an embedded PDF in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=69880
+
+        Reviewed by Darin Adler.
+
         * WebProcess/Plugins/PluginView.cpp: (WebKit::PluginView::paint): Don't call plug-in that
         doesn't even have a controller yet.
 
