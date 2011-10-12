@@ -514,31 +514,6 @@ double JSCallbackObject<Parent>::toNumber(ExecState* exec) const
 }
 
 template <class Parent>
-UString JSCallbackObject<Parent>::toString(ExecState* exec) const
-{
-    JSContextRef ctx = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
-    
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
-            JSValueRef exception = 0;
-            JSValueRef value;
-            {
-                APICallbackShim callbackShim(exec);
-                value = convertToType(ctx, thisRef, kJSTypeString, &exception);
-            }
-            if (exception) {
-                throwError(exec, toJS(exec, exception));
-                return "";
-            }
-            if (value)
-                return toJS(exec, value).getString(exec);
-        }
-            
-    return Parent::toString(exec);
-}
-
-template <class Parent>
 void JSCallbackObject<Parent>::setPrivate(void* data)
 {
     m_callbackObjectData->privateData = data;

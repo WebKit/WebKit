@@ -141,7 +141,7 @@ namespace JSC {
         bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         virtual double toNumber(ExecState*) const;
-        virtual UString toString(ExecState*) const;
+        UString toString(ExecState*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSObject* unwrappedObject();

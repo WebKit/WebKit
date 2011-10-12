@@ -67,7 +67,6 @@ namespace JSC {
         // JSValue methods
         virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
         virtual double toNumber(ExecState*) const;
-        virtual UString toString(ExecState*) const;
 
         // JSObject methods
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

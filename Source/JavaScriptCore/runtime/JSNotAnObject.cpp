@@ -51,12 +51,6 @@ double JSNotAnObject::toNumber(ExecState* exec) const
     return std::numeric_limits<double>::quiet_NaN();
 }
 
-UString JSNotAnObject::toString(ExecState* exec) const
-{
-    ASSERT_UNUSED(exec, exec->hadException());
-    return "";
-}
-
 bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);

@@ -62,7 +62,6 @@ public:
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType preferredType = NoPreference) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
-    virtual UString toString(ExecState *exec) const;
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

@@ -1,3 +1,16 @@
+2011-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSCell::toString
+        https://bugs.webkit.org/show_bug.cgi?id=69677
+
+        Reviewed by Sam Weinig.
+
+        Removed UserObjectImp::toString because it's no longer necessary since 
+        clients can provide their own toString callback which will in turn be 
+        called by JSObject::toString.
+        * UserObjectImp.cpp:
+        * UserObjectImp.h:
+
 2011-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getCallDataVirtual methods

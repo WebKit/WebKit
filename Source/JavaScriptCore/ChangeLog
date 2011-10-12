@@ -1,3 +1,42 @@
+2011-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSCell::toString
+        https://bugs.webkit.org/show_bug.cgi?id=69677
+
+        Reviewed by Sam Weinig.
+
+        Removed toString from JSCallbackObject, since it is no 
+        longer necessary since we now implicitly add toString and valueOf
+        functions to object prototypes when a convertToType callback 
+        is provided, which is now the standard way to override toString 
+        and valueOf in the JSC C API.
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+        Removed toString from InterruptedExecutionError and 
+        TerminatedExecutionError and replaced it with defaultValue,
+        which JSObject::toString calls.  We'll probably have to de-virtualize 
+        defaultValue eventually, but we'll cross that bridge when we 
+        come to it.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::defaultValue):
+        (JSC::TerminatedExecutionError::defaultValue):
+        * runtime/ExceptionHelpers.h:
+
+        Removed toString from JSNotAnObject, since its return value doesn't
+        actually matter and JSObject::toString can cover it.
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+
+        De-virtualized JSCell::toString, JSObject::toString and JSString::toString.
+        Added handling of all cases for JSCell to JSCell::toString.
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toString):
+        * runtime/JSCell.h:
+
 2011-10-12  Oliver Hunt  <oliver@apple.com>
 
         Global stringStructure caches its prototype chain, abandoning a web page

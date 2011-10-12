@@ -62,7 +62,7 @@ private:
     {
     }
 
-    virtual UString toString(ExecState*) const;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
 public:
     typedef JSNonFinalObject Base;
@@ -89,7 +89,7 @@ private:
     {
     }
 
-    virtual UString toString(ExecState*) const;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
 public:
     typedef JSNonFinalObject Base;

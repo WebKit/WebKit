@@ -168,10 +168,11 @@ double JSCell::toNumber(ExecState*) const
     return 0;
 }
 
-UString JSCell::toString(ExecState*) const
+UString JSCell::toString(ExecState* exec) const
 {
-    ASSERT_NOT_REACHED();
-    return UString();
+    if (isString())
+        return static_cast<const JSString*>(this)->toString(exec);
+    return static_cast<const JSObject*>(this)->toString(exec);
 }
 
 JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
