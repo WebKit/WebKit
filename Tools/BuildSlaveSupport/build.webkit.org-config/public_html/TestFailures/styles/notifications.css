@@ -193,3 +193,27 @@ ol.notifications table.failures {
     ol.notifications table.failures tbody tr td:first-child {
         vertical-align: top;
     }
+
+    ol.notifications table.failures tbody tr td:first-child span {
+        padding: 0 2px;
+    }
+
+    ol.notifications table.failures tbody tr.TIMEOUT td:first-child span {
+        background-color: #fffc6c;
+    }
+
+    ol.notifications table.failures tbody tr.TEXT td:first-child span {
+        background-color: #e98080;
+    }
+
+    ol.notifications table.failures tbody tr.CRASH td:first-child span {
+        background-color: #ffc343;
+    }
+
+    ol.notifications table.failures tbody tr.IMAGE td:first-child span {
+        background-color: #69f;
+    }
+
+    ol.notifications table.failures tbody tr.IMAGE\+TEXT td:first-child span {
+        background-color: #96f;
+    }

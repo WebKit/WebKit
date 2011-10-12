@@ -91,7 +91,8 @@ ui.failures.FailureGrid = base.extends('table', {
         row.className = result;
         row.insertCell();
         row.insertCell();
-        row.insertCell().textContent = result;
+        var titleCell = row.insertCell();
+        titleCell.appendChild(document.createElement('span')).textContent = result;
         return row;
     },
     update: function(resultsByBuilder)
