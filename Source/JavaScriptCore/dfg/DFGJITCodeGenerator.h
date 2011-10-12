@@ -54,7 +54,9 @@ class SpeculateBooleanOperand;
 class JITCodeGenerator {
 protected:
     typedef JITCompiler::TrustedImm32 TrustedImm32;
-    typedef MacroAssembler::Imm32 Imm32;
+    typedef JITCompiler::Imm32 Imm32;
+    typedef JITCompiler::TrustedImmPtr TrustedImmPtr;
+    typedef JITCompiler::ImmPtr ImmPtr;
 
     // These constants are used to set priorities for spill order for
     // the register allocator.
@@ -336,31 +338,40 @@ protected:
         ASSERT(info.registerFormat() != DataFormatDouble);
         DataFormat registerFormat = info.registerFormat();
 
-#if USE(JSVALUE64)
         if (registerFormat == DataFormatInteger) {
             if (node.hasConstant()) {
                 ASSERT(isInt32Constant(nodeIndex));
                 m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
             } else
-                m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
+                m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
             return;
         }
 
+        if (registerFormat == DataFormatCell) {
+            if (node.isConstant()) {
+                JSValue value = valueOfJSConstant(nodeIndex);
+                ASSERT(value.isCell());
+                m_jit.move(ImmPtr(value.asCell()), info.gpr());
+            } else
+                m_jit.loadPtr(JITCompiler::payloadFor(spillMe), info.gpr());
+            return;
+        }
+
+        if (registerFormat == DataFormatStorage) {
+            m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
+            return;
+        }
+
+        ASSERT(registerFormat & DataFormatJS);
+#if USE(JSVALUE64)
         if (node.hasConstant())
             m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
-        else {
-            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell || registerFormat == DataFormatStorage);
+        else
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
-        }
-#elif USE(JSVALUE32_64)
-        if (registerFormat == DataFormatInteger || registerFormat == DataFormatCell) {
-            if (node.isConstant())
-                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
-            else
-                m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
-        } else if (registerFormat == DataFormatStorage)
-            m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
-        else 
+#else
+        if (node.hasConstant())
+            m_jit.emitLoad(valueOfJSConstant(nodeIndex), info.tagGPR(), info.payloadGPR());
+        else
             m_jit.emitLoad(nodeIndex, info.tagGPR(), info.payloadGPR());
 #endif
     }

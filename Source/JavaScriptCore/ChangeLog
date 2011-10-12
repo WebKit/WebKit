@@ -1,3 +1,12 @@
+2011-10-12  Gavin Barraclough  <baraclough@apple.com>
+
+        Unreviewed, re-land changes from #69890, #69903.
+
+        These were reverted due to bug #69897, but #69903 fixed this problem.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+
 2011-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         ValueProfile::computeUpdatedPrediction doesn't merge statistics correctly
