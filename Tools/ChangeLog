@@ -1,3 +1,14 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        _run_tests is a confusing variable name in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=69971
+
+        Reviewed by Eric Seidel.
+
+        Eric and I thought this was a function.
+
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+
 2011-10-12  Tony Chang  <tony@chromium.org>
 
         Fix test-webkitpy after r97307 and r97293.

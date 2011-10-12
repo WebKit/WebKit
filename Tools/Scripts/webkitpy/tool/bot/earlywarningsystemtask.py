@@ -40,9 +40,9 @@ class EarlyWarningSystemTaskDelegate(PatchAnalysisTaskDelegate):
 
 
 class EarlyWarningSystemTask(PatchAnalysisTask):
-    def __init__(self, delegate, patch, run_tests=True):
+    def __init__(self, delegate, patch, should_run_tests=True):
         PatchAnalysisTask.__init__(self, delegate, patch)
-        self._run_tests = run_tests
+        self._should_run_tests = should_run_tests
 
     def validate(self):
         self._patch = self._delegate.refetch_patch(self._patch)
@@ -67,6 +67,6 @@ class EarlyWarningSystemTask(PatchAnalysisTask):
             if not self._build_without_patch():
                 return False
             return self.report_failure()
-        if not self._run_tests:
+        if not self._should_run_tests:
             return True
         return self._test_patch()
