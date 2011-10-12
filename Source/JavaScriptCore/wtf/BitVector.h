@@ -29,6 +29,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WTF {
 
 // This is a space-efficient, resizeable bitvector class. In the common case it
