@@ -1089,8 +1089,6 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     m_suggestedValue = String(); // Prevent TextFieldInputType::setValue from using the suggested value.
     m_inputType->setValue(sanitizedValue, valueChanged, sendChangeEvent);
 
-    setNeedsValidityCheck();
-
     if (!valueChanged)
         return;
 
@@ -1108,6 +1106,7 @@ void HTMLInputElement::setValueInternal(const String& sanitizedValue, bool sendC
 {
     m_valueIfDirty = sanitizedValue;
     m_wasModifiedByUser = sendChangeEvent;
+    setNeedsValidityCheck();
 }
 
 double HTMLInputElement::valueAsDate() const

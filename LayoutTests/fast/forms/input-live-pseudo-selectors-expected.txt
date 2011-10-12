@@ -20,6 +20,8 @@ PASS backgroundOf(el) is invalidColor
 Change the value by DOM attribute:
 PASS backgroundOf(el) is validColor
 PASS backgroundOf(el) is invalidColor
+Change the value by DOM attribute for a focused text field:
+PASS backgroundOf(el) is validColor
 Change the value by key input:
 PASS backgroundOf(el) is validColor
 PASS backgroundOf(el) is invalidColor
