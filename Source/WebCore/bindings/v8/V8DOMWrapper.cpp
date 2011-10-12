@@ -230,24 +230,6 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
-static bool globalObjectPrototypeIsDOMWindow(v8::Handle<v8::Object> objectPrototype)
-{
-    // We can identify what type of context the global object is wrapping by looking at the
-    // internal field count of its prototype. This assumes WorkerContexts and DOMWindows have different numbers
-    // of internal fields, so a COMPILE_ASSERT is included to warn if this ever changes.
-#if ENABLE(WORKERS)
-    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8WorkerContext::internalFieldCount,
-        DOMWindowAndWorkerContextHaveUnequalFieldCounts);
-    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8DedicatedWorkerContext::internalFieldCount,
-        DOMWindowAndDedicatedWorkerContextHaveUnequalFieldCounts);
-#endif
-#if ENABLE(SHARED_WORKERS)
-    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8SharedWorkerContext::internalFieldCount,
-        DOMWindowAndSharedWorkerContextHaveUnequalFieldCounts);
-#endif
-    return objectPrototype->InternalFieldCount() == V8DOMWindow::internalFieldCount;
-}
-
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo* type, void* impl)
 {
 #if ENABLE(WORKERS)
@@ -263,7 +245,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
         v8::Handle<v8::Context> context = v8::Context::GetCurrent();
         if (!context.IsEmpty()) {
             v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-            if (globalObjectPrototypeIsDOMWindow(globalPrototype))
+            if (isWrapperOfType(globalPrototype, &V8DOMWindow::info))
                 proxy = V8Proxy::retrieve(V8DOMWindow::toNative(globalPrototype)->frame());
 #if ENABLE(WORKERS)
             else
@@ -468,7 +450,7 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> va
     if (lookup == ListenerFindOnly)
         return V8EventListenerList::findWrapper(value, isAttribute);
     v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-    if (globalObjectPrototypeIsDOMWindow(globalPrototype))
+    if (isWrapperOfType(globalPrototype, &V8DOMWindow::info))
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
 #if ENABLE(WORKERS)
     return V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(value, isAttribute);
