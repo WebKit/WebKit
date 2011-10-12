@@ -1,3 +1,20 @@
+2011-10-11  Ojan Vafai  <ojan@chromium.org>
+
+        margin-right is ignored with vertical writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=69686
+
+        Reviewed by Darin Adler.
+
+        We need to use the parent's writing mode when grabbing
+        the margin start/end for the purposes of computing the parent's
+        preferred widths.
+
+        Test: fast/writing-mode/margins.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderBlock.h:
+
 2011-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97202, r97207, and r97215.

@@ -5184,7 +5184,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
 {
     bool nowrap = style()->whiteSpace() == NOWRAP;
 
-    RenderObject *child = firstChild();
+    RenderObject* child = firstChild();
     RenderBlock* containingBlock = this->containingBlock();
     LayoutUnit floatLeftWidth = 0, floatRightWidth = 0;
     while (child) {
@@ -5209,8 +5209,8 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        Length startMarginLength = child->style()->marginStart();
-        Length endMarginLength = child->style()->marginEnd();
+        Length startMarginLength = child->style()->marginStartUsing(style());
+        Length endMarginLength = child->style()->marginEndUsing(style());
         LayoutUnit margin = 0;
         LayoutUnit marginStart = 0;
         LayoutUnit marginEnd = 0;
