@@ -1,5 +1,11 @@
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Some more WK2 test skipping.
+
+        * platform/wk2/Skipped:
+
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
        Add some tests to the WK2 skipped list which require layoutTestController or
        textInputController methods not implemented yet, and remove a WK2-specific
        result that is not longer correct.

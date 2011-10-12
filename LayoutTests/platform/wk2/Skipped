@@ -1352,7 +1352,9 @@ platform/mac/fast/events/objc-event-api.html
 
 # WebKitTestRunner needs an implementation of eventSender.beginDragWithFiles
 # https://bugs.webkit.org/show_bug.cgi?id=64285
-fast/forms/file-input-change-event.html
+fast/forms/file/file-input-change-event.html
+fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-re-render.html
 
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
