@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,41 +28,41 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "MediaStreamFrameController.h"
-#include <wtf/PassRefPtr.h>
+#include "ExceptionBase.h"
+#include "MediaStream.h"
+#include "MediaStreamList.h"
+#include "PeerHandler.h"
+#include "SignalingCallback.h"
+#include "Timer.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class MediaStream;
-class MediaStreamList;
-class ScriptExecutionContext;
-class SerializedScriptValue;
-class SignalingCallback;
-
-class PeerConnection : public RefCounted<PeerConnection>, public EventTarget, public MediaStreamFrameController::PeerConnectionClient {
+class PeerConnection : public RefCounted<PeerConnection>, public PeerHandlerClient, public EventTarget, public ActiveDOMObject {
 public:
+    static PassRefPtr<PeerConnection> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
+    ~PeerConnection();
+
+    void processSignalingMessage(const String& message, ExceptionCode&);
+
     // Name and values of the enum must match the corressponding constants in the .idl file.
-    enum {
+    enum ReadyState {
         NEW = 0,
         NEGOTIATING = 1,
         ACTIVE = 2,
         CLOSED = 3
     };
 
-    static PassRefPtr<PeerConnection> create(MediaStreamFrameController*, int id, const String& configuration, PassRefPtr<SignalingCallback>);
-    virtual ~PeerConnection();
+    ReadyState readyState() const;
 
-    MediaStreamList* localStreams();
-    MediaStreamList* remoteStreams();
-
-    unsigned short readyState() const { return m_readyState; }
-
-    void processSignalingMessage(const String& message, ExceptionCode&);
     void send(const String& text, ExceptionCode&);
-    void addStream(PassRefPtr<MediaStream>, ExceptionCode&);
-    void removeStream(PassRefPtr<MediaStream>, ExceptionCode&);
+    void addStream(const PassRefPtr<MediaStream>, ExceptionCode&);
+    void removeStream(MediaStream*, ExceptionCode&);
+    MediaStreamList* localStreams() const;
+    MediaStreamList* remoteStreams() const;
     void close(ExceptionCode&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(connecting);
@@ -70,58 +71,63 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
 
+    // PeerHandlerClient
+    virtual void iceProcessingCompleted();
+    virtual void sdpGenerated(const String& sdp);
+    virtual void dataStreamMessageReceived(const char* data, unsigned length);
+    virtual void remoteStreamAdded(PassRefPtr<MediaStreamDescriptor>);
+    virtual void remoteStreamRemoved(MediaStreamDescriptor*);
+
     // EventTarget
     virtual PeerConnection* toPeerConnection();
 
     // EventTarget implementation.
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-    // Callbacks
-    void onMessage(const String& message);
-    void onSignalingMessage(const String& message);
-    void onNegotiationStarted();
-    void onNegotiationDone();
-    void streamAdded(PassRefPtr<MediaStream>);
-    void streamRemoved(const String& streamLabel);
+    // ActiveDOMObject
+    virtual void stop();
 
     using RefCounted<PeerConnection>::ref;
     using RefCounted<PeerConnection>::deref;
 
-protected:
+private:
+    PeerConnection(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
+
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
-
-private:
-    static const size_t kMaxMessageUTF8Length = 504;
-
-    PeerConnection(MediaStreamFrameController*, int id, const String& configuration, PassRefPtr<SignalingCallback>);
-    void init();
-
-    void postSimpleEvent(const String& eventName);
-    void postMessageEvent(const String& message);
-    void postSignalingEvent(const String& message);
-    void postStreamAddedEvent(PassRefPtr<MediaStream>);
-    void postStreamRemovedEvent(PassRefPtr<MediaStream>);
-    void postStartNegotiationTask();
-
-    void dispatchSimpleEvent(const String& eventName);
-    void dispatchMessageEvent(const int&, PassRefPtr<SerializedScriptValue> data);
-    void dispatchSignalingEvent(const String& eventName);
-    void dispatchStreamEvent(const String& name, PassRefPtr<MediaStream>);
-    void dispatchStartNegotiationTask(const int&);
-
-    // EventTarget implementation.
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
+    void scheduleInitialNegotiation();
+    void initialNegotiationTimerFired(Timer<PeerConnection>*);
+    void ensureStreamChangeScheduled();
+    void streamChangeTimerFired(Timer<PeerConnection>*);
+    void scheduleReadyStateChange(ReadyState);
+    void readyStateChangeTimerFired(Timer<PeerConnection>*);
+
+    void changeReadyState(ReadyState);
+
+    RefPtr<SignalingCallback> m_signalingCallback;
+
+    ReadyState m_readyState;
+    bool m_iceStarted;
+
+    RefPtr<MediaStreamList> m_localStreams;
+    RefPtr<MediaStreamList> m_remoteStreams;
+
+    // EventTarget implementation.
     EventTargetData m_eventTargetData;
 
-    String m_configuration;
-    unsigned short m_readyState;
-    RefPtr<SignalingCallback> m_signalingCallback;
-    RefPtr<MediaStreamList> m_localStreamList;
-    RefPtr<MediaStreamList> m_remoteStreamList;
+    Timer<PeerConnection> m_initialNegotiationTimer;
+    Timer<PeerConnection> m_streamChangeTimer;
+    Timer<PeerConnection> m_readyStateChangeTimer;
+
+    MediaStreamDescriptorVector m_pendingAddStreams;
+    MediaStreamDescriptorVector m_pendingRemoveStreams;
+    Vector<ReadyState> m_pendingReadyStates;
+
+    OwnPtr<PeerHandler> m_peerHandler;
 };
 
 } // namespace WebCore

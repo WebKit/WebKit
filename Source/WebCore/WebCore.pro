@@ -3323,8 +3323,7 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
 
     v8 {
         SOURCES += \
-            bindings/v8/custom/V8NavigatorCustom.cpp \
-            bindings/v8/custom/V8PeerConnectionCustom.cpp
+            bindings/v8/custom/V8NavigatorCustom.cpp
     } else {
         SOURCES += \
             bindings/js/JSNavigatorCustom.cpp \

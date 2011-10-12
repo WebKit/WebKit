@@ -45,7 +45,6 @@ class MediaStreamTrackList;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class Page;
-class PeerConnection;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class SignalingCallback;
@@ -71,7 +70,6 @@ public:
         virtual bool isMediaStream() const { return false; }
         virtual bool isLocalMediaStream() const { return false; }
         virtual bool isGenericClient() const { return false; }
-        virtual bool isPeerConnection() const { return false; }
 
         // Called when the frame controller is being disconnected to the MediaStreamClient embedder.
         // Clients should override this to send any required shutdown messages.
@@ -140,13 +138,6 @@ public:
         virtual void unregister() { unregisterClient(this); }
     };
 
-    class PeerConnectionClient : public GenericClient {
-    public:
-        PeerConnectionClient(MediaStreamFrameController* frameController, int id) : GenericClient(frameController, id) { }
-        virtual ~PeerConnectionClient() { }
-        virtual bool isPeerConnection() const { return true; }
-    };
-
     MediaStreamFrameController(Frame*);
     virtual ~MediaStreamFrameController();
 
@@ -163,27 +154,11 @@ public:
     void stopGeneratedStream(const String& streamLabel);
     void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
 
-    PassRefPtr<PeerConnection> createPeerConnection(const String& configuration, PassRefPtr<SignalingCallback>);
-    void newPeerConnection(int peerConnectionId, const String& configuration);
-    void startNegotiation(int peerConnectionId);
-    void processSignalingMessage(int peerConnectionId, const String& message);
-    void message(int peerConnectionId, const String& message);
-    void addStream(int peerConnectionId, PassRefPtr<MediaStream>);
-    void removeStream(int peerConnectionId, PassRefPtr<MediaStream>);
-    void closePeerConnection(int peerConnectionId);
-
     // --- Calls coming back from the controller. --- //
 
     void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
     void streamFailed(const String& streamLabel);
-
-    void onSignalingMessage(int peerConnectionId, const String& message);
-    void onMessage(int peerConnectionId, const String& message);
-    void onAddStream(int peerConnectionId, const String& streamLabel, PassRefPtr<MediaStreamTrackList>);
-    void onRemoveStream(int peerConnectionId, const String& streamLabel);
-    void onNegotiationStarted(int peerConnectionId);
-    void onNegotiationDone(int peerConnectionId);
 
 private:
     class Request;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,59 +28,39 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DispatchTask.h"
-#include "ErrorEvent.h"
-#include "Event.h"
-#include "EventNames.h"
-#include "MediaStream.h"
+#include "ExceptionCode.h"
 #include "MediaStreamEvent.h"
-#include "MediaStreamList.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
-#include "SignalingCallback.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
-PassRefPtr<PeerConnection> PeerConnection::create(MediaStreamFrameController* frameController, int id, const String& configuration, PassRefPtr<SignalingCallback> signalingCallback)
+PassRefPtr<PeerConnection> PeerConnection::create(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
 {
-    // FIXME: Verify that configuration follows the specified format, if not return null.
+    RefPtr<PeerConnection> connection = adoptRef(new PeerConnection(context, serverConfiguration, signalingCallback));
+    connection->setPendingActivity(connection.get());
+    connection->scheduleInitialNegotiation();
 
-    RefPtr<PeerConnection> peerConnection = adoptRef(new PeerConnection(frameController, id, configuration, signalingCallback));
-    peerConnection->init();
-    return peerConnection.release();
+    return connection.release();
 }
 
-PeerConnection::PeerConnection(MediaStreamFrameController* frameController, int id, const String& configuration, PassRefPtr<SignalingCallback> signalingCallback)
-    : PeerConnectionClient(frameController, id)
-    , m_configuration(configuration)
-    , m_readyState(NEW)
+PeerConnection::PeerConnection(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
+    : ActiveDOMObject(context, this)
     , m_signalingCallback(signalingCallback)
+    , m_readyState(NEW)
+    , m_iceStarted(false)
+    , m_localStreams(MediaStreamList::create())
+    , m_remoteStreams(MediaStreamList::create())
+    , m_initialNegotiationTimer(this, &PeerConnection::initialNegotiationTimerFired)
+    , m_streamChangeTimer(this, &PeerConnection::streamChangeTimerFired)
+    , m_readyStateChangeTimer(this, &PeerConnection::readyStateChangeTimerFired)
+    , m_peerHandler(PeerHandler::create(this, serverConfiguration, context->securityOrigin()->toString()))
 {
-    ASSERT(frameController);
-    m_localStreamList = MediaStreamList::create();
-    m_remoteStreamList = MediaStreamList::create();
-}
-
-void PeerConnection::init()
-{
-    if (MediaStreamFrameController* frameController = mediaStreamFrameController())
-        frameController->newPeerConnection(m_clientId, m_configuration);
-
-    postStartNegotiationTask();
 }
 
 PeerConnection::~PeerConnection()
 {
-}
-
-MediaStreamList* PeerConnection::localStreams()
-{
-    return m_localStreamList.get();
-}
-
-MediaStreamList* PeerConnection::remoteStreams()
-{
-    return m_remoteStreamList.get();
 }
 
 void PeerConnection::processSignalingMessage(const String& message, ExceptionCode& ec)
@@ -89,8 +70,28 @@ void PeerConnection::processSignalingMessage(const String& message, ExceptionCod
         return;
     }
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->processSignalingMessage(m_clientId, message);
+    if (!message.startsWith("SDP\n"))
+        return;
+
+    String sdp = message.substring(4);
+
+    if (m_iceStarted) {
+        if (m_peerHandler)
+            m_peerHandler->processSDP(sdp);
+        return;
+    }
+
+    if (m_peerHandler)
+        m_peerHandler->handleInitialOffer(sdp);
+
+    ensureStreamChangeScheduled();
+    m_iceStarted = true;
+    scheduleReadyStateChange(NEGOTIATING);
+}
+
+PeerConnection::ReadyState PeerConnection::readyState() const
+{
+    return m_readyState;
 }
 
 void PeerConnection::send(const String& text, ExceptionCode& ec)
@@ -100,14 +101,16 @@ void PeerConnection::send(const String& text, ExceptionCode& ec)
         return;
     }
 
-    CString utf8 = text.utf8();
-    if (utf8.length() > kMaxMessageUTF8Length) {
+    CString data = text.utf8();
+    unsigned length = data.length();
+
+    if (length > 504) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->message(m_clientId, text);
+    if (m_peerHandler)
+        m_peerHandler->sendDataStreamMessage(data.data(), length);
 }
 
 void PeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
@@ -117,37 +120,63 @@ void PeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode&
         return;
     }
 
-    // The Stream object is guaranteed to exist since StrictTypeChecking is set in the idl.
+    // The MediaStream object is guaranteed to exist since StrictTypeChecking is set in the idl.
 
     RefPtr<MediaStream> stream = prpStream;
 
-    if (m_localStreamList->contains(stream))
+    if (m_localStreams->contains(stream.get()))
         return;
 
-    m_localStreamList->add(stream);
+    m_localStreams->append(stream);
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->addStream(m_clientId, stream);
+    // FIXME: get from stream->descriptor() when it's available, see http://webkit.org/b/68464
+    MediaStreamDescriptor* streamDescriptor = 0;
+    size_t i = m_pendingRemoveStreams.find(streamDescriptor);
+    if (i != notFound) {
+        m_pendingRemoveStreams.remove(i);
+        return;
+    }
+
+    m_pendingAddStreams.append(streamDescriptor);
+    if (m_iceStarted)
+        ensureStreamChangeScheduled();
 }
 
-void PeerConnection::removeStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
+void PeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    // The Stream object is guaranteed to exist since StrictTypeChecking is set in the idl.
+    // The MediaStream object is guaranteed to exist since StrictTypeChecking is set in the idl.
 
-    RefPtr<MediaStream> stream = prpStream;
-
-    if (!m_localStreamList->contains(stream))
+    if (!m_localStreams->contains(stream))
         return;
 
-    m_localStreamList->remove(stream);
+    m_localStreams->remove(stream);
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->removeStream(m_clientId, stream);
+    // FIXME: get from stream->descriptor() when it's available, see http://webkit.org/b/68464
+    MediaStreamDescriptor* streamDescriptor = 0;
+    size_t i = m_pendingAddStreams.find(streamDescriptor);
+    if (i != notFound) {
+        m_pendingAddStreams.remove(i);
+        return;
+    }
+
+    m_pendingRemoveStreams.append(streamDescriptor);
+    if (m_iceStarted)
+        ensureStreamChangeScheduled();
+}
+
+MediaStreamList* PeerConnection::localStreams() const
+{
+    return m_localStreams.get();
+}
+
+MediaStreamList* PeerConnection::remoteStreams() const
+{
+    return m_remoteStreams.get();
 }
 
 void PeerConnection::close(ExceptionCode& ec)
@@ -157,50 +186,57 @@ void PeerConnection::close(ExceptionCode& ec)
         return;
     }
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->closePeerConnection(m_clientId);
-
-    m_readyState = CLOSED;
+    stop();
 }
 
-void PeerConnection::onNegotiationStarted()
+void PeerConnection::iceProcessingCompleted()
 {
-    m_readyState = NEGOTIATING;
-
-    postSimpleEvent(eventNames().connectingEvent);
+    ASSERT(scriptExecutionContext()->isContextThread());
+    changeReadyState(ACTIVE);
 }
 
-void PeerConnection::onNegotiationDone()
+void PeerConnection::sdpGenerated(const String& sdp)
 {
-    m_readyState = ACTIVE;
-
-    postSimpleEvent(eventNames().openEvent);
+    ASSERT(scriptExecutionContext()->isContextThread());
+    m_signalingCallback->handleEvent("SDP\n" + sdp, this);
 }
 
-void PeerConnection::streamAdded(PassRefPtr<MediaStream> prpStream)
+void PeerConnection::dataStreamMessageReceived(const char* data, unsigned length)
 {
-    RefPtr<MediaStream> stream = prpStream;
-    m_remoteStreamList->add(stream);
-    postStreamAddedEvent(stream);
+    ASSERT(scriptExecutionContext()->isContextThread());
+    const String& message = String::fromUTF8(data, length);
+    dispatchEvent(MessageEvent::create(PassOwnPtr<MessagePortArray>(), SerializedScriptValue::create(message)));
 }
 
-void PeerConnection::streamRemoved(const String& streamLabel)
+void PeerConnection::remoteStreamAdded(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
-    ASSERT(m_remoteStreamList->contains(streamLabel));
+    ASSERT(scriptExecutionContext()->isContextThread());
 
-    RefPtr<MediaStream> stream = m_remoteStreamList->get(streamLabel);
-    m_remoteStreamList->remove(stream);
-    postStreamRemovedEvent(stream);
+    if (m_readyState == CLOSED)
+        return;
+
+    // FIXME: create a new MediaStream from the streamDescriptor once it's possible, see http://webkit.org/b/68464
+    RefPtr<MediaStream> stream = 0;
+    m_remoteStreams->append(stream);
+
+    dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
 }
 
-void PeerConnection::onMessage(const String& message)
+void PeerConnection::remoteStreamRemoved(MediaStreamDescriptor* streamDescriptor)
 {
-    postMessageEvent(message);
-}
+    ASSERT(scriptExecutionContext()->isContextThread());
+    ASSERT(streamDescriptor->owner());
 
-void PeerConnection::onSignalingMessage(const String& message)
-{
-    postSignalingEvent(message);
+    RefPtr<MediaStream> stream = streamDescriptor->owner();
+    stream->streamEnded();
+
+    if (m_readyState == CLOSED)
+        return;
+
+    ASSERT(m_remoteStreams->contains(stream.get()));
+    m_remoteStreams->remove(stream.get());
+
+    dispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
 }
 
 PeerConnection* PeerConnection::toPeerConnection()
@@ -210,7 +246,25 @@ PeerConnection* PeerConnection::toPeerConnection()
 
 ScriptExecutionContext* PeerConnection::scriptExecutionContext() const
 {
-    return mediaStreamFrameController() ? mediaStreamFrameController()->scriptExecutionContext() : 0;
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+void PeerConnection::stop()
+{
+    if (m_readyState == CLOSED)
+        return;
+
+    m_initialNegotiationTimer.stop();
+    m_streamChangeTimer.stop();
+    m_readyStateChangeTimer.stop();
+
+    if (m_peerHandler)
+        m_peerHandler->stop();
+
+    unsetPendingActivity(this);
+    m_peerHandler.clear();
+
+    changeReadyState(CLOSED);
 }
 
 EventTargetData* PeerConnection::eventTargetData()
@@ -223,88 +277,94 @@ EventTargetData* PeerConnection::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
-void PeerConnection::postMessageEvent(const String& message)
+void PeerConnection::scheduleInitialNegotiation()
 {
-    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(message);
+    ASSERT(!m_initialNegotiationTimer.isActive());
 
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
+    m_initialNegotiationTimer.startOneShot(0);
+}
+
+void PeerConnection::initialNegotiationTimerFired(Timer<PeerConnection>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_initialNegotiationTimer);
+
+    if (m_iceStarted)
         return;
-    ASSERT(context->isContextThread());
-    context->postTask(DispatchTask<PeerConnection, int, SerializedScriptValue>::create(this, &PeerConnection::dispatchMessageEvent, 0, data.release()));
+
+    MediaStreamDescriptorVector pendingAddStreams;
+    m_pendingAddStreams.swap(pendingAddStreams);
+    if (m_peerHandler)
+        m_peerHandler->produceInitialOffer(pendingAddStreams);
+
+    m_iceStarted = true;
+
+    changeReadyState(NEGOTIATING);
 }
 
-void PeerConnection::postSignalingEvent(const String& message)
+void PeerConnection::ensureStreamChangeScheduled()
 {
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
+    if (!m_streamChangeTimer.isActive())
+        m_streamChangeTimer.startOneShot(0);
+}
+
+void PeerConnection::streamChangeTimerFired(Timer<PeerConnection>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_streamChangeTimer);
+
+    if (!m_pendingAddStreams.isEmpty() && !m_pendingRemoveStreams.isEmpty())
         return;
-    ASSERT(context->isContextThread());
-    context->postTask(SimpleDispatchTask<PeerConnection, String>::create(this, &PeerConnection::dispatchSignalingEvent, message));
+
+    MediaStreamDescriptorVector pendingAddStreams;
+    MediaStreamDescriptorVector pendingRemoveStreams;
+
+    m_pendingAddStreams.swap(pendingAddStreams);
+    m_pendingRemoveStreams.swap(pendingRemoveStreams);
+
+    if (m_peerHandler)
+        m_peerHandler->processPendingStreams(pendingAddStreams, pendingRemoveStreams);
+
+    if (!pendingAddStreams.isEmpty())
+        changeReadyState(NEGOTIATING);
 }
 
-void PeerConnection::postStreamAddedEvent(PassRefPtr<MediaStream> prpStream)
+void PeerConnection::scheduleReadyStateChange(ReadyState readyState)
 {
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
+    m_pendingReadyStates.append(readyState);
+    if (!m_readyStateChangeTimer.isActive())
+        m_readyStateChangeTimer.startOneShot(0);
+}
+
+void PeerConnection::readyStateChangeTimerFired(Timer<PeerConnection>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_readyStateChangeTimer);
+
+    Vector<ReadyState> pendingReadyStates;
+    m_pendingReadyStates.swap(pendingReadyStates);
+
+    for (size_t i = 0; i < pendingReadyStates.size(); i++)
+        changeReadyState(pendingReadyStates[i]);
+}
+
+void PeerConnection::changeReadyState(ReadyState readyState)
+{
+    if (readyState == m_readyState)
         return;
-    ASSERT(context->isContextThread());
-    scriptExecutionContext()->postTask(DispatchTask<PeerConnection, String, MediaStream>::create(this, &PeerConnection::dispatchStreamEvent, eventNames().addstreamEvent, prpStream));
-}
 
-void PeerConnection::postStreamRemovedEvent(PassRefPtr<MediaStream> prpStream)
-{
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
-        return;
-    ASSERT(context->isContextThread());
-    context->postTask(DispatchTask<PeerConnection, String, MediaStream>::create(this, &PeerConnection::dispatchStreamEvent, eventNames().removestreamEvent, prpStream));
-}
+    m_readyState = readyState;
 
-void PeerConnection::postSimpleEvent(const String& eventName)
-{
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
-        return;
-    ASSERT(context->isContextThread());
-    context->postTask(SimpleDispatchTask<PeerConnection, String>::create(this, &PeerConnection::dispatchSimpleEvent, eventName));
-}
-
-void PeerConnection::postStartNegotiationTask()
-{
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
-        return;
-    ASSERT(context->isContextThread());
-    context->postTask(SimpleDispatchTask<PeerConnection, int>::create(this, &PeerConnection::dispatchStartNegotiationTask, 0));
-}
-
-void PeerConnection::dispatchMessageEvent(const int&, PassRefPtr<SerializedScriptValue> data)
-{
-    RefPtr<SerializedScriptValue> d = data;
-    dispatchEvent(MessageEvent::create(PassOwnPtr<MessagePortArray>(), d));
-}
-
-void PeerConnection::dispatchSignalingEvent(const String& message)
-{
-    m_signalingCallback->handleEvent(message, this);
-}
-
-void PeerConnection::dispatchStreamEvent(const String& name, PassRefPtr<MediaStream> stream)
-{
-    RefPtr<MediaStream> s = stream;
-    dispatchEvent(MediaStreamEvent::create(name, false, false, s));
-}
-
-void PeerConnection::dispatchSimpleEvent(const String& eventName)
-{
-    dispatchEvent(Event::create(eventName, false, false));
-}
-
-void PeerConnection::dispatchStartNegotiationTask(const int&)
-{
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->startNegotiation(m_clientId);
+    switch (m_readyState) {
+    case NEW:
+        ASSERT_NOT_REACHED();
+        break;
+    case NEGOTIATING:
+        dispatchEvent(Event::create(eventNames().connectingEvent, false, false));
+        break;
+    case ACTIVE:
+        dispatchEvent(Event::create(eventNames().openEvent, false, false));
+        break;
+    case CLOSED:
+        break;
+    }
 }
 
 } // namespace WebCore

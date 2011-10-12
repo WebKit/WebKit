@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,22 +30,25 @@
 #include "JSPeerConnection.h"
 
 #include "CallbackFunction.h"
-#include "DOMWindow.h"
-#include "Frame.h"
-#include "JSDOMWindowCustom.h"
 #include "JSSignalingCallback.h"
-#include "MediaStreamFrameController.h"
 #include "PeerConnection.h"
-
-namespace WebCore {
+#include <runtime/Error.h>
 
 using namespace JSC;
+
+namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnection(ExecState* exec)
 {
     JSPeerConnectionConstructor* jsConstructor = static_cast<JSPeerConnectionConstructor*>(exec->callee());
+    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
+    if (!context)
+        return throwVMError(exec, createReferenceError(exec, "PeerConnection constructor associated document is unavailable"));
 
-    String configuration = ustringToString(exec->argument(0).toString(exec));
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+
+    String serverConfiguration = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return JSValue::encode(JSValue());
 
@@ -52,17 +56,8 @@ EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnect
     if (exec->hadException())
         return JSValue::encode(JSValue());
 
-    Frame* frame = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
-    MediaStreamFrameController* frameController = frame ? frame->mediaStreamFrameController() : 0;
-
-    RefPtr<PeerConnection> peerConnection;
-    if (frameController)
-        peerConnection = frameController->createPeerConnection(configuration, signalingCallback);
-
-    if (!peerConnection)
-        return JSValue::encode(JSValue());
-
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), peerConnection.get())));
+    RefPtr<PeerConnection> peerConnection = PeerConnection::create(context, serverConfiguration, signalingCallback.release());
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), PeerConnection, peerConnection.get()));
 }
 
 } // namespace WebCore

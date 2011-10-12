@@ -2218,7 +2218,6 @@
             'bindings/v8/custom/V8NodeCustom.cpp',
             'bindings/v8/custom/V8NodeListCustom.cpp',
             'bindings/v8/custom/V8NotificationCenterCustom.cpp',
-            'bindings/v8/custom/V8PeerConnectionCustom.cpp',
             'bindings/v8/custom/V8PerformanceCustom.cpp',
             'bindings/v8/custom/V8PopStateEventCustom.cpp',
             'bindings/v8/custom/V8SQLResultSetRowListCustom.cpp',

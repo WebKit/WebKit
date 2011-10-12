@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,46 +48,27 @@ unsigned MediaStreamList::length() const
     return m_streams.size();
 }
 
-PassRefPtr<MediaStream> MediaStreamList::item(unsigned index) const
+MediaStream* MediaStreamList::item(unsigned index) const
 {
-    HashMap<String, RefPtr<MediaStream> >::const_iterator i = m_streams.begin();
-    for (unsigned j = 0; i != m_streams.end(); ++i, ++j) {
-        if (j == index)
-            return i->second;
-    }
-    return PassRefPtr<MediaStream>();
+    return m_streams[index].get();
 }
 
-void MediaStreamList::add(PassRefPtr<MediaStream> stream)
+void MediaStreamList::append(PassRefPtr<MediaStream> stream)
 {
-    RefPtr<MediaStream> s = stream;
-    ASSERT(!contains(s));
-    m_streams.add(s->label(), s);
+    m_streams.append(stream);
 }
 
-void MediaStreamList::remove(PassRefPtr<MediaStream> stream)
+void MediaStreamList::remove(const MediaStream* stream)
 {
-    RefPtr<MediaStream> s = stream;
-    ASSERT(contains(s));
-    m_streams.remove(s->label());
+    size_t i = m_streams.find(stream);
+    if (i != notFound)
+        return m_streams.remove(i);
 }
 
-bool MediaStreamList::contains(PassRefPtr<MediaStream> stream) const
+bool MediaStreamList::contains(const MediaStream* stream) const
 {
-    RefPtr<MediaStream> s = stream;
-    return m_streams.contains(s->label());
+    return m_streams.contains(stream);
 }
-
-bool MediaStreamList::contains(const String& label) const
-{
-    return m_streams.contains(label);
-}
-
-PassRefPtr<MediaStream> MediaStreamList::get(const String& label) const
-{
-    return m_streams.get(label);
-}
-
 
 } // namespace WebCore
 

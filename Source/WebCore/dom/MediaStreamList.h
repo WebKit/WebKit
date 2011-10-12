@@ -28,10 +28,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStream.h"
-#include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -42,19 +38,17 @@ public:
 
     // DOM methods & attributes for MediaStreamList
     unsigned length() const;
-    PassRefPtr<MediaStream> item(unsigned index) const;
+    MediaStream* item(unsigned index) const;
 
     // List manipulation
-    void add(PassRefPtr<MediaStream>);
-    void remove(PassRefPtr<MediaStream>);
-    bool contains(PassRefPtr<MediaStream>) const;
-    bool contains(const String& label) const;
-    PassRefPtr<MediaStream> get(const String& label) const;
+    void append(PassRefPtr<MediaStream>);
+    void remove(const MediaStream*);
+    bool contains(const MediaStream*) const;
 
 private:
     MediaStreamList();
 
-    HashMap<String, RefPtr<MediaStream> > m_streams;
+    Vector<RefPtr<MediaStream> > m_streams;
 };
 
 } // namespace WebCore
