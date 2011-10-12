@@ -1,3 +1,16 @@
+2011-10-12  Robert Hogan  <robert@webkit.org>
+
+        Platform-specific results for r97278
+
+        Unreviewed, adding results.
+
+        * platform/gtk/css2.1/20110323/border-conflict-style-079-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/border-conflict-style-088-expected.txt: Added.
+        * platform/mac/css2.1/20110323/border-conflict-style-079-expected.txt: Added.
+        * platform/mac/css2.1/20110323/border-conflict-style-088-expected.txt: Added.
+        * platform/qt/css2.1/20110323/border-conflict-style-079-expected.txt: Added.
+        * platform/qt/css2.1/20110323/border-conflict-style-088-expected.txt: Added.
+
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Widen expectation of flakiness according to bots.
