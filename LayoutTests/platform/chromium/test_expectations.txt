@@ -3140,9 +3140,6 @@ BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
 // New test added in r85454. Actual failure.
 BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
-// New test added in r85535.
-BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = MISSING FAIL
-
 // Flakiness around r85622.
 BUGWK65463 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
 BUGWK65463 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS

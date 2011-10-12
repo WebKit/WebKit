@@ -1,3 +1,17 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r85535. The test only works in Mac because it tests sub pixel layout and
+        depends on the specific font metrics used in Mac port.
+
+        * platform/chromium-cg-mac-leopard/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-linux/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-win/editing/inserting/typing-at-end-of-line-expected.png: Added.
+        * platform/chromium-win/editing/inserting/typing-at-end-of-line-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-12  Jer Noble  <jer.noble@apple.com>
 
         Lion: media tests with invalid URLs failing
