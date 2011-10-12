@@ -69,7 +69,7 @@ inline EventSource::EventSource(const KURL& url, ScriptExecutionContext* context
 {
 }
 
-PassRefPtr<EventSource> EventSource::create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;

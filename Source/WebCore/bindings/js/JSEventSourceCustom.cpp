@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL JSEventSourceConstructor::constructJSEventSource(Ex
         return throwVMError(exec, createReferenceError(exec, "EventSource constructor associated document is unavailable"));
 
     ExceptionCode ec = 0;
-    RefPtr<EventSource> eventSource = EventSource::create(ustringToString(url), context, ec);
+    RefPtr<EventSource> eventSource = EventSource::create(context, ustringToString(url), ec);
     if (ec) {
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());

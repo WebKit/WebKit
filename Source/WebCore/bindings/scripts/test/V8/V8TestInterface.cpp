@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     if (!context)
         return throwError("TestInterface constructor's associated context is not available", V8Proxy::ReferenceError);
 
-    RefPtr<TestInterface> obj = TestInterface::create(str1, str2, context, ec);
+    RefPtr<TestInterface> obj = TestInterface::create(context, str1, str2, ec);
     if (ec)
         goto fail;
 

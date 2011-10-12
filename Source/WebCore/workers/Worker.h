@@ -51,7 +51,7 @@ namespace WebCore {
 
     class Worker : public AbstractWorker, private WorkerScriptLoaderClient {
     public:
-        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext*, ExceptionCode&);
+        static PassRefPtr<Worker> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
         virtual ~Worker();
 
         virtual Worker* toWorker() { return this; }

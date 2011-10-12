@@ -1545,8 +1545,9 @@ END
     my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
     push(@implContent, $parameterCheckString);
 
+    my @contextArgument;
     if ($dataNode->extendedAttributes->{"ConstructorWith"} && $dataNode->extendedAttributes->{"ConstructorWith"} eq "ScriptExecutionContext") {
-        push(@extraArgumentList, "context");
+        push(@contextArgument, "context");
         push(@implContent, <<END);
 
     ScriptExecutionContext* context = getScriptExecutionContext();
@@ -1567,7 +1568,7 @@ END
         $index++;
     }
 
-    my $argumentString = join(", ", @argumentList, @extraArgumentList);
+    my $argumentString = join(", ", @contextArgument, @argumentList, @extraArgumentList);
     push(@implContent, "\n");
     push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::create(${argumentString});\n");
 

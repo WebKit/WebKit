@@ -51,7 +51,7 @@ namespace WebCore {
     class EventSource : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassRefPtr<EventSource> create(const String& url, ScriptExecutionContext*, ExceptionCode&);
+        static PassRefPtr<EventSource> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
         virtual ~EventSource();
 
         static const unsigned long long defaultReconnectDelay;

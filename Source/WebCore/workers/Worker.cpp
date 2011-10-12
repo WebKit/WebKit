@@ -56,7 +56,7 @@ inline Worker::Worker(ScriptExecutionContext* context)
 {
 }
 
-PassRefPtr<Worker> Worker::create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
+PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
 {
     RefPtr<Worker> worker = adoptRef(new Worker(context));
 
