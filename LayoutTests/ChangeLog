@@ -1,3 +1,9 @@
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Mark http/tests/media/video-play-stall.html as flaky TIMEOUT.
+
+        * platform/chromium/test_expectations.txt: Marked.
+
 2011-10-12  Robert Hogan  <robert@webkit.org>
 
         Platform-specific results for r97278

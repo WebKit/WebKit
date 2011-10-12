@@ -757,7 +757,7 @@ BUGWK29359 : fast/forms/week = PASS FAIL
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
 // canplaythrough event is sent too early.
-BUGCR73609 : http/tests/media/video-play-stall.html = TEXT
+BUGCR100103 BUGCR73609 : http/tests/media/video-play-stall.html = TEXT TIMEOUT PASS
 
 // video.buffered multiple TimeRanges support.
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
