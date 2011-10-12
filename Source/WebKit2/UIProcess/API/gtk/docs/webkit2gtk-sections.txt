@@ -19,7 +19,10 @@ WebKitWebViewBasePrivate
 <FILE>WebKitWebContext</FILE>
 <TITLE>WebKitWebContext</TITLE>
 WebKitWebContext
+WebKitCacheModel
 webkit_web_context_get_default
+webkit_web_context_get_cache_model
+webkit_web_context_set_cache_model
 <SUBSECTION Standard>
 WebKitWebContextClass
 WEBKIT_WEB_CONTEXT
@@ -43,8 +46,11 @@ webkit_web_view_get_context
 webkit_web_view_get_loader_client
 webkit_web_view_set_loader_client
 webkit_web_view_load_uri
+webkit_web_view_load_alternate_html
 webkit_web_view_go_back
 webkit_web_view_go_forward
+webkit_web_view_reload
+webkit_web_view_reload_bypass_cache
 <SUBSECTION Standard>
 WebKitWebViewClass
 WEBKIT_WEB_VIEW
@@ -62,6 +68,7 @@ WebKitWebViewPrivate
 <FILE>WebKitWebLoaderClient</FILE>
 <TITLE>WebKitWebLoaderClient</TITLE>
 WebKitWebLoaderClient
+webkit_web_loader_client_get_estimated_progress
 <SUBSECTION Standard>
 WebKitWebLoaderClientClass
 WEBKIT_WEB_LOADER_CLIENT
@@ -78,7 +85,13 @@ webkit_web_loader_client_get_type
 <SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
+WEBKIT_PLUGIN_ERROR
+WEBKIT_POLICY_ERROR
 WebKitNetworkError
+WebKitPluginError
+WebKitPolicyError
 webkit_network_error_quark
+webkit_plugin_error_quark
+webkit_policy_error_quark
 </SECTION>
 

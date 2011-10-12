@@ -48,10 +48,14 @@ CFILE_GLOB=$(top_srcdir)/Source/WebKit2/UIProcess/API/gtk/*.cpp
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
 IGNORE_HFILES = \
-   WebKitWebViewBasePrivate.h \
-   PageClientImpl.h \
-   WebKitPrivate.h \
-   WebKitWebContextPrivate.h
+	LoadTrackingTest.h \
+	PageClientImpl.h \
+	TestMain.h \
+	WebViewTest.h \
+	WebKitDefines.h \
+	WebKitPrivate.h \
+	WebKitWebContextPrivate.h \
+	WebKitWebViewBasePrivate.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

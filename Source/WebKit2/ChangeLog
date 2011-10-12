@@ -1,3 +1,16 @@
+2011-10-12  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Add few more API's to gtk-doc section file.
+        https://bugs.webkit.org/show_bug.cgi?id=69921
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Generate documentation for existing WebKit2-GTK+ API's,
+        which are not yet the part of gtk-doc documentation.
+
+        * UIProcess/API/gtk/docs/GNUmakefile.am: List ignore files.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: API's addition.
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
