@@ -1,3 +1,22 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dir attribute is converted into direction property when merging paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=69680
+
+        Reviewed by Enrica Casucci.
+
+        Don't include direction and unicode-bidi properties in the wrapping style.
+
+        Tests: editing/deleting/merge-paragraph-into-h1-with-dir-2.html
+               editing/deleting/merge-paragraph-into-h1-with-dir.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement): Skip unicode-bidi and direction properties.
+        (WebCore::EditingStyle::wrappingStyleForSerialization): Extracted from StyledMarkupAccumulator::serializeNodes.
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::serializeNodes): Calls wrappingStyleForSerialization.
+
 2011-10-11  Nico Weber  <thakis@chromium.org>
 
         [chromium] Let rule_binding use os.execvp() instead of subprocess.call() to spawn fewer processes.

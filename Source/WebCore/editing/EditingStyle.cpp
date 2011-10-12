@@ -887,10 +887,43 @@ void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, 
 
     const Vector<OwnPtr<HTMLAttributeEquivalent> >& attributeEquivalents = htmlAttributeEquivalents();
     for (size_t i = 0; i < attributeEquivalents.size(); ++i) {
+        if (attributeEquivalents[i]->attributeName() == HTMLNames::dirAttr)
+            continue; // We don't want to include directionality
         if (elementMatchesAndPropertyIsNotInInlineStyleDecl(attributeEquivalents[i].get(), element, mode, m_mutableStyle.get()))
             attributeEquivalents[i]->addToStyle(element, this);
     }
 }
+
+PassRefPtr<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node* context, bool shouldAnnotate)
+{
+    RefPtr<EditingStyle> wrappingStyle;
+    if (shouldAnnotate) {
+        wrappingStyle = EditingStyle::create(context, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+
+        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
+        // to help us differentiate those styles from ones that the user has applied.
+        // This helps us get the color of content pasted into blockquotes right.
+        wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(context), isMailBlockquote, CanCrossEditingBoundary));
+
+        // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
+        wrappingStyle->collapseTextDecorationProperties();
+        
+        return wrappingStyle.release();
+    }
+
+    wrappingStyle = EditingStyle::create();
+
+    // When not annotating for interchange, we only preserve inline style declarations.
+    for (Node* node = context; node && !node->isDocumentNode(); node = node->parentNode()) {
+        if (node->isStyledElement()) {
+            wrappingStyle->mergeInlineAndImplicitStyleOfElement(static_cast<StyledElement*>(node), EditingStyle::DoNotOverrideValues,
+                EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+        }
+    }
+
+    return wrappingStyle.release();
+}
+
 
 static void mergeTextDecorationValues(CSSValueList* mergedValue, const CSSValueList* valueToMerge)
 {

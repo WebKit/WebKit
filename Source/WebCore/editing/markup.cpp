@@ -343,29 +343,8 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
         m_highestNodeToBeSerialized = lastClosed;
     }
 
-    if (Node* parentOfHighestNode = m_highestNodeToBeSerialized ? m_highestNodeToBeSerialized->parentNode() : 0) {
-        if (shouldAnnotate()) {
-            m_wrappingStyle = EditingStyle::create(parentOfHighestNode, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
-
-            // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
-            // to help us differentiate those styles from ones that the user has applied.
-            // This helps us get the color of content pasted into blockquotes right.
-            m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isMailBlockquote, CanCrossEditingBoundary));
-
-            // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
-            m_wrappingStyle->collapseTextDecorationProperties();
-        } else {
-            m_wrappingStyle = EditingStyle::create();
-
-            // When not annotating for interchange, we only preserve inline style declarations.
-            for (Node* node = parentOfHighestNode; node && !node->isDocumentNode(); node = node->parentNode()) {
-                if (node->isStyledElement()) {
-                    m_wrappingStyle->mergeInlineAndImplicitStyleOfElement(static_cast<StyledElement*>(node), EditingStyle::DoNotOverrideValues,
-                        EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
-                }
-            }
-        }
-    }
+    if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode())
+        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(m_highestNodeToBeSerialized->parentNode(), shouldAnnotate());
 
     return traverseNodesForSerialization(startNode, pastEnd, EmitString);
 }

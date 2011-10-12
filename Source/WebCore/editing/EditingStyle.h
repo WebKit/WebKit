@@ -125,7 +125,7 @@ public:
     void mergeTypingStyle(Document*);
     enum CSSPropertyOverrideMode { OverrideValues, DoNotOverrideValues };
     void mergeInlineStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude = AllProperties);
-    void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
+    static PassRefPtr<EditingStyle> wrappingStyleForSerialization(Node* context, bool shouldAnnotate);
     void mergeStyleFromRules(StyledElement*);
     void mergeStyleFromRulesForSerialization(StyledElement*);
     void removeStyleFromRulesAndContext(StyledElement*, Node* context);
@@ -148,6 +148,7 @@ private:
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
+    void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyle(CSSMutableStyleDeclaration*, CSSPropertyOverrideMode);
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;

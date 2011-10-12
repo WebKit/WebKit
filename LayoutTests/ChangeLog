@@ -1,3 +1,18 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dir attribute is converted into direction property when merging paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=69680
+
+        Reviewed by Enrica Casucci.
+
+        Added tests to merge paragraphs inside a block with dir attribute. WebKit should not add
+        direction or unicode-bidi properties.
+
+        * editing/deleting/merge-paragraph-into-h1-with-dir-2-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-dir-2.html: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-dir-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-dir.html: Added.
+
 2011-10-11  Fady Samuel  <fsamuel@chromium.org>
 
         Towards making PopupMenuClient more testable
