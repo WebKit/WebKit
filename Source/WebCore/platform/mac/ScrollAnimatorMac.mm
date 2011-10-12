@@ -452,11 +452,13 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
     return adoptPtr(new ScrollAnimatorMac(scrollableArea));
 }
 
+#if USE(SCROLLBAR_PAINTER)
 static ScrollbarThemeMac* macScrollbarTheme()
 {
     ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
     return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeMac*>(scrollbarTheme) : 0;
 }
+#endif
 
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
