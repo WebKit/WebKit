@@ -86,13 +86,7 @@ public:
     bool hit;
 };
 
-#if OS(WINDOWS) || OS(MAC_OS_X)
-#define MAYBE_startPostAndWaitOnCondition DISABLED_startPostAndWaitOnCondition
-#else
-#define MAYBE_startPostAndWaitOnCondition startPostAndWaitOnCondition
-#endif
-
-TEST(CCThreadTest, MAYBE_startPostAndWaitOnCondition)
+TEST(CCThreadTest, DISABLED_startPostAndWaitOnCondition)
 {
     OwnPtr<WebThread> webThread = adoptPtr(webKitPlatformSupport()->createThread("test"));
 
