@@ -1,3 +1,469 @@
+2011-10-12  Cary Clark  <caryclark@google.com>
+
+        Roll back image baseline changes from
+        http://trac.webkit.org/changeset/96814 -- they were generated on a
+        headless Mac, and thus used the wrong color profile.
+
+        Unreviewed rebaselining.
+
+        * platform/chromium-mac/css1/basic/comments-expected.png:
+        * platform/chromium-mac/css1/basic/containment-expected.png:
+        * platform/chromium-mac/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-mac/css1/basic/inheritance-expected.png:
+        * platform/chromium-mac/css1/box_properties/border-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_style-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/clear-expected.png:
+        * platform/chromium-mac/css1/box_properties/float_margin-expected.png:
+        * platform/chromium-mac/css1/box_properties/height-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_right-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/width-expected.png:
+        * platform/chromium-mac/css1/cascade/cascade_order-expected.png:
+        * platform/chromium-mac/css1/classification/display-expected.png:
+        * platform/chromium-mac/css1/classification/list_style_type-expected.png:
+        * platform/chromium-mac/css1/classification/white_space-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_attachment-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_position-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_repeat-expected.png:
+        * platform/chromium-mac/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_size-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_weight-expected.png:
+        * platform/chromium-mac/css1/formatting_model/floating_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/height_of_lines-expected.png:
+        * platform/chromium-mac/css1/formatting_model/horizontal_formatting-expected.png:
+        * platform/chromium-mac/css1/formatting_model/inline_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/replaced_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/chromium-mac/css1/pseudo/anchor-expected.png:
+        * platform/chromium-mac/css1/pseudo/firstletter-expected.png:
+        * platform/chromium-mac/css1/pseudo/firstline-expected.png:
+        * platform/chromium-mac/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/chromium-mac/css1/text_properties/letter_spacing-expected.png:
+        * platform/chromium-mac/css1/text_properties/line_height-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_decoration-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.png:
+        * platform/chromium-mac/css1/text_properties/vertical_align-expected.png:
+        * platform/chromium-mac/css1/text_properties/word_spacing-expected.png:
+        * platform/chromium-mac/css1/units/color_units-expected.png:
+        * platform/chromium-mac/css1/units/length_units-expected.png:
+        * platform/chromium-mac/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/abspos-non-replaced-width-margin-000-ref-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/abspos-replaced-width-margin-000-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/abspos-replaced-width-margin-000-ref-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-002-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-004-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-006-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-008-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-010-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-012-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-014-expected.png:
+        * platform/chromium-mac/css2.1/20110323/block-non-replaced-height-016-expected.png:
+        * platform/chromium-mac/css2.1/t0803-c5502-mrgn-r-02-c-expected.png:
+        * platform/chromium-mac/css2.1/t0803-c5505-mrgn-02-c-expected.png:
+        * platform/chromium-mac/css2.1/t080301-c411-vt-mrgn-00-b-expected.png:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5526-fltclr-00-c-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1002-c5523-width-02-b-g-expected.png:
+        * platform/chromium-mac/css2.1/t1202-counters-08-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-09-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t140201-c535-bg-fixd-00-b-g-expected.png:
+        * platform/chromium-mac/css2.1/t140201-c537-bgfxps-00-c-ag-expected.png:
+        * platform/chromium-mac/css2.1/t1508-c527-font-07-b-expected.png:
+        * platform/chromium-mac/editing/inserting/insert-div-023-expected.png:
+        * platform/chromium-mac/editing/selection/focus_editable_html-expected.png:
+        * platform/chromium-mac/editing/selection/select-all-003-expected.png:
+        * platform/chromium-mac/editing/selection/select-all-004-expected.png:
+        * platform/chromium-mac/fast/backgrounds/background-inherit-color-bug-expected.png:
+        * platform/chromium-mac/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-mac/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/chromium-mac/fast/block/basic/truncation-rtl-expected.png:
+        * platform/chromium-mac/fast/block/float/008-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/013-expected.png:
+        * platform/chromium-mac/fast/block/float/019-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/021-expected.png:
+        * platform/chromium-mac/fast/block/float/025-expected.png:
+        * platform/chromium-mac/fast/block/float/026-expected.png:
+        * platform/chromium-mac/fast/block/float/027-expected.png:
+        * platform/chromium-mac/fast/block/float/028-expected.png:
+        * platform/chromium-mac/fast/block/float/032-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/035-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/avoidance-percent-width-strict-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/br-with-clear-2-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/float-not-removed-from-next-sibling4-expected.png:
+        * platform/chromium-mac/fast/block/float/nested-clearance-expected.png: Removed.
+        * platform/chromium-mac/fast/block/float/relative-painted-twice-expected.png:
+        * platform/chromium-mac/fast/block/lineboxcontain/parsing-invalid-expected.png:
+        * platform/chromium-mac/fast/block/margin-collapse/104-expected.png:
+        * platform/chromium-mac/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/chromium-mac/fast/block/positioning/047-expected.png:
+        * platform/chromium-mac/fast/block/positioning/055-expected.png:
+        * platform/chromium-mac/fast/block/positioning/auto/007-expected.png:
+        * platform/chromium-mac/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/chromium-mac/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/chromium-mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.png: Removed.
+        * platform/chromium-mac/fast/block/positioning/negative-rel-position-expected.png: Removed.
+        * platform/chromium-mac/fast/block/positioning/relative-overflow-block-expected.png: Removed.
+        * platform/chromium-mac/fast/block/positioning/relative-overflow-replaced-expected.png:
+        * platform/chromium-mac/fast/block/positioning/relative-overflow-replaced-float-expected.png:
+        * platform/chromium-mac/fast/block/positioning/vertical-lr/002-expected.png: Removed.
+        * platform/chromium-mac/fast/block/positioning/vertical-rl/002-expected.png: Removed.
+        * platform/chromium-mac/fast/body-propagation/overflow/002-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/002-xhtml-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/003-declarative-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/003-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/003-xhtml-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/004-declarative-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/004-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/004-xhtml-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/006-declarative-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/006-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/006-xhtml-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/007-declarative-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/007-expected.png:
+        * platform/chromium-mac/fast/body-propagation/overflow/007-xhtml-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-massive-scale-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac/fast/borders/inline-mask-overlay-image-expected.png:
+        * platform/chromium-mac/fast/borders/rtl-border-01-expected.png:
+        * platform/chromium-mac/fast/borders/rtl-border-02-expected.png:
+        * platform/chromium-mac/fast/borders/rtl-border-03-expected.png:
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac/fast/box-sizing/box-sizing-expected.png: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac/fast/clip/014-expected.png:
+        * platform/chromium-mac/fast/css-generated-content/014-expected.png:
+        * platform/chromium-mac/fast/css/005-expected.png:
+        * platform/chromium-mac/fast/css/MarqueeLayoutTest-expected.png:
+        * platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.png:
+        * platform/chromium-mac/fast/css/border-height-expected.png: Removed.
+        * platform/chromium-mac/fast/css/color-correction-backgrounds-and-text-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-on-background-image-expected.png:
+        * platform/chromium-mac/fast/css/empty-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/first-child-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/hsl-color-expected.png:
+        * platform/chromium-mac/fast/css/last-child-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/line-height-overflow-expected.png: Removed.
+        * platform/chromium-mac/fast/css/nested-floating-relative-position-percentages-expected.png: Removed.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-mac/fast/css/only-child-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/chromium-mac/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-mac/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-mac/fast/css/word-space-extra-expected.png:
+        * platform/chromium-mac/fast/dom/clone-node-dynamic-style-expected.png:
+        * platform/chromium-mac/fast/dom/scroll-reveal-top-overflow-expected.png: Removed.
+        * platform/chromium-mac/fast/dynamic/anchor-lock-expected.png: Removed.
+        * platform/chromium-mac/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-mac/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/chromium-mac/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/chromium-mac/fast/events/pointer-events-2-expected.png:
+        * platform/chromium-mac/fast/events/standalone-image-drag-to-editable-expected.png:
+        * platform/chromium-mac/fast/flexbox/009-expected.png:
+        * platform/chromium-mac/fast/flexbox/016-expected.png:
+        * platform/chromium-mac/fast/flexbox/flex-hang-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/fieldset-align-expected.png:
+        * platform/chromium-mac/fast/forms/form-hides-table-expected.png:
+        * platform/chromium-mac/fast/forms/textAreaLineHeight-expected.png:
+        * platform/chromium-mac/fast/frames/frame-scrolling-attribute-expected.png: Removed.
+        * platform/chromium-mac/fast/frames/iframe-scrolling-attribute-expected.png:
+        * platform/chromium-mac/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-color-stop-units-expected.png:
+        * platform/chromium-mac/fast/html/details-position-expected.png:
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.png: Removed.
+        * platform/chromium-mac/fast/inline-block/tricky-baseline-expected.png:
+        * platform/chromium-mac/fast/inline/inline-borders-with-bidi-override-expected.png:
+        * platform/chromium-mac/fast/inline/inline-continuation-borders-expected.png:
+        * platform/chromium-mac/fast/inline/long-wrapped-line-expected.png: Removed.
+        * platform/chromium-mac/fast/invalid/residual-style-expected.png:
+        * platform/chromium-mac/fast/layers/overflow-scroll-auto-switch-expected.png: Removed.
+        * platform/chromium-mac/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/chromium-mac/fast/lists/001-expected.png:
+        * platform/chromium-mac/fast/lists/001-vertical-expected.png:
+        * platform/chromium-mac/fast/lists/008-expected.png:
+        * platform/chromium-mac/fast/lists/008-vertical-expected.png:
+        * platform/chromium-mac/fast/lists/li-br-expected.png: Removed.
+        * platform/chromium-mac/fast/lists/ol-start-parsing-expected.png:
+        * platform/chromium-mac/fast/lists/olstart-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-02-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-03-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-04-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-05-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-06-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-07-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-09-expected.png:
+        * platform/chromium-mac/fast/media/mq-width-absolute-01-expected.png:
+        * platform/chromium-mac/fast/media/mq-width-absolute-02-expected.png:
+        * platform/chromium-mac/fast/media/mq-width-absolute-03-expected.png:
+        * platform/chromium-mac/fast/media/mq-width-absolute-04-expected.png:
+        * platform/chromium-mac/fast/multicol/client-rects-expected.png:
+        * platform/chromium-mac/fast/multicol/column-break-with-balancing-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/column-rules-stacking-expected.png:
+        * platform/chromium-mac/fast/multicol/columns-shorthand-parsing-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/float-paginate-complex-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/float-paginate-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/layers-split-across-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/paginate-block-replaced-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/positioned-with-constrained-height-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/scrolling-overflow-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/chromium-mac/fast/multicol/table-vertical-align-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-paginate-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-paginate-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Removed.
+        * platform/chromium-mac/fast/overflow/002-expected.png:
+        * platform/chromium-mac/fast/overflow/003-expected.png:
+        * platform/chromium-mac/fast/overflow/005-expected.png: Removed.
+        * platform/chromium-mac/fast/overflow/007-expected.png:
+        * platform/chromium-mac/fast/overflow/008-expected.png:
+        * platform/chromium-mac/fast/overflow/childFocusRingClip-expected.png:
+        * platform/chromium-mac/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/chromium-mac/fast/overflow/float-in-relpositioned-expected.png:
+        * platform/chromium-mac/fast/overflow/hit-test-overflow-controls-expected.png:
+        * platform/chromium-mac/fast/overflow/image-selection-highlight-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-auto-position-absolute-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-auto-table-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-stacking-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-text-hit-testing-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-update-transform-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/chromium-mac/fast/overflow/position-fixed-transform-clipping-expected.png:
+        * platform/chromium-mac/fast/overflow/scrollbar-position-update-expected.png:
+        * platform/chromium-mac/fast/overflow/table-overflow-float-expected.png:
+        * platform/chromium-mac/fast/overflow/unreachable-overflow-rtl-bug-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/block-selection-gap-stale-cache-2-expected.png:
+        * platform/chromium-mac/fast/repaint/fixed-expected.png:
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/chromium-mac/fast/repaint/fixed-tranformed-expected.png:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-mac/fast/repaint/overflow-scroll-body-appear-expected.png:
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/chromium-mac/fast/repaint/select-option-background-color-expected.png:
+        * platform/chromium-mac/fast/repaint/selection-gap-overflow-scroll-2-expected.png:
+        * platform/chromium-mac/fast/replaced/005-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-mac/fast/selectors/166-expected.png:
+        * platform/chromium-mac/fast/table/023-expected.png: Removed.
+        * platform/chromium-mac/fast/table/027-vertical-expected.png:
+        * platform/chromium-mac/fast/table/028-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/table/034-expected.png:
+        * platform/chromium-mac/fast/table/038-vertical-expected.png:
+        * platform/chromium-mac/fast/table/040-expected.png:
+        * platform/chromium-mac/fast/table/040-vertical-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/002-vertical-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.png:
+        * platform/chromium-mac/fast/table/edge-offsets-expected.png:
+        * platform/chromium-mac/fast/table/empty-cells-expected.png:
+        * platform/chromium-mac/fast/table/height-percent-test-expected.png: Removed.
+        * platform/chromium-mac/fast/table/height-percent-test-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/table/overflowHidden-expected.png:
+        * platform/chromium-mac/fast/table/prepend-in-anonymous-table-expected.png:
+        * platform/chromium-mac/fast/table/table-display-types-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/table/wide-colspan-expected.png: Removed.
+        * platform/chromium-mac/fast/table/wide-column-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-mac/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac/fast/text/large-text-composed-char-expected.png:
+        * platform/chromium-mac/fast/text/softHyphen-expected.png: Removed.
+        * platform/chromium-mac/fast/text/text-letter-spacing-expected.png:
+        * platform/chromium-mac/fast/text/wbr-expected.png:
+        * platform/chromium-mac/fast/text/whitespace/024-expected.png:
+        * platform/chromium-mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png:
+        * platform/chromium-mac/fast/text/word-break-expected.png:
+        * platform/chromium-mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.png:
+        * platform/chromium-mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.png:
+        * platform/chromium-mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac/fast/writing-mode/text-orientation-basic-expected.png:
+        * platform/chromium-mac/fonts/cursive-expected.png:
+        * platform/chromium-mac/fonts/default-expected.png:
+        * platform/chromium-mac/fonts/fantasy-expected.png:
+        * platform/chromium-mac/fonts/serif-expected.png:
+        * platform/chromium-mac/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-zoom-expected.png:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/scrollbars-on-positioned-content-expected.png:
+        * platform/chromium-mac/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-mac/svg/custom/altglyph-expected.png:
+        * platform/chromium-mac/svg/custom/external-paintserver-reference-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-div-area-expected.png:
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png:
+        * platform/chromium-mac/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/chromium-mac/svg/custom/junk-data-expected.png:
+        * platform/chromium-mac/svg/custom/linking-base-external-reference-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/missing-xlink-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-no-width-height-expected.png:
+        * platform/chromium-mac/svg/custom/text-xy-updates-SVGList-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/use-font-face-crash-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-appendItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-removeItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-xml-dom-modifications-expected.png:
+        * platform/chromium-mac/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPathSegList-appendItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPathSegList-clear-and-initialize-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPathSegList-insertItemBefore-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPathSegList-removeItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPathSegList-replaceItem-expected.png:
+        * platform/chromium-mac/svg/dom/SVGPointList-basics-expected.png:
+        * platform/chromium-mac/svg/dom/SVGStringList-basics-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/chromium-mac/svg/in-html/circle-expected.png:
+        * platform/chromium-mac/svg/overflow: Removed.
+        * platform/chromium-mac/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Removed.
+        * platform/chromium-mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Removed.
+        * platform/chromium-mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Removed.
+        * platform/chromium-mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Removed.
+        * platform/chromium-mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png: Removed.
+        * platform/chromium-mac/svg/text/kerning-expected.png:
+        * platform/chromium-mac/svg/text/multichar-glyph-expected.png:
+        * platform/chromium-mac/svg/zoom/page/absolute-sized-document-scrollbars-expected.png:
+        * platform/chromium-mac/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10269-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug113235-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug113235-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug11944-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug120364-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug149275-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug22019-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug23151-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug32205-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug38916-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug43039-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46480-1-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46480-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug56405-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug5835-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug650-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug92143-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug96343-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_fix-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/col_widths_fix_fixPer-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/nested1-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/one_row-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_table_bgcolor_name-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_bgcolor_name-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_bgcolor_rgb-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_height-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_nowrap-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_bgcolor_name-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_bgcolor_rgb-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_height-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_nowrap-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_tr_bgcolor_name-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_tr_bgcolor_rgb-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/nestedTables-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/test6-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/wa_table_tr_align-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug101759-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug32205-1-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug67915-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug80762-2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/backgrounds-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/col_span2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/columns-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/conflicts-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/standards1-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/chromium-mac/transforms/2d/transform-fixed-container-expected.png:
+
 2011-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][ARMv5] inspector/elements/edit-dom-actions.html and ~/elements-delete-inline-style.html times out
