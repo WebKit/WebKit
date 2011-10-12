@@ -1,5 +1,11 @@
 2011-10-11  Oliver Hunt  <oliver@apple.com>
 
+        Remove unintentional logging.
+
+        * heap/Heap.cpp:
+
+2011-10-11  Oliver Hunt  <oliver@apple.com>
+
         Tidy up card walking logic
         https://bugs.webkit.org/show_bug.cgi?id=69883
 

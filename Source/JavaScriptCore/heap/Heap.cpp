@@ -43,7 +43,7 @@ namespace {
 
 static const size_t largeHeapSize = 16 * 1024 * 1024;
 static const size_t smallHeapSize = 512 * 1024;
-#define ENABLE_GC_LOGGING 1
+
 #if ENABLE(GC_LOGGING)
 #if COMPILER(CLANG)
 #define DEFINE_GC_LOGGING_GLOBAL(type, name, arguments) \
