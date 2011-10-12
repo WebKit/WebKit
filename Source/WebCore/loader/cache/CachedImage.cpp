@@ -99,7 +99,7 @@ void CachedImage::didAddClient(CachedResourceClient* c)
         m_image->setData(m_data, true);
     }
 
-    if (m_image && !m_image->isNull() && c->type() == CachedImageClient::expectedType())
+    if (m_image && !m_image->isNull() && c->resourceClientType() == CachedImageClient::expectedType())
         static_cast<CachedImageClient*>(c)->imageChanged(this);
 
     CachedResource::didAddClient(c);

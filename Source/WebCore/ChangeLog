@@ -1,3 +1,32 @@
+2011-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Clang build broken
+        https://bugs.webkit.org/show_bug.cgi?id=69891
+
+        Reviewed by Darin Adler.
+
+        Rename CachedResourceClient::type to CachedResourceClient::resourceClientType
+        to avoid conflict in CSSImportRule.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::didAddClient):
+        * loader/cache/CachedFont.h:
+        (WebCore::CachedFontClient::resourceClientType):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        * loader/cache/CachedImage.h:
+        (WebCore::CachedImageClient::resourceClientType):
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::resourceClientType):
+        * loader/cache/CachedResourceClientWalker.h:
+        (WebCore::CachedResourceClientWalker::next):
+        * loader/cache/CachedStyleSheetClient.h:
+        (WebCore::CachedStyleSheetClient::resourceClientType):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dir attribute is converted into direction property when merging paragraphs

@@ -84,7 +84,7 @@ class CachedFontClient : public CachedResourceClient {
 public:
     virtual ~CachedFontClient() { }
     static CachedResourceClientType expectedType() { return FontType; }
-    virtual CachedResourceClientType type() { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
     virtual void fontLoaded(CachedFont*) { }
 };
 

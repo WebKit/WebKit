@@ -45,7 +45,7 @@ public:
     virtual void notifyFinished(CachedResource*) { }
     
     static CachedResourceClientType expectedType() { return BaseResourceType; }
-    virtual CachedResourceClientType type() { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
 
 protected:
     CachedResourceClient() { }

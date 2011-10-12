@@ -48,7 +48,7 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(const ResourceRequest& resourceRequest)
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient* c)
 {  
-    if (!isLoading() && c->type() == CachedStyleSheetClient::expectedType())
+    if (!isLoading() && c->resourceClientType() == CachedStyleSheetClient::expectedType())
         static_cast<CachedStyleSheetClient*>(c)->setXSLStyleSheet(m_resourceRequest.url(), m_response.url(), m_sheet);
 }
 
