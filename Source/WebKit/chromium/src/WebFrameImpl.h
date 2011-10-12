@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "PlatformString.h"
+#include <wtf/Compiler.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -148,6 +149,7 @@ public:
     virtual void unmarkText();
     virtual bool hasMarkedText() const;
     virtual WebRange markedRange() const;
+    virtual void setSelectionToRange(const WebRange&) OVERRIDE;
     virtual bool firstRectForCharacterRange(unsigned location, unsigned length, WebRect&) const;
     virtual size_t characterIndexForPoint(const WebPoint&) const;
     virtual bool executeCommand(const WebString&, const WebNode& = WebNode());
