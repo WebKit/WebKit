@@ -209,6 +209,12 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
 
 // FIXME: Make all these flow aware methods actually be flow aware.
 
+bool RenderFlexibleBox::isFlowAwareLogicalHeightAuto() const
+{
+    Length height = isHorizontalFlow() ? style()->height() : style()->width();
+    return height.isAuto();
+}
+
 void RenderFlexibleBox::setFlowAwareLogicalHeight(LayoutUnit size)
 {
     setLogicalHeight(size);
@@ -234,6 +240,11 @@ LayoutUnit RenderFlexibleBox::flowAwareLogicalWidth() const
     return logicalWidth();
 }
 
+LayoutUnit RenderFlexibleBox::flowAwareContentLogicalHeight() const
+{
+    return contentLogicalHeight();
+}
+
 LayoutUnit RenderFlexibleBox::flowAwareContentLogicalWidth() const
 {
     return contentLogicalWidth();
@@ -252,6 +263,12 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 {
     return borderAfter();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight() const
+{
+    // FIXME: Only do the flow check once.
+    return flowAwareBorderBefore() + flowAwarePaddingBefore() + flowAwarePaddingAfter() + flowAwareBorderAfter();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingStart() const
@@ -274,6 +291,11 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginStartForChild(RenderBox* child) con
     return marginStartForChild(child);
 }
 
+LayoutUnit RenderFlexibleBox::flowAwareMarginEndForChild(RenderBox* child) const
+{
+    return marginStartForChild(child);
+}
+
 LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(RenderBox* child) const
 {
     return marginBeforeForChild(child);
@@ -282,6 +304,17 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(RenderBox* child) co
 LayoutUnit RenderFlexibleBox::flowAwareMarginAfterForChild(RenderBox* child) const
 {
     return marginAfterForChild(child);
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareMarginLogicalHeightForChild(RenderBox* child) const
+{
+    // FIXME: Only do the flow check once.
+    return flowAwareMarginBeforeForChild(child) + flowAwareMarginAfterForChild(child);
+}
+
+LayoutPoint RenderFlexibleBox::flowAwareLogicalLocationForChild(RenderBox* child) const
+{
+    return isHorizontalFlow() ? child->location() : child->location().transposedPoint();
 }
 
 void RenderFlexibleBox::setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit margin)
@@ -355,8 +388,6 @@ void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
     }
 
     layoutAndPlaceChildrenInlineDirection(flexIterator, childSizes, availableFreeSpace, totalPositiveFlexibility);
-
-    // FIXME: Handle distribution of cross-axis space (third distribution round).
 }
 
 float RenderFlexibleBox::logicalPositiveFlexForChild(RenderBox* child) const
@@ -367,6 +398,21 @@ float RenderFlexibleBox::logicalPositiveFlexForChild(RenderBox* child) const
 float RenderFlexibleBox::logicalNegativeFlexForChild(RenderBox* child) const
 {
     return isHorizontalFlow() ? child->style()->flexboxWidthNegativeFlex() : child->style()->flexboxHeightNegativeFlex();
+}
+
+LayoutUnit RenderFlexibleBox::availableLogicalHeightForChild(RenderBox* child)
+{
+    LayoutUnit contentLogicalHeight = flowAwareContentLogicalHeight();
+    LayoutUnit currentChildHeight = flowAwareMarginLogicalHeightForChild(child) + flowAwareLogicalHeightForChild(child);
+    return contentLogicalHeight - currentChildHeight;
+}
+
+LayoutUnit RenderFlexibleBox::marginBoxAscent(RenderBox* child)
+{
+    LayoutUnit ascent = child->firstLineBoxBaseline();
+    if (ascent == -1)
+        ascent = flowAwareLogicalHeightForChild(child) + flowAwareMarginAfterForChild(child);
+    return ascent + flowAwareMarginBeforeForChild(child);
 }
 
 void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, TreeOrderIterator& iterator, LayoutUnit& preferredLogicalWidth, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
@@ -470,16 +516,28 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
 
     LayoutUnit logicalTop = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit totalLogicalWidth = flowAwareLogicalWidth();
-    setFlowAwareLogicalHeight(0);
+    if (isFlowAwareLogicalHeightAuto())
+        setFlowAwareLogicalHeight(0);
+    LayoutUnit maxAscent = 0, maxDescent = 0; // Used when flex-align: baseline.
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
-        // FIXME: Does this need to take the scrollbar width into account?
         LayoutUnit childPreferredSize = childSizes[i] + logicalBorderAndPaddingWidthForChild(child);
         setLogicalOverrideSize(child, childPreferredSize);
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
-        setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderBefore() + flowAwarePaddingBefore() + flowAwareMarginBeforeForChild(child) + flowAwareLogicalHeightForChild(child) + flowAwareMarginAfterForChild(child) + flowAwarePaddingAfter() + flowAwareBorderAfter() + scrollbarLogicalHeight()));
+        if (child->style()->flexAlign() == AlignBaseline) {
+            LayoutUnit ascent = marginBoxAscent(child);
+            LayoutUnit descent = (flowAwareMarginLogicalHeightForChild(child) + flowAwareLogicalHeightForChild(child)) - ascent;
+
+            maxAscent = std::max(maxAscent, ascent);
+            maxDescent = std::max(maxDescent, descent);
+
+            // FIXME: add flowAwareScrollbarLogicalHeight.
+            if (isFlowAwareLogicalHeightAuto())
+                setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderAndPaddingLogicalHeight() + flowAwareMarginLogicalHeightForChild(child) + maxAscent + maxDescent + scrollbarLogicalHeight()));
+        } else if (isFlowAwareLogicalHeightAuto())
+            setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderAndPaddingLogicalHeight() + flowAwareMarginLogicalHeightForChild(child) + flowAwareLogicalHeightForChild(child) + scrollbarLogicalHeight()));
 
         if (marginStartStyleForChild(child).isAuto())
             setFlowAwareMarginStartForChild(child, 0);
@@ -497,6 +555,46 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
 
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)
             startEdge += availableFreeSpace / (childSizes.size() - 1);
+    }
+
+    alignChildrenBlockDirection(iterator, maxAscent);
+}
+
+void RenderFlexibleBox::adjustLocationLogicalTopForChild(RenderBox* child, LayoutUnit delta)
+{
+    setFlowAwareLogicalLocationForChild(child, flowAwareLogicalLocationForChild(child) + LayoutSize(0, delta));
+}
+
+void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator, LayoutUnit maxAscent)
+{
+    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        switch (child->style()->flexAlign()) {
+        case AlignStretch: {
+            Length height = isHorizontalFlow() ? child->style()->height() : child->style()->width();
+            if (height.isAuto()) {
+                // FIXME: Clamp to max-height once it's spec'ed (should we align towards the start or center?).
+                LayoutUnit stretchedHeight = logicalHeightForChild(child) + RenderFlexibleBox::availableLogicalHeightForChild(child);
+                if (isHorizontalFlow())
+                    child->setHeight(stretchedHeight);
+                else
+                    child->setWidth(stretchedHeight);
+            }
+            break;
+        }
+        case AlignStart:
+            break;
+        case AlignEnd:
+            adjustLocationLogicalTopForChild(child, RenderFlexibleBox::availableLogicalHeightForChild(child));
+            break;
+        case AlignCenter:
+            adjustLocationLogicalTopForChild(child, RenderFlexibleBox::availableLogicalHeightForChild(child) / 2);
+            break;
+        case AlignBaseline: {
+            LayoutUnit ascent = marginBoxAscent(child);
+            adjustLocationLogicalTopForChild(child, maxAscent - ascent);
+            break;
+        }
+        }
     }
 }
 

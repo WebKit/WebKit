@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+
+body, html {
+    height: 600px;
+}
+
+.flexbox {
+    width: 600px;
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+}
+
+.flexbox div {
+    border: 0;
+}
+
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkFlexBoxen()">
+
+<div class="flexbox" style="height: 50%;">
+  <div data-expected-height="50"  data-offset-y="0" style="width: -webkit-flex(1); height: 50px;"></div>
+  <div data-expected-height="300" data-offset-y="0" style="width: -webkit-flex(1);"></div>
+</div>
+
+</body>
+</html>

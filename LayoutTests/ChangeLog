@@ -1,3 +1,17 @@
+2011-10-12  Tony Chang  <tony@chromium.org>
+
+        Implement -webkit-flex-align for cross axis alignment in flex-flow: row
+        https://bugs.webkit.org/show_bug.cgi?id=69808
+
+        Reviewed by David Hyatt.
+
+        * css3/flexbox/flex-align-expected.txt: Added.
+        * css3/flexbox/flex-align-percent-height-expected.txt: Added.
+        * css3/flexbox/flex-align-percent-height.html: Added.
+        * css3/flexbox/flex-align-vertical-writing-mode-expected.txt: Added.
+        * css3/flexbox/flex-align-vertical-writing-mode.html: Added.
+        * css3/flexbox/flex-align.html: Added.
+
 2011-10-12  Ojan Vafai  <ojan@chromium.org>
 
         Expected result accidentally left out of http://trac.webkit.org/changeset/97222/.

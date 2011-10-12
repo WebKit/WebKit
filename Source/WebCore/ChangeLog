@@ -1,3 +1,28 @@
+2011-10-12  Tony Chang  <tony@chromium.org>
+
+        Implement -webkit-flex-align for cross axis alignment in flex-flow: row
+        https://bugs.webkit.org/show_bug.cgi?id=69808
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/flex-align-percent-height.html
+               css3/flexbox/flex-align-vertical-writing-mode.html
+               css3/flexbox/flex-align.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isFlowAwareLogicalHeightAuto):
+        (WebCore::RenderFlexibleBox::flowAwareContentLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareMarginLogicalHeightForChild):
+        (WebCore::RenderFlexibleBox::flowAwareLogicalLocationForChild):
+        (WebCore::RenderFlexibleBox::layoutInlineDirection):
+        (WebCore::RenderFlexibleBox::availableLogicalHeightForChild):
+        (WebCore::RenderFlexibleBox::marginBoxAscent):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        (WebCore::RenderFlexibleBox::adjustLocationLogicalTopForChild):
+        (WebCore::RenderFlexibleBox::alignChildrenBlockDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-10-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions]Remove -webkit-content-order property
