@@ -16,9 +16,9 @@ Flow Threads
     layer at (0,0) size 50x250
       RenderFlowThread at (0,0) size 50x250
   Regions for flow 'no-flow'
-    RenderRegion {DIV} with index 0
-    RenderRegion {DIV} with index 0
-    RenderRegion {DIV} with index 0
-    RenderRegion {DIV} with index 0
-    RenderRegion {DIV} with index 0
-    RenderRegion {DIV} with index 0
+    RenderRegion {DIV}
+    RenderRegion {DIV}
+    RenderRegion {DIV}
+    RenderRegion {DIV}
+    RenderRegion {DIV}
+    RenderRegion {DIV}

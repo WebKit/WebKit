@@ -197,7 +197,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-user-select: text
     -webkit-writing-mode: horizontal-tb
     -webkit-flow: auto
-    -webkit-content-order: 0
     -webkit-region-overflow: auto
     -webkit-region-break-after: auto
     -webkit-region-break-before: auto

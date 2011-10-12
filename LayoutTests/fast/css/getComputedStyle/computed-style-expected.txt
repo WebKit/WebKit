@@ -198,7 +198,6 @@ zoom: 1;
 -webkit-user-select: text;
 -webkit-writing-mode: horizontal-tb;
 -webkit-flow: auto;
--webkit-content-order: 0;
 -webkit-region-overflow: auto;
 -webkit-region-break-after: auto;
 -webkit-region-break-before: auto;

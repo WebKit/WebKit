@@ -1642,9 +1642,6 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
     case CSSPropertyWebkitFlow:
         return parseFlowThread(propId, important);
-    case CSSPropertyWebkitContentOrder:
-        validPrimitive = validUnit(value, FInteger, m_strict);
-        break;
     case CSSPropertyWebkitRegionOverflow:
         if (id == CSSValueAuto || id == CSSValueBreak)
             validPrimitive = true;

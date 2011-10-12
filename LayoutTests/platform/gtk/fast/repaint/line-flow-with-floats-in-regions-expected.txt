@@ -85,4 +85,4 @@ Flow Threads
                     text run at (6,500) width 93: "here; the great "
                     text run at (99,500) width 261: "wonder is, that there\x{2018}s any one left alive!\x{2019}"
   Regions for flow 'thread'
-    RenderRegion {DIV} with index 0
+    RenderRegion {DIV}

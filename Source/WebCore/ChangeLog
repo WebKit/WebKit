@@ -1,3 +1,31 @@
+2011-10-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Remove -webkit-content-order property
+        https://bugs.webkit.org/show_bug.cgi?id=69848
+
+        Reviewed by Tony Chang.
+
+        -webkit-content-order property is removed from latest CSS Regions spec.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::compareRenderRegions):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderFlowThreads):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-10-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Update PeerConnection to use WebCore platform interfaces

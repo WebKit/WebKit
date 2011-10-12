@@ -14,4 +14,4 @@ Flow Threads
             RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
         RenderBlock {DIV} at (0,0) size 100x50 [bgcolor=#FF0000]
   Regions for flow 'thread'
-    RenderRegion {DIV} with index 0
+    RenderRegion {DIV}

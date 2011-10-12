@@ -132,7 +132,6 @@ public:
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;
-    int m_regionIndex;
     unsigned m_regionOverflow : 1; // RegionOverflow
 
     unsigned m_regionBreakAfter : 2; // EPageBreak

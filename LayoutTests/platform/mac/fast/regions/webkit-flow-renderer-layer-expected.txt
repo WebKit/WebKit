@@ -15,7 +15,7 @@ Flow Threads
         RenderText {#text} at (0,0) size 91x18
           text run at (0,0) width 91: "DIV1 - flowA"
   Regions for flow 'flowA'
-    RenderRegion {DIV} #REGION1 with index 0
+    RenderRegion {DIV} #REGION1
   Thread with flow-name 'flowB'
     layer at (0,0) size 784x100
       RenderFlowThread at (0,0) size 784x100
@@ -24,7 +24,7 @@ Flow Threads
         RenderText {#text} at (0,0) size 90x18
           text run at (0,0) width 90: "DIV2 - flowB"
   Regions for flow 'flowB'
-    RenderRegion {DIV} #REGION2 with index 0
+    RenderRegion {DIV} #REGION2
   Thread with flow-name 'flowC'
     layer at (0,0) size 784x100 layerType: background only
     layer at (0,36) size 90x18
@@ -41,4 +41,4 @@ Flow Threads
             RenderText {#text} at (0,0) size 90x18
               text run at (0,0) width 90: "DIV5 - flowC"
   Regions for flow 'flowC'
-    RenderRegion {DIV} #REGION3 with index 0
+    RenderRegion {DIV} #REGION3

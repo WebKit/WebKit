@@ -34,6 +34,6 @@ Flow Threads
                 RenderText {#text} at (0,0) size 304x18
                   text run at (0,0) width 304: "This line of text should not get out of the region."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

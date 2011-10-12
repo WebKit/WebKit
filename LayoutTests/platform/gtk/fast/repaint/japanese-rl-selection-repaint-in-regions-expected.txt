@@ -21,6 +21,6 @@ Flow Threads
             text run at (168,0) width 390: "\x{3064}\x{3051}\x{305F}\x{3059}\x{3070}\x{3089}\x{3057}\x{3044}\x{8A18}\x{4E8B}\x{304C}\x{3069}\x{3053}\x{306B}\x{3042}\x{3063}\x{305F}\x{304B}\x{5FD8}\x{308C}\x{3066}\x{3057}\x{307E}\x{3063}\x{305F}\x{7D4C}\x{9A13}\x{306F}\x{3042}\x{308A}"
             text run at (192,0) width 291: "\x{307E}\x{3059}\x{304B} \x{306A}\x{3089}\x{30BF}\x{30A4}\x{30C8}\x{30EB}\x{3068}\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}\x{304F}\x{3001}\x{8A2A}\x{554F}"
   Regions for flow 'thread'
-    RenderRegion {DIV} with index 0
+    RenderRegion {DIV}
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 46 of child 0 {#text} of child 1 {DIV} of body

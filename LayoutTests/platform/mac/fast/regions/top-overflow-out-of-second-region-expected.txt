@@ -33,6 +33,6 @@ Flow Threads
                   text run at (0,36) width 112: "top of the second "
                   text run at (112,36) width 44: "region."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

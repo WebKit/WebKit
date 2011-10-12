@@ -31,7 +31,7 @@ Flow Threads
                 text run at (0,68) width 166: "should be nothing in this"
                 text run at (0,100) width 139: "region after this line."
   Regions for flow 'flow'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
-    RenderRegion {DIV} #region4 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3
+    RenderRegion {DIV} #region4

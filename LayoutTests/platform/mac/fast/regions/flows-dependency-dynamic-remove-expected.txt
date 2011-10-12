@@ -8,8 +8,8 @@ Flow Threads
   Thread with flow-name 'flowC'
   Thread with flow-name 'flowA'
   Regions for flow 'flowA'
-    RenderRegion {DIV} with index 1
-    RenderRegion {DIV} with index 2
+    RenderRegion {DIV}
+    RenderRegion {DIV}
   Thread with flow-name 'flowB'
   Regions for flow 'flowB'
-    RenderRegion {DIV} with index 1
+    RenderRegion {DIV}

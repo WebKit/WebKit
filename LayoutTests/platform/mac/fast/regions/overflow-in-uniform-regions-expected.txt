@@ -36,6 +36,6 @@ Flow Threads
             text run at (0,52) width 376: "spill out of the regions. These lines will not spill out of the"
             text run at (0,70) width 50: "regions."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

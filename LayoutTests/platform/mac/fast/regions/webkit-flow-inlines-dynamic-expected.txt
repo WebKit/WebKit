@@ -47,6 +47,6 @@ Flow Threads
               RenderBR {BR} at (68,390) size 0x18
               RenderBR {BR} at (1,408) size 0x18
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

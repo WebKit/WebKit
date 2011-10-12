@@ -40,6 +40,6 @@ Flow Threads
           RenderText {#text} at (-22,0) size 286x18
             text run at (-22,0) width 286: "Clipped line of text that should not be visible."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

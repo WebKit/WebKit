@@ -3450,9 +3450,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             m_style->setFlowThread(primitiveValue->getStringValue());
         return;
-    case CSSPropertyWebkitContentOrder:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionIndex, RegionIndex);
-        return;
     case CSSPropertyWebkitRegionOverflow:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
         return;

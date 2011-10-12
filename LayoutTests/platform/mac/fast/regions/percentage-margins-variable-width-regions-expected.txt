@@ -48,6 +48,6 @@ Flow Threads
                   text run at (-18,72) width 64: "out of the"
                   text run at (-18,90) width 44: "region."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

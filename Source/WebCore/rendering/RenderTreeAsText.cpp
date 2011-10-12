@@ -687,7 +687,7 @@ static void writeRenderFlowThreads(TextStream& ts, RenderView* renderView, const
                 }
                 if (!renderRegion->isValid())
                     ts << " invalid";
-                ts << " with index " << renderRegion->style()->regionIndex() << "\n";
+                ts << "\n";
             }
         }
     }

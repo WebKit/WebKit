@@ -51,6 +51,6 @@ Flow Threads
                   text run at (182,90) width 4 RTL: "."
                   text run at (186,90) width 40: "region"
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

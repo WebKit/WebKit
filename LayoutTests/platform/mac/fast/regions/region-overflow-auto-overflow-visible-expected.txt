@@ -52,5 +52,5 @@ Flow Threads
                 text run at (0,77) width 100: "This is some content."
             RenderText {#text} at (0,0) size 0x0
   Regions for flow 'article'
-    RenderRegion {DIV} #region_1 with index 0
-    RenderRegion {DIV} #region_2 with index 0
+    RenderRegion {DIV} #region_1
+    RenderRegion {DIV} #region_2
