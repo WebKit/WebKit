@@ -1,3 +1,14 @@
+2011-10-12  Jer Noble  <jer.noble@apple.com>
+
+        Lion: media tests with invalid URLs failing
+        https://bugs.webkit.org/show_bug.cgi?id=69947
+
+        Unreviewed.
+
+        Add failing tests to the Skipped list.
+
+        * platform/mac-lion/Skipped:
+
 2011-10-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69896

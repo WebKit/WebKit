@@ -99,6 +99,12 @@ media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html
 
+# Failing due to invalid src: <rdar://problem/9808539>
+http/tests/media/pdf-served-as-pdf.html
+http/tests/media/text-served-as-text.html
+media/invalid-media-url-crash.html
+media/video-src-change.html
+
 # --- Plugins ---
 
 # WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
