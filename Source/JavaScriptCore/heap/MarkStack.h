@@ -103,6 +103,8 @@ namespace JSC {
 
         void reset();
 
+        size_t visitCount() const { return m_visitCount; }
+
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_visitedTypeCounts;
 #endif
@@ -139,6 +141,8 @@ namespace JSC {
         bool m_isCheckingForDefaultMarkViolation;
         bool m_isDraining;
 #endif
+    protected:
+        size_t m_visitCount;
     };
 
     inline MarkStack::MarkStack(void* jsArrayVPtr)
@@ -148,6 +152,7 @@ namespace JSC {
         , m_isCheckingForDefaultMarkViolation(false)
         , m_isDraining(false)
 #endif
+        , m_visitCount(0)
     {
     }
 
@@ -264,6 +269,7 @@ namespace JSC {
     {
         if (!count)
             return;
+        m_visitCount += count;
 #if ENABLE(GC_VALIDATION)
         validateSet(slot, count);
 #endif

@@ -345,6 +345,7 @@ namespace JSC {
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         ASSERT(cell);
+        m_visitCount++;
         if (Heap::testAndSetMarked(cell))
             return;
         if (cell->structure() && cell->structure()->typeInfo().type() >= CompoundType)

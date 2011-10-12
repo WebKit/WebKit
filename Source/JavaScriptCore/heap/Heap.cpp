@@ -43,9 +43,20 @@ namespace {
 
 static const size_t largeHeapSize = 16 * 1024 * 1024;
 static const size_t smallHeapSize = 512 * 1024;
-
+#define ENABLE_GC_LOGGING 1
 #if ENABLE(GC_LOGGING)
-    
+#if COMPILER(CLANG)
+#define DEFINE_GC_LOGGING_GLOBAL(type, name, arguments) \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wglobal-constructors\"") \
+_Pragma("clang diagnostic ignored \"-Wexit-time-destructors\"") \
+static type name arguments; \
+_Pragma("clang diagnostic pop")
+#else
+#define DEFINE_GC_LOGGING_GLOBAL(type, name, arguments) \
+static type name arguments;
+#endif // COMPILER(CLANG)
+
 struct GCTimer {
     GCTimer(const char* name)
         : m_time(0)
@@ -86,14 +97,45 @@ struct GCTimerScope {
     double m_start;
 };
 
-#define GCPHASE(name) static GCTimer name##Timer(#name); GCTimerScope name##TimerScope(&name##Timer)
-#define COND_GCPHASE(cond, name1, name2) static GCTimer name1##Timer(#name1); static GCTimer name2##Timer(#name2); GCTimerScope name1##CondTimerScope(cond ? &name1##Timer : &name2##Timer)
+struct GCCounter {
+    GCCounter(const char* name)
+        : m_name(name)
+        , m_count(0)
+        , m_total(0)
+        , m_min(10000000)
+        , m_max(0)
+    {
+    }
+    
+    void count(size_t amount)
+    {
+        m_count++;
+        m_total += amount;
+        if (amount < m_min)
+            m_min = amount;
+        if (amount > m_max)
+            m_max = amount;
+    }
+    ~GCCounter()
+    {
+        printf("%s: %zu values (avg. %zu, min. %zu, max. %zu)\n", m_name, m_total, m_total / m_count, m_min, m_max);
+    }
+    const char* m_name;
+    size_t m_count;
+    size_t m_total;
+    size_t m_min;
+    size_t m_max;
+};
 
+#define GCPHASE(name) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name##Timer, (#name)); GCTimerScope name##TimerScope(&name##Timer)
+#define COND_GCPHASE(cond, name1, name2) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name1##Timer, (#name1)); DEFINE_GC_LOGGING_GLOBAL(GCTimer, name2##Timer, (#name2)); GCTimerScope name1##CondTimerScope(cond ? &name1##Timer : &name2##Timer)
+#define GCCOUNTER(name, value) do { DEFINE_GC_LOGGING_GLOBAL(GCCounter, name##Counter, (#name)); name##Counter.count(value); } while (false)
+    
 #else
 
 #define GCPHASE(name) do { } while (false)
 #define COND_GCPHASE(cond, name1, name2) do { } while (false)
-
+#define GCCOUNTER(name, value) do { } while (false)
 #endif
 
 static size_t heapSizeForHint(HeapSize heapSize)
@@ -548,8 +590,10 @@ void Heap::markRoots(bool fullGC)
     HeapRootVisitor heapRootVisitor(visitor);
 
 #if ENABLE(GGC)
-    if (size_t dirtyCellCount = dirtyCells.size()) {
+    {
+        size_t dirtyCellCount = dirtyCells.size();
         GCPHASE(VisitDirtyCells);
+        GCCOUNTER(DirtyCellCount, dirtyCellCount);
         for (size_t i = 0; i < dirtyCellCount; i++) {
             heapRootVisitor.visitChildren(dirtyCells[i]);
             visitor.drain();
@@ -621,6 +665,7 @@ void Heap::markRoots(bool fullGC)
             // If the set of opaque roots has grown, more weak handles may have become reachable.
         } while (lastOpaqueRootCount != visitor.opaqueRootCount());
     }
+    GCCOUNTER(VisitedValueCount, visitor.visitCount());
     visitor.reset();
 
     m_operationInProgress = NoOperation;

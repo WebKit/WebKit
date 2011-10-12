@@ -38,6 +38,7 @@ namespace JSC {
 
 void MarkStack::reset()
 {
+    m_visitCount = 0;
     m_values.shrinkAllocation(pageSize());
     m_markSets.shrinkAllocation(pageSize());
     m_opaqueRoots.clear();

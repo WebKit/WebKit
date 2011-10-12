@@ -75,7 +75,7 @@ namespace JSC {
 
         static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
         static const size_t atomMask = atomsPerBlock - 1;
-        static const int cardShift = 10; // This is log2 of bytes per card.
+        static const int cardShift = 8; // This is log2 of bytes per card.
         static const size_t bytesPerCard = 1 << cardShift;
         static const int cardCount = blockSize / bytesPerCard;
         static const int cardMask = cardCount - 1;
@@ -150,6 +150,7 @@ namespace JSC {
 
         typedef Vector<JSCell*, 32> DirtyCellVector;
         inline void gatherDirtyCells(DirtyCellVector&);
+        template <int size> inline void gatherDirtyCellsWithSize(DirtyCellVector&);
 #endif
 
         template <typename Functor> void forEachCell(Functor&);
@@ -316,6 +317,35 @@ namespace JSC {
     }
 
 #if ENABLE(GGC)
+template <int _cellSize> void MarkedBlock::gatherDirtyCellsWithSize(DirtyCellVector& dirtyCells)
+{
+    if (m_cards.testAndClear(0)) {
+        char* ptr = reinterpret_cast<char*>(&atoms()[firstAtom()]);
+        const char* end = reinterpret_cast<char*>(this) + bytesPerCard;
+        while (ptr < end) {
+            JSCell* cell = reinterpret_cast<JSCell*>(ptr);
+            if (isMarked(cell))
+                dirtyCells.append(cell);
+            ptr += _cellSize;
+        }
+    }
+    
+    const size_t cellOffset = firstAtom() * atomSize % _cellSize;
+    for (size_t i = 1; i < m_cards.cardCount; i++) {
+        if (!m_cards.testAndClear(i))
+            continue;
+        char* ptr = reinterpret_cast<char*>(this) + i * bytesPerCard + cellOffset;
+        char* end = reinterpret_cast<char*>(this) + (i + 1) * bytesPerCard;
+        
+        while (ptr < end) {
+            JSCell* cell = reinterpret_cast<JSCell*>(ptr);
+            if (isMarked(cell))
+                dirtyCells.append(cell);
+            ptr += _cellSize;
+        }
+    }
+}
+
 void MarkedBlock::gatherDirtyCells(DirtyCellVector& dirtyCells)
 {
     COMPILE_ASSERT((int)m_cards.cardCount == (int)cardCount, MarkedBlockCardCountsMatch);
@@ -330,26 +360,39 @@ void MarkedBlock::gatherDirtyCells(DirtyCellVector& dirtyCells)
         return;
     
     size_t cellSize = this->cellSize();
+    if (cellSize == 32) {
+        gatherDirtyCellsWithSize<32>(dirtyCells);
+        return;
+    }
+    if (cellSize == 64) {
+        gatherDirtyCellsWithSize<64>(dirtyCells);
+        return;
+    }
+
     const size_t firstCellOffset = firstAtom() * atomSize % cellSize;
     
-    for (size_t i = 0; i < m_cards.cardCount; i++) {
-        if (!m_cards.isCardMarked(i))
-            continue;
-        char* ptr = reinterpret_cast<char*>(this);
-        if (i)
-            ptr += firstCellOffset + cellSize * ((i * bytesPerCard + cellSize - 1 - firstCellOffset) / cellSize);
-        else
-            ptr += firstAtom() * atomSize;
-        char* end = reinterpret_cast<char*>(this) + std::min((i + 1) * bytesPerCard, m_endAtom * atomSize);
-        
+    if (m_cards.testAndClear(0)) {
+        char* ptr = reinterpret_cast<char*>(this) + firstAtom() * atomSize;
+        char* end = reinterpret_cast<char*>(this) + bytesPerCard;
         while (ptr < end) {
             JSCell* cell = reinterpret_cast<JSCell*>(ptr);
-            ASSERT(*addressOfCardFor(cell));
             if (isMarked(cell))
                 dirtyCells.append(cell);
             ptr += cellSize;
         }
-        m_cards.clearCard(i);
+    }
+    for (size_t i = 1; i < m_cards.cardCount; i++) {
+        if (!m_cards.testAndClear(i))
+            continue;
+        char* ptr = reinterpret_cast<char*>(this) + firstCellOffset + cellSize * ((i * bytesPerCard + cellSize - 1 - firstCellOffset) / cellSize);
+        char* end = reinterpret_cast<char*>(this) + std::min((i + 1) * bytesPerCard, m_endAtom * atomSize);
+        
+        while (ptr < end) {
+            JSCell* cell = reinterpret_cast<JSCell*>(ptr);
+            if (isMarked(cell))
+                dirtyCells.append(cell);
+            ptr += cellSize;
+        }
     }
 }
 #endif

@@ -47,7 +47,7 @@ public:
     void markCardForAtom(const void*);
     uint8_t& cardForAtom(const void*);
     bool isCardMarked(size_t);
-    void clearCard(size_t);
+    bool testAndClear(size_t);
 
 private:
     uint8_t m_cards[cardCount];
@@ -78,10 +78,12 @@ template <size_t cardSize, size_t blockSize> bool CardSet<cardSize, blockSize>::
     return m_cards[i];
 }
 
-template <size_t cardSize, size_t blockSize> void CardSet<cardSize, blockSize>::clearCard(size_t i)
+template <size_t cardSize, size_t blockSize> bool CardSet<cardSize, blockSize>::testAndClear(size_t i)
 {
     ASSERT(i < cardCount);
+    bool result = m_cards[i];
     m_cards[i] = 0;
+    return result;
 }
 
 }

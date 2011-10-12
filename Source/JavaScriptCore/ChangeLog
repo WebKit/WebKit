@@ -1,3 +1,32 @@
+2011-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Tidy up card walking logic
+        https://bugs.webkit.org/show_bug.cgi?id=69883
+
+        Reviewed by Gavin Barraclough.
+
+        Special case common cell sizes when walking a block's
+        cards.
+
+        * heap/CardSet.h:
+        (JSC::::testAndClear):
+        * heap/Heap.cpp:
+        (JSC::GCTimer::GCCounter::GCCounter):
+        (JSC::GCTimer::GCCounter::count):
+        (JSC::GCTimer::GCCounter::~GCCounter):
+        (JSC::Heap::markRoots):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::reset):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::visitCount):
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::append):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::gatherDirtyCellsWithSize):
+        (JSC::MarkedBlock::gatherDirtyCells):
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend):
+
 2011-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG virtual register allocator should be more aggressive in
