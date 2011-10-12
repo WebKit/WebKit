@@ -132,7 +132,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     [m_view display];
     RetainPtr<CGImageRef> windowSnapshotImage(AdoptCF, CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
-    return WKImageCreateFromCGImage(windowSnapshotImage.get(), 0);
+    return adoptWK(WKImageCreateFromCGImage(windowSnapshotImage.get(), 0));
 }
 
 } // namespace WTR
