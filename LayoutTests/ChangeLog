@@ -1,5 +1,11 @@
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] More TIMEOUTs and TIMEOUT flakes due to V8 roll.
+
+        * platform/chromium/test_expectations.txt: Added expectations of TIMEOUT.
+
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Add a bunch of TIMEOUTs due to V8 roll.
 
         * platform/chromium/test_expectations.txt: Added expectations of TIMEOUT.
