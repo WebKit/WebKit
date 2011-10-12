@@ -1,3 +1,21 @@
+2011-10-12  Cary Clark  <caryclark@google.com>
+
+        [Chromium] Prevent fallback fonts from purging while measuring
+        https://bugs.webkit.org/show_bug.cgi?id=69855
+
+        Reviewed by Eric Seidel.
+
+        When Chrome computes the page width, an international page
+        may bring in a fallback font. FontCache::getCachedFontData
+        expects the font cache to be locked, so the measure path
+        needs to include an instance of FontCachePurgePreventer.
+
+        Adding FontCachePurgePreventer suppresses a debug-time assert
+        when running PageCycler over international tests.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::contentsPreferredWidth):
+
 2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, CCThreadTest.startPostAndWaitOnCondition is flaky on linux.

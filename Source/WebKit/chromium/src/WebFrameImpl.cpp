@@ -86,6 +86,7 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FocusController.h"
+#include "FontCache.h"
 #include "FormState.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -579,8 +580,11 @@ WebSize WebFrameImpl::contentsSize() const
 
 int WebFrameImpl::contentsPreferredWidth() const
 {
-    if (m_frame->document() && m_frame->document()->renderView())
+    if (m_frame->document() && m_frame->document()->renderView()) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         return m_frame->document()->renderView()->minPreferredLogicalWidth();
+    }
     return 0;
 }
 
