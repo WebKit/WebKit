@@ -264,6 +264,7 @@ committers_unable_to_review = [
     Committer("Michael Nordman", "michaeln@google.com", "michaeln"),
     Committer("Michael Saboff", "msaboff@apple.com"),
     Committer("Michelangelo De Simone", "michelangelo@webkit.org", "michelangelo"),
+    Committer("Mihnea Ovidenie", "mihnea@adobe.com", "mihnea"),
     Committer("Mike Belshe", ["mbelshe@chromium.org", "mike@belshe.com"]),
     Committer("Mike Fenton", ["mifenton@rim.com", "mike.fenton@torchmobile.com"], "mfenton"),
     Committer("Mike Lawther", "mikelawther@chromium.org", "mikelawther"),
