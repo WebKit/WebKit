@@ -42,11 +42,13 @@
 #include "JSPopStateEvent.h"
 #include "JSProgressEvent.h"
 #include "JSWebKitAnimationEvent.h"
+#include "JSWebKitTransitionEvent.h"
 #include "MessageEvent.h"
 #include "PageTransitionEvent.h"
 #include "PopStateEvent.h"
 #include "ProgressEvent.h"
 #include "WebKitAnimationEvent.h"
+#include "WebKitTransitionEvent.h"
 #include <runtime/Error.h>
 
 using namespace JSC;

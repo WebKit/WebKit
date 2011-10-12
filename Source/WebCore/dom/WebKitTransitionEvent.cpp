@@ -29,10 +29,16 @@
 #include "EventNames.h"
 
 namespace WebCore {
-        
+
+WebKitTransitionEventInit::WebKitTransitionEventInit()
+    : propertyName()
+    , elapsedTime(0)
+{
+}
+
 WebKitTransitionEvent::WebKitTransitionEvent()
     : m_propertyName()
-    , m_elapsedTime(0.0)
+    , m_elapsedTime(0)
 {
 }
 
@@ -40,6 +46,13 @@ WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const Str
     : Event(type, true, true)
     , m_propertyName(propertyName)
     , m_elapsedTime(elapsedTime)
+{
+}
+
+WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const WebKitTransitionEventInit& initializer)
+    : Event(type, initializer)
+    , m_propertyName(initializer.propertyName)
+    , m_elapsedTime(initializer.elapsedTime)
 {
 }
 
@@ -55,9 +68,9 @@ void WebKitTransitionEvent::initWebKitTransitionEvent(const AtomicString& type,
 {
     if (dispatched())
         return;
-    
+
     initEvent(type, canBubbleArg, cancelableArg);
-    
+
     m_propertyName = propertyName;
     m_elapsedTime = elapsedTime;
 }

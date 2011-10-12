@@ -1,3 +1,17 @@
+2011-10-11  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a WebKitTransitionEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69829
+
+        Reviewed by Adam Barth.
+
+        webkit-transition-event-constructor.html checks the behavior of the WebKitTransitionEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/events/constructors/webkit-transition-event-constructor-expected.txt: Added.
+        * fast/events/constructors/webkit-transition-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped webkit-transition-event-constructor.html, since V8 does not yet have the WebKitTransitionEvent constructor.
+
 2011-10-11  Sameer Patil  <mkrp87@motorola.com>
 
         :checked pseudo selector not matching selected option

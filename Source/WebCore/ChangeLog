@@ -1,3 +1,38 @@
+2011-10-11  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a WebKitTransitionEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69829
+
+        Reviewed by Adam Barth.
+
+        There is no spec for the WebKitTransitionEvent constructor
+        since it is WebKit-specific. However, judging from the current
+        IDL of initWebKitTransitionEvent(), the constructor IDL
+        should be as follows.
+
+        [Constructor(DOMString type, optional WebKitTransitionEventInit eventInitDict)]
+        interface WebKitTransitionEvent : Event {
+            ...;
+        }
+
+        dictionary WebKitTransitionEventInit : EventInit {
+            DOMString propertyName;
+            double elapsedTime;
+        }
+
+        Test: fast/events/constructors/webkit-transition-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the WebKitTransitionEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for WebKitTransitionEvent.
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEventInit::WebKitTransitionEventInit):
+        (WebCore::WebKitTransitionEvent::WebKitTransitionEvent):
+        (WebCore::WebKitTransitionEvent::initWebKitTransitionEvent):
+        * dom/WebKitTransitionEvent.h: Added a definition for WebKitTransitionEventInit.
+        (WebCore::WebKitTransitionEvent::create):
+        (WebCore::WebKitTransitionEvent::isWebKitTransitionEvent):
+        * dom/WebKitTransitionEvent.idl: Makes WebKitTransitionEvent constructible.
+
 2011-10-11  Sameer Patil  <mkrp87@motorola.com>
 
         :checked pseudo selector not matching selected option 
