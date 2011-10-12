@@ -739,10 +739,14 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
     if (thisObject->m_globalObject)
         visitor.append(&thisObject->m_globalObject);
-    if (thisObject->m_prototype)
-        visitor.append(&thisObject->m_prototype);
-    if (thisObject->m_cachedPrototypeChain)
-        visitor.append(&thisObject->m_cachedPrototypeChain);
+    if (!thisObject->isObject())
+        thisObject->m_cachedPrototypeChain.clear();
+    else {
+        if (thisObject->m_prototype)
+            visitor.append(&thisObject->m_prototype);
+        if (thisObject->m_cachedPrototypeChain)
+            visitor.append(&thisObject->m_cachedPrototypeChain);
+    }
     if (thisObject->m_previous)
         visitor.append(&thisObject->m_previous);
     if (thisObject->m_specificValueInPrevious)

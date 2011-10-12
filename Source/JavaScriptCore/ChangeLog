@@ -1,3 +1,16 @@
+2011-10-12  Oliver Hunt  <oliver@apple.com>
+
+        Global stringStructure caches its prototype chain, abandoning a web page
+        https://bugs.webkit.org/show_bug.cgi?id=69952
+
+        Reviewed by Filip Pizlo.
+
+        When visiting a structure, we don't keep the prototype chain
+        alive if we're not the structure for an object type.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+
 2011-10-12  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT 32_64 - Fix ArrayPop
