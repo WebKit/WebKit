@@ -1,3 +1,16 @@
+2011-10-11  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] update pywebsocket to 0.6b6.
+        https://bugs.webkit.org/show_bug.cgi?id=69824
+
+        Reviewed by Kent Tamura.
+
+        WebKit supports WebSocket with version 8 based protocol for now.
+        We should update its protocol to version 13 based one like hybi-17.
+        pywebsocket 0.6b6 supports both of version 8 and 13.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitTestRunner needs to link with WebKit for NSURL category methods
