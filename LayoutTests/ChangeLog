@@ -1,5 +1,11 @@
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Mark implicit-submission test as slow for all Debug builds.
+
+        * platform/chromium/test_expectations.txt: Marked so.
+
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Fix ambiguous expectations.
 
         * platform/chromium/test_expectations.txt: Fixed.
