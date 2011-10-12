@@ -1,3 +1,27 @@
+2011-10-12  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Move qweberror* out of API/qt
+        https://bugs.webkit.org/show_bug.cgi?id=69875
+
+        Reviewed by Andreas Kling.
+
+        Moving QWebError outside API/qt in order to keep our API folder (layer) aligned.
+
+        * UIProcess/qt/qweberror.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/qweberror.cpp.
+        (QWebError::QWebError):
+        (QWebErrorPrivate::createQWebError):
+        (QWebErrorPrivate::QWebErrorPrivate):
+        (QWebErrorPrivate::~QWebErrorPrivate):
+        (QWebError::type):
+        (QWebError::errorCode):
+        (QWebError::url):
+        * UIProcess/qt/qweberror.h: Renamed from Source/WebKit2/UIProcess/API/qt/qweberror.h.
+        (QWebError::errorCodeAsHttpStatusCode):
+        (QWebError::errorCodeAsNetworkError):
+        * UIProcess/qt/qweberror_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qweberror_p.h.
+        * WebKit2.pro:
+        * WebKit2API.pri:
+
 2011-10-12  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Add few more API's to gtk-doc section file.

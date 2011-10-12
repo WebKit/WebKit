@@ -31,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QWebError {
+class QWebError {
 public:
     enum Type {
         EngineError,
