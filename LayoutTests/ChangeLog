@@ -1,3 +1,12 @@
+2011-10-12  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Unreviewed gardening. Add platform specific expected result for new tests.
+
+        * platform/qt/fast/writing-mode/margins-expected.png: Added.
+        * platform/qt/fast/writing-mode/margins-expected.txt: Added.
+        * platform/qt/plugins/iframe-plugin-bgcolor-expected.png: Added.
+        * platform/qt/plugins/iframe-plugin-bgcolor-expected.txt: Added.
+
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline after r97225.
