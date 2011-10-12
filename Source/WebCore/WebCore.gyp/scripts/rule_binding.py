@@ -124,8 +124,13 @@ def main(args):
     command.extend(['--outputHeadersDir', hdir])
     command.extend(['--outputDir', cppdir, input])
 
-    # Do it. check_call is new in 2.5, so simulate its behavior with call and
-    # assert.
+    # Do it. Use os.execvp() to save a child process on posix. On win32,
+    # execvp() does't do the escaping of spaces that subprocess.call() does,
+    # so use subprocess.call() on win32.
+    if sys.platform != 'win32':
+        os.execvp('perl', command)  # Does not return.
+
+    # check_call is new in 2.5, so simulate its behavior with call and assert.
     returnCode = subprocess.call(command)
     assert returnCode == 0
 
