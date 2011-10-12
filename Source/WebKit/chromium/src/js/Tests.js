@@ -715,23 +715,21 @@ TestSuite.prototype._scriptsAreParsed = function(expected)
  */
 TestSuite.prototype._waitForScriptPause = function(expectations, callback)
 {
-    var test = this;
-    // Wait until script is paused.
-    test.addSniffer(
-        WebInspector.debuggerModel,
-        "_pausedScript",
-        function(details) {
-            var callFrames = details.callFrames;
-            var functionsOnStack = [];
-            for (var i = 0; i < callFrames.length; i++)
-                functionsOnStack.push(callFrames[i].functionName);
+    function pauseListener(event) {
+        var callFrames = event.data.callFrames;
+        var functionsOnStack = [];
+        for (var i = 0; i < callFrames.length; i++)
+            functionsOnStack.push(callFrames[i].functionName);
 
-            test.assertEquals(expectations.functionsOnStack.join(","), functionsOnStack.join(","), "Unexpected stack.");
+        this.assertEquals(expectations.functionsOnStack.join(","), functionsOnStack.join(","), "Unexpected stack.");
 
-            // Check that execution line where the script is paused is
-            // expected one.
-            test._checkSourceFrameWhenLoaded(expectations, callback);
-        });
+        // Check that execution line where the script is paused is
+        // expected one.
+        this._checkSourceFrameWhenLoaded(expectations, callback);
+
+        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, pauseListener, this);
+    }
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, pauseListener, this);
 };
 
 

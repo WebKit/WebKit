@@ -1,3 +1,15 @@
+2011-10-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: repair interactive tests for debugger pause
+        https://bugs.webkit.org/show_bug.cgi?id=69912
+
+        Listen to DebuggerModel event instead of overriding private methods on it.
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._waitForScriptPause):
+
 2011-10-11  Steve VanDeBogart  <vandebo@chromium.org>
 
         [chromium] Add accessor for plugin request to not scale print output.
