@@ -1,3 +1,189 @@
+2011-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG does not have flow-sensitive intraprocedural control flow analysis
+        https://bugs.webkit.org/show_bug.cgi?id=69690
+
+        Reviewed by Gavin Barraclough.
+
+        Implemented a control flow analysis (CFA). It currently propagates type
+        proofs only. For example, if all predecessors to a basic block have
+        checks that variable X is a JSFinalObject with structure 0xabcdef, then
+        this basic block will now know this fact and will know that it does not
+        have to emit either JSFinalObject checks or any structure checks since
+        the structure is precisely known. The CFA takes heap side-effects into
+        account (though somewhat conservatively), so that if the object pointed
+        to by variable X could have possibly undergone a structure transition
+        then this is reflected: the analysis may simply say that X's structure
+        is unknown.
+        
+        This also propagates a wealth of other type information which is
+        currently not being used. For example, we now know when a variable can
+        only hold doubles. Even if a variable may hold other types at different
+        points in its live range, we can still prove exactly when it will only
+        be double.
+        
+        There's a bunch of stuff that the CFA could do that it still does not
+        do, like precise handling of PutStructure (i.e. structure transitions),
+        precise handling of CheckFunction and CheckMethod, etc. So this is
+        very much intended to be a starting point rather than an end unto
+        itself.
+        
+        This is a 1% win on V8 (mostly due to a 3% win on richards and deltablue)
+        and a 1% win on Kraken (mostly due to a 6% win on imaging-desaturate).
+        Neutral on SunSpider.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ActionablePrediction.h: Removed.
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        * bytecode/PredictedType.h:
+        * dfg/DFGAbstractState.cpp: Added.
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::~AbstractState):
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::reset):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::clobberStructures):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::merge):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        (JSC::DFG::AbstractState::mergeVariableBetweenBlocks):
+        (JSC::DFG::AbstractState::dump):
+        * dfg/DFGAbstractState.h: Added.
+        (JSC::DFG::AbstractState::forNode):
+        (JSC::DFG::AbstractState::isValid):
+        * dfg/DFGAbstractValue.h: Added.
+        (JSC::DFG::StructureAbstractValue::StructureAbstractValue):
+        (JSC::DFG::StructureAbstractValue::clear):
+        (JSC::DFG::StructureAbstractValue::makeTop):
+        (JSC::DFG::StructureAbstractValue::top):
+        (JSC::DFG::StructureAbstractValue::add):
+        (JSC::DFG::StructureAbstractValue::addAll):
+        (JSC::DFG::StructureAbstractValue::contains):
+        (JSC::DFG::StructureAbstractValue::isSubsetOf):
+        (JSC::DFG::StructureAbstractValue::doesNotContainAnyOtherThan):
+        (JSC::DFG::StructureAbstractValue::isSupersetOf):
+        (JSC::DFG::StructureAbstractValue::filter):
+        (JSC::DFG::StructureAbstractValue::isClear):
+        (JSC::DFG::StructureAbstractValue::isTop):
+        (JSC::DFG::StructureAbstractValue::size):
+        (JSC::DFG::StructureAbstractValue::at):
+        (JSC::DFG::StructureAbstractValue::operator[]):
+        (JSC::DFG::StructureAbstractValue::last):
+        (JSC::DFG::StructureAbstractValue::predictionFromStructures):
+        (JSC::DFG::StructureAbstractValue::operator==):
+        (JSC::DFG::StructureAbstractValue::dump):
+        (JSC::DFG::AbstractValue::AbstractValue):
+        (JSC::DFG::AbstractValue::clear):
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::makeTop):
+        (JSC::DFG::AbstractValue::clobberStructures):
+        (JSC::DFG::AbstractValue::isTop):
+        (JSC::DFG::AbstractValue::top):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::operator==):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGBasicBlock.h: Added.
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::getBytecodeBegin):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::setupPredecessors):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::block):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGNode.h:
+        (JSC::DFG::NodeIndexTraits::defaultValue):
+        (JSC::DFG::Node::variableAccessData):
+        (JSC::DFG::Node::takenBytecodeOffsetDuringParsing):
+        (JSC::DFG::Node::notTakenBytecodeOffsetDuringParsing):
+        (JSC::DFG::Node::setTakenBlockIndex):
+        (JSC::DFG::Node::setNotTakenBlockIndex):
+        (JSC::DFG::Node::takenBlockIndex):
+        (JSC::DFG::Node::notTakenBlockIndex):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOperands.h: Added.
+        (JSC::DFG::operandIsArgument):
+        (JSC::DFG::OperandValueTraits::defaultValue):
+        (JSC::DFG::Operands::Operands):
+        (JSC::DFG::Operands::numberOfArguments):
+        (JSC::DFG::Operands::numberOfLocals):
+        (JSC::DFG::Operands::argument):
+        (JSC::DFG::Operands::local):
+        (JSC::DFG::Operands::setLocal):
+        (JSC::DFG::Operands::setArgumentFirstTime):
+        (JSC::DFG::Operands::setLocalFirstTime):
+        (JSC::DFG::Operands::operand):
+        (JSC::DFG::Operands::setOperand):
+        (JSC::DFG::Operands::clear):
+        (JSC::DFG::dumpOperands):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::propagatePredictions):
+        (JSC::DFG::Propagator::performBlockCFA):
+        (JSC::DFG::Propagator::performForwardCFA):
+        (JSC::DFG::Propagator::globalCFA):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureSet.h:
+        (JSC::DFG::StructureSet::clear):
+        (JSC::DFG::StructureSet::predictionFromStructures):
+        (JSC::DFG::StructureSet::operator==):
+        (JSC::DFG::StructureSet::dump):
+        * dfg/DFGVariableAccessData.h: Added.
+
 2011-10-11  Gavin Barraclough  <baraclough@apple.com>
 
         DFG JIT 32_64 - Fix silentFillGPR for non-integer constants.

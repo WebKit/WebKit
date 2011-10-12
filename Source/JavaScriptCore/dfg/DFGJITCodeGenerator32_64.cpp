@@ -965,8 +965,8 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
 void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
     
     if (taken == (m_block + 1)) {
         invert = !invert;
@@ -1028,8 +1028,8 @@ bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, 
 void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
 
     JITCompiler::ResultCondition callResultCondition = JITCompiler::NonZero;
 
@@ -1157,8 +1157,8 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
 void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex branchNodeIndex, bool invert)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.

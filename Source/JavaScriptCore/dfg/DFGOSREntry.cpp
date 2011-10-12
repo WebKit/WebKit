@@ -77,34 +77,38 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    into a less-likely path. So, the wisest course of action is to simply not
     //    OSR at this time.
     
-    for (unsigned i = 1; i < entry->m_predictions.argumentUpperBound(); ++i) {
-        ActionablePrediction prediction = entry->m_predictions.argument(i);
-        if (prediction == NoActionablePrediction)
-            continue;
-
-        if (i >= exec->argumentCountIncludingThis()) {
+    for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
+        if (argument >= exec->argumentCountIncludingThis()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %u was not passed, expected %s.\n", i, actionablePredictionToString(prediction));
+            printf("    OSR failed because argument %lu was not passed, expected ", argument);
+            entry->m_expectedValues.argument(argument).dump(stdout);
+            printf(".\n");
 #endif
             return 0;
         }
         
-        if (!valueObeysPrediction(globalData, exec->argument(i - 1), prediction)) {
+        JSValue value;
+        if (!argument)
+            value = exec->hostThisValue();
+        else
+            value = exec->argument(argument - 1);
+        
+        if (!entry->m_expectedValues.argument(argument).validate(value)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %u is %s, expected %s.\n", i, exec->argument(i - 1).description(), actionablePredictionToString(prediction));
+            printf("    OSR failed because argument %lu is %s, expected ", argument, value.description());
+            entry->m_expectedValues.argument(argument).dump(stdout);
+            printf(".\n");
 #endif
             return 0;
         }
     }
     
-    for (unsigned i = 0; i < entry->m_predictions.variableUpperBound(); ++i) {
-        ActionablePrediction prediction = entry->m_predictions.variable(i);
-        if (prediction == NoActionablePrediction)
-            continue;
-        
-        if (!valueObeysPrediction(globalData, exec->registers()[i].jsValue(), prediction)) {
+    for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
+        if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because variable %u is %s, expected %s.\n", i, exec->registers()[i].jsValue().description(), actionablePredictionToString(prediction));
+            printf("    OSR failed because variable %lu is %s, expected ", local, exec->registers()[local].jsValue().description());
+            entry->m_expectedValues.local(local).dump(stdout);
+            printf(".\n");
 #endif
             return 0;
         }

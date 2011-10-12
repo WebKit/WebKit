@@ -131,8 +131,8 @@ void OSRExit::dump(FILE* out) const
 void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
     
     SpeculateDoubleOperand op1(this, node.child1());
     SpeculateDoubleOperand op2(this, node.child2());
@@ -143,11 +143,11 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNod
         addBranch(m_jit.jump(), notTaken);
 }
 
-void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, void* vptr)
+void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, void* vptr, PredictionChecker predictionCheck)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
 
     MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
     
@@ -164,8 +164,10 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
     
-    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(vptr)));
-    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    if (!predictionCheck(m_state.forNode(node.child1()).m_type))
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    if (!predictionCheck(m_state.forNode(node.child2()).m_type))
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR), MacroAssembler::TrustedImmPtr(vptr)));
     
     addBranch(m_jit.branchPtr(condition, op1GPR, op2GPR), taken);
     if (notTaken != (m_block + 1))
@@ -175,8 +177,8 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
 void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition condition)
 {
     Node& branchNode = at(branchNodeIndex);
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
@@ -225,11 +227,11 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::Relationa
             use(node.child1());
             use(node.child2());
         } else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
-            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr);
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
             use(node.child1());
             use(node.child2());
         } else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
-            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr);
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
             use(node.child1());
             use(node.child2());
         } else
@@ -262,18 +264,21 @@ void SpeculativeJIT::compile(BasicBlock& block)
     m_jit.breakpoint();
 #endif
 
-    ASSERT(m_arguments.size() == block.m_argumentsAtHead.size());
+    ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
-        NodeIndex nodeIndex = block.m_argumentsAtHead[i].value;
+        NodeIndex nodeIndex = block.variablesAtHead.argument(i);
         if (nodeIndex == NoNode)
             m_arguments[i] = ValueSource(ValueInRegisterFile);
         else
             m_arguments[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }
     
-    ASSERT(m_variables.size() == block.m_localsAtHead.size());
+    m_state.reset();
+    m_state.beginBasicBlock(&block);
+    
+    ASSERT(m_variables.size() == block.variablesAtHead.numberOfLocals());
     for (size_t i = 0; i < m_variables.size(); ++i) {
-        NodeIndex nodeIndex = block.m_localsAtHead[i].value;
+        NodeIndex nodeIndex = block.variablesAtHead.local(i);
         if (nodeIndex == NoNode)
             m_variables[i] = ValueSource(ValueInRegisterFile);
         else
@@ -342,6 +347,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if ENABLE(DFG_DEBUG_VERBOSE)
         fprintf(stderr, "\n");
 #endif
+        
+        // Make sure that the abstract state is rematerialized for the next node.
+        m_state.execute(m_compileIndex);
         
         if (node.shouldGenerate())
             checkConsistency();
@@ -543,7 +551,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node& node)
     GPRReg stringReg = string.gpr();
     GPRReg indexReg = index.gpr();
     
-    if (!isKnownString(node.child1()))
+    if (!isStringPrediction(m_state.forNode(node.child1()).m_type))
         speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(stringReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
     
     // unsigned comparison so we can filter out negative indices and indices that are too large
@@ -572,7 +580,7 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
 
-    if (!isKnownString(node.child1()))
+    if (!isStringPrediction(m_state.forNode(node.child1()).m_type))
         speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
 
     // unsigned comparison so we can filter out negative indices and indices that are too large

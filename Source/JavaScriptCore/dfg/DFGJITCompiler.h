@@ -404,23 +404,19 @@ public:
 #if ENABLE(DFG_OSR_ENTRY)
         OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
         
-        ActionablePredictions actionablePredictions(basicBlock.m_argumentsAtHead.size(), basicBlock.m_localsAtHead.size());
-
-        for (unsigned i = 0; i < basicBlock.m_argumentsAtHead.size(); ++i) {
-            NodeIndex nodeIndex = basicBlock.m_argumentsAtHead[i].value;
-            if (nodeIndex != NoNode)
-                actionablePredictions.setArgument(i, actionablePredictionFromPredictedType(m_graph[nodeIndex].variableAccessData()->prediction()));
+        entry->m_expectedValues = basicBlock.valuesAtHead;
+        
+        // Fix the expected values: in our protocol, a dead variable will have an expected
+        // value of (None, []). But the old JIT may stash some values there. So we really
+        // need (Top, TOP).
+        for (size_t argument = 0; argument < basicBlock.variablesAtHead.numberOfArguments(); ++argument) {
+            if (basicBlock.variablesAtHead.argument(argument) == NoNode)
+                entry->m_expectedValues.argument(argument).makeTop();
         }
-        
-        for (unsigned i = 0; i < basicBlock.m_localsAtHead.size(); ++i) {
-            NodeIndex nodeIndex = basicBlock.m_localsAtHead[i].value;
-            if (nodeIndex != NoNode)
-                actionablePredictions.setVariable(i, actionablePredictionFromPredictedType(m_graph[nodeIndex].variableAccessData()->prediction()));
+        for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
+            if (basicBlock.variablesAtHead.local(local) == NoNode)
+                entry->m_expectedValues.local(local).makeTop();
         }
-        
-        actionablePredictions.pack();
-        
-        entry->m_predictions = actionablePredictions;
 #else
         UNUSED_PARAM(basicBlock);
 #endif

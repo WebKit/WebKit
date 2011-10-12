@@ -188,11 +188,11 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         hasPrinted = true;
     }
     if  (node.isBranch() || node.isJump()) {
-        printf("%sT:#%u", hasPrinted ? ", " : "", blockIndexForBytecodeOffset(node.takenBytecodeOffset()));
+        printf("%sT:#%u", hasPrinted ? ", " : "", node.takenBlockIndex());
         hasPrinted = true;
     }
     if  (node.isBranch()) {
-        printf("%sF:#%u", hasPrinted ? ", " : "", blockIndexForBytecodeOffset(node.notTakenBytecodeOffset()));
+        printf("%sF:#%u", hasPrinted ? ", " : "", node.notTakenBlockIndex());
         hasPrinted = true;
     }
     (void)hasPrinted;
@@ -239,8 +239,15 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
 void Graph::dump(CodeBlock* codeBlock)
 {
     for (size_t b = 0; b < m_blocks.size(); ++b) {
-        printf("Block #%u (bc#%u):  %s\n", (int)b, m_blocks[b]->bytecodeBegin, m_blocks[b]->isOSRTarget ? " (OSR target)" : "");
-        for (size_t i = m_blocks[b]->begin; i < m_blocks[b]->end; ++i)
+        BasicBlock* block = m_blocks[b].get();
+        printf("Block #%u (bc#%u):  %s\n", (int)b, block->bytecodeBegin, block->isOSRTarget ? " (OSR target)" : "");
+        printf("  vars: ");
+        if (block->cfaHasVisited)
+            dumpOperands(block->valuesAtHead, stdout);
+        else
+            printf("<empty>");
+        printf("\n");
+        for (size_t i = block->begin; i < block->end; ++i)
             dump(i, codeBlock);
     }
     printf("Phi Nodes:\n");

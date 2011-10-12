@@ -81,7 +81,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
-	Source/JavaScriptCore/bytecode/ActionablePrediction.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
@@ -105,6 +104,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
+	Source/JavaScriptCore/dfg/DFGAbstractState.cpp \
+	Source/JavaScriptCore/dfg/DFGAbstractState.h \
+	Source/JavaScriptCore/dfg/DFGAbstractValue.h \
+	Source/JavaScriptCoer/dfg/DFGBasicBlock.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
@@ -122,6 +125,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
+	Source/JavaScriptCore/dfg/DFGOperands.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
 	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \
@@ -135,6 +139,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGStructureSet.h \
+	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
 	Source/JavaScriptCore/heap/AllocationSpace.cpp \
 	Source/JavaScriptCore/heap/AllocationSpace.h \
 	Source/JavaScriptCore/heap/CardSet.h \

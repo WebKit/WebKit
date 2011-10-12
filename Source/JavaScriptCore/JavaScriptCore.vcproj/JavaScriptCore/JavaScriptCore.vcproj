@@ -1438,10 +1438,6 @@
 			Name="bytecode"
 			>
 			<File
-				RelativePath="..\..\bytecode\ActionablePrediction.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\CodeBlock.cpp"
 				>
 			</File>
@@ -1583,6 +1579,10 @@
                         </File>
                         <File
                                 RelativePath="..\..\dfg\DFGIntrinsic.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\dfg\DFGOSREntry.h"
                                 >
                         </File>
                 </Filter>

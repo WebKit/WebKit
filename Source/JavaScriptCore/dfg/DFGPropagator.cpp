@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractState.h"
 #include "DFGGraph.h"
 #include "DFGScoreBoard.h"
 #include <wtf/FixedArray.h>
@@ -55,45 +56,11 @@ public:
     void fixpoint()
     {
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-    m_graph.dump(m_codeBlock);
+        m_graph.dump(m_codeBlock);
 #endif
 
-#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-        m_count = 0;
-#endif
-        do {
-            m_changed = false;
-            
-            // Up here we start with a backward pass because we suspect that to be
-            // more profitable.
-            propagateArithNodeFlagsBackward();
-            if (!m_changed)
-                break;
-            
-            m_changed = false;
-            propagateArithNodeFlagsForward();
-        } while (m_changed);
-        
-#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-        m_count = 0;
-#endif
-        do {
-            m_changed = false;
-            
-            // Forward propagation is near-optimal for both topologically-sorted and
-            // DFS-sorted code.
-            propagatePredictionsForward();
-            if (!m_changed)
-                break;
-            
-            // Backward propagation reduces the likelihood that pathological code will
-            // cause slowness. Loops (especially nested ones) resemble backward flow.
-            // This pass captures two cases: (1) it detects if the forward fixpoint
-            // found a sound solution and (2) short-circuits backward flow.
-            m_changed = false;
-            propagatePredictionsBackward();
-        } while (m_changed);
-        
+        propagateArithNodeFlags();
+        propagatePredictions();
         fixup();
         
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
@@ -109,6 +76,13 @@ public:
 #endif
 
         allocateVirtualRegisters();
+
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("Graph after virtual register allocation:\n");
+        m_graph.dump(m_codeBlock);
+#endif
+
+        globalCFA();
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Graph after propagation:\n");
@@ -272,6 +246,25 @@ private:
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagateArithNodeFlags(m_graph[m_compileIndex]);
+    }
+    
+    void propagateArithNodeFlags()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        m_count = 0;
+#endif
+        do {
+            m_changed = false;
+            
+            // Up here we start with a backward pass because we suspect that to be
+            // more profitable.
+            propagateArithNodeFlagsBackward();
+            if (!m_changed)
+                break;
+            
+            m_changed = false;
+            propagateArithNodeFlagsForward();
+        } while (m_changed);
     }
     
     bool setPrediction(PredictedType prediction)
@@ -608,7 +601,7 @@ private:
         }
 
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-        printf("%s ", predictionToString(m_graph[m_compileIndex].prediction()));
+        printf("%s\n", predictionToString(m_graph[m_compileIndex].prediction()));
 #endif
         
         m_changed |= changed;
@@ -630,6 +623,29 @@ private:
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagateNodePredictions(m_graph[m_compileIndex]);
+    }
+    
+    void propagatePredictions()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        m_count = 0;
+#endif
+        do {
+            m_changed = false;
+            
+            // Forward propagation is near-optimal for both topologically-sorted and
+            // DFS-sorted code.
+            propagatePredictionsForward();
+            if (!m_changed)
+                break;
+            
+            // Backward propagation reduces the likelihood that pathological code will
+            // cause slowness. Loops (especially nested ones) resemble backward flow.
+            // This pass captures two cases: (1) it detects if the forward fixpoint
+            // found a sound solution and (2) short-circuits backward flow.
+            m_changed = false;
+            propagatePredictionsBackward();
+        } while (m_changed);
     }
     
     void toDouble(NodeIndex nodeIndex)
@@ -1451,6 +1467,81 @@ private:
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Num callee registers: %u\n", calleeRegisters);
 #endif
+    }
+    
+    void performBlockCFA(AbstractState& state, BlockIndex blockIndex)
+    {
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        if (!block->cfaShouldRevisit)
+            return;
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
+#endif
+        state.beginBasicBlock(block);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("      head vars: ");
+        dumpOperands(block->valuesAtHead, stdout);
+        printf("\n");
+#endif
+        for (NodeIndex nodeIndex = block->begin; nodeIndex < block->end; ++nodeIndex) {
+            if (!m_graph[nodeIndex].shouldGenerate())
+                continue;
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+            printf("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op), nodeIndex);
+            state.dump(stdout);
+            printf("\n");
+#endif
+            if (!state.execute(nodeIndex))
+                break;
+        }
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("      tail regs: ");
+        state.dump(stdout);
+        printf("\n");
+#endif
+        m_changed |= state.endBasicBlock(AbstractState::MergeToSuccessors);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("      tail vars: ");
+        dumpOperands(block->valuesAtTail, stdout);
+        printf("\n");
+#endif
+    }
+    
+    void performForwardCFA(AbstractState& state)
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("CFA [%u]\n", ++m_count);
+#endif
+        
+        for (BlockIndex block = 0; block < m_graph.m_blocks.size(); ++block)
+            performBlockCFA(state, block);
+    }
+    
+    void globalCFA()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        m_count = 0;
+#endif
+        
+        // This implements a pseudo-worklist-based forward CFA, except that the visit order
+        // of blocks is the bytecode program order (which is nearly topological), and
+        // instead of a worklist we just walk all basic blocks checking if cfaShouldRevisit
+        // is set to true. This is likely to balance the efficiency properties of both
+        // worklist-based and forward fixpoint-based approaches. Like a worklist-based
+        // approach, it won't visit code if it's meaningless to do so (nothing changed at
+        // the head of the block or the predecessors have not been visited). Like a forward
+        // fixpoint-based approach, it has a high probability of only visiting a block
+        // after all predecessors have been visited. Only loops will cause this analysis to
+        // revisit blocks, and the amount of revisiting is proportional to loop depth.
+        
+        AbstractState::initialize(m_graph);
+        
+        AbstractState state(m_codeBlock, m_graph);
+        
+        do {
+            m_changed = false;
+            performForwardCFA(state);
+        } while (m_changed);
     }
     
     Graph& m_graph;

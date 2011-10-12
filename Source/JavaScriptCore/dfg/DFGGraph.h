@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGBasicBlock.h"
 #include "DFGNode.h"
 #include "PredictionTracker.h"
 #include "RegisterFile.h"
@@ -43,29 +44,6 @@ class CodeBlock;
 class ExecState;
 
 namespace DFG {
-
-// helper function to distinguish vars & temporaries from arguments.
-inline bool operandIsArgument(int operand) { return operand < 0; }
-
-typedef uint32_t BlockIndex;
-
-// For every local variable we track any existing get or set of the value.
-// We track the get so that these may be shared, and we track the set to
-// retrieve the current value, and to reference the final definition.
-struct VariableRecord {
-    VariableRecord()
-        : value(NoNode)
-    {
-    }
-    
-    void setFirstTime(NodeIndex nodeIndex)
-    {
-        ASSERT(value == NoNode);
-        value = nodeIndex;
-    }
-
-    NodeIndex value;
-};
 
 struct MethodCheckData {
     // It is safe to refer to these directly because they are shadowed by
@@ -110,40 +88,6 @@ struct StorageAccessData {
 struct ResolveGlobalData {
     unsigned identifierNumber;
     unsigned resolveInfoIndex;
-};
-
-typedef Vector <BlockIndex, 2> PredecessorList;
-
-struct BasicBlock {
-    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numLocals)
-        : bytecodeBegin(bytecodeBegin)
-        , begin(begin)
-        , end(NoNode)
-        , isOSRTarget(false)
-        , m_argumentsAtHead(numArguments)
-        , m_localsAtHead(numLocals)
-        , m_argumentsAtTail(numArguments)
-        , m_localsAtTail(numLocals)
-    {
-    }
-
-    static inline BlockIndex getBytecodeBegin(OwnPtr<BasicBlock>* block)
-    {
-        return (*block)->bytecodeBegin;
-    }
-
-    unsigned bytecodeBegin;
-    NodeIndex begin;
-    NodeIndex end;
-    bool isOSRTarget;
-
-    PredecessorList m_predecessors;
-    
-    Vector<VariableRecord, 8> m_argumentsAtHead;
-    Vector<VariableRecord, 16> m_localsAtHead;
-    
-    Vector<VariableRecord, 8> m_argumentsAtTail;
-    Vector<VariableRecord, 16> m_localsAtTail;
 };
 
 // 

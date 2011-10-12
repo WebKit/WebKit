@@ -26,10 +26,8 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
-#include "DFGStructureSet.h"
 #include <wtf/BoundsCheckedPointer.h>
 #include <wtf/Platform.h>
-#include <wtf/UnionFind.h>
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define ENABLE_DFG_DEBUG_VERBOSE 0
@@ -67,6 +65,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGOperands.h"
+#include "DFGVariableAccessData.h"
 #include "JSValue.h"
 #include "PredictedType.h"
 #include "ValueProfile.h"
@@ -74,14 +74,15 @@
 
 namespace JSC { namespace DFG {
 
-// Type for a virtual register number (spill location).
-// Using an enum to make this type-checked at compile time, to avert programmer errors.
-enum VirtualRegister { InvalidVirtualRegister = -1 };
-COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
-
 // Type for a reference to another node in the graph.
 typedef uint32_t NodeIndex;
 static const NodeIndex NoNode = UINT_MAX;
+
+typedef uint32_t BlockIndex;
+
+struct NodeIndexTraits {
+    static NodeIndex defaultValue() { return NoNode; }
+};
 
 // Information used to map back from an exception to any handler/source information,
 // and to implement OSR.
@@ -108,51 +109,6 @@ public:
     
 private:
     uint32_t m_bytecodeIndex;
-};
-
-class VariableAccessData: public UnionFind<VariableAccessData> {
-public:
-    VariableAccessData()
-        : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
-        , m_prediction(PredictNone)
-    {
-    }
-    
-    VariableAccessData(VirtualRegister local)
-        : m_local(local)
-        , m_prediction(PredictNone)
-    {
-    }
-    
-    VirtualRegister local()
-    {
-        ASSERT(m_local == find()->m_local);
-        return m_local;
-    }
-    
-    int operand()
-    {
-        return static_cast<int>(local());
-    }
-    
-    bool predict(PredictedType prediction)
-    {
-        return mergePrediction(find()->m_prediction, prediction);
-    }
-    
-    PredictedType prediction()
-    {
-        return find()->m_prediction;
-    }
-    
-private:
-    // This is slightly space-inefficient, since anything we're unified with
-    // will have the same operand and should have the same prediction. But
-    // putting them here simplifies the code, and we don't expect DFG space
-    // usage for variable access nodes do be significant.
-
-    VirtualRegister m_local;
-    PredictedType m_prediction;
 };
 
 struct StructureTransitionData {
@@ -564,6 +520,7 @@ struct Node {
     
     VariableAccessData* variableAccessData()
     {
+        ASSERT(hasVariableAccessData());
         return reinterpret_cast<VariableAccessData*>(m_opInfo)->find();
     }
     
@@ -755,13 +712,37 @@ struct Node {
         return op & NodeIsTerminal;
     }
 
-    unsigned takenBytecodeOffset()
+    unsigned takenBytecodeOffsetDuringParsing()
     {
         ASSERT(isBranch() || isJump());
         return m_opInfo;
     }
 
-    unsigned notTakenBytecodeOffset()
+    unsigned notTakenBytecodeOffsetDuringParsing()
+    {
+        ASSERT(isBranch());
+        return m_opInfo2;
+    }
+    
+    void setTakenBlockIndex(BlockIndex blockIndex)
+    {
+        ASSERT(isBranch() || isJump());
+        m_opInfo = blockIndex;
+    }
+    
+    void setNotTakenBlockIndex(BlockIndex blockIndex)
+    {
+        ASSERT(isBranch());
+        m_opInfo2 = blockIndex;
+    }
+    
+    BlockIndex takenBlockIndex()
+    {
+        ASSERT(isBranch() || isJump());
+        return m_opInfo;
+    }
+    
+    BlockIndex notTakenBlockIndex()
     {
         ASSERT(isBranch());
         return m_opInfo2;

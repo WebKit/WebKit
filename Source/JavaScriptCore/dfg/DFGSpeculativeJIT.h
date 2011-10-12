@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <dfg/DFGAbstractState.h>
 #include <dfg/DFGJITCodeGenerator.h>
 
 namespace JSC { namespace DFG {
@@ -433,43 +434,16 @@ private:
         return info.isJSInteger();
     }
     
-    bool isKnownArray(NodeIndex op1)
-    {
-        Node& node = at(op1);
-        switch (node.op) {
-        case GetLocal:
-            return isArrayPrediction(node.variableAccessData()->prediction());
-            
-        case NewArray:
-        case NewArrayBuffer:
-            return true;
-            
-        default:
-            return false;
-        }
-    }
-
-    bool isKnownString(NodeIndex op1)
-    {
-        switch (at(op1).op) {
-        case StrCat:
-            return true;
-            
-        default:
-            return false;
-        }
-    }
-    
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
-    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
-    void compileObjectEquality(Node&, void* vptr);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr, PredictionChecker);
+    void compileObjectEquality(Node&, void* vptr, PredictionChecker);
     void compileValueAdd(Node&);
-    void compileObjectOrOtherLogicalNot(NodeIndex value, void* vptr);
+    void compileObjectOrOtherLogicalNot(NodeIndex value, void* vptr, bool needSpeculationCheck);
     void compileLogicalNot(Node&);
-    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr);
+    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck);
     void emitBranch(Node&);
     
     void compileGetCharCodeAt(Node&);
@@ -590,6 +564,8 @@ private:
     Vector<ValueSource, 0> m_variables;
     int m_lastSetOperand;
     uint32_t m_bytecodeIndexForOSR;
+    
+    AbstractState m_state;
     
     ValueRecovery computeValueRecoveryFor(const ValueSource&);
 
@@ -823,6 +799,7 @@ inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_bytecodeIndexForOSR(std::numeric_limits<uint32_t>::max())
+    , m_state(m_jit.codeBlock(), m_jit.graph())
 {
 }
 

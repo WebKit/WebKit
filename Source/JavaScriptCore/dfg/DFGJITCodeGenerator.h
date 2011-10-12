@@ -1515,6 +1515,11 @@ protected:
         }
     }
 
+    BasicBlock* block()
+    {
+        return m_jit.graph().m_blocks[m_block].get();
+    }
+
 #ifndef NDEBUG
     void dump(const char* label = 0);
 #endif

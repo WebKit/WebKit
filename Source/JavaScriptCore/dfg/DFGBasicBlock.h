@@ -23,37 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSREntry_h
-#define DFGOSREntry_h
-
-#include "DFGAbstractValue.h"
-#include "DFGOperands.h"
-
-namespace JSC {
-
-class ExecState;
-class CodeBlock;
-
-namespace DFG {
+#ifndef DFGBasicBlock_h
+#define DFGBasicBlock_h
 
 #if ENABLE(DFG_JIT)
-struct OSREntryData {
-    unsigned m_bytecodeIndex;
-    unsigned m_machineCodeOffset;
-    Operands<AbstractValue> m_expectedValues;
+
+#include "DFGAbstractValue.h"
+#include "DFGNode.h"
+#include "DFGOperands.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
+
+namespace JSC { namespace DFG {
+
+typedef Vector <BlockIndex, 2> PredecessorList;
+
+struct BasicBlock {
+    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numLocals)
+        : bytecodeBegin(bytecodeBegin)
+        , begin(begin)
+        , end(NoNode)
+        , isOSRTarget(false)
+        , cfaHasVisited(false)
+        , cfaShouldRevisit(false)
+        , variablesAtHead(numArguments, numLocals)
+        , variablesAtTail(numArguments, numLocals)
+        , valuesAtHead(numArguments, numLocals)
+        , valuesAtTail(numArguments, numLocals)
+    {
+    }
+
+    static inline BlockIndex getBytecodeBegin(OwnPtr<BasicBlock>* block)
+    {
+        return (*block)->bytecodeBegin;
+    }
+
+    unsigned bytecodeBegin;
+    NodeIndex begin;
+    NodeIndex end;
+    bool isOSRTarget;
+    bool cfaHasVisited;
+    bool cfaShouldRevisit;
+    
+    PredecessorList m_predecessors;
+    
+    Operands<NodeIndex, NodeIndexTraits> variablesAtHead;
+    Operands<NodeIndex, NodeIndexTraits> variablesAtTail;
+    
+    Operands<AbstractValue> valuesAtHead;
+    Operands<AbstractValue> valuesAtTail;
 };
-
-inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
-{
-    return osrEntryData->m_bytecodeIndex;
-}
-
-void* prepareOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
-#else
-inline void* prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return 0; }
-#endif
 
 } } // namespace JSC::DFG
 
-#endif // DFGOSREntry_h
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGBasicBlock_h
 

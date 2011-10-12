@@ -44,32 +44,55 @@ const char* predictionToString(PredictedType value)
     static char description[size];
     BoundsCheckedPointer<char> ptr(description, size);
     
+    bool isTop = true;
+    
     if (value & PredictCellOther)
         ptr.strcat("Othercell");
+    else
+        isTop = false;
     
     if (value & PredictObjectOther)
         ptr.strcat("Otherobj");
+    else
+        isTop = false;
     
     if (value & PredictFinalObject)
         ptr.strcat("Final");
+    else
+        isTop = false;
 
     if (value & PredictArray)
         ptr.strcat("Array");
+    else
+        isTop = false;
     
     if (value & PredictString)
         ptr.strcat("String");
+    else
+        isTop = false;
     
     if (value & PredictInt32)
         ptr.strcat("Int");
+    else
+        isTop = false;
     
     if (value & PredictDouble)
         ptr.strcat("Double");
+    else
+        isTop = false;
     
     if (value & PredictBoolean)
         ptr.strcat("Bool");
+    else
+        isTop = false;
     
     if (value & PredictOther)
         ptr.strcat("Other");
+    else
+        isTop = false;
+    
+    if (isTop)
+        return "Top";
     
     *ptr++ = 0;
     

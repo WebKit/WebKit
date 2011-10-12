@@ -128,7 +128,7 @@ private:
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getLocal(unsigned operand)
     {
-        NodeIndex nodeIndex = m_currentBlock->m_localsAtTail[operand].value;
+        NodeIndex nodeIndex = m_currentBlock->variablesAtTail.local(operand);
 
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
@@ -147,15 +147,15 @@ private:
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
         nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
-        m_currentBlock->m_localsAtTail[operand].value = nodeIndex;
+        m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
         
-        m_currentBlock->m_localsAtHead[operand].setFirstTime(nodeIndex);
+        m_currentBlock->variablesAtHead.setLocalFirstTime(operand, nodeIndex);
         
         return nodeIndex;
     }
     void setLocal(unsigned operand, NodeIndex value)
     {
-        m_currentBlock->m_localsAtTail[operand].value = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
+        m_currentBlock->variablesAtTail.local(operand) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -164,7 +164,7 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        NodeIndex nodeIndex = m_currentBlock->m_argumentsAtTail[argument].value;
+        NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
 
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
@@ -173,7 +173,7 @@ private:
                 // the GetLocal to the SetArgument.
                 ASSERT(node.local() == static_cast<VirtualRegister>(operand));
                 nodeIndex = addToGraph(GetLocal, OpInfo(node.variableAccessData()), nodeIndex);
-                m_currentBlock->m_argumentsAtTail[argument].value = nodeIndex;
+                m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                 return nodeIndex;
             }
             
@@ -189,9 +189,9 @@ private:
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
         nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
-        m_currentBlock->m_argumentsAtTail[argument].value = nodeIndex;
+        m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
         
-        m_currentBlock->m_argumentsAtHead[argument].setFirstTime(nodeIndex);
+        m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, nodeIndex);
         
         return nodeIndex;
     }
@@ -200,7 +200,7 @@ private:
         unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
         ASSERT(argument < m_numArguments);
 
-        m_currentBlock->m_argumentsAtTail[argument].value = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
+        m_currentBlock->variablesAtTail.argument(argument) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -786,8 +786,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argument - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize)));
             m_graph.m_arguments[argument] = setArgument;
-            m_currentBlock->m_argumentsAtHead[argument].setFirstTime(setArgument);
-            m_currentBlock->m_argumentsAtTail[argument].setFirstTime(setArgument);
+            m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
+            m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
     }
 
@@ -1692,16 +1692,16 @@ void ByteCodeParser::processPhiStack()
         for (size_t i = 0; i < predecessors.size(); ++i) {
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
 
-            VariableRecord& var = (stackType == ArgumentPhiStack) ? predecessorBlock->m_argumentsAtTail[varNo] : predecessorBlock->m_localsAtTail[varNo];
+            NodeIndex& var = (stackType == ArgumentPhiStack) ? predecessorBlock->variablesAtTail.argument(varNo) : predecessorBlock->variablesAtTail.local(varNo);
 
-            NodeIndex valueInPredecessor = var.value;
+            NodeIndex valueInPredecessor = var;
             if (valueInPredecessor == NoNode) {
                 valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? varNo - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize : varNo)));
-                var.setFirstTime(valueInPredecessor);
+                var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
-                    predecessorBlock->m_argumentsAtHead[varNo].setFirstTime(valueInPredecessor);
+                    predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);
                 else
-                    predecessorBlock->m_localsAtHead[varNo].setFirstTime(valueInPredecessor);
+                    predecessorBlock->variablesAtHead.setLocalFirstTime(varNo, valueInPredecessor);
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal) {
                 // We want to ensure that the VariableAccessDatas are identical between the
@@ -1761,11 +1761,14 @@ void ByteCodeParser::setupPredecessors()
         Node& node = m_graph[block->end - 1];
         ASSERT(node.isTerminal());
 
-        if (node.isJump())
-            m_graph.blockForBytecodeOffset(node.takenBytecodeOffset()).m_predecessors.append(index);
-        else if (node.isBranch()) {
-            m_graph.blockForBytecodeOffset(node.takenBytecodeOffset()).m_predecessors.append(index);
-            m_graph.blockForBytecodeOffset(node.notTakenBytecodeOffset()).m_predecessors.append(index);
+        if (node.isJump()) {
+            node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(node.takenBytecodeOffsetDuringParsing()));
+            m_graph.m_blocks[node.takenBlockIndex()]->m_predecessors.append(index);
+        } else if (node.isBranch()) {
+            node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(node.takenBytecodeOffsetDuringParsing()));
+            node.setNotTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(node.notTakenBytecodeOffsetDuringParsing()));
+            m_graph.m_blocks[node.takenBlockIndex()]->m_predecessors.append(index);
+            m_graph.m_blocks[node.notTakenBlockIndex()]->m_predecessors.append(index);
         }
     }
 }

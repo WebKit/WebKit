@@ -26,6 +26,12 @@
 #ifndef DFGStructureSet_h
 #define DFGStructureSet_h
 
+#include <wtf/Platform.h>
+
+#if ENABLE(DFG_JIT)
+
+#include "PredictedType.h"
+#include <stdio.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -34,6 +40,8 @@ class Structure;
 
 namespace DFG {
 
+class StructureAbstractValue;
+
 class StructureSet {
 public:
     StructureSet() { }
@@ -41,6 +49,11 @@ public:
     StructureSet(Structure* structure)
     {
         m_structures.append(structure);
+    }
+    
+    void clear()
+    {
+        m_structures.clear();
     }
     
     void add(Structure* structure)
@@ -104,10 +117,50 @@ public:
     
     Structure* last() const { return m_structures.last(); }
 
+    PredictedType predictionFromStructures() const
+    {
+        PredictedType result = PredictNone;
+        
+        for (size_t i = 0; i < m_structures.size(); ++i)
+            mergePrediction(result, predictionFromStructure(m_structures[i]));
+        
+        return result;
+    }
+    
+    bool operator==(const StructureSet& other) const
+    {
+        if (m_structures.size() != other.m_structures.size())
+            return false;
+        
+        for (size_t i = 0; i < m_structures.size(); ++i) {
+            if (!other.contains(m_structures[i]))
+                return false;
+        }
+        
+        return true;
+    }
+    
+#ifndef NDEBUG
+    void dump(FILE* out)
+    {
+        fprintf(out, "[");
+        for (size_t i = 0; i < m_structures.size(); ++i) {
+            if (i)
+                fprintf(out, ", ");
+            fprintf(out, "%p", m_structures[i]);
+        }
+        fprintf(out, "]");
+    }
+#endif
+    
 private:
+    friend class StructureAbstractValue;
+    
     Vector<Structure*, 2> m_structures;
 };
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // DFGStructureSet_h
