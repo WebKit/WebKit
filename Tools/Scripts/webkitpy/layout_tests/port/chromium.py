@@ -62,6 +62,7 @@ class ChromiumPort(Port):
     ALL_SYSTEMS = (
         ('leopard', 'x86'),
         ('snowleopard', 'x86'),
+        ('lion', 'x86'),
         ('xp', 'x86'),
         ('vista', 'x86'),
         ('win7', 'x86'),
