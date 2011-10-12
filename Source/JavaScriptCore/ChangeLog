@@ -1,3 +1,10 @@
+2011-10-11  Gavin Barraclough  <baraclough@apple.com>
+
+        Unreviewed, temporarily reverted r97216 due to bug #69897.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+
 2011-10-11  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG 32_64 - fix silentFillGPR
