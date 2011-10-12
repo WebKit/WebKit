@@ -1,3 +1,22 @@
+2011-10-12  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Update WebSocket protocol to hybi-17
+        https://bugs.webkit.org/show_bug.cgi?id=69910
+
+        Reviewed by Kent Tamura.
+
+        Essential changes between hybi-10 and hybi-17 are:
+        - Sec-WebSocket-Origin header has been renamed to "Origin".
+        - Sec-WebSocket-Version header value has been bumped to 13.
+
+        No new tests are necessary. pywebsocket has already been updated to the latest version
+        which understands the new protocol. Tests under http/tests/websocket/ should keep
+        passing.
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+
 2011-10-11  Antti Koivisto  <antti@apple.com>
 
         Resolve regular and visited link style in a single pass

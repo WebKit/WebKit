@@ -268,10 +268,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Upgrade: websocket");
     fields.append("Connection: Upgrade");
     fields.append("Host: " + hostName(m_url, m_secure));
-    if (m_useHixie76Protocol)
-        fields.append("Origin: " + clientOrigin());
-    else
-        fields.append("Sec-WebSocket-Origin: " + clientOrigin());
+    fields.append("Origin: " + clientOrigin());
     if (!m_clientProtocol.isEmpty())
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
@@ -289,7 +286,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Key2: " + m_hixie76SecWebSocketKey2);
     } else {
         fields.append("Sec-WebSocket-Key: " + m_secWebSocketKey);
-        fields.append("Sec-WebSocket-Version: 8");
+        fields.append("Sec-WebSocket-Version: 13");
     }
 
     // Fields in the handshake are sent by the client in a random order; the
@@ -327,10 +324,7 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
         request.addHeaderField("Upgrade", "websocket");
     request.addHeaderField("Connection", "Upgrade");
     request.addHeaderField("Host", hostName(m_url, m_secure));
-    if (m_useHixie76Protocol)
-        request.addHeaderField("Origin", clientOrigin());
-    else
-        request.addHeaderField("Sec-WebSocket-Origin", clientOrigin());
+    request.addHeaderField("Origin", clientOrigin());
     if (!m_clientProtocol.isEmpty())
         request.addHeaderField("Sec-WebSocket-Protocol:", m_clientProtocol);
 
@@ -349,7 +343,7 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setKey3(m_hixie76Key3);
     } else {
         request.addHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
-        request.addHeaderField("Sec-WebSocket-Version", "8");
+        request.addHeaderField("Sec-WebSocket-Version", "13");
     }
 
     return request;
