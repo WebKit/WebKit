@@ -901,7 +901,7 @@
 #endif
 
 /* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
-#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && PLATFORM(MAC)
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
 #define ENABLE_DFG_JIT 1
 #endif
 
