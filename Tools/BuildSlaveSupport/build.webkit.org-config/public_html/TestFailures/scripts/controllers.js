@@ -67,7 +67,7 @@ controllers.ResultsDetails = base.extends(Object, {
         $(this._view).bind('next', this.onNext.bind(this));
         $(this._view).bind('previous', this.onPrevious.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
-        $(this._view).bind('updateexpectations', this.onUpdateExpectations.bind(this));
+        $(this._view).bind('expectfailure', this.onUpdateExpectations.bind(this));
     },
     onNext: function()
     {
@@ -119,7 +119,7 @@ var FailureStreamController = base.extends(Object, {
             $(failure).bind('rebaseline', function() {
                 this.onRebaseline(failure);
             }.bind(this));
-            $(failure).bind('updateexpectations', function() {
+            $(failure).bind('expectfailure', function() {
                 this.onUpdateExpectations(failure);
             }.bind(this));
         }
