@@ -1,3 +1,17 @@
+2011-10-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fix build with GLib 2.31
+        https://bugs.webkit.org/show_bug.cgi?id=69840
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: removed ThreadingGtk.cpp.
+        * wtf/ThreadingPrimitives.h: remove GTK+-specific definitions.
+        * wtf/gobject/GOwnPtr.cpp: remove GCond and GMutex specializations.
+        * wtf/gobject/GOwnPtr.h: ditto.
+        * wtf/gobject/GTypedefs.h: remove GCond and GMutex forward declarations.
+        * wtf/gtk/ThreadingGtk.cpp: Removed.
+
 2011-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         Layout tests crashing in DFG JIT code

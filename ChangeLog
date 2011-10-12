@@ -1,3 +1,12 @@
+2011-10-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fix build with GLib 2.31
+        https://bugs.webkit.org/show_bug.cgi?id=69840
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: add check for pthread rwlock support.
+
 2011-10-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Make adding another unit test easier

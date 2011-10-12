@@ -111,6 +111,9 @@ if test "$os_win32" = "no"; then
 AC_CHECK_HEADERS([pthread.h],
                  AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exists]),
                  AC_MSG_ERROR([pthread support is required to build WebKit]))
+AC_CHECK_LIB(pthread, pthread_rwlock_init,
+                 AC_DEFINE([HAVE_PTHREAD_RWLOCK],[1],[Define if pthread rwlock is present]),
+                 AC_MSG_WARN([pthread rwlock support is not available]))
 fi
 
 # check for libjpeg the way Gtk does it.
