@@ -1,3 +1,24 @@
+2011-10-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        StorageAreaSync::sync needs a transaction for better performance.
+        https://bugs.webkit.org/show_bug.cgi?id=57694
+
+        Reviewed by Darin Adler.
+
+        For now, StorageAreaSync::sync execute SQLite operations for all items outside
+        a transaction.
+        However, SQLite operations outside a transaction are all atomic and thus
+        writes will block on I/O, which makes the process slow during heavy I/O.
+        This wrapped them with BEGIN TRANSACTION and END TRANSACTION for the better
+        performance.
+
+        No new tests required.
+        No functional changes if transaction doesn't fail.
+        And also, it is difficult to test the case of transaction fails.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::sync):
+
 2011-10-11  Ojan Vafai  <ojan@chromium.org>
 
         margin-right is ignored with vertical writing mode
