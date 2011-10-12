@@ -6,11 +6,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Sending FormData containing one sliced file with empty name:
 
 Sending FormData containing one sliced file:
-file=Blob:application/octet-stream:23456
+file=blob:application/octet-stream:23456
+Sending FormData containing one sliced file with optional null filename:
+file=blob:application/octet-stream:23456
+Sending FormData containing one sliced file with optional non-null filename:
+file=filename:application/octet-stream:23456
+Sending FormData containing one complete file with optional non-null filename:
+file=file-for-drag-to-send.txt:text/plain:1234567890
 Sending FormData containing one string and one sliced file:
-string1=foo&file1=Blob:application/octet-stream:23456
+string1=foo&file1=blob:application/octet-stream:23456
 Sending FormData containing two strings and two sliced files:
-string1=foo&string2=bar&file1=Blob:application/octet-stream:23456&file2=Blob:application/octet-stream:45
+string1=foo&string2=bar&file1=blob:application/octet-stream:23456&file2=filename2:application/octet-stream:45
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -63,10 +63,10 @@ void DOMFormData::append(const String& name, const String& value)
         appendData(name, value);
 }
 
-void DOMFormData::append(const String& name, Blob* blob)
+void DOMFormData::append(const String& name, Blob* blob, const String& filename)
 {
     if (!name.isEmpty())
-        appendBlob(name, blob);
+        appendBlob(name, blob, filename);
 }
 
 } // namespace WebCore

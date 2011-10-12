@@ -48,7 +48,7 @@ public:
     static PassRefPtr<DOMFormData> create(const TextEncoding& encoding) { return adoptRef(new DOMFormData(encoding)); }
 
     void append(const String& name, const String& value);
-    void append(const String& name, Blob*);
+    void append(const String& name, Blob*, const String& filename = String());
 
 private:
     explicit DOMFormData(const TextEncoding&);

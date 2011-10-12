@@ -62,9 +62,12 @@ JSValue JSDOMFormData::append(ExecState* exec)
     if (exec->argumentCount() >= 2) {
         String name = ustringToString(exec->argument(0).toString(exec));
         JSValue value = exec->argument(1);
-        if (value.inherits(&JSBlob::s_info))
-            impl()->append(name, toBlob(value));
-        else
+        if (value.inherits(&JSBlob::s_info)) {
+            String filename;
+            if (exec->argumentCount() >= 3 && !exec->argument(2).isUndefinedOrNull())
+                filename = ustringToString(exec->argument(2).toString(exec));
+            impl()->append(name, toBlob(value), filename);
+        } else
             impl()->append(name, ustringToString(value.toString(exec)));
     }
 

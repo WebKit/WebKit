@@ -221,9 +221,11 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                         }
                     }
                 } else {
-                    // For non-file blob, use the identifier part of the URL as the name.
-                    name = "Blob" + BlobURL::getIdentifier(value.blob()->url());
-                    name = name.replace("-", ""); // For safety, remove '-' from the filename since some servers may not like it.
+                    // For non-file blob, use the filename if it is passed in FormData.append().
+                    if (!value.filename().isEmpty())
+                        name = value.filename();
+                    else
+                        name = "blob";
                 }
 
                 // We have to include the filename=".." part in the header, even if the filename is empty

@@ -1,3 +1,31 @@
+2011-10-12  Jian Li  <jianli@chromium.org>
+
+        Support passing optional filename when FormData.append() is used to
+        append a blob
+        https://bugs.webkit.org/show_bug.cgi?id=69885
+
+        Reviewed by David Levin.
+
+        Covered by existing test with new test case added:
+        http/tests/local/formdata/send-form-data-with-sliced-file.html
+
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::JSDOMFormData::append):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::appendCallback):
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::append):
+        * html/DOMFormData.h:
+        * html/DOMFormData.idl:
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendBlob):
+        * html/FormDataList.h:
+        (WebCore::FormDataList::Item::Item):
+        (WebCore::FormDataList::Item::filename):
+        (WebCore::FormDataList::appendBlob):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendKeyValuePairItems):
+
 2011-10-12  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         ScriptController::executeIfJavaScriptURL gets confused by synchronous frame loads

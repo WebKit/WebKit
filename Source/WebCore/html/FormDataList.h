@@ -34,14 +34,16 @@ public:
     public:
         Item() { }
         Item(const WTF::CString& data) : m_data(data) { }
-        Item(PassRefPtr<Blob> blob) : m_blob(blob) { }
+        Item(PassRefPtr<Blob> blob, const String& filename) : m_blob(blob), m_filename(filename) { }
 
         const WTF::CString& data() const { return m_data; }
         Blob* blob() const { return m_blob.get(); }
+        const String& filename() const { return m_filename; }
 
     private:
         WTF::CString m_data;
         RefPtr<Blob> m_blob;
+        String m_filename;
     };
 
     FormDataList(const TextEncoding&);
@@ -61,10 +63,10 @@ public:
         appendString(key);
         appendString(String::number(value));
     }
-    void appendBlob(const String& key, PassRefPtr<Blob> blob)
+    void appendBlob(const String& key, PassRefPtr<Blob> blob, const String& filename = String())
     {
         appendString(key);
-        appendBlob(blob);
+        appendBlob(blob, filename);
     }
 
     const Vector<Item>& items() const { return m_items; }
@@ -73,7 +75,7 @@ public:
 private:
     void appendString(const CString&);
     void appendString(const String&);
-    void appendBlob(PassRefPtr<Blob>);
+    void appendBlob(PassRefPtr<Blob>, const String& filename);
 
     TextEncoding m_encoding;
     Vector<Item> m_items;

@@ -72,7 +72,12 @@ v8::Handle<v8::Value> V8DOMFormData::appendCallback(const v8::Arguments& args)
         v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
         Blob* blob = V8Blob::toNative(object);
         ASSERT(blob);
-        domFormData->append(name, blob);
+
+        String filename;
+        if (args.Length() >= 3 && !args[2]->IsUndefined())
+            filename = toWebCoreStringWithNullCheck(args[2]);
+
+        domFormData->append(name, blob, filename);
     } else
         domFormData->append(name, toWebCoreStringWithNullCheck(arg));
 

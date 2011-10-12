@@ -36,9 +36,11 @@ module html {
         GenerateNativeConverter,
         GenerateToJS
     ] DOMFormData {
-        // void append(DOMString name, Blob value);
+        // void append(DOMString name, DOMString value);
+        // void append(DOMString name, Blob value, optional DOMString filename);
         [Custom] void append(in [Optional=CallWithDefaultValue] DOMString name, 
-                             in [Optional=CallWithDefaultValue] DOMString value);
+                             in [Optional=CallWithDefaultValue] DOMString value,
+                             in [Optional=CallWithDefaultValue] DOMString filename);
     };
 
 }

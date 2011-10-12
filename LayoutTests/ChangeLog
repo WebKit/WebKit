@@ -1,3 +1,19 @@
+2011-10-12  Jian Li  <jianli@chromium.org>
+
+        Support passing optional filename when FormData.append() is used to
+        append a blob
+        https://bugs.webkit.org/show_bug.cgi?id=69885
+
+        Reviewed by David Levin.
+
+        * http/tests/local/formdata/resources/send-form-data-common.js:
+        (dumpResponse):
+        (sendFormData):
+        (testSendingFormData):
+        * http/tests/local/formdata/script-tests/send-form-data-with-sliced-file.js:
+        (runTest):
+        * http/tests/local/formdata/send-form-data-with-sliced-file-expected.txt:
+
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Mark implicit-submission test as slow for all Debug builds.

@@ -21,21 +21,18 @@ function getFileName(filePath)
 
 function dumpResponse(xhr, fileSliced)
 {
-    var responseText = xhr.responseText;
-
-    // If we're sending a sliced file among the FormData, a uniquely generated name prefixed with "Blob" is used.
-    // We need to remove the random part in the filename so that we get consistent result.
-    if (fileSliced)
-        responseText = responseText.replace(/Blob\w{32}/g, "Blob");
-
-    debug(responseText);
+    debug(xhr.responseText);
 }
 
 function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
 {
     var formData = new FormData();
-    for (var i = 0; i < formDataList.length; i++)
-        formData.append(formDataList[i]['name'], formDataList[i]['value']);
+    for (var i = 0; i < formDataList.length; i++) {
+        if (formDataList[i]['filename'] != undefined)
+            formData.append(formDataList[i]['name'], formDataList[i]['value'], formDataList[i]['filename']);
+        else
+            formData.append(formDataList[i]['name'], formDataList[i]['value']);
+    }
 
     var xhr = new XMLHttpRequest();
     if (addEventHandlers)
@@ -75,7 +72,7 @@ function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
                         fileSliced = true;
                         file = file.webkitSlice(dataList[i]['start'], dataList[i]['start'] + dataList[i]['length']);
                     }
-                    formDataList.push({'name': dataList[i]['name'], 'value': file});
+                    formDataList.push({'name': dataList[i]['name'], 'value': file, 'filename': dataList[i]['filename']});
                     break;
                 }
             }
