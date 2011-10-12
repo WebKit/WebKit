@@ -97,7 +97,7 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     int result = posix_spawn(&pid, args[0], 0, &attr, const_cast<char* const*>(args), environmentVariables.environmentPointer());
     posix_spawnattr_destroy(&attr);
 
-    if (result < 0)
+    if (result)
         return false;
     int status;
     if (waitpid(pid, &status, 0) < 0)

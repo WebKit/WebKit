@@ -1,3 +1,16 @@
+2011-10-12  Dan Bernstein  <mitz@apple.com>
+
+        Hang beneath PluginProcessProxy::createPropertyListFile() when using a thin build
+        https://bugs.webkit.org/show_bug.cgi?id=69960
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::createPropertyListFile): Check for any non-zero return value
+        from posix_spawn() rather than for a negative return value. The old, incorrect check, caused
+        this function to hang in waitpid() after failing to spawn a plug-in process for a 32-bit plug-in
+        when WebKit2 was built for 64-bit only.
+
 2011-10-12  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Move qweberror* out of API/qt
