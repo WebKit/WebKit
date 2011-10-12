@@ -1,5 +1,17 @@
 2011-10-12  Ben Wells  <benwells@chromium.org>
 
+        [skia] Implement Path.currentPoint for skia
+        https://bugs.webkit.org/show_bug.cgi?id=69817
+
+        Replace FIXME with implementation.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::currentPoint):
+
+2011-10-12  Ben Wells  <benwells@chromium.org>
+
         Incorrect rendering with one-sided thick border and border-radius
         https://bugs.webkit.org/show_bug.cgi?id=38787
 
