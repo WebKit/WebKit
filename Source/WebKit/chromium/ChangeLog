@@ -1,3 +1,20 @@
+2011-10-11  Antoine Labour  <piman@chromium.org>
+
+        Separate compositor client thread from webkit's main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=69048
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::currentThread):
+        * src/CCMainThreadImpl.cpp: Added.
+        (WTF::TaskWrapper::TaskWrapper):
+        (WTF::TaskWrapper::~TaskWrapper):
+        (WTF::TaskWrapper::run):
+        (WebCore::CCMainThread::initialize):
+        (WebCore::CCMainThread::postTask):
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms

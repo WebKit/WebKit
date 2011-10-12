@@ -33,6 +33,7 @@
 #include "TreeSynchronizer.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCMainThread.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
@@ -56,6 +57,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
     , m_settings(settings)
     , m_visible(true)
 {
+    CCMainThread::initialize();
     ASSERT(CCProxy::isMainThread());
 }
 

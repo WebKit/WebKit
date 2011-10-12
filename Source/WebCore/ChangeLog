@@ -1,3 +1,22 @@
+2011-10-11  Antoine Labour  <piman@chromium.org>
+
+        Separate compositor client thread from webkit's main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=69048
+
+        Reviewed by Darin Fisher.
+
+        Covered by compositing tests.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCMainThread.cpp:
+        * platform/graphics/chromium/cc/CCMainThread.h:
+        * platform/graphics/chromium/cc/CCProxy.cpp:
+        (WebCore::CCProxy::isMainThread):
+        (WebCore::CCProxy::setMainThread):
+        (WebCore::CCProxy::CCProxy):
+        * platform/graphics/chromium/cc/CCProxy.h:
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Leopard and Snow Leopard builds, which don't use the scrollbar painter.

@@ -338,6 +338,7 @@
                 'src/BlobRegistryProxy.h',
                 'src/BoundObject.cpp',
                 'src/BoundObject.h',
+                'src/CCMainThreadImpl.cpp',
                 'src/CCThreadImpl.cpp',
                 'src/CCThreadImpl.h',
                 'src/ChromeClientImpl.cpp',

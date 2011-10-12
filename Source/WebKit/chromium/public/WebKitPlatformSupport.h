@@ -186,6 +186,10 @@ public:
     // Creates an embedder-defined thread.
     virtual WebThread* createThread(const char* name) { return 0; }
 
+    // Returns an interface to the current thread. This is owned by the
+    // embedder.
+    virtual WebThread* currentThread() { return 0; }
+
 
     // Message Ports -------------------------------------------------------
 

@@ -41,11 +41,12 @@ namespace WebCore {
 namespace {
 bool fakeImplThread = false;
 static WTF::ThreadIdentifier implThreadID;
+static WTF::ThreadIdentifier mainThreadID;
 }
 
 bool CCProxy::isMainThread()
 {
-    return ::isMainThread() && !fakeImplThread;
+    return !fakeImplThread && currentThread() == mainThreadID;
 }
 
 bool CCProxy::isImplThread()
@@ -63,6 +64,16 @@ void CCProxy::setImplThread(WTF::ThreadIdentifier id)
     implThreadID = id;
 }
 
+void CCProxy::setMainThread(WTF::ThreadIdentifier id)
+{
+    mainThreadID = id;
+}
+
 #endif // !NDEBUG
+
+CCProxy::CCProxy()
+{
+    ASSERT(isMainThread());
+}
 
 }

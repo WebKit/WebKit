@@ -86,10 +86,11 @@ public:
 #ifndef NDEBUG
     static void setImplThread(bool);
     static void setImplThread(WTF::ThreadIdentifier);
+    static void setMainThread(WTF::ThreadIdentifier);
 #endif
 
 protected:
-    CCProxy() { }
+    CCProxy();
     friend class DebugScopedSetImplThread;
 };
 

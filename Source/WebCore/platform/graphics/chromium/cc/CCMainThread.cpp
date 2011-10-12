@@ -38,9 +38,4 @@ void CCMainThread::performTask(void* userdata)
     delete task;
 }
 
-void CCMainThread::postTask(PassOwnPtr<Task> task)
-{
-    callOnMainThread(performTask, task.leakPtr());
-}
-
 }

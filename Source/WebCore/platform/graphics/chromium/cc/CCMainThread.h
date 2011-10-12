@@ -43,6 +43,7 @@ public:
         void* m_instance;
     };
 
+    static void initialize();
     static void postTask(PassOwnPtr<Task>); // Executes the task on main thread asynchronously.
 private:
     static void performTask(void*);
