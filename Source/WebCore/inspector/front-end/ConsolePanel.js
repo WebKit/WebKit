@@ -52,7 +52,7 @@ WebInspector.ConsolePanel.prototype = {
     show: function()
     {
         if (WebInspector.drawer.visible) {
-            WebInspector.drawer.hide(true);
+            WebInspector.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
             this._drawerWasVisible = true;
         }
         WebInspector.Panel.prototype.show.call(this);
@@ -66,7 +66,7 @@ WebInspector.ConsolePanel.prototype = {
         WebInspector.Panel.prototype.hide.call(this);
         this.removeChildView(this._view);
         if (this._drawerWasVisible) {
-            WebInspector.drawer.show(this._view, true);
+            WebInspector.drawer.show(this._view, WebInspector.Drawer.AnimationType.Immediately);
             delete this._drawerWasVisible;
         }
     },

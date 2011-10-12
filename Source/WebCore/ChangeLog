@@ -1,3 +1,34 @@
+2011-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Fix Drawer to make it possible to show views other than Console.
+        https://bugs.webkit.org/show_bug.cgi?id=69831
+
+        Reviewed by Pavel Feldman.
+
+        Animation type extracted to distinguish between slow and normal
+        animation and immediate show/hide.
+        Implemented correct console toggle button behavior on showing views
+        other than console in Drawer.
+        View shown in Drawer is now shown in drawer-contents div with common
+        styles moved there.
+        Removed unused "_safelyRemoveChildren" method from Drawer.
+
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.show):
+        (WebInspector.ConsolePanel.prototype.hide):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._animationDuration):
+        * inspector/front-end/inspector.css:
+        (body.drawer-visible #drawer-contents):
+        * inspector/front-end/inspector.js:
+        (WebInspector._toggleConsoleButtonClicked):
+        (WebInspector._escPressed):
+        (WebInspector.showViewInDrawer):
+        (WebInspector.documentKeyDown):
+
 2011-10-12  Yury Semikhatsky  <yurys@chromium.org>
 
         [v8] Use V8DOMWrapper::isWrapperOfType for determining global object type

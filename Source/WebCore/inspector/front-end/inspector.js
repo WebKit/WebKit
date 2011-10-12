@@ -218,13 +218,35 @@ var WebInspector = {
 
         this._toggleConsoleButton.toggled = !this._toggleConsoleButton.toggled;
 
+        var animationType = window.event && window.event.shiftKey ? WebInspector.Drawer.AnimationType.Slow : WebInspector.Drawer.AnimationType.Normal;
         if (this._toggleConsoleButton.toggled) {
             this._toggleConsoleButton.title = WebInspector.UIString("Hide console.");
-            this.drawer.show(this.consoleView);
+            this.drawer.show(this.consoleView, animationType);
+            this._consoleWasShown = true;
         } else {
             this._toggleConsoleButton.title = WebInspector.UIString("Show console.");
-            this.drawer.hide();
+            this.drawer.hide(animationType);
+            delete this._consoleWasShown;
         }
+    },
+
+    _escPressed: function()
+    {
+        // If drawer was open with some view other than console then just close it.
+        if (!this._consoleWasShown && WebInspector.drawer.visible)
+            this.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
+        else
+            this._toggleConsoleButtonClicked();            
+    },
+
+    /**
+     * @param {WebInspector.View} view
+     */
+    showViewInDrawer: function(view)
+    {
+        this._toggleConsoleButton.title = WebInspector.UIString("Hide console.");
+        this._toggleConsoleButton.toggled = false;
+        this.drawer.show(view, WebInspector.Drawer.AnimationType.Immediately);
     },
 
     _toggleSettings: function()
@@ -745,7 +767,7 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+001B": // Escape key
             event.preventDefault();
-            this._toggleConsoleButtonClicked();
+            this._escPressed();
             break;
 
         // Windows and Mac have two different definitions of [, so accept both.

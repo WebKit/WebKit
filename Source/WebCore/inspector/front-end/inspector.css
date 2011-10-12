@@ -592,6 +592,14 @@ body.port-qt #dock-status-bar-item {
     background-position: bottom;
 }
 
+body.drawer-visible #drawer-contents {
+    position: absolute;
+    top: 0;
+    bottom: 23px;
+    left: 0;
+    right: 0;
+}
+
 body.drawer-visible #drawer {
     display: block;
 }
@@ -646,10 +654,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     word-wrap: break-word;
     -webkit-user-select: text;
     -webkit-text-size-adjust: auto;
-}
-
-#drawer #console-messages {
-    bottom: 23px;
 }
 
 #console-prompt {
