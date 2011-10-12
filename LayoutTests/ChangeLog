@@ -1,3 +1,13 @@
+2011-10-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        new-run-webkit-tests does not support qt-4.8 results
+        https://bugs.webkit.org/show_bug.cgi?id=64071
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-4.7/Skipped: Added.
+        * platform/qt-5.0/Skipped: Added.
+
 2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, mark fast/css/text-transform-select.html as IMAGE+TEXT on win.

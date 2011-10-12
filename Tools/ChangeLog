@@ -1,3 +1,13 @@
+2011-10-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        new-run-webkit-tests does not support qt-4.8 results
+        https://bugs.webkit.org/show_bug.cgi?id=64071
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+
 2011-10-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Make adding another unit test easier

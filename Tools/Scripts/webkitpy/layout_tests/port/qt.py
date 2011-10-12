@@ -29,10 +29,12 @@
 """QtWebKit implementation of the Port interface."""
 
 import logging
+import re
 import sys
 
 import webkit
 
+from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
@@ -88,6 +90,44 @@ class QtPort(WebKitPort):
 
     def _path_to_webcore_library(self):
         return self._build_path('lib/libQtWebKit.so')
+
+    @memoized
+    def qt_version(self):
+        version = ''
+        for line in self._executive.run_command(['qmake', '-v']).split('\n'):
+            match = re.search('Qt\sversion\s(?P<version>\d\.\d)', line)
+            if match:
+                version = match.group('version')
+                break
+        return version
+
+    def baseline_search_path(self):
+        search_paths = []
+        if self.get_option('webkit_test_runner'):
+            search_paths.append(self._wk2_port_name())
+        search_paths.append(self.name())
+        version = self.qt_version()
+        if '4.7' in version:
+            search_paths.append('qt-4.7')
+        elif '4.8' in version:
+            search_paths.append('qt-4.8')
+        elif version:
+            search_paths.append('qt-5.0')
+        search_paths.append(self.port_name)
+        return map(self._webkit_baseline_path, search_paths)
+
+    def _skipped_file_search_paths(self):
+        search_paths = set([self.port_name, self.name()])
+        version = self.qt_version()
+        if '4.7' in version:
+            search_paths.add('qt-4.7')
+        elif '4.8' in version:
+            search_paths.add('qt-4.8')
+        elif version:
+            search_paths.add('qt-5.0')
+        if self.get_option('webkit_test_runner'):
+            search_paths.update(['qt-wk2', 'wk2'])
+        return search_paths
 
     def _runtime_feature_list(self):
         return None
