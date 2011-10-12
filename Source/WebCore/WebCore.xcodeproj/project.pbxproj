@@ -199,6 +199,7 @@
 		0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */; };
 		0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */; };
 		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
+		0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
 		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
 		0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F29C16D1300C2E2002D794E /* AccessibilityAllInOne.cpp */; };
@@ -7255,6 +7256,7 @@
 		0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuad.cpp; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollbarThemeMock.cpp; path = mock/ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollbarThemeMock.h; path = mock/ScrollbarThemeMock.h; sourceTree = "<group>"; };
+		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
 		0FF50259102BA9010066F39A /* DOMStyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMedia.h; sourceTree = "<group>"; };
 		0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMStyleMedia.mm; sourceTree = "<group>"; };
 		0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMediaInternal.h; sourceTree = "<group>"; };
@@ -20057,6 +20059,7 @@
 				CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC7B2AF80450824100A8000F /* Scrollbar.h */,
+				0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */,
 				BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */,
 				BC1402890E83680800319717 /* ScrollbarThemeComposite.h */,
 				BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */,
@@ -27469,6 +27472,7 @@
 				310603741432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp in Sources */,
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
+				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -38,21 +38,21 @@ class RenderScrollbarTheme : public ScrollbarThemeComposite {
 public:
     virtual ~RenderScrollbarTheme() {};
     
-    virtual int scrollbarThickness(ScrollbarControlSize controlSize) { return ScrollbarTheme::nativeTheme()->scrollbarThickness(controlSize); }
+    virtual int scrollbarThickness(ScrollbarControlSize controlSize) { return ScrollbarTheme::theme()->scrollbarThickness(controlSize); }
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarTheme::nativeTheme()->buttonsPlacement(); }
+    virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarTheme::theme()->buttonsPlacement(); }
 
     virtual bool supportsControlTints() const { return true; }
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect);
 
-    virtual bool shouldCenterOnThumb(Scrollbar* scrollbar, const PlatformMouseEvent& event) { return ScrollbarTheme::nativeTheme()->shouldCenterOnThumb(scrollbar, event); }
+    virtual bool shouldCenterOnThumb(Scrollbar* scrollbar, const PlatformMouseEvent& event) { return ScrollbarTheme::theme()->shouldCenterOnThumb(scrollbar, event); }
     
-    virtual double initialAutoscrollTimerDelay() { return ScrollbarTheme::nativeTheme()->initialAutoscrollTimerDelay(); }
-    virtual double autoscrollTimerDelay() { return ScrollbarTheme::nativeTheme()->autoscrollTimerDelay(); }
+    virtual double initialAutoscrollTimerDelay() { return ScrollbarTheme::theme()->initialAutoscrollTimerDelay(); }
+    virtual double autoscrollTimerDelay() { return ScrollbarTheme::theme()->autoscrollTimerDelay(); }
 
-    virtual void registerScrollbar(Scrollbar* scrollbar) { return ScrollbarTheme::nativeTheme()->registerScrollbar(scrollbar); }
-    virtual void unregisterScrollbar(Scrollbar* scrollbar) { return ScrollbarTheme::nativeTheme()->unregisterScrollbar(scrollbar); }
+    virtual void registerScrollbar(Scrollbar* scrollbar) { return ScrollbarTheme::theme()->registerScrollbar(scrollbar); }
+    virtual void unregisterScrollbar(Scrollbar* scrollbar) { return ScrollbarTheme::theme()->unregisterScrollbar(scrollbar); }
 
     virtual int minimumThumbLength(Scrollbar*);
 

@@ -60,7 +60,7 @@ PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea* scrollabl
 
 int Scrollbar::maxOverlapBetweenPages()
 {
-    static int maxOverlapBetweenPages = ScrollbarTheme::nativeTheme()->maxOverlapBetweenPages();
+    static int maxOverlapBetweenPages = ScrollbarTheme::theme()->maxOverlapBetweenPages();
     return maxOverlapBetweenPages;
 }
 
@@ -88,7 +88,7 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     , m_suppressInvalidation(false)
 {
     if (!m_theme)
-        m_theme = ScrollbarTheme::nativeTheme();
+        m_theme = ScrollbarTheme::theme();
 
     m_theme->registerScrollbar(this);
 

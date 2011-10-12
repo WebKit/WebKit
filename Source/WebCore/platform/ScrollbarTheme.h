@@ -100,6 +100,11 @@ public:
     virtual void registerScrollbar(Scrollbar*) {}
     virtual void unregisterScrollbar(Scrollbar*) {}
 
+    virtual bool isMockTheme() const { return false; }
+
+    static ScrollbarTheme* theme();
+
+private:
     static ScrollbarTheme* nativeTheme(); // Must be implemented to return the correct theme subclass.
 };
 

@@ -461,6 +461,12 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
     return adoptPtr(new ScrollAnimatorChromiumMac(scrollableArea));
 }
 
+static ScrollbarThemeChromiumMac* chromiumScrollbarTheme()
+{
+    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
+    return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeChromiumMac*>(scrollbarTheme) : 0;
+}
+
 ScrollAnimatorChromiumMac::ScrollAnimatorChromiumMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
 #if USE(WK_SCROLLBAR_PAINTER)
@@ -682,8 +688,11 @@ void ScrollAnimatorChromiumMac::didEndScrollGesture() const
 
 void ScrollAnimatorChromiumMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+        
+    if (ScrollbarThemeChromiumMac* theme = chromiumScrollbarTheme()) {
+        WKScrollbarPainterRef painter = theme->painterForScrollbar(scrollbar);
         wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
         wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
         if (scrollableArea()->inLiveResize())
@@ -693,8 +702,11 @@ void ScrollAnimatorChromiumMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 
 void ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
+    if (ScrollbarThemeChromiumMac* theme = chromiumScrollbarTheme()) {
+        WKScrollbarPainterRef painter = theme->painterForScrollbar(scrollbar);
         wkScrollbarPainterSetDelegate(painter, nil);
         wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
     }
@@ -702,8 +714,11 @@ void ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar
 
 void ScrollAnimatorChromiumMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
+    if (ScrollbarThemeChromiumMac* theme = chromiumScrollbarTheme()) {
+        WKScrollbarPainterRef painter = theme->painterForScrollbar(scrollbar);
         wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
         wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
         if (scrollableArea()->inLiveResize())
@@ -713,8 +728,11 @@ void ScrollAnimatorChromiumMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 
 void ScrollAnimatorChromiumMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
+    if (ScrollbarThemeChromiumMac* theme = chromiumScrollbarTheme()) {
+        WKScrollbarPainterRef painter = theme->painterForScrollbar(scrollbar);
         wkScrollbarPainterSetDelegate(painter, nil);
         wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
     }
@@ -1218,7 +1236,12 @@ void ScrollAnimatorChromiumMac::updateScrollerStyle()
         return;
     }
 
-    ScrollbarThemeChromiumMac* macTheme = (ScrollbarThemeChromiumMac*)ScrollbarTheme::nativeTheme();
+    ScrollbarThemeChromiumMac* macTheme = chromiumScrollbarTheme();
+    if (!macTheme) {
+        setNeedsScrollerStyleUpdate(false);
+        return;
+    }
+
     int newStyle = wkScrollbarPainterControllerStyle(m_scrollbarPainterController.get());
 
     if (Scrollbar* verticalScrollbar = scrollableArea()->verticalScrollbar()) {

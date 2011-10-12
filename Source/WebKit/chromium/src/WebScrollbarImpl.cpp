@@ -63,7 +63,7 @@ WebScrollbar* WebScrollbar::createForPlugin(Orientation orientation,
 
 int WebScrollbar::defaultThickness()
 {
-    return ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
 WebScrollbarImpl::WebScrollbarImpl(Orientation orientation,

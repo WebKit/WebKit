@@ -2821,6 +2821,7 @@ webcore_sources += \
 	Source/WebCore/platform/Scrollbar.h \
 	Source/WebCore/platform/ScrollbarThemeComposite.cpp \
 	Source/WebCore/platform/ScrollbarThemeComposite.h \
+	Source/WebCore/platform/ScrollbarTheme.cpp \
 	Source/WebCore/platform/ScrollbarTheme.h \
 	Source/WebCore/platform/ScrollTypes.h \
 	Source/WebCore/platform/ScrollView.cpp \

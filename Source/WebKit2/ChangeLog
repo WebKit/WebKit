@@ -1,3 +1,35 @@
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Darin Adler.
+
+        Use ScrollbarThemeMock when the setting to use mock scrollbars is enabled.
+        
+        Make ScrollbarTheme::nativeTheme() private, and add a new static theme() method
+        that reads the setting, and returns the mock theme if set. All callers now use
+        theme() rther than nativeTheme(). Add the new ScrollbarTheme.cpp file to the build.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::calculatePositionAndSize):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::paintControls):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::bounds):
+
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Darin Adler.
+
+        ScrollbarTheme::nativeTheme() renamed to theme().
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::bounds):
+
 2011-10-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Make adding another unit test easier

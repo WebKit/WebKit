@@ -382,7 +382,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
 
     if (naturalHeight > maxPopupHeight) {
         // We need room for a scrollbar
-        popupWidth += ScrollbarTheme::nativeTheme()->scrollbarThickness(SmallScrollbar);
+        popupWidth += ScrollbarTheme::theme()->scrollbarThickness(SmallScrollbar);
     }
 
     popupHeight += 2 * popupWindowBorderWidth;

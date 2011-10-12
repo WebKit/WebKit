@@ -1081,6 +1081,7 @@ SOURCES += \
     platform/ScrollableArea.cpp \
     platform/ScrollAnimator.cpp \
     platform/Scrollbar.cpp \
+    platform/ScrollbarTheme.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \
     platform/text/SegmentedString.cpp \

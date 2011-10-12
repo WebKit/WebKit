@@ -334,7 +334,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     if (naturalHeight > maxPopupHeight)
         // We need room for a scrollbar
-        popupWidth += ScrollbarTheme::nativeTheme()->scrollbarThickness(SmallScrollbar);
+        popupWidth += ScrollbarTheme::theme()->scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
     popupWidth += max(0, client()->clientPaddingRight() - client()->clientInsetRight()) + max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());

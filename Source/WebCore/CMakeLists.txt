@@ -1040,6 +1040,7 @@ SET(WebCore_SOURCES
     platform/ScrollAnimator.cpp
     platform/ScrollableArea.cpp
     platform/Scrollbar.cpp
+    platform/ScrollbarTheme.cpp
     platform/ScrollbarThemeComposite.cpp
     platform/ScrollView.cpp
     platform/SharedBuffer.cpp

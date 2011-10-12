@@ -301,7 +301,7 @@ void BuiltInPDFView::paintControls(GraphicsContext* graphicsContext, const IntRe
         m_verticalScrollbar->paint(graphicsContext, dirtyRect);
 
     IntRect dirtyCornerRect = intersection(scrollCornerRect(), dirtyRect);
-    ScrollbarTheme::nativeTheme()->paintScrollCorner(0, graphicsContext, dirtyCornerRect);
+    ScrollbarTheme::theme()->paintScrollCorner(0, graphicsContext, dirtyCornerRect);
 }
 
 void BuiltInPDFView::updateControlTints(GraphicsContext* graphicsContext)

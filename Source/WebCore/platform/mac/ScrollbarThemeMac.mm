@@ -75,7 +75,7 @@ static ScrollbarPainterMap* scrollbarMap()
 {
     UNUSED_PARAM(unusedNotification);
 
-    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
+    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::theme())->preferencesChanged();
     if (scrollbarMap()->isEmpty())
         return;
     ScrollbarPainterMap::iterator end = scrollbarMap()->end();
@@ -94,7 +94,7 @@ static ScrollbarPainterMap* scrollbarMap()
 {
     UNUSED_PARAM(unusedNotification);
 
-    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
+    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::theme())->preferencesChanged();
 }
 
 + (void)registerAsObserver

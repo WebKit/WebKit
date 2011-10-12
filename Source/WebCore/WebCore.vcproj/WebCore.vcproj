@@ -27230,6 +27230,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollbarTheme.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ScrollbarThemeComposite.cpp"
 				>
 			</File>

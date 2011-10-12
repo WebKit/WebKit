@@ -1074,7 +1074,7 @@ void RenderThemeQt::adjustInnerSpinButtonStyle(CSSStyleSelector* selector, Rende
                                                Element* e) const
 {
     // Use the same width as our native scrollbar
-    int width = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    int width = ScrollbarTheme::theme()->scrollbarThickness();
     style->setWidth(Length(width, Fixed));
     style->setMinWidth(Length(width, Fixed));
 }

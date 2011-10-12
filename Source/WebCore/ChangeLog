@@ -1,3 +1,90 @@
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Darin Adler.
+
+        Use ScrollbarThemeMock when the setting to use mock scrollbars is enabled.
+        
+        Make ScrollbarTheme::nativeTheme() private, and add a new static theme() method
+        that reads the setting, and returns the mock theme if set. All callers now use
+        theme() rther than nativeTheme(). Add the new ScrollbarTheme.cpp file to the build.
+        
+        Fix scroll animator code for Mac and Chromium that was casting the ScrollbarTheme
+        without type-checking it to test whether it's the mock theme.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::startRepeatingTimer):
+        * platform/ScrollAnimatorWin.cpp:
+        (WebCore::ScrollAnimatorWin::scroll):
+        (WebCore::ScrollAnimatorWin::accelerationTime):
+        (WebCore::ScrollAnimatorWin::animateScroll):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollbarOverlayStyle):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::maxOverlapBetweenPages):
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/ScrollbarTheme.cpp: Copied from Source/WebCore/platform/mock/ScrollbarThemeMock.h.
+        (WebCore::ScrollbarTheme::theme):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::isMockTheme):
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::layout):
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::chromiumScrollbarTheme):
+        (WebCore::ScrollAnimatorChromiumMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::updateScrollerStyle):
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (+[ScrollbarPrefsObserver behaviorPrefsChanged:]):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::macScrollbarTheme):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[WebScrollbarPrefsObserver appearancePrefsChanged:]):
+        (+[WebScrollbarPrefsObserver behaviorPrefsChanged:]):
+        * platform/mock/ScrollbarThemeMock.h:
+        (WebCore::ScrollbarThemeMock::isMockTheme):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustInnerSpinButtonStyle):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::cornerRect):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::calcScrollbarThicknessUsing):
+        * rendering/RenderScrollbarTheme.h:
+        (WebCore::RenderScrollbarTheme::scrollbarThickness):
+        (WebCore::RenderScrollbarTheme::buttonsPlacement):
+        (WebCore::RenderScrollbarTheme::shouldCenterOnThumb):
+        (WebCore::RenderScrollbarTheme::initialAutoscrollTimerDelay):
+        (WebCore::RenderScrollbarTheme::autoscrollTimerDelay):
+        (WebCore::RenderScrollbarTheme::registerScrollbar):
+        (WebCore::RenderScrollbarTheme::unregisterScrollbar):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::scrollbarThickness):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::menuListInternalPadding):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::adjustInnerSpinButtonStyle):
+
 2011-10-11  Kentaro Hara  <haraken@chromium.org>
 
         Implement a WebKitTransitionEvent constructor for JSC

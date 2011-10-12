@@ -99,7 +99,7 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     //
     // When autoscrolling, the scrollbar's autoscroll timer will call us to
     // increment the desired position by |step| (with |multiplier| == 1) every
-    // ScrollbarTheme::nativeTheme()->autoscrollTimerDelay() seconds.  If we set
+    // ScrollbarTheme::theme()->autoscrollTimerDelay() seconds. If we set
     // the desired velocity to exactly this rate, smooth scrolling will neither
     // race ahead (and then have to slow down) nor increasingly lag behind, but
     // will be smooth and synchronized.
@@ -110,7 +110,7 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     //   lag = |step| - v(0.5tA + tD)
     // Where
     //   v = The steady-state velocity,
-    //       |step| / ScrollbarTheme::nativeTheme()->autoscrollTimerDelay()
+    //       |step| / ScrollbarTheme::theme()->autoscrollTimerDelay()
     //   tA = accelerationTime()
     //   tD = The time we pretend has already passed when starting to scroll,
     //        |animationTimerDelay|
@@ -152,7 +152,7 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     //   lag = |step| * ((r / k) - 1)
     // Where
     //   r = The ratio of the autoscroll repeat delay,
-    //       ScrollbarTheme::nativeTheme()->autoscrollTimerDelay(), to the
+    //       ScrollbarTheme::theme()->autoscrollTimerDelay(), to the
     //       key/wheel repeat delay (i.e. > 1 when keys repeat faster)
     //   k = The velocity trim constant given below
     //
@@ -163,14 +163,14 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     // calculated above being larger than that).  This will result in "perfect"
     // behavior for autoscrolling without having to special-case it.
     if (alreadyAnimating)
-        animationStep /= (2.0 - ((1.0 / ScrollbarTheme::nativeTheme()->autoscrollTimerDelay()) * (0.5 * accelerationTime() + animationTimerDelay)));
+        animationStep /= (2.0 - ((1.0 / ScrollbarTheme::theme()->autoscrollTimerDelay()) * (0.5 * accelerationTime() + animationTimerDelay)));
     // The result of all this is that single keypresses or wheel flicks will
     // scroll in the same time period as single presses of scrollbar elements;
     // holding the mouse down on a scrollbar part will scroll as fast as
     // possible without hitching; and other repeated scroll events will also
     // scroll with the same time lag as holding down the mouse on a scrollbar
     // part.
-    data->m_desiredVelocity = animationStep / ScrollbarTheme::nativeTheme()->autoscrollTimerDelay();
+    data->m_desiredVelocity = animationStep / ScrollbarTheme::theme()->autoscrollTimerDelay();
 
     // If we're not already scrolling, start.
     if (!alreadyAnimating)
@@ -198,11 +198,11 @@ void ScrollAnimatorWin::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 
 double ScrollAnimatorWin::accelerationTime()
 {
-    // We elect to use ScrollbarTheme::nativeTheme()->autoscrollTimerDelay() as
+    // We elect to use ScrollbarTheme::theme()->autoscrollTimerDelay() as
     // the length of time we'll take to accelerate from 0 to our target
     // velocity.  Choosing a larger value would produce a more pronounced
     // acceleration effect.
-    return ScrollbarTheme::nativeTheme()->autoscrollTimerDelay();
+    return ScrollbarTheme::theme()->autoscrollTimerDelay();
 }
 
 void ScrollAnimatorWin::animationTimerFired(Timer<ScrollAnimatorWin>* timer)
@@ -224,7 +224,7 @@ void ScrollAnimatorWin::animateScroll(PerAxisData* data)
     // Where
     //   t0 = The time to perform the scroll without smooth scrolling
     //   tA = The acceleration time,
-    //        ScrollbarTheme::nativeTheme()->autoscrollTimerDelay() (see below)
+    //        ScrollbarTheme::theme()->autoscrollTimerDelay() (see below)
     //   tD = |animationTimerDelay|
     //   tS = A value less than or equal to the time required to perform a
     //        single scroll increment, i.e. the work done due to calling

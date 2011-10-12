@@ -23,32 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeMock_h
-#define ScrollbarThemeMock_h
+#include "config.h"
+#include "ScrollbarTheme.h"
 
-#include "ScrollbarThemeComposite.h"
+#include "ScrollbarThemeMock.h"
+#include "Settings.h"
 
 namespace WebCore {
 
-// Scrollbar theme used in image snapshots, to eliminate appearance differences between platforms.
-class ScrollbarThemeMock : public ScrollbarThemeComposite {
-public:
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-
-protected:
-    virtual bool hasButtons(Scrollbar*) { return false; }
-    virtual bool hasThumb(Scrollbar*) { return true; }
-
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
-    
-    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
-    
-private:
-    virtual bool isMockTheme() const { return true; }
-};
+ScrollbarTheme* ScrollbarTheme::theme()
+{
+    if (Settings::mockScrollbarsEnabled()) {
+        DEFINE_STATIC_LOCAL(ScrollbarThemeMock, mockTheme, ());
+        return &mockTheme;
+    }
+    return nativeTheme();
+}
 
 }
-#endif // ScrollbarThemeMock_h

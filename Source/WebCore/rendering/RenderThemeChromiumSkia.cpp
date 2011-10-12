@@ -535,7 +535,7 @@ int RenderThemeChromiumSkia::menuListInternalPadding(RenderStyle* style, int pad
     // we don't draw a button, so don't reserve space for it.
     const int barType = style->direction() == LTR ? RightPadding : LeftPadding;
     if (paddingType == barType && style->appearance() != NoControlPart)
-        padding += ScrollbarTheme::nativeTheme()->scrollbarThickness();
+        padding += ScrollbarTheme::theme()->scrollbarThickness();
 
     return padding;
 }

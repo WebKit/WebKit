@@ -158,7 +158,7 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
-    return ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
 void RenderTextControl::computeLogicalHeight()

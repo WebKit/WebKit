@@ -1753,7 +1753,7 @@ static LayoutRect cornerRect(const RenderLayer* layer, const LayoutRect& bounds)
     if (!layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
         // FIXME: This isn't right.  We need to know the thickness of custom scrollbars
         // even when they don't exist in order to set the resizer square size properly.
-        horizontalThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+        horizontalThickness = ScrollbarTheme::theme()->scrollbarThickness();
         verticalThickness = horizontalThickness;
     } else if (layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
         horizontalThickness = layer->verticalScrollbar()->width();

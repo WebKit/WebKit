@@ -384,7 +384,7 @@ IntRect ChromeClientQt::windowResizerRect() const
 
     // There's no API in Qt to query for the size of the resizer, so we assume
     // it has the same width and height as the scrollbar thickness.
-    int scollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    int scollbarThickness = ScrollbarTheme::theme()->scrollbarThickness();
 
     // There's no API in Qt to query for the position of the resizer. Sometimes
     // it's drawn by the system, and sometimes it's a QSizeGrip. For RTL locales

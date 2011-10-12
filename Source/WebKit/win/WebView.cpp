@@ -2299,7 +2299,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             if (Frame* coreFrame = core(mainFrameImpl)) {
                 webView->deleteBackingStore();
                 coreFrame->page()->theme()->themeChanged();
-                ScrollbarTheme::nativeTheme()->themeChanged();
+                ScrollbarTheme::theme()->themeChanged();
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);
                 ::InvalidateRect(hWnd, &windowRect, false);

@@ -82,7 +82,7 @@ void RenderScrollbarPart::layoutVerticalPart()
 static int calcScrollbarThicknessUsing(const Length& l, int containingLength)
 {
     if (l.isIntrinsicOrAuto())
-        return ScrollbarTheme::nativeTheme()->scrollbarThickness();
+        return ScrollbarTheme::theme()->scrollbarThickness();
     return l.calcMinValue(containingLength);
 }
 

@@ -203,7 +203,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::requestedWidth(
     if (!w)
         return E_POINTER;
 
-    *w = m_scrollBar->orientation() == VerticalScrollbar ? ScrollbarTheme::nativeTheme()->scrollbarThickness(m_scrollBar->controlSize()) : -1;
+    *w = m_scrollBar->orientation() == VerticalScrollbar ? ScrollbarTheme::theme()->scrollbarThickness(m_scrollBar->controlSize()) : -1;
     return S_OK;
 }
 
@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::requestedHeight(
     if (!h)
         return E_POINTER;
 
-    *h = m_scrollBar->orientation() == HorizontalScrollbar ? ScrollbarTheme::nativeTheme()->scrollbarThickness(m_scrollBar->controlSize()) : -1;
+    *h = m_scrollBar->orientation() == HorizontalScrollbar ? ScrollbarTheme::theme()->scrollbarThickness(m_scrollBar->controlSize()) : -1;
     return S_OK;
 }
 

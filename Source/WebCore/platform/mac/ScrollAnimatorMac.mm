@@ -452,6 +452,12 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
     return adoptPtr(new ScrollAnimatorMac(scrollableArea));
 }
 
+static ScrollbarThemeMac* macScrollbarTheme()
+{
+    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
+    return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeMac*>(scrollbarTheme) : 0;
+}
+
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
 #if USE(SCROLLBAR_PAINTER)
@@ -682,11 +688,13 @@ void ScrollAnimatorMac::didEndScrollGesture() const
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    [painter setDelegate:m_scrollbarPainterDelegate.get()];
-    [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
-    if (scrollableArea()->inLiveResize())
-        [painter setKnobAlpha:1];
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter setDelegate:m_scrollbarPainterDelegate.get()];
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
+        if (scrollableArea()->inLiveResize())
+            [painter setKnobAlpha:1];
+    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -695,9 +703,11 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    [painter setDelegate:nil];
-    [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter setDelegate:nil];
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
+    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -706,11 +716,13 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    [painter setDelegate:m_scrollbarPainterDelegate.get()];
-    [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
-    if (scrollableArea()->inLiveResize())
-        [painter setKnobAlpha:1];
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter setDelegate:m_scrollbarPainterDelegate.get()];
+        [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
+        if (scrollableArea()->inLiveResize())
+            [painter setKnobAlpha:1];
+    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -719,9 +731,11 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    [painter setDelegate:nil];
-    [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter setDelegate:nil];
+        [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
+    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -1237,7 +1251,12 @@ void ScrollAnimatorMac::updateScrollerStyle()
         return;
     }
 
-    ScrollbarThemeMac* macTheme = (ScrollbarThemeMac*)ScrollbarTheme::nativeTheme();
+    ScrollbarThemeMac* macTheme = macScrollbarTheme();
+    if (!macTheme) {
+        setNeedsScrollerStyleUpdate(false);
+        return;
+    }
+
     NSScrollerStyle newStyle = [m_scrollbarPainterController.get() scrollerStyle];
 
     if (Scrollbar* verticalScrollbar = scrollableArea()->verticalScrollbar()) {

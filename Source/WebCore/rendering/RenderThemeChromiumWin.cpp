@@ -716,7 +716,7 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
 
 void RenderThemeChromiumWin::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    int width = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    int width = ScrollbarTheme::theme()->scrollbarThickness();
     style->setWidth(Length(width, Fixed));
     style->setMinWidth(Length(width, Fixed));
 }
