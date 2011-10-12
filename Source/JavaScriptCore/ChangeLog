@@ -1,3 +1,15 @@
+2011-10-11  Gavin Barraclough  <baraclough@apple.com>
+
+        DFG JIT 32_64 - Fix silentFillGPR for non-integer constants.
+        https://bugs.webkit.org/show_bug.cgi?id=69890
+
+        Reviewed by Oliver Hunt.
+
+        Cell constants are currently hitting the valueOfInt32Constant case, there is no constant handling for JSValues.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK build fix attempt after r97197.
