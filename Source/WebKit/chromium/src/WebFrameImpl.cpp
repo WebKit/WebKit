@@ -1395,6 +1395,20 @@ void WebFrameImpl::printEnd()
     m_printContext.clear();
 }
 
+bool WebFrameImpl::isPrintScalingDisabledForPlugin(const WebNode& node)
+{
+    WebPluginContainerImpl* pluginContainer = 0;
+    if (node.isNull())
+        pluginContainer = pluginContainerFromFrame(frame());
+    else
+        pluginContainer = pluginContainerFromNode(node);
+
+    if (!pluginContainer || !pluginContainer->supportsPaginatedPrint())
+        return false;
+
+    return pluginContainer->isPrintScalingDisabled();
+}
+
 bool WebFrameImpl::isPageBoxVisible(int pageIndex)
 {
     return frame()->document()->isPageBoxVisible(pageIndex);

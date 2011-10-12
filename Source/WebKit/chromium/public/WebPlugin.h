@@ -86,6 +86,9 @@ public:
     // Whether the plugin supports its own paginated print. The other print
     // interface methods are called only if this method returns true.
     virtual bool supportsPaginatedPrint() { return false; }
+    // Returns true if the printed content should not be scaled to
+    // the printer's printable area.
+    virtual bool isPrintScalingDisabled() { return false; }
     // Sets up printing at the given print rect and printer DPI. printableArea
     // is in points (a point is 1/72 of an inch).Returns the number of pages to
     // be printed at these settings.

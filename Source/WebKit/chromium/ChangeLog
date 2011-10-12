@@ -1,3 +1,20 @@
+2011-10-11  Steve VanDeBogart  <vandebo@chromium.org>
+
+        [chromium] Add accessor for plugin request to not scale print output.
+        https://bugs.webkit.org/show_bug.cgi?id=68853
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrame.h:
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::isPrintScalingDisabled):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::isPrintScalingDisabledForPlugin):
+        * src/WebFrameImpl.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::isPrintScalingDisabled):
+        * src/WebPluginContainerImpl.h:
+
 2011-10-11  Antoine Labour  <piman@chromium.org>
 
         Separate compositor client thread from webkit's main thread.

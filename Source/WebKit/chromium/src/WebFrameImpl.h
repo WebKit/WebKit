@@ -168,6 +168,7 @@ public:
     virtual float printPage(int pageToPrint, WebCanvas*);
     virtual float getPrintPageShrink(int page);
     virtual void printEnd();
+    virtual bool isPrintScalingDisabledForPlugin(const WebNode&);
     virtual bool isPageBoxVisible(int pageIndex);
     virtual void pageSizeAndMarginsInPixels(int pageIndex,
                                             WebSize& pageSize,

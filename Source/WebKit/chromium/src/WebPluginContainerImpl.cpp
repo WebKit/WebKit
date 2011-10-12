@@ -244,6 +244,11 @@ bool WebPluginContainerImpl::supportsPaginatedPrint() const
     return m_webPlugin->supportsPaginatedPrint();
 }
 
+bool WebPluginContainerImpl::isPrintScalingDisabled() const
+{
+    return m_webPlugin->isPrintScalingDisabled();
+}
+
 int WebPluginContainerImpl::printBegin(const IntRect& printableArea,
                                        int printerDPI) const
 {

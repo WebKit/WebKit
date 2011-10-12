@@ -448,6 +448,11 @@ public:
     // Reformats the WebFrame for screen display.
     virtual void printEnd() = 0;
 
+    // If the frame contains a full-frame plugin or the given node refers to a
+    // plugin whose content indicates that printed output should not be scaled,
+    // return true, otherwise return false.
+    virtual bool isPrintScalingDisabledForPlugin(const WebNode& = WebNode()) = 0;
+
     // CSS3 Paged Media ----------------------------------------------------
 
     // Returns true if page box (margin boxes and page borders) is visible.
