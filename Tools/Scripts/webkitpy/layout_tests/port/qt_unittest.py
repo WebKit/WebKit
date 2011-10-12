@@ -28,7 +28,6 @@
 
 import unittest
 
-from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.qt import QtPort
@@ -40,7 +39,7 @@ class QtPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
         return QtPort
 
-    def _assert_search_path(self, search_paths, sys_platform, use_webkit2=False, qt_version='4.7'):
+    def _assert_search_path(self, search_paths, sys_platform, use_webkit2=False):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
@@ -48,34 +47,20 @@ class QtPortTest(port_testcase.PortTestCase):
             options=MockOptions(webkit_test_runner=use_webkit2),
             filesystem=MockFileSystem(),
             user=MockUser(),
-            executive=MockExecutive2(self._qt_version(qt_version)))
+            executive=MockExecutive())
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
-    def _qt_version(self, qt_version):
-        if qt_version in '4.7':
-            return 'QMake version 2.01a\nUsing Qt version 4.7.3 in /usr/local/Trolltech/Qt-4.7.3/lib'
-        if qt_version in '4.8':
-            return 'QMake version 2.01a\nUsing Qt version 4.8.0 in /usr/local/Trolltech/Qt-4.8.0/lib'
-        if qt_version in '5.0':
-            return 'QMake version 2.01a\nUsing Qt version 5.0.0 in /usr/local/Trolltech/Qt-5.0.0/lib'
-
     def test_baseline_search_path(self):
-        self._assert_search_path(['qt-mac', 'qt-4.7', 'qt'], 'darwin')
-        self._assert_search_path(['qt-win', 'qt-4.7', 'qt'], 'win32')
-        self._assert_search_path(['qt-win', 'qt-4.7', 'qt'], 'cygwin')
-        self._assert_search_path(['qt-linux', 'qt-4.7', 'qt'], 'linux2')
-        self._assert_search_path(['qt-linux', 'qt-4.7', 'qt'], 'linux3')
+        self._assert_search_path(['qt-mac', 'qt'], 'darwin')
+        self._assert_search_path(['qt-win', 'qt'], 'win32')
+        self._assert_search_path(['qt-win', 'qt'], 'cygwin')
+        self._assert_search_path(['qt-linux', 'qt'], 'linux2')
+        self._assert_search_path(['qt-linux', 'qt'], 'linux3')
 
-        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], 'darwin', qt_version='4.8')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win32', qt_version='4.8')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'cygwin', qt_version='4.8')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux2', qt_version='4.8')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux3', qt_version='4.8')
-
-        self._assert_search_path(['qt-wk2', 'qt-mac', 'qt-5.0', 'qt'], 'darwin', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-wk2', 'qt-win', 'qt-5.0', 'qt'], 'cygwin', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-wk2', 'qt-linux', 'qt-5.0', 'qt'], 'linux2', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-wk2', 'qt-mac', 'qt'], 'darwin', use_webkit2=True)
+        self._assert_search_path(['qt-wk2', 'qt-win', 'qt'], 'cygwin', use_webkit2=True)
+        self._assert_search_path(['qt-wk2', 'qt-linux', 'qt'], 'linux2', use_webkit2=True)
 
     def test_show_results_html_file(self):
         port = self.make_port()
