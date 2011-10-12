@@ -42,6 +42,7 @@ import webbrowser
 from webkitpy.common.config import urls
 from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
+from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port
@@ -595,14 +596,8 @@ class ChromiumDriver(Driver):
         self._proc.stdout.close()
         if self._proc.stderr:
             self._proc.stderr.close()
-        # The kill timeout was hard coded to 3 seconds given a default
-        # --time-out-ms of 35 seconds. We divide by 12 to get a close
-        # approximation.
         time_out_ms = self._port.get_option('time_out_ms')
-        if time_out_ms:
-          kill_timeout_seconds = int(time_out_ms) / 12000
-        else:
-          kill_timeout_seconds = 3.0
+        kill_timeout_seconds = 3.0 * int(time_out_ms) / Manager.DEFAULT_TEST_TIMEOUT_MS
 
         # Closing stdin/stdout/stderr hangs sometimes on OS X,
         # (see __init__(), above), and anyway we don't want to hang

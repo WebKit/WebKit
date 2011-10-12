@@ -1,3 +1,16 @@
+2011-10-12  Tony Chang  <tony@chromium.org>
+
+        stop spamming 'stopping test driver timed out, killing it' when running rwt
+        https://bugs.webkit.org/show_bug.cgi?id=69938
+
+        Reviewed by Adam Barth.
+
+        In http://trac.webkit.org/changeset/95875 , we made the timeout for
+        stopping the driver based on time_out_ms, but we based it on the wrong
+        default times.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         3D transforms are flattened in WebKit2 snapshots
