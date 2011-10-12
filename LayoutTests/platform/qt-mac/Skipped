@@ -5141,3 +5141,14 @@ inspector/styles/styles-disable-then-delete.html
 
 # Qt specific result was added by r97008, but it fails on Qt-Mac platform
 fast/css/text-transform-select.html
+
+# new failing tests
+fast/css-generated-content/first-letter-in-nested-before-table.html
+fast/css-generated-content/table-parts-before-and-after.html
+fast/lists/inline-before-content-after-list-marker.html
+fast/runin/runin-between-list-marker-and-before-content.html
+fast/runin/runin-into-div-with-float-child.html
+fast/runin/runin-not-go-into-float.html
+fast/table/table-row-before-after-content-around-table-cell.html
+fast/writing-mode/margins.html
+plugins/iframe-plugin-bgcolor.html

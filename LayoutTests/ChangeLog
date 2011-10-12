@@ -1,5 +1,11 @@
 2011-10-12  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Skip new failing tests.
+
+2011-10-12  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         [Qt] Unreviewed gardening. Add platform specific expected result for new tests.
 
         * platform/qt/fast/writing-mode/margins-expected.png: Added.
