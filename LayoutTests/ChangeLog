@@ -1,3 +1,9 @@
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Fix expectation ambiguities.
+
+        * platform/chromium/test_expectations.txt: Fixed.
+
 2011-10-12  Jian Li  <jianli@chromium.org>
 
         Support passing optional filename when FormData.append() is used to

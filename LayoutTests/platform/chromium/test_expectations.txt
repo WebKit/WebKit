@@ -2225,7 +2225,7 @@ BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
 BUGWK45667 : fast/files/read-file-async.html = PASS CRASH
 BUGWK45667 LINUX : fast/files/read-blob-async.html = PASS CRASH
 
-BUGWK45737 SLOW DEBUG : fast/frames/frame-limit.html = PASS
+BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT PASS
 
 // Regressions from webkit roll r67178:t67358
 BUGWK60092 SLOW LINUX WIN DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
@@ -3911,4 +3911,3 @@ BUGCR100056 WIN DEBUG : fast/forms/interactive-validation-required-checkbox.html
 BUGCR100056 WIN DEBUG : fast/frames/calculate-fixed.html = TIMEOUT PASS
 BUGCR100056 WIN DEBUG : fast/frames/iframe-reparenting.html = TIMEOUT PASS
 BUGCR100056 WIN DEBUG : fast/frames/viewsource-unfinished-tags.html = TIMEOUT PASS
-BUGCR100056 WIN DEBUG : fast/frames/frame-limit.html = TIMEOUT
