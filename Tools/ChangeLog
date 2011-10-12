@@ -1,3 +1,16 @@
+2011-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitTestRunner needs to link with WebKit for NSURL category methods
+        https://bugs.webkit.org/show_bug.cgi?id=69892
+
+        Reviewed by Sam Weinig.
+        
+        WebDragClient::declareAndWriteDragImage() was throwing an Obj-C exception on 10.6 because
+        the +_web_originalDataAsString selector on NSURL was not recognized. Link with
+        WebKit.framework to fix this.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2011-10-11  Adam Barth  <abarth@webkit.org>
 
         sheriffbot takes too long to acknowledge rollout commands
