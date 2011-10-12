@@ -1,3 +1,12 @@
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Check in failing test expectation after r95897. The failure is tracked by the bug 69069.
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-advanced-expected.png:
+        * platform/mac/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframesets-expected.png:
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframesets-expected.txt:
+
 2011-10-11  Kentaro Hara  <haraken@chromium.org>
 
         Implement a WebKitTransitionEvent constructor for JSC
