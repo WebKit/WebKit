@@ -64,9 +64,9 @@ size_t HRTFPanner::fftSizeForSampleRate(float sampleRate)
 {
     // The HRTF impulse responses (loaded as audio resources) are 512 sample-frames @44.1KHz.
     // Currently, we truncate the impulse responses to half this size, but an FFT-size of twice impulse response size is needed (for convolution).
-    // So for sample rates around 44.1KHz an FFT size of 512 is good.  We double that size for higher sample rates.
+    // So for sample rates around 44.1KHz an FFT size of 512 is good. We double the FFT-size only for sample rates at least double this.
     ASSERT(sampleRate >= 44100 && sampleRate <= 96000.0);
-    return (sampleRate <= 48000.0) ? 512 : 1024;
+    return (sampleRate < 88200.0) ? 512 : 1024;
 }
 
 void HRTFPanner::reset()

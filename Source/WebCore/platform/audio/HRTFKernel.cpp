@@ -52,7 +52,10 @@ static float extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTS
         
     float* impulseP = channel->data();
     
-    ASSERT(channel->length() >= analysisFFTSize);
+    bool isSizeGood = channel->length() >= analysisFFTSize;
+    ASSERT(isSizeGood);
+    if (!isSizeGood)
+        return 0;
     
     // Check for power-of-2.
     ASSERT(1UL << static_cast<unsigned>(log2(analysisFFTSize)) == analysisFFTSize);
