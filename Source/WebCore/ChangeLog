@@ -1,3 +1,18 @@
+2011-10-11  Sameer Patil  <mkrp87@motorola.com>
+
+        :checked pseudo selector not matching selected option 
+        https://bugs.webkit.org/show_bug.cgi?id=63192
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/css/checked-pseudo-selector.html
+
+        Option element selected state need to be checked in checkOneSelector, 
+        so that it can be considered as checked on querySelectorAll(':checked').
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+
 2011-10-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         StorageAreaSync::sync needs a transaction for better performance.

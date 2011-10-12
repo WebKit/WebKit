@@ -1,3 +1,13 @@
+2011-10-11  Sameer Patil  <mkrp87@motorola.com>
+
+        :checked pseudo selector not matching selected option
+        https://bugs.webkit.org/show_bug.cgi?id=63192
+
+        Reviewed by Kent Tamura.
+
+        * fast/css/checked-pseudo-selector-expected.txt: Added.
+        * fast/css/checked-pseudo-selector.html: Added.
+
 2011-10-11  Ojan Vafai  <ojan@chromium.org>
 
         margin-right is ignored with vertical writing mode

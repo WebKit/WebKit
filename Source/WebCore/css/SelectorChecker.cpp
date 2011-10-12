@@ -40,6 +40,7 @@
 #include "HTMLProgressElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
+#include "OptionElement.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderObject.h"
@@ -1115,6 +1116,10 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 // obey the CSS spec here in the test for matching the pseudo.
                 HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
+                    return true;
+
+                OptionElement* optionElement = toOptionElement(e);
+                if (optionElement && optionElement->selected())
                     return true;
                 break;
             }
