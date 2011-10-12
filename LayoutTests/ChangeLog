@@ -1,3 +1,9 @@
+2011-10-12  Ojan Vafai  <ojan@chromium.org>
+
+        Expected result accidentally left out of http://trac.webkit.org/changeset/97222/.
+
+        * fast/writing-mode/margins-expected.png: Added.
+
 2011-10-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions]Remove -webkit-content-order property
