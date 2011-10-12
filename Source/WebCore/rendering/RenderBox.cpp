@@ -3690,6 +3690,11 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
         || (!style()->logicalMinHeight().isIntrinsicOrAuto() && style()->logicalMinHeight().isPositive() && (!style()->logicalMinHeight().isPercent() || percentageLogicalHeightIsResolvable(this)));
 }
 
+bool RenderBox::isUnsplittableForPagination() const
+{
+    return isReplaced() || hasUnsplittableScrollingOverflow() || (parent() && isWritingModeRoot());
+}
+
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
     if (isReplaced())

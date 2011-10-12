@@ -1,3 +1,21 @@
+2011-10-12  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69950
+        
+        REGRESSION: Printing broken because of the isWritingModeRoot addition for unsplittable
+        paginated content. Make sure not to include the RenderView when checking for writing mode
+        roots. We only care about children that differ from their parents.
+
+        Reviewed by Dimitri Glazkov.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isUnsplittableForPagination):
+        * rendering/RenderBox.h:
+
 2011-10-12  Anna Cavender  <annacc@chromium.org>
 
         Moving ScriptExecutionContext to the front of the argument list for

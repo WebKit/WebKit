@@ -6270,8 +6270,8 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, P
 
 LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins)
 {
-    bool isUnsplittable = child->isReplaced() || child->hasUnsplittableScrollingOverflow() || child->isWritingModeRoot()
-        || child->style()->columnBreakInside() == PBAVOID || child->style()->regionBreakInside() == PBAVOID;
+    bool isUnsplittable = child->isUnsplittableForPagination() || child->style()->columnBreakInside() == PBAVOID
+        || child->style()->regionBreakInside() == PBAVOID;
     if (!isUnsplittable)
         return logicalOffset;
     LayoutUnit childLogicalHeight = logicalHeightForChild(child) + (includeMargins ? marginBeforeForChild(child) + marginAfterForChild(child) : 0);
