@@ -1586,7 +1586,7 @@ BUGCR24182 SLOW DEBUG : fast/forms/input-maxlength.html = PASS
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
 // WebKit Roll 49597:49640
-BUGCR24966 SLOW MAC DEBUG : fast/frames/calculate-fixed.html = PASS
+//BUGCR24966 SLOW MAC DEBUG : fast/frames/calculate-fixed.html = PASS
 
 // WebKit Roll 49640:49684
 BUGCR25202 LINUX WIN : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
@@ -3928,3 +3928,24 @@ BUGCR100056 MAC DEBUG : fast/dom/shadow/tree-scope-crash.html = TIMEOUT
 BUGCR100056 MAC DEBUG : fast/encoding/char-encoding.html = TIMEOUT
 BUGCR100056 MAC DEBUG : fast/flexbox/016.html = TIMEOUT
 BUGCR100056 MAC DEBUG : fast/harness/show-modal-dialog.html = TIMEOUT
+
+BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.gradient.radial.equal.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/deleting/delete-select-all-001.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/inserting/return-key-span-start.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/pasteboard/select-element-1.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/selection/move-by-word-visually-multi-line.html = TIMEOUT
+BUGCR100056 MAC DEBUG : editing/undo/undo-typing-001.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/canvas/webgl/triangle.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/css-generated-content/016.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/HTMLAnchorElement/anchor-download.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/HTMLDocument/frameless-location-bugzilla10837.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/HTMLHeadElement/head-check.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/SelectorAPI/undefined-null-stringify.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/dom/Window/window-special-properties.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/frames/calculate-fixed.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/history/history-back-initial-vs-final-url.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/loader/data-url-encoding-html.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/media/mq-js-stylesheet-media-03.html = TIMEOUT
+BUGCR100056 MAC DEBUG : fast/multicol/float-avoidance.html = TIMEOUT
+BUGCR100056 MAC DEBUG : http/tests/appcache/xhr-foreign-resource.html = TIMEOUT
+BUGCR100056 MAC DEBUG : http/tests/misc/window-open-then-write.html = TIMEOUT

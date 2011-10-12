@@ -1,5 +1,11 @@
 2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] More timeouts after V8 roll.
+
+        * platform/chromium/test_expectations.txt: Updated.
+
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Mark http/tests/media/video-play-stall.html as flaky TIMEOUT.
 
         * platform/chromium/test_expectations.txt: Marked.
