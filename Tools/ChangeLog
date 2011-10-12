@@ -1,3 +1,9 @@
+2011-10-10  Alice Boxhall  <aboxhall@chromium.org>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         _run_tests is a confusing variable name in webkitpy

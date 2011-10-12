@@ -87,7 +87,6 @@ class Reviewer(Committer):
 
 contributors_who_are_not_committers = [
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
-    Contributor("Alice Boxhall", "aboxhall@chromium.org", "aboxhall"),
     Contributor("Ami Fischman", ["fischman@chromium.org", "fischman@google.com"], "amifischman0"),
     Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
@@ -142,6 +141,7 @@ committers_unable_to_review = [
     Committer("Alexander Kellett", ["lypanov@mac.com", "a-lists001@lypanov.net", "lypanov@kde.org"], "lypanov"),
     Committer("Alexander Pavlov", "apavlov@chromium.org", "apavlov"),
     Committer("Alexis Menard", ["alexis.menard@openbossa.org", "menard@kde.org", "alexis.menard@nokia.com"], "darktears"),
+    Committer("Alice Boxhall", "aboxhall@chromium.org", "aboxhall"),
     Committer("Alok Priyadarshi", "alokp@chromium.org", "alokp"),
     Committer("Amruth Raj", "amruthraj@motorola.com", "amruthraj"),
     Committer("Andre Boule", "aboule@apple.com"),
