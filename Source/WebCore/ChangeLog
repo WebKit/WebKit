@@ -1,5 +1,12 @@
 2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Second Qt minimum release build fix attempt after r97163.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+
+2011-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Qt minimum release build fix attempt after r97163.
 
         * platform/graphics/texmap/TextureMapperNode.cpp:

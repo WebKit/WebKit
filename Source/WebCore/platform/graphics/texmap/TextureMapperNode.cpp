@@ -688,7 +688,7 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
 {
     int changeMask = graphicsLayer->changeMask();
     const TextureMapperNode::ContentData& pendingContent = graphicsLayer->pendingContent();
-#ifdef ENABLE(TILED_BACKING_STORE)
+#if ENABLE(TILED_BACKING_STORE)
     swapContentsBuffers();
 #endif
     if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty() && pendingContent.needsDisplayRect.isEmpty() && !pendingContent.needsDisplay)
