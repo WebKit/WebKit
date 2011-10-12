@@ -63,6 +63,8 @@ DOMWindow* ScriptState::domWindow() const
 {
     v8::HandleScope handleScope;
     v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
+    if (!V8DOMWrapper::isWrapperOfType(v8RealGlobal, &V8DOMWindow::info))
+        return 0;
     return V8DOMWindow::toNative(v8RealGlobal);
 }
 

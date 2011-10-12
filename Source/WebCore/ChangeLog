@@ -1,3 +1,15 @@
+2011-10-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: assertion failure when evaluating expression in worker inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=69922
+
+        Check that the global object is a DOMWindow wrapper befor casting it to V8DOMWindow.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::domWindow):
+
 2011-10-12  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Update WebSocket protocol to hybi-17
