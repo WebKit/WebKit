@@ -1179,7 +1179,7 @@ BUGCR10378 MAC : fast/images/object-image.html = TIMEOUT FAIL
 // green so new mac regressions are caught much quicker.
 // (there are a few others marked w/ multiple status like this in other parts of
 // the file, but they were left there as the comments in those areas are valid.)
-BUGCR10384 MAC : fast/dom/Window/new-window-opener.html = TEXT
+BUGCR10384 MAC RELEASE : fast/dom/Window/new-window-opener.html = TEXT
 
 // We can support legacy Mac encodings by building platform/text/mac, but we may
 // not want to.
