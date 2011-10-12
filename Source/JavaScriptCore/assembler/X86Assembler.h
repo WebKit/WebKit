@@ -1066,6 +1066,12 @@ public:
         m_formatter.immediate32(imm);
     }
     
+    void movl_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, index, scale, offset);
+        m_formatter.immediate32(imm);
+    }
+
     void movb_i8m(int imm, int offset, RegisterID base)
     {
         ASSERT(-128 <= imm && imm < 128);

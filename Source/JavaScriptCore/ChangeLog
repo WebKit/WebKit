@@ -1,3 +1,22 @@
+2011-10-12  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT 32_64 - Fix ArrayPop
+        https://bugs.webkit.org/show_bug.cgi?id=69918
+
+        Reviewed by Filip Pizlo.
+
+        The storageLengthGPR is polluted by EmptyValueTag and later used to
+        index the array, which results in abnormal behaviors in execution.
+        This fix makes 32_64 DFG pass v8-deltablue and kraken
+        crypto-sha256-iterative on Linux ia32.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_i32m):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix build with GLib 2.31
