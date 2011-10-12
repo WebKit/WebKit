@@ -3871,3 +3871,11 @@ BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
 BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
+
+// We need to upstream new test expectations for these after fixing some
+// V8 bugs. Keeping here until we are sure that the push with the new GC
+// stays in.
+BUG_RICOW : fast/js/array-functions-non-arrays.html = TEXT
+BUG_RICOW : fast/js/array-prototype-properties.html = TEXT
+BUG_RICOW : fast/js/kde/RegExp.html = TEXT
+BUG_RICOW : fast/js/toString-overrides.html = TEXT
