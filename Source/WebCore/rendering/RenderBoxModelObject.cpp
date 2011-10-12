@@ -1399,7 +1399,10 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
 
     if (path) {
         GraphicsContextStateSaver stateSaver(*graphicsContext);
-        clipBorderSidePolygon(graphicsContext, outerBorder, innerBorder, side, adjacentSide1StylesMatch, adjacentSide2StylesMatch);
+        if (innerBorder.isRenderable())
+            clipBorderSidePolygon(graphicsContext, outerBorder, innerBorder, side, adjacentSide1StylesMatch, adjacentSide2StylesMatch);
+        else
+            clipBorderSideForComplexInnerPath(graphicsContext, outerBorder, innerBorder, side, edges);
         float thickness = max(max(edgeToRender.width, adjacentEdge1.width), adjacentEdge2.width);
         drawBoxSideFromPath(graphicsContext, outerBorder.rect(), *path, edges, edgeToRender.width, thickness, side, style,
             colorToPaint, edgeToRender.style, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
@@ -1618,7 +1621,10 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         // Clip to the inner and outer radii rects.
         if (bleedAvoidance != BackgroundBleedUseTransparencyLayer)
             graphicsContext->addRoundedRectClip(outerBorder);
-        graphicsContext->clipOutRoundedRect(innerBorder);
+        // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
+        // The inside will be clipped out later (in clipBorderSideForComplexInnerPath)
+        if (innerBorder.isRenderable())
+            graphicsContext->clipOutRoundedRect(innerBorder);
     }
 
     bool antialias = shouldAntialiasLines(graphicsContext);    
@@ -2217,6 +2223,120 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
     secondQuad[3] = quad[3];
     // Antialiasing affects the second side.
     graphicsContext->clipConvexPolygon(4, secondQuad, !secondEdgeMatches);
+}
+
+static LayoutRect calculateSideRectIncludingInner(const RoundedRect& outerBorder, const BorderEdge edges[], BoxSide side)
+{
+    LayoutRect sideRect = outerBorder.rect();
+    int width;
+
+    switch (side) {
+    case BSTop:
+        width = sideRect.height() - edges[BSBottom].width;
+        sideRect.setHeight(width);
+        break;
+    case BSBottom:
+        width = sideRect.height() - edges[BSTop].width;
+        sideRect.shiftYEdgeTo(sideRect.maxY() - width);
+        break;
+    case BSLeft:
+        width = sideRect.width() - edges[BSRight].width;
+        sideRect.setWidth(width);
+        break;
+    case BSRight:
+        width = sideRect.width() - edges[BSLeft].width;
+        sideRect.shiftXEdgeTo(sideRect.maxX() - width);
+        break;
+    }
+
+    return sideRect;
+}
+
+static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, BoxSide side)
+{
+    // Expand the inner border as necessary to make it a rounded rect (i.e. radii contained within each edge).
+    // This function relies on the fact we only get radii not contained within each edge if one of the radii
+    // for an edge is zero, so we can shift the arc towards the zero radius corner.
+    RoundedRect::Radii newRadii = innerBorder.radii();
+    LayoutRect newRect = innerBorder.rect();
+
+    float overshoot;
+    float maxRadii;
+
+    switch (side) {
+    case BSTop:
+        overshoot = newRadii.topLeft().width() + newRadii.topRight().width() - newRect.width();
+        if (overshoot > 0) {
+            ASSERT(!(newRadii.topLeft().width() && newRadii.topRight().width()));
+            newRect.setWidth(newRect.width() + overshoot);
+            if (!newRadii.topLeft().width())
+                newRect.move(-overshoot, 0);
+        }
+        newRadii.setBottomLeft(LayoutSize(0, 0));
+        newRadii.setBottomRight(LayoutSize(0, 0));
+        maxRadii = max<LayoutUnit>(newRadii.topLeft().height(), newRadii.topRight().height());
+        if (maxRadii > newRect.height())
+            newRect.setHeight(maxRadii);
+        break;
+
+    case BSBottom:
+        overshoot = newRadii.bottomLeft().width() + newRadii.bottomRight().width() - newRect.width();
+        if (overshoot > 0) {
+            ASSERT(!(newRadii.bottomLeft().width() && newRadii.bottomRight().width()));
+            newRect.setWidth(newRect.width() + overshoot);
+            if (!newRadii.bottomLeft().width())
+                newRect.move(-overshoot, 0);
+        }
+        newRadii.setTopLeft(LayoutSize(0, 0));
+        newRadii.setTopRight(LayoutSize(0, 0));
+        maxRadii = max<LayoutUnit>(newRadii.bottomLeft().height(), newRadii.bottomRight().height());
+        if (maxRadii > newRect.height()) {
+            newRect.move(0, newRect.height() - maxRadii);
+            newRect.setHeight(maxRadii);
+        }
+        break;
+
+    case BSLeft:
+        overshoot = newRadii.topLeft().height() + newRadii.bottomLeft().height() - newRect.height();
+        if (overshoot > 0) {
+            ASSERT(!(newRadii.topLeft().height() && newRadii.bottomLeft().height()));
+            newRect.setHeight(newRect.height() + overshoot);
+            if (!newRadii.topLeft().height())
+                newRect.move(0, -overshoot);
+        }
+        newRadii.setTopRight(LayoutSize(0, 0));
+        newRadii.setBottomRight(LayoutSize(0, 0));
+        maxRadii = max<LayoutUnit>(newRadii.topLeft().width(), newRadii.bottomLeft().width());
+        if (maxRadii > newRect.width())
+            newRect.setWidth(maxRadii);
+        break;
+
+    case BSRight:
+        overshoot = newRadii.topRight().height() + newRadii.bottomRight().height() - newRect.height();
+        if (overshoot > 0) {
+            ASSERT(!(newRadii.topRight().height() && newRadii.bottomRight().height()));
+            newRect.setHeight(newRect.height() + overshoot);
+            if (!newRadii.topRight().height())
+                newRect.move(0, -overshoot);
+        }
+        newRadii.setTopLeft(LayoutSize(0, 0));
+        newRadii.setBottomLeft(LayoutSize(0, 0));
+        maxRadii = max<LayoutUnit>(newRadii.topRight().width(), newRadii.bottomRight().width());
+        if (maxRadii > newRect.width()) {
+            newRect.move(newRect.width() - maxRadii, 0);
+            newRect.setWidth(maxRadii);
+        }
+        break;
+    }
+
+    return RoundedRect(newRect, newRadii);
+}
+
+void RenderBoxModelObject::clipBorderSideForComplexInnerPath(GraphicsContext* graphicsContext, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
+    BoxSide side, const class BorderEdge edges[])
+{
+    graphicsContext->clip(calculateSideRectIncludingInner(outerBorder, edges, side));
+    graphicsContext->clipOutRoundedRect(calculateAdjustedInnerBorder(innerBorder, side));
 }
 
 void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const

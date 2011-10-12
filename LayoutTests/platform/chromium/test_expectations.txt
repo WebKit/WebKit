@@ -3618,6 +3618,11 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
+// Need rebaselining after fix for webkit bug 38787 lands
+BUGWK38787 MAC WIN : fast/borders/border-radius-different-width-001.html = IMAGE
+BUGWK38787 MAC WIN : fast/borders/mixed-border-styles-radius.html = IMAGE
+BUGWK38787 MAC WIN : fast/borders/border-radius-complex-inner.html = IMAGE
+
 // Failing after r94912.
 BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
 BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT

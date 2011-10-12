@@ -1,3 +1,17 @@
+2011-10-12  Ben Wells  <benwells@chromium.org>
+
+        Incorrect rendering with one-sided thick border and border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=38787
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/border-radius-complex-inner.html: Added.
+        * platform/chromium-linux/fast/borders/border-radius-complex-inner-expected.png: Added.
+        * platform/chromium-linux/fast/borders/border-radius-different-width-001-expected.png:
+        * platform/chromium-linux/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/borders/border-radius-complex-inner-expected.txt: Added.
+
 2011-10-12  Dominic Mazzoni  <dmazzoni@google.com>
 
         Skip accessibility/menu-list-sends-change-notification.html on Mac.

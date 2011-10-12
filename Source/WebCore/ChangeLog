@@ -1,3 +1,29 @@
+2011-10-12  Ben Wells  <benwells@chromium.org>
+
+        Incorrect rendering with one-sided thick border and border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=38787
+
+        Reviewed by Simon Fraser.
+
+        Incorrect rendering resulted when the inner border could not be properly represented as a rounded
+        rectangle. When this happens, and the inner border is clipped out, the clipping code clips out the
+        enclosing rectangle instead.
+
+        This change addresses this by clipping in a different way in this case only. The inside is clipped
+        out one side at a time with a rounded rect created by adjusting the unrenderable inner border
+        rounded rectangle. The side polygon which is clipped to is also increased in this case to include
+        the inside of the border so that no areas are missing.
+
+        Test: fast/borders/border-radius-complex-inner.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::calculateSideRectIncludingInner):
+        (WebCore::calculateAdjustedInnerBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSideForComplexInnerPath):
+        * rendering/RenderBoxModelObject.h:
+
 2011-10-12  Luke Macpherson   <macpherson@chromium.org>
 
         Clean up CSSPropertyTextDecoration implementation and ETextDecoration usage.
