@@ -469,10 +469,11 @@ public:
     void updateLayerPositionsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
-    int staticInlinePosition() const { return m_staticInlinePosition; }
-    int staticBlockPosition() const { return m_staticBlockPosition; }
-    void setStaticInlinePosition(int position) { m_staticInlinePosition = position; }
-    void setStaticBlockPosition(int position) { m_staticBlockPosition = position; }
+    LayoutUnit staticInlinePosition() const { return m_staticInlinePosition; }
+    LayoutUnit staticBlockPosition() const { return m_staticBlockPosition; }
+   
+    void setStaticInlinePosition(LayoutUnit position) { m_staticInlinePosition = position; }
+    void setStaticBlockPosition(LayoutUnit position) { m_staticBlockPosition = position; }
 
     bool hasTransform() const { return renderer()->hasTransform(); }
     // Note that this transform has the transform-origin baked in.
@@ -787,9 +788,9 @@ protected:
     RenderMarquee* m_marquee; // Used by layers with overflow:marquee
     
     // Cached normal flow values for absolute positioned elements with static left/top values.
-    int m_staticInlinePosition;
-    int m_staticBlockPosition;
-    
+    LayoutUnit m_staticInlinePosition;
+    LayoutUnit m_staticBlockPosition;
+
     OwnPtr<TransformationMatrix> m_transform;
     
     // May ultimately be extended to many replicas (with their own paint order).

@@ -1,3 +1,38 @@
+2011-10-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69896
+        
+        [CSS Regions] Make positioned blocks work with variable width regions.
+
+        Reviewed by Sam Weinig.
+
+        * fast/regions/overflow-size-change-with-stacking-context-rtl.html: Added.
+        * fast/regions/position-writing-modes-in-variable-width-regions.html: Added.
+        * fast/regions/positioned-objects-block-static-spanning-regions-rtl.html: Added.
+        * fast/regions/positioned-objects-block-static-spanning-regions.html: Added.
+        * fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html: Added.
+        * fast/regions/positioned-objects-inline-static-spanning-regions.html: Added.
+        * fast/regions/positioned-objects-spanning-regions.html: Added.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-expected.txt:
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Added.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt: Added.
+        * platform/mac/fast/regions/position-writing-modes-in-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/position-writing-modes-in-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/positioned-objects-block-static-in-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-block-static-in-rtl-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-expected.txt: Added.
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.txt: Added.
+        * platform/mac/fast/regions/positioned-objects-inline-static-in-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-inline-static-in-rtl-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-expected.txt: Added.
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-rtl-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-rtl-expected.txt: Added.
+        * platform/mac/fast/regions/positioned-objects-spanning-regions-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-spanning-regions-expected.txt: Added.
+
 2011-10-06  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: border-conflict-style-079

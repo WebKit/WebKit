@@ -19,8 +19,8 @@ Flow Threads
         RenderBlock {DIV} at (0,30) size 300x100
           RenderBlock {DIV} at (30,0) size 240x100
             RenderBlock {DIV} at (140,0) size 100x100 [bgcolor=#FF0000]
-    layer at (120,0) size 160x150
-      RenderBlock (positioned) {DIV} at (120,0) size 160x150 [bgcolor=#008000]
+    layer at (110,0) size 160x150
+      RenderBlock (positioned) {DIV} at (110,0) size 160x150 [bgcolor=#008000]
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1 with index 0
     RenderRegion {DIV} #region2 with index 0

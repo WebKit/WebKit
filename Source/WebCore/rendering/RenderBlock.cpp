@@ -1228,10 +1228,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         // Set our start and end regions. No regions above or below us will be considered by our children. They are
         // effectively clamped to our region range.
         LayoutUnit oldHeight =  logicalHeight();
-        setLogicalHeight(INT_MAX / 2); // FIXME: With the eventual refactoring of logical height computation to be region-aware, we can avoid this hack.
+        LayoutUnit oldLogicalTop = logicalTop();
+        setLogicalHeight(INT_MAX / 2); 
         computeLogicalHeight();
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
         setLogicalHeight(oldHeight);
+        setLogicalTop(oldLogicalTop);
     }
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
@@ -1486,11 +1488,10 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
 {
     bool isHorizontal = isHorizontalWritingMode();
     bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
-    RenderLayer* childLayer = child->layer();
-        
-    childLayer->setStaticInlinePosition(startOffsetForContent(logicalHeight()));
-
+    
     LayoutUnit logicalTop = logicalHeight();
+    setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
+
     if (!marginInfo.canCollapseWithMarginBefore()) {
         child->computeBlockDirectionMargins(this);
         LayoutUnit marginBefore = marginBeforeForChild(child);
@@ -1505,6 +1506,8 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
         }
         logicalTop += (collapsedBeforePos - collapsedBeforeNeg) - marginBefore;
     }
+    
+    RenderLayer* childLayer = child->layer();
     if (childLayer->staticBlockPosition() != logicalTop) {
         childLayer->setStaticBlockPosition(logicalTop);
         if (hasStaticBlockPosition)
@@ -2266,7 +2269,26 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
         if (r->needsPositionedMovementLayoutOnly() && r->tryLayoutDoingPositionedMovementOnly())
             r->setNeedsLayout(false);
+            
+        // If we are in a flow thread, go ahead and compute a vertical position for our object now.
+        // If it's wrong we'll lay out again.
+        LayoutUnit oldLogicalTop = 0;
+        bool checkForPaginationRelayout = r->needsLayout() && view()->layoutState()->isPaginated() && view()->layoutState()->pageLogicalHeight(); 
+        if (checkForPaginationRelayout) {
+            if (isHorizontalWritingMode() == r->isHorizontalWritingMode())
+                r->computeLogicalHeight();
+            else
+                r->computeLogicalWidth();
+            oldLogicalTop = logicalTopForChild(r);
+        }
+            
         r->layoutIfNeeded();
+        
+        // Lay out again if our estimate was wrong.
+        if (checkForPaginationRelayout && logicalTopForChild(r) != oldLogicalTop) {
+            r->setChildNeedsLayout(true, false);
+            r->layoutIfNeeded();
+        }
     }
     
     if (hasColumns())
@@ -6248,8 +6270,8 @@ LayoutUnit RenderBlock::pageRemainingLogicalHeightForOffset(LayoutUnit offset, P
 
 LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins)
 {
-    bool isUnsplittable = child->isReplaced() || child->hasUnsplittableScrollingOverflow() || child->style()->columnBreakInside() == PBAVOID
-                            || child->style()->regionBreakInside() == PBAVOID;
+    bool isUnsplittable = child->isReplaced() || child->hasUnsplittableScrollingOverflow() || child->isWritingModeRoot()
+        || child->style()->columnBreakInside() == PBAVOID || child->style()->regionBreakInside() == PBAVOID;
     if (!isUnsplittable)
         return logicalOffset;
     LayoutUnit childLogicalHeight = logicalHeightForChild(child) + (includeMargins ? marginBeforeForChild(child) + marginAfterForChild(child) : 0);
@@ -6438,6 +6460,15 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
         return 0;
 
     return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+}
+
+void RenderBlock::setStaticInlinePositionForChild(RenderBox* child, LayoutUnit blockOffset, LayoutUnit inlinePosition)
+{
+    if (inRenderFlowThread()) {
+        // Shift the inline position to exclude the region offset.
+        inlinePosition += startOffsetForContent() - startOffsetForContent(blockOffset);
+    }
+    child->layer()->setStaticInlinePosition(inlinePosition);
 }
 
 bool RenderBlock::logicalWidthChangedInRegions() const

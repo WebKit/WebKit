@@ -1,3 +1,115 @@
+2011-10-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69896
+        
+        [CSS Regions] Make positioned blocks work with variable width regions.
+        
+        Make positioned objects able to position and size independently in each region. This involves
+        lifting the restriction in renderBoxRegionInfo for positioned objects and passing in region
+        information to computeLogicalWidthForPositioned so that it can compute answers for a given
+        region.
+
+        In order to make mixed writing modes work with positioned objects, this patch also takes some
+        baby steps towards fixing differing writing modes in paginated environments.
+
+        Reviewed by Sam Weinig.
+
+        Added many new tests in fast/regions.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        Disable pagination whenever differing writing modes are encountered. The block effectively becomes
+        unsplittable (as though it was an image).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        Remove a FIXME that looks incorrect now.
+
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        Patch static inline position caching to call a new method that unshifts the position to put it back
+        in the overall block's space rather than having it be per-region.
+
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        Make sure to attempt to set a logicalTop for positioned objects before they lay out so that they
+        have a chance of paginating correctly the first time around. If for some reason the top estimate proves
+        to be incorrect, we lay out again. Technically this bug exists for multi-column and printing as well, but
+        for now just fixing it for regions.
+
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        Add writing mode roots to the set of objects we consider to be unsplittable.
+
+        (WebCore::RenderBlock::setStaticInlinePositionForChild):
+        New helper function that handles shifting the inline static position back into the overall block's space
+        rather than leaving it in a translated region-specific space.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::startOffsetForContent):
+        New helper function for computing the start offset when no regions are involved.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setStaticPositions):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        Patched to call the new helper function, setStaticInlinePositionForChild.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        Patched to call the new helper function, setStaticInlinePositionForChild.
+
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        Pass region information into the positioning logical width computation function.
+
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        Remove the positioning restriction and properly compute shifting and left/right offsets for positioned
+        objects.
+
+        (WebCore::RenderBox::computeLogicalHeight):
+        Add code for perpendicular flows that just positions the object within the first region it is encountered
+        in. Since the object is unsplittable, this will work out. Should the object be so tall that it can't fit
+        in any region, then the resulting rendering will potentially be terrible, but the expectation is that authors should
+        avoid having perpendicular flows break across pages.
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        Patched to handle regions when they are passed in. Also makes sure that the pagination direction axis computation uses
+        the flow thread's first region when the flow thread is the positioned object's containing block.
+
+        (WebCore::computeInlineStaticDistance):
+        Patched to examine regions and to modify the static distance computation accordingly so that it is per-region.
+
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        Pass along the region information when computing the positioned logical width.
+
+        (WebCore::computeLogicalLeftPositionedOffset):
+        Handle the adjustment of the logical left offset for differing writing modes (in this case when the writing mode
+        is flipped relative to us).
+
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        Deal with perpendicular writing modes and make sure the object is placed properly using the first region it 
+        occurs in.
+
+        (WebCore::computeLogicalTopPositionedOffset):
+        Remove code that is no longer needed.
+
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        Patched to pass in 0 instead of a region since replaced elements aren't handled yet.
+
+        * rendering/RenderBox.h:
+        Changing the computePositionedLogicalWidth method to take region information.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        Didn't bother fixing deprecated flexible box, and the new flexbox still can't handle positioned objects. When it does,
+        it will use the new method. Put in some FIXMEs to help the flexbox coders see the issue when they port the code over
+        to the new flexbox.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::staticInlinePosition):
+        (WebCore::RenderLayer::staticBlockPosition):
+        (WebCore::RenderLayer::setStaticInlinePosition):
+        (WebCore::RenderLayer::setStaticBlockPosition):
+        Patched to take LayoutUnits instead of ints.
+
 2011-10-12  Nate Chapin  <japhet@chromium.org>
 
         Remove logging to determine how null v8::Contexts are happening,
