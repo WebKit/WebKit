@@ -3446,8 +3446,6 @@ BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
 BUGWK64946 WIN DEBUG : fast/dom/DeviceOrientation/no-synchronous-events.html = PASS CRASH
 
-BUGWK64948 WIN DEBUG : fast/forms/file/input-file-label.html = PASS CRASH
-
 BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = PASS CRASH TIMEOUT
 
 BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE
@@ -3866,9 +3864,6 @@ BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 
 // Broken in r96745.
 BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
-
-// Need rebaseline
-BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS

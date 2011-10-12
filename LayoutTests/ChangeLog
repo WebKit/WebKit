@@ -1,5 +1,22 @@
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update test expectations.
+
+        Update fast/forms/input-disabled-color.html, and remove an entry
+        for fast/forms/file/input-file-label.html.
+
+        * platform/chromium-cg-mac-leopard/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-cg-mac-snowleopard/fast/forms/input-disabled-color-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-disabled-color-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/input-disabled-color-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-win/fast/forms/input-disabled-color-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
         REGRESSION(r94836): An assertion fails in HTMLFormControlElement::isValidFormControlElement
         when HTMLInputElement::setValue() is called while the element is focused.
         https://bugs.webkit.org/show_bug.cgi?id=69909
