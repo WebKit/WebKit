@@ -29,7 +29,6 @@
 #include "HTMLSelectElement.h"
 #include "OptionGroupElement.h"
 #include "ScriptElement.h"
-#include "SelectElement.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

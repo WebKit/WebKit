@@ -5287,8 +5287,6 @@
             'dom/ScriptableDocumentParser.h',
             'dom/ScriptedAnimationController.cpp',
             'dom/ScriptedAnimationController.h',
-            'dom/SelectElement.cpp',
-            'dom/SelectElement.h',
             'dom/SelectorQuery.cpp',
             'dom/SelectorQuery.h',
             'dom/ShadowContentElement.cpp',

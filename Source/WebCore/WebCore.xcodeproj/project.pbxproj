@@ -109,8 +109,6 @@
 		083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */; };
 		0845680812B90DA600960A9F /* FontMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 0845680712B90DA600960A9F /* FontMetrics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		084A0829128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 084A0828128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h */; };
-		084AEBE40FB505FA0038483E /* SelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084AEBE20FB505FA0038483E /* SelectElement.cpp */; };
-		084AEBE50FB505FA0038483E /* SelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084AEBE30FB505FA0038483E /* SelectElement.h */; };
 		084DB59B128008CC002A6D64 /* SVGAnimatedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DB59A128008CC002A6D64 /* SVGAnimatedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08525E631278C00100A84778 /* SVGAnimatedStaticPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 08525E621278C00100A84778 /* SVGAnimatedStaticPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0854B0151255E4E600B9CDD0 /* RenderSVGInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 0854B0031255E4E600B9CDD0 /* RenderSVGInline.h */; };
@@ -7121,8 +7119,6 @@
 		083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlSingleLine.h; sourceTree = "<group>"; };
 		0845680712B90DA600960A9F /* FontMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontMetrics.h; sourceTree = "<group>"; };
 		084A0828128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListPropertyTearOff.h; sourceTree = "<group>"; };
-		084AEBE20FB505FA0038483E /* SelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectElement.cpp; sourceTree = "<group>"; };
-		084AEBE30FB505FA0038483E /* SelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectElement.h; sourceTree = "<group>"; };
 		084DB59A128008CC002A6D64 /* SVGAnimatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedString.h; sourceTree = "<group>"; };
 		08525E621278C00100A84778 /* SVGAnimatedStaticPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedStaticPropertyTearOff.h; sourceTree = "<group>"; };
 		0854B0021255E4E600B9CDD0 /* RenderSVGInline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGInline.cpp; sourceTree = "<group>"; };
@@ -21200,8 +21196,6 @@
 				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
 				8A413ADF1207BBA50082016E /* ScriptRunner.cpp */,
 				8A413ADE1207BBA50082016E /* ScriptRunner.h */,
-				084AEBE20FB505FA0038483E /* SelectElement.cpp */,
-				084AEBE30FB505FA0038483E /* SelectElement.h */,
 				E45322A9140CE267005A0F92 /* SelectorQuery.cpp */,
 				E45322AA140CE267005A0F92 /* SelectorQuery.h */,
 				A766CF8B13810E0C0011A0B3 /* ShadowContentElement.cpp */,
@@ -23989,7 +23983,6 @@
 				BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */,
 				371F4FFC0D25E7F300ECE0D5 /* SegmentedFontData.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
-				084AEBE50FB505FA0038483E /* SelectElement.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
@@ -26974,7 +26967,6 @@
 				BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */,
 				371F4FFD0D25E7F300ECE0D5 /* SegmentedFontData.cpp in Sources */,
 				B2C3DA2E0D006C1D00EF6F26 /* SegmentedString.cpp in Sources */,
-				084AEBE40FB505FA0038483E /* SelectElement.cpp in Sources */,
 				A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,

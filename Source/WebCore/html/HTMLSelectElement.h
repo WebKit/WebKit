@@ -29,7 +29,6 @@
 #include "CollectionCache.h"
 #include "Event.h"
 #include "HTMLFormControlElement.h"
-#include "SelectElement.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -50,8 +49,8 @@ public:
 
     unsigned length() const;
 
-    int size() const { return m_data.size(); }
-    bool multiple() const { return m_data.multiple(); }
+    int size() const { return m_size; }
+    bool multiple() const { return m_multiple; }
 
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void remove(int index);
@@ -155,6 +154,7 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event*);
     void setOptionsChangedOnRenderer();
+    bool usesMenuList() const;
 
     enum SkipDirection {
         SkipBackwards = -1,
@@ -167,13 +167,33 @@ private:
     int lastSelectableListIndex() const;
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
-    SelectElementData m_data;
     CollectionCache m_collectionInfo;
     Vector<Element*> m_listItems;
+    Vector<bool> m_lastOnChangeSelection;
+    Vector<bool> m_cachedStateForActiveSelection;
+    DOMTimeStamp m_lastCharTime;
+    String m_typedString;
+    int m_size;
+    int m_lastOnChangeIndex;
+    int m_activeSelectionAnchorIndex;
+    int m_activeSelectionEndIndex;
+    UChar m_repeatingChar;
+    bool m_userDrivenChange;
+    bool m_multiple;
+    bool m_activeSelectionState;
     bool m_recalcListItems;
 };
 
 HTMLSelectElement* toSelectElement(Element*);
+
+inline bool HTMLSelectElement::usesMenuList() const
+{
+#if ENABLE(NO_LISTBOX_RENDERING)
+    return true;
+#else
+    return !m_multiple && m_size <= 1;
+#endif
+}
 
 } // namespace
 

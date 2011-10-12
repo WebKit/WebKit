@@ -1,3 +1,63 @@
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
+        Move the content of SelectElementData into HTMLSelectElement, and remove SelectElement.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=69828
+
+        Reviewed by Darin Adler.
+
+        - Move all of the data members of SelectElementData to
+        HTMLSelectElement, and their accessor functions are not needed
+        anymore.
+        - Move SelectElementData::useMenuList() to HTMLSelectElement.
+
+        No new tests, just a refactoring.
+
+        * CMakeLists.txt: Remove SelectElement.cpp.
+        * WebCore.gypi: Remove SelectElement.{cpp,h}.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * dom/OptionElement.cpp: Remove a reference to SelectElement.h.
+        * dom/SelectElement.cpp: Removed.
+        * dom/SelectElement.h: Removed.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        Initializes the moved data members.
+        (WebCore::HTMLSelectElement::formControlType):
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser):
+        (WebCore::HTMLSelectElement::activeSelectionStartListIndex):
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex):
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::canSelectAll):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::menuListOnChange):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::recalcListItemsInternal):
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal):
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::size):
+        (WebCore::HTMLSelectElement::multiple):
+        (WebCore::HTMLSelectElement::usesMenuList):
+
 2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Mac build fix after r97227.
