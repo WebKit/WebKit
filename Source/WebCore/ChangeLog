@@ -1,3 +1,56 @@
+2011-10-11  Antti Koivisto  <antti@apple.com>
+
+        Resolve regular and visited link style in a single pass
+        https://bugs.webkit.org/show_bug.cgi?id=69838
+
+        Reviewed by Darin Adler
+        
+        We can simplify and speed up selector matching by removing the recursive matching done
+        to generate the style for the :visited pseudo selector. Both regular and visited link style
+        can be generated in a single pass through the style selector.
+        
+        - Make SelectorChecker::checkSelector to return both :visited and :link matches for all links.
+        - For each selector statically determine and cache the link states it may match.
+        - When applying the matched style declarations, apply them to the right RenderStyle
+          (regular, visited, or both).
+
+        Statically determining which link state will be matched works since we only support :visited matching
+        based on the current element state (not ancestors or siblings).
+        
+        A later patch will eliminate the separate RenderStyle for visited style completely and include the
+        few allowed properties to the regular RenderStyle.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::linkMatchType):
+        (WebCore::RuleSet::linkPseudoClassRules):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::collectFeatures):
+        (WebCore::RuleSet::shrinkToFit):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::MatchedStyleDeclaration::MatchedStyleDeclaration):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::SelectorChecker):
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore::SelectorChecker::fastCheckRightmostSelector):
+        (WebCore::SelectorChecker::fastCheckSelector):
+        (WebCore::SelectorChecker::checkOneSelector):
+        (WebCore::SelectorChecker::commonPseudoClassSelectorMatches):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorChecker.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r94836): An assertion fails in HTMLFormControlElement::isValidFormControlElement

@@ -50,9 +50,9 @@ public:
     SelectorChecker(Document*, bool strictParsing);
 
     enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
-
+    enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+    SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
     static bool isFastCheckableSelector(const CSSSelector*);
     bool fastCheckSelector(const CSSSelector*, const Element*) const;
 
@@ -73,10 +73,7 @@ public:
     
     bool isCollectingRulesOnly() const { return m_isCollectingRulesOnly; }
     void setCollectingRulesOnly(bool b) { m_isCollectingRulesOnly = b; }
-    
-    bool isMatchingVisitedPseudoClass() const { return m_isMatchingVisitedPseudoClass; }
-    void setMatchingVisitedPseudoClass(bool b) { m_isMatchingVisitedPseudoClass = b; }
-    
+
     PseudoId pseudoStyle() const { return m_pseudoStyle; }
     void setPseudoStyle(PseudoId pseudoId) { m_pseudoStyle = pseudoId; }
 
@@ -86,18 +83,20 @@ public:
     static bool tagMatches(const Element*, const CSSSelector*);
     static bool attributeNameMatches(const Attribute*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
-    bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*) const;
-    bool linkMatchesVisitedPseudoClass(const Element*) const;
     bool matchesFocusPseudoClass(const Element*) const;
     static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
     static bool checkExactAttribute(const Element*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
+    
+    enum LinkMatchMask { MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
+    static unsigned determineLinkMatchType(const CSSSelector*);
 
 private:
-    bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
+    bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle*, RenderStyle* elementParentStyle) const;
     bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
     static bool isFrameFocused(const Element*);
     
-    bool fastCheckRightmostSelector(const CSSSelector*, const Element*) const;
+    bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;
+    bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType) const;
 
     EInsideLink determineLinkStateSlowCase(Element*) const;
 
@@ -110,7 +109,6 @@ private:
     bool m_isCollectingRulesOnly;
     PseudoId m_pseudoStyle;
     mutable bool m_hasUnknownPseudoElements;
-    mutable bool m_isMatchingVisitedPseudoClass;
     mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 
     struct ParentStackFrame {
@@ -153,12 +151,6 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         || pseudoType == CSSSelector::PseudoAnyLink
         || pseudoType == CSSSelector::PseudoVisited
         || pseudoType == CSSSelector::PseudoFocus;
-}
-
-inline bool SelectorChecker::linkMatchesVisitedPseudoClass(const Element* element) const
-{
-    ASSERT(element->isLink());
-    return m_isMatchingVisitedPseudoClass || InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoVisited);
 }
 
 inline bool SelectorChecker::matchesFocusPseudoClass(const Element* element) const

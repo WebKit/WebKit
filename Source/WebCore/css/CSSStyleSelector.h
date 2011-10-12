@@ -97,11 +97,11 @@ public:
     void pushParent(Element* parent) { m_checker.pushParent(parent); }
     void popParent(Element* parent) { m_checker.popParent(parent); }
 
-    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
+    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
     
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
-    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0, bool matchVisitedPseudoClass = false);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
@@ -221,7 +221,7 @@ private:
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-    void addMatchedDeclaration(CSSMutableStyleDeclaration*);
+    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
@@ -232,6 +232,8 @@ private:
 
     template <bool firstPass>
     void applyDeclarations(bool important, int startIndex, int endIndex);
+    template <bool firstPass>
+    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -309,7 +311,12 @@ private:
     // set of matched decls four times, once for those properties that others depend on (like font-size),
     // and then a second time for all the remaining properties. We then do the same two passes
     // for any !important rules.
-    Vector<CSSMutableStyleDeclaration*, 64> m_matchedDecls;
+    struct MatchedStyleDeclaration {
+        MatchedStyleDeclaration(CSSMutableStyleDeclaration* decl, unsigned type) : styleDeclaration(decl), linkMatchType(type) { }
+        CSSMutableStyleDeclaration* styleDeclaration;
+        unsigned linkMatchType;
+    };
+    Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
 
     // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
     // merge sorting.
@@ -327,7 +334,9 @@ private:
     SelectorChecker m_checker;
 
     RefPtr<RenderStyle> m_style;
+    RefPtr<RenderStyle> m_visitedLinkStyle;
     RenderStyle* m_parentStyle;
+    RenderStyle* m_visitedLinkParentStyle;
     RenderStyle* m_rootElementStyle;
     Element* m_element;
     StyledElement* m_styledElement;

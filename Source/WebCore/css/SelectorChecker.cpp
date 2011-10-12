@@ -74,7 +74,6 @@ SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     , m_isCollectingRulesOnly(false)
     , m_pseudoStyle(NOPSEUDO)
     , m_hasUnknownPseudoElements(false)
-    , m_isMatchingVisitedPseudoClass(false)
 {
 }
 
@@ -255,11 +254,11 @@ bool SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isF
 {
     PseudoId dynamicPseudo = NOPSEUDO;
     if (isFastCheckableSelector && !element->isSVGElement()) {
-        if (!fastCheckRightmostSelector(sel, element))
+        if (!fastCheckRightmostSelector(sel, element, VisitedMatchDisabled))
             return false;
         return fastCheckSelector(sel, element);
     }
-    return checkSelector(sel, element, dynamicPseudo, false, false) == SelectorMatches;
+    return checkSelector(sel, element, dynamicPseudo, false, VisitedMatchDisabled) == SelectorMatches;
 }
 
 namespace {
@@ -322,7 +321,7 @@ inline bool checkTagValue(const Element*, AtomicStringImpl*, const QualifiedName
     
 }
 
-inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element) const
+inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element, VisitedMatchType visitedMatchType) const
 {
     ASSERT(isFastCheckableSelector(selector));
 
@@ -339,7 +338,7 @@ inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selec
     case CSSSelector::Set:
         return checkExactAttributeValue(element, selector->value().impl(), selector->attribute());
     case CSSSelector::PseudoClass:
-        return commonPseudoClassSelectorMatches(element, selector);
+        return commonPseudoClassSelectorMatches(element, selector, visitedMatchType);
     default:
         ASSERT_NOT_REACHED();
     }
@@ -348,7 +347,7 @@ inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selec
 
 bool SelectorChecker::fastCheckSelector(const CSSSelector* selector, const Element* element) const
 {
-    ASSERT(fastCheckRightmostSelector(selector, element));
+    ASSERT(fastCheckRightmostSelector(selector, element, VisitedMatchEnabled));
 
     const CSSSelector* topChildOrSubselector = 0;
     const Element* topChildOrSubselectorMatchElement = 0;
@@ -426,7 +425,7 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
 // * SelectorMatches         - the selector matches the element e
 // * SelectorFailsLocally    - the selector fails for the element e
 // * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
-SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType visitedMatchType, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
@@ -436,7 +435,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
 #endif
 
     // first selector has to match
-    if (!checkOneSelector(sel, e, dynamicPseudo, isSubSelector, encounteredLink, elementStyle, elementParentStyle))
+    if (!checkOneSelector(sel, e, dynamicPseudo, isSubSelector, visitedMatchType, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
     
     // The rest of the selectors has to match
@@ -447,20 +446,14 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
     if (!sel)
         return SelectorMatches;
     
-    if (relation != CSSSelector::SubSelector)
+    if (relation != CSSSelector::SubSelector) {
         // Bail-out if this selector is irrelevant for the pseudoStyle
         if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
     
-    // Check for nested links.
-    if (m_isMatchingVisitedPseudoClass && !isSubSelector) {
-        RenderStyle* currentStyle = elementStyle ? elementStyle : e->renderStyle();
-        if (currentStyle && currentStyle->insideLink() && e->isLink()) {
-            if (encounteredLink)
-                m_isMatchingVisitedPseudoClass = false; // This link is not relevant to the style being resolved, so disable matching.
-            else
-                encounteredLink = true;
-        }
+        // Disable :visited matching after we move to selector components that would match anything else than the current element.
+        if (!isSubSelector)
+            visitedMatchType = VisitedMatchDisabled;
     }
     
     switch (relation) {
@@ -470,7 +463,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
-            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
+            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
             if (match != SelectorFailsLocally)
                 return match;
         }
@@ -481,7 +474,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     case CSSSelector::DirectAdjacent:
         {
@@ -496,8 +489,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             if (!n)
                 return SelectorFailsLocally;
             e = static_cast<Element*>(n);
-            m_isMatchingVisitedPseudoClass = false;
-            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     case CSSSelector::IndirectAdjacent:
         if (!m_isCollectingRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
@@ -512,8 +504,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             if (!n)
                 return SelectorFailsLocally;
             e = static_cast<Element*>(n);
-            m_isMatchingVisitedPseudoClass = false;
-            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
+            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
             if (match != SelectorFailsLocally)
                 return match;
         };
@@ -525,14 +516,14 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
         if ((elementStyle || m_isCollectingRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
              && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
-        return checkSelector(sel, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
+        return checkSelector(sel, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle);
     case CSSSelector::ShadowDescendant:
         {
             Node* shadowHostNode = e->shadowAncestorNode();
             if (shadowHostNode == e || !shadowHostNode->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(shadowHostNode);
-            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     }
     
@@ -684,7 +675,7 @@ static bool anyAttributeMatches(NamedNodeMap* attributes, CSSSelector::Match mat
     return false;
 }
 
-bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType visitedMatchType, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
     ASSERT(e);
     if (!SelectorChecker::tagMatches(e, sel))
@@ -718,8 +709,10 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 // restriction in CSS3, but it is, so let's honor it.
                 // the parser enforces that this never occurs
                 ASSERT(subSel->pseudoType() != CSSSelector::PseudoNot);
-                
-                if (!checkOneSelector(subSel, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle))
+                // We select between :visited and :link when applying. We don't know which one applied (or not) yet.
+                if (subSel->pseudoType() == CSSSelector::PseudoVisited || (subSel->pseudoType() == CSSSelector::PseudoLink && visitedMatchType == VisitedMatchEnabled))
+                    return true;
+                if (!checkOneSelector(subSel, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle))
                     return true;
             }
         } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
@@ -1020,13 +1013,9 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             break;
         case CSSSelector::PseudoAny:
             for (CSSSelector* selector = sel->selectorList()->first(); selector; selector = CSSSelectorList::next(selector)) {
-                if (checkSelector(selector, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle) == SelectorMatches)
+                if (checkSelector(selector, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle) == SelectorMatches)
                     return true;
             }
-            break;
-        case CSSSelector::PseudoAnyLink:
-            if (e && e->isLink())
-                return true;
             break;
         case CSSSelector::PseudoAutofill:
             if (!e || !e->isFormControlElement())
@@ -1034,10 +1023,13 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             if (HTMLInputElement* inputElement = e->toInputElement())
                 return inputElement->isAutofilled();
             break;
+        case CSSSelector::PseudoAnyLink:
         case CSSSelector::PseudoLink:
-            return e->isLink() && !linkMatchesVisitedPseudoClass(e);
+            // :visited and :link matches are separated later when applying the style. Here both classes match all links...
+            return e->isLink();
         case CSSSelector::PseudoVisited:
-            return e->isLink() && linkMatchesVisitedPseudoClass(e);
+            // ...except if :visited matching is disabled for ancestor/sibling matching.
+            return e->isLink() && visitedMatchType == VisitedMatchEnabled;
         case CSSSelector::PseudoDrag:
             if (elementStyle)
                 elementStyle->setAffectedByDragRules(true);
@@ -1319,22 +1311,56 @@ void SelectorChecker::visitedStateChanged(LinkHash visitedHash)
     }
 }
 
-bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, const CSSSelector* selector) const
+bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, const CSSSelector* selector, VisitedMatchType visitedMatchType) const
 {
     ASSERT(isCommonPseudoClassSelector(selector));
     switch (selector->pseudoType()) {
     case CSSSelector::PseudoLink:
-        return element->isLink() && !linkMatchesVisitedPseudoClass(element);
-    case CSSSelector::PseudoVisited:
-        return element->isLink() && linkMatchesVisitedPseudoClass(element);
     case CSSSelector::PseudoAnyLink:
         return element->isLink();
+    case CSSSelector::PseudoVisited:
+        return element->isLink() && visitedMatchType == VisitedMatchEnabled;
     case CSSSelector::PseudoFocus:
         return matchesFocusPseudoClass(element);
     default:
         ASSERT_NOT_REACHED();
     }
     return true;
+}
+
+unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
+{
+    unsigned linkMatchType = MatchAll;
+    
+    // Statically determine if this selector will match a link in visited, unvisited or any state, or never.
+    // :visited never matches other elements than the current.
+    for (; selector; selector = selector->tagHistory()) {
+        switch (selector->pseudoType()) {
+        case CSSSelector::PseudoNot:
+            // :not(:visited) is equivalent to :link. Parser enforces that :not can't nest.
+            for (CSSSelector* subSelector = selector->selectorList()->first(); subSelector; subSelector = subSelector->tagHistory()) {
+                CSSSelector::PseudoType subType = subSelector->pseudoType();
+                if (subType == CSSSelector::PseudoVisited)
+                    linkMatchType &= ~SelectorChecker::MatchVisited;
+                else if (subType == CSSSelector::PseudoLink)
+                    linkMatchType &= ~SelectorChecker::MatchLink;
+            }
+            break;
+        case CSSSelector::PseudoLink:
+            linkMatchType &= ~SelectorChecker::MatchVisited;
+            break;
+        case CSSSelector::PseudoVisited:
+            linkMatchType &= ~SelectorChecker::MatchLink;
+            break;
+        default:
+            // We don't support :link and :visited inside :-webkit-any.
+            break;
+        }
+        if (selector->relation() != CSSSelector::SubSelector)
+            return linkMatchType;
+    }
+    ASSERT_NOT_REACHED();
+    return linkMatchType;
 }
 
 bool SelectorChecker::isFrameFocused(const Element* element)

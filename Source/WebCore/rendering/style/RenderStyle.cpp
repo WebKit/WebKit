@@ -256,7 +256,9 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
 {
     if (!pseudo)
         return 0;
-    
+
+    ASSERT(pseudo->styleType() > NOPSEUDO);
+
     RenderStyle* result = pseudo.get();
 
     if (!m_cachedPseudoStyles)
