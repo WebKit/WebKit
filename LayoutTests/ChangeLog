@@ -1,3 +1,9 @@
+2011-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Widen expectation of flakiness according to bots.
+
+        * platform/chromium/test_expectations.txt: Widened.
+
 2011-10-12  Chang Shu  <cshu@webkit.org>
 
         Selection is not collapsed in some WK2 editing tests
