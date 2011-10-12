@@ -1,5 +1,11 @@
 2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, mark fast/css/text-transform-select.html as IMAGE+TEXT on win.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, mark four js tests as failing after v8 roll.
 
         * platform/chromium/test_expectations.txt:
