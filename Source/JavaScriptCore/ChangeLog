@@ -1,3 +1,17 @@
+2011-10-11  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG 32_64 - fix silentFillGPR
+        https://bugs.webkit.org/show_bug.cgi?id=69903
+
+        Reviewed by Filip Pizlo.
+
+        Fix a small bug in silentFillGPR,
+        and add the newly introduced DFG file to CMakeListsEfl.
+
+        * CMakeListsEfl.txt:
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+
 2011-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG does not have flow-sensitive intraprocedural control flow analysis

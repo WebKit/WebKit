@@ -22,6 +22,7 @@ IF (ENABLE_DFG_JIT)
       ${JAVASCRIPTCORE_DIR}/dfg
     )
     LIST(APPEND JavaScriptCore_SOURCES
+        dfg/DFGAbstractState.cpp
         dfg/DFGByteCodeParser.cpp
         dfg/DFGCapabilities.cpp
         dfg/DFGDriver.cpp

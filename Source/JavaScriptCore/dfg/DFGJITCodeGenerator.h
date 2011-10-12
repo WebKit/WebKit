@@ -357,8 +357,10 @@ protected:
             return;
         }
 
-        if (registerFormat == DataFormatStorage)
+        if (registerFormat == DataFormatStorage) {
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
+            return;
+        }
 
         ASSERT(registerFormat & DataFormatJS);
 #if USE(JSVALUE64)
