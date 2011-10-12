@@ -245,7 +245,8 @@ bool V8Proxy::handleOutOfMemory()
 void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
     // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
-    windowShell()->initContextIfNeeded();
+    if (!windowShell()->initContextIfNeeded())
+        return;
 
     v8::HandleScope handleScope;
     V8IsolatedContext* isolatedContext = 0;

@@ -78,10 +78,6 @@
 
 namespace WebCore {
 
-// FIXME: Temporary diagnostics as to why V8 sometimes crashes with a null context in namedItemAdded().
-// See https://bugs.webkit.org/show_bug.cgi?id=68099.
-static int s_contextFailureReason = -1;
-
 static void handleFatalErrorInV8()
 {
     // FIXME: We temporarily deal with V8 internal error situations
@@ -281,7 +277,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
 {
     // Bail out if the context has already been initialized.
     if (!m_context.IsEmpty())
-        return false;
+        return true;
 
     // Create a handle scope for all local handles.
     v8::HandleScope handleScope;
@@ -322,7 +318,6 @@ bool V8DOMWindowShell::initContextIfNeeded()
         // Bail out if allocation of the first global objects fails.
         if (m_global.IsEmpty()) {
             disposeContextHandles();
-            s_contextFailureReason = 3;
             return false;
         }
 #ifndef NDEBUG
@@ -358,18 +353,14 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     v8::Persistent<v8::Context> result;
 
     // The activeDocumentLoader pointer could be 0 during frame shutdown.
-    if (!m_frame->loader()->activeDocumentLoader()) {
-        s_contextFailureReason = 0;
+    if (!m_frame->loader()->activeDocumentLoader())
         return result;
-    }
 
     // Create a new environment using an empty template for the shadow
     // object. Reuse the global object if one has been created earlier.
     v8::Persistent<v8::ObjectTemplate> globalTemplate = V8DOMWindow::GetShadowObjectTemplate();
-    if (globalTemplate.IsEmpty()) {
-        s_contextFailureReason = 1;
+    if (globalTemplate.IsEmpty())
         return result;
-    }
 
     // Used to avoid sleep calls in unload handlers.
     if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))
@@ -396,8 +387,6 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     v8::ExtensionConfiguration extensionConfiguration(index, extensionNames.get());
     result = v8::Context::New(&extensionConfiguration, globalTemplate, global);
 
-    if (result.IsEmpty())
-        s_contextFailureReason = 2;
     return result;
 }
 
@@ -417,10 +406,8 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
     v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::getConstructor(&V8DOMWindow::info, getHiddenObjectPrototype(context));
     v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
     // Bail out if allocation failed.
-    if (jsWindow.IsEmpty()) {
-        s_contextFailureReason = 7;
+    if (jsWindow.IsEmpty())
         return false;
-    }
 
     // Wrap the window.
     V8DOMWrapper::setDOMWrapper(jsWindow, &V8DOMWindow::info, window);
@@ -551,10 +538,7 @@ void V8DOMWindowShell::updateDocument()
     // reference to this wrapper. We eagerly initialize the JavaScript
     // context for the new document to make property access on the
     // global object wrapper succeed.
-    initContextIfNeeded();
-
-    // Bail out if context initialization failed.
-    if (m_context.IsEmpty())
+    if (!initContextIfNeeded())
         return;
 
     // We have a new document and we need to update the cache.
@@ -580,25 +564,8 @@ v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::AccessorI
 
 void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& name)
 {
-    initContextIfNeeded();
-
-    if (!isContextInitialized()) {
-#if PLATFORM(CHROMIUM)
-        // FIXME: Temporary diagnostics as to why V8 sometimes crashes with a null context below.
-        // See https://bugs.webkit.org/show_bug.cgi?id=68099.
-        PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 0, 3);
-        if (m_frame->settings() && !m_frame->settings()->isJavaScriptEnabled())
-            PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 1, 3);
-
-        if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
-            PlatformSupport::histogramEnumeration("V8Bindings.nullContextState", 2, 3);
-
-        if (s_contextFailureReason >= 0 && s_contextFailureReason <= 7)
-            PlatformSupport::histogramEnumeration("V8Bindings.nullContextReason", s_contextFailureReason, 8);
-        s_contextFailureReason = -1;
-#endif
+    if (!initContextIfNeeded())
         return;
-    }
 
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context);
@@ -629,23 +596,17 @@ bool V8DOMWindowShell::installHiddenObjectPrototype(v8::Handle<v8::Context> cont
     v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
     v8::Handle<v8::String> hiddenObjectPrototypeString = V8HiddenPropertyName::objectPrototype();
     // Bail out if allocation failed.
-    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty()) {
-        s_contextFailureReason = 4;
+    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty())
         return false;
-    }
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(objectString));
     // Bail out if fetching failed.
-    if (object.IsEmpty()) {
-        s_contextFailureReason = 5;
+    if (object.IsEmpty())
         return false;
-    }
     v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
     // Bail out if fetching failed.
-    if (objectPrototype.IsEmpty()) {
-        s_contextFailureReason = 6;
+    if (objectPrototype.IsEmpty())
         return false;
-    }
 
     context->Global()->SetHiddenValue(hiddenObjectPrototypeString, objectPrototype);
 
@@ -655,7 +616,9 @@ bool V8DOMWindowShell::installHiddenObjectPrototype(v8::Handle<v8::Context> cont
 v8::Local<v8::Object> V8DOMWindowShell::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
     // Not in cache.
-    initContextIfNeeded();
+    if (!initContextIfNeeded())
+        return notHandledByInterceptor();
+
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = V8DOMWrapper::getConstructor(type, getHiddenObjectPrototype(m_context));
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);

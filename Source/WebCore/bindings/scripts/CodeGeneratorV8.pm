@@ -2726,7 +2726,7 @@ END
     if (impl->document()) {
         proxy = V8Proxy::retrieve(impl->document()->frame());
         if (proxy && static_cast<Node*>(impl->document()) == static_cast<Node*>(impl)) {
-            if (proxy->windowShell()->initContextIfNeeded()) {
+            if (proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
                 // initContextIfNeeded may have created a wrapper for the object, retry from the start.
                 return ${className}::wrap(impl);
             }
