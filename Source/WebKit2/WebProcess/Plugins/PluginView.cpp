@@ -554,11 +554,14 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    if (m_plugin && context->updatingControlTints())
-        m_plugin->updateControlTints(context);
-
-    if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
+    if (!m_plugin || !m_isInitialized)
         return;
+
+    if (context->paintingDisabled()) {
+        if (context->updatingControlTints())
+            m_plugin->updateControlTints(context);
+        return;
+    }
 
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
     IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
