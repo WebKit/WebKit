@@ -1,3 +1,25 @@
+2011-10-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Make adding another unit test easier
+        https://bugs.webkit.org/show_bug.cgi?id=69409
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add the new WebKit2 API tests.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Added.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp: Added. A fixture for creating load tracking tests.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h: Added.
+        * UIProcess/API/gtk/tests/TestMain.cpp: Copied from Source/WebKit2/UIProcess/API/gtk/tests/testwebview.c.
+        (main):
+        * UIProcess/API/gtk/tests/TestMain.h: Added.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp: Copied from Source/WebKit2/UIProcess/API/gtk/tests/testwebview.c.
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp: Added.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/testwebview.c.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp: Added. A fixture for generic WebView tests.
+        * UIProcess/API/gtk/tests/WebViewTest.h: Added.
+        * UIProcess/API/gtk/tests/testloading.c: Removed.
+        * UIProcess/API/gtk/tests/testwebcontext.c: Removed.
+
 2011-10-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Crash when opening an embedded PDF in a background tab

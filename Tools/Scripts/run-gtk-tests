@@ -27,13 +27,13 @@ use webkitdirs;
 # This initializes the correct configuration (Release/Debug)
 setConfiguration();
 
-my $productDir = productDir();
-my $testsDir = $productDir . "/Programs/unittests" ;
-my @unitTests = glob  $testsDir . "/test*";
-my @webkit2UnitTests = glob  $testsDir . "/webkit2/test*";
-push @unitTests, @webkit2UnitTests;
+my @unitTests;
+my $programsDirectory = productDir() . "/Programs";
+push(@unitTests, glob($programsDirectory . "/unittests/*"));
+push(@unitTests, glob($programsDirectory . "/WebKit2APITests/*"));
+
 if ($#unitTests < 1) {
-    die "ERROR: tests not found in $productDir.\n";
+    die "ERROR: tests not found in $programsDirectory.\n";
 }
 
 my $pid = fork();
@@ -52,6 +52,8 @@ $ENV{"DISPLAY"} = ':31';
 my $exitStatus = 0;
 foreach my $unitTest (@unitTests)
 {
+    next unless (-f $unitTest and -x $unitTest);
+
     system "gtester $unitTest";
     if ($?) {
         $exitStatus = $?;

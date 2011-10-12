@@ -1,3 +1,12 @@
+2011-10-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Make adding another unit test easier
+        https://bugs.webkit.org/show_bug.cgi?id=69409
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Include the new testing makefile.
+
 2011-10-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove all references to QTDIR_build and standalone_package

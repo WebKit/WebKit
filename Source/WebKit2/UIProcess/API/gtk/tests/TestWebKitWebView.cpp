@@ -17,28 +17,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <glib.h>
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
+#include "config.h"
+#include "WebViewTest.h"
+#include "LoadTrackingTest.h"
 
-static void testWebViewDefaultContext(void)
+static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
 {
-    WebKitWebView *view = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(view);
-    g_assert(webkit_web_view_get_context(view) == webkit_web_context_get_default());
-    g_object_unref(view);
+    g_assert(webkit_web_view_get_context(test->m_webView) == webkit_web_context_get_default());
 }
 
-int main(int argc, char **argv)
+void beforeAll()
 {
-    g_thread_init(NULL);
-    gtk_test_init(&argc, &argv, NULL);
+    WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
+}
 
-    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
-
-    g_test_bug_base("https://bugs.webkit.org/");
-    g_test_add_func("/webkit2/webview/default_context",
-                    testWebViewDefaultContext);
-
-    return g_test_run();
+void afterAll()
+{
 }

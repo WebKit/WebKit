@@ -1082,53 +1082,6 @@ CLEANFILES += \
 DISTCLEANFILES += \
 	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
-# Unit tests
-TEST_PROGS += \
-	Programs/unittests/webkit2/testwebcontext \
-	Programs/unittests/webkit2/testwebview \
-	Programs/unittests/webkit2/testloading
-
-noinst_PROGRAMS += $(TEST_PROGS)
-webkit2_tests_cflags = \
-	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
-	-I$(srcdir)/Source \
-	-I$(srcdir)/Source/WebKit2 \
-	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
-	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
-	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
-	$(global_cflags) \
-	$(global_cppflags) \
-	$(GLIB_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
-
-webkit2_tests_ldadd = \
-	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(GLIB_LIBS) \
-	$(GTK_LIBS) \
-	$(LIBSOUP_LIBS)
-
-webkit2_tests_ldflags = \
-	-no-install \
-	-no-fast-install
-
-Programs_unittests_webkit2_testwebcontext_SOURCES = Source/WebKit2/UIProcess/API/gtk/tests/testwebcontext.c
-Programs_unittests_webkit2_testwebcontext_CFLAGS = $(webkit2_tests_cflags)
-Programs_unittests_webkit2_testwebcontext_LDADD = $(webkit2_tests_ldadd)
-Programs_unittests_webkit2_testwebcontext_LDFLAGS = $(webkit2_tests_ldflags)
-
-Programs_unittests_webkit2_testwebview_SOURCES = Source/WebKit2/UIProcess/API/gtk/tests/testwebview.c
-Programs_unittests_webkit2_testwebview_CFLAGS = $(webkit2_tests_cflags)
-Programs_unittests_webkit2_testwebview_LDADD = $(webkit2_tests_ldadd)
-Programs_unittests_webkit2_testwebview_LDFLAGS = $(webkit2_tests_ldflags)
-
-Programs_unittests_webkit2_testloading_SOURCES = Source/WebKit2/UIProcess/API/gtk/tests/testloading.c
-Programs_unittests_webkit2_testloading_CFLAGS = $(webkit2_tests_cflags)
-Programs_unittests_webkit2_testloading_LDADD = $(webkit2_tests_ldadd)
-Programs_unittests_webkit2_testloading_LDFLAGS = $(webkit2_tests_ldflags)
-
 # WebKitWebProcess
 libexec_PROGRAMS += \
 	Programs/WebKitWebProcess

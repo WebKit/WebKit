@@ -210,6 +210,7 @@ include Tools/DumpRenderTree/gtk/GNUmakefile.ImageDiff.am
 
 if ENABLE_WEBKIT2
 include Source/WebKit2/GNUmakefile.am
+include Source/WebKit2/UIProcess/API/gtk/tests/GNUmakefile.am
 include Tools/MiniBrowser/gtk/GNUmakefile.am
 include Tools/WebKitTestRunner/GNUmakefile.am
 # [GTK] Refactor the translations now that we have webkit2

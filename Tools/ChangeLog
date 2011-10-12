@@ -1,3 +1,13 @@
+2011-10-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Make adding another unit test easier
+        https://bugs.webkit.org/show_bug.cgi?id=69409
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/run-gtk-tests: Update run-gtk-tests to be able to execute
+        new WebKit2 tests.
+
 2011-10-11  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] update pywebsocket to 0.6b6.

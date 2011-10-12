@@ -1,0 +1,62 @@
+TEST_PROGS += \
+	Programs/WebKit2APITests/TestWebKitWebContext \
+	Programs/WebKit2APITests/TestWebKitWebView \
+	Programs/WebKit2APITests/TestWebKitWebLoaderClient
+
+noinst_PROGRAMS += $(TEST_PROGS)
+webkit2_tests_cppflags = \
+	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
+	$(javascriptcore_cppflags) \
+	-I$(srcdir)/Source/JavaScriptCore \
+	-I$(srcdir)/Source \
+	-I$(srcdir)/Source/WebKit2 \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
+	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
+	$(global_cppflags) \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+webkit2_tests_ldadd = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Libraries/libWebKit2APITestCore.la \
+	$(GEOCLUE_LIBS) \
+	$(GLIB_LIBS) \
+	$(GTK_LIBS) \
+	$(LIBSOUP_LIBS)
+
+webkit2_tests_ldflags = \
+	-no-install \
+	-no-fast-install
+
+noinst_LTLIBRARIES += Libraries/libWebKit2APITestCore.la
+Libraries_libWebKit2APITestCore_la_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.h \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.h \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.h
+Libraries_libWebKit2APITestCore_la_CPPFLAGS = $(webkit2_tests_cppflags)
+
+Programs_WebKit2APITests_TestWebKitWebContext_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebContext.cpp
+Programs_WebKit2APITests_TestWebKitWebContext_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitWebContext_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitWebContext_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitWebView_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebView.cpp
+Programs_WebKit2APITests_TestWebKitWebView_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitWebView_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitWebView_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitWebLoaderClient_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp
+Programs_WebKit2APITests_TestWebKitWebLoaderClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
+
