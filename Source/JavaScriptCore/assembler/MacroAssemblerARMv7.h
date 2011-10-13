@@ -1013,12 +1013,6 @@ public:
         return branchTest32(cond, addressTempRegister, mask);
     }
 
-    Jump branchTest8(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
-    {
-        test32(reg, mask);
-        return Jump(makeBranch(cond));
-    }
-
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/

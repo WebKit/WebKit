@@ -1020,7 +1020,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         flushRegisters();
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
 
-        addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+        addBranch(m_jit.branchTest32(callResultCondition, resultGPR), taken);
     } else {
         GPRTemporary result(this, arg2);
         GPRReg resultGPR = result.gpr();
@@ -1044,7 +1044,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
             callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
             silentFillAllRegisters(resultGPR);
         
-            addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+            addBranch(m_jit.branchTest32(callResultCondition, resultGPR), taken);
         }
     }
 
@@ -1142,7 +1142,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         callOperation(operationCompareStrictEqCell, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
-        addBranch(m_jit.branchTest8(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultGPR), taken);
+        addBranch(m_jit.branchTest32(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultGPR), taken);
     } else {
         m_jit.orPtr(arg1GPR, arg2GPR, resultGPR);
         
@@ -1162,7 +1162,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         callOperation(operationCompareStrictEq, resultGPR, arg1GPR, arg2GPR);
         silentFillAllRegisters(resultGPR);
         
-        addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR), taken);
+        addBranch(m_jit.branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR), taken);
     }
     
     if (notTaken != (m_block + 1))

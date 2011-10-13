@@ -644,7 +644,7 @@ void SpeculativeJIT::emitBranch(Node& node)
         callOperation(dfgConvertJSValueToBoolean, resultGPR, valueTagGPR, valuePayloadGPR);
         silentFillAllRegisters(resultGPR);
     
-        addBranch(m_jit.branchTest8(JITCompiler::NonZero, resultGPR), taken);
+        addBranch(m_jit.branchTest32(JITCompiler::NonZero, resultGPR), taken);
         if (notTaken != (m_block + 1))
             addBranch(m_jit.jump(), notTaken);
     

@@ -931,17 +931,6 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchTest8(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
-    {
-        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
-        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
-        if (mask.m_value == -1)
-            m_assembler.testb_rr(reg, reg);
-        else
-            m_assembler.testb_i8r(mask.m_value, reg);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
-    }
-
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
@@ -1163,8 +1152,7 @@ public:
     void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        set32(x86Condition(cond), dest);
     }
 
     void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
@@ -1173,12 +1161,11 @@ public:
             m_assembler.testl_rr(left, left);
         else
             m_assembler.cmpl_ir(right.m_value, left);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        set32(x86Condition(cond), dest);
     }
 
     // FIXME:
-    // The mask should be optional... paerhaps the argument order should be
+    // The mask should be optional... perhaps the argument order should be
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
 
@@ -1188,8 +1175,7 @@ public:
             m_assembler.cmpb_im(0, address.offset, address.base);
         else
             m_assembler.testb_im(mask.m_value, address.offset, address.base);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        set32(x86Condition(cond), dest);
     }
 
     void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
@@ -1198,8 +1184,7 @@ public:
             m_assembler.cmpl_im(0, address.offset, address.base);
         else
             m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-        m_assembler.setCC_r(x86Condition(cond), dest);
-        m_assembler.movzbl_rr(dest, dest);
+        set32(x86Condition(cond), dest);
     }
 
     // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.
@@ -1222,6 +1207,23 @@ protected:
     X86Assembler::Condition x86Condition(ResultCondition cond)
     {
         return static_cast<X86Assembler::Condition>(cond);
+    }
+
+    void set32(X86Assembler::Condition cond, RegisterID dest)
+    {
+#if CPU(X86)
+        // On 32-bit x86 we can only set the first 4 registers;
+        // esp..edi are mapped to the 'h' registers!
+        if (dest >= 4) {
+            m_assembler.xchgl_rr(dest, X86Registers::eax);
+            m_assembler.setCC_r(cond, X86Registers::eax);
+            m_assembler.movzbl_rr(X86Registers::eax, X86Registers::eax);
+            m_assembler.xchgl_rr(dest, X86Registers::eax);
+            return;
+        }
+#endif
+        m_assembler.setCC_r(cond, dest);
+        m_assembler.movzbl_rr(dest, dest);
     }
 
 private:

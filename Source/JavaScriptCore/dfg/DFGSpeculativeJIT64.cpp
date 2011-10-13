@@ -773,7 +773,7 @@ void SpeculativeJIT::emitBranch(Node& node)
             callOperation(dfgConvertJSValueToBoolean, resultGPR, valueGPR);
             silentFillAllRegisters(resultGPR);
     
-            addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
+            addBranch(m_jit.branchTest32(MacroAssembler::NonZero, resultGPR), taken);
             if (notTaken != (m_block + 1))
                 addBranch(m_jit.jump(), notTaken);
         }

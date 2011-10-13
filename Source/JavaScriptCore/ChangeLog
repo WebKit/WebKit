@@ -1,5 +1,48 @@
 2011-10-12  Gavin Barraclough  <baraclough@apple.com>
 
+        MacroAssemblerX86 8-bit register ops unsafe on CPU(X86)
+        https://bugs.webkit.org/show_bug.cgi?id=69978
+
+        Reviewed by Filip Pizlo.
+
+        Certain ops are unsafe if the register passed is esp..edi (will instead test/set the ).
+
+        compare32/test8/test32 Call setCC, which sets an 8-bit register - we can fix this by adding
+        a couple of xchg instructions.
+
+        branchTest8 with a register argument is also affected. In all cases this is currently used
+        this is testing a value that is correct to 32 or more bits, so we can simply switch these
+        to branchTest32 & remove the corresponding branchTest8 (this is desirable anyway, since the
+        32-bit form is cheaper to implement on platforms that don't have an 8-bit compare instruction).
+
+        This fixes the remaining fast/js failures with the DFG JIT 32_64.
+
+        * assembler/MacroAssemblerARMv7.h
+            - removed branchTest8.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::compare32):
+        (JSC::MacroAssemblerX86Common::test8):
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::set32):
+            - added set32 helper that is 'h' register safe.
+            - removed branchTest8.
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+            - switch uses of branchTest8 to branchTest32.
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+            - switch uses of branchTest8 to branchTest32.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+            - switch uses of branchTest8 to branchTest32.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+            - switch uses of branchTest8 to branchTest32.
+
+2011-10-12  Gavin Barraclough  <baraclough@apple.com>
+
         Errrk, revert accidental commit!
 
         * wtf/Platform.h:

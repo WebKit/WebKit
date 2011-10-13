@@ -1062,7 +1062,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
         flushRegisters();
         callOperation(helperFunction, resultGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
 
-        addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+        addBranch(m_jit.branchTest32(callResultCondition, resultGPR), taken);
     } else {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
@@ -1086,7 +1086,7 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
             callOperation(helperFunction, resultGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
             silentFillAllRegisters(resultGPR);
         
-            addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+            addBranch(m_jit.branchTest32(callResultCondition, resultGPR), taken);
         }
     }
 
@@ -1191,7 +1191,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultPayloadGPR);
         
-        addBranch(m_jit.branchTest8(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultPayloadGPR), taken);
+        addBranch(m_jit.branchTest32(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultPayloadGPR), taken);
     } else {
         // FIXME: Add fast paths for twoCells, number etc.
 
@@ -1199,7 +1199,7 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
         callOperation(operationCompareStrictEq, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         silentFillAllRegisters(resultPayloadGPR);
         
-        addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultPayloadGPR), taken);
+        addBranch(m_jit.branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultPayloadGPR), taken);
     }
     
     if (notTaken != (m_block + 1))
