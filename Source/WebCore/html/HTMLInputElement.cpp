@@ -1307,6 +1307,25 @@ void HTMLInputElement::setDefaultName(const AtomicString& name)
     m_name = name;
 }
 
+Vector<String> HTMLInputElement::acceptMIMETypes()
+{
+    Vector<String> mimeTypes;
+
+    String acceptString = accept();
+    if (acceptString.isEmpty())
+        return mimeTypes;
+
+    Vector<String> splitTypes;
+    acceptString.split(',', false, splitTypes);
+    for (size_t i = 0; i < splitTypes.size(); ++i) {
+        String trimmedMimeType = stripLeadingAndTrailingHTMLSpaces(splitTypes[i]);
+        if (!trimmedMimeType.isEmpty())
+            mimeTypes.append(trimmedMimeType);
+    }
+
+    return mimeTypes;
+}
+
 String HTMLInputElement::accept() const
 {
     return fastGetAttribute(acceptAttr);

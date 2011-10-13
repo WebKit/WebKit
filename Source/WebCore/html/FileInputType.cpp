@@ -154,6 +154,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
 #endif
         settings.deprecatedAcceptTypes = input->accept();
+        settings.acceptMIMETypes = input->acceptMIMETypes();
         settings.selectedFiles = m_fileList->paths();
         chrome->runOpenPanel(input->document()->frame(), newFileChooser(settings));
     }
@@ -324,10 +325,12 @@ void FileInputType::receiveDropForDirectoryUpload(const Vector<String>& paths)
 {
     if (Chrome* chrome = this->chrome()) {
         FileChooserSettings settings;
+        HTMLInputElement* input = element();
         settings.allowsDirectoryUpload = true;
         settings.allowsMultipleFiles = true;
         settings.selectedFiles.append(paths[0]);
-        settings.deprecatedAcceptTypes = element()->accept();
+        settings.deprecatedAcceptTypes = input->accept();
+        settings.acceptMIMETypes = input->acceptMIMETypes();
         chrome->enumerateChosenDirectory(newFileChooser(settings));
     }
 }

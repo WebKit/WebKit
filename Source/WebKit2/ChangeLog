@@ -3,6 +3,17 @@
         Pass Parsed Accept Attribute MIME Types to WebKit Clients
         https://bugs.webkit.org/show_bug.cgi?id=69598
 
+        Reviewed by David Kilzer.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
         Reviewed by Anders Carlsson.
 
         The WebOpenPanelParameters::Data struct was a mirror of

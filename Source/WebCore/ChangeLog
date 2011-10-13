@@ -3,6 +3,29 @@
         Pass Parsed Accept Attribute MIME Types to WebKit Clients
         https://bugs.webkit.org/show_bug.cgi?id=69598
 
+        Reviewed by David Kilzer.
+
+        No new tests. No new functionality in WebCore, just
+        exposing more information to the WebKit port.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::receiveDropForDirectoryUpload):
+        Set the MIME type list on the FileChooser settings.
+
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::acceptMIMETypes):
+        Accessor for a parsed list of MIME types from the accept attribute.
+        
+        * platform/FileChooser.h:
+        Add a slot for a MIME type list on the chooser settings.
+
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
         Reviewed by Kent Tamura.
 
         Deprecate the old String version of getting the "accept"

@@ -190,6 +190,7 @@ public:
 
     void setDefaultName(const AtomicString&);
 
+    Vector<String> acceptMIMETypes();
     String accept() const;
     String alt() const;
 

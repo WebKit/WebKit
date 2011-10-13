@@ -525,6 +525,7 @@ void ArgumentCoder<FileChooserSettings>::encode(ArgumentEncoder* encoder, const 
 #if ENABLE(DIRECTORY_UPLOAD)
     encoder->encode(settings.allowsDirectoryUpload);
 #endif
+    encoder->encode(settings.acceptMIMETypes);
     encoder->encode(settings.selectedFiles);
 }
 
@@ -536,6 +537,8 @@ bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder* decoder, FileCh
     if (!decoder->decode(settings.allowsDirectoryUpload))
         return false;
 #endif
+    if (!decoder->decode(settings.acceptMIMETypes))
+        return false;
     if (!decoder->decode(settings.selectedFiles))
         return false;
 

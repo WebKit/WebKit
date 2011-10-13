@@ -43,6 +43,7 @@ struct FileChooserSettings {
     bool allowsDirectoryUpload;
 #endif
     String deprecatedAcceptTypes;
+    Vector<String> acceptMIMETypes;
     Vector<String> selectedFiles;
 };
 
