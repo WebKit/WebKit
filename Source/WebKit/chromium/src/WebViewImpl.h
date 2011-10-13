@@ -120,8 +120,13 @@ public:
     virtual bool compositionRange(size_t* location, size_t* length);
     virtual WebTextInputType textInputType();
     virtual bool getSelectionOffsetsAndTextInEditableContent(WebString&, size_t& focus, size_t& anchor) const;
+    // FIXME: It has been replaced by selectionBounds. Remove it when chromium
+    // switches to selectionBounds.
     virtual WebRect caretOrSelectionBounds();
+    // FIXME: It has been replaced by selectionBounds. Remove it when chromium
+    // switches to selectionBounds.
     virtual bool selectionRange(WebPoint& start, WebPoint& end) const;
+    virtual bool selectionBounds(WebRect& start, WebRect& end) const;
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const;

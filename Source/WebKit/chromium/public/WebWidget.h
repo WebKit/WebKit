@@ -42,7 +42,6 @@
 namespace WebKit {
 
 class WebInputEvent;
-class WebRange;
 class WebString;
 struct WebPoint;
 template <typename T> class WebVector;
@@ -149,14 +148,22 @@ public:
     // otherwise the anchor index will be the same value of the focus index.
     virtual bool getSelectionOffsetsAndTextInEditableContent(WebString&, size_t& focus, size_t& anchor) const { return false; }
 
+    // FIXME: It has been replaced by selectionBounds. Remove it when chromium
+    // switches to selectionBounds.
     // Returns the current caret bounds of this WebWidget. The selection bounds
     // will be returned if a selection range is available.
     virtual WebRect caretOrSelectionBounds() { return WebRect(); }
 
+    // FIXME: It has been replaced by selectionBounds. Remove it when chromium
+    // switches to selectionBounds.
     // Returns the start and end point for the current selection, aligned to the
     // bottom of the selected line. start and end are the logical beginning and
     // ending positions of the selection. Visually, start may lie after end.
     virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
+
+    // Returns the start and end bounds of the current selection.
+    // If the selection range is empty, it returns the caret bounds.
+    virtual bool selectionBounds(WebRect& start, WebRect& end) const { return false; }
 
     // Fetch the current selection range of this WebWidget. If there is no
     // selection, it will output a 0-length range with the location at the

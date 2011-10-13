@@ -295,7 +295,7 @@ void WebViewImpl::setAutofillClient(WebAutofillClient* autofillClient)
     m_autofillClient = autofillClient;
 }
 
-void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient) 
+void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient)
 {
     if (devToolsClient)
         m_devToolsAgent = adoptPtr(new WebDevToolsAgentImpl(this, devToolsClient));
@@ -1568,34 +1568,51 @@ WebRect WebViewImpl::caretOrSelectionBounds()
 
 bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
 {
-    const Frame* frame = focusedWebCoreFrame();
-    if (!frame || !frame->selection()->isRange())
+    WebRect startRect, endRect;
+    if (!selectionBounds(startRect, endRect))
         return false;
+    start.x = startRect.x;
+    start.y = startRect.y + startRect.height - 1;
+    end.x = endRect.x + endRect.width - 1;
+    end.y = endRect.y + endRect.height - 1;
+    return true;
+}
+
+bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+    FrameSelection* selection = frame->selection();
+    if (!selection)
+        return false;
+
+    if (selection->isCaret()) {
+        start = end = frame->view()->contentsToWindow(selection->absoluteCaretBounds());
+        return true;
+    }
+
     RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
     if (!selectedRange)
         return false;
+
     RefPtr<Range> range(Range::create(selectedRange->startContainer()->document(),
                                       selectedRange->startContainer(),
                                       selectedRange->startOffset(),
                                       selectedRange->startContainer(),
                                       selectedRange->startOffset()));
-
-    IntRect rect = frame->editor()->firstRectForRange(range.get());
-    start.x = rect.x();
-    start.y = rect.y() + rect.height() - 1;
+    start = frame->editor()->firstRectForRange(range.get());
 
     range = Range::create(selectedRange->endContainer()->document(),
                           selectedRange->endContainer(),
                           selectedRange->endOffset(),
                           selectedRange->endContainer(),
                           selectedRange->endOffset());
-
-    rect = frame->editor()->firstRectForRange(range.get());
-    end.x = rect.x() + rect.width() - 1;
-    end.y = rect.y() + rect.height() - 1;
+    end = frame->editor()->firstRectForRange(range.get());
 
     start = frame->view()->contentsToWindow(start);
     end = frame->view()->contentsToWindow(end);
+
     if (!frame->selection()->selection().isBaseFirst())
         std::swap(start, end);
     return true;

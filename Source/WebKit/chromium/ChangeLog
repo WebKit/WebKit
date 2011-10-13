@@ -1,3 +1,17 @@
+2011-10-13  Peng Huang  <shawn.p.huang@gmail.com>
+
+        [chromium] Add a selectionBounds() method to WebWidget.
+        https://bugs.webkit.org/show_bug.cgi?id=69028
+
+        Reviewed by Darin Fisher.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::selectionBounds):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::selectionRange):
+        (WebKit::WebViewImpl::selectionBounds):
+        * src/WebViewImpl.h:
+
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
         Cleanup of HTMLSelectElement
