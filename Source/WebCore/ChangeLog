@@ -1,3 +1,41 @@
+2011-10-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97362.
+        http://trac.webkit.org/changeset/97362
+        https://bugs.webkit.org/show_bug.cgi?id=70039
+
+        Relies on V8 APIs that have been reverted upstream. (Requested
+        by dglazkov on #webkit).
+
+        * English.lproj/localizedStrings.js:
+        * bindings/js/ScriptProfiler.cpp:
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype.hasHoverMessage.false.hoverMessage):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.hoverMessage):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopover):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype.updateStaticData):
+        (WebInspector.HeapSnapshotNodesProvider.prototype._serialize):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        * inspector/front-end/RemoteObject.js:
+        * inspector/front-end/heapProfiler.css:
+
 2011-10-13  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69932

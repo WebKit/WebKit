@@ -2009,15 +2009,6 @@
             },
             {
                 "name": "collectGarbage"
-            },
-            {
-                "name": "getObjectByHeapObjectId",
-                "parameters": [
-                    { "name": "objectId", "type": "integer" }
-                ],
-                "returns": [
-                    { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Evaluation result." }
-                ]
             }
         ],
         "events": [

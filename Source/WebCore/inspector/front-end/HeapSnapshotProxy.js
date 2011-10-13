@@ -370,11 +370,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this.callMethod(callback, "nodeFieldValuesByIndex", fieldName, indexes);
     },
 
-    get nodeFlags()
-    {
-        return this._staticData.nodeFlags;
-    },
-
     pushBaseIds: function(snapshotId, className, nodeIds)
     {
         this.callMethod(null, "pushBaseIds", snapshotId, className, nodeIds);

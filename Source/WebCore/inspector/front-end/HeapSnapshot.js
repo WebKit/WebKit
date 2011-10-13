@@ -494,12 +494,6 @@ WebInspector.HeapSnapshotNode = function(snapshot, nodeIndex)
 }
 
 WebInspector.HeapSnapshotNode.prototype = {
-    get canBeQueried()
-    {
-        var flags = this._snapshot._flagsOfNode(this);
-        return !!(flags & this._snapshot._nodeFlags.canBeQueried);
-    },
-
     get className()
     {
         switch (this.type) {
@@ -535,11 +529,6 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this._nodes[this.nodeIndex + this._snapshot._edgesCountOffset];
     },
 
-    get flags()
-    {
-        return this._snapshot._flagsOfNode(this);
-    },
-
     get id()
     {
         return this._nodes[this.nodeIndex + this._snapshot._nodeIdOffset];
@@ -553,11 +542,6 @@ WebInspector.HeapSnapshotNode.prototype = {
     get isHidden()
     {
         return this._type() === this._snapshot._nodeHiddenType;
-    },
-
-    get isDOMWindow()
-    {
-        return this.name.substr(0, 9) === "DOMWindow";
     },
 
     get isRoot()
@@ -698,8 +682,6 @@ WebInspector.HeapSnapshot.prototype = {
         this._edgeInvisibleType = this._edgeTypes.length;
         this._edgeTypes.push("invisible");
 
-        this._nodeFlags = { canBeQueried: 1 };
-
         this._markInvisibleEdges();
     },
 
@@ -717,7 +699,6 @@ WebInspector.HeapSnapshot.prototype = {
         delete this._baseNodeIds;
         delete this._dominatedNodes;
         delete this._dominatedIndex;
-        delete this._flags;
     },
 
     get _allNodes()
@@ -780,13 +761,6 @@ WebInspector.HeapSnapshot.prototype = {
         var dominatedIndexFrom = this._getDominatedIndex(node.nodeIndex);
         var dominatedIndexTo = this._getDominatedIndex(node._nextNodeIndex);
         return new WebInspector.HeapSnapshotArraySlice(this, "_dominatedNodes", dominatedIndexFrom, dominatedIndexTo);
-    },
-
-    _flagsOfNode: function(node)
-    {
-        if (!this._flags)
-            this._calculateFlags();
-        return this._flags[node.nodeIndex];
     },
 
     aggregates: function(sortedIndexes)
@@ -985,32 +959,6 @@ WebInspector.HeapSnapshot.prototype = {
         return a < b ? -1 : (a > b ? 1 : 0);
     },
 
-    _calculateFlags: function()
-    {
-        var flag = this._nodeFlags.canBeQueried;
-        this._flags = new Array(this.nodeCount);
-        // Allow runtime properties query for objects accessible from DOMWindow objects
-        // via regular properties, and for DOM wrappers. Trying to access random objects
-        // can cause a crash due to insonsistent state of internal properties of wrappers.
-        var list = [];
-        for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
-            if (iter.edge.node.isDOMWindow)
-                list.push(iter.edge.node);
-        }
-        while (list.length) {
-            var node = list.shift();
-            if (node.canBeQueried) continue;
-            this._flags[node.nodeIndex] = flag;
-            for (var iter = node.edges; iter.hasNext(); iter.next()) {
-                var edge = iter.edge;
-                if (!edge.isHidden && !edge.isInvisible &&
-                    edge.name && (!edge.isInternal || edge.name === "native") &&
-                    !edge.node.canBeQueried)
-                    list.push(edge.node);
-            }
-        }
-    },
-
     baseSnapshotHasNode: function(baseSnapshotId, className, nodeId)
     {
         return this._baseNodeIds[baseSnapshotId][className].binaryIndexOf(nodeId, this._numbersComparator) !== -1;
@@ -1066,7 +1014,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     updateStaticData: function()
     {
-        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid, nodeFlags: this._nodeFlags};
+        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid};
     }
 };
 
@@ -1287,7 +1235,7 @@ WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter, nodeIndexes)
 WebInspector.HeapSnapshotNodesProvider.prototype = {
     _serialize: function(node)
     {
-        return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type, flags: node.flags};
+        return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type};
     },
 
     sort: function(comparator, leftBound, rightBound, count)

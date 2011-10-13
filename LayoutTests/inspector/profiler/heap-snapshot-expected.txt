@@ -17,8 +17,6 @@ Running: heapSnapshotRetainersTest
 
 Running: heapSnapshotAggregatesTest
 
-Running: heapSnapshotFlagsTest
-
 Running: heapSnapshotNodesProviderTest
 
 Running: heapSnapshotEdgesProviderTest

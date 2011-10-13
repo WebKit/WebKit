@@ -62,17 +62,16 @@ static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-in
 static const char* const CPUProfileType = "CPU";
 static const char* const HeapProfileType = "HEAP";
 
-PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState)
 {
-    return adoptPtr(new InspectorProfilerAgent(instrumentingAgents, consoleAgent, inspectedPage, inspectorState, injectedScriptManager));
+    return adoptPtr(new InspectorProfilerAgent(instrumentingAgents, consoleAgent, inspectedPage, inspectorState));
 }
 
-InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState)
     : m_instrumentingAgents(instrumentingAgents)
     , m_consoleAgent(consoleAgent)
     , m_inspectedPage(inspectedPage)
     , m_inspectorState(inspectorState)
-    , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
     , m_recordingUserInitiatedProfile(false)
@@ -377,15 +376,6 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
 {
     if (m_frontend)
         m_frontend->setRecordingProfile(isProfiling);
-}
-
-void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, RefPtr<InspectorObject>* result)
-{
-    RefPtr<InspectorValue> heapObject = ScriptProfiler::objectByHeapObjectId(id, m_injectedScriptManager);
-    if (!heapObject->isNull())
-        heapObject->asObject(result);
-    else
-        *error = "Object is not available.";
 }
 
 } // namespace WebCore
