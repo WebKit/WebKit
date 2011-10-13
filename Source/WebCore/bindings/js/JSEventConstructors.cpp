@@ -26,11 +26,13 @@
 #include "config.h"
 #include "EventConstructors.h"
 
+#include "BeforeLoadEvent.h"
 #include "CloseEvent.h"
 #include "CustomEvent.h"
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "HashChangeEvent.h"
+#include "JSBeforeLoadEvent.h"
 #include "JSCloseEvent.h"
 #include "JSCustomEvent.h"
 #include "JSDictionary.h"

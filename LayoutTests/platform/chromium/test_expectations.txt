@@ -95,6 +95,9 @@ BUGCR10395 SKIP : svg/webarchive = PASS FAIL
 BUGCR10395 SKIP : svg/custom/image-with-prefix-in-webarchive.svg = PASS FAIL
 BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
 
+// This will soon be fixed after implementing a BeforeLoadEvent constructor for V8.
+BUGWK69893 : fast/events/constructors/before-load-event-constructor.html = FAIL
+
 // According to the Chromium bug, we need to write some sort of workaround for
 // how clipboards on Windows work, or something?  That doesn't explain why this
 // fails for other platforms...

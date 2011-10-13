@@ -1,3 +1,17 @@
+2011-10-12  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a BeforeLoadEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69893
+
+        Reviewed by Adam Barth.
+
+        before-load-event-constructor.html checks the behavior of the BeforeLoadEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Added inner.BeforeLoadEvent().
+        * fast/events/constructors/before-load-event-constructor-expected.txt: Added.
+        * fast/events/constructors/before-load-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped before-load-event-constructor.html, since V8 does not yet have the BeforeLoadEvent constructor.
+
 2011-10-12  Ben Wells  <benwells@chromium.org>
 
         Incorrect rendering with one-sided thick border and border-radius

@@ -1,3 +1,35 @@
+2011-10-12  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a BeforeLoadEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69893
+
+        Reviewed by Adam Barth.
+
+        There is no spec for the BeforeLoadEvent constructor
+        since it is WebKit-specific. However, judging from the current
+        IDL of initBeforeLoadEvent(), the constructor IDL
+        should be as follows.
+
+        [Constructor(DOMString type, optional BeforeLoadEventInit eventInitDict)]
+        interface BeforeLoadEvent : Event {
+            ...;
+        }
+
+        dictionary BeforeLoadEventInit : EventInit {
+            DOMString url;
+        }
+
+        Test: fast/events/constructors/before-load-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the BeforeLoadEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for BeforeLoadEvent.
+        * dom/BeforeLoadEvent.h: Added a definition for BeforeLoadEventInit.
+        (WebCore::BeforeLoadEventInit::BeforeLoadEventInit):
+        (WebCore::BeforeLoadEvent::create):
+        (WebCore::BeforeLoadEvent::initBeforeLoadEvent):
+        (WebCore::BeforeLoadEvent::BeforeLoadEvent):
+        * dom/BeforeLoadEvent.idl: Makes BeforeLoadEvent constructible.
+
 2011-10-12  Ben Wells  <benwells@chromium.org>
 
         [skia] Implement Path.currentPoint for skia

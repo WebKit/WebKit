@@ -32,6 +32,14 @@
 
 namespace WebCore {
 
+struct BeforeLoadEventInit : public EventInit {
+    BeforeLoadEventInit()
+    {
+    };
+
+    String url;
+};
+
 class BeforeLoadEvent : public Event {
 public:
     virtual bool isBeforeLoadEvent() const { return true; }
@@ -46,11 +54,16 @@ public:
         return adoptRef(new BeforeLoadEvent(url));
     }
 
+    static PassRefPtr<BeforeLoadEvent> create(const AtomicString& type, const BeforeLoadEventInit& initializer)
+    {
+        return adoptRef(new BeforeLoadEvent(type, initializer));
+    }
+
     void initBeforeLoadEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& url)
     {
         if (dispatched())
             return;
-        
+
         initEvent(type, canBubble, cancelable);
 
         m_url = url;
@@ -66,6 +79,12 @@ private:
     BeforeLoadEvent(const String& url)
         : Event(eventNames().beforeloadEvent, false, true)
         , m_url(url)
+    {
+    }
+
+    BeforeLoadEvent(const AtomicString& type, const BeforeLoadEventInit& initializer)
+        : Event(type, initializer)
+        , m_url(initializer.url)
     {
     }
 
