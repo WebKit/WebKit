@@ -30,6 +30,7 @@
 #include "CSSFontFace.h"
 #include "CSSFontSelector.h"
 #include "CachedResourceLoader.h"
+#include "Document.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GlyphPageTreeNode.h"

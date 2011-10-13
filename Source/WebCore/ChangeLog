@@ -1,3 +1,9 @@
+2011-10-13  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Qt compile fix.
+
+        * css/CSSFontFaceSource.cpp: include Document.h.
+
 2011-10-12  Abhishek Arya  <inferno@chromium.org>
 
         Register custom fonts at their creation time,  
