@@ -1,3 +1,20 @@
+2011-10-03  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: inline-replaced-height-008.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69273
+
+        Reviewed by Simon Fraser.
+
+        Test: css2.1/20110323/inline-block-replaced-height-008.html
+
+        Per http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height,  if 'height' has computed value of 
+        'auto', the replaced element has an intrinsic ratio and its used width is known or resolved, then 
+        the used value of 'height' is determined by the equation (used width) / (intrinsic ratio).
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        * rendering/RenderReplaced.h:
+
 2011-10-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97362.

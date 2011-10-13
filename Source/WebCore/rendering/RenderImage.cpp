@@ -537,8 +537,11 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
 
 LayoutUnit RenderImage::computeReplacedLogicalHeight() const
 {
+    // FIXME: This function should use RenderReplaced::computeReplacedLogicalHeight()
     LayoutUnit logicalHeight;
-    if (isLogicalHeightSpecified())
+    if (logicalHeightIsAuto() && !style()->logicalWidth().isAuto() && intrinsicLogicalWidth() && intrinsicLogicalHeight())
+        logicalHeight = static_cast<LayoutUnit>(availableLogicalWidth() * intrinsicLogicalHeight() / intrinsicLogicalWidth());
+    else if (isLogicalHeightSpecified())
         logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
     else if (m_imageResource->usesImageContainerSize()) {
         LayoutSize size = m_imageResource->imageSize(style()->effectiveZoom());

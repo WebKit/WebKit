@@ -1,3 +1,21 @@
+2011-10-03  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: inline-replaced-height-008.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69273
+
+        Reviewed by Simon Fraser.
+
+        * css2.1/20110323/floating-replaced-height-008.htm: Added.
+        * css2.1/20110323/inline-block-replaced-height-008.htm: Added.
+        * css2.1/20110323/inline-replaced-height-008.htm: Added.
+        * css2.1/20110323/support/60x60-green.png: Added
+        * platform/chromium-linux/css2.1/20110323/floating-replaced-height-008-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/floating-replaced-height-008-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-block-replaced-height-008-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-block-replaced-height-008-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-replaced-height-008-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-replaced-height-008-expected.txt: Added.
+
 2011-10-13  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, skip MutationObserver tests on wincairo.
