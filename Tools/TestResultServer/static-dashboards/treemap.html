@@ -298,7 +298,7 @@ function handleValidHashParameter(key, value)
             function() {
                 // FIXME: There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
                 // e.g. LayoutTests/foo/bar.html
-                return (value.match(/^(\w+\/\w*)*/$));
+                return (value.match(/^(\w+\/\w*)*$/));
             });
         return true;
 
