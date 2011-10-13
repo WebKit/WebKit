@@ -1,3 +1,19 @@
+2011-10-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Implement decidePolicyForResponse in our PolicyClient
+        https://bugs.webkit.org/show_bug.cgi?id=69832
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We implement decidePolicyForResponse in our PolicyClient in order to
+        decide whether a given ResourceResponse should be downloaded or loaded.
+
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_decidePolicyForResponse):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+
 2011-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitTestServer class to WebKit2 GTK+ unit tests library

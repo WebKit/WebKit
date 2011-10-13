@@ -247,3 +247,30 @@ void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKF
         break;
     }
 }
+
+void qt_wk_decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    String type = toImpl(response)->resourceResponse().mimeType();
+    type.makeLower();
+    bool canShowMIMEType = toImpl(frame)->canShowMIMEType(type);
+
+    if (WKPageGetMainFrame(page) == frame) {
+        if (canShowMIMEType) {
+            WKFramePolicyListenerUse(listener);
+            return;
+        }
+
+        // If we can't use (show) it then we should download it.
+        WKFramePolicyListenerDownload(listener);
+        return;
+    }
+
+    // We should ignore downloadable top-level content for subframes, with an exception for text/xml and application/xml so we can still support Acid3 test.
+    // It makes the browser intentionally behave differently when it comes to text(application)/xml content in subframes vs. mainframe.
+    if (!canShowMIMEType && !(type == "text/xml" || type == "application/xml")) {
+        WKFramePolicyListenerIgnore(listener);
+        return;
+    }
+
+    WKFramePolicyListenerUse(listener);
+}
