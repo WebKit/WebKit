@@ -1,3 +1,17 @@
+2011-10-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in DeleteSelectionCommand::handleGeneralDelete
+        https://bugs.webkit.org/show_bug.cgi?id=70045
+
+        Reviewed by Darin Adler.
+
+        Exit early when m_upstreamStart is null.
+
+        No new tests because we don't have a reduction.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+
 2011-10-13  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70049
