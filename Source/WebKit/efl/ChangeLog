@@ -1,3 +1,14 @@
+2011-10-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed; revert some changes introduced in r97329 which are
+        unrelated to the patch and reverted other patches themselves.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_del): Remove warning again.
+        (ewk_frame_contents_size_get): Check for Frame and FrameView again.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Revert back default font size change.
+
 2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Pass Parsed Accept Attribute MIME Types to WebKit Clients

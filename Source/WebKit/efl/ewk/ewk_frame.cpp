@@ -231,7 +231,6 @@ static void _ewk_frame_smart_add(Evas_Object* ewkFrame)
 
 static void _ewk_frame_smart_del(Evas_Object* ewkFrame)
 {
-    WRN("ewkFrame=%p", ewkFrame); // XXX REMOVE ME LATER
     EWK_FRAME_SD_GET(ewkFrame, sd);
 
     if (sd) {
@@ -368,6 +367,8 @@ Eina_Bool ewk_frame_contents_size_get(const Evas_Object* ewkFrame, Evas_Coord* w
     if (height)
         *height = 0;
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
+    if (!sd->frame || !sd->frame->view())
+        return EINA_FALSE;
     if (width)
         *width = sd->frame->view()->contentsWidth();
     if (height)
