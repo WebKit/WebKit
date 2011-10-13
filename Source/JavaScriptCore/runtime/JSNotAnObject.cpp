@@ -45,12 +45,6 @@ JSValue JSNotAnObject::defaultValue(ExecState* exec, PreferredPrimitiveType) con
     return jsNumber(0);
 }
 
-double JSNotAnObject::toNumber(ExecState* exec) const
-{
-    ASSERT_UNUSED(exec, exec->hadException());
-    return std::numeric_limits<double>::quiet_NaN();
-}
-
 bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);

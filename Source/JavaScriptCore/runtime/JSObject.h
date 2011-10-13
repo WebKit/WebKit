@@ -140,7 +140,7 @@ namespace JSC {
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
         bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
-        virtual double toNumber(ExecState*) const;
+        double toNumber(ExecState*) const;
         UString toString(ExecState*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;

@@ -479,41 +479,6 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(ExecState* exec, PropertyName
 }
 
 template <class Parent>
-double JSCallbackObject<Parent>::toNumber(ExecState* exec) const
-{
-    // We need this check to guard against the case where this object is rhs of
-    // a binary expression where lhs threw an exception in its conversion to
-    // primitive
-    if (exec->hadException())
-        return std::numeric_limits<double>::quiet_NaN();
-    JSContextRef ctx = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
-    
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
-            JSValueRef exception = 0;
-            JSValueRef value;
-            {
-                APICallbackShim callbackShim(exec);
-                value = convertToType(ctx, thisRef, kJSTypeNumber, &exception);
-            }
-            if (exception) {
-                throwError(exec, toJS(exec, exception));
-                return 0;
-            }
-            if (!value)
-                continue;
-                
-            JSValue jsValue = toJS(exec, value);
-            if (!jsValue.isNumber())
-                return std::numeric_limits<double>::quiet_NaN();
-            return jsValue.asNumber();
-        }
-            
-    return Parent::toNumber(exec);
-}
-
-template <class Parent>
 void JSCallbackObject<Parent>::setPrivate(void* data)
 {
     m_callbackObjectData->privateData = data;

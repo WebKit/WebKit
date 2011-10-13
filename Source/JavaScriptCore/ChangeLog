@@ -1,3 +1,30 @@
+2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualized JSCell::toNumber
+        https://bugs.webkit.org/show_bug.cgi?id=69858
+
+        Reviewed by Sam Weinig.
+
+
+        Removed JSCallbackObject::toNumber because its no longer necessary since 
+        JSObject::toNumber now suffices since we implicitly add valueOf to an object's
+        prototype whenever a convertToType callback is provided.
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+        De-virtualized JSCell::toNumber, JSObject::toNumber, and JSString::toNumber.
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toNumber):
+        * runtime/JSCell.h:
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+
+        Removed JSNotAnObject::toNumber because its result doesn't matter and it implements 
+        defaultValue, therefore JSObject::toNumber can cover its case.
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+
 2011-10-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Use realloc() to expand/shrink StringBuilder buffer

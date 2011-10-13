@@ -294,40 +294,6 @@ bool UserObjectImp::toBoolean(ExecState *exec) const
     return result;
 }
 
-double UserObjectImp::toNumber(ExecState *exec) const
-{
-    double result = 0;
-    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec, exec->lexicalGlobalObject()), exec);
-    CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
-    if (cfValue)
-    {
-        CFTypeID cfType = CFGetTypeID(cfValue);
-
-        if (cfValue == GetCFNull())
-        {
-            //
-        }
-        else if (cfType == CFBooleanGetTypeID())
-        {
-            if (cfValue == kCFBooleanTrue)
-            {
-                result = 1;
-            }
-        }
-        else if (cfType == CFStringGetTypeID())
-        {
-            result = CFStringGetDoubleValue((CFStringRef)cfValue);
-        }
-        else if (cfType == CFNumberGetTypeID())
-        {
-            CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &result);
-        }
-    }
-    ReleaseCFType(cfValue);
-    if (jsObjPtr) jsObjPtr->Release();
-    return result;
-}
-
 void UserObjectImp::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);

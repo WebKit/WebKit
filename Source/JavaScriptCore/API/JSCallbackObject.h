@@ -193,8 +193,6 @@ private:
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-    virtual double toNumber(ExecState*) const;
-
     virtual ConstructType getConstructData(ConstructData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);

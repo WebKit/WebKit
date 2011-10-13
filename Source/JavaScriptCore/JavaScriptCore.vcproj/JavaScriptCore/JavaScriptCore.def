@@ -346,9 +346,6 @@ EXPORTS
     ?tlsKeys@WTF@@YAPAKXZ
     ?toInt32@JSC@@YAHN@Z
     ?toInteger@JSValue@JSC@@QBENPAVExecState@2@@Z
-    ?toNumber@JSCell@JSC@@UBENPAVExecState@2@@Z
-    ?toNumber@JSObject@JSC@@UBENPAVExecState@2@@Z
-    ?toNumber@JSString@JSC@@EBENPAVExecState@2@@Z
     ?toNumberSlowCase@JSValue@JSC@@ABENPAVExecState@2@@Z
     ?toObject@JSCell@JSC@@QBEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
     ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z

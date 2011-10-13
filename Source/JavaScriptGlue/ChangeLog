@@ -1,3 +1,15 @@
+2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualized JSCell::toNumber
+        https://bugs.webkit.org/show_bug.cgi?id=69858
+
+        Reviewed by Sam Weinig.
+
+        Removed UserObjectImp::toNumber because it's no longer necessary since 
+        JSObject::toNumber can cover this case.
+        * UserObjectImp.cpp:
+        * UserObjectImp.h:
+
 2011-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::toString
