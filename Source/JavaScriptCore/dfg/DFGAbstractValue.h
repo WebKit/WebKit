@@ -319,6 +319,7 @@ struct AbstractValue {
     {
         m_type = PredictNone;
         m_structure.clear();
+        checkConsistency();
     }
     
     bool isClear()
@@ -330,16 +331,16 @@ struct AbstractValue {
     {
         m_type = PredictTop;
         m_structure.makeTop();
+        checkConsistency();
     }
     
     void clobberStructures()
     {
-        if (m_type & PredictCell) {
+        if (m_type & PredictCell)
             m_structure.makeTop();
-            return;
-        }
-        
-        ASSERT(m_structure.isClear());
+        else
+            ASSERT(m_structure.isClear());
+        checkConsistency();
     }
     
     bool isTop() const
@@ -361,6 +362,8 @@ struct AbstractValue {
             m_structure.add(value.asCell()->structure());
         
         m_type = predictionFromValue(value);
+        
+        checkConsistency();
     }
     
     void set(Structure* structure)
@@ -369,6 +372,8 @@ struct AbstractValue {
         m_structure.add(structure);
         
         m_type = predictionFromStructure(structure);
+        
+        checkConsistency();
     }
     
     void set(PredictedType type)
@@ -378,6 +383,7 @@ struct AbstractValue {
         else
             m_structure.clear();
         m_type = type;
+        checkConsistency();
     }
     
     bool operator==(const AbstractValue& other) const
@@ -387,7 +393,9 @@ struct AbstractValue {
     
     bool merge(const AbstractValue& other)
     {
-        return mergePrediction(m_type, other.m_type) | m_structure.addAll(other.m_structure);
+        bool result = mergePrediction(m_type, other.m_type) | m_structure.addAll(other.m_structure);
+        checkConsistency();
+        return result;
     }
     
     void merge(PredictedType type)
@@ -396,6 +404,8 @@ struct AbstractValue {
         
         if (type & PredictCell)
             m_structure.makeTop();
+
+        checkConsistency();
     }
     
     void filter(const StructureSet& other)
@@ -409,6 +419,7 @@ struct AbstractValue {
         // sure that new information gleaned from the PredictedType needs to be fed back
         // into the information gleaned from the StructureSet.
         m_structure.filter(m_type);
+        checkConsistency();
     }
     
     void filter(PredictedType type)
@@ -416,7 +427,13 @@ struct AbstractValue {
         if (type == PredictTop)
             return;
         m_type &= type;
-        m_structure.filter(type);
+        
+        // It's possible that prior to this filter() call we had, say, (Final, TOP), and
+        // the passed type is Array. At this point we'll have (None, TOP). The best way
+        // to ensure that the structure filtering does the right thing is to filter on
+        // the new type (None) rather than the one passed (Array).
+        m_structure.filter(m_type);
+        checkConsistency();
     }
     
     bool validate(JSValue value) const
@@ -436,6 +453,17 @@ struct AbstractValue {
         }
         
         return true;
+    }
+    
+    void checkConsistency() const
+    {
+        if (!(m_type & PredictCell))
+            ASSERT(m_structure.isClear());
+        
+        // Note that it's possible for a prediction like (Final, []). This really means that
+        // the value is bottom and that any code that uses the value is unreachable. But
+        // we don't want to get pedantic about this as it would only increase the computational
+        // complexity of the code.
     }
     
 #ifndef NDEBUG
