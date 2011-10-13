@@ -1,3 +1,23 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        script-src * should allow all URLs
+        https://bugs.webkit.org/show_bug.cgi?id=70011
+
+        Reviewed by Eric Seidel.
+
+        This patch gets us slightly ahead of the spec.  Technically, script-src
+        means "any host" and inherits the current scheme.  However, that's not
+        what developers expect and it's even contradicted by examples in the
+        spec itself.  After this patch, * matches all URLs.
+
+        Test: http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSourceList::CSPSourceList):
+        (WebCore::CSPSourceList::matches):
+        (WebCore::CSPSourceList::parseSource):
+        (WebCore::CSPSourceList::addSourceStar):
+
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
         Implement an OverflowEvent constructor for JSC

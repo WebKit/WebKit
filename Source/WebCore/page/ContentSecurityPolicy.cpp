@@ -190,17 +190,20 @@ private:
     bool parsePort(const UChar* begin, const UChar* end, int& port, bool& portHasWildcard);
 
     void addSourceSelf();
+    void addSourceStar();
     void addSourceUnsafeInline();
     void addSourceUnsafeEval();
 
     SecurityOrigin* m_origin;
     Vector<CSPSource> m_list;
+    bool m_allowStar;
     bool m_allowInline;
     bool m_allowEval;
 };
 
 CSPSourceList::CSPSourceList(SecurityOrigin* origin)
     : m_origin(origin)
+    , m_allowStar(false)
     , m_allowInline(false)
     , m_allowEval(false)
 {
@@ -213,10 +216,14 @@ void CSPSourceList::parse(const String& value)
 
 bool CSPSourceList::matches(const KURL& url)
 {
+    if (m_allowStar)
+        return true;
+
     for (size_t i = 0; i < m_list.size(); ++i) {
         if (m_list[i].matches(url))
             return true;
     }
+
     return false;
 }
 
@@ -262,6 +269,11 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
 {
     if (begin == end)
         return false;
+
+    if (end - begin == 1 && *begin == '*') {
+        addSourceStar();
+        return false;
+    }
 
     if (equalIgnoringCase("'self'", begin, end - begin)) {
         addSourceSelf();
@@ -427,6 +439,11 @@ bool CSPSourceList::parsePort(const UChar* begin, const UChar* end, int& port, b
 void CSPSourceList::addSourceSelf()
 {
     m_list.append(CSPSource(m_origin->protocol(), m_origin->host(), m_origin->port(), false, false));
+}
+
+void CSPSourceList::addSourceStar()
+{
+    m_allowStar = true;
 }
 
 void CSPSourceList::addSourceUnsafeInline()
