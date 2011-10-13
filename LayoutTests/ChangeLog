@@ -1,3 +1,17 @@
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update expectations after gdi->skia switch.
+
+        * platform/chromium-cg-mac-snowleopard/svg/batik/text/textFeatures-expected.png: Renamed from LayoutTests/platform/chromium-cg-mac/svg/batik/text/textFeatures-expected.png.
+        * platform/chromium-mac-leopard/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/css/text-shadow-multiple-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/css/text-shadow-multiple-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/css/text-shadow-multiple-expected.png.
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.png: Removed.
+        * platform/chromium-win-xp/svg/css/text-shadow-multiple-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+
 2011-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Sync requestAnimationFrame callback to CVDisplayLink on Mac
