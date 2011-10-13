@@ -1,3 +1,10 @@
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+        Try marking SLOW for Mac Debug timeouts.
+
 2011-10-12  Kentaro Hara  <haraken@chromium.org>
 
         Implement a WebKitTransitionEvent constructor for V8
