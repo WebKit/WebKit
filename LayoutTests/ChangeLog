@@ -1,3 +1,16 @@
+2011-10-13  Andrew Scherkus  <scherkus@chromium.org>
+
+        Add stallFor URL parameter for http/tests/media/video-play-stall.html test.
+        https://bugs.webkit.org/show_bug.cgi?id=69974
+
+        Without the call to sleep(), the test server will issue a TCP
+        connection close earlier than the 3 second wait time required to issue
+        a stalled event.
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/video-play-stall.html:
+
 2011-10-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac test expectation update for the bug 69999.
