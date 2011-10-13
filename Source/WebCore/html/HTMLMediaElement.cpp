@@ -248,6 +248,9 @@ void HTMLMediaElement::didMoveToNewOwnerDocument()
 
 bool HTMLMediaElement::supportsFocus() const
 {
+    if (ownerDocument()->isMediaDocument())
+        return false;
+
     // If no controls specified, we should still be able to focus the element if it has tabIndex.
     return controls() ||  HTMLElement::supportsFocus();
 }
