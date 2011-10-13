@@ -1,3 +1,88 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        DOMWindow subobjects can be re-created after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=68849
+
+        Reviewed by Sam Weinig.
+
+        Test: http/tests/security/xss-DENIED-getSelection-from-inactive-domwindow.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+            - Add ASSERTs to show that we're not recreating these objects.
+            - Add a call to clear() as defense in depth in case we have any of
+              these objects hanging around.
+        (WebCore::DOMWindow::clear):
+            - Clear out a couple of objects that weren't getting cleared.
+              These are actually not likely to cause problems, but clearing
+              them out is the safe thing to do.
+        (WebCore::DOMWindow::isActive):
+            - Add a concept of whether the DOMWindow is "active" in its frame.
+              We had this concept in a couple places already, but centralizing
+              it into a helper function make it easier to use and talk about.
+        (WebCore::DOMWindow::orientation):
+            - Whitespace nit.
+        (WebCore::DOMWindow::screen):
+        (WebCore::DOMWindow::history):
+        (WebCore::DOMWindow::crypto):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        (WebCore::DOMWindow::console):
+        (WebCore::DOMWindow::applicationCache):
+        (WebCore::DOMWindow::navigator):
+        (WebCore::DOMWindow::performance):
+        (WebCore::DOMWindow::location):
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        (WebCore::DOMWindow::webkitNotifications):
+        (WebCore::DOMWindow::webkitIndexedDB):
+        (WebCore::DOMWindow::getSelection):
+        (WebCore::DOMWindow::styleMedia):
+        (WebCore::DOMWindow::webkitURL):
+        (WebCore::DOMWindow::webkitStorageInfo):
+            - Avoid creating these objects when we're not active.  That can
+              only lead to sadness.
+        (WebCore::DOMWindow::webkitRequestFileSystem):
+        (WebCore::DOMWindow::webkitResolveLocalFileSystemURL):
+        (WebCore::DOMWindow::openDatabase):
+        (WebCore::DOMWindow::postMessage):
+            - While not techincally creating subobjects, these functions also
+              seem unwise when the DOMWindow is inactive.
+        (WebCore::DOMWindow::find):
+        (WebCore::DOMWindow::length):
+        (WebCore::DOMWindow::getMatchedCSSRules):
+            - These functions operate on the active Document.  When we're not
+              active, that's not us!
+        (WebCore::DOMWindow::document):
+            - Update to use the new concept of being active rather than having
+              this function roll its own implementation.
+        (WebCore::DOMWindow::webkitConvertPointFromNodeToPage):
+        (WebCore::DOMWindow::webkitConvertPointFromPageToNode):
+        (WebCore::DOMWindow::scrollBy):
+        (WebCore::DOMWindow::scrollTo):
+            - These functions also look unwise to run when inactive because
+              they're reading information from the active document.
+            - I added a RefPtr for node because the call to
+              updateLayoutIgnorePendingStylesheets() seems likely to be able to
+              run script somehow.
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::dispatchEvent):
+            - I don't think these functions worked when inactive anyway, but
+              explicitly blocking them seems wise.
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::isInsecureScriptAccess):
+        (WebCore::DOMWindow::open):
+        (WebCore::DOMWindow::showModalDialog):
+            - These already have checks for being active, but it can't hurt to
+              be explicit at the top of the function.
+        * page/DOMWindow.h:
+
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r89915): <input type=email multiple> don't show the default value

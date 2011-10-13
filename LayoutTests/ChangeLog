@@ -1,3 +1,13 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        DOMWindow subobjects can be re-created after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=68849
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/security/xss-DENIED-getSelection-from-inactive-domwindow-expected.txt: Added.
+        * http/tests/security/xss-DENIED-getSelection-from-inactive-domwindow.html: Added.
+
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix errors in test_expectations.txt.
