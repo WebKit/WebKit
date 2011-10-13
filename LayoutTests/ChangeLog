@@ -1,5 +1,11 @@
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update test expectation.
+
+        * platform/chromium-gpu-linux/media/video-playing-and-pause.png: Added.
+
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
         Update expectation of xss-DENIED-contentWindow-eval.html for r97353
 
         * http/tests/security/xss-DENIED-contentWindow-eval-expected.txt:
