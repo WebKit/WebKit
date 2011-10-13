@@ -1,5 +1,11 @@
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Add GPU crashes that cropped up.
+
+        * platform/chromium/test_expectations.txt: Added.
+
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove expectations of failure after r97149.
 
         * platform/chromium/test_expectations.txt: Yipee.

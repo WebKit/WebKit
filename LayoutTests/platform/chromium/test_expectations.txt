@@ -3815,3 +3815,6 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = PASS CRA
 BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-arc-360-winding.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-arc-connecting-line.html = CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = CRASH
