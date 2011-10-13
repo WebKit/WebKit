@@ -1,3 +1,19 @@
+2011-10-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Deprecate event.layerX and event.layerY in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=69951
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/window-xy-properties-expected.txt:
+        * fast/events/init-events-expected.txt:
+        * fast/events/mouse-relative-position-expected.txt:
+        * fast/events/mouseclick-target-and-positioning-expected.txt:
+        * fast/events/simulated-click-coords-expected.txt:
+        * jquery/events-expected.txt:
+        Updated those tests with the console messages to keep our existing
+        coverage until we remove the 2 properties.
+
 2011-10-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: inline-replaced-height-008.htm

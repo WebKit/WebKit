@@ -190,6 +190,7 @@ void MouseRelatedEvent::computeRelativePosition()
 
 int MouseRelatedEvent::layerX()
 {
+    warnDeprecatedLayerXYUsage();
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
     return m_layerLocation.x();
@@ -197,6 +198,7 @@ int MouseRelatedEvent::layerX()
 
 int MouseRelatedEvent::layerY()
 {
+    warnDeprecatedLayerXYUsage();
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
     return m_layerLocation.y();

@@ -1065,8 +1065,8 @@
 @property(readonly) int detail;
 @property(readonly) int keyCode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly) int charCode AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int layerX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int layerY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+@property(readonly) int layerX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
+@property(readonly) int layerY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
 @property(readonly) int pageX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly) int pageY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly) int which AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
