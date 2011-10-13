@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x325
+  RenderBlock {HTML} at (0,0) size 800x325
+    RenderBody {BODY} at (8,16) size 784x301
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 744x39
+          text run at (0,0) width 744: "Test that pausing the media element in \"playing\" event handler pauses the media immediately. The video should show the first"
+          text run at (0,20) width 38: "frame."
+      RenderBlock (anonymous) at (0,56) size 784x245
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,72) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,72) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,280) size 320x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,208) size 320x32 [bgcolor=#00000099]
+layer at (15,286) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (38,280) size 256x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 256x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 184x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 182x16
+        RenderBlock {DIV} at (0,0) size 173x29
+        RenderBlock {DIV} at (173,0) size 9x29
+layer at (235,286) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (197,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 42x21
+      RenderText {#text} at (0,1) size 42x19
+        text run at (0,1) width 42: "00:00"
+layer at (46,282) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (294,280) size 34x32
+  RenderButton {INPUT} at (286,0) size 34x32

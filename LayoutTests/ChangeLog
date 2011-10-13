@@ -1,3 +1,20 @@
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+        Add baseline files for media/video-playing-and-pause.html.
+
+        * platform/chromium-cg-mac-leopard/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-gpu-cg-mac/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-linux/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-mac-leopard/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-mac-snowleopard/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-win/media/video-playing-and-pause-expected.png: Added.
+        * platform/chromium-win/media/video-playing-and-pause-expected.txt: Added.
+        * platform/chromium/media/video-playing-and-pause-expected.txt: Added.
+
 2011-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Skip some more tests for WK2.
