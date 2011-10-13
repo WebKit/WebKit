@@ -1,5 +1,9 @@
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Update expectations after r97378.
+
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Update expectations after r97369.
 
         * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
