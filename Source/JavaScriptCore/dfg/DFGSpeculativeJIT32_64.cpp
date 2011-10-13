@@ -194,12 +194,15 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 
     switch (info.registerFormat()) {
     case DataFormatNone:
-    case DataFormatCell:
     case DataFormatBoolean:
     case DataFormatStorage:
         // Should have filled, above.
         ASSERT_NOT_REACHED();
-        
+
+    case DataFormatCell:
+        terminateSpeculativeExecution();
+        return fprAllocate();
+
     case DataFormatJSCell:
     case DataFormatJS:
     case DataFormatJSInteger:

@@ -1,3 +1,16 @@
+2011-10-13  Gavin Barraclough  <baraclough@apple.com>
+
+        terminateSpeculativeExecution for fillSpeculateDouble with DataFormatCell
+
+        Rubber stamped by Filip Pizlo
+
+        This is breaking fast/canvas/canvas-composite-alpha.html on 32_64 DFG JIT.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
 2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualized JSCell::toNumber

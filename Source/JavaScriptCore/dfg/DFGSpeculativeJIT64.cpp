@@ -244,8 +244,11 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     case DataFormatBoolean: // This type never occurs.
     case DataFormatStorage:
         ASSERT_NOT_REACHED();
-        
+
     case DataFormatCell:
+        terminateSpeculativeExecution();
+        return fprAllocate();
+
     case DataFormatJSCell:
     case DataFormatJS:
     case DataFormatJSBoolean: {
