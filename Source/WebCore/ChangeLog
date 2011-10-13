@@ -1,3 +1,11 @@
+2011-10-13  Chris Marrin  <cmarrin@apple.com>
+
+        Fix Leopard build
+
+        Unreviewed.
+
+        * platform/graphics/DisplayRefreshMonitor.h: Added.
+
 2011-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Sync requestAnimationFrame callback to CVDisplayLink on Mac

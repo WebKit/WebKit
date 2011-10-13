@@ -41,8 +41,8 @@ class DisplayRefreshMonitorManager;
 // Abstract virtual client which receives refresh fired messages on the main thread
 //
 class DisplayRefreshMonitorClient {
-    friend DisplayRefreshMonitor;
-    friend DisplayRefreshMonitorManager;
+    friend class DisplayRefreshMonitor;
+    friend class DisplayRefreshMonitorManager;
     
 public:
     DisplayRefreshMonitorClient();
