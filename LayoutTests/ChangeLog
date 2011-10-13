@@ -1,5 +1,12 @@
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Fix errors in test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+        Remove duplicated entries for MAC DEBUG.
+
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
         REGRESSION(r89915): <input type=email multiple> don't show the default value
         https://bugs.webkit.org/show_bug.cgi?id=69895
 
