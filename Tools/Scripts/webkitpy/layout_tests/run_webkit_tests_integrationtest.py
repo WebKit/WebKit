@@ -426,6 +426,23 @@ class MainTest(unittest.TestCase):
         self.assertFalse(err.empty())
         self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
 
+    def test_missing_and_unexpected_results(self):
+        # Test that we update expectations in place. If the expectation
+        # is missing, update the expected generic location.
+        fs = unit_test_filesystem()
+        res, out, err, _ = logging_run(['--no-show-results',
+            'failures/expected/missing_image.html',
+            'failures/unexpected/missing_text.html',
+            'failures/unexpected/text-image-checksum.html'],
+            tests_included=True, filesystem=fs, record_results=True)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 1)
+        expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"TEXT"},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
+        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        self.assertTrue(json_string.find(expected_token) != -1)
+        self.assertTrue(json_string.find('"num_flaky":1') != -1)
+
     def test_crash_with_stderr(self):
         fs = unit_test_filesystem()
         res, buildbot_output, regular_output, user = logging_run([

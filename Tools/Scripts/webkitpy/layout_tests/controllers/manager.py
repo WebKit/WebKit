@@ -138,6 +138,12 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
                 continue
         elif result_type == test_expectations.CRASH:
             num_regressions += 1
+        elif result_type == test_expectations.MISSING:
+            # We count missing results as flaky not to turn buildbot red
+            # This is a huge hack should be fixed by adding new category for MISSING results.
+            # See also: https://bugs.webkit.org/show_bug.cgi?id=64812
+            if test_name in result_summary.unexpected_results:
+                num_flaky += 1
         elif test_name in result_summary.unexpected_results:
             if test_name not in retry_summary.unexpected_results:
                 actual.extend(expectations.get_expectations_string(test_name).split(" "))
@@ -146,9 +152,6 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
                 retry_result_type = retry_summary.unexpected_results[test_name].type
                 if result_type != retry_result_type:
                     actual.append(keywords[retry_result_type])
-                    num_flaky += 1
-                # FIXME: break MISSING results into a different category
-                elif 'MISSING' in actual:
                     num_flaky += 1
                 else:
                     num_regressions += 1
