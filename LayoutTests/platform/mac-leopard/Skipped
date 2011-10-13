@@ -248,3 +248,6 @@ http/tests/inspector/network/network-iframe-load-and-delete.html
 # http/tests/navigation/anchor-basic.html fails on Leopard
 # https://bugs.webkit.org/show_bug.cgi?id=63380
 http/tests/navigation/anchor-basic.html
+
+# HiDPI tests have lower-level platform dependencies on Mac
+fast/hidpi

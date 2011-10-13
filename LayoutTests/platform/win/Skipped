@@ -1422,3 +1422,6 @@ editing/spelling/spelling-insert-html.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=66773
 http/tests/loading/progress-finished-callback.html
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi

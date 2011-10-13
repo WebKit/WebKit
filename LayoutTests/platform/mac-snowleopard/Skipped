@@ -182,3 +182,6 @@ media/media-fullscreen-inline.html
 # https://bugs.webkit.org/show_bug.cgi?id=51138
 http/tests/media/video-play-progress.html
 http/tests/media/video-load-twice.html
+
+# HiDPI tests have lower-level platform dependencies on Mac
+fast/hidpi

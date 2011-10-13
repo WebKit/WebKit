@@ -447,6 +447,9 @@ bool TestController::resetStateToConsistentValues()
     m_mainWebView->removeChromeInputField();
     m_mainWebView->focus();
 
+    // Re-set to the default backing scale factor by setting the custom scale factor to 0.
+    WKPageSetCustomBackingScaleFactor(m_mainWebView->page(), 0);
+
     // Reset main page back to about:blank
     m_doneResetting = false;
 

@@ -999,3 +999,7 @@ void LayoutTestController::removeChromeInputField()
 void LayoutTestController::focusWebView()
 {
 }
+
+void LayoutTestController::setBackingScaleFactor(double)
+{
+}

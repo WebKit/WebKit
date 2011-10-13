@@ -923,3 +923,6 @@ http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
 http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html
 http/tests/xmlviewer/dumpAsText/frames.html
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi

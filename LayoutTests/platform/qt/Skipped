@@ -233,6 +233,9 @@ css3/filters
 # https://bugs.webkit.org/show_bug.cgi?id=47059
 http/tests/multipart
 
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

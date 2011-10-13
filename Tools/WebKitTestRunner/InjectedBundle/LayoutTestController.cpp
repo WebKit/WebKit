@@ -528,7 +528,8 @@ static CallbackMap& callbackMap()
 enum {
     AddChromeInputFieldCallbackID,
     RemoveChromeInputFieldCallbackID,
-    FocusWebViewCallbackID
+    FocusWebViewCallbackID,
+    SetBackingScaleFactorCallbackID
 };
 
 static void cacheLayoutTestControllerCallback(unsigned index, JSValueRef callback)
@@ -571,6 +572,12 @@ void LayoutTestController::focusWebView(JSValueRef callback)
     InjectedBundle::shared().postFocusWebView();
 }
 
+void LayoutTestController::setBackingScaleFactor(double backingScaleFactor, JSValueRef callback)
+{
+    cacheLayoutTestControllerCallback(SetBackingScaleFactorCallbackID, callback);
+    InjectedBundle::shared().postSetBackingScaleFactor(backingScaleFactor);
+}
+
 void LayoutTestController::setWindowIsKey(bool isKey)
 {
     InjectedBundle::shared().postSetWindowIsKey(isKey);
@@ -589,6 +596,11 @@ void LayoutTestController::callRemoveChromeInputFieldCallback()
 void LayoutTestController::callFocusWebViewCallback()
 {
     callLayoutTestControllerCallback(FocusWebViewCallbackID);
+}
+
+void LayoutTestController::callSetBackingScaleFactorCallback()
+{
+    callLayoutTestControllerCallback(SetBackingScaleFactorCallbackID);
 }
 
 } // namespace WTR

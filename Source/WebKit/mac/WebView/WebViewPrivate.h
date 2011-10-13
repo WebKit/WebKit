@@ -553,6 +553,7 @@ Could be worth adding to the API.
 - (NSSize)_fixedLayoutSize;
 
 - (void)_setCustomBackingScaleFactor:(CGFloat)overrideScaleFactor;
+- (CGFloat)_backingScaleFactor;
 
 // Deprecated. Use the methods in pending public above instead.
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit;

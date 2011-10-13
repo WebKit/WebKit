@@ -2700,6 +2700,11 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return view->fixedLayoutSize();
 }
 
+- (CGFloat)_backingScaleFactor
+{
+    return [self _deviceScaleFactor];
+}
+
 - (void)_setCustomBackingScaleFactor:(CGFloat)customScaleFactor
 {
     float oldScaleFactor = [self _deviceScaleFactor];

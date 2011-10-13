@@ -5152,3 +5152,6 @@ fast/runin/runin-not-go-into-float.html
 fast/table/table-row-before-after-content-around-table-cell.html
 fast/writing-mode/margins.html
 plugins/iframe-plugin-bgcolor.html
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi

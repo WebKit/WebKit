@@ -7432,3 +7432,6 @@ fast/table/table-row-before-after-content-around-table-cell.html
 fast/writing-mode/margins.html
 plugins/iframe-plugin-bgcolor.html
 plugins/netscape-plugin-setwindow-size-2.html
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi

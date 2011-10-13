@@ -1152,6 +1152,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView makeTextStandardSize:nil];
     [webView resetPageZoom:nil];
     [webView _scaleWebView:1.0 atOrigin:NSZeroPoint];
+    [webView _setCustomBackingScaleFactor:0];
     [webView setTabKeyCyclesThroughElements:YES];
     [webView setPolicyDelegate:nil];
     [policyDelegate setPermissive:NO];

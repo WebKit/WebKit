@@ -1,3 +1,39 @@
+2011-10-13  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70050
+        DRT and WRT should have HiDPI testing capabilities
+
+        Reviewed by Darin Adler.
+
+        New HiDPI tests and results. These should be skipped on all non-Lion platforms.
+        * fast/hidpi: Added.
+        * fast/hidpi/broken-image-icon-hidpi.html: Added.
+        * fast/hidpi/broken-image-with-size-hidpi.html: Added.
+        * fast/hidpi/clip-text-in-hidpi.html: Added.
+        * fast/hidpi/resize-corner-hidpi.html: Added.
+        * fast/hidpi/video-controls-in-hidpi.html: Added.
+        * platform/gtk-wk2/Skipped:
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac/fast/hidpi: Added.
+        * platform/mac/fast/hidpi/broken-image-icon-hidpi-expected.png: Added.
+        * platform/mac/fast/hidpi/broken-image-icon-hidpi-expected.txt: Added.
+        * platform/mac/fast/hidpi/broken-image-with-size-hidpi-expected.png: Added.
+        * platform/mac/fast/hidpi/broken-image-with-size-hidpi-expected.txt: Added.
+        * platform/mac/fast/hidpi/clip-text-in-hidpi-expected.png: Added.
+        * platform/mac/fast/hidpi/clip-text-in-hidpi-expected.txt: Added.
+        * platform/mac/fast/hidpi/resize-corner-hidpi-expected.png: Added.
+        * platform/mac/fast/hidpi/resize-corner-hidpi-expected.txt: Added.
+        * platform/mac/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/mac/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update expectations after gdi->skia switch.

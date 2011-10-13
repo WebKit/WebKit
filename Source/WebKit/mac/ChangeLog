@@ -1,3 +1,17 @@
+2011-10-13  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70050
+        DRT and WRT should have HiDPI testing capabilities
+
+        Reviewed by Darin Adler.
+
+        New method _backingScaleFactor matches SPI of a similar name that I added 
+        recently to WKPage in WebKit2. Equivalent functionality is needed for 
+        DumpRenderTree's HiDPI support.
+        * WebView/WebView.mm:
+        (-[WebView _backingScaleFactor]):
+        * WebView/WebViewPrivate.h:
+
 2011-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Sync requestAnimationFrame callback to CVDisplayLink on Mac

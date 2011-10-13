@@ -270,6 +270,16 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
+        double backingScaleFactor = WKDoubleGetValue(static_cast<WKDoubleRef>(messageBody));
+        WKPageSetCustomBackingScaleFactor(TestController::shared().mainWebView()->page(), backingScaleFactor);
+
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallSetBackingScaleFactorCallback"));
+        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

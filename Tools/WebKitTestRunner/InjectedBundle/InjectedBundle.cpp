@@ -170,6 +170,10 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         m_layoutTestController->callFocusWebViewCallback();
         return;
     }
+    if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
+        m_layoutTestController->callSetBackingScaleFactorCallback();
+        return;
+    }
 
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
     WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));
@@ -275,6 +279,13 @@ void InjectedBundle::postFocusWebView()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("FocusWebView"));
     WKBundlePostMessage(m_bundle, messageName.get(), 0);
+}
+
+void InjectedBundle::postSetBackingScaleFactor(double backingScaleFactor)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetBackingScaleFactor"));
+    WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(backingScaleFactor));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
 void InjectedBundle::postSetWindowIsKey(bool isKey)

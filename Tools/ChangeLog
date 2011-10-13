@@ -1,3 +1,70 @@
+2011-10-13  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70050
+        DRT and WRT should have HiDPI testing capabilities
+
+        Reviewed by Darin Adler.
+
+        New layoutTestController function setBackingScaleFactor takes a double for a scale 
+        factor and a callback function to call once the backing scale factor has 
+        successfully been set for the view.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setBackingScaleFactorCallback):
+        (LayoutTestController::staticFunctions):
+
+        On Mac, setBackingScaleFactor calls WebView _setCustomBackingScaleFactor. Other 
+        platforms do nothing.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setBackingScaleFactor):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setBackingScaleFactor):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setBackingScaleFactor):
+
+        Reset the backing scale factor by calling _setCutsomBackingScaleFactor with a 
+        value of 0, which resets to the system default.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
+        When generating the pixel dump, create a Bitmap of the appropriate size based on 
+        the backing scale factor. If it is a HiDPI view, paint into the context using 
+        displayRectIgnoringOpacity.
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
+        And now the same stuff for WK2. Again, new layoutTestController function 
+        setBackingScaleFactor takes a double for a scale factor and a callback function. 
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setBackingScaleFactor):
+        (WTR::LayoutTestController::callSetBackingScaleFactorCallback):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
+        The InjectedBundle sends a message to the UI process to set the backing scale 
+        factor. It also processes a message the UI process will send back once it 
+        completes this task, and at that time, the InjectedBundle calls the callback.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::postSetBackingScaleFactor):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        Again, reset the backing scale factor by calling WKPageSetCustomBackingScaleFactor 
+        with a value of 0, which resets to the system default.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
+        Upon receiving the SetBackingScaleFactor message, call 
+        WKPageSetCustomBackingScaleFactor to the given scale factor, and post a message 
+        back to InjectedBundle to say it has been done.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        
+        Don't use window snapshotting for the HiDPI tests. We don't have a way to fake a 
+        window's scale factor so we have to avoid that.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2011-10-13  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Allow building without speech input enabled.
