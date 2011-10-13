@@ -261,7 +261,8 @@ MOCK: release_work_item: commit-queue 10000
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
-MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'MOCK script error'
+MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'MOCK script error
+Full output: http://dummy_url'
 MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
 """,
@@ -275,6 +276,37 @@ MOCK: release_work_item: commit-queue 10000
                 # We want cleaning to succeed so we can error out on a step
                 # that causes the commit-queue to reject the patch.
                 return
+            raise ScriptError('MOCK script error')
+
+        queue.run_webkit_patch = mock_run_webkit_patch
+        self.assert_queue_outputs(queue, expected_stderr=expected_stderr)
+
+    def test_commit_queue_failure_with_failing_tests(self):
+        expected_stderr = {
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
+            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
+            "next_work_item": "",
+            "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+MOCK: update_status: commit-queue Updated working directory
+MOCK: update_status: commit-queue Patch does not apply
+MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'New failing tests:
+mock_test_name.html
+another_test_name.html
+Full output: http://dummy_url'
+MOCK: update_status: commit-queue Fail
+MOCK: release_work_item: commit-queue 10000
+""",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_script_error": "ScriptError error message\n",
+        }
+        queue = CommitQueue()
+
+        def mock_run_webkit_patch(command):
+            if command == ['clean'] or command == ['update']:
+                # We want cleaning to succeed so we can error out on a step
+                # that causes the commit-queue to reject the patch.
+                return
+            queue._expected_failures.unexpected_failures_observed = lambda results: ["mock_test_name.html", "another_test_name.html"]
             raise ScriptError('MOCK script error')
 
         queue.run_webkit_patch = mock_run_webkit_patch

@@ -1,3 +1,15 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        The commit-queue doesn't tell me which tests my patch broke
+        https://bugs.webkit.org/show_bug.cgi?id=69975
+
+        Reviewed by Eric Seidel.
+
+        We now print the list of newly failing tests, like we do for the EWS.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2011-10-10  Alice Boxhall  <aboxhall@chromium.org>
 
         Added myself as a committer.

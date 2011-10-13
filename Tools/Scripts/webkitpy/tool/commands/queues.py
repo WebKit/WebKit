@@ -289,17 +289,25 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
             self._did_retry(patch)
         except ScriptError, e:
             validator = CommitterValidator(self._tool.bugs)
-            validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
+            validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)
             self._did_fail(patch)
 
-    def _error_message_for_bug(self, status_id, script_error):
-        if not script_error.output:
-            return script_error.message_with_output()
-        results_link = self._tool.status_server.results_url_for_status(status_id)
-        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+    def _failing_tests_message(self, task, patch):
+        results = task.results_from_patch_test_run(patch)
+        unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
+        if not unexpected_failures:
+            return None
+        return "New failing tests:\n%s" % "\n".join(unexpected_failures)
+
+    def _error_message_for_bug(self, task, patch, script_error):
+        message = self._failing_tests_message(task, patch)
+        if not message:
+            message = script_error.message_with_output()
+        results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
+        return "%s\nFull output: %s" % (message, results_link)
 
     def handle_unexpected_error(self, patch, message):
         self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
