@@ -27,20 +27,27 @@
 #define GeolocationClientQt_h
 
 #include "GeolocationClient.h"
-#include <QGeoPositionInfoSource>
+
+#include <QObject>
 #include <wtf/RefPtr.h>
 
-// FIXME: Remove usage of "using namespace" in a header file.
-// There is bug in qtMobility signal names are not full qualified when used with namespace
-// QtMobility namespace in slots throws up error and its required to be fixed in qtmobility.
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#include <QGeoPositionInfo>
+namespace QtMobility {
+class QGeoPositionInfoSource;
+};
 using namespace QtMobility;
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtLocation/QGeoPositionInfo>
+class QGeoPositionInfoSource;
+#endif
+
 
 class QWebPage;
 
 namespace WebCore {
 
-// This class provides a implementation of a GeolocationService for qtWebkit.
-// It uses QtMobility (v1.0.0) location service to get positions
+// This class provides an implementation of a GeolocationService for QtWebkit.
 class GeolocationClientQt : public QObject, public GeolocationClient {
     Q_OBJECT
 
@@ -59,13 +66,12 @@ public:
     virtual void cancelPermissionRequest(Geolocation*);
 
 private Q_SLOTS:
-    // QGeoPositionInfoSource
     void positionUpdated(const QGeoPositionInfo&);
 
 private:
     const QWebPage* m_page;
     RefPtr<GeolocationPosition> m_lastPosition;
-    QtMobility::QGeoPositionInfoSource* m_location;
+    QGeoPositionInfoSource* m_location;
 };
 
 } // namespace WebCore

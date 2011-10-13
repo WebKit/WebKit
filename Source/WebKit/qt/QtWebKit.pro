@@ -287,6 +287,8 @@ contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
+     qt5: QT += location
+
      HEADERS += \
         $$PWD/WebCoreSupport/GeolocationClientQt.h
      SOURCES += \
