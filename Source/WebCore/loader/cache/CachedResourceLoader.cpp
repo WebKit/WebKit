@@ -289,16 +289,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     if (!checkInsecureContent(type, url))
         return false;
 
-    // FIXME: Consider letting the embedder block mixed content loads.
-
     switch (type) {
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
     case CachedResource::Script:
         if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url))
             return false;
         break;
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-#endif
     case CachedResource::CSSStyleSheet:
         if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url))
             return false;

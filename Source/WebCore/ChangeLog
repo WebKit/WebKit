@@ -1,3 +1,21 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        Move XSTL to script-src in Content-Security-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=63637
+
+        Reviewed by Eric Seidel.
+
+        The spec was unclear about how to treat XSLT.  My reading was that they
+        should fall under style-src, but further discussion on the mailing list
+        settled on using script-src because an XSLT can inject arbitrary DOM
+        and script into a page, which is more risky than including style.
+
+        Tests: http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php
+               http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2.php
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2011-10-13  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt] QtWebKit build error for Mac 32bit

@@ -1,3 +1,18 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        Move XSTL to script-src in Content-Security-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=63637
+
+        Reviewed by Eric Seidel.
+
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.php:
+        * http/tests/security/contentSecurityPolicy/xsl-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.php:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2.php: Added.
+
 2011-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Rebase some editing/spelling results for Lion.
