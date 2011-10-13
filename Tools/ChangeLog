@@ -1,3 +1,15 @@
+2011-10-12  Eric Seidel  <eric@webkit.org>
+
+        Layout tests asserting in LayoutTestController::pathToLocalResource()
+        https://bugs.webkit.org/show_bug.cgi?id=69898
+
+        Reviewed by Simon Fraser.
+
+        old-run-webkit-tests just didn't know to set LOCAL_RESOURCE_ROOT, oops.
+
+        * Scripts/old-run-webkit-tests:
+        (openDumpTool):
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         The commit-queue doesn't tell me which tests my patch broke

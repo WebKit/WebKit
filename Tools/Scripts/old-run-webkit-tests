@@ -1476,6 +1476,7 @@ sub openDumpTool()
     # unique temporary directory for each DumpRendertree - needed for running more DumpRenderTree in parallel
     $CLEAN_ENV{DUMPRENDERTREE_TEMP} = File::Temp::tempdir('DumpRenderTree-XXXXXX', TMPDIR => 1, CLEANUP => 1);
     $CLEAN_ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
+    $CLEAN_ENV{LOCAL_RESOURCE_ROOT} = $testDirectory; # Used by layoutTestConstroller.pathToLocalResource()
 
     # Platform spesifics
     if (isLinux()) {
