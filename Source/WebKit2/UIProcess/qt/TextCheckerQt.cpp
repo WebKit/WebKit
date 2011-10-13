@@ -59,6 +59,16 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     notImplemented();
 }
 
+void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    notImplemented();
+}
+
+void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
+{
+    notImplemented();
+}
+
 int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
     notImplemented();

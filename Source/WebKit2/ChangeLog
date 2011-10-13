@@ -1,3 +1,38 @@
+2011-10-13  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Implement TextChecker for WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=68548
+
+        Reviewed by Anders Carlsson.
+
+        Added implementation for all functions in TextCheckerGtk.cpp removing earlier stubbed implementations.
+        Moved couple of API earlier specific to win port to common section and added stubbed implementation
+        of the same for remaining ports of Qt, Efl and Mac.
+
+        * GNUmakefile.am: Added TextChecker implementation files.
+        * UIProcess/TextChecker.h: Moved spellCheckingEnabled and grammarCheckingEnabled API outside of win port.
+        * UIProcess/efl/TextCheckerEfl.cpp: Stubbed implementation of API which was moved outside win port.
+        * UIProcess/gtk/TextCheckerGtk.cpp: Implementation of all TextChecker API.
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::spellingUIIsShowing):
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        * UIProcess/mac/TextCheckerMac.mm: Implementation of API which was moved outside win port.
+        * UIProcess/qt/TextCheckerQt.cpp: Stubbed implementation of API which was moved outside win port.
+
 2011-10-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement decidePolicyForResponse in our PolicyClient

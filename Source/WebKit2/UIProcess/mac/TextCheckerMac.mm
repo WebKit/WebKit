@@ -213,6 +213,16 @@ void TextChecker::toggleSubstitutionsPanelIsShowing()
     [substitutionsPanel orderFront:nil];
 }
 
+void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    textCheckerState.isContinuousSpellCheckingEnabled = enabled;
+}
+
+void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
+{
+    textCheckerState.isGrammarCheckingEnabled = enabled;
+}
+
 int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
     return [NSSpellChecker uniqueSpellDocumentTag];

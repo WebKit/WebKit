@@ -48,6 +48,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKFormSubmissionListener.h \
 	$(WebKit2)/UIProcess/API/C/WKFrame.h \
 	$(WebKit2)/UIProcess/API/C/WKFramePolicyListener.h \
+	$(WebKit2)/UIProcess/API/C/WKGrammarDetail.h \
 	$(WebKit2)/UIProcess/API/C/WKHitTestResult.h \
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
 	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
@@ -65,6 +66,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
 	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
+	$(WebKit2)/UIProcess/API/C/WKTextChecker.h \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
@@ -432,6 +434,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/C/WKFrame.h \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.h \
+	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.cpp \
+	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.h \
 	Source/WebKit2/UIProcess/API/C/WKHitTestResult.cpp \
 	Source/WebKit2/UIProcess/API/C/WKHitTestResult.h \
 	Source/WebKit2/UIProcess/API/C/WKIconDatabase.cpp \
@@ -464,6 +468,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpaceTypes.h \
 	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.h \
 	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKTextChecker.h \
+	Source/WebKit2/UIProcess/API/C/WKTextChecker.cpp \
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
@@ -582,6 +588,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/WebGeolocationManagerProxy.h \
 	Source/WebKit2/UIProcess/WebGeolocationProvider.cpp \
 	Source/WebKit2/UIProcess/WebGeolocationProvider.h \
+	Source/WebKit2/UIProcess/WebGrammarDetail.cpp \
+	Source/WebKit2/UIProcess/WebGrammarDetail.h \
 	Source/WebKit2/UIProcess/WebHistoryClient.cpp \
 	Source/WebKit2/UIProcess/WebHistoryClient.h \
 	Source/WebKit2/UIProcess/WebIconDatabase.cpp \
@@ -617,6 +625,10 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebResourceLoadClient.cpp \
 	Source/WebKit2/UIProcess/WebResourceLoadClient.h \
+	Source/WebKit2/UIProcess/WebTextChecker.cpp \
+	Source/WebKit2/UIProcess/WebTextChecker.h \
+	Source/WebKit2/UIProcess/WebTextCheckerClient.cpp \
+	Source/WebKit2/UIProcess/WebTextCheckerClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
 	Source/WebKit2/UIProcess/WebUIClient.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.h \

@@ -54,11 +54,10 @@ public:
 
     static bool substitutionsPanelIsShowing();
     static void toggleSubstitutionsPanelIsShowing();
-#elif PLATFORM(WIN)
-    static void continuousSpellCheckingEnabledStateChanged(bool);
-    static void grammarCheckingEnabledStateChanged(bool);
 #endif
 
+    static void continuousSpellCheckingEnabledStateChanged(bool);
+    static void grammarCheckingEnabledStateChanged(bool);
     static int64_t uniqueSpellDocumentTag(WebPageProxy*);
     static void closeSpellDocumentWithTag(int64_t);
 #if USE(UNIFIED_TEXT_CHECKING)
