@@ -2413,3 +2413,9 @@ inspector/debugger/script-formatter.html
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
+
+# Web Inspector: REGRESSION(r97267): It made 3 tests fail on the Qt bot
+# https://bugs.webkit.org/show_bug.cgi?id=70005
+http/tests/inspector/resource-tree/resource-tree-document-url.html
+http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
