@@ -69,13 +69,13 @@ LayoutRect RenderRegion::regionOverflowRect() const
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
         LayoutUnit minY = isFirstRegion() ? (flowThreadOverflow.y() - outlineSize) : regionRect().y();
-        LayoutUnit maxY = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? (flowThreadOverflow.maxY() + outlineSize) : regionRect().maxY();
+        LayoutUnit maxY = isLastRegion() ? max(regionRect().maxY(), flowThreadOverflow.maxY()) + outlineSize : regionRect().maxY();
         LayoutUnit minX = clipX ? regionRect().x() : (flowThreadOverflow.x() - outlineSize);
         LayoutUnit maxX = clipX ? regionRect().maxX() : (flowThreadOverflow.maxX() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
         LayoutUnit minX = isFirstRegion() ? (flowThreadOverflow.x() - outlineSize) : regionRect().x();
-        LayoutUnit maxX = style()->regionOverflow() == AutoRegionOverflow && isLastRegion() ? (flowThreadOverflow.maxX() + outlineSize) : regionRect().maxX();
+        LayoutUnit maxX = isLastRegion() ? max(regionRect().maxX(), flowThreadOverflow.maxX()) + outlineSize : regionRect().maxX();
         LayoutUnit minY = clipY ? regionRect().y() : (flowThreadOverflow.y() - outlineSize);
         LayoutUnit maxY = clipY ? regionRect().maxY() : (flowThreadOverflow.maxY() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);

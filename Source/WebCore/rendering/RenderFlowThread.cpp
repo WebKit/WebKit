@@ -523,6 +523,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         
         // Now switch to the region's writing mode coordinate space and let it repaint itself.
         region->flipForWritingMode(clippedRect);
+        LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the region is somewhere else.
         region->repaintRectangle(clippedRect, immediate);
     }
 }

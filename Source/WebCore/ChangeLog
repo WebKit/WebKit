@@ -1,3 +1,28 @@
+2011-10-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69932
+        
+        Layout repainting messed up for objects in regions. There were two bugs here.
+        The first is that the regionOverflowRect needs to at least be the size of the 
+        region's rect. When you're in the middle of layout, you haven't computed the
+        overflow rect for the flow thread yet (the flow thread's height could even be 0),
+        and so you just need to enforce a minimum size. Also removed the region-overflow:break
+        clipping behavior, since it was established that was wrong.
+        
+        The second bug is that when you tell a region to repaint, you need to disable layout state,
+        since applying layout deltas from the flow thread makes no sense. The region is in a totally
+        different place in the render tree, so the current flow thread layout state can't be used
+        to determine your coordinate offset.
+
+        Reviewed by Dan Bernstein.
+
+        Added fast/repaint test.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOverflowRect):
+
 2011-10-13  Renata Hodovan  <reni@webkit.org>
 
         FEComponentTransfer element doesn't support dynamic invalidation

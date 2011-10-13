@@ -1,3 +1,17 @@
+2011-10-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69932
+        
+        Layout repainting messed up for objects in regions. Add a repaint test to
+        illustrate the issue.
+
+        Reviewed by Dan Bernstein.
+
+        * fast/repaint/region-painting-via-layout.html: Added.
+        * platform/mac/fast/regions/region-overflow-break-expected.png:
+        * platform/mac/fast/repaint/region-painting-via-layout-expected.png: Added.
+        * platform/mac/fast/repaint/region-painting-via-layout-expected.txt: Added.
+
 2011-10-13  Renata Hodovan  <reni@webkit.org>
 
         FEComponentTransfer element doesn't support dynamic invalidation
