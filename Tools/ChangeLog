@@ -1,3 +1,12 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] A DRT fix for r97348.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        Ignore overridePreference() for "WebKitWebAudioEnabled", and don't
+        print an error message.
+
 2011-10-12  Lucas Forschler  <lforschler@apple.com>
 
         Update kill-old-processes logic.

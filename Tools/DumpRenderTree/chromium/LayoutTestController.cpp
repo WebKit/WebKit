@@ -1439,7 +1439,9 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->allowRunningOfInsecureContent = cppVariantToBool(value);
     else if (key == "WebKitHixie76WebSocketProtocolEnabled")
         prefs->hixie76WebSocketProtocolEnabled = cppVariantToBool(value);
-    else {
+    else if (key == "WebKitWebAudioEnabled") {
+        ASSERT(cppVariantToBool(value));
+    } else {
         string message("Invalid name for preference: ");
         message.append(key);
         logErrorToConsole(message);
