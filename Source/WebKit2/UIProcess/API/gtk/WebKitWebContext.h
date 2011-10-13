@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_CONTEXT))
 #define WEBKIT_WEB_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_CONTEXT, WebKitWebContextClass))
 
-/*
+/**
  * WebKitCacheModel:
  * @WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER: Disable the cache completely, which
  *   substantially reduces memory usage. Useful for applications that only

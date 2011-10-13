@@ -267,7 +267,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
 
 /**
  * webkit_web_view_reload_bypass_cache:
- * @webView: a #WebKitWebView
+ * @web_view: a #WebKitWebView
  *
  * Reloads the current contents of @web_view without
  * using any cached data.
