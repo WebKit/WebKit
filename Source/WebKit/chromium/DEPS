@@ -204,6 +204,11 @@ include_rules = [
 
 hooks = [
   {
+    # Pull clang on mac.
+    "pattern": ".",
+    "action": ["python", "tools/clang/scripts/update.py", "--mac-only"],
+  },
+  {
     # A change to any file in this directory should run the gyp generator.
     'pattern': '.',
     'action': ['python', 'gyp_webkit'],
