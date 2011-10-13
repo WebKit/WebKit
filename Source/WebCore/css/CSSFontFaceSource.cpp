@@ -72,10 +72,6 @@ void CSSFontFaceSource::pruneTable()
     if (m_fontDataTable.isEmpty())
         return;
 
-    HashMap<unsigned, SimpleFontData*>::iterator end = m_fontDataTable.end();
-    for (HashMap<unsigned, SimpleFontData*>::iterator it = m_fontDataTable.begin(); it != end; ++it)
-        m_face->retireCustomFont(it->second);
-
     m_fontDataTable.clear();
 }
 
@@ -194,6 +190,9 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 
     SimpleFontData* fontDataRawPtr = fontData.leakPtr();
     m_fontDataTable.set(hashKey, fontDataRawPtr);
+    ASSERT(fontSelector->document());
+    if (Document* doc = fontSelector->document())
+        doc->registerCustomFont(fontDataRawPtr);
 
     return fontDataRawPtr;
 }

@@ -567,7 +567,7 @@ Document::~Document()
             (*m_userSheets)[i]->clearOwnerNode();
     }
 
-    deleteRetiredCustomFonts();
+    deleteCustomFonts();
 
     m_weakReference->clear();
 
@@ -1557,15 +1557,6 @@ void Document::recalcStyle(StyleChange change)
             element->recalcStyle(change);
     }
 
-    // FIXME: Disabling the deletion of retired custom font data until
-    // we fix all the stale style bugs (68804, 68624, etc). These bugs
-    // indicate problems where some styles were not updated in recalcStyle,
-    // thereby retaining stale copy of font data. To prevent that, we
-    // disable this code for now and only delete retired custom font data
-    // in Document destructor.
-    // Now that all RenderStyles that pointed to retired fonts have been updated, the fonts can safely be deleted.
-    // deleteRetiredCustomFonts();
-
 #if USE(ACCELERATED_COMPOSITING)
     if (view()) {
         bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
@@ -1702,18 +1693,18 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
     return style.release();
 }
 
-void Document::retireCustomFont(FontData* fontData)
+void Document::registerCustomFont(FontData* fontData)
 {
-    m_retiredCustomFonts.append(adoptPtr(fontData));
+    m_customFonts.append(adoptPtr(fontData));
 }
 
-void Document::deleteRetiredCustomFonts()
+void Document::deleteCustomFonts()
 {
-    size_t size = m_retiredCustomFonts.size();
+    size_t size = m_customFonts.size();
     for (size_t i = 0; i < size; ++i)
-        GlyphPageTreeNode::pruneTreeCustomFontData(m_retiredCustomFonts[i].get());
+        GlyphPageTreeNode::pruneTreeCustomFontData(m_customFonts[i].get());
 
-    m_retiredCustomFonts.clear();
+    m_customFonts.clear();
 }
 
 bool Document::isPageBoxVisible(int pageIndex)

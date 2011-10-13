@@ -545,7 +545,7 @@ public:
     PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
-    void retireCustomFont(FontData*);
+    void registerCustomFont(FontData*);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     bool isPageBoxVisible(int pageIndex);
@@ -1135,7 +1135,7 @@ private:
 
     void createStyleSelector();
 
-    void deleteRetiredCustomFonts();
+    void deleteCustomFonts();
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
@@ -1150,7 +1150,7 @@ private:
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
     bool m_hasDirtyStyleSelector;
-    Vector<OwnPtr<FontData> > m_retiredCustomFonts;
+    Vector<OwnPtr<FontData> > m_customFonts;
 
     mutable RefPtr<CSSPrimitiveValueCache> m_cssPrimitiveValueCache;
 
