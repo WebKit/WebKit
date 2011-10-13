@@ -1,5 +1,12 @@
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        https://bugs.webkit.org/show_bug.cgi?id=70069
+        REGRESSION (r63637): [Chromium] http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php reports as MISSING results.
+
+        * platform/chromium/test_expectations.txt: Added expectations.
+
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Tweaking moar expectations.
 
         * platform/chromium/test_expectations.txt: Tweakage.

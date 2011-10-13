@@ -3813,3 +3813,4 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = CRASH
 
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
+BUGWK70069 http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
