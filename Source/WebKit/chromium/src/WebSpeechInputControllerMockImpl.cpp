@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebSpeechInputControllerMockImpl.h"
 
+#if ENABLE(INPUT_SPEECH)
+
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SpeechInputClientMock.h"
@@ -99,3 +101,17 @@ void WebSpeechInputControllerMockImpl::stopRecording(int requestId)
 }
 
 } // namespace WebKit
+
+#else
+
+namespace WebKit {
+
+WebSpeechInputControllerMock* WebSpeechInputControllerMock::create(WebSpeechInputListener* listener)
+{
+    return 0;
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(INPUT_SPEECH)
+

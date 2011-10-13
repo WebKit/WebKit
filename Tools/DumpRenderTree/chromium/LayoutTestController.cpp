@@ -1722,7 +1722,8 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
     if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
         return;
 
-    m_shell->webViewHost()->speechInputControllerMock()->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
+    if (WebSpeechInputControllerMock* controller = m_shell->webViewHost()->speechInputControllerMock())
+        controller->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
 }
 
 void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)

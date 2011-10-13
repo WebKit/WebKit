@@ -37,6 +37,8 @@
 #include "WebString.h"
 #include <wtf/OwnPtr.h>
 
+#if ENABLE(INPUT_SPEECH)
+
 namespace WebCore {
 class SpeechInputClientMock;
 }
@@ -71,5 +73,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INPUT_SPEECH)
 
 #endif // WebSpeechInputControllerMockImpl_h

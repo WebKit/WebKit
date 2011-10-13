@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebSpeechInputResult.h"
 
+#if ENABLE(INPUT_SPEECH)
+
 #include "SpeechInputResult.h"
 #include <wtf/PassRefPtr.h>
 
@@ -52,3 +54,5 @@ WebSpeechInputResult::operator PassRefPtr<WebCore::SpeechInputResult>() const
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INPUT_SPEECH)
