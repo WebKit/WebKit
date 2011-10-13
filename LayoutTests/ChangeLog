@@ -1,3 +1,9 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        Update expectation of xss-DENIED-contentWindow-eval.html for r97353
+
+        * http/tests/security/xss-DENIED-contentWindow-eval-expected.txt:
+
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
         Implement an OverflowEvent constructor for JSC

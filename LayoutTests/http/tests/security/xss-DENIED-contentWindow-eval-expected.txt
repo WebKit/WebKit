@@ -1,3 +1,1 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL about:blank. Domains, protocols and ports must match.
-
 This test passes if alert() is not called. 
