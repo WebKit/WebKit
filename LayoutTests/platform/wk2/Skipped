@@ -183,6 +183,10 @@ svg/text/select-x-list-with-tspans-3.svg
 svg/text/select-x-list-with-tspans-4.svg
 svg/text/selection-doubleclick.svg
 
+# WebKit2 needs layoutTestController.setPageVisibility
+# https://bugs.webkit.org/show_bug.cgi?id=69554
+compositing/video-page-visibility.html
+
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 fast/canvas/webgl/framebuffer-object-attachment.html
@@ -448,6 +452,7 @@ editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
 fast/events/ime-composition-events-001.html
+fast/forms/cursor-at-editable-content-boundary.html
 fast/text/international/thai-cursor-position.html
 platform/mac/editing/input/5576619.html
 platform/mac/editing/input/bold-node.html
@@ -740,6 +745,7 @@ http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
+http/tests/loading/empty-urls.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/load-javascript-after-many-xhrs.html
 http/tests/loading/location-hash-reload-cycle.html
