@@ -1,3 +1,12 @@
+2011-10-11  Kent Tamura  <tkent@chromium.org>
+
+        C4481 warning should be disabled for OVERRIDE and FINAL.
+        https://bugs.webkit.org/show_bug.cgi?id=69904
+
+        Reviewed by Adam Roben.
+
+        * win/tools/vsprops/common.vsprops: Disable C4481.
+
 2011-10-04  Kent Tamura  <tkent@chromium.org>
 
         Introduce feature flags for incomplete input types
