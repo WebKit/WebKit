@@ -1,3 +1,19 @@
+2011-10-13  Robert Hogan  <robert@webkit.org>
+
+        Platform-specific results for r97378
+
+        Unreviewed, new platform-specific results.
+
+        * platform/gtk/css2.1/20110323/floating-replaced-height-008-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/inline-block-replaced-height-008-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/inline-replaced-height-008-expected.txt: Added.
+        * platform/mac/css2.1/20110323/floating-replaced-height-008-expected.txt: Added.
+        * platform/mac/css2.1/20110323/inline-block-replaced-height-008-expected.txt: Added.
+        * platform/mac/css2.1/20110323/inline-replaced-height-008-expected.txt: Added.
+        * platform/qt/css2.1/20110323/floating-replaced-height-008-expected.txt: Added.
+        * platform/qt/css2.1/20110323/inline-block-replaced-height-008-expected.txt: Added.
+        * platform/qt/css2.1/20110323/inline-replaced-height-008-expected.txt: Added.
+
 2011-10-13  Ben Wells  <benwells@chromium.org>
 
         Rebaseline for webkit bug 69503
