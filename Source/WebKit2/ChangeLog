@@ -1,5 +1,22 @@
 2011-10-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
+        [Qt][WK2] WebErrorsQt.cpp duplicates code from WKError.h and WebError.h
+        https://bugs.webkit.org/show_bug.cgi?id=70053
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now we will be aligned with WKError.h and WebError.h by using the shared
+        and pre-defined enum for error codes and WebError::webkitErrorDomain().
+
+        * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp:
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::pluginWillHandleLoadError):
+
+2011-10-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
         [Qt][WK2] WebViews are emitting loadFailed for "private" error codes
         https://bugs.webkit.org/show_bug.cgi?id=70047
 
