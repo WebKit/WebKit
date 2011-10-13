@@ -82,8 +82,8 @@ def main():
         for task in tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
     else:
-        raise Exception("Have not implemented kill-old-processes for this platform")
-    # FIXME: Should we return an exit code based on how the kills went?
+        sys.exit()
+        # FIXME: Should we return an exit code based on how the kills went?
 
 
 if __name__ == '__main__':

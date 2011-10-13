@@ -1,3 +1,17 @@
+2011-10-12  Lucas Forschler  <lforschler@apple.com>
+
+        Update kill-old-processes logic.
+        https://bugs.webkit.org/show_bug.cgi?id=63651
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove unused mac platform specific folder.
+        Update master.config to use new kill-old-processes.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/kill-old-processes:
+        * BuildSlaveSupport/mac: Removed.
+
 2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         [NRWT] New tests without expected files are reported as flakey tests
