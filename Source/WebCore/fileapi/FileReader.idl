@@ -38,7 +38,6 @@ module html {
         EventTarget,
         NoStaticTables,
         Constructor,
-        ConstructorWith=ScriptExecutionContext,
         V8ConstructorSetsActiveDOMWrapper
     ] FileReader {
         // ready states

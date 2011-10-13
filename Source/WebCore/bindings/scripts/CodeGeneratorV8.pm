@@ -1548,7 +1548,7 @@ END
     push(@implContent, $parameterCheckString);
 
     my @contextArgument;
-    if ($dataNode->extendedAttributes->{"ConstructorWith"} && $dataNode->extendedAttributes->{"ConstructorWith"} eq "ScriptExecutionContext") {
+    if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
         push(@contextArgument, "context");
         push(@implContent, <<END);
 

@@ -37,7 +37,7 @@ module window {
         JSCustomConstructor,
         ConstructorParameters=1,
         Constructor(in DOMString scriptUrl),
-        ConstructorWith=ScriptExecutionContext,
+        CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
         V8ConstructorSetsActiveDOMWrapper,
         EventTarget,

@@ -30,7 +30,7 @@ module p2p {
         CanBeConstructed,
         ConstructorParameters=2,
         Constructor(in DOMString serverConfiguration, in [Callback=FunctionOnly] SignalingCallback signalingCallback),
-        ConstructorWith=ScriptExecutionContext,
+        CallWith=ScriptExecutionContext,
         JSCustomConstructor,
         V8ConstructorSetsActiveDOMWrapper,
         EventTarget

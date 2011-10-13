@@ -1,5 +1,25 @@
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
+        Regarding constructor, replace [ConstructorWith=...] IDL with [CallWith=...] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=69801
+
+        As for constructors, [ConstructorWith=...] has the same meaning as [CallWith=...].
+        We should deprecate [ConstructorWith=...]. This is a clean-up bug for the bug 65839.
+
+        Reviewed by Adam Barth.
+
+        No new tests, since no change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Replaced [ConstructorWith=...] IDL with [CallWith=...] IDL.
+        (GenerateConstructorCallback):
+        * bindings/scripts/test/TestInterface.idl: Ditto.
+        * fileapi/FileReader.idl: Ditto.
+        * p2p/PeerConnection.idl: Ditto.
+        * page/EventSource.idl: Ditto.
+        * workers/Worker.idl: Ditto.
+
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
         Constructor should not be called if the object is being constructed inside WebCore
         https://bugs.webkit.org/show_bug.cgi?id=70015
 

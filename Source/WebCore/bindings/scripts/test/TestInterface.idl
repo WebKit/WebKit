@@ -34,7 +34,6 @@ module test {
         CanBeConstructed,
         CallWith=ScriptExecutionContext,
         Constructor(in DOMString str1, in [Optional=CallWithDefaultValue] DOMString str2),
-        ConstructorWith=ScriptExecutionContext,
         V8ConstructorSetsActiveDOMWrapper,
         ConstructorRaisesException
     ] TestInterface {
