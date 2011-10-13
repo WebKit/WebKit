@@ -1,3 +1,10 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix test expectations.
+
+        * platform/chromium-gpu-linux/media/video-playing-and-pause-expected.png: Renamed from LayoutTests/platform/chromium-gpu-linux/media/video-playing-and-pause.png.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         script-src * should allow all URLs

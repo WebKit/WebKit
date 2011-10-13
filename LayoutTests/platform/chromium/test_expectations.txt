@@ -2714,7 +2714,7 @@ BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
 BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
 
 // Take new baselines from the bots when 68035 lands.
-BUGWK69624 MAC WIN GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE
+BUGWK69624 MAC WIN GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE MISSING
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3876,6 +3876,11 @@ BUG_RICOW : fast/js/toString-overrides.html = TEXT
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
+// Randon crash in fast/canvas.
+BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-arc-360-winding.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
 
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.composite.transparent.destination-atop.html = TIMEOUT
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-5.html = TIMEOUT
