@@ -1,5 +1,11 @@
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Tweak flakiness expectation.
+
+        * platform/chromium/test_expectations.txt: Tweaked.
+
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Add GPU crashes that cropped up.
 
         * platform/chromium/test_expectations.txt: Added.
