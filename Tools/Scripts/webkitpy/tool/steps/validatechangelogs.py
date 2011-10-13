@@ -35,6 +35,12 @@ from webkitpy.common.system.deprecated_logging import error, log
 # This is closely related to the ValidateReviewer step and the CommitterValidator class.
 # We may want to unify more of this code in one place.
 class ValidateChangeLogs(AbstractStep):
+    @classmethod
+    def options(cls):
+        return AbstractStep.options() + [
+            Options.non_interactive,
+        ]
+
     def _check_changelog_diff(self, diff_file):
         if not self._tool.checkout().is_path_to_changelog(diff_file.filename):
             return True

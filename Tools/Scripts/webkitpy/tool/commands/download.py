@@ -301,6 +301,18 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
+class ValidateChangelog(AbstractSequencedCommand):
+    name = "validate-changelog"
+    help_text = "Validate that the ChangeLogs and reviewers look reasonable"
+    long_help = """Examines the current diff to see whether the ChangeLogs
+and the reviewers listed in the ChangeLogs look reasonable.
+"""
+    steps = [
+        steps.ValidateChangeLogs,
+        steps.ValidateReviewer,
+    ]
+
+
 class AbstractRolloutPrepCommand(AbstractSequencedCommand):
     argument_names = "REVISION [REVISIONS] REASON"
 

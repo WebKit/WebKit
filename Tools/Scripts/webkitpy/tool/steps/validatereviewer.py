@@ -37,6 +37,12 @@ from webkitpy.common.system.deprecated_logging import error, log
 
 # FIXME: Some of this logic should probably be unified with CommitterValidator?
 class ValidateReviewer(AbstractStep):
+    @classmethod
+    def options(cls):
+        return AbstractStep.options() + [
+            Options.non_interactive,
+        ]
+
     # FIXME: This should probably move onto ChangeLogEntry
     def _has_valid_reviewer(self, changelog_entry):
         if changelog_entry.reviewer():

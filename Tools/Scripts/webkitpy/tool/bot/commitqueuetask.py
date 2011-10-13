@@ -47,9 +47,16 @@ class CommitQueueTask(PatchAnalysisTask):
             return False
         if self._patch.review() == "-":
             return False
-        # Reviewer is not required. Missing reviewers will be caught during
-        # the ChangeLog check during landing.
         return True
+
+    def _validate_changelog(self):
+        return self._run_command([
+            "validate-changelog",
+            "--non-interactive",
+            self._patch.id(),
+        ],
+        "ChangeLog validated",
+        "ChangeLog did not pass validation")
 
     def run(self):
         if not self.validate():
@@ -59,6 +66,8 @@ class CommitQueueTask(PatchAnalysisTask):
         if not self._update():
             return False
         if not self._apply():
+            return self.report_failure()
+        if not self._validate_changelog():
             return self.report_failure()
         if not self._patch.is_rollout():
             if not self._build():

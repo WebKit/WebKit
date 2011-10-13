@@ -1,3 +1,21 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        commit-queue doesn't have a friendly error message when the reviewer line is messed up
+        https://bugs.webkit.org/show_bug.cgi?id=69979
+
+        Reviewed by Eric Seidel.
+
+        Rather than combining the ChangeLog validation with a more complicated
+        command, this patch has the commit-queue run it as a separate command,
+        which will give us more control over the error message.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2011-10-12  Eric Seidel  <eric@webkit.org>
 
         Layout tests asserting in LayoutTestController::pathToLocalResource()

@@ -133,6 +133,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -178,8 +180,27 @@ command_failed: failure_message='Patch does not apply' script_error='MOCK apply 
 """
         self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
 
+    def test_validate_changelog_failure(self):
+        commit_queue = MockCommitQueue([
+            None,
+            None,
+            None,
+            GoldenScriptError("MOCK validate failure"),
+        ])
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='10000'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='10000'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
+command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_failed: failure_message='ChangeLog did not pass validation' script_error='MOCK validate failure' patch='10000'
+"""
+        self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
+
     def test_build_failure(self):
         commit_queue = MockCommitQueue([
+            None,
             None,
             None,
             None,
@@ -191,6 +212,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
 run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both']
@@ -203,6 +226,7 @@ command_passed: success_message='Able to build without patch' patch='10000'
             None,
             None,
             None,
+            None,
             ScriptError("MOCK build failure"),
             ScriptError("MOCK clean build failure"),
         ])
@@ -212,6 +236,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
 run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both']
@@ -221,6 +247,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
 
     def test_flaky_test_failure(self):
         commit_queue = MockCommitQueue([
+            None,
             None,
             None,
             None,
@@ -236,6 +263,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -255,6 +284,7 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             None,
             None,
+            None,
             ScriptError("MOCK tests failure"),
         ])
         commit_queue.layout_test_results = lambda: LayoutTestResults([])
@@ -267,6 +297,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -280,6 +312,7 @@ command_passed: success_message='Landed patch' patch='10000'
 
     def test_double_flaky_test_failure(self):
         commit_queue = FailingTestCommitQueue([
+            None,
             None,
             None,
             None,
@@ -300,6 +333,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -320,6 +355,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
             None,
             None,
             None,
+            None,
             GoldenScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
         ])
@@ -329,6 +365,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -344,6 +382,7 @@ command_passed: success_message='Able to pass tests without patch' patch='10000'
 
     def test_red_test_failure(self):
         commit_queue = FailingTestCommitQueue([
+            None,
             None,
             None,
             None,
@@ -365,6 +404,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -387,6 +428,7 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             None,
             None,
+            None,
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
@@ -405,6 +447,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -420,6 +464,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
 
     def test_red_tree_patch_rejection(self):
         commit_queue = FailingTestCommitQueue([
+            None,
             None,
             None,
             None,
@@ -441,6 +486,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
@@ -462,6 +509,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
             None,
             None,
             None,
+            None,
             GoldenScriptError("MOCK land failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
@@ -470,6 +518,8 @@ run_webkit_patch: ['update']
 command_passed: success_message='Updated working directory' patch='10000'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
 command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
 run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']

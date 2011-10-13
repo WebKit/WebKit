@@ -242,6 +242,7 @@ class CommitQueueTest(QueuesTest):
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Applied patch
+MOCK: update_status: commit-queue ChangeLog validated
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Landed patch
@@ -326,6 +327,8 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd
 MOCK: update_status: commit-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'validate-changelog', '--non-interactive', 10000], cwd=/mock-checkout
+MOCK: update_status: commit-queue ChangeLog validated
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive'], cwd=/mock-checkout
@@ -355,6 +358,8 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd
 MOCK: update_status: commit-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10005], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'validate-changelog', '--non-interactive', 10005], cwd=/mock-checkout
+MOCK: update_status: commit-queue ChangeLog validated
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10005], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
@@ -389,6 +394,7 @@ MOCK: release_work_item: commit-queue 10005
         expected_stderr = """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Applied patch
+MOCK: update_status: commit-queue ChangeLog validated
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
