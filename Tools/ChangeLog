@@ -1,3 +1,15 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Kill old run-webkit-tests processes in kill-process on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=69976
+
+        Reviewed by Dirk Pranke.
+
+        Add a system call to remove all python processes running run-webkit-tests.
+
+        * BuildSlaveSupport/kill-old-processes:
+        * BuildSlaveSupport/mac: Removed.
+
 2011-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Many WK2 snapshots are blank
