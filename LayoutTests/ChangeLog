@@ -1,5 +1,30 @@
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Test expectation udpate.
+
+        Add baseline files for ruby-base-merge-block-children.html, and
+        color-jpeg-with-color-profile.html only for Mac.
+
+        * fast/ruby/ruby-base-merge-block-children-crash-expected.txt: Renamed from LayoutTests/platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-expected.txt.
+        * platform/chromium-cg-mac-leopard/fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-linux/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-linux/fast/ruby/ruby-base-merge-block-children-crash-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-win-vista/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-win-xp/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-win/fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/ruby-base-merge-block-children-crash-expected.png: Added.
+        * platform/chromium/fast/ruby/ruby-base-merge-block-children-crash-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/fast/ruby/ruby-base-merge-block-children-crash-expected.txt: Removed.
+
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Test expectation update.
         Add baseline files for media/video-playing-and-pause.html.
 

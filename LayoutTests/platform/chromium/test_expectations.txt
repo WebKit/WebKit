@@ -3877,6 +3877,7 @@ BUG_RICOW : fast/js/kde/RegExp.html = TEXT
 BUG_RICOW : fast/js/toString-overrides.html = TEXT
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
+BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = IMAGE
 
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.composite.transparent.destination-atop.html = TIMEOUT
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-5.html = TIMEOUT
