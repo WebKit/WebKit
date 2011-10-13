@@ -1,3 +1,10 @@
+2011-10-13  Gavin Barraclough  <baraclough@apple.com>
+
+        Speculative build fix for !DFG builds.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2011-10-13  Oliver Hunt  <oliver@apple.com>
 
         Fix performance of ValueToInt32 node when predicting double
