@@ -68,6 +68,13 @@ namespace JSC {
             return arguments;
         }
         
+        static Arguments* createAndCopyRegisters(JSGlobalData& globalData, CallFrame* callFrame)
+        {
+            Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+            arguments->finishCreationAndCopyRegisters(callFrame);
+            return arguments;
+        }
+        
         static Arguments* createNoParameters(JSGlobalData& globalData, CallFrame* callFrame)
         {
             Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame, NoParameters);
@@ -119,7 +126,9 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
+        void finishCreationButDontCopyRegisters(CallFrame*);
         void finishCreation(CallFrame*);
+        void finishCreationAndCopyRegisters(CallFrame*);
         void finishCreation(CallFrame*, NoParametersType);
 
     private:
@@ -182,7 +191,7 @@ namespace JSC {
     {
     }
     
-    inline void Arguments::finishCreation(CallFrame* callFrame)
+    inline void Arguments::finishCreationButDontCopyRegisters(CallFrame* callFrame)
     {
         Base::finishCreation(callFrame->globalData());
         ASSERT(inherits(&s_info));
@@ -219,8 +228,19 @@ namespace JSC {
         d->overrodeCallee = false;
         d->overrodeCaller = false;
         d->isStrictMode = callFrame->codeBlock()->isStrictMode();
+    }
+
+    inline void Arguments::finishCreation(CallFrame* callFrame)
+    {
+        finishCreationButDontCopyRegisters(callFrame);
         if (d->isStrictMode)
             copyRegisters(callFrame->globalData());
+    }
+
+    inline void Arguments::finishCreationAndCopyRegisters(CallFrame* callFrame)
+    {
+        finishCreationButDontCopyRegisters(callFrame);
+        copyRegisters(callFrame->globalData());
     }
 
     inline void Arguments::finishCreation(CallFrame* callFrame, NoParametersType)

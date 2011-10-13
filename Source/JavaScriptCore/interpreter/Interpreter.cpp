@@ -5138,9 +5138,7 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
         return arguments;
     }
 
-    Arguments* arguments = Arguments::create(functionCallFrame->globalData(), functionCallFrame);
-    arguments->copyRegisters(functionCallFrame->globalData());
-    return arguments;
+    return Arguments::createAndCopyRegisters(functionCallFrame->globalData(), functionCallFrame);
 }
 
 JSValue Interpreter::retrieveCaller(CallFrame* callFrame, JSFunction* function) const

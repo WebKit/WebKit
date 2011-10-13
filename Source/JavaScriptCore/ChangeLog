@@ -1,5 +1,21 @@
 2011-10-12  Filip Pizlo  <fpizlo@apple.com>
 
+        If an Arguments object is being used to copy the arguments, then
+        make this explicit
+        https://bugs.webkit.org/show_bug.cgi?id=69995
+
+        Reviewed by Sam Weinig.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveArguments):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createAndCopyRegisters):
+        (JSC::Arguments::finishCreationButDontCopyRegisters):
+        (JSC::Arguments::finishCreation):
+        (JSC::Arguments::finishCreationAndCopyRegisters):
+
+2011-10-12  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CFA does not filter structures aggressively enough.
         https://bugs.webkit.org/show_bug.cgi?id=69989
 
