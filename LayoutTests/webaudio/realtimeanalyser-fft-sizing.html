@@ -14,6 +14,7 @@
 description("Test that re-sizing the FFT arrays does not fail.");
 
 if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }

@@ -17,6 +17,7 @@ description("Tests that DelayNode delayTime parameter can be scheduled at a give
 
 function runTest() {
     if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }

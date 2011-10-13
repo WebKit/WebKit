@@ -24,9 +24,11 @@ function gc()
 }
 
 function runTest() {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
         layoutTestController.dumpAsText();
-    
+    }
+
     audioElement = document.createElement("audio");
     context = new webkitAudioContext(1, 1000, 44100);
     source = context.createMediaElementSource(audioElement);

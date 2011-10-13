@@ -17,6 +17,7 @@ description("Tests basic functionality of DelayNode.");
 
 function runTest() {
     if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }

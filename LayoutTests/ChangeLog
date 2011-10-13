@@ -1,3 +1,22 @@
+2011-10-11  Philippe Normand  <pnormand@igalia.com>
+
+        Tests don't override the WebKitWebAudioEnabled runtime preference
+        https://bugs.webkit.org/show_bug.cgi?id=69830
+
+        Rubber-stamped by Eric Carlson.
+
+        Override WebKitWebAudioEnabled in the WebAudio tests so the audio
+        context can be created even for the WebKit ports not enabling the
+        runtime WebAudio preference by default.
+
+        * webaudio/biquadfilternode-basic.html:
+        * webaudio/delaynode-scheduling.html:
+        * webaudio/delaynode.html:
+        * webaudio/mediaelementaudiosourcenode-gc.html:
+        * webaudio/mediaelementaudiosourcenode.html:
+        * webaudio/realtimeanalyser-fft-sizing.html:
+        * webaudio/resources/audio-testing.js:
+
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation udpate.
