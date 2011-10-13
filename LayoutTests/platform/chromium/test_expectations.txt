@@ -3800,14 +3800,6 @@ BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
-// We need to upstream new test expectations for these after fixing some
-// V8 bugs. Keeping here until we are sure that the push with the new GC
-// stays in.
-BUG_RICOW : fast/js/array-functions-non-arrays.html = TEXT
-BUG_RICOW : fast/js/array-prototype-properties.html = TEXT
-BUG_RICOW : fast/js/kde/RegExp.html = TEXT
-BUG_RICOW : fast/js/toString-overrides.html = TEXT
-
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
 // Randon crash in fast/canvas.
@@ -3818,3 +3810,6 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-arc-connecting-line.html = CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = CRASH
+
+// These all will timeout, because we are lacking a hook that signals test completion.
+BUGWK70066 SKIP : fast/hidpi = TIMEOUT
