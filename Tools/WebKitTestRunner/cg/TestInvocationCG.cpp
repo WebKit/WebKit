@@ -66,7 +66,7 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsCon
     if (flip == FlipGraphicsContext) {
         CGContextSaveGState(context);
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -pixelsHigh);
+        CGContextTranslateCTM(context, 0, -static_cast<CGFloat>(pixelsHigh));
     }
     
     CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());

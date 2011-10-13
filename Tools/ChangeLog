@@ -1,3 +1,22 @@
+2011-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Many WK2 snapshots are blank
+        https://bugs.webkit.org/show_bug.cgi?id=69953
+
+        Reviewed by Beth Dakin.
+        
+        Two fixes:
+        1. negating a size_t in CGContextTranslateCTM() fails, because
+        size_t is unsigned. Fix by casing to CGFloat before negation.
+        
+        2. Turn on window autodisplay, so that compositing tests snapshot correctly.
+        Autodisplay is necessary to kick off Core Animation rendering.
+
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromImage):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         commit-queue doesn't have a friendly error message when the reviewer line is messed up
