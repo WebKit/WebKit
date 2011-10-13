@@ -983,16 +983,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToInt32: {
-        if (at(node.child1()).shouldNotSpeculateInteger()) {
-            // Do it the safe way.
-            nonSpeculativeValueToInt32(node);
-            break;
-        }
-        
-        SpeculateIntegerOperand op1(this, node.child1());
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
+        compileValueToInt32(node);
         break;
     }
 

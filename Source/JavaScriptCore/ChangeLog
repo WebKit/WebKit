@@ -1,3 +1,34 @@
+2011-10-13  Oliver Hunt  <oliver@apple.com>
+
+        Fix performance of ValueToInt32 node when predicting double
+        https://bugs.webkit.org/show_bug.cgi?id=70063
+
+        Reviewed by Filip Pizlo.
+
+        Currently we fail to inline double to int conversion when
+        performing a ValueToInt32 operation on a value we predict
+        to be a double.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+           Apply correct filter for the double prediction path
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+           Support double parameters even when value has been spilled.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+           Moved old valueToInt32 code to this function, and added
+           path for double prediction
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+           Made the two implementations of ValueToInt32 call a single
+           shared compileValueToInt32 function.
+
 2011-10-13  Chris Marrin  <cmarrin@apple.com>
 
         Sync requestAnimationFrame callback to CVDisplayLink on Mac

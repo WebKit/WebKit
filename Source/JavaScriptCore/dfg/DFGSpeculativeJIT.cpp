@@ -607,6 +607,33 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
     cellResult(scratchReg, m_compileIndex);
 }
 
+void SpeculativeJIT::compileValueToInt32(Node& node)
+{
+    if (at(node.child1()).shouldNotSpeculateInteger()) {
+        if (at(node.child1()).shouldSpeculateDouble()) {
+            SpeculateDoubleOperand op1(this, node.child1());
+            GPRTemporary result(this);
+            FPRReg fpr = op1.fpr();
+            GPRReg gpr = result.gpr();
+            JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
+            
+            speculationCheck(m_jit.jump());
+            
+            truncatedToInteger.link(&m_jit);
+            integerResult(gpr, m_compileIndex);
+            return;
+        }
+        // Do it the safe way.
+        nonSpeculativeValueToInt32(node);
+        return;
+    }
+    
+    SpeculateIntegerOperand op1(this, node.child1());
+    GPRTemporary result(this, op1);
+    m_jit.move(op1.gpr(), result.gpr());
+    integerResult(result.gpr(), m_compileIndex, op1.format());
+}
+
 } } // namespace JSC::DFG
 
 #endif
