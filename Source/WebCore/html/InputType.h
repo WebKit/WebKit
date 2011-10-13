@@ -161,7 +161,8 @@ public:
     virtual String convertFromVisibleValue(const String&) const;
     virtual bool isAcceptableValue(const String&);
     // Returing the null string means "use the default value."
-    virtual String sanitizeValue(const String&);
+    // This function must be called only by HTMLInputElement::sanitizeValue().
+    virtual String sanitizeValue(const String&) const;
     virtual bool hasUnacceptableValue();
 
     // Event handlers

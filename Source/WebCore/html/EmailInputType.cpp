@@ -92,7 +92,7 @@ bool EmailInputType::isEmailField() const
     return true;
 }
 
-String EmailInputType::sanitizeValue(const String& proposedValue)
+String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
     String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);
     if (!element()->multiple())

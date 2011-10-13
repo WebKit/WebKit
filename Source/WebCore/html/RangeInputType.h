@@ -68,7 +68,7 @@ private:
     virtual void minOrMaxAttributeChanged();
     virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
     virtual String fallbackValue();
-    virtual String sanitizeValue(const String& proposedValue);
+    virtual String sanitizeValue(const String& proposedValue) const;
     virtual bool shouldRespectListAttribute();
 };
 

@@ -89,11 +89,8 @@ String ColorInputType::fallbackValue()
     return String("#000000");
 }
 
-String ColorInputType::sanitizeValue(const String& proposedValue)
+String ColorInputType::sanitizeValue(const String& proposedValue) const
 {
-    if (proposedValue.isNull())
-        return proposedValue;
-
     if (!isValidColorString(proposedValue))
         return fallbackValue();
 

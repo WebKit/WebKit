@@ -1405,6 +1405,8 @@ bool HTMLInputElement::isAcceptableValue(const String& proposedValue) const
 
 String HTMLInputElement::sanitizeValue(const String& proposedValue) const
 {
+    if (proposedValue.isNull())
+        return proposedValue;
     return m_inputType->sanitizeValue(proposedValue);
 }
 
@@ -1800,6 +1802,7 @@ void HTMLInputElement::parseMaxLengthAttribute(Attribute* attribute)
 void HTMLInputElement::updateValueIfNeeded()
 {
     String newValue = sanitizeValue(m_valueIfDirty);
+    ASSERT(!m_valueIfDirty.isNull() || newValue.isNull());
     if (newValue != m_valueIfDirty)
         setValue(newValue);
 }

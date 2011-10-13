@@ -299,7 +299,7 @@ static String limitLength(const String& string, int maxLength)
     return string.left(newLength);
 }
 
-String TextFieldInputType::sanitizeValue(const String& proposedValue)
+String TextFieldInputType::sanitizeValue(const String& proposedValue) const
 {
     return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maximumLength);
 }

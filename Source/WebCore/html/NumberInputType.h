@@ -68,7 +68,7 @@ private:
     virtual String visibleValue() const;
     virtual String convertFromVisibleValue(const String&) const;
     virtual bool isAcceptableValue(const String&);
-    virtual String sanitizeValue(const String&);
+    virtual String sanitizeValue(const String&) const;
     virtual bool hasUnacceptableValue();
     virtual bool shouldRespectSpeechAttribute();
     virtual bool supportsPlaceholder() const;

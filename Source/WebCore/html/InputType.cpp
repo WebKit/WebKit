@@ -573,7 +573,7 @@ bool InputType::isAcceptableValue(const String&)
     return true;
 }
 
-String InputType::sanitizeValue(const String& proposedValue)
+String InputType::sanitizeValue(const String& proposedValue) const
 {
     return proposedValue;
 }

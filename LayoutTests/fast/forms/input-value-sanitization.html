@@ -11,6 +11,20 @@
 var input;
 
 debug('');
+debug('Email with multiple:');
+input = document.createElement('input');
+input.multiple = true;
+input.type = 'email';
+input.setAttribute('value', ' tkent@chromium.org, tkent@example.!!!  ');
+shouldBe('input.value', '"tkent@chromium.org,tkent@example.!!!"');
+debug('Email without multiple:');
+input = document.createElement('input');
+input.multiple = false;
+input.type = 'email';
+input.setAttribute('value', ' tkent@chromium.org, tkent@example.***  \r\n');
+shouldBe('input.value', '" tkent@chromium.org, tkent@example.***  "');
+
+debug('');
 debug('Number:');
 input = document.createElement('input');
 input.setAttribute('value', '65536');

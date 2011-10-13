@@ -308,7 +308,7 @@ bool NumberInputType::isAcceptableValue(const String& proposedValue)
     return proposedValue.isEmpty() || isfinite(parseLocalizedNumber(proposedValue)) || parseToDoubleForNumberType(proposedValue, 0);
 }
 
-String NumberInputType::sanitizeValue(const String& proposedValue)
+String NumberInputType::sanitizeValue(const String& proposedValue) const
 {
     if (proposedValue.isEmpty())
         return proposedValue;

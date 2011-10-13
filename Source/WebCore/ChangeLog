@@ -1,3 +1,47 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r89915): <input type=email multiple> don't show the default value
+        https://bugs.webkit.org/show_bug.cgi?id=69895
+
+        Reviewed by Hajime Morita.
+
+        m_valueIfDirty became unexpectedly empty because
+        EmailInputType::sanitizeValue() returned an empty string for a
+        null input string.
+
+        To solve this issue, HTMLInputElement::sanitizeValue() checks
+        nullness, and remove the null check of sanitizeValue() of
+        InputType subclasses.
+        Also, we make InputType::sanitizeValue() const.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::sanitizeValue):
+        - Make this const.
+        - Remove null check.
+        * html/ColorInputType.h: Make sanitizeValue() const.
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::sanitizeValue): Make this const.
+        * html/EmailInputType.h: Make sanitizeValue() const.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::sanitizeValue):
+        (WebCore::HTMLInputElement::updateValueIfNeeded):
+        * html/InputType.cpp:
+        (WebCore::InputType::sanitizeValue):
+        Returns a null string if the input string is null, and
+        don't call InputType::sanitizeValue() in this case.
+        * html/InputType.h: Make sanitizeValue() const.
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::sanitizeValue): Make this const.
+        * html/NumberInputType.h: Make sanitizeValue() const.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::sanitizeValue):
+        - Make this const.
+        - Remove null check.
+        * html/RangeInputType.h: Make sanitizeValue() const.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::sanitizeValue): Make this const.
+        * html/TextFieldInputType.h: Make sanitizeValue() const.
+
 2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Pass Parsed Accept Attribute MIME Types to WebKit Clients

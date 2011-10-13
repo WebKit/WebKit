@@ -300,14 +300,8 @@ String RangeInputType::fallbackValue()
     return serializeForNumberType(StepRange(element()).defaultValue());
 }
 
-String RangeInputType::sanitizeValue(const String& proposedValue)
+String RangeInputType::sanitizeValue(const String& proposedValue) const
 {
-    // If the proposedValue is null than this is a reset scenario and we
-    // want the range input's value attribute to take priority over the
-    // calculated default (middle) value.
-    if (proposedValue.isNull())
-        return proposedValue;
-
     return serializeForNumberType(StepRange(element()).clampValue(proposedValue));
 }
 
