@@ -1,3 +1,20 @@
+2011-10-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Use realloc() to expand/shrink StringBuilder buffer
+        https://bugs.webkit.org/show_bug.cgi?id=69913
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::reallocateBuffer):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reallocate): Added to allow StringBuilder to reallocate the buffer.
+        * wtf/text/StringImpl.h:
+
 2011-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         If an Arguments object is being used to copy the arguments, then

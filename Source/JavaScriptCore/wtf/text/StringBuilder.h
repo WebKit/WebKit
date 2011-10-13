@@ -130,6 +130,7 @@ public:
 
 private:
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
+    void reallocateBuffer(unsigned requiredLength);
     UChar* appendUninitialized(unsigned length);
     void reifyString();
 

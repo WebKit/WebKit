@@ -83,7 +83,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
     if (m_buffer) {
         // If there is already a buffer, then grow if necessary.
         if (newCapacity > m_buffer->length())
-            allocateBuffer(m_buffer->characters(), newCapacity);
+            reallocateBuffer(newCapacity);
     } else {
         // Grow the string, if necessary.
         if (newCapacity > m_length)
@@ -104,13 +104,24 @@ void StringBuilder::allocateBuffer(const UChar* currentCharacters, unsigned requ
     m_string = String();
 }
 
+void StringBuilder::reallocateBuffer(unsigned requiredLength)
+{
+    // If the buffer has only one ref (by this StringBuilder), reallocate it,
+    // otherwise fall back to "allocate and copy" method.
+    m_string = String();
+    if (m_buffer->hasOneRef())
+        m_buffer = StringImpl::reallocate(m_buffer.release(), requiredLength, m_bufferCharacters);
+    else
+        allocateBuffer(m_buffer->characters(), requiredLength);
+}
+
 // Make 'length' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
 UChar* StringBuilder::appendUninitialized(unsigned length)
 {
     ASSERT(length);
 
-    // Calcuate the new size of the builder after appending.
+    // Calculate the new size of the builder after appending.
     unsigned requiredLength = length + m_length;
     if (requiredLength < length)
         CRASH();
@@ -127,8 +138,7 @@ UChar* StringBuilder::appendUninitialized(unsigned length)
             return m_bufferCharacters + currentLength;
         }
 
-        // We need to realloc the buffer.
-        allocateBuffer(m_buffer->characters(), std::max(requiredLength, std::max(minimumCapacity, m_buffer->length() * 2)));
+        reallocateBuffer(std::max(requiredLength, std::max(minimumCapacity, m_buffer->length() * 2)));
     } else {
         ASSERT(m_string.length() == m_length);
         allocateBuffer(m_string.characters(), std::max(requiredLength, std::max(minimumCapacity, m_length * 2)));
@@ -164,9 +174,8 @@ void StringBuilder::shrinkToFit()
 {
     // If the buffer is at least 80% full, don't bother copying. Need to tune this heuristic!
     if (m_buffer && m_buffer->length() > (m_length + (m_length >> 2))) {
-        UChar* result;
-        m_string = StringImpl::createUninitialized(m_length, result);
-        memcpy(result, m_buffer->characters(), static_cast<size_t>(m_length) * 2); // This can't overflow.
+        reallocateBuffer(m_length);
+        m_string = m_buffer;
         m_buffer = 0;
     }
 }

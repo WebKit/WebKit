@@ -181,6 +181,11 @@ public:
         return adoptRef(new(resultImpl) StringImpl(length));
     }
 
+    // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
+    // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),
+    // the originalString can't be used after this function.
+    static PassRefPtr<StringImpl> reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data);
+
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data); }
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
     static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);

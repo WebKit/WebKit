@@ -90,6 +90,26 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     return adoptRef(new (string) StringImpl(length));
 }
 
+PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
+{
+    ASSERT(originalString->hasOneRef() && originalString->bufferOwnership() == BufferInternal);
+
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Same as createUninitialized() except here we use fastRealloc.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
+
+    data = reinterpret_cast<UChar*>(string + 1);
+    return adoptRef(new (string) StringImpl(length));
+}
+
 PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
 {
     if (!characters || !length)
