@@ -1,3 +1,10 @@
+2011-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Add results to keep the bots quiet.
+
+        * fast/images/color-jpeg-with-color-profile-expected.png: Added.
+        * fast/images/color-jpeg-with-color-profile-expected.txt: Added.
+
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Tweak flakiness expectation.
