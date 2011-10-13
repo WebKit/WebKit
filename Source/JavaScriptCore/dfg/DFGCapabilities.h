@@ -29,9 +29,9 @@
 #include "Interpreter.h"
 #include <wtf/Platform.h>
 
-namespace JSC { namespace DFG {
+#include "DFGNode.h"
 
-#define ENABLE_DFG_RESTRICTIONS 1
+namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 // Fast check functions; if they return true it is still necessary to
@@ -135,7 +135,7 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     // Regresses string-validate-input, probably because it uses comparisons (< and >)
     // on strings, which currently will cause speculation failures in some cases.
     case op_new_regexp: 
-#if ENABLE(DFG_RESTRICTIONS)
+#if DFG_ENABLE(RESTRICTIONS)
         return false;
 #else
         return true;

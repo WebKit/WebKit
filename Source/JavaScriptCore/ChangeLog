@@ -12,6 +12,89 @@
 
 2011-10-13  Gavin Barraclough  <baraclough@apple.com>
 
+        DFG JIT should not be using ENABLE macro to enable features
+        https://bugs.webkit.org/show_bug.cgi?id=70060
+
+        Reviewed by Oliver Hunt.
+
+        The ENABLE macro is only intended to be used to detect features that are configured
+        in Platform.h. Using its to detect settings defined in other headers is an error.
+
+        The problem is that the ENABLE macro checks if the value is defined, so will silently
+        return false if you fail to include the header defining the switch. This is not a problem
+        if (1) the settings are defined in the same header that defines the macro that tests them,
+        or (2) the header is included everywhere.  In the case of ENABLE settings defined in
+        Platform.h, both are true! To make this clear, add an explicit DFG_ENABLE macro.
+
+        * bytecode/CodeBlock.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGNode.h:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::propagateArithNodeFlagsForward):
+        (JSC::DFG::Propagator::propagateArithNodeFlagsBackward):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::propagatePredictionsForward):
+        (JSC::DFG::Propagator::propagatePredictionsBackward):
+        (JSC::DFG::Propagator::propagatePredictions):
+        (JSC::DFG::Propagator::toDouble):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::fixup):
+        (JSC::DFG::Propagator::startIndexForChildren):
+        (JSC::DFG::Propagator::endIndexForPureCSE):
+        (JSC::DFG::Propagator::setReplacement):
+        (JSC::DFG::Propagator::eliminate):
+        (JSC::DFG::Propagator::performNodeCSE):
+        (JSC::DFG::Propagator::localCSE):
+        (JSC::DFG::Propagator::allocateVirtualRegisters):
+        (JSC::DFG::Propagator::performBlockCFA):
+        (JSC::DFG::Propagator::performForwardCFA):
+        (JSC::DFG::Propagator::globalCFA):
+        * dfg/DFGScoreBoard.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
+2011-10-13  Gavin Barraclough  <baraclough@apple.com>
+
         terminateSpeculativeExecution for fillSpeculateDouble with DataFormatCell
 
         Rubber stamped by Filip Pizlo

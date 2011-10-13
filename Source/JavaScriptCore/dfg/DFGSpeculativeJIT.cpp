@@ -260,7 +260,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         m_jit.noticeOSREntry(block);
 
     m_blockHeads[m_block] = m_jit.label();
-#if ENABLE(DFG_JIT_BREAK_ON_EVERY_BLOCK)
+#if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
 
@@ -292,17 +292,17 @@ void SpeculativeJIT::compile(BasicBlock& block)
         Node& node = at(m_compileIndex);
         m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex();
         if (!node.shouldGenerate()) {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
             fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
 #endif
             if (node.op == SetLocal)
                 compileMovHint(node);
         } else {
             
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
             fprintf(stderr, "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
 #endif
-#if ENABLE(DFG_JIT_BREAK_ON_EVERY_NODE)
+#if DFG_ENABLE(JIT_BREAK_ON_EVERY_NODE)
             m_jit.breakpoint();
 #endif
             checkConsistency();
@@ -314,7 +314,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 return;
             }
             
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
             if (node.hasResult()) {
                 GenerationInfo& info = m_generationInfo[node.virtualRegister()];
                 fprintf(stderr, "-> %s, vr#%d", dataFormatToString(info.registerFormat()), (int)node.virtualRegister());
@@ -334,7 +334,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #endif
         }
         
-#if ENABLE(DFG_VERBOSE_VALUE_RECOVERIES)
+#if DFG_ENABLE(VERBOSE_VALUE_RECOVERIES)
         for (int operand = -m_arguments.size() - RegisterFile::CallFrameHeaderSize; operand < -RegisterFile::CallFrameHeaderSize; ++operand)
             computeValueRecoveryFor(operand).dump(stderr);
         
@@ -344,7 +344,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
             computeValueRecoveryFor(operand).dump(stderr);
 #endif
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
         fprintf(stderr, "\n");
 #endif
         

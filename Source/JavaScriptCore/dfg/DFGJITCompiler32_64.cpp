@@ -46,11 +46,11 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // 1) Pro-forma stuff.
     exit.m_check.link(this);
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x   ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
     exit.dump(stderr);
 #endif
-#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
     SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
     debugInfo->codeBlock = m_codeBlock;
     debugInfo->debugOffset = debugOffset();
@@ -58,11 +58,11 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     debugCall(debugOperationPrintSpeculationFailure, debugInfo);
 #endif
     
-#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
+#if DFG_ENABLE(JIT_BREAK_ON_SPECULATION_FAILURE)
     breakpoint();
 #endif
     
-#if ENABLE(DFG_SUCCESS_STATS)
+#if DFG_ENABLE(SUCCESS_STATS)
     static SamplingCounter counter("SpeculationFailure");
     emitCount(counter);
 #endif
@@ -463,7 +463,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     move(TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jump(GPRInfo::regT2);
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "   -> %p\n", jumpTarget);
 #endif
 }
@@ -504,7 +504,7 @@ void JITCompiler::compileEntry()
 void JITCompiler::compileBody()
 {
 
-#if ENABLE(DFG_JIT_BREAK_ON_EVERY_FUNCTION)
+#if DFG_ENABLE(JIT_BREAK_ON_EVERY_FUNCTION)
     // Handy debug tool!
     breakpoint();
 #endif
@@ -547,7 +547,7 @@ void JITCompiler::compileBody()
 void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "JIT code for %p start at [%p, %p)\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
 #endif
 
@@ -681,7 +681,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
-#if ENABLE(DFG_JIT_ASSERT)
+#if DFG_ENABLE(JIT_ASSERT)
 void JITCompiler::jitAssertIsInt32(GPRReg gpr)
 {
     UNUSED_PARAM(gpr);

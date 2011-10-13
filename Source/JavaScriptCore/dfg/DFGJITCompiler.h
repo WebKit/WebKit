@@ -30,12 +30,11 @@
 
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
+#include <dfg/DFGFPRInfo.h>
+#include <dfg/DFGGPRInfo.h>
 #include <dfg/DFGGraph.h>
 #include <dfg/DFGRegisterBank.h>
 #include <jit/JITCode.h>
-
-#include <dfg/DFGFPRInfo.h>
-#include <dfg/DFGGPRInfo.h>
 
 namespace JSC {
 
@@ -57,7 +56,7 @@ struct OSRExit;
 typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
 #endif
 
-#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
 struct SpeculationFailureDebugInfo {
     CodeBlock* codeBlock;
     unsigned debugOffset;
@@ -316,7 +315,7 @@ public:
 #endif
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
-#if ENABLE(DFG_JIT_ASSERT)
+#if DFG_ENABLE(JIT_ASSERT)
     void jitAssertIsInt32(GPRReg);
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);
@@ -401,7 +400,7 @@ public:
     
     void noticeOSREntry(BasicBlock& basicBlock)
     {
-#if ENABLE(DFG_OSR_ENTRY)
+#if DFG_ENABLE(OSR_ENTRY)
         OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
         
         entry->m_expectedValues = basicBlock.valuesAtHead;

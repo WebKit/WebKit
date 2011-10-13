@@ -305,7 +305,7 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         
         at(m_arguments[arg]).variableAccessData()->predict(profile->computeUpdatedPrediction());
         
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
         printf("Argument [%lu] prediction: %s\n", arg, predictionToString(at(m_arguments[arg]).variableAccessData()->prediction()));
 #endif
     }

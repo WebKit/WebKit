@@ -504,7 +504,7 @@ private:
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
         PredictedType prediction = profile->computeUpdatedPrediction();
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
         printf("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
         
@@ -527,7 +527,7 @@ private:
         if (!m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
             return nodeIndex;
         
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
         printf("Making %s @%u safe at bc#%u because slow-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
 #endif
         

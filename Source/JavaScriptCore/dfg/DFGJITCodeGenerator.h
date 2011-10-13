@@ -1526,7 +1526,7 @@ protected:
     void dump(const char* label = 0);
 #endif
 
-#if ENABLE(DFG_CONSISTENCY_CHECK)
+#if DFG_ENABLE(CONSISTENCY_CHECK)
     void checkConsistency();
 #else
     void checkConsistency() {}

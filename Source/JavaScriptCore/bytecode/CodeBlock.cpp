@@ -32,6 +32,7 @@
 
 #include "BytecodeGenerator.h"
 #include "DFGCapabilities.h"
+#include "DFGNode.h"
 #include "Debugger.h"
 #include "Interpreter.h"
 #include "JIT.h"

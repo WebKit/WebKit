@@ -58,7 +58,7 @@ public:
         }
     }
 
-#if ENABLE(DFG_CONSISTENCY_CHECK)
+#if DFG_ENABLE(CONSISTENCY_CHECK)
     ~ScoreBoard()
     {
         // For every entry in the used list the use count of the virtual register should be zero.

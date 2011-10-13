@@ -48,7 +48,7 @@ static double CDECL fmodWithCDecl(double x, double y)
 template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "SpecInt@%d   ", nodeIndex);
 #endif
     Node& node = at(nodeIndex);
@@ -145,7 +145,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "SpecDouble@%d   ", nodeIndex);
 #endif
     Node& node = at(nodeIndex);
@@ -262,7 +262,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "SpecCell@%d   ", nodeIndex);
 #endif
     Node& node = at(nodeIndex);
@@ -339,7 +339,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
     ASSERT_NOT_REACHED();
     UNUSED_PARAM(nodeIndex);
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if DFG_ENABLE(DEBUG_VERBOSE)
      fprintf(stderr, "SpecBool@%d   ", nodeIndex);
 #endif
     return InvalidGPRReg;
@@ -1612,7 +1612,7 @@ void SpeculativeJIT::compile(Node& node)
         ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
         ASSERT(GPRInfo::returnValueGPR != GPRInfo::callFrameRegister);
 
-#if ENABLE(DFG_SUCCESS_STATS)
+#if DFG_ENABLE(SUCCESS_STATS)
         static SamplingCounter counter("SpeculativeJIT");
         m_jit.emitCount(counter);
 #endif

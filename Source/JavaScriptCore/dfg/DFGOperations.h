@@ -158,7 +158,7 @@ double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
 size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
 size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
-#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
 void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*);
 #endif
 

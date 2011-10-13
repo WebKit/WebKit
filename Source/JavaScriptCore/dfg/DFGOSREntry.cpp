@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 
 void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {
-#if ENABLE(DFG_OSR_ENTRY)
+#if DFG_ENABLE(OSR_ENTRY)
     ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
@@ -145,7 +145,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 #endif
     
     return result;
-#else // ENABLE(DFG_OSR_ENTRY)
+#else // DFG_ENABLE(OSR_ENTRY)
     UNUSED_PARAM(exec);
     UNUSED_PARAM(codeBlock);
     UNUSED_PARAM(bytecodeIndex);
