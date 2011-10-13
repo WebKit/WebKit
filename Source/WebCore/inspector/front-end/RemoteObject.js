@@ -54,6 +54,11 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
     }
 }
 
+WebInspector.RemoteObject.fromError = function(errorDescription)
+{
+    return new WebInspector.RemoteObject(null, null, null, errorDescription);
+}
+
 WebInspector.RemoteObject.fromPrimitiveValue = function(value)
 {
     return new WebInspector.RemoteObject(null, typeof value, null, value);

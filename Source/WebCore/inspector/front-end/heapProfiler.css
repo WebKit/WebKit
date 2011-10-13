@@ -194,6 +194,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     margin-right: 8px;
 }
 
+.detailed-heapshot-view tr:not(.selected) td.object-column span.highlight {
+    background-color: rgb(255, 255, 200);
+}
+
 .heapshot-help-status-bar-item .glyph {
     -webkit-mask-position: -160px 0;
 }

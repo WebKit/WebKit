@@ -56,9 +56,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 
     hasHoverMessage: false,
 
-    hoverMessage: function(callback)
+    queryObjectContent: function(callback)
     {
-        callback("");
     },
 
     _populate: function(event)
@@ -185,11 +184,10 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     if (this._type === "string")
         this.hasHoverMessage = true;
     else if (this._type === "object" && this.isDOMWindow(this._name)) {
-        var url = [];
-        this._name = this.shortenWindowURL(this._name, false, url);
-        this._url = url[0];
+        this._name = this.shortenWindowURL(this._name, false);
         this.hasHoverMessage = true;
-    }
+    } else if (node.flags & tree.snapshot.nodeFlags.canBeQueried)
+        this.hasHoverMessage = true;
 };
 
 WebInspector.HeapSnapshotGenericObjectNode.prototype = {
@@ -259,6 +257,8 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
                 value += " []";
             break;
         };
+        if (this.hasHoverMessage)
+            valueStyle += " highlight";
         data["object"] = { valueStyle: valueStyle, value: value + " @" + this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
@@ -268,12 +268,20 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         return this._enhanceData ? this._enhanceData(data) : data;
     },
 
-    hoverMessage: function(callback)
+    queryObjectContent: function(callback)
     {
         if (this._type === "string")
-            callback("\"" + this._name + "\"", "console-formatted-string");
-        else if (this._url)
-            callback(this._url, "console-formatted-object");
+            callback(WebInspector.RemoteObject.fromPrimitiveValue(this._name));
+        else {
+            function formatResult(error, object)
+            {
+                if (!error && object.type)
+                    callback(WebInspector.RemoteObject.fromPayload(object), !!error);
+                else
+                    callback(WebInspector.RemoteObject.fromError(WebInspector.UIString("Not available")));
+            }
+            ProfilerAgent.getObjectByHeapObjectId(this.snapshotNodeId, formatResult);
+        }
     },
 
     get _retainedSizePercent()
@@ -300,14 +308,12 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         return fullName.substr(0, 9) === "DOMWindow";
     },
 
-    shortenWindowURL: function(fullName, hasObjectId, fullURLPtr)
+    shortenWindowURL: function(fullName, hasObjectId)
     {
         var startPos = fullName.indexOf("/");
         var endPos = hasObjectId ? fullName.indexOf("@") : fullName.length;
         if (startPos !== -1 && endPos !== -1) {
             var fullURL = fullName.substring(startPos + 1, endPos).trimLeft();
-            if (fullURLPtr)
-                fullURLPtr[0] = fullURL;
             var url = fullURL.trimURL();
             if (url.length > 40)
                 url = url.trimMiddle(40);
