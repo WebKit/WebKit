@@ -1,3 +1,10 @@
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+        plugins/refcount-leaks.html is flaky.
+
 2011-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline Mac region results after r97308.
