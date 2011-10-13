@@ -81,6 +81,6 @@ Flow Threads
           text run at (-18,348) width 27: "text."
         RenderBR {BR} at (9,348) size 0x18
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1 with index 0
-    RenderRegion {DIV} #region2 with index 0
-    RenderRegion {DIV} #region3 with index 0
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3

@@ -1,3 +1,15 @@
+2011-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline Mac region results after r97308.
+
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt:
+        * platform/mac/fast/regions/position-writing-modes-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-inline-static-spanning-regions-rtl-expected.txt:
+        * platform/mac/fast/regions/positioned-objects-spanning-regions-expected.txt:
+
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
