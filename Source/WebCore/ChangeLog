@@ -1,3 +1,15 @@
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a BeforeLoadEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=69980
+
+        Reviewed by Adam Barth.
+
+        Test: fast/events/constructors/before-load-event-constructor.html
+
+        * bindings/v8/custom/V8EventConstructors.cpp: Added a BeforeLoadEvent constructor.
+        * dom/BeforeLoadEvent.idl: Replaced 'JSCustomConstructor' with 'CustomConstructor'.
+
 2011-10-13  Joshua Bell  <jsbell@chromium.org>
 
         make IDBFactory.open wait for pending setVersion transactions to complete

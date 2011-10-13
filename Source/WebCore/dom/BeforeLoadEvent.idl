@@ -28,7 +28,7 @@ module events {
 
     interface [
         CanBeConstructed,
-        JSCustomConstructor
+        CustomConstructor
     ] BeforeLoadEvent : Event {
         void initBeforeLoadEvent(in [Optional=CallWithDefaultValue] DOMString type,
                                  in [Optional=CallWithDefaultValue] boolean canBubble, 
