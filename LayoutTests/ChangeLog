@@ -1,3 +1,20 @@
+2011-10-13  Ben Wells  <benwells@chromium.org>
+
+        Rebaseline for webkit bug 69503
+        https://bugs.webkit.org/show_bug.cgi?id=69818
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium-cg-mac-leopard/fast/css/text-transform-select-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/css/text-transform-select-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-transform-select-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/css/text-transform-select-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-transform-select-expected.png: Added.
+        * platform/chromium-win/fast/css/text-transform-select-expected.png: Added.
+        * platform/chromium-win/fast/css/text-transform-select-expected.txt: Added.
+        * platform/chromium/fast/css/text-transform-select-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         Move XSTL to script-src in Content-Security-Policy
