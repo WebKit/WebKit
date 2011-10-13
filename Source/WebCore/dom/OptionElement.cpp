@@ -49,7 +49,7 @@ int OptionElement::optionIndex(HTMLSelectElement* selectElement, const Element* 
 
     // Let's do this dynamically. Might be a bit slow, but we're sure
     // we won't forget to update a member variable in some cases...
-    const Vector<Element*>& items = selectElement->listItems();
+    const Vector<HTMLElement*>& items = selectElement->listItems();
     int length = items.size();
     int optionIndex = 0;
     for (int i = 0; i < length; ++i) {

@@ -146,7 +146,7 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
+    const Vector<HTMLElement*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
     int size = listItems.size();    
     FontCachePurgePreventer fontCachePurgePreventer;
 
@@ -195,7 +195,7 @@ void RenderMenuList::updateFromElement()
 void RenderMenuList::setTextFromOption(int optionIndex)
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     int size = listItems.size();
 
     int i = select->optionToListIndex(optionIndex);
@@ -373,7 +373,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
 String RenderMenuList::itemText(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
 
@@ -402,7 +402,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
 
@@ -412,7 +412,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 String RenderMenuList::itemToolTip(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return String();
     Element* element = listItems[listIndex];
@@ -422,7 +422,7 @@ String RenderMenuList::itemToolTip(unsigned listIndex) const
 bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
     Element* element = listItems[listIndex];
@@ -443,7 +443,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size()) {
         // If we are making an out of bounds access, then we want to use the style
         // of a different option element (index 0). However, if there isn't an option element
@@ -463,7 +463,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return style()->visitedDependentColor(CSSPropertyBackgroundColor);
     Element* element = listItems[listIndex];
@@ -557,7 +557,7 @@ void RenderMenuList::popupDidHide()
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
     Element* element = listItems[listIndex];
@@ -567,7 +567,7 @@ bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
     Element* element = listItems[listIndex];
@@ -577,7 +577,7 @@ bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (listIndex >= listItems.size())
         return false;
     Element* element = listItems[listIndex];

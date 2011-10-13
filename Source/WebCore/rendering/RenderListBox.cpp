@@ -106,7 +106,7 @@ void RenderListBox::updateFromElement()
     FontCachePurgePreventer fontCachePurgePreventer;
 
     if (m_optionsChanged) {
-        const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
+        const Vector<HTMLElement*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
         int size = numItems();
         
         float width = 0;
@@ -325,7 +325,7 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
 
     // No selected items, find the first non-disabled item.
     int size = numItems();
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     for (int i = 0; i < size; ++i) {
         OptionElement* optionElement = toOptionElement(listItems[i]);
         if (optionElement && !optionElement->disabled()) {
@@ -371,7 +371,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     FontCachePurgePreventer fontCachePurgePreventer;
 
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
@@ -423,7 +423,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
     HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
@@ -680,7 +680,7 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
-    const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
+    const Vector<HTMLElement*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
     int size = numItems();
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 

@@ -66,7 +66,7 @@ public:
     void setRecalcListItems();
     void recalcListItemsIfNeeded();
 
-    const Vector<Element*>& listItems() const;
+    const Vector<HTMLElement*>& listItems() const;
 
     virtual void accessKeyAction(bool sendToAnyElement);
     void accessKeySetSelectedIndex(int);
@@ -143,7 +143,6 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    void checkListItems() const;
     void recalcListItemsInternal(bool updateSelectedStates = true);
     void setSelectedIndexInternal(int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
     void deselectItemsWithoutValidation(Element* excludeElement = 0);
@@ -160,7 +159,7 @@ private:
         SkipBackwards = -1,
         SkipForwards = 1
     };
-    static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection, int skip);
+    static int nextValidIndex(const Vector<HTMLElement*>& listItems, int listIndex, SkipDirection, int skip);
     int nextSelectableListIndex(int startIndex) const;
     int previousSelectableListIndex(int startIndex) const;
     int firstSelectableListIndex() const;
@@ -168,7 +167,8 @@ private:
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
     CollectionCache m_collectionInfo;
-    Vector<Element*> m_listItems;
+    // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, or HTMLHRElement.
+    Vector<HTMLElement*> m_listItems;
     Vector<bool> m_lastOnChangeSelection;
     Vector<bool> m_cachedStateForActiveSelection;
     DOMTimeStamp m_lastCharTime;
@@ -181,7 +181,7 @@ private:
     bool m_userDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;
-    bool m_recalcListItems;
+    bool m_shouldRecalcListItems;
 };
 
 HTMLSelectElement* toSelectElement(Element*);

@@ -98,7 +98,7 @@ void AccessibilityMenuListPopup::addChildren()
 
     ASSERT(selectNode->hasTagName(selectTag));
 
-    const Vector<Element*>& listItems = static_cast<HTMLSelectElement*>(selectNode)->listItems();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(selectNode)->listItems();
     unsigned length = listItems.size();
     for (unsigned i = 0; i < length; i++) {
         AccessibilityMenuListOption* option = menuListOptionAccessibilityObject(toHTMLElement(listItems[i]));

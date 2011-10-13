@@ -101,9 +101,9 @@ HTMLFormControlElement* GetButtonToActivate(HTMLFormElement* form)
 // selected state.
 bool IsSelectInDefaultState(HTMLSelectElement* select)
 {
-    const Vector<Element*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     if (select->multiple() || select->size() > 1) {
-        for (Vector<Element*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
+        for (Vector<HTMLElement*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
             if (!(*i)->hasLocalName(HTMLNames::optionTag))
                 continue;
             HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
@@ -116,7 +116,7 @@ bool IsSelectInDefaultState(HTMLSelectElement* select)
     // The select is rendered as a combobox (called menulist in WebKit). At
     // least one item is selected, determine which one.
     HTMLOptionElement* initialSelected = 0;
-    for (Vector<Element*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
+    for (Vector<HTMLElement*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
         if (!(*i)->hasLocalName(HTMLNames::optionTag))
             continue;
         HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);

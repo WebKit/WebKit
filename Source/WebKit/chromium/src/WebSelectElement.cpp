@@ -53,10 +53,10 @@ WebString WebSelectElement::value() const
 
 WebVector<WebElement> WebSelectElement::listItems() const
 {
-    const Vector<Element*>& sourceItems = constUnwrap<HTMLSelectElement>()->listItems();
+    const Vector<HTMLElement*>& sourceItems = constUnwrap<HTMLSelectElement>()->listItems();
     WebVector<WebElement> items(sourceItems.size());
     for (size_t i = 0; i < sourceItems.size(); ++i)
-        items[i] = WebElement(static_cast<HTMLElement*>(sourceItems[i]));
+        items[i] = WebElement(sourceItems[i]);
 
     return items;
 }

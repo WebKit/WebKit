@@ -1150,7 +1150,7 @@ String AccessibilityRenderObject::stringValue() const
         if (node && node->isHTMLElement() && node->hasTagName(selectTag)) {
             HTMLSelectElement* selectNode = static_cast<HTMLSelectElement*>(node);
             int selectedIndex = selectNode->selectedIndex();
-            const Vector<Element*> listItems = selectNode->listItems();
+            const Vector<HTMLElement*> listItems = selectNode->listItems();
         
             Element* selectedOption = 0;
             if (selectedIndex >= 0 && selectedIndex < (int)listItems.size()) 

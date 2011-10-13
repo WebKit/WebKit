@@ -1,3 +1,18 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        Cleanup of HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=69908
+
+        Reviewed by Darin Adler.
+
+        Change the HTMLSelectElement::listItems() return type:
+          Vector<Element*> -> Vector<HTMLElement*>
+
+        * src/WebSearchableFormData.cpp:
+        (HTMLNames::IsSelectInDefaultState):
+        * src/WebSelectElement.cpp:
+        (WebKit::WebSelectElement::listItems):
+
 2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Pass Parsed Accept Attribute MIME Types to WebKit Clients

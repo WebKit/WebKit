@@ -1,3 +1,89 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        Cleanup of HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=69908
+
+        Reviewed by Darin Adler.
+
+        - Change the m_listItems type: Vector<Element*> -> Vector<HTMLElement*>
+        - Rename a member: m_recalcListItems -> m_shouldRecalcListItems
+        - Fold checkListItems() into listItems()
+        - Style fixes
+
+        No new tests, just a cleanup.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::listBoxOptionIndex):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (optionFromSelection):
+        (webkit_accessible_selection_get_selection_count):
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::optionIndex):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        (WebCore::HTMLSelectElement::add):
+        (WebCore::HTMLSelectElement::value):
+        (WebCore::HTMLSelectElement::setValue):
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::recalcListItemsIfNeeded):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::setLength):
+        (WebCore::HTMLSelectElement::nextValidIndex):
+        (WebCore::HTMLSelectElement::firstSelectableListIndex):
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::listItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::recalcListItemsInternal):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndexInternal):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::saveFormControlState): Use StringBuilder.
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        Optimize the code by iterating in the reverse order.
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        (WebCore::toSelectElement):
+        * html/HTMLSelectElement.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemAccessibilityText):
+        (WebCore::RenderMenuList::itemToolTip):
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::itemBackgroundColor):
+        (WebCore::RenderMenuList::itemIsSeparator):
+        (WebCore::RenderMenuList::itemIsLabel):
+        (WebCore::RenderMenuList::itemIsSelected):
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         DOMWindow subobjects can be re-created after navigation

@@ -74,7 +74,7 @@ void AccessibilityListBox::addChildren()
     
     m_haveChildren = true;
     
-    const Vector<Element*>& listItems = static_cast<HTMLSelectElement*>(selectNode)->listItems();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(selectNode)->listItems();
     unsigned length = listItems.size();
     for (unsigned i = 0; i < length; i++) {
         // The cast to HTMLElement below is safe because the only other possible listItem type
