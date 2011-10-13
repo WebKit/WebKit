@@ -1,3 +1,9 @@
+2011-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, rebaselined GTK SVG test result.
+
+        * platform/gtk/svg/hixie/cascade/002-expected.txt:
+
 2011-10-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Add an ability to look up and explore an object from a heap profile.
