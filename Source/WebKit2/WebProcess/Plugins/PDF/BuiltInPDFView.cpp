@@ -280,8 +280,8 @@ void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRec
     int pageTop = 0;
     for (size_t i = 0; i < m_pageBoxes.size(); ++i) {
         IntRect pageBox = m_pageBoxes[i];
-        float extraOffsetForCenteringX = max((m_frameRect.width() - pageBox.width()) / 2.0f, 0.0f);
-        float extraOffsetForCenteringY = (m_pageBoxes.size() == 1) ? max((m_frameRect.height() - pageBox.height() + shadowOffsetY) / 2.0f, 0.0f) : 0;
+        float extraOffsetForCenteringX = max(roundf((m_frameRect.width() - pageBox.width()) / 2.0f), 0.0f);
+        float extraOffsetForCenteringY = (m_pageBoxes.size() == 1) ? max(roundf((m_frameRect.height() - pageBox.height() + shadowOffsetY) / 2.0f), 0.0f) : 0;
 
         if (pageTop > contentRect.maxY())
             break;
