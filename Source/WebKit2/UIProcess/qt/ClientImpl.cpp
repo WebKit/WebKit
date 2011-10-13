@@ -74,6 +74,11 @@ static void dispatchLoadFailed(WKFrameRef frame, const void* clientInfo, WKError
         return;
 
     toQtWebPageProxy(clientInfo)->updateNavigationActions();
+
+    int errorCode = WKErrorGetErrorCode(error);
+    if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad)
+        return;
+
     toQtWebPageProxy(clientInfo)->loadDidFail(QWebErrorPrivate::createQWebError(error));
 }
 

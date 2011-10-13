@@ -1,3 +1,19 @@
+2011-10-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] WebViews are emitting loadFailed for "private" error codes
+        https://bugs.webkit.org/show_bug.cgi?id=70047
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Both QDesktopWebView and QTouchWebView are emitting loadFailed for private errors
+        like the ones defined in Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp.
+
+        We now filter these by not emitting this signal for FrameLoadInterruptedByPolicyChange,
+        PlugInWillHandleLoad and Cancellation, following previous decisions from WebKit 1.
+
+        * UIProcess/qt/ClientImpl.cpp:
+        (dispatchLoadFailed):
+
 2011-10-13  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Implement TextChecker for WebKit2 GTK+
