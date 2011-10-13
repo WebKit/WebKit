@@ -2147,7 +2147,7 @@ void WebPageProxy::pageDidScroll()
 #endif
 }
 
-void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data& data)
+void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& settings)
 {
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();
@@ -2157,12 +2157,13 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    RefPtr<WebOpenPanelParameters> parameters = WebOpenPanelParameters::create(settings);
     m_openPanelResultListener = WebOpenPanelResultListenerProxy::create(this);
 
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
     process()->responsivenessTimer()->stop();
 
-    if (!m_uiClient.runOpenPanel(this, frame, data, m_openPanelResultListener.get()))
+    if (!m_uiClient.runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
         didCancelForOpenPanel();
 }
 

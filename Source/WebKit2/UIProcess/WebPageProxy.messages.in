@@ -57,7 +57,7 @@ messages -> WebPageProxy {
     WindowToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
     RunBeforeUnloadConfirmPanel(WTF::String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
-    RunOpenPanel(uint64_t frameID, WebKit::WebOpenPanelParameters::Data parameters)
+    RunOpenPanel(uint64_t frameID, WebCore::FileChooserSettings parameters)
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)

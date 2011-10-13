@@ -46,6 +46,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     struct CompositionUnderline;
+    struct FileChooserSettings;
     struct GrammarDetail;
     struct MimeClassInfo;
     struct PluginInfo;
@@ -190,6 +191,11 @@ template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
 template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
     static void encode(ArgumentEncoder*, const WebCore::DatabaseDetails&);
     static bool decode(ArgumentDecoder*, WebCore::DatabaseDetails&);
+};
+
+template<> struct ArgumentCoder<WebCore::FileChooserSettings> {
+    static void encode(ArgumentEncoder*, const WebCore::FileChooserSettings&);
+    static bool decode(ArgumentDecoder*, WebCore::FileChooserSettings&);
 };
 
 template<> struct ArgumentCoder<WebCore::GrammarDetail> {

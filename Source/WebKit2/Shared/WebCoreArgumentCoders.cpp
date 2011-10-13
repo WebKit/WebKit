@@ -32,6 +32,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FileChooser.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Image.h>
 #include <WebCore/PluginData.h>
@@ -514,6 +515,30 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder* decoder, DatabaseDe
         return false;
     
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
+    return true;
+}
+
+
+void ArgumentCoder<FileChooserSettings>::encode(ArgumentEncoder* encoder, const FileChooserSettings& settings)
+{
+    encoder->encode(settings.allowsMultipleFiles);
+#if ENABLE(DIRECTORY_UPLOAD)
+    encoder->encode(settings.allowsDirectoryUpload);
+#endif
+    encoder->encode(settings.selectedFiles);
+}
+
+bool ArgumentCoder<FileChooserSettings>::decode(ArgumentDecoder* decoder, FileChooserSettings& settings)
+{
+    if (!decoder->decode(settings.allowsMultipleFiles))
+        return false;
+#if ENABLE(DIRECTORY_UPLOAD)
+    if (!decoder->decode(settings.allowsDirectoryUpload))
+        return false;
+#endif
+    if (!decoder->decode(settings.selectedFiles))
+        return false;
+
     return true;
 }
 

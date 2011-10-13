@@ -614,18 +614,7 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     RefPtr<FileChooser> fileChooser = prpFileChooser;
 
     m_page->setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(m_page, fileChooser.get()));
-    
-    WebOpenPanelParameters::Data parameters;
-    parameters.allowMultipleFiles = fileChooser->settings().allowsMultipleFiles;
-#if ENABLE(DIRECTORY_UPLOAD)
-    parameters.allowsDirectoryUpload = fileChooser->settings().allowsDirectoryUpload;
-#else
-    parameters.allowsDirectoryUpload = false;
-#endif
-    parameters.acceptTypes = fileChooser->settings().deprecatedAcceptTypes;
-    parameters.filenames = fileChooser->settings().selectedFiles;
-
-    m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));
+    m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), fileChooser->settings()));
 }
 
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)

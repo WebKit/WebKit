@@ -3,6 +3,54 @@
         Pass Parsed Accept Attribute MIME Types to WebKit Clients
         https://bugs.webkit.org/show_bug.cgi?id=69598
 
+        Reviewed by Anders Carlsson.
+
+        The WebOpenPanelParameters::Data struct was a mirror of
+        the already existing WebCore::FileChooserSettings struct.
+        So eliminate the excess struct and generate default
+        WebCore coders for the WebCore::FileChooserSettings struct.
+
+        * Scripts/webkit2/messages.py:
+        Switch to the new type. FileChooserSetting's header needs
+        to be special cased to FileChooser.h.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Encode and decode all, non-deprecated, values. So we
+        ignore deprecatedAcceptTypes. A follow-up patch will add it.
+
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::create):
+        (WebKit::WebOpenPanelParameters::WebOpenPanelParameters):
+        Switch to the new type.
+
+        * Shared/WebOpenPanelParameters.h:
+        (WebKit::WebOpenPanelParameters::allowMultipleFiles):
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        FileChooserSettings had different property names.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        Generate the WebOpenPanelParameters object here, before
+        passing into the WebUIClient. This seems to be the convention
+        to not have WebCore types in WebUIClient.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::runOpenPanel):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel):
+        Switch to the new type.
+
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
         Reviewed by Kent Tamura.
 
         Switch to deprecated for now, but the next patches will

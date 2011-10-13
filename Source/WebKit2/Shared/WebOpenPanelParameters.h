@@ -27,13 +27,9 @@
 #define WebOpenPanelParameters_h
 
 #include "APIObject.h"
+#include <WebCore/FileChooser.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
-}
 
 namespace WebKit {
 
@@ -41,28 +37,18 @@ class WebOpenPanelParameters : public APIObject {
 public:
     static const Type APIType = TypeOpenPanelParameters;
 
-    struct Data {
-        void encode(CoreIPC::ArgumentEncoder*) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, Data&);
-
-        bool allowMultipleFiles;
-        bool allowsDirectoryUpload;
-        String acceptTypes;
-        Vector<String> filenames;
-    };
-
-    static PassRefPtr<WebOpenPanelParameters> create(const Data&);
+    static PassRefPtr<WebOpenPanelParameters> create(const WebCore::FileChooserSettings&);
     ~WebOpenPanelParameters();
 
-    bool allowMultipleFiles() const { return m_data.allowMultipleFiles; } 
-    Vector<String> selectedFileNames() const { return m_data.filenames; }
+    bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; } 
+    Vector<String> selectedFileNames() const { return m_settings.selectedFiles; }
 
 private:
-    explicit WebOpenPanelParameters(const Data&);
+    explicit WebOpenPanelParameters(const WebCore::FileChooserSettings&);
 
     virtual Type type() const { return APIType; }
 
-    Data m_data;
+    WebCore::FileChooserSettings m_settings;
 };
 
 } // namespace WebKit

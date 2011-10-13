@@ -313,13 +313,12 @@ unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFra
     return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.clientInfo);
 }
 
-bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, const WebOpenPanelParameters::Data& parameterData, WebOpenPanelResultListenerProxy* listener)
+bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
 {
     if (!m_client.runOpenPanel)
         return false;
 
-    RefPtr<WebOpenPanelParameters> parameters = WebOpenPanelParameters::create(parameterData);
-    m_client.runOpenPanel(toAPI(page), toAPI(frame), toAPI(parameters.get()), toAPI(listener), m_client.clientInfo);
+    m_client.runOpenPanel(toAPI(page), toAPI(frame), toAPI(parameters), toAPI(listener), m_client.clientInfo);
     return true;
 }
 

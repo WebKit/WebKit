@@ -26,44 +26,22 @@
 #include "config.h"
 #include "WebOpenPanelParameters.h"
 
-#include "WebCoreArgumentCoders.h"
+using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebOpenPanelParameters> WebOpenPanelParameters::create(const Data& data)
+PassRefPtr<WebOpenPanelParameters> WebOpenPanelParameters::create(const FileChooserSettings& settings)
 {
-    return adoptRef(new WebOpenPanelParameters(data));
+    return adoptRef(new WebOpenPanelParameters(settings));
 }
 
-WebOpenPanelParameters::WebOpenPanelParameters(const Data& data)
-    : m_data(data)
+WebOpenPanelParameters::WebOpenPanelParameters(const FileChooserSettings& settings)
+    : m_settings(settings)
 {
 }
 
 WebOpenPanelParameters::~WebOpenPanelParameters()
 {
-}
-
-void WebOpenPanelParameters::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(allowMultipleFiles);
-    encoder->encode(allowsDirectoryUpload);
-    encoder->encode(acceptTypes);
-    encoder->encode(filenames);
-}
-
-bool WebOpenPanelParameters::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& result)
-{
-    if (!decoder->decode(result.allowMultipleFiles))
-        return false;
-    if (!decoder->decode(result.allowsDirectoryUpload))
-        return false;
-    if (!decoder->decode(result.acceptTypes))
-        return false;
-    if (!decoder->decode(result.filenames))
-        return false;
-
-    return true;
 }
 
 } // namespace WebCore
