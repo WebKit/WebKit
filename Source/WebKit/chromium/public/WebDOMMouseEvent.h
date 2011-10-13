@@ -44,8 +44,6 @@ public:
     WEBKIT_EXPORT int screenY() const;
     WEBKIT_EXPORT int clientX() const;
     WEBKIT_EXPORT int clientY() const;
-    WEBKIT_EXPORT int layerX();
-    WEBKIT_EXPORT int layerY();
     WEBKIT_EXPORT int offsetX();
     WEBKIT_EXPORT int offsetY();
     WEBKIT_EXPORT int pageX() const;

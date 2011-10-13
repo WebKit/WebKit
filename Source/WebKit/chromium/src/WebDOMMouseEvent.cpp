@@ -57,16 +57,6 @@ int WebDOMMouseEvent::clientY() const
     return constUnwrap<MouseEvent>()->clientY();
 }
 
-int WebDOMMouseEvent::layerX()
-{
-    return unwrap<MouseEvent>()->layerX();
-}
-
-int WebDOMMouseEvent::layerY()
-{
-    return unwrap<MouseEvent>()->layerY();
-}
-
 int WebDOMMouseEvent::offsetX()
 {
     return unwrap<MouseEvent>()->offsetX();
