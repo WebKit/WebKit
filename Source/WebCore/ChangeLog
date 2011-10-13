@@ -1,5 +1,83 @@
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
+        Constructor should not be called if the object is being constructed inside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=70015
+
+        Reviewed by Adam Barth.
+
+        Summary: A DOM object can be created from the JS context and from the WebCore context.
+        Constructor should be called if the object is created from the JS context,
+        but should not be called if the object is created from the WebCore context.
+
+        Details:
+        - Expected behavior when the object is created from the JS context (e.g. "new Event()"):
+        (1) V8XXXX::constructorCallback() is called.
+        (2) V8XXXX::constructorCallback() calls XXXX::create().
+        (3) XXXX::create() creates a C++ object.
+        (4) V8XXXX::constructorCallback() calls toV8() for the C++ object.
+        (5) toV8() wraps the C++ object and returns the wrapped JS object.
+
+        - Actual behavior when the object is created from the JS context (e.g. "new Event()"):
+        As described above (1) - (5). That's fine!!
+
+        - Expected behavior when the object is created from the WebCore context.
+        (e.g. "window.addEventListener("load", function (event) { ... });". In this case,
+        the Event object is created inside the WebCore context):
+        (1) WebCore calls XXXX::create().
+        (2) XXXX::create() creates a C++ object.
+        (3) WebCore calls toV8() for the C++ object.
+        (4) toV8() wraps the C++ object and returns the wrapped JS object.
+
+        - Actual behavior when the object is created from the WebCore context.
+        (e.g. "window.addEventListener("load", function (event) { ... });"):
+        (1) WebCore calls XXXX::create().
+        (2) XXXX::create() creates a C++ object.
+        (3) WebCore calls toV8() for the C++ object.
+        (4) toV8() can call XXXX::constructorCallback(). (Whether or not toV8() calls
+        XXXX::constructorCallback() depends on the implementation of toV8().)
+        (5) V8XXXX::constructorCallback() calls XXXX::create().
+        (6) XXXX::create() creates __another__ C++ object.
+        (7) V8XXXX::constructorCallback() calls toV8() for the C++ object.
+        (8) toV8() wraps the C++ object and returns the wrapped JS object.
+
+        This actual behavior definitely causes the following problems:
+
+        - Problem1: The object returned to JS is not the object created in (2)
+        but the object created in (6). However, I do not yet know a test case that causes
+        some visible bug because of this problem.
+
+        - Problem2: In (4), XXXX::constructorCallback() can be called with no argument.
+        If XXXX::constructorCallback() expects at least one argument, XXXX::constructorCallback()
+        throws TypeError, resulting in crash. For example, Event caused this problem
+        when I implemented constructor for Event. Based on the discussion with Dominicc,
+        we solved this problem by adding the following two lines of code to Event::constructorCallback()
+        (See here: http://codesearch.google.com/codesearch#OAMlx_jo-ck/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventConstructors.cpp&exact_package=chromium&q=allowallocation&type=cs):
+
+        XXXX::constructorCallback(...) {
+            ...;
+            if (AllowAllocation::current())
+                return args.Holder();
+            ...;
+        }
+
+        This if check means "XXXX::constructorCallback() returns immediately if it is called
+        from the WebCore context".
+
+        With these observations, we think that all constructorCallback() should have the above
+        if check. This patch adds the if check to CodeGeneratorV8.pm. After this patch is landed,
+        I would like to add the if check to all existing custom V8 constructors.
+
+        No new tests, since we could not find a test case that causes some visible bug without the if check.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorCallback): Generates a constructor so that it returns immediately without doing anything if the constructor is called from the WebCore context.
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Updated the result.
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+        (WebCore::V8TestObj::constructorCallback):
+
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
         Implement a BeforeLoadEvent constructor for V8
         https://bugs.webkit.org/show_bug.cgi?id=69980
 

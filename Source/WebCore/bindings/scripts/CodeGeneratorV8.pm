@@ -1532,6 +1532,8 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (AllowAllocation::current())
+        return args.Holder();
 END
 
     push(@implContent, GenerateArgumentsCountCheck($function, $dataNode));

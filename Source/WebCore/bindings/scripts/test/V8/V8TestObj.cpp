@@ -1393,6 +1393,8 @@ v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (AllowAllocation::current())
+        return args.Holder();
 
     RefPtr<TestObj> obj = TestObj::create();
 
