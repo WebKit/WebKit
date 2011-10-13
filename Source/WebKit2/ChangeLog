@@ -1,3 +1,18 @@
+2011-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Wheel event handler counter is incorrect with PDF views
+        https://bugs.webkit.org/show_bug.cgi?id=70062
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::didAddVerticalScrollbar): Added forgotten override for vertical case.
+        (WebKit::BuiltInPDFView::willRemoveVerticalScrollbar): Ditto.
+        (WebKit::BuiltInPDFView::createScrollbar): Notify self, do not make a shortcut to ScrollAnimator.
+        (WebKit::BuiltInPDFView::destroyScrollbar): Ditto.
+        (WebKit::BuiltInPDFView::destroy): Actually destroy the scrollbars.
+
 2011-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Sync requestAnimationFrame callback to CVDisplayLink on Mac

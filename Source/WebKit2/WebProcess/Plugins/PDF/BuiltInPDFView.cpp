@@ -142,14 +142,28 @@ void BuiltInPDFView::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
         pluginView->frame()->document()->didRemoveWheelEventHandler();
 }
 
+void BuiltInPDFView::didAddVerticalScrollbar(Scrollbar* scrollbar)
+{
+    pluginView()->frame()->document()->didAddWheelEventHandler();
+    ScrollableArea::didAddVerticalScrollbar(scrollbar);
+}
+
+void BuiltInPDFView::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
+{
+    ScrollableArea::willRemoveVerticalScrollbar(scrollbar);
+    // FIXME: Maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
+    if (PluginView* pluginView = this->pluginView())
+        pluginView->frame()->document()->didRemoveWheelEventHandler();
+}
+
 PassRefPtr<Scrollbar> BuiltInPDFView::createScrollbar(ScrollbarOrientation orientation)
 {
     // FIXME: Support custom scrollbar styles.
     RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar)
-        scrollAnimator()->didAddHorizontalScrollbar(widget.get());
+        didAddHorizontalScrollbar(widget.get());
     else 
-        scrollAnimator()->didAddVerticalScrollbar(widget.get());
+        didAddVerticalScrollbar(widget.get());
     pluginView()->frame()->view()->addChild(widget.get());
     return widget.release();
 }
@@ -161,9 +175,9 @@ void BuiltInPDFView::destroyScrollbar(ScrollbarOrientation orientation)
         return;
 
     if (orientation == HorizontalScrollbar)
-        scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar.get());
+        willRemoveHorizontalScrollbar(scrollbar.get());
     else
-        scrollAnimator()->willRemoveVerticalScrollbar(scrollbar.get());
+        willRemoveVerticalScrollbar(scrollbar.get());
 
     scrollbar->removeFromParent();
     scrollbar->disconnectFromScrollableArea();
@@ -214,10 +228,8 @@ void BuiltInPDFView::destroy()
     if (m_page)
         m_page->removeScrollableArea(this);
 
-    if (m_horizontalScrollbar)
-        willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
-    if (m_verticalScrollbar)
-        willRemoveVerticalScrollbar(m_verticalScrollbar.get());
+    destroyScrollbar(HorizontalScrollbar);
+    destroyScrollbar(VerticalScrollbar);
 }
 
 void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRectInWindowCoordinates)
