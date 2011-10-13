@@ -3498,6 +3498,12 @@ BUGWK63186 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PA
 BUGWK63186 LEOPARD LINUX WIN : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK65862 MAC DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
 
+// Performance issues with border radius clipping on Chromium not yet resolved
+BUGCR97716 : fast/clip/overflow-border-radius-composited.html = IMAGE
+BUGCR97716 : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
+BUGCR97716 : fast/clip/overflow-border-radius-transformed.html = IMAGE
+BUGCR97716 : fast/clip/overflow-border-radius-combinations.html = IMAGE
+
 // Caused by r92618
 BUGWK65874 : fast/js/preventExtensions.html = TEXT
 
