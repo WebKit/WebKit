@@ -1,3 +1,16 @@
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
+        Reviewed by Kent Tamura.
+
+        EFL uses the deprecated accept string. They can switch
+        to an Eina_List if they want to update their API.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+
 2011-10-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Change efl style parameter variables with WebKit coding Style

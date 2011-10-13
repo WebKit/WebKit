@@ -622,7 +622,7 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
 #else
     parameters.allowsDirectoryUpload = false;
 #endif
-    parameters.acceptTypes = fileChooser->settings().acceptTypes;
+    parameters.acceptTypes = fileChooser->settings().deprecatedAcceptTypes;
     parameters.filenames = fileChooser->settings().selectedFiles;
 
     m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));

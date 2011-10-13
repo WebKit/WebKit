@@ -1,3 +1,19 @@
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
+        Reviewed by Kent Tamura.
+
+        Deprecate the old String version of getting the "accept"
+        mime type values. Instead we will change to include a
+        list of MIME types.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::receiveDropForDirectoryUpload):
+        * platform/FileChooser.h:
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(XHTMLMP) and associated code

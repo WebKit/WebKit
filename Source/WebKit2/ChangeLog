@@ -1,3 +1,16 @@
+2011-10-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Pass Parsed Accept Attribute MIME Types to WebKit Clients
+        https://bugs.webkit.org/show_bug.cgi?id=69598
+
+        Reviewed by Kent Tamura.
+
+        Switch to deprecated for now, but the next patches will
+        remove the deprecated version from the WebKit2 path.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel):
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(XHTMLMP) and associated code

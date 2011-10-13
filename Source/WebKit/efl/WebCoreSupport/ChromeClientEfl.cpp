@@ -433,7 +433,7 @@ void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     void* filename;
     Vector<String> filenames;
 
-    CString accept = chooser->settings().acceptTypes.utf8();
+    CString accept = chooser->settings().deprecatedAcceptTypes.utf8();
     confirm = ewk_view_run_open_panel(m_view, kit(frame), chooser->settings().allowsMultipleFiles, accept.data(), &selectedFilenames);
 
     if (!confirm)
