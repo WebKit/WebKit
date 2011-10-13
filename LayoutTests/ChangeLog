@@ -1,3 +1,14 @@
+2011-10-12  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a WebKitTransitionEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=69911
+
+        Reviewed by Adam Barth.
+
+        Enabled webkit-transition-event-constructor.html, since now V8 has the WebKitTransitionEvent constructor.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-12  Ojan Vafai  <ojan@chromium.org>
 
         make fast/writing-mode/margins.html a reftest to avoid cross-platform differences
