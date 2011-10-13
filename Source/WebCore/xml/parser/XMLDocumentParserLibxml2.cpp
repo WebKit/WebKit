@@ -68,11 +68,6 @@
 #include <libxslt/xslt.h>
 #endif
 
-#if ENABLE(XHTMLMP)
-#include "HTMLScriptElement.h"
-#endif
-
-
 using namespace std;
 
 namespace WebCore {
@@ -555,10 +550,6 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
-#if ENABLE(XHTMLMP)
-    , m_isXHTMLMPDocument(false)
-    , m_hasDocTypeDeclaration(false)
-#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -581,10 +572,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
-#if ENABLE(XHTMLMP)
-    , m_isXHTMLMPDocument(false)
-    , m_hasDocTypeDeclaration(false)
-#endif
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
@@ -756,14 +743,6 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
-#if ENABLE(XHTMLMP)
-    // check if the DOCTYPE Declaration of XHTMLMP document exists
-    if (!m_hasDocTypeDeclaration && document()->isXHTMLMPDocument()) {
-        handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
-        return;
-    }
-#endif
-
     exitText();
 
     AtomicString localName = toAtomicString(xmlLocalName);
@@ -776,24 +755,6 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         else
             uri = m_defaultNamespaceURI;
     }
-
-#if ENABLE(XHTMLMP)
-    if (!m_sawFirstElement && isXHTMLMPDocument()) {
-        // As per the section 7.1 of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf,
-        // we should make sure that the root element MUST be 'html' and
-        // ensure the name of the default namespace on the root elment 'html'
-        // MUST be 'http://www.w3.org/1999/xhtml'
-        if (localName != HTMLNames::htmlTag.localName()) {
-            handleError(fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
-            return;
-        }
-
-        if (uri.isNull()) {
-            m_defaultNamespaceURI = HTMLNames::xhtmlNamespaceURI;
-            uri = m_defaultNamespaceURI;
-        }
-    }
-#endif
 
     bool isFirstElement = !m_sawFirstElement;
     m_sawFirstElement = true;
@@ -887,13 +848,7 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    bool successfullyPrepared = scriptElement->prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute);
-    if (!successfullyPrepared) {
-#if ENABLE(XHTMLMP)
-        if (!scriptElement->isScriptTypeSupported(ScriptElement::AllowLegacyTypeInTypeAttribute))
-            document()->setShouldProcessNoscriptElement(true);
-#endif
-    } else {
+    if (scriptElement->prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute)) {
         // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
 
@@ -1043,9 +998,6 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
 void XMLDocumentParser::endDocument()
 {
     exitText();
-#if ENABLE(XHTMLMP)
-    m_hasDocTypeDeclaration = false;
-#endif
 }
 
 void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
@@ -1058,28 +1010,8 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
         return;
     }
 
-    if (document()) {
-#if ENABLE(XHTMLMP)
-        String extId = toString(externalID);
-        String dtdName = toString(name);
-        if (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
-            || extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN") {
-            if (dtdName != HTMLNames::htmlTag.localName()) {
-                handleError(fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
-                return;
-            }
-
-            if (document()->isXHTMLMPDocument())
-                setIsXHTMLMPDocument(true);
-            else
-                setIsXHTMLDocument(true);
-
-            m_hasDocTypeDeclaration = true;
-        }
-#endif
-
+    if (document())
         document()->parserAddChild(DocumentType::create(document(), toString(name), toString(externalID), toString(systemID)));
-    }
 }
 
 static inline XMLDocumentParser* getParser(void* closure)
@@ -1220,11 +1152,7 @@ static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
     }
 
     ent = xmlGetDocEntity(ctxt->myDoc, name);
-    if (!ent && (getParser(closure)->isXHTMLDocument()
-#if ENABLE(XHTMLMP)
-                 || getParser(closure)->isXHTMLMPDocument()
-#endif
-       )) {
+    if (!ent && getParser(closure)->isXHTMLDocument()) {
         ent = getXHTMLEntity(name);
         if (ent)
             ent->etype = XML_INTERNAL_GENERAL_ENTITY;
@@ -1263,8 +1191,7 @@ static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* 
         || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
-       )
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 

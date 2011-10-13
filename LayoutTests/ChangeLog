@@ -1,3 +1,21 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        Remove ENABLE(XHTMLMP) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=69729
+
+        Reviewed by David Levin.
+
+        These tests are not needed anymore (and they are currently not run).
+
+        * fast/xhtmlmp: Removed.
+        * fast/xhtmlmp/check-doctype-declaration.xhtml: Removed.
+        * fast/xhtmlmp/check-rootelement.xhtml: Removed.
+        * fast/xhtmlmp/noscript-basic-expected.txt: Removed.
+        * fast/xhtmlmp/noscript-basic.xhtml: Removed.
+        * fast/xhtmlmp/noscript-in-multiscripts.xhtml: Removed.
+        * fast/xhtmlmp/noscript-nested.xhtml: Removed.
+        * fast/xhtmlmp/noscript.xhtml: Removed.
+
 2011-10-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.

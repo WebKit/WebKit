@@ -1745,8 +1745,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLModElement.h \
 	Source/WebCore/html/HTMLNameCollection.cpp \
 	Source/WebCore/html/HTMLNameCollection.h \
-	Source/WebCore/html/HTMLNoScriptElement.cpp \
-	Source/WebCore/html/HTMLNoScriptElement.h \
 	Source/WebCore/html/HTMLObjectElement.cpp \
 	Source/WebCore/html/HTMLObjectElement.h \
 	Source/WebCore/html/HTMLOListElement.cpp \

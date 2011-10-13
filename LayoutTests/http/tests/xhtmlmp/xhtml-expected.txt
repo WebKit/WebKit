@@ -1,1 +1,0 @@
-Simple XHTML file served with an XHTML mobile profile MIME type

@@ -1,3 +1,16 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        Remove ENABLE(XHTMLMP) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=69729
+
+        Reviewed by David Levin.
+
+        * Scripts/build-webkit:
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitperl/features.pm:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Kill old run-webkit-tests processes in kill-process on Mac

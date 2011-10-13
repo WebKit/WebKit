@@ -91,10 +91,6 @@ class Text;
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
-#if ENABLE(XHTMLMP)
-        void setIsXHTMLMPDocument(bool isXHTML) { m_isXHTMLMPDocument = isXHTML; }
-        bool isXHTMLMPDocument() const { return m_isXHTMLMPDocument; }
-#endif
 
         static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
 
@@ -196,11 +192,6 @@ public:
         bool m_sawXSLTransform;
         bool m_sawFirstElement;
         bool m_isXHTMLDocument;
-#if ENABLE(XHTMLMP)
-        bool m_isXHTMLMPDocument;
-        bool m_hasDocTypeDeclaration;
-#endif
-
         bool m_parserPaused;
         bool m_requestingScript;
         bool m_finishCalled;

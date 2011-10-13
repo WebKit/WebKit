@@ -317,11 +317,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
         return HTMLDocument::create(frame, url);
-    if (type == "application/xhtml+xml"
-#if ENABLE(XHTMLMP)
-        || type == "application/vnd.wap.xhtml+xml"
-#endif
-        )
+    if (type == "application/xhtml+xml")
         return Document::createXHTML(frame, url);
 
 #if ENABLE(FTPDIR)

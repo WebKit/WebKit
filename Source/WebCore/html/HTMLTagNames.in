@@ -131,10 +131,4 @@ var interfaceName=HTMLElement
 video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 wbr interfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement
-
-#if ENABLE_XHTMLMP
-noscript interfaceName=HTMLNoScriptElement
-#else
 noscript interfaceName=HTMLElement
-#endif
-

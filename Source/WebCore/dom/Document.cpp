@@ -204,10 +204,6 @@
 #include "MathMLNames.h"
 #endif
 
-#if ENABLE(XHTMLMP)
-#include "HTMLNoScriptElement.h"
-#endif
-
 #if ENABLE(FULLSCREEN_API)
 #include "RenderFullScreen.h"
 #endif
@@ -517,9 +513,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     static int docID = 0;
     m_docID = docID++;
-#if ENABLE(XHTMLMP)
-    m_shouldProcessNoScriptElement = !(m_frame && m_frame->script()->canExecuteScripts(NotAboutToExecuteScript));
-#endif
 }
 
 Document::~Document()
@@ -4832,19 +4825,6 @@ MediaCanStartListener* Document::takeAnyMediaCanStartListener()
     m_mediaCanStartListeners.remove(slot);
     return listener;
 }
-
-#if ENABLE(XHTMLMP)
-bool Document::isXHTMLMPDocument() const
-{
-    if (!frame() || !frame()->loader())
-        return false;
-    // As per section 7.2 of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, a conforming user agent
-    // MUST accept XHTMLMP document identified as "application/vnd.wap.xhtml+xml"
-    // and SHOULD accept it identified as "application/xhtml+xml" , "application/xhtml+xml" is a 
-    // general MIME type for all XHTML documents, not only for XHTMLMP
-    return loader()->writer()->mimeType() == "application/vnd.wap.xhtml+xml";
-}
-#endif
 
 #if ENABLE(FULLSCREEN_API)
 bool Document::fullScreenIsAllowedForElement(Element* element) const

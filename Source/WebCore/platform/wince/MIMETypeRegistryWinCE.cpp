@@ -108,11 +108,6 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
             return i->first;
     }
 
-#if ENABLE(XHTMLMP)
-    if (equalIgnoringCase("application/vnd.wap.xhtml+xml", type))
-        return String("xml");
-#endif
-
     return String();
 }
 

@@ -598,14 +598,6 @@ AC_ARG_ENABLE(media_stream,
               [],[enable_media_stream="no"])
 AC_MSG_RESULT([$enable_media_stream])
 
-# check whether to enable XHTML-MP support
-AC_MSG_CHECKING([whether to enable XHTML-MP support])
-AC_ARG_ENABLE(xhtmlmp,
-              AC_HELP_STRING([--enable-xhtmlmp],
-                             [enable support for XHTML-MP [default=no]]),
-              [],[enable_xhtmlmp="no"])
-AC_MSG_RESULT([$enable_xhtmlmp])
-
 # check whether to enable XPath support
 AC_MSG_CHECKING([whether to enable XPath support])
 AC_ARG_ENABLE(xpath,
@@ -1165,7 +1157,6 @@ AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_COLOR],[test "$enable_input_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
-AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
@@ -1297,7 +1288,6 @@ Features:
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
- XHTML-MP support                                         : $enable_xhtmlmp
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
  Spellcheck support                                       : $enable_spellcheck

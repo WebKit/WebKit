@@ -61,11 +61,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
 
 PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()
 {
-    if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type)
-#if ENABLE(XHTMLMP)
-        || m_type == "application/vnd.wap.xhtml+xml"
-#endif
-        )
+    if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type))
         return HTMLViewSourceParser::create(this);
 
     return TextViewSourceParser::create(this);

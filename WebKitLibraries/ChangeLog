@@ -1,3 +1,13 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        Remove ENABLE(XHTMLMP) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=69729
+
+        Reviewed by David Levin.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2011-10-11  Kent Tamura  <tkent@chromium.org>
 
         C4481 warning should be disabled for OVERRIDE and FINAL.

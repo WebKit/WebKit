@@ -1741,7 +1741,6 @@ HEADERS += \
     html/HTMLMeterElement.h \
     html/HTMLModElement.h \
     html/HTMLNameCollection.h \
-    html/HTMLNoScriptElement.h \
     html/HTMLObjectElement.h \
     html/HTMLOListElement.h \
     html/HTMLOptGroupElement.h \
@@ -3254,11 +3253,6 @@ contains(DEFINES, ENABLE_MATHML=1) {
         rendering/mathml/RenderMathMLSquareRoot.cpp \
         rendering/mathml/RenderMathMLSubSup.cpp \
         rendering/mathml/RenderMathMLUnderOver.cpp
-}
-
-contains(DEFINES, ENABLE_XHTMLMP=1) {
-    SOURCES += \
-        html/HTMLNoScriptElement.cpp
 }
 
 # QRawFont feature added in Qt 4.8.0

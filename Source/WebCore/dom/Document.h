@@ -440,11 +440,6 @@ public:
 #endif
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }
-#if ENABLE(XHTMLMP)
-    bool isXHTMLMPDocument() const; 
-    bool shouldProcessNoscriptElement() const { return m_shouldProcessNoScriptElement; }
-    void setShouldProcessNoscriptElement(bool shouldDo) { m_shouldProcessNoScriptElement = shouldDo; }
-#endif
     virtual bool isFrameSet() const { return false; }
     
     PassRefPtr<CSSPrimitiveValueCache> cssPrimitiveValueCache() const;
@@ -1316,10 +1311,6 @@ private:
     bool m_xmlStandalone;
 
     String m_contentLanguage;
-
-#if ENABLE(XHTMLMP)
-    bool m_shouldProcessNoScriptElement;
-#endif
 
     RenderObject* m_savedRenderer;
     

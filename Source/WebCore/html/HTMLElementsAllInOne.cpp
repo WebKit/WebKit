@@ -76,7 +76,6 @@
 #include "HTMLMetaElement.cpp"
 #include "HTMLMeterElement.cpp"
 #include "HTMLModElement.cpp"
-#include "HTMLNoScriptElement.cpp"
 #include "HTMLOListElement.cpp"
 #include "HTMLObjectElement.cpp"
 #include "HTMLOptGroupElement.cpp"

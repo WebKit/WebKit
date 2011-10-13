@@ -5476,8 +5476,6 @@
             'html/HTMLModElement.h',
             'html/HTMLNameCollection.cpp',
             'html/HTMLNameCollection.h',
-            'html/HTMLNoScriptElement.cpp',
-            'html/HTMLNoScriptElement.h',
             'html/HTMLOListElement.cpp',
             'html/HTMLOListElement.h',
             'html/HTMLObjectElement.cpp',

@@ -96,7 +96,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
         pass
 
     def test_skipped_directories_for_symbols(self):
-        supported_symbols = ["GraphicsLayer", "WebCoreHas3DRendering", "isXHTMLMPDocument", "fooSymbol"]
+        supported_symbols = ["GraphicsLayer", "WebCoreHas3DRendering", "fooSymbol"]
         expected_directories = set(["mathml", "fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl", "mhtml"])
         result_directories = set(TestWebKitPort(supported_symbols, None)._skipped_tests_for_unsupported_features())
         self.assertEqual(result_directories, expected_directories)

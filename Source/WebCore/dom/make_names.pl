@@ -948,7 +948,7 @@ sub usesDefaultJSWrapper
     my $name = shift;
 
     # A tag reuses the default wrapper if its JSInterfaceName matches the default namespace Element.
-    return $enabledTags{$name}{JSInterfaceName} eq $parameters{namespace} . "Element" || $enabledTags{$name}{JSInterfaceName} eq "HTMLNoScriptElement";
+    return $enabledTags{$name}{JSInterfaceName} eq $parameters{namespace} . "Element";
 }
 
 sub printWrapperFunctions

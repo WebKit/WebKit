@@ -1,3 +1,0 @@
-If you see this line only when javascript enabled, it succeeds; one line follows if Javascript is disabled
-
-

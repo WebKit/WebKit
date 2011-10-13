@@ -128,7 +128,6 @@ my (
     $webSocketsSupport,
     $webTimingSupport,
     $workersSupport,
-    $xhtmlmpSupport,
     $xpathSupport,
     $xsltSupport,
 );
@@ -322,9 +321,6 @@ my @features = (
 
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$workersSupport },
-
-    { option => "xhtmlmp", desc => "Toggle XHTML-MP support",
-      define => "ENABLE_XHTMLMP", default => 0, value => \$xhtmlmpSupport },
 
     { option => "xpath", desc => "Toggle XPath support",
       define => "ENABLE_XPATH", default => 1, value => \$xpathSupport },

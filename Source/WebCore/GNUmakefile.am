@@ -385,14 +385,6 @@ webcore_cppflags += -DENABLE_MEDIA_STREAM=0
 endif # END ENABLE_MEDIA_STREAM
 
 # ----
-# XHTML-MP Support
-# ----
-if ENABLE_XHTMLMP
-FEATURE_DEFINES += ENABLE_XHTMLMP=1
-webcore_cppflags += -DENABLE_XHTMLMP=1
-endif # END ENABLE_XHTMLMP
-
-# ----
 # XPath Support
 # ----
 if ENABLE_XPATH

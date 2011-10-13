@@ -388,12 +388,6 @@ WONTFIX SKIP : http/tests/globalhistory = FAIL
 // For more details, see discussions at issue 20570.
 WONTFIX SKIP : fast/forms/get-forms-to-about-blank.html = FAIL
 
-// xhtml mp tests were added in http://trac.webkit.org/changeset/43865 and are
-// skipped on all platforms upstream.
-// We are not planning to support these.
-WONTFIX SKIP : fast/xhtmlmp = FAIL
-WONTFIX SKIP : http/tests/xhtmlmp = FAIL
-
 // This test requires LayoutTestController.setCacheModel, which we don't
 // implement because we can't emulate the caching behaviors it expects.
 WONTFIX SKIP : fast/dom/HTMLScriptElement/nested-execution.html = FAIL

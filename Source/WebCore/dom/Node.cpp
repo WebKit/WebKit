@@ -111,10 +111,6 @@
 #include "SVGUseElement.h"
 #endif
 
-#if ENABLE(XHTMLMP)
-#include "HTMLNoScriptElement.h"
-#endif
-
 #if USE(JSC)
 #include <runtime/JSGlobalData.h>
 #endif

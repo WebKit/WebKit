@@ -40,7 +40,6 @@
 #cmakedefine01 ENABLE_WEBGL
 #cmakedefine01 ENABLE_WEB_SOCKETS
 #cmakedefine01 ENABLE_WORKERS
-#cmakedefine01 ENABLE_XHTMLMP
 #cmakedefine01 ENABLE_XPATH
 #cmakedefine01 ENABLE_XSLT
 #cmakedefine01 ENABLE_DFG_JIT

@@ -1,3 +1,15 @@
+2011-10-12  Adam Barth  <abarth@webkit.org>
+
+        Remove ENABLE(XHTMLMP) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=69729
+
+        Reviewed by David Levin.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+
 2011-10-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix build with GLib 2.31
