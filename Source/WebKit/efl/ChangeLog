@@ -1,3 +1,21 @@
+2011-10-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL]: Move from FileChooserSettings deprecatedAcceptType to acceptMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=70002
+
+        Reviewed by Joseph Pecoraro.
+
+        Adapt to the changes introduced in r97336 and r97338 by using a vector
+        of strings instead of a single string in runOpenPanel().
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runOpenPanel):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_run_open_panel): Change signature; accept a Vector<String>
+        instead of a char*. Build an Eina_List to pass for child classes.
+        * ewk/ewk_view.h:
+
 2011-10-13  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed; revert some changes introduced in r97329 which are

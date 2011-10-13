@@ -3253,30 +3253,37 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* ewkView, Evas_Object* fra
  * @internal
  * Open panel to choose a file.
  *
- * @param o View.
+ * @param ewkView View.
  * @param frame Frame in which operation is required.
- * @param allows_multiple_files @c EINA_TRUE when more than one file may be
- * selected, @c EINA_FALSE otherwise
- * @param accept_types accept mime types
- * @selected_filenames List of files selected.
+ * @param allowsMultipleFiles @c true when more than one file may be selected, @c false otherwise.
+ * @param acceptMIMETypes List of accepted mime types. It is passed to child objects as an Eina_List of char pointers that is freed automatically.
+ * @param selectedFilenames List of files selected.
  *
  * @return @EINA_FALSE if user canceled file selection; @EINA_TRUE if confirmed.
  */
-Eina_Bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, Eina_Bool allowsMultipleFiles, const char* acceptTypes, Eina_List** selectedFilenames)
+Eina_Bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allowsMultipleFiles, const WTF::Vector<WTF::String>& acceptMIMETypes, Eina_List** selectedFilenames)
 {
     DBG("ewkView=%p frame=%p allows_multiple_files=%d", ewkView, frame, allowsMultipleFiles);
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
-    Eina_Bool confirm;
 
     if (!sd->api->run_open_panel)
         return EINA_FALSE;
 
     *selectedFilenames = 0;
 
-    confirm = sd->api->run_open_panel(sd, frame, allowsMultipleFiles, acceptTypes, selectedFilenames);
+    Eina_List* cAcceptMIMETypes = 0;
+    for (WTF::Vector<WTF::String>::const_iterator it = acceptMIMETypes.begin(); it != acceptMIMETypes.end(); ++it)
+        cAcceptMIMETypes = eina_list_append(cAcceptMIMETypes, strdup((*it).utf8().data()));
+
+    bool confirm = sd->api->run_open_panel(sd, frame, allowsMultipleFiles, cAcceptMIMETypes, selectedFilenames);
     if (!confirm && *selectedFilenames)
         ERR("Canceled file selection, but selected filenames != 0. Free names before return.");
+
+    void* item = 0;
+    EINA_LIST_FREE(cAcceptMIMETypes, item)
+        free(item);
+
     return confirm;
 }
 

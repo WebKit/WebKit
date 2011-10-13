@@ -121,7 +121,7 @@ Eina_Bool ewk_view_run_javascript_prompt(Evas_Object* o, Evas_Object* frame, con
 Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* o);
 uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, const char* databaseName, uint64_t current_size, uint64_t expected_size);
 
-Eina_Bool ewk_view_run_open_panel(Evas_Object* o, Evas_Object* frame, Eina_Bool allows_multiple_files, const char* accept_types, Eina_List** selected_filenames);
+Eina_Bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allowsMultipleFiles, const Vector<String>& acceptMIMETypes, Eina_List** selectedFilenames);
 
 void ewk_view_repaint(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, Eina_Bool main_frame);

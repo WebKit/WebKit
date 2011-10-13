@@ -428,13 +428,12 @@ NotificationPresenter* ChromeClientEfl::notificationPresenter() const
 void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
     RefPtr<FileChooser> chooser = prpFileChooser;
-    bool confirm;
     Eina_List* selectedFilenames = 0;
     void* filename;
     Vector<String> filenames;
 
-    CString accept = chooser->settings().deprecatedAcceptTypes.utf8();
-    confirm = ewk_view_run_open_panel(m_view, kit(frame), chooser->settings().allowsMultipleFiles, accept.data(), &selectedFilenames);
+    const FileChooserSettings& settings = chooser->settings();
+    bool confirm = ewk_view_run_open_panel(m_view, kit(frame), settings.allowsMultipleFiles, settings.acceptMIMETypes, &selectedFilenames);
 
     if (!confirm)
         return;
