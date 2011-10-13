@@ -2111,7 +2111,7 @@ BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
 BUGWK20011 : printing/setPrinting.html = FAIL
-BUGWK65005 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
+BUGWK65005 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL MISSING
 
 // Needs V8 change.
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
@@ -3615,11 +3615,6 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
-// Need rebaselining after fix for webkit bug 38787 lands
-BUGWK38787 MAC WIN : fast/borders/border-radius-different-width-001.html = IMAGE
-BUGWK38787 MAC WIN : fast/borders/mixed-border-styles-radius.html = IMAGE
-BUGWK38787 MAC WIN : fast/borders/border-radius-complex-inner.html = IMAGE
-
 // Failing after r94912.
 BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
 BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT
@@ -3880,7 +3875,7 @@ BUG_RICOW : fast/js/kde/RegExp.html = TEXT
 BUG_RICOW : fast/js/toString-overrides.html = TEXT
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
-BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = IMAGE
+BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
 
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.composite.transparent.destination-atop.html = TIMEOUT
 BUGCR100056 MAC DEBUG : canvas/philip/tests/2d.fillStyle.parse.rgb-clamp-5.html = TIMEOUT

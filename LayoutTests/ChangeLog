@@ -2,6 +2,48 @@
 
         [Chromium] Update test expectation.
 
+        * fast/borders/border-radius-different-width-001-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/border-radius-different-width-001-expected.txt.
+        * fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Renamed from LayoutTests/platform/gtk/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/borders/border-radius-complex-inner-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/borders/mixed-border-styles-radius-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-radius-different-width-001-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/borders/mixed-border-styles-radius-expected.png: Removed.
+        * platform/chromium-mac-leopard/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/border-radius-complex-inner-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/mixed-border-styles-radius-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-different-width-001-expected.png: Removed.
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png: Removed.
+        * platform/chromium-win/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/border-conflict-style-079-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/border-conflict-style-079-expected.txt.
+        * platform/chromium-win/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/border-conflict-style-088-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/border-conflict-style-088-expected.txt.
+        * platform/chromium-win/fast/borders/border-radius-complex-inner-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-radius-different-width-001-expected.png:
+        * platform/chromium-win/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-win/fast/css/outline-narrowLine-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/css/outline-narrowLine-expected.png.
+        * platform/chromium-win/fast/css/outline-narrowLine-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/css/outline-narrowLine-expected.txt.
+        * platform/chromium-win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/chromium-win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt.
+        * platform/chromium/fast/css/outline-narrowLine-expected.png: Added.
+        * platform/chromium/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/borders/border-radius-different-width-001-expected.txt: Removed.
+        * platform/mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Removed.
+        * platform/qt/fast/borders/border-radius-different-width-001-expected.txt: Removed.
+
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectation.
+
         * platform/chromium-gpu-linux/media/video-playing-and-pause.png: Added.
 
 2011-10-13  Kent Tamura  <tkent@chromium.org>
