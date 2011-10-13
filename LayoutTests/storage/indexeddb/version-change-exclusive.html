@@ -1,0 +1,87 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+
+function test() {
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    openDBConnection();
+}
+
+function openDBConnection()
+{
+    evalAndLog("window.state = 'starting'");
+    request = evalAndLog("indexedDB.open('version-change-exclusive')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    window.db = evalAndLog("db = event.target.result");
+
+    debug("calling setVersion() - callback should run immediately");
+    var versionChangeRequest = evalAndLog("db.setVersion('version 1')");
+    versionChangeRequest.onerror = unexpectedErrorCallback;
+    versionChangeRequest.onsuccess = inSetVersion;
+
+    // and concurrently...
+
+    debug("calling open() - callback should wait until VERSION_CHANGE transaction is complete");
+    var openRequest = evalAndLog("indexedDB.open('version-change-exclusive')");
+    openRequest.onsuccess = openAgainSuccess;
+    openRequest.onerror = unexpectedErrorCallback;
+}
+
+function inSetVersion()
+{
+    debug("setVersion() callback");
+    debug("starting work in VERSION_CHANGE transaction");
+    evalAndLog("window.state = 'VERSION_CHANGE started'");
+
+    window.store = evalAndLog("store = db.createObjectStore('test-store')");
+    window.count = 0;
+    do_async_puts();
+
+    function do_async_puts() {
+        var req = evalAndLog("store.put(" + count + ", " + count + ")");
+        req.onerror = unexpectedErrorCallback;
+        req.onsuccess = function (e) {
+            debug("in put's onsuccess");
+            if (++window.count < 10) {
+                do_async_puts();
+            } else {
+                debug("ending work in VERSION_CHANGE transaction");
+                evalAndLog("window.state = 'VERSION_CHANGE finished'");
+            }
+        };
+    }
+}
+
+function openAgainSuccess()
+{
+    debug("open() callback - this should appear after VERSION_CHANGE transaction ends");
+    shouldBeEqualToString("window.state", "VERSION_CHANGE finished");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

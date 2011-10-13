@@ -1,0 +1,40 @@
+Test behavior when the same connection calls setVersion twice
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;
+PASS indexedDB == null is false
+PASS IDBTransaction == null is false
+window.state = 'starting'
+indexedDB.open('two-versions-one-connection')
+db = event.target.result
+window.state = 0
+db.setVersion('version 1')
+db.setVersion('version 2')
+setVersion() #1 callback
+window.store1 = db.createObjectStore('test-store1')
+PASS ++window.state is 1
+window.store1.put('aaa', 111)
+PASS ++window.state is 2
+PASS ++window.state is 3
+halfway there...
+setVersion() #2 callback
+PASS ++window.state is 4
+window.store2 = db.createObjectStore('test-store2')
+window.store2.put('bbb', 222)
+PASS ++window.state is 5
+PASS ++window.state is 6
+PASS window.db.version is "version 2"
+window.trans = db.transaction(['test-store1', 'test-store2'])
+window.store = window.trans.objectStore('test-store1')
+window.req = window.store.get(111)
+PASS event.target.result is "aaa"
+window.store = window.trans.objectStore('test-store2')
+window.req = window.store.get(222)
+PASS event.target.result is "bbb"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

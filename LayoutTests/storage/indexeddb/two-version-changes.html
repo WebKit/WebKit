@@ -1,0 +1,116 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test behavior when the same connection calls setVersion twice");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+
+function test() {
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;");
+
+    shouldBeFalse("indexedDB == null");
+    shouldBeFalse("IDBTransaction == null");
+    openDBConnection();
+}
+
+function openDBConnection()
+{
+    evalAndLog("window.state = 'starting'");
+    var request = evalAndLog("indexedDB.open('two-versions-one-connection')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    window.db = evalAndLog("db = event.target.result");
+    evalAndLog("window.state = 0");
+
+    var versionChangeRequest1 = evalAndLog("db.setVersion('version 1')");
+    versionChangeRequest1.onerror = unexpectedErrorCallback;
+    versionChangeRequest1.onsuccess = inSetVersion1;
+
+    // and concurrently...
+
+    var versionChangeRequest2 = evalAndLog("db.setVersion('version 2')");
+    versionChangeRequest2.onerror = unexpectedErrorCallback;
+    versionChangeRequest2.onsuccess = inSetVersion2;
+}
+
+function inSetVersion1()
+{
+    debug("setVersion() #1 callback");
+    evalAndLog("window.store1 = db.createObjectStore('test-store1')");
+    shouldBe("++window.state", "1");
+    var req = evalAndLog("window.store1.put('aaa', 111)");
+    req.onerror = unexpectedErrorCallback;
+    req.onsuccess = function (e) {
+        shouldBe("++window.state", "2");
+        halfwayDone();
+    };
+}
+
+function inSetVersion2()
+{
+    debug("setVersion() #2 callback");
+    shouldBe("++window.state", "4");
+    evalAndLog("window.store2 = db.createObjectStore('test-store2')");
+
+    var req = evalAndLog("window.store2.put('bbb', 222)");
+    req.onerror = unexpectedErrorCallback;
+    req.onsuccess = function (e) {
+        shouldBe("++window.state", "5");
+        halfwayDone();
+    };
+}
+
+var counter = 0;
+function halfwayDone() 
+{
+    counter += 1;
+    if (counter < 2) {
+        shouldBe("++window.state", "3");
+        debug("halfway there..." );
+    } else {
+        shouldBe("++window.state", "6");
+        checkResults();
+    }
+}
+
+function checkResults() {
+    shouldBeEqualToString("window.db.version", "version 2");
+    trans = evalAndLog("window.trans = db.transaction(['test-store1', 'test-store2'])");
+    store = evalAndLog("window.store = window.trans.objectStore('test-store1')");
+    req = evalAndLog("window.req = window.store.get(111)");
+    req.onerror = unexpectedErrorCallback;
+    req.onsuccess = function (e) {
+        shouldBeEqualToString("event.target.result", "aaa");
+
+        store = evalAndLog("window.store = window.trans.objectStore('test-store2')");
+        req = evalAndLog("window.req = window.store.get(222)");
+        req.onerror = unexpectedErrorCallback;
+        req.onsuccess = function (e) {
+            shouldBeEqualToString("event.target.result", "bbb");
+            done();    
+        };
+    };
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

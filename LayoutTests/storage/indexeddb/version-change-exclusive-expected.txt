@@ -1,0 +1,46 @@
+Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+window.state = 'starting'
+indexedDB.open('version-change-exclusive')
+db = event.target.result
+calling setVersion() - callback should run immediately
+db.setVersion('version 1')
+calling open() - callback should wait until VERSION_CHANGE transaction is complete
+indexedDB.open('version-change-exclusive')
+setVersion() callback
+starting work in VERSION_CHANGE transaction
+window.state = 'VERSION_CHANGE started'
+store = db.createObjectStore('test-store')
+store.put(0, 0)
+in put's onsuccess
+store.put(1, 1)
+in put's onsuccess
+store.put(2, 2)
+in put's onsuccess
+store.put(3, 3)
+in put's onsuccess
+store.put(4, 4)
+in put's onsuccess
+store.put(5, 5)
+in put's onsuccess
+store.put(6, 6)
+in put's onsuccess
+store.put(7, 7)
+in put's onsuccess
+store.put(8, 8)
+in put's onsuccess
+store.put(9, 9)
+in put's onsuccess
+ending work in VERSION_CHANGE transaction
+window.state = 'VERSION_CHANGE finished'
+open() callback - this should appear after VERSION_CHANGE transaction ends
+PASS window.state is "VERSION_CHANGE finished"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

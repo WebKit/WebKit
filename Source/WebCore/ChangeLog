@@ -1,3 +1,36 @@
+2011-10-13  Joshua Bell  <jsbell@chromium.org>
+
+        make IDBFactory.open wait for pending setVersion transactions to complete
+        https://bugs.webkit.org/show_bug.cgi?id=69307
+
+        Reviewed by Tony Chang.
+
+        Added a queue of pending open calls, similar to the queue of pending
+        setVersion calls. Ensure pending calls are processed in the correct
+        order when transactions complete.
+
+        Tests: storage/indexeddb/open-close-version.html
+               storage/indexeddb/two-version-changes.html
+               storage/indexeddb/version-change-exclusive.html
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::callbacks):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::PendingOpenCall):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::transactionStarted):
+        (WebCore::IDBDatabaseBackendImpl::transactionFinished):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::close):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::start):
+        (WebCore::IDBTransactionBackendImpl::commit):
+
 2011-10-13  Chris Marrin  <cmarrin@apple.com>
 
         Fix Leopard build

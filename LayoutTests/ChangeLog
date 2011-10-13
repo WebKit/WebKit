@@ -1,3 +1,19 @@
+2011-10-13  Joshua Bell  <jsbell@chromium.org>
+
+        make IDBFactory.open wait for pending setVersion transactions to complete
+        https://bugs.webkit.org/show_bug.cgi?id=69307
+
+        Reviewed by Tony Chang.
+
+        Some tests marked FAIL due to crbug.com/100123
+
+        * storage/indexeddb/open-close-version-expected.txt: Added.
+        * storage/indexeddb/open-close-version.html: Added.
+        * storage/indexeddb/two-version-changes-expected.txt: Added.
+        * storage/indexeddb/two-version-changes.html: Added.
+        * storage/indexeddb/version-change-exclusive-expected.txt: Added.
+        * storage/indexeddb/version-change-exclusive.html: Added.
+
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=70069

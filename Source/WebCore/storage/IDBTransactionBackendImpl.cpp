@@ -131,6 +131,7 @@ void IDBTransactionBackendImpl::abort()
     m_callbacks->onAbort();
     m_database->transactionCoordinator()->didFinishTransaction(this);
     ASSERT(!m_database->transactionCoordinator()->isActive(this));
+    m_database->transactionFinished(this);
     m_database = 0;
 }
 
@@ -171,6 +172,7 @@ void IDBTransactionBackendImpl::start()
 
     m_state = StartPending;
     m_database->transactionCoordinator()->didStartTransaction(this);
+    m_database->transactionStarted(this);
 }
 
 void IDBTransactionBackendImpl::commit()
@@ -186,6 +188,7 @@ void IDBTransactionBackendImpl::commit()
     m_transaction->commit();
     m_callbacks->onComplete();
     m_database->transactionCoordinator()->didFinishTransaction(this);
+    m_database->transactionFinished(this);
     m_database = 0;
 }
 

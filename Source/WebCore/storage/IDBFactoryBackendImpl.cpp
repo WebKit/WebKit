@@ -109,7 +109,9 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
 
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
-        callbacks->onSuccess(it->second);
+        // If it's already been opened, we have to wait for any pending
+        // setVersion calls to complete.
+        it->second->openConnection(callbacks);
         return;
     }
 

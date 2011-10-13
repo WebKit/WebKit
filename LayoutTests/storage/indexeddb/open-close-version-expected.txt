@@ -1,0 +1,103 @@
+Test interleaved open/close/setVersion calls in various permutations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+
+TEST: setVersion blocked on open handles
+window.dbname = 'test1'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h2.open'
+'h2.open.onsuccess'
+'h1.setVersion'
+'h2.onversionchange'
+    h2 closing, but not immediately
+'h1.setVersion.onblocked'
+'h2.close'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+PASS window.steps.toString() is "h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h1.setVersion.onblocked,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete"
+
+TEST: setVersion not blocked if handle closed immediately
+window.dbname = 'test2'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h2.open'
+'h2.open.onsuccess'
+'h1.setVersion'
+'h2.onversionchange'
+    h2 closing immediately
+'h2.close'
+'h1.setVersion.onblocked'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123
+FAIL window.steps.toString() should be h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete. Was h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h2.close,h1.setVersion.onblocked,h1.setVersion.onsuccess,h1.setVersion.transaction-complete.
+
+TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - close when blocked
+window.dbname = 'test3'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h2.open'
+'h2.open.onsuccess'
+'h1.setVersion'
+'h2.setVersion'
+'h2.onversionchange'
+'h1.setVersion.onblocked'
+'h1.onversionchange'
+'h2.setVersion.onblocked'
+    h2 blocked so closing
+'h2.close'
+'h3.open'
+'h2.setVersion.onerror'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+'h3.open.onsuccess'
+PASS window.steps.toString() is "h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.setVersion,h2.onversionchange,h1.setVersion.onblocked,h1.onversionchange,h2.setVersion.onblocked,h2.close,h3.open,h2.setVersion.onerror,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess"
+
+TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - just close
+window.dbname = 'test4'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h2.open'
+'h2.open.onsuccess'
+'h1.setVersion'
+'h3.open'
+'h2.close'
+'h1.setVersion.onblocked'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+'h3.open.onsuccess'
+NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123
+FAIL window.steps.toString() should be h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h3.open,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess. Was h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h3.open,h2.close,h1.setVersion.onblocked,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess.
+
+TEST: open blocked if a VERSION_CHANGE transaction is running
+window.dbname = 'test5'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h1.setVersion'
+'h2.open'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+'h2.open.onsuccess'
+PASS window.steps.toString() is "h1.open,h1.open.onsuccess,h1.setVersion,h2.open,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h2.open.onsuccess"
+
+TEST: two setVersions from the same connection
+window.dbname = 'test6'; window.ver = 1; window.steps = []
+'h1.open'
+'h1.open.onsuccess'
+'h1.setVersion'
+'h1.setVersion'
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+half done
+'h1.setVersion.onsuccess'
+'h1.setVersion.transaction-complete'
+PASS window.steps.toString() is "h1.open,h1.open.onsuccess,h1.setVersion,h1.setVersion,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h1.setVersion.onsuccess,h1.setVersion.transaction-complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

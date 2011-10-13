@@ -1,0 +1,300 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test interleaved open/close/setVersion calls in various permutations");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function Connection(id) {
+    id = String(id);
+    var self = this;
+    this.open = function(opts) {
+        window.steps.push(evalAndLog("'" + id + ".open'"));
+        var req = indexedDB.open(window.dbname);
+        req.onerror = unexpectedErrorCallback;
+        req.onsuccess = function (e) {
+            self.handle = e.target.result;
+            window.steps.push(evalAndLog("'" + id + ".open.onsuccess'"));
+            self.handle.onversionchange = function(e) {
+                window.steps.push(evalAndLog("'" + id + ".onversionchange'"));
+                if (opts && opts.onversion) { opts.onversion.call(self); }
+            };
+            if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+        };
+    };
+
+    this.close = function() {
+        window.steps.push(evalAndLog("'" + id + ".close'"));
+        this.handle.close();
+    };
+
+    this.setVersion = function(opts) {
+        window.steps.push(evalAndLog("'" + id + ".setVersion'"));
+        var req = this.handle.setVersion(String(window.ver++));
+        req.onabort = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onabort'"));
+            if (opts && opts.onabort) { opts.onabort.call(self); }
+        };
+        req.onblocked = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onblocked'"));
+            if (opts && opts.onblocked) { opts.onblocked.call(self); }
+        };
+        req.onsuccess = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onsuccess'"));
+            if (self.handle.objectStoreNames.contains("test-store" + window.ver)) {
+                self.handle.deleteObjectStore("test-store" + window.ver);
+            }
+            var store = self.handle.createObjectStore("test-store" + window.ver);
+            var count = 0;
+            do_async_puts(); // Keep this transaction running for a while
+            function do_async_puts() {
+                var req = store.put(count, count);
+                req.onerror = unexpectedErrorCallback;
+                req.onsuccess = function (e) {
+                    if (++count < 10) {
+                        do_async_puts();
+                    } else {
+                        window.steps.push(evalAndLog("'" + id + ".setVersion.transaction-complete'"));
+                        if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+                    }
+                };
+            }
+        };
+        req.onerror = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onerror'"));
+            if (opts && opts.onerror) { opts.onerror.call(self); }
+        };
+    };
+}
+
+// run a series of steps that take a continuation function
+function runSteps(commands) {
+    if (commands.length) {
+        var command = commands.shift();
+        command(function() { runSteps(commands); });
+    }
+}
+
+function test() {
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    test1();
+}
+
+function test1() {
+    debug("");
+    debug("TEST: setVersion blocked on open handles");
+    evalAndLog("window.dbname = 'test1'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+    var h2 = new Connection("h2");
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+         function(doNext) { h2.open({onsuccess: doNext,
+                                onversion: function() {
+                                    debug("    h2 closing, but not immediately");
+                                    setTimeout(function() { h2.close(); }, 0);
+                                }}); },
+         function(doNext) { h1.setVersion({onsuccess: finishTest}); },
+         ]);
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h2.open",
+                               "h2.open.onsuccess",
+                               "h1.setVersion",
+                               "h2.onversionchange",
+                               "h1.setVersion.onblocked",
+                               "h2.close",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete"
+                               ].toString());
+        test2();
+    }
+}
+
+function test2() {
+    debug("");
+    debug("TEST: setVersion not blocked if handle closed immediately");
+    evalAndLog("window.dbname = 'test2'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+    var h2 = new Connection("h2");
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+              function(doNext) { h2.open({onsuccess: doNext,
+                                          onversion: function() {
+                                              debug("    h2 closing immediately");
+                                              h2.close();
+                                          }}); },
+              function(doNext) { h1.setVersion({onsuccess: doNext}); },
+              finishTest
+              ]);
+
+    function finishTest() {
+        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123");
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h2.open",
+                               "h2.open.onsuccess",
+                               "h1.setVersion",
+                               "h2.onversionchange",
+                               "h2.close",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete"
+                               ].toString());
+        test3();
+    }
+}
+
+function test3() {
+    debug("");
+    debug("TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - close when blocked");
+    evalAndLog("window.dbname = 'test3'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+    var h2 = new Connection("h2");
+    var h3 = new Connection("h3");
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+              function(doNext) { h2.open({onsuccess: doNext}); },
+              function(doNext) { h1.setVersion(); doNext(); },
+              function(doNext) { h2.setVersion({
+                                                   onblocked: function() {
+                                                       debug("    h2 blocked so closing");
+                                                       h2.close();
+                                                       doNext();
+                                                   }}); },
+              function() { h3.open({onsuccess: finishTest});}
+              ]);
+
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h2.open",
+                               "h2.open.onsuccess",
+                               "h1.setVersion",
+                               "h2.setVersion",
+                               "h2.onversionchange",
+                               "h1.setVersion.onblocked",
+                               "h1.onversionchange",
+                               "h2.setVersion.onblocked",
+                               "h2.close",
+                               "h3.open",
+                               "h2.setVersion.onerror",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete",
+                               "h3.open.onsuccess"
+                               ].toString());
+        test4();
+    }
+}
+
+function test4() {
+    debug("");
+    debug("TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - just close");
+    evalAndLog("window.dbname = 'test4'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+    var h2 = new Connection("h2");
+    var h3 = new Connection("h3");
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+              function(doNext) { h2.open({onsuccess: doNext}); },
+              function(doNext) { h1.setVersion(); doNext(); },
+              function(doNext) { h3.open({onsuccess: finishTest}); doNext(); },
+              function(doNext) { h2.close(); },
+              ]);
+
+    function finishTest() {
+        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123");
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h2.open",
+                               "h2.open.onsuccess",
+                               "h1.setVersion",
+                               "h3.open",
+                               "h2.close",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete",
+                               "h3.open.onsuccess"
+                               ].toString());
+        test5();
+    }
+}
+
+function test5() {
+    debug("");
+    debug("TEST: open blocked if a VERSION_CHANGE transaction is running");
+    evalAndLog("window.dbname = 'test5'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+    var h2 = new Connection("h2");
+
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+              function(doNext) { h1.setVersion(); doNext(); },
+              function(doNext) { h2.open({onsuccess: finishTest}); }
+              ]);
+
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h1.setVersion",
+                               "h2.open",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete",
+                               "h2.open.onsuccess"
+                               ].toString());
+        test6();
+    }
+}
+
+
+function test6() {
+    debug("");
+    debug("TEST: two setVersions from the same connection");
+    evalAndLog("window.dbname = 'test6'; window.ver = 1; window.steps = []");
+    var h1 = new Connection("h1");
+
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },                                  
+              function(doNext) { h1.setVersion({onsuccess: halfDone}); 
+                                 h1.setVersion({onsuccess: halfDone}); }
+              ]);
+
+    var counter = 0;
+    function halfDone() {
+        counter++;
+        if (counter < 2) {
+            debug('half done');
+        } else {
+            finishTest();
+        }
+    }  
+
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h1.open",
+                               "h1.open.onsuccess",
+                               "h1.setVersion",
+                               "h1.setVersion",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete",
+                               "h1.setVersion.onsuccess",
+                               "h1.setVersion.transaction-complete"
+                               ].toString());
+        done();
+    }
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

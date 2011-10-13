@@ -54,7 +54,10 @@ public:
 
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }
+
+    // FIXME: Rename "open" to something more descriptive, like registerFrontEndCallbacks.
     void open(PassRefPtr<IDBDatabaseCallbacks>);
+    void openConnection(PassRefPtr<IDBCallbacks>);
 
     virtual String name() const { return m_name; }
     virtual String version() const { return m_version; }
@@ -68,11 +71,14 @@ public:
 
     PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
+    void transactionStarted(PassRefPtr<IDBTransactionBackendInterface>);
+    void transactionFinished(PassRefPtr<IDBTransactionBackendInterface>);
 
 private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     void loadObjectStores();
+    void processPendingCalls();
 
     static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
     static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
@@ -96,9 +102,13 @@ private:
     ObjectStoreMap m_objectStores;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
+    RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
 
     class PendingSetVersionCall;
     Deque<RefPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;
+
+    class PendingOpenCall;
+    Deque<RefPtr<PendingOpenCall> > m_pendingOpenCalls;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
