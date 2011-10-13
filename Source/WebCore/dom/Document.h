@@ -38,6 +38,7 @@
 #include "IntRect.h"
 #include "LayoutTypes.h"
 #include "PageVisibilityState.h"
+#include "PlatformScreen.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
@@ -939,6 +940,8 @@ public:
 
     virtual void suspendScriptedAnimationControllerCallbacks();
     virtual void resumeScriptedAnimationControllerCallbacks();
+    
+    void windowScreenDidChange(PlatformDisplayID);
 
     virtual void finishedParsing();
 

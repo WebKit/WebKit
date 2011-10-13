@@ -25,6 +25,7 @@
 #include "FindOptions.h"
 #include "LayoutTypes.h"
 #include "PageVisibilityState.h"
+#include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
@@ -256,6 +257,8 @@ namespace WebCore {
         void didMoveOnscreen();
         void willMoveOffscreen();
 
+        void windowScreenDidChange(PlatformDisplayID);
+        
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
 
@@ -310,6 +313,8 @@ namespace WebCore {
         void setVisibilityState(PageVisibilityState, bool);
 #endif
 
+        PlatformDisplayID displayID() const { return m_displayID; }
+        
     private:
         void initGroup();
 
@@ -416,6 +421,7 @@ namespace WebCore {
 #if ENABLE(PAGE_VISIBILITY_API)
         PageVisibilityState m_visibilityState;
 #endif
+        PlatformDisplayID m_displayID;
     };
 
 } // namespace WebCore

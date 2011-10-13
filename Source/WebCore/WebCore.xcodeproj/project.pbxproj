@@ -1167,6 +1167,8 @@
 		49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */; };
 		49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */; };
 		49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */; };
+		49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */; };
+		49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */; };
 		49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */; };
 		49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */; };
 		49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F013D97646003808A9 /* JSPeerConnection.h */; };
@@ -1290,6 +1292,7 @@
 		49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */; };
 		49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */; };
 		49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */; };
+		49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */; };
 		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
 		49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */; };
 		49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */; };
@@ -8313,6 +8316,8 @@
 		49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PeerConnection.idl; path = p2p/PeerConnection.idl; sourceTree = "<group>"; };
 		49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalingCallback.h; path = p2p/SignalingCallback.h; sourceTree = "<group>"; };
 		49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SignalingCallback.idl; path = p2p/SignalingCallback.idl; sourceTree = "<group>"; };
+		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
+		49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnectionCustom.cpp; sourceTree = "<group>"; };
 		49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnection.cpp; sourceTree = "<group>"; };
 		49BE30F013D97646003808A9 /* JSPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPeerConnection.h; sourceTree = "<group>"; };
@@ -8455,6 +8460,7 @@
 		49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
+		49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitor.cpp; sourceTree = "<group>"; };
 		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DMac.mm; sourceTree = "<group>"; };
 		49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLLayer.h; sourceTree = "<group>"; };
 		49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLLayer.mm; sourceTree = "<group>"; };
@@ -19039,6 +19045,7 @@
 				37C2360F1097EE7700EF9F72 /* ComplexTextController.h */,
 				37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */,
 				37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */,
+				49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */,
 				B275354B0B053814002CE64F /* FloatPointMac.mm */,
 				B275354C0B053814002CE64F /* FloatRectMac.mm */,
 				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
@@ -19092,6 +19099,8 @@
 				B27535390B053814002CE64F /* Color.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
+				49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */,
+				49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */,
 				6E67D2A81280E8BD008758F7 /* Extensions3D.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
 				B275353B0B053814002CE64F /* FloatPoint.h */,
@@ -24607,6 +24616,7 @@
 				31060379143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h in Headers */,
 				3106037B143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h in Headers */,
 				29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */,
+				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27457,6 +27467,8 @@
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
 				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
+				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
+				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

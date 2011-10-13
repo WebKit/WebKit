@@ -55,6 +55,7 @@
 #include "WebUIClient.h"
 #include <WebCore/DragActions.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
 #include <wtf/HashMap.h>
@@ -392,7 +393,8 @@ public:
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
-
+    void windowScreenDidChange(PlatformDisplayID);
+    
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
     bool useFixedLayout() const { return m_useFixedLayout; };

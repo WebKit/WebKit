@@ -113,6 +113,7 @@ messages -> WebPage {
     SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
     SetPageZoomFactor(double zoomFactor)
     SetTextZoomFactor(double zoomFactor)
+    WindowScreenDidChange(uint64_t displayID)
 
     ScalePage(double scale, WebCore::IntPoint origin)
 

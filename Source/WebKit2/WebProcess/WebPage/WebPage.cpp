@@ -816,6 +816,11 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
 }
 
+void WebPage::windowScreenDidChange(uint64_t displayID)
+{
+    m_page->windowScreenDidChange(static_cast<PlatformDisplayID>(displayID));
+}
+
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     m_page->setPageScaleFactor(scale, origin);

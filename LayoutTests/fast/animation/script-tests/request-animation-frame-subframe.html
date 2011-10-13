@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<span id="e"></span>
+<span id="f"></span>
+<script>
+    var e = document.getElementById("e");
+    window.webkitRequestAnimationFrame(function() {
+        parent.callbackInvoked = true;
+    }, e);
+
+    parent.doDisplay();
+    
+    setTimeout(function() {
+        parent.doCheckResult();
+    }, 100);
+
+    setTimeout(function() {
+        parent.doTestDone();
+    }, 200);    
+</script>
+</body>
+</html>

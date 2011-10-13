@@ -31,6 +31,8 @@
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
+#include <QuartzCore/QuartzCore.h>
+
 #ifdef __OBJC__
     @class NSScreen;
     @class NSWindow;
@@ -38,6 +40,9 @@
     class NSScreen;
     class NSWindow;
 #endif
+typedef CGDirectDisplayID PlatformDisplayID;
+#else
+typedef uint64_t PlatformDisplayID;
 #endif
 
 namespace WebCore {

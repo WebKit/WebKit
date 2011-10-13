@@ -172,6 +172,7 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
+    , m_displayID(0)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -677,6 +678,16 @@ void Page::willMoveOffscreen()
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->view())
             frame->view()->willMoveOffscreen();
+    }
+}
+
+void Page::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    m_displayID = displayID;
+    
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            frame->document()->windowScreenDidChange(displayID);
     }
 }
 

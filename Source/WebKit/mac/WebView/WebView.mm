@@ -3218,6 +3218,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
             name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
             name:windowDidChangeResolutionNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
+            name:NSWindowDidChangeScreenNotification object:window];
     }
 }
 
@@ -3235,6 +3237,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
             name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:windowDidChangeResolutionNotification object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidChangeScreenNotification object:window];
     }
 }
 
@@ -3287,6 +3291,12 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     [self _updateActiveState];
 }
 
+- (void)doWindowDidChangeScreen
+{
+    if (_private && _private->page)
+        _private->page->windowScreenDidChange((PlatformDisplayID)[[[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
+}
+
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
     NSWindow *keyWindow = [notification object];
@@ -3310,6 +3320,14 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
     if (![self shouldUpdateWhileOffscreen])
         [self setNeedsDisplay:YES];
+
+    // Send a change screen to make sure the initial displayID is set
+    [self doWindowDidChangeScreen];
+}
+
+- (void)_windowDidChangeScreen:(NSNotification *)notification
+{
+    [self doWindowDidChangeScreen];
 }
 
 - (void)_windowWillOrderOffScreen:(NSNotification *)notification

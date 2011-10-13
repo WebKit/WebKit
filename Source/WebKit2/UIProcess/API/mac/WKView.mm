@@ -1797,7 +1797,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
                                                      name:@"_NSWindowDidBecomeVisible" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
                                                      name:windowDidChangeResolutionNotification object:window];
-
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
+                                                     name:NSWindowDidChangeScreenNotification object:window];
     }
 }
 
@@ -1816,7 +1817,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeResolutionNotification object:window];
-
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -1868,6 +1869,11 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
+- (void)doWindowDidChangeScreen
+{
+    _data->_page->windowScreenDidChange((PlatformDisplayID)[[[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
+}
+
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
     NSWindow *keyWindow = [notification object];
@@ -1875,6 +1881,14 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         [self _updateSecureInputState];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     }
+
+    // Send a change screen to make sure the initial displayID is set
+    [self doWindowDidChangeScreen];
+}
+
+- (void)_windowDidChangeScreen:(NSNotification *)notification
+{
+    [self doWindowDidChangeScreen];
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification

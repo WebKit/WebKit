@@ -1158,6 +1158,14 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
     m_drawingArea->deviceScaleFactorDidChange();
 }
 
+void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::WindowScreenDidChange(displayID), m_pageID);
+}
+
 float WebPageProxy::deviceScaleFactor() const
 {
     if (m_customDeviceScaleFactor)

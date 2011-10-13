@@ -1,3 +1,67 @@
+2011-10-12  Chris Marrin  <cmarrin@apple.com>
+
+        Sync requestAnimationFrame callback to CVDisplayLink on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=68911
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/animation/request-animation-frame-iframe.html
+
+        Implement CVDisplayLink which checks to see if any scheduleAnimation requests
+        have come in. If so, remember the timestamp and do a callOnMainThread to fire
+        the callbacks. A DisplayRefreshMonitorManager is a singleton which has a list
+        of DisplayRefreshMonitors, one for each display. Each monitor has one or more
+        DisplayRefreshMonitorClients, which is a abstract virtual class implemented
+        by ScriptAnimationController. When an animation is scheduled, the
+        displayRefreshFired method is called on the client, which in turn calls the
+        requestAnimationFrame callbacks. 
+
+        DisplayRefreshMonitor and therefore the CVDisplayLink it owns is discarded
+        when it no longer has any clients. This minimizes the number of concurrent
+        CVDisplayLink threads.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::windowScreenDidChange):
+        (WebCore::Document::webkitRequestAnimationFrame):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::windowScreenDidChange):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::displayRefreshFired):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::windowScreenDidChange):
+        * page/Page.h:
+        (WebCore::Page::displayID):
+        * platform/PlatformScreen.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp: Added.
+        (WebCore::DisplayRefreshMonitorClient::DisplayRefreshMonitorClient):
+        (WebCore::DisplayRefreshMonitorClient::~DisplayRefreshMonitorClient):
+        (WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded):
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor):
+        (WebCore::DisplayRefreshMonitor::refreshDisplayOnMainThread):
+        (WebCore::DisplayRefreshMonitorManager::sharedManager):
+        (WebCore::DisplayRefreshMonitorManager::findMonitor):
+        (WebCore::DisplayRefreshMonitorManager::registerClient):
+        (WebCore::DisplayRefreshMonitorManager::unregisterClient):
+        (WebCore::DisplayRefreshMonitorManager::scheduleAnimation):
+        (WebCore::DisplayRefreshMonitorManager::windowScreenDidChange):
+        * platform/graphics/DisplayRefreshMonitor.h: Added.
+        (WebCore::DisplayRefreshMonitorClient::scheduleAnimation):
+        (WebCore::DisplayRefreshMonitor::hasClients):
+        (WebCore::DisplayRefreshMonitor::addClient):
+        (WebCore::DisplayRefreshMonitor::removeClient):
+        (WebCore::DisplayRefreshMonitor::displayID):
+        (WebCore::DisplayRefreshMonitorManager::DisplayRefreshMonitorManager):
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp: Added.
+        (WebCore::DisplayRefreshMonitor::displayLinkCallback):
+        (WebCore::DisplayRefreshMonitor::~DisplayRefreshMonitor):
+        (WebCore::DisplayRefreshMonitor::scheduleAnimation):
+
 2011-10-13  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Qt compile fix.

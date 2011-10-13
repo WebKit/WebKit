@@ -46,15 +46,19 @@ using namespace std;
 
 namespace WebCore {
 
-ScriptedAnimationController::ScriptedAnimationController(Document* document)
+ScriptedAnimationController::ScriptedAnimationController(Document* document, PlatformDisplayID displayID)
     : m_document(document)
     , m_nextCallbackId(0)
     , m_suspendCount(0)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_animationTimer(this, &ScriptedAnimationController::animationTimerFired)
     , m_lastAnimationFrameTime(0)
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    , m_useTimer(false)
+#endif
 #endif
 {
+    windowScreenDidChange(displayID);
 }
 
 void ScriptedAnimationController::suspend()
@@ -146,9 +150,29 @@ void ScriptedAnimationController::serviceScriptedAnimations(DOMTimeStamp time)
         scheduleAnimation();
 }
     
+void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displayID)
+{
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
+#else
+    UNUSED_PARAM(displayID);
+#endif    
+}
+
 void ScriptedAnimationController::scheduleAnimation()
 {
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (!m_useTimer) {
+        if (DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this))
+            return;
+            
+        m_useTimer = true;
+    }
+#endif
+    if (m_animationTimer.isActive())
+        return;
+        
     double scheduleDelay = max<double>(MinimumAnimationInterval - (currentTime() - m_lastAnimationFrameTime), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
