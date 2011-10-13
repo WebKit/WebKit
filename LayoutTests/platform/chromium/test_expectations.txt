@@ -3990,3 +3990,20 @@ BUGCR100056 MAC DEBUG SLOW : http/tests/cache/history-only-cached-subresource-lo
 BUGCR100056 MAC DEBUG SLOW : http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html = PASS
 BUGCR100056 MAC DEBUG SLOW : http/tests/misc/submit-post-in-utf32le.html = PASS
 BUGCR100056 MAC DEBUG SLOW : http/tests/misc/window-open-then-write.html = PASS
+
+// new tests -- rebaseline once all bots have results
+BUG_DGLAZKOV : fast/repaint/region-painting-via-layout.html = TEXT
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html = IMAGE
+BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop.html = IMAGE
