@@ -1,3 +1,17 @@
+2011-10-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70049
+        
+        [CSS Regions] Add a test of a float being pushed down because it can't fit
+        next to another float and make sure it re-evaluates its position when it changes
+        regions as a result of the push.
+
+        Reviewed by Sam Weinig.
+
+        * fast/regions/float-pushed-width-change.html: Added.
+        * platform/mac/fast/regions/float-pushed-width-change-expected.png: Added.
+        * platform/mac/fast/regions/float-pushed-width-change-expected.txt: Added.
+
 2011-10-13  Robert Hogan  <robert@webkit.org>
 
         Platform-specific results for r97378

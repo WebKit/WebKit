@@ -3326,10 +3326,8 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
     RenderBox* childBox = floatingObject->renderer();
     LayoutUnit logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
     LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
-    LayoutUnit floatLogicalWidth = logicalWidthForFloat(floatingObject); // The width we look for.
-    if (logicalRightOffset - logicalLeftOffset < floatLogicalWidth)
-        floatLogicalWidth = logicalRightOffset - logicalLeftOffset; // Never look for more than what will be available.
-       
+    LayoutUnit floatLogicalWidth = min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset); // The width we look for.
+
     LayoutUnit floatLogicalLeft;
 
     if (childBox->style()->floating() == LeftFloat) {
@@ -3339,6 +3337,12 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
         while (logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight) - floatLogicalLeft < floatLogicalWidth) {
             logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
             floatLogicalLeft = logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
+            if (inRenderFlowThread()) {
+                // Have to re-evaluate all of our offsets, since they may have changed.
+                logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
+                logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
+                floatLogicalWidth = min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset);
+            }
         }
         floatLogicalLeft = max<LayoutUnit>(logicalLeftOffset - borderAndPaddingLogicalLeft(), floatLogicalLeft);
     } else {
@@ -3348,6 +3352,12 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
         while (floatLogicalLeft - logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft) < floatLogicalWidth) {
             logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
             floatLogicalLeft = logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight);
+            if (inRenderFlowThread()) {
+                // Have to re-evaluate all of our offsets, since they may have changed.
+                logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
+                logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
+                floatLogicalWidth = min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset);
+            }
         }
         floatLogicalLeft -= logicalWidthForFloat(floatingObject); // Use the original width of the float here, since the local variable
                                                                   // |floatLogicalWidth| was capped to the available line width.
