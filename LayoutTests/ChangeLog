@@ -1,3 +1,9 @@
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Add a colon to make expectation valid.
+
+        * platform/chromium/test_expectations.txt: Jeez.
+
 2011-10-13  Joshua Bell  <jsbell@chromium.org>
 
         make IDBFactory.open wait for pending setVersion transactions to complete
