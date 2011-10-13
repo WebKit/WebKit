@@ -3109,6 +3109,9 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/mac/WebWindowAnimation.mm
 
         DEFINES+=NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+        contains(CONFIG, "x86") {
+            DEFINES+=NS_BUILD_32_LIKE_64
+        }
 
     } else: contains(DEFINES, WTF_USE_GSTREAMER=1) {
         HEADERS += \

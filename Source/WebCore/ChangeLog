@@ -1,3 +1,22 @@
+2011-10-13  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt] QtWebKit build error for Mac 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=69914
+
+        In WebCore.pro and QtWebKit.pro we define NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+        when compiling with ENABLE_VIDEO and with WTF_USE_QTKIT.
+        But this is meant to be defined in NSGeometry.h under certain preconditions.
+        Without setting NS_BUILD_32_LIKE_64 none of these preconditions is
+        met and therefore NSGeometry.h will create several conflicting type definitions.
+
+        With this patch we create consistent definitions again.
+        Due to the order of include files we cannot remove
+        NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES from WebCore.pro.
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.pro:
+
 2011-10-13  Tom Hudson  <tomhudson@google.com>
 
         Revert border radius clips (r95239) for Chromium due to performance issues. Update test expectations to skip border radius clip layout tests.

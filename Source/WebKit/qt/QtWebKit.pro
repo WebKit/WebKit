@@ -237,6 +237,9 @@ contains(DEFINES, ENABLE_VIDEO=1) {
                        $$SOURCE_DIR/../WebKitLibraries/
 
         DEFINES+=NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+        contains(CONFIG, "x86") {
+            DEFINES+=NS_BUILD_32_LIKE_64
+        }
 
         HEADERS += $$PWD/WebCoreSupport/WebSystemInterface.h \
                    $$PWD/WebCoreSupport/QTKitFullScreenVideoHandler.h
