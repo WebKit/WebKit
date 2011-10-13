@@ -1,3 +1,67 @@
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r97369.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-win/fast/repaint/region-painting-via-layout-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium/fast/repaint/region-painting-via-layout-expected.png: Added.
+        * platform/chromium/test_expectations.txt: Removed failure expectations.
+
 2011-10-13  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70049

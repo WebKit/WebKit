@@ -3500,6 +3500,7 @@ BUGWK65862 MAC DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
 
 // Performance issues with border radius clipping on Chromium not yet resolved
 BUGCR97716 : fast/clip/overflow-border-radius-composited.html = IMAGE
+// Consistently failing as of about r95590
 BUGCR97716 : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
 BUGCR97716 : fast/clip/overflow-border-radius-transformed.html = IMAGE
 BUGCR97716 : fast/clip/overflow-border-radius-combinations.html = IMAGE
@@ -3756,9 +3757,6 @@ BUGWK68445 : fast/js/string-split-conformance.html = FAIL
 // Tests that have become flaky (causing regressions, but only sometimes)
 BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
-// Consistently failing as of about r95590
-BUG_EPOGER LEOPARD CPU-CG : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
-
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
 BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
@@ -3992,20 +3990,3 @@ BUGCR100056 MAC DEBUG SLOW : http/tests/cache/history-only-cached-subresource-lo
 BUGCR100056 MAC DEBUG SLOW : http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html = PASS
 BUGCR100056 MAC DEBUG SLOW : http/tests/misc/submit-post-in-utf32le.html = PASS
 BUGCR100056 MAC DEBUG SLOW : http/tests/misc/window-open-then-write.html = PASS
-
-// new tests -- rebaseline once all bots have results
-BUG_DGLAZKOV : fast/repaint/region-painting-via-layout.html = TEXT
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html = IMAGE
-BUG_DGLAZKOV : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop.html = IMAGE
