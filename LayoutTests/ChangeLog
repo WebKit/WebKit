@@ -1,3 +1,10 @@
+2011-10-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/test_expectations.txt:
+        More slow tests for Mac Debug.
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(XHTMLMP) and associated code
