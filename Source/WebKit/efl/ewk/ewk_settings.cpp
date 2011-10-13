@@ -31,6 +31,8 @@
 #include "IntSize.h"
 #include "KURL.h"
 #include "MemoryCache.h"
+// FIXME: Why is there a directory in this include?
+#include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
 
 #include <Eina.h>
@@ -43,9 +45,6 @@
 #include <unistd.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
-
-// FIXME: Why is there a directory in this include?
-#include "appcache/ApplicationCacheStorage.h"
 
 static const char* _ewk_cache_directory_path = 0;
 
@@ -229,12 +228,12 @@ void ewk_settings_cache_capacity_set(unsigned capacity)
     cache->setCapacities(0, capacity, capacity);
 }
 
-void ewk_settings_repaint_throttling_set(double deferred_repaint_delay, double initial_deferred_repaint_delay_during_loading, double max_deferred_repaint_delay_during_loading, double deferred_repaint_delay_increment_during_loading)
+void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double initialDeferredRepaintDelayDuringLoading, double maxDeferredRepaintDelayDuringLoading, double deferredRepaintDelayIncrementDuringLoading)
 {
-    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelay(deferred_repaint_delay);
-    WebCore::FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(initial_deferred_repaint_delay_during_loading);
-    WebCore::FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(max_deferred_repaint_delay_during_loading);
-    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(deferred_repaint_delay_increment_during_loading);
+    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelay(deferredRepaintDelay);
+    WebCore::FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(initialDeferredRepaintDelayDuringLoading);
+    WebCore::FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(maxDeferredRepaintDelayDuringLoading);
+    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(deferredRepaintDelayIncrementDuringLoading);
 }
 
 /**

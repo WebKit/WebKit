@@ -142,14 +142,14 @@ void ewk_cookies_cookie_free(Ewk_Cookie* cookie)
 #endif
 }
 
-void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
+void ewk_cookies_policy_set(Ewk_Cookie_Policy cookiePolicy)
 {
 #if USE(SOUP)
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
     policy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
-    switch (p) {
+    switch (cookiePolicy) {
     case EWK_COOKIE_JAR_ACCEPT_NEVER:
         policy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
         break;

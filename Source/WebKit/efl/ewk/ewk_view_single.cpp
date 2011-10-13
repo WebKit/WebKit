@@ -9,7 +9,7 @@
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    MERchANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public License
@@ -31,89 +31,87 @@
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
-static void _ewk_view_single_on_del(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_single_on_del(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
     Evas_Object* clip = (Evas_Object*)data;
     evas_object_del(clip);
 }
 
-static void _ewk_view_single_smart_add(Evas_Object* o)
+static void _ewk_view_single_smart_add(Evas_Object* ewkSingle)
 {
     Ewk_View_Smart_Data* sd;
 
-    _parent_sc.sc.add(o);
+    _parent_sc.sc.add(ewkSingle);
 
-    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o));
+    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
     if (!sd)
         return;
 
     Evas_Object* clip = evas_object_rectangle_add(sd->base.evas);
-    evas_object_clip_set(sd->backing_store, clip);
-    evas_object_smart_member_add(clip, o);
     evas_object_show(clip);
 
     evas_object_event_callback_add
         (sd->backing_store, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
 }
 
-static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* sd)
+static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* smartData)
 {
-    Evas_Object* bs = evas_object_image_add(sd->base.evas);
+    Evas_Object* bs = evas_object_image_add(smartData->base.evas);
     evas_object_image_alpha_set(bs, EINA_FALSE);
-    evas_object_image_smooth_scale_set(bs, sd->zoom_weak_smooth_scale);
+    evas_object_image_smooth_scale_set(bs, smartData->zoom_weak_smooth_scale);
 
     return bs;
 }
 
-static void _ewk_view_single_smart_resize(Evas_Object* o, Evas_Coord w, Evas_Coord h)
+static void _ewk_view_single_smart_resize(Evas_Object* ewkSingle, Evas_Coord width, Evas_Coord height)
 {
-    Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o));
-    _parent_sc.sc.resize(o, w, h);
+    Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
+    _parent_sc.sc.resize(ewkSingle, width, height);
 
     if (!sd)
         return;
 
     // these should be queued and processed in calculate as well!
-    evas_object_image_size_set(sd->backing_store, w, h);
+    evas_object_image_size_set(sd->backing_store, width, height);
     if (sd->animated_zoom.zoom.current < 0.00001) {
         Evas_Object* clip = evas_object_clip_get(sd->backing_store);
         Evas_Coord x, y, cw, ch;
-        evas_object_image_fill_set(sd->backing_store, 0, 0, w, h);
+        evas_object_image_fill_set(sd->backing_store, 0, 0, width, height);
         evas_object_geometry_get(sd->backing_store, &x, &y, 0, 0);
         evas_object_move(clip, x, y);
         ewk_frame_contents_size_get(sd->main_frame, &cw, &ch);
-        if (w > cw)
-            w = cw;
-        if (h > ch)
-            h = ch;
-        evas_object_resize(clip, w, h);
+        if (width > cw)
+            width = cw;
+        if (height > ch)
+            height = ch;
+        evas_object_resize(clip, width, height);
     }
 }
 
-static inline void _ewk_view_4b_move_region_up(uint32_t* image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_up(uint32_t* image, size_t rows, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
 {
     uint32_t* src;
     uint32_t* dst;
 
-    dst = image + x + y * rowsize;
-    src = dst + rows * rowsize;
-    h -= rows;
+    dst = image + x + y * rowSize;
+    src = dst + rows * rowSize;
+    height -= rows;
 
-    for (; h > 0; h--, dst += rowsize, src += rowsize)
-        memcpy(dst, src, w * 4);
+    for (; height > 0; height--, dst += rowSize, src += rowSize)
+        memcpy(dst, src, width * 4);
 }
 
-static inline void _ewk_view_4b_move_region_down(uint32_t* image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_down(uint32_t* image, size_t rows, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
 {
     uint32_t* src;
     uint32_t* dst;
 
-    h -= rows;
-    src = image + x + (y + h - 1) * rowsize;
-    dst = src + rows * rowsize;
+    height -= rows;
+    src = image + x + (y + height - 1) * rowSize;
+    dst = src + rows * rowSize;
 
-    for (; h > 0; h--, dst -= rowsize, src -= rowsize)
-        memcpy(dst, src, w * 4);
+    for (; height > 0; height--, dst -= rowSize, src -= rowSize)
+        memcpy(dst, src, width * 4);
 }
 
 static inline void _ewk_view_4b_move_line_left(uint32_t* dst, const uint32_t* src, size_t count)
@@ -136,90 +134,90 @@ static inline void _ewk_view_4b_move_line_right(uint32_t* dst, uint32_t* src, si
         *dst = *src;
 }
 
-static inline void _ewk_view_4b_move_region_left(uint32_t* image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_left(uint32_t* image, size_t cols, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
 {
     uint32_t* src;
     uint32_t* dst;
 
-    dst = image + x + y * rowsize;
+    dst = image + x + y * rowSize;
     src = dst + cols;
-    w -= cols;
+    width -= cols;
 
-    for (; h > 0; h--, dst += rowsize, src += rowsize)
-        _ewk_view_4b_move_line_left(dst, src, w);
+    for (; height > 0; height--, dst += rowSize, src += rowSize)
+        _ewk_view_4b_move_line_left(dst, src, width);
 }
 
-static inline void _ewk_view_4b_move_region_right(uint32_t* image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_right(uint32_t* image, size_t columns, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
 {
     uint32_t* src;
     uint32_t* dst;
 
-    w -= cols;
-    src = image + (x + w - 1) + y * rowsize;
-    dst = src + cols;
+    width -= columns;
+    src = image + (x + width - 1) + y * rowSize;
+    dst = src + columns;
 
-    for (; h > 0; h--, dst += rowsize, src += rowsize)
-        _ewk_view_4b_move_line_right(dst, src, w);
+    for (; height > 0; height--, dst += rowSize, src += rowSize)
+        _ewk_view_4b_move_line_right(dst, src, width);
 }
 
 /* catch-all function, not as optimized as the others, but does the work. */
-static inline void _ewk_view_4b_move_region(uint32_t* image, int dx, int dy, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region(uint32_t* image, int deltaX, int deltaY, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
 {
     uint32_t* src;
     uint32_t* dst;
 
-    if (dy < 0) {
-        h += dy;
-        dst = image + x + y * rowsize;
-        src = dst - dy * rowsize;
-        if (dx <= 0) {
-            w += dx;
-            src -= dx;
-            for (; h > 0; h--, dst += rowsize, src += rowsize)
-                _ewk_view_4b_move_line_left(dst, src, w);
+    if (deltaY < 0) {
+        height += deltaY;
+        dst = image + x + y * rowSize;
+        src = dst - deltaY * rowSize;
+        if (deltaX <= 0) {
+            width += deltaX;
+            src -= deltaX;
+            for (; height > 0; height--, dst += rowSize, src += rowSize)
+                _ewk_view_4b_move_line_left(dst, src, width);
         } else {
-            w -= dx;
-            src += w - 1;
-            dst += w + dx -1;
-            for (; h > 0; h--, dst += rowsize, src += rowsize)
-                _ewk_view_4b_move_line_right(dst, src, w);
+            width -= deltaX;
+            src += width - 1;
+            dst += width + deltaX -1;
+            for (; height > 0; height--, dst += rowSize, src += rowSize)
+                _ewk_view_4b_move_line_right(dst, src, width);
         }
     } else {
-        h -= dy;
-        src = image + x + (y + h - 1) * rowsize;
-        dst = src + dy * rowsize;
-        if (dx <= 0) {
-            w += dx;
-            src -= dx;
-            for (; h > 0; h--, dst -= rowsize, src -= rowsize)
-                _ewk_view_4b_move_line_left(dst, src, w);
+        height -= deltaY;
+        src = image + x + (y + height - 1) * rowSize;
+        dst = src + deltaY * rowSize;
+        if (deltaX <= 0) {
+            width += deltaX;
+            src -= deltaX;
+            for (; height > 0; height--, dst -= rowSize, src -= rowSize)
+                _ewk_view_4b_move_line_left(dst, src, width);
         } else {
-            w -= dx;
-            src += w - 1;
-            dst += w + dx - 1;
-            for (; h > 0; h--, dst -= rowsize, src -= rowsize)
-                _ewk_view_4b_move_line_right(dst, src, w);
+            width -= deltaX;
+            src += width - 1;
+            dst += width + deltaX - 1;
+            for (; height > 0; height--, dst -= rowSize, src -= rowSize)
+                _ewk_view_4b_move_line_right(dst, src, width);
         }
     }
 }
 
-static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* sd, void* pixels, Evas_Coord ow, Evas_Coord oh, const Ewk_Scroll_Request* sr)
+static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* smartData, void* pixels, Evas_Coord width, Evas_Coord height, const Ewk_Scroll_Request* scrollRequest)
 {
     Evas_Coord sx, sy, sw, sh;
 
     DBG("%d,%d + %d,%d %+03d,%+03d, store: %p %dx%d",
-        sr->x, sr->y, sr->w, sr->h, sr->dx, sr->dy, pixels, ow, oh);
+        scrollRequest->x, scrollRequest->y, scrollRequest->w, scrollRequest->h, scrollRequest->dx, scrollRequest->dy, pixels, width, height);
 
-    sx = sr->x;
-    sy = sr->y;
-    sw = sr->w;
-    sh = sr->h;
+    sx = scrollRequest->x;
+    sy = scrollRequest->y;
+    sw = scrollRequest->w;
+    sh = scrollRequest->h;
 
-    if (abs(sr->dx) >= sw || abs(sr->dy) >= sh) {
+    if (abs(scrollRequest->dx) >= sw || abs(scrollRequest->dy) >= sh) {
         /* doubt webkit would be so stupid... */
         DBG("full page scroll %+03d,%+03d. convert to repaint %d,%d + %dx%d",
-            sr->dx, sr->dy, sx, sy, sw, sh);
-        ewk_view_repaint_add(sd->_priv, sx, sy, sw, sh);
+            scrollRequest->dx, scrollRequest->dy, sx, sy, sw, sh);
+        ewk_view_repaint_add(smartData->_priv, sx, sy, sw, sh);
         return;
     }
 
@@ -232,10 +230,10 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
         sy = 0;
     }
 
-    if (sx + sw > ow)
-        sw = ow - sx;
-    if (sy + sh > oh)
-        sh = oh - sy;
+    if (sx + sw > width)
+        sw = width - sx;
+    if (sy + sh > height)
+        sh = height - sy;
 
     if (sw < 0)
         sw = 0;
@@ -243,83 +241,83 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
         sh = 0;
 
     EINA_SAFETY_ON_TRUE_RETURN(!sw || !sh);
-    if (!sr->dx) {
-        if (sr->dy < 0) {
+    if (!scrollRequest->dx) {
+        if (scrollRequest->dy < 0) {
             DBG("scroll up: %+03d,%+03d update=%d,%d+%dx%d, "
                 "repaint=%d,%d+%dx%d",
-                sr->dx, sr->dy, sx, sy, sw, sh + sr->dy,
-                sx, sy + sh + sr->dy, sw, -sr->dy);
+                scrollRequest->dx, scrollRequest->dy, sx, sy, sw, sh + scrollRequest->dy,
+                sx, sy + sh + scrollRequest->dy, sw, -scrollRequest->dy);
 
             _ewk_view_4b_move_region_up
-                (static_cast<uint32_t*>(pixels), -sr->dy, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), -scrollRequest->dy, sx, sy, sw, sh, width);
             evas_object_image_data_update_add
-                (sd->backing_store, sx, sy, sw, sh + sr->dy);
+                (smartData->backing_store, sx, sy, sw, sh + scrollRequest->dy);
 
-            ewk_view_repaint_add(sd->_priv, sx, sy + sh + sr->dy, sw, -sr->dy);
-        } else if (sr->dy > 0) {
+            ewk_view_repaint_add(smartData->_priv, sx, sy + sh + scrollRequest->dy, sw, -scrollRequest->dy);
+        } else if (scrollRequest->dy > 0) {
             DBG("scroll down: %+03d,%+03d update=%d,%d+%dx%d, "
                 "repaint=%d,%d+%dx%d",
-                sr->dx, sr->dy, sx, sy + sr->dy, sw, sh - sr->dy,
-                sx, sy, sw, sr->dy);
+                scrollRequest->dx, scrollRequest->dy, sx, sy + scrollRequest->dy, sw, sh - scrollRequest->dy,
+                sx, sy, sw, scrollRequest->dy);
 
             _ewk_view_4b_move_region_down
-                (static_cast<uint32_t*>(pixels), sr->dy, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), scrollRequest->dy, sx, sy, sw, sh, width);
             evas_object_image_data_update_add
-                (sd->backing_store, sx, sy + sr->dy, sw, sh - sr->dy);
+                (smartData->backing_store, sx, sy + scrollRequest->dy, sw, sh - scrollRequest->dy);
 
-            ewk_view_repaint_add(sd->_priv, sx, sy, sw, sr->dy);
+            ewk_view_repaint_add(smartData->_priv, sx, sy, sw, scrollRequest->dy);
         }
-    } else if (!sr->dy) {
-        if (sr->dx < 0) {
+    } else if (!scrollRequest->dy) {
+        if (scrollRequest->dx < 0) {
             DBG("scroll left: %+03d,%+03d update=%d,%d+%dx%d, "
                 "repaint=%d,%d+%dx%d",
-                sr->dx, sr->dy, sx, sy, sw + sr->dx, sh,
-                sx + sw + sr->dx, sy, -sr->dx, sh);
+                scrollRequest->dx, scrollRequest->dy, sx, sy, sw + scrollRequest->dx, sh,
+                sx + sw + scrollRequest->dx, sy, -scrollRequest->dx, sh);
 
             _ewk_view_4b_move_region_left
-                (static_cast<uint32_t*>(pixels), -sr->dx, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), -scrollRequest->dx, sx, sy, sw, sh, width);
             evas_object_image_data_update_add
-                (sd->backing_store, sx, sy, sw + sr->dx, sh);
+                (smartData->backing_store, sx, sy, sw + scrollRequest->dx, sh);
 
-            ewk_view_repaint_add(sd->_priv, sx + sw + sr->dx, sy, -sr->dx, sh);
-        } else if (sr->dx > 0) {
+            ewk_view_repaint_add(smartData->_priv, sx + sw + scrollRequest->dx, sy, -scrollRequest->dx, sh);
+        } else if (scrollRequest->dx > 0) {
             DBG("scroll up: %+03d,%+03d update=%d,%d+%dx%d, "
                 "repaint=%d,%d+%dx%d",
-                sr->dx, sr->dy, sx + sr->dx, sy, sw - sr->dx, sh,
-                sx, sy, sr->dx, sh);
+                scrollRequest->dx, scrollRequest->dy, sx + scrollRequest->dx, sy, sw - scrollRequest->dx, sh,
+                sx, sy, scrollRequest->dx, sh);
 
             _ewk_view_4b_move_region_right
-                (static_cast<uint32_t*>(pixels), sr->dx, sx, sy, sw, sh, ow);
+                (static_cast<uint32_t*>(pixels), scrollRequest->dx, sx, sy, sw, sh, width);
             evas_object_image_data_update_add
-                (sd->backing_store, sx + sr->dx, sy, sw - sr->dx, sh);
+                (smartData->backing_store, sx + scrollRequest->dx, sy, sw - scrollRequest->dx, sh);
 
-            ewk_view_repaint_add(sd->_priv, sx, sy, sr->dx, sh);
+            ewk_view_repaint_add(smartData->_priv, sx, sy, scrollRequest->dx, sh);
         }
     } else {
         Evas_Coord mx, my, mw, mh, ax, ay, aw, ah, bx, by, bw, bh;
 
-        if (sr->dx < 0) {
+        if (scrollRequest->dx < 0) {
             mx = sx;
-            mw = sw + sr->dx;
+            mw = sw + scrollRequest->dx;
             ax = mx + mw;
-            aw = -sr->dx;
+            aw = -scrollRequest->dx;
         } else {
             ax = sx;
-            aw = sr->dx;
+            aw = scrollRequest->dx;
             mx = ax + aw;
-            mw = sw - sr->dx;
+            mw = sw - scrollRequest->dx;
         }
 
-        if (sr->dy < 0) {
+        if (scrollRequest->dy < 0) {
             my = sy;
-            mh = sh + sr->dy;
+            mh = sh + scrollRequest->dy;
             by = my + mh;
-            bh = -sr->dy;
+            bh = -scrollRequest->dy;
         } else {
             by = sy;
-            bh = sr->dy;
+            bh = scrollRequest->dy;
             my = by + bh;
-            mh = sh - sr->dy;
+            mh = sh - scrollRequest->dy;
         }
 
         ay = my;
@@ -329,37 +327,37 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
 
         DBG("scroll diagonal: %+03d,%+03d update=%d,%d+%dx%d, "
             "repaints: h=%d,%d+%dx%d v=%d,%d+%dx%d",
-            sr->dx, sr->dy, mx, my, mw, mh, ax, ay, aw, ah, bx, by, bw, bh);
+            scrollRequest->dx, scrollRequest->dy, mx, my, mw, mh, ax, ay, aw, ah, bx, by, bw, bh);
 
         _ewk_view_4b_move_region
-            (static_cast<uint32_t*>(pixels), sr->dx, sr->dy, sx, sy, sw, sh, ow);
+            (static_cast<uint32_t*>(pixels), scrollRequest->dx, scrollRequest->dy, sx, sy, sw, sh, width);
 
-        evas_object_image_data_update_add(sd->backing_store, mx, my, mw, mh);
-        ewk_view_repaint_add(sd->_priv, ax, ay, aw, ah);
-        ewk_view_repaint_add(sd->_priv, bx, by, bw, bh);
+        evas_object_image_data_update_add(smartData->backing_store, mx, my, mw, mh);
+        ewk_view_repaint_add(smartData->_priv, ax, ay, aw, ah);
+        ewk_view_repaint_add(smartData->_priv, bx, by, bw, bh);
     }
 }
 
-static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
     const Ewk_Scroll_Request* sr;
     const Ewk_Scroll_Request* sr_end;
     Evas_Coord ow, oh;
     size_t count;
-    void* pixels = evas_object_image_data_get(sd->backing_store, 1);
-    evas_object_image_size_get(sd->backing_store, &ow, &oh);
+    void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
+    evas_object_image_size_get(smartData->backing_store, &ow, &oh);
 
-    sr = ewk_view_scroll_requests_get(sd->_priv, &count);
+    sr = ewk_view_scroll_requests_get(smartData->_priv, &count);
     sr_end = sr + count;
     for (; sr < sr_end; sr++)
-        _ewk_view_single_scroll_process_single(sd, pixels, ow, oh, sr);
+        _ewk_view_single_scroll_process_single(smartData, pixels, ow, oh, sr);
 
-    evas_object_image_data_set(sd->backing_store, pixels);
+    evas_object_image_data_set(smartData->backing_store, pixels);
 
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* smartData)
 {
     Ewk_View_Paint_Context* ctxt;
     Evas_Coord ow, oh;
@@ -376,18 +374,18 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
     size_t count;
     Eina_Bool ret = EINA_TRUE;
 
-    if (sd->animated_zoom.zoom.current < 0.00001) {
-        Evas_Object* clip = evas_object_clip_get(sd->backing_store);
+    if (smartData->animated_zoom.zoom.current < 0.00001) {
+        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
         Evas_Coord w, h, cw, ch;
         // reset effects of zoom_weak_set()
         evas_object_image_fill_set
-            (sd->backing_store, 0, 0, sd->view.w, sd->view.h);
-        evas_object_move(clip, sd->view.x, sd->view.y);
+            (smartData->backing_store, 0, 0, smartData->view.w, smartData->view.h);
+        evas_object_move(clip, smartData->view.x, smartData->view.y);
 
-        w = sd->view.w;
-        h = sd->view.h;
+        w = smartData->view.w;
+        h = smartData->view.h;
 
-        ewk_frame_contents_size_get(sd->main_frame, &cw, &ch);
+        ewk_frame_contents_size_get(smartData->main_frame, &cw, &ch);
         if (w > cw)
             w = cw;
         if (h > ch)
@@ -395,8 +393,8 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
         evas_object_resize(clip, w, h);
     }
 
-    pixels = evas_object_image_data_get(sd->backing_store, 1);
-    evas_object_image_size_get(sd->backing_store, &ow, &oh);
+    pixels = evas_object_image_data_get(smartData->backing_store, 1);
+    evas_object_image_size_get(smartData->backing_store, &ow, &oh);
     format = CAIRO_FORMAT_ARGB32;
 
     surface = cairo_image_surface_create_for_data
@@ -417,7 +415,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
         goto error_cairo;
     }
 
-    ctxt = ewk_view_paint_context_new(sd->_priv, cairo);
+    ctxt = ewk_view_paint_context_new(smartData->_priv, cairo);
     if (!ctxt) {
         ERR("could not create paint context");
         ret = EINA_FALSE;
@@ -431,7 +429,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
         goto error_tiler;
     }
 
-    pr = ewk_view_repaints_get(sd->_priv, &count);
+    pr = ewk_view_repaints_get(smartData->_priv, &count);
     pr_end = pr + count;
     for (; pr < pr_end; pr++)
         eina_tiler_rect_add(tiler, pr);
@@ -443,10 +441,10 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
         goto error_iterator;
     }
 
-    ewk_view_layout_if_needed_recursive(sd->_priv);
+    ewk_view_layout_if_needed_recursive(smartData->_priv);
 
     int sx, sy;
-    ewk_frame_scroll_pos_get(sd->main_frame, &sx, &sy);
+    ewk_frame_scroll_pos_get(smartData->main_frame, &sx, &sy);
 
     EINA_ITERATOR_FOREACH(itr, r) {
         Eina_Rectangle scrolled_rect = {
@@ -464,7 +462,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd
 
         ewk_view_paint_context_restore(ctxt);
         evas_object_image_data_update_add
-            (sd->backing_store, r->x, r->y, r->w, r->h);
+            (smartData->backing_store, r->x, r->y, r->w, r->h);
     }
     eina_iterator_free(itr);
 
@@ -477,56 +475,56 @@ error_paint_context:
 error_cairo:
     cairo_surface_destroy(surface);
 error_cairo_surface:
-    evas_object_image_data_set(sd->backing_store, pixels); /* dec refcount */
+    evas_object_image_data_set(smartData->backing_store, pixels); /* dec refcount */
 
     return ret;
 }
 
-static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data* sd, float zoom, Evas_Coord cx, Evas_Coord cy)
+static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
 {
     // TODO: review
-    float scale = zoom / sd->animated_zoom.zoom.start;
-    Evas_Coord w = sd->view.w * scale;
-    Evas_Coord h = sd->view.h * scale;
+    float scale = zoom / smartData->animated_zoom.zoom.start;
+    Evas_Coord w = smartData->view.w * scale;
+    Evas_Coord h = smartData->view.h * scale;
     Evas_Coord dx, dy, cw, ch;
-    Evas_Object* clip = evas_object_clip_get(sd->backing_store);
+    Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
 
-    ewk_frame_contents_size_get(sd->main_frame, &cw, &ch);
-    if (sd->view.w > 0 && sd->view.h > 0) {
-        dx = (w * (sd->view.w - cx)) / sd->view.w;
-        dy = (h * (sd->view.h - cy)) / sd->view.h;
+    ewk_frame_contents_size_get(smartData->main_frame, &cw, &ch);
+    if (smartData->view.w > 0 && smartData->view.h > 0) {
+        dx = (w * (smartData->view.w - centerX)) / smartData->view.w;
+        dy = (h * (smartData->view.h - centerY)) / smartData->view.h;
     } else {
         dx = 0;
         dy = 0;
     }
 
-    evas_object_image_fill_set(sd->backing_store, cx + dx, cy + dy, w, h);
+    evas_object_image_fill_set(smartData->backing_store, centerX + dx, centerY + dy, w, h);
 
-    if (sd->view.w > 0 && sd->view.h > 0) {
-        dx = ((sd->view.w - w) * cx) / sd->view.w;
-        dy = ((sd->view.h - h) * cy) / sd->view.h;
+    if (smartData->view.w > 0 && smartData->view.h > 0) {
+        dx = ((smartData->view.w - w) * centerX) / smartData->view.w;
+        dy = ((smartData->view.h - h) * centerY) / smartData->view.h;
     } else {
         dx = 0;
         dy = 0;
     }
-    evas_object_move(clip, sd->view.x + dx, sd->view.y + dy);
+    evas_object_move(clip, smartData->view.x + dx, smartData->view.y + dy);
 
-    if (cw < sd->view.w)
+    if (cw < smartData->view.w)
         w = cw * scale;
-    if (ch < sd->view.h)
+    if (ch < smartData->view.h)
         h = ch * scale;
     evas_object_resize(clip, w, h);
     return EINA_TRUE;
 }
 
-static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* sd, Eina_Bool smooth_scale)
+static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* smartData, Eina_Bool smooth_scale)
 {
-    evas_object_image_smooth_scale_set(sd->backing_store, smooth_scale);
+    evas_object_image_smooth_scale_set(smartData->backing_store, smooth_scale);
 }
 
-static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* sd, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* smartData, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
 {
-    evas_object_image_alpha_set(sd->backing_store, a < 255);
+    evas_object_image_alpha_set(smartData->backing_store, alpha < 255);
 }
 
 Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
@@ -563,7 +561,7 @@ static inline Evas_Smart* _ewk_view_single_smart_class_new(void)
     return smart;
 }
 
-Evas_Object* ewk_view_single_add(Evas* e)
+Evas_Object* ewk_view_single_add(Evas* canvas)
 {
-    return evas_object_smart_add(e, _ewk_view_single_smart_class_new());
+    return evas_object_smart_add(canvas, _ewk_view_single_smart_class_new());
 }

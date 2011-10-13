@@ -1,3 +1,52 @@
+2011-10-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change efl style parameter variables with WebKit coding Style
+        https://bugs.webkit.org/show_bug.cgi?id=69073
+
+        Reviewed by Antonio Gomes.
+
+        This is a third step in order to be more compliant with WebKit coding style.
+        We have used one-letter| two-letter parameter according to efl style. However, it's more difficult
+        for other reviewers to review EFL patches. So, this patch changes efl style parameters
+        with meaningful one.
+
+        Majors changes are listed below,
+
+        - Use ewkFrame instead of o parameter in ewk_frame.cpp.
+        - Use ewkView instead of o parameter in ewk_view.cpp.
+        - Use menu and item instead of o parameter in ewk_contextmenu.cpp.
+        - Use ewkTile instead of o parameter in ewk_tile_xxx.cpp.
+        - Use tile parameter name instead of t parameter in ewk_tile_xxx.cpp.
+        - Use smartData instead of sd parameter for Ewk_XXXX_Smart_Data struct.
+        - Use width, height instead of w, h parameter.
+        - Use xxxEvent instead of ev parameter for event. (e.g. downEvent, upEvent, wheelEvent)
+        - Use scrollX, scrollY, scrollWidth, scrollHeight, centerX, centerY, deltaX, deltaY instead of sx, xy, sw,
+        sh, cx, cy, dx, dy.
+        - Use tileUnusedCache instead of tuc parameter in tiled backing store.
+        - Use red, green, blue and alpha instead of r,g,b,a.
+        - Remove "_" from parameter variable.
+        - Run demarchi's coding style script for ewk_tile_xxx.cpp files.
+        - Remove *void* parameter in ewk_tile_xxx.cpp's internal functions.
+
+        * ewk/ewk_auth_soup.cpp:
+        * ewk/ewk_contextmenu.cpp:
+        * ewk/ewk_cookies.cpp:
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_history.cpp:
+        * ewk/ewk_js.cpp:
+        * ewk/ewk_protocol_handler_soup.cpp:
+        * ewk/ewk_settings.cpp:
+        * ewk/ewk_tiled_backing_store.cpp:
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.cpp:
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.cpp:
+        * ewk/ewk_tiled_model.h:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view_single.cpp:
+        * ewk/ewk_view_tiled.cpp:
+        * ewk/ewk_window_features.cpp:
+
 2011-10-10  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not cache a frame's contents size.
@@ -2057,7 +2106,7 @@
         (WebCore::ChromeClientEfl::runOpenPanel):
         * ewk/ewk_view.cpp:
         (ewk_view_run_open_panel):
-        * ewk/ewk_view.h
+        * ewk/ewk_view.h:
 
 2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 

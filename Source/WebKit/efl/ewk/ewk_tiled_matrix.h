@@ -52,7 +52,7 @@ void ewk_tile_matrix_thaw(Ewk_Tile_Matrix* tm);
 // remove me!
 void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tm);
 void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache* tuc);
-void ewk_tile_accounting_dbg(void);
+void ewk_tile_accounting_dbg();
 
 
 #endif // ewk_tiled_matrix_h

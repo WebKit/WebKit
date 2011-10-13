@@ -178,44 +178,44 @@ struct _Ewk_View_Private_Data {
 };
 
 #ifndef EWK_TYPE_CHECK
-#define EWK_VIEW_TYPE_CHECK(o, ...) do { } while (0)
+#define EWK_VIEW_TYPE_CHECK(ewkView, ...) do { } while (0)
 #else
-#define EWK_VIEW_TYPE_CHECK(o, ...)                                     \
+#define EWK_VIEW_TYPE_CHECK(ewkView, ...)                                     \
     do {                                                                \
-        const char* _tmp_otype = evas_object_type_get(o);               \
-        const Evas_Smart* _tmp_s = evas_object_smart_smart_get(o);      \
+        const char* _tmp_otype = evas_object_type_get(ewkView);               \
+        const Evas_Smart* _tmp_s = evas_object_smart_smart_get(ewkView);      \
         if (EINA_UNLIKELY(!_tmp_s)) {                                   \
             EINA_LOG_CRIT                                               \
-                ("%p (%s) is not a smart object!", o,                   \
+                ("%p (%s) is not a smart object!", ewkView,                   \
                 _tmp_otype ? _tmp_otype : "(null)");                   \
             return __VA_ARGS__;                                         \
         }                                                               \
         const Evas_Smart_Class* _tmp_sc = evas_smart_class_get(_tmp_s); \
         if (EINA_UNLIKELY(!_tmp_sc)) {                                  \
             EINA_LOG_CRIT                                               \
-                ("%p (%s) is not a smart object!", o,                   \
+                ("%p (%s) is not a smart object!", ewkView,                   \
                 _tmp_otype ? _tmp_otype : "(null)");                   \
             return __VA_ARGS__;                                         \
         }                                                               \
         if (EINA_UNLIKELY(_tmp_sc->data != EWK_VIEW_TYPE_STR)) {        \
             EINA_LOG_CRIT                                               \
                 ("%p (%s) is not of an ewk_view (need %p, got %p)!",    \
-                o, _tmp_otype ? _tmp_otype : "(null)",                 \
+                ewkView, _tmp_otype ? _tmp_otype : "(null)",                 \
                 EWK_VIEW_TYPE_STR, _tmp_sc->data);                     \
             return __VA_ARGS__;                                         \
         }                                                               \
     } while (0)
 #endif
 
-#define EWK_VIEW_SD_GET(o, ptr)                                 \
-    Ewk_View_Smart_Data* ptr = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(o))
+#define EWK_VIEW_SD_GET(ewkView, ptr)                                 \
+    Ewk_View_Smart_Data* ptr = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView))
 
-#define EWK_VIEW_SD_GET_OR_RETURN(o, ptr, ...)          \
-    EWK_VIEW_TYPE_CHECK(o, __VA_ARGS__);                \
-    EWK_VIEW_SD_GET(o, ptr);                            \
+#define EWK_VIEW_SD_GET_OR_RETURN(ewkView, ptr, ...)          \
+    EWK_VIEW_TYPE_CHECK(ewkView, __VA_ARGS__);                \
+    EWK_VIEW_SD_GET(ewkView, ptr);                            \
     if (!ptr) {                                         \
         CRITICAL("no smart data for object %p (%s)",    \
-                 o, evas_object_type_get(o));           \
+                 ewkView, evas_object_type_get(ewkView));           \
         return __VA_ARGS__;                             \
     }
 
@@ -230,12 +230,12 @@ struct _Ewk_View_Private_Data {
         return __VA_ARGS__;                                     \
     }
 
-static void _ewk_view_smart_changed(Ewk_View_Smart_Data* sd)
+static void _ewk_view_smart_changed(Ewk_View_Smart_Data* smartData)
 {
-    if (sd->changed.any)
+    if (smartData->changed.any)
         return;
-    sd->changed.any = EINA_TRUE;
-    evas_object_smart_changed(sd->self);
+    smartData->changed.any = EINA_TRUE;
+    evas_object_smart_changed(smartData->self);
 }
 
 static Eina_Bool _ewk_view_repaints_resize(Ewk_View_Private_Data* priv, size_t size)
@@ -250,7 +250,7 @@ static Eina_Bool _ewk_view_repaints_resize(Ewk_View_Private_Data* priv, size_t s
     return EINA_TRUE;
 }
 
-static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
 {
     Eina_Rectangle* r;
 
@@ -270,10 +270,10 @@ static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Eva
 
     r->x = x;
     r->y = y;
-    r->w = w;
-    r->h = h;
+    r->w = width;
+    r->h = height;
 
-    DBG("add repaint %d, %d+%dx%d", x, y, w, h);
+    DBG("add repaint %d, %d+%dx%d", x, y, width, height);
 }
 
 static void _ewk_view_repaints_flush(Ewk_View_Private_Data* priv)
@@ -296,16 +296,16 @@ static Eina_Bool _ewk_view_scrolls_resize(Ewk_View_Private_Data* priv, size_t si
     return EINA_TRUE;
 }
 
-static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool main_scroll)
+static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, Eina_Bool mainScroll)
 {
     Ewk_Scroll_Request* r;
     Ewk_Scroll_Request* r_end;
-    Evas_Coord x2 = x + w, y2 = y + h;
+    Evas_Coord x2 = x + width, y2 = y + height;
 
     r = priv->scrolls.array;
     r_end = r + priv->scrolls.count;
     for (; r < r_end; r++) {
-        if (r->x == x && r->y == y && r->w == w && r->h == h) {
+        if (r->x == x && r->y == y && r->w == width && r->h == height) {
             DBG("region already scrolled %d,%d+%dx%d %+03d,%+03d add "
                 "%+03d,%+03d",
                 r->x, r->y, r->w, r->h, r->dx, r->dy, dx, dy);
@@ -337,14 +337,14 @@ static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord dx, Eva
 
     r->x = x;
     r->y = y;
-    r->w = w;
-    r->h = h;
+    r->w = width;
+    r->h = height;
     r->x2 = x2;
     r->y2 = y2;
     r->dx = dx;
     r->dy = dy;
-    r->main_scroll = main_scroll;
-    DBG("add scroll in region: %d, %d+%dx%d %+03d, %+03d", x, y, w, h, dx, dy);
+    r->main_scroll = mainScroll;
+    DBG("add scroll in region: %d, %d+%dx%d %+03d, %+03d", x, y, width, height, dx, dy);
 
     Eina_Rectangle* pr;
     Eina_Rectangle* pr_end;
@@ -367,11 +367,11 @@ static void _ewk_view_scrolls_flush(Ewk_View_Private_Data* priv)
 }
 
 // Default Event Handling //////////////////////////////////////////////
-static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* smartData)
 {
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_PRIV_GET(smartData, priv);
     WebCore::FocusController* fc = priv->page->focusController();
-    DBG("o=%p, fc=%p", sd->self, fc);
+    DBG("ewkView=%p, fc=%p", smartData->self, fc);
     EINA_SAFETY_ON_NULL_RETURN_VAL(fc, EINA_FALSE);
 
     fc->setActive(true);
@@ -379,11 +379,11 @@ static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* sd)
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
 {
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_PRIV_GET(smartData, priv);
     WebCore::FocusController* fc = priv->page->focusController();
-    DBG("o=%p, fc=%p", sd->self, fc);
+    DBG("ewkView=%p, fc=%p", smartData->self, fc);
     EINA_SAFETY_ON_NULL_RETURN_VAL(fc, EINA_FALSE);
 
     fc->setActive(false);
@@ -391,71 +391,71 @@ static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* sd)
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_smart_mouse_wheel(Ewk_View_Smart_Data* sd, const Evas_Event_Mouse_Wheel* ev)
+static Eina_Bool _ewk_view_smart_mouse_wheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
-    return ewk_frame_feed_mouse_wheel(sd->main_frame, ev);
+    return ewk_frame_feed_mouse_wheel(smartData->main_frame, wheelEvent);
 }
 
-static Eina_Bool _ewk_view_smart_mouse_down(Ewk_View_Smart_Data* sd, const Evas_Event_Mouse_Down* ev)
+static Eina_Bool _ewk_view_smart_mouse_down(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Down* downEvent)
 {
-    return ewk_frame_feed_mouse_down(sd->main_frame, ev);
+    return ewk_frame_feed_mouse_down(smartData->main_frame, downEvent);
 }
 
-static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* sd, const Evas_Event_Mouse_Up* ev)
+static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Up* upEvent)
 {
-    return ewk_frame_feed_mouse_up(sd->main_frame, ev);
+    return ewk_frame_feed_mouse_up(smartData->main_frame, upEvent);
 }
 
-static Eina_Bool _ewk_view_smart_mouse_move(Ewk_View_Smart_Data* sd, const Evas_Event_Mouse_Move* ev)
+static Eina_Bool _ewk_view_smart_mouse_move(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Move* moveEvent)
 {
-    return ewk_frame_feed_mouse_move(sd->main_frame, ev);
+    return ewk_frame_feed_mouse_move(smartData->main_frame, moveEvent);
 }
 
-static Eina_Bool _ewk_view_smart_key_down(Ewk_View_Smart_Data* sd, const Evas_Event_Key_Down* ev)
+static Eina_Bool _ewk_view_smart_key_down(Ewk_View_Smart_Data* smartData, const Evas_Event_Key_Down* downEvent)
 {
-    Evas_Object* frame = ewk_view_frame_focused_get(sd->self);
+    Evas_Object* frame = ewk_view_frame_focused_get(smartData->self);
 
     if (!frame)
-        frame = sd->main_frame;
+        frame = smartData->main_frame;
 
-    return ewk_frame_feed_key_down(frame, ev);
+    return ewk_frame_feed_key_down(frame, downEvent);
 }
 
-static Eina_Bool _ewk_view_smart_key_up(Ewk_View_Smart_Data* sd, const Evas_Event_Key_Up* ev)
+static Eina_Bool _ewk_view_smart_key_up(Ewk_View_Smart_Data* smartData, const Evas_Event_Key_Up* upEvent)
 {
-    Evas_Object* frame = ewk_view_frame_focused_get(sd->self);
+    Evas_Object* frame = ewk_view_frame_focused_get(smartData->self);
 
     if (!frame)
-        frame = sd->main_frame;
+        frame = smartData->main_frame;
 
-    return ewk_frame_feed_key_up(frame, ev);
+    return ewk_frame_feed_key_up(frame, upEvent);
 }
 
-static void _ewk_view_smart_add_console_message(Ewk_View_Smart_Data* sd, const char* message, unsigned int lineNumber, const char* sourceID)
+static void _ewk_view_smart_add_console_message(Ewk_View_Smart_Data* smartData, const char* message, unsigned int lineNumber, const char* sourceID)
 {
     INF("console message: %s @%d: %s\n", sourceID, lineNumber, message);
 }
 
-static void _ewk_view_smart_run_javascript_alert(Ewk_View_Smart_Data* sd, Evas_Object* frame, const char* message)
+static void _ewk_view_smart_run_javascript_alert(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message)
 {
     INF("javascript alert: %s\n", message);
 }
 
-static Eina_Bool _ewk_view_smart_run_javascript_confirm(Ewk_View_Smart_Data* sd, Evas_Object* frame, const char* message)
+static Eina_Bool _ewk_view_smart_run_javascript_confirm(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message)
 {
     INF("javascript confirm: %s", message);
     INF("javascript confirm (HARD CODED)? YES");
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_smart_should_interrupt_javascript(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_smart_should_interrupt_javascript(Ewk_View_Smart_Data* smartData)
 {
     INF("should interrupt javascript?\n"
         "\t(HARD CODED) NO");
     return EINA_FALSE;
 }
 
-static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* sd, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
+static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
 {
     *value = strdup("test");
     Eina_Bool ret = EINA_TRUE;
@@ -469,7 +469,7 @@ static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* sd, 
 }
 
 // Event Handling //////////////////////////////////////////////////////
-static void _ewk_view_on_focus_in(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_focus_in(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
@@ -477,7 +477,7 @@ static void _ewk_view_on_focus_in(void* data, Evas* e, Evas_Object* o, void* eve
     sd->api->focus_in(sd);
 }
 
-static void _ewk_view_on_focus_out(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_focus_out(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
@@ -485,63 +485,63 @@ static void _ewk_view_on_focus_out(void* data, Evas* e, Evas_Object* o, void* ev
     sd->api->focus_out(sd);
 }
 
-static void _ewk_view_on_mouse_wheel(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_mouse_wheel(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Mouse_Wheel* ev = static_cast<Evas_Event_Mouse_Wheel*>(event_info);
+    Evas_Event_Mouse_Wheel* ev = static_cast<Evas_Event_Mouse_Wheel*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->mouse_wheel);
     sd->api->mouse_wheel(sd, ev);
 }
 
-static void _ewk_view_on_mouse_down(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_mouse_down(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Mouse_Down* ev = static_cast<Evas_Event_Mouse_Down*>(event_info);
+    Evas_Event_Mouse_Down* ev = static_cast<Evas_Event_Mouse_Down*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->mouse_down);
     sd->api->mouse_down(sd, ev);
 }
 
-static void _ewk_view_on_mouse_up(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_mouse_up(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Mouse_Up* ev = static_cast<Evas_Event_Mouse_Up*>(event_info);
+    Evas_Event_Mouse_Up* ev = static_cast<Evas_Event_Mouse_Up*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->mouse_up);
     sd->api->mouse_up(sd, ev);
 }
 
-static void _ewk_view_on_mouse_move(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_mouse_move(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Mouse_Move* ev = static_cast<Evas_Event_Mouse_Move*>(event_info);
+    Evas_Event_Mouse_Move* ev = static_cast<Evas_Event_Mouse_Move*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->mouse_move);
     sd->api->mouse_move(sd, ev);
 }
 
-static void _ewk_view_on_key_down(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_key_down(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Key_Down* ev = static_cast<Evas_Event_Key_Down*>(event_info);
+    Evas_Event_Key_Down* ev = static_cast<Evas_Event_Key_Down*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->key_down);
     sd->api->key_down(sd, ev);
 }
 
-static void _ewk_view_on_key_up(void* data, Evas* e, Evas_Object* o, void* event_info)
+static void _ewk_view_on_key_up(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
 {
-    Evas_Event_Key_Up* ev = static_cast<Evas_Event_Key_Up*>(event_info);
+    Evas_Event_Key_Up* ev = static_cast<Evas_Event_Key_Up*>(eventInfo);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->key_up);
     sd->api->key_up(sd, ev);
 }
 
-static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_Data* sd, Ewk_View_Private_Data* priv, WebCore::HTMLFrameOwnerElement* owner)
+static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_Data* smartData, Ewk_View_Private_Data* priv, WebCore::HTMLFrameOwnerElement* owner)
 {
-    WebCore::FrameLoaderClientEfl* flc = new WebCore::FrameLoaderClientEfl(sd->self);
+    WebCore::FrameLoaderClientEfl* flc = new WebCore::FrameLoaderClientEfl(smartData->self);
     if (!flc) {
         CRITICAL("Could not create frame loader client.");
         return 0;
@@ -553,7 +553,7 @@ static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_D
 
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
-static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
+static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 {
     Ewk_View_Private_Data* priv =
         static_cast<Ewk_View_Private_Data*>(calloc(1, sizeof(Ewk_View_Private_Data)));
@@ -566,8 +566,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     }
 
     WebCore::Page::PageClients pageClients;
-    pageClients.chromeClient = static_cast<WebCore::ChromeClient*>(new WebCore::ChromeClientEfl(sd->self));
-    pageClients.editorClient = static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(sd->self));
+    pageClients.chromeClient = static_cast<WebCore::ChromeClient*>(new WebCore::ChromeClientEfl(smartData->self));
+    pageClients.editorClient = static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(smartData->self));
     pageClients.dragClient = static_cast<WebCore::DragClient*>(new WebCore::DragClientEfl);
     pageClients.inspectorClient = static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl);
 #if ENABLE(DEVICE_ORIENTATION)
@@ -595,8 +595,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->viewport_arguments.userScalable = EINA_TRUE;
 
     priv->page_settings->setLoadsImagesAutomatically(true);
-    priv->page_settings->setDefaultFixedFontSize(12);
-    priv->page_settings->setDefaultFontSize(16);
+    priv->page_settings->setDefaultFixedFontSize(10);
+    priv->page_settings->setDefaultFontSize(13);
     priv->page_settings->setSerifFontFamily("serif");
     priv->page_settings->setFixedFontFamily("monotype");
     priv->page_settings->setSansSerifFontFamily("sans");
@@ -666,7 +666,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
 
     priv->settings.dom_timer_interval = priv->page_settings->defaultMinDOMTimerInterval();
 
-    priv->main_frame = _ewk_view_core_frame_new(sd, priv, 0).get();
+    priv->main_frame = _ewk_view_core_frame_new(smartData, priv, 0).get();
     if (!priv->main_frame) {
         CRITICAL("Could not create main frame.");
         goto error_main_frame;
@@ -721,13 +721,13 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     free(priv);
 }
 
-static void _ewk_view_smart_add(Evas_Object* o)
+static void _ewk_view_smart_add(Evas_Object* ewkView)
 {
-    const Evas_Smart* smart = evas_object_smart_smart_get(o);
+    const Evas_Smart* smart = evas_object_smart_smart_get(ewkView);
     const Evas_Smart_Class* sc = evas_smart_class_get(smart);
     const Ewk_View_Smart_Class* api = reinterpret_cast<const Ewk_View_Smart_Class*>(sc);
     EINA_SAFETY_ON_NULL_RETURN(api->backing_store_add);
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
 
     if (!sd) {
         sd = static_cast<Ewk_View_Smart_Data*>(calloc(1, sizeof(Ewk_View_Smart_Data)));
@@ -735,7 +735,7 @@ static void _ewk_view_smart_add(Evas_Object* o)
             CRITICAL("could not allocate Ewk_View_Smart_Data");
             return;
         }
-        evas_object_smart_data_set(o, sd);
+        evas_object_smart_data_set(ewkView, sd);
     }
 
     sd->bg_color.r = 255;
@@ -743,11 +743,11 @@ static void _ewk_view_smart_add(Evas_Object* o)
     sd->bg_color.b = 255;
     sd->bg_color.a = 255;
 
-    sd->self = o;
+    sd->self = ewkView;
     sd->_priv = _ewk_view_priv_new(sd);
     sd->api = api;
 
-    _parent_sc.add(o);
+    _parent_sc.add(ewkView);
 
     if (!sd->_priv)
         return;
@@ -760,13 +760,13 @@ static void _ewk_view_smart_add(Evas_Object* o)
         return;
     }
 
-    evas_object_smart_member_add(sd->backing_store, o);
+    evas_object_smart_member_add(sd->backing_store, ewkView);
     evas_object_show(sd->backing_store);
     evas_object_pass_events_set(sd->backing_store, EINA_TRUE);
 
     sd->events_rect = evas_object_rectangle_add(sd->base.evas);
     evas_object_color_set(sd->events_rect, 0, 0, 0, 0);
-    evas_object_smart_member_add(sd->events_rect, o);
+    evas_object_smart_member_add(sd->events_rect, ewkView);
     evas_object_show(sd->events_rect);
 
     sd->main_frame = ewk_frame_add(sd->base.evas);
@@ -775,7 +775,7 @@ static void _ewk_view_smart_add(Evas_Object* o)
         return;
     }
 
-    if (!ewk_frame_init(sd->main_frame, o, priv->main_frame)) {
+    if (!ewk_frame_init(sd->main_frame, ewkView, priv->main_frame)) {
         ERR("Could not initialize main frme object.");
         evas_object_del(sd->main_frame);
         sd->main_frame = 0;
@@ -786,10 +786,10 @@ static void _ewk_view_smart_add(Evas_Object* o)
     }
 
     evas_object_name_set(sd->main_frame, "EWK_Frame:main");
-    evas_object_smart_member_add(sd->main_frame, o);
+    evas_object_smart_member_add(sd->main_frame, ewkView);
     evas_object_show(sd->main_frame);
 
-#define CONNECT(s, c) evas_object_event_callback_add(o, s, c, sd)
+#define CONNECT(s, c) evas_object_event_callback_add(ewkView, s, c, sd)
     CONNECT(EVAS_CALLBACK_FOCUS_IN, _ewk_view_on_focus_in);
     CONNECT(EVAS_CALLBACK_FOCUS_OUT, _ewk_view_on_focus_out);
     CONNECT(EVAS_CALLBACK_MOUSE_WHEEL, _ewk_view_on_mouse_wheel);
@@ -801,19 +801,19 @@ static void _ewk_view_smart_add(Evas_Object* o)
 #undef CONNECT
 }
 
-static void _ewk_view_smart_del(Evas_Object* o)
+static void _ewk_view_smart_del(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     Ewk_View_Private_Data* priv = sd ? sd->_priv : 0;
 
-    ewk_view_stop(o);
-    _parent_sc.del(o);
+    ewk_view_stop(ewkView);
+    _parent_sc.del(ewkView);
     _ewk_view_priv_del(priv);
 }
 
-static void _ewk_view_smart_resize(Evas_Object* o, Evas_Coord w, Evas_Coord h)
+static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord w, Evas_Coord h)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
 
     // these should be queued and processed in calculate as well!
     evas_object_resize(sd->backing_store, w, h);
@@ -822,16 +822,16 @@ static void _ewk_view_smart_resize(Evas_Object* o, Evas_Coord w, Evas_Coord h)
     _ewk_view_smart_changed(sd);
 }
 
-static void _ewk_view_smart_move(Evas_Object* o, Evas_Coord x, Evas_Coord y)
+static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     sd->changed.position = EINA_TRUE;
     _ewk_view_smart_changed(sd);
 }
 
-static void _ewk_view_smart_calculate(Evas_Object* o)
+static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->contents_resize);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->scrolls_process);
@@ -843,11 +843,11 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
     if (!sd->main_frame || !priv->main_frame)
         return;
 
-    evas_object_geometry_get(o, &x, &y, &w, &h);
+    evas_object_geometry_get(ewkView, &x, &y, &w, &h);
 
-    DBG("o=%p geo=[%d, %d + %dx%d], changed: size=%hhu, "
+    DBG("ewkView=%p geo=[%d, %d + %dx%d], changed: size=%hhu, "
         "scrolls=%zu, repaints=%zu",
-        o, x, y, w, h, sd->changed.size,
+        ewkView, x, y, w, h, sd->changed.size,
         priv->scrolls.count, priv->repaints.count);
 
     if (sd->changed.size && ((w != sd->view.w) || (h != sd->view.h))) {
@@ -866,7 +866,7 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
         _ewk_view_repaint_add(priv, 0, 0, w, h);
 
         // This callback is a good place e.g. to change fixed layout size (ewk_view_fixed_layout_size_set).
-        evas_object_smart_callback_call(o, "view,resized", 0);
+        evas_object_smart_callback_call(ewkView, "view,resized", 0);
     }
     sd->changed.size = EINA_FALSE;
 
@@ -895,96 +895,96 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
     }
 }
 
-static void _ewk_view_smart_show(Evas_Object* o)
+static void _ewk_view_smart_show(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
 
     if (evas_object_clipees_get(sd->base.clipper))
         evas_object_show(sd->base.clipper);
     evas_object_show(sd->backing_store);
 }
 
-static void _ewk_view_smart_hide(Evas_Object* o)
+static void _ewk_view_smart_hide(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
 
     evas_object_hide(sd->base.clipper);
     evas_object_hide(sd->backing_store);
 }
 
-static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data* sd, int w, int h)
+static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data* smartData, int width, int height)
 {
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_smart_zoom_set(Ewk_View_Smart_Data* sd, float zoom, Evas_Coord cx, Evas_Coord cy)
+static Eina_Bool _ewk_view_smart_zoom_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
 {
     double px, py;
     Evas_Coord x, y, w, h;
     Eina_Bool ret;
 
-    ewk_frame_scroll_size_get(sd->main_frame, &w, &h);
-    ewk_frame_scroll_pos_get(sd->main_frame, &x, &y);
+    ewk_frame_scroll_size_get(smartData->main_frame, &w, &h);
+    ewk_frame_scroll_pos_get(smartData->main_frame, &x, &y);
 
-    if (w + sd->view.w > 0)
-        px = static_cast<double>(x + cx) / (w + sd->view.w);
+    if (w + smartData->view.w > 0)
+        px = static_cast<double>(x + centerX) / (w + smartData->view.w);
     else
         px = 0.0;
 
-    if (h + sd->view.h > 0)
-        py = static_cast<double>(y + cy) / (h + sd->view.h);
+    if (h + smartData->view.h > 0)
+        py = static_cast<double>(y + centerY) / (h + smartData->view.h);
     else
         py = 0.0;
 
-    ret = ewk_frame_page_zoom_set(sd->main_frame, zoom);
+    ret = ewk_frame_page_zoom_set(smartData->main_frame, zoom);
 
-    ewk_frame_scroll_size_get(sd->main_frame, &w, &h);
-    x = (w + sd->view.w) * px - cx;
-    y = (h + sd->view.h) * py - cy;
-    ewk_frame_scroll_set(sd->main_frame, x, y);
+    ewk_frame_scroll_size_get(smartData->main_frame, &w, &h);
+    x = (w + smartData->view.w) * px - centerX;
+    y = (h + smartData->view.h) * py - centerY;
+    ewk_frame_scroll_set(smartData->main_frame, x, y);
     return ret;
 }
 
-static void _ewk_view_smart_flush(Ewk_View_Smart_Data* sd)
+static void _ewk_view_smart_flush(Ewk_View_Smart_Data* smartData)
 {
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     _ewk_view_repaints_flush(priv);
     _ewk_view_scrolls_flush(priv);
 }
 
-static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
+static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* smartData, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
 {
     WRN("not supported by engine. sd=%p area=%d,%d+%dx%d, zoom=%f",
-        sd, x, y, w, h, zoom);
+        smartData, x, y, width, height, zoom);
     return EINA_FALSE;
 }
 
-static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data* sd, unsigned int n, float zoom)
+static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data* smartData, unsigned int number, float zoom)
 {
     WRN("not supported by engine. sd=%p, n=%u zoom=%f",
-        sd, n, zoom);
+        smartData, number, zoom);
     return EINA_FALSE;
 }
 
-static void _ewk_view_smart_pre_render_cancel(Ewk_View_Smart_Data* sd)
+static void _ewk_view_smart_pre_render_cancel(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", sd);
+    WRN("not supported by engine. sd=%p", smartData);
 }
 
-static void _ewk_view_zoom_animated_mark_stop(Ewk_View_Smart_Data* sd)
+static void _ewk_view_zoom_animated_mark_stop(Ewk_View_Smart_Data* smartData)
 {
-    sd->animated_zoom.zoom.start = 0.0;
-    sd->animated_zoom.zoom.end = 0.0;
-    sd->animated_zoom.zoom.current = 0.0;
+    smartData->animated_zoom.zoom.start = 0.0;
+    smartData->animated_zoom.zoom.end = 0.0;
+    smartData->animated_zoom.zoom.current = 0.0;
 }
 
-static void _ewk_view_zoom_animated_finish(Ewk_View_Smart_Data* sd)
+static void _ewk_view_zoom_animated_finish(Ewk_View_Smart_Data* smartData)
 {
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_PRIV_GET(smartData, priv);
     ecore_animator_del(priv->animated_zoom.animator);
     priv->animated_zoom.animator = 0;
-    _ewk_view_zoom_animated_mark_stop(sd);
-    evas_object_smart_callback_call(sd->self, "zoom,animated,end", 0);
+    _ewk_view_zoom_animated_mark_stop(smartData);
+    evas_object_smart_callback_call(smartData->self, "zoom,animated,end", 0);
 }
 
 static float _ewk_view_zoom_animated_current(Ewk_View_Private_Data* priv)
@@ -1032,18 +1032,18 @@ static Eina_Bool _ewk_view_zoom_animator_cb(void* data)
     return EINA_TRUE;
 }
 
-static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* sd)
+static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* smartData)
 {
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     if (priv->animated_zoom.animator)
         return;
     priv->animated_zoom.animator = ecore_animator_add
-                                       (_ewk_view_zoom_animator_cb, sd);
+                                       (_ewk_view_zoom_animator_cb, smartData);
 }
 
-static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Evas_Object* o)
+static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     int desktop_width = 980;
@@ -1057,15 +1057,15 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const E
     return attributes;
 }
 
-static Eina_Bool _ewk_view_smart_disable_render(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_smart_disable_render(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", sd);
+    WRN("not supported by engine. sd=%p", smartData);
     return EINA_FALSE;
 }
 
-static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* sd)
+static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", sd);
+    WRN("not supported by engine. sd=%p", smartData);
     return EINA_FALSE;
 }
 
@@ -1120,22 +1120,22 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     return EINA_TRUE;
 }
 
-void ewk_view_fixed_layout_size_set(Evas_Object* o, Evas_Coord w, Evas_Coord h)
+void ewk_view_fixed_layout_size_set(Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
     WebCore::FrameView* view = priv->main_frame->view();
-    if (w <= 0 && h <= 0) {
+    if (width <= 0 && height <= 0) {
         if (!view->useFixedLayout())
             return;
         view->setUseFixedLayout(EINA_FALSE);
     } else {
         WebCore::IntSize size = view->fixedLayoutSize();
-        if (size.width() == w && size.height() == h)
+        if (size.width() == width && size.height() == height)
             return;
         if (view)
-            view->setFixedLayoutSize(WebCore::IntSize(w, h));
+            view->setFixedLayoutSize(WebCore::IntSize(width, height));
     }
 
     if (!view)
@@ -1144,27 +1144,27 @@ void ewk_view_fixed_layout_size_set(Evas_Object* o, Evas_Coord w, Evas_Coord h)
     view->forceLayout();
 }
 
-void ewk_view_fixed_layout_size_get(const Evas_Object* o, Evas_Coord* w, Evas_Coord* h)
+void ewk_view_fixed_layout_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
 {
-    if (w)
-        *w = 0;
-    if (h)
-        *h = 0;
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    if (width)
+        *width = 0;
+    if (height)
+        *height = 0;
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     WebCore::FrameView* view = priv->main_frame->view();
     if (view->useFixedLayout()) {
         WebCore::IntSize size = view->fixedLayoutSize();
-        if (w)
-            *w = size.width();
-        if (h)
-            *h = size.height();
+        if (width)
+            *width = size.width();
+        if (height)
+            *height = size.height();
     }
 }
 
-void ewk_view_theme_set(Evas_Object* o, const char* path)
+void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     if (!eina_stringshare_replace(&priv->settings.theme, path))
         return;
@@ -1177,22 +1177,22 @@ void ewk_view_theme_set(Evas_Object* o, const char* path)
 
 }
 
-const char* ewk_view_theme_get(const Evas_Object* o)
+const char* ewk_view_theme_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.theme;
 }
 
-Evas_Object* ewk_view_frame_main_get(const Evas_Object* o)
+Evas_Object* ewk_view_frame_main_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     return sd->main_frame;
 }
 
-Evas_Object* ewk_view_frame_focused_get(const Evas_Object* o)
+Evas_Object* ewk_view_frame_focused_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
 
     WebCore::Frame* core = priv->page->focusController()->focusedFrame();
@@ -1205,42 +1205,42 @@ Evas_Object* ewk_view_frame_focused_get(const Evas_Object* o)
     return client->webFrame();
 }
 
-Eina_Bool ewk_view_uri_set(Evas_Object* o, const char* uri)
+Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_uri_set(sd->main_frame, uri);
 }
 
-const char* ewk_view_uri_get(const Evas_Object* o)
+const char* ewk_view_uri_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     return ewk_frame_uri_get(sd->main_frame);
 }
 
-const char* ewk_view_title_get(const Evas_Object* o)
+const char* ewk_view_title_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     return ewk_frame_title_get(sd->main_frame);
 }
 
-Eina_Bool ewk_view_editable_get(const Evas_Object* o)
+Eina_Bool ewk_view_editable_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_editable_get(sd->main_frame);
 }
 
-void ewk_view_bg_color_set(Evas_Object* o, int r, int g, int b, int a)
+void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, int alpha)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->bg_color_set);
 
-    if (a < 0) {
-        WRN("Alpha less than zero (%d).", a);
-        a = 0;
-    } else if (a > 255) {
-        WRN("Alpha is larger than 255 (%d).", a);
-        a = 255;
+    if (alpha < 0) {
+        WRN("Alpha less than zero (%d).", alpha);
+        alpha = 0;
+    } else if (alpha > 255) {
+        WRN("Alpha is larger than 255 (%d).", alpha);
+        alpha = 255;
     }
 
 #define CHECK_PREMUL_COLOR(c, a)                                        \
@@ -1252,63 +1252,63 @@ void ewk_view_bg_color_set(Evas_Object* o, int r, int g, int b, int a)
             c, a);                                                      \
         c = a;                                                          \
     }
-    CHECK_PREMUL_COLOR(r, a);
-    CHECK_PREMUL_COLOR(g, a);
-    CHECK_PREMUL_COLOR(b, a);
+    CHECK_PREMUL_COLOR(red, alpha);
+    CHECK_PREMUL_COLOR(green, alpha);
+    CHECK_PREMUL_COLOR(blue, alpha);
 #undef CHECK_PREMUL_COLOR
 
-    sd->bg_color.r = r;
-    sd->bg_color.g = g;
-    sd->bg_color.b = b;
-    sd->bg_color.a = a;
+    sd->bg_color.r = red;
+    sd->bg_color.g = green;
+    sd->bg_color.b = blue;
+    sd->bg_color.a = alpha;
 
-    sd->api->bg_color_set(sd, r, g, b, a);
+    sd->api->bg_color_set(sd, red, green, blue, alpha);
 
     WebCore::FrameView* view = sd->_priv->main_frame->view();
     if (view) {
         WebCore::Color color;
 
-        if (!a)
+        if (!alpha)
             color = WebCore::Color(0, 0, 0, 0);
-        else if (a == 255)
-            color = WebCore::Color(r, g, b, a);
+        else if (alpha == 255)
+            color = WebCore::Color(red, green, blue, alpha);
         else
-            color = WebCore::Color(r * 255 / a, g * 255 / a, b * 255 / a, a);
+            color = WebCore::Color(red * 255 / alpha, green * 255 / alpha, blue * 255 / alpha, alpha);
 
-        view->updateBackgroundRecursively(color, !a);
+        view->updateBackgroundRecursively(color, !alpha);
     }
 }
 
-void ewk_view_bg_color_get(const Evas_Object* o, int* r, int* g, int* b, int* a)
+void ewk_view_bg_color_get(const Evas_Object* ewkView, int* red, int* green, int* blue, int* alpha)
 {
-    if (r)
-        *r = 0;
-    if (g)
-        *g = 0;
-    if (b)
-        *b = 0;
-    if (a)
-        *a = 0;
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
-    if (r)
-        *r = sd->bg_color.r;
-    if (g)
-        *g = sd->bg_color.g;
-    if (b)
-        *b = sd->bg_color.b;
-    if (a)
-        *a = sd->bg_color.a;
+    if (red)
+        *red = 0;
+    if (green)
+        *green = 0;
+    if (blue)
+        *blue = 0;
+    if (alpha)
+        *alpha = 0;
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
+    if (red)
+        *red = sd->bg_color.r;
+    if (green)
+        *green = sd->bg_color.g;
+    if (blue)
+        *blue = sd->bg_color.b;
+    if (alpha)
+        *alpha = sd->bg_color.a;
 }
 
-Eina_Bool ewk_view_text_search(const Evas_Object* o, const char* string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap)
+Eina_Bool ewk_view_text_search(const Evas_Object* ewkView, const char* string, Eina_Bool caseSensitive, Eina_Bool forward, Eina_Bool wrap)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, EINA_FALSE);
     WTF::TextCaseSensitivity sensitive;
     WebCore::FindDirection direction;
 
-    if (case_sensitive)
+    if (caseSensitive)
         sensitive = WTF::TextCaseSensitive;
     else
         sensitive = WTF::TextCaseInsensitive;
@@ -1326,20 +1326,20 @@ Eina_Bool ewk_view_text_search(const Evas_Object* o, const char* string, Eina_Bo
  *
  * @param o view object where to search text.
  * @param string reference string to match.
- * @param case_sensitive if match should be case sensitive or not.
+ * @param caseSensitive if match should be case sensitive or not.
  * @param highlight if matches should be highlighted.
  * @param limit maximum amount of matches, or zero to unlimited.
  *
  * @return number of matches.
  */
-unsigned int ewk_view_text_matches_mark(Evas_Object* o, const char* string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit)
+unsigned int ewk_view_text_matches_mark(Evas_Object* ewkView, const char* string, Eina_Bool caseSensitive, Eina_Bool highlight, unsigned int limit)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(string, 0);
     WTF::TextCaseSensitivity sensitive;
 
-    if (case_sensitive)
+    if (caseSensitive)
         sensitive = WTF::TextCaseSensitive;
     else
         sensitive = WTF::TextCaseInsensitive;
@@ -1347,35 +1347,35 @@ unsigned int ewk_view_text_matches_mark(Evas_Object* o, const char* string, Eina
     return priv->page->markAllMatchesForText(String::fromUTF8(string), sensitive, highlight, limit);
 }
 
-Eina_Bool ewk_view_text_matches_unmark_all(Evas_Object* o)
+Eina_Bool ewk_view_text_matches_unmark_all(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     priv->page->unmarkAllTextMatches();
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_text_matches_highlight_set(Evas_Object* o, Eina_Bool highlight)
+Eina_Bool ewk_view_text_matches_highlight_set(Evas_Object* ewkView, Eina_Bool highlight)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_text_matches_highlight_set(sd->main_frame, highlight);
 }
 
-Eina_Bool ewk_view_text_matches_highlight_get(const Evas_Object* o)
+Eina_Bool ewk_view_text_matches_highlight_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_text_matches_highlight_get(sd->main_frame);
 }
 
-Eina_Bool ewk_view_editable_set(Evas_Object* o, Eina_Bool editable)
+Eina_Bool ewk_view_editable_set(Evas_Object* ewkView, Eina_Bool editable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_editable_set(sd->main_frame, editable);
 }
 
-char* ewk_view_selection_get(const Evas_Object* o)
+char* ewk_view_selection_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     CString s = priv->page->focusController()->focusedOrMainFrame()->editor()->selectedText().utf8();
     if (s.isNull())
@@ -1388,9 +1388,9 @@ static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const cha
     return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(value);
 }
 
-Eina_Bool ewk_view_execute_editor_command(Evas_Object* o, const Ewk_Editor_Command command, const char* value)
+Eina_Bool ewk_view_execute_editor_command(Evas_Object* ewkView, const Ewk_Editor_Command command, const char* value)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     switch (command) {
@@ -1415,10 +1415,10 @@ Eina_Bool ewk_view_execute_editor_command(Evas_Object* o, const Ewk_Editor_Comma
     }
 }
 
-Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* o, const Evas_Event_Mouse_Down* ev)
+Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_Event_Mouse_Down* downEvent)
 {
 #if ENABLE(CONTEXT_MENUS)
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     Eina_Bool mouse_press_handled = EINA_FALSE;
 
@@ -1427,7 +1427,7 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* o, const Evas_Event_M
     Evas_Coord x, y;
     evas_object_geometry_get(sd->self, &x, &y, 0, 0);
 
-    WebCore::PlatformMouseEvent event(ev, WebCore::IntPoint(x, y));
+    WebCore::PlatformMouseEvent event(downEvent, WebCore::IntPoint(x, y));
 
     if (main_frame->view()) {
         mouse_press_handled =
@@ -1451,85 +1451,85 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* o, const Evas_Event_M
 #endif
 }
 
-double ewk_view_load_progress_get(const Evas_Object* o)
+double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
     return priv->page->progress()->estimatedProgress();
 }
 
-Eina_Bool ewk_view_stop(Evas_Object* o)
+Eina_Bool ewk_view_stop(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_stop(sd->main_frame);
 }
 
-Eina_Bool ewk_view_reload(Evas_Object* o)
+Eina_Bool ewk_view_reload(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_reload(sd->main_frame);
 }
 
-Eina_Bool ewk_view_reload_full(Evas_Object* o)
+Eina_Bool ewk_view_reload_full(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_reload_full(sd->main_frame);
 }
 
-Eina_Bool ewk_view_back(Evas_Object* o)
+Eina_Bool ewk_view_back(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_back(sd->main_frame);
 }
 
-Eina_Bool ewk_view_forward(Evas_Object* o)
+Eina_Bool ewk_view_forward(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_forward(sd->main_frame);
 }
 
-Eina_Bool ewk_view_navigate(Evas_Object* o, int steps)
+Eina_Bool ewk_view_navigate(Evas_Object* ewkView, int steps)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_navigate(sd->main_frame, steps);
 }
 
-Eina_Bool ewk_view_back_possible(Evas_Object* o)
+Eina_Bool ewk_view_back_possible(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_back_possible(sd->main_frame);
 }
 
-Eina_Bool ewk_view_forward_possible(Evas_Object* o)
+Eina_Bool ewk_view_forward_possible(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_forward_possible(sd->main_frame);
 }
 
-Eina_Bool ewk_view_navigate_possible(Evas_Object* o, int steps)
+Eina_Bool ewk_view_navigate_possible(Evas_Object* ewkView, int steps)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return ewk_frame_navigate_possible(sd->main_frame, steps);
 }
 
-Eina_Bool ewk_view_history_enable_get(const Evas_Object* o)
+Eina_Bool ewk_view_history_enable_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled();
 }
 
-Eina_Bool ewk_view_history_enable_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_history_enable_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->setEnabled(enable);
     return EINA_TRUE;
 }
 
-Ewk_History* ewk_view_history_get(const Evas_Object* o)
+Ewk_History* ewk_view_history_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     if (!static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled()) {
         ERR("asked history, but it's disabled! Returning 0!");
@@ -1544,9 +1544,9 @@ float ewk_view_zoom_get(const Evas_Object* ewkView)
     return ewk_frame_page_zoom_get(sd->main_frame);
 }
 
-Eina_Bool ewk_view_zoom_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy)
+Eina_Bool ewk_view_zoom_set(Evas_Object* ewkView, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
@@ -1619,27 +1619,27 @@ Eina_Bool ewk_view_text_zoom_set(Evas_Object* ewkView, float textZoomFactor)
     return ewk_frame_text_zoom_set(sd->main_frame, textZoomFactor);
 }
 
-Eina_Bool ewk_view_zoom_weak_smooth_scale_get(const Evas_Object* o)
+Eina_Bool ewk_view_zoom_weak_smooth_scale_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     return sd->zoom_weak_smooth_scale;
 }
 
-void ewk_view_zoom_weak_smooth_scale_set(Evas_Object* o, Eina_Bool smooth_scale)
+void ewk_view_zoom_weak_smooth_scale_set(Evas_Object* ewkView, Eina_Bool smoothScale)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
-    smooth_scale = !!smooth_scale;
-    if (sd->zoom_weak_smooth_scale == smooth_scale)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
+    smoothScale = !!smoothScale;
+    if (sd->zoom_weak_smooth_scale == smoothScale)
         return;
-    sd->zoom_weak_smooth_scale = smooth_scale;
+    sd->zoom_weak_smooth_scale = smoothScale;
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->zoom_weak_smooth_scale_set);
-    sd->api->zoom_weak_smooth_scale_set(sd, smooth_scale);
+    sd->api->zoom_weak_smooth_scale_set(sd, smoothScale);
 }
 
-Eina_Bool ewk_view_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy)
+Eina_Bool ewk_view_zoom_weak_set(Evas_Object* ewkView, float zoom, Evas_Coord centerX, Evas_Coord centerY)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
@@ -1662,41 +1662,41 @@ Eina_Bool ewk_view_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas
     sd->animated_zoom.zoom.start = ewk_frame_page_zoom_get(sd->main_frame);
     sd->animated_zoom.zoom.end = zoom;
     sd->animated_zoom.zoom.current = zoom;
-    return sd->api->zoom_weak_set(sd, zoom, cx, cy);
+    return sd->api->zoom_weak_set(sd, zoom, centerX, centerY);
 }
 
-Eina_Bool ewk_view_zoom_animated_mark_start(Evas_Object* o, float zoom)
+Eina_Bool ewk_view_zoom_animated_mark_start(Evas_Object* ewkView, float zoom)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     sd->animated_zoom.zoom.start = zoom;
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_zoom_animated_mark_end(Evas_Object* o, float zoom)
+Eina_Bool ewk_view_zoom_animated_mark_end(Evas_Object* ewkView, float zoom)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     sd->animated_zoom.zoom.end = zoom;
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_zoom_animated_mark_current(Evas_Object* o, float zoom)
+Eina_Bool ewk_view_zoom_animated_mark_current(Evas_Object* ewkView, float zoom)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     sd->animated_zoom.zoom.current = zoom;
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_zoom_animated_mark_stop(Evas_Object* o)
+Eina_Bool ewk_view_zoom_animated_mark_stop(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     _ewk_view_zoom_animated_mark_stop(sd);
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration, Evas_Coord cx, Evas_Coord cy)
+Eina_Bool ewk_view_zoom_animated_set(Evas_Object* ewkView, float zoom, float duration, Evas_Coord centerX, Evas_Coord centerY)
 {
     double now;
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->zoom_weak_set, EINA_FALSE);
@@ -1722,10 +1722,10 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
         _ewk_view_zoom_animation_start(sd);
     }
 
-    if (cx < 0)
-        cx = 0;
-    if (cy < 0)
-        cy = 0;
+    if (centerX < 0)
+        centerX = 0;
+    if (centerY < 0)
+        centerY = 0;
 
     now = ecore_loop_time_get();
     priv->animated_zoom.time.start = now;
@@ -1733,8 +1733,8 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
     priv->animated_zoom.time.duration = duration;
     priv->animated_zoom.zoom.end = zoom;
     priv->animated_zoom.zoom.range = (priv->animated_zoom.zoom.end - priv->animated_zoom.zoom.start);
-    priv->animated_zoom.center.x = cx;
-    priv->animated_zoom.center.y = cy;
+    priv->animated_zoom.center.x = centerX;
+    priv->animated_zoom.center.y = centerY;
     sd->animated_zoom.zoom.current = priv->animated_zoom.zoom.start;
     sd->animated_zoom.zoom.start = priv->animated_zoom.zoom.start;
     sd->animated_zoom.zoom.end = priv->animated_zoom.zoom.end;
@@ -1742,9 +1742,9 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* o, float zoom, float duration,
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
+Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->pre_render_region, EINA_FALSE);
     float cur_zoom;
@@ -1765,29 +1765,29 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y,
 
     cw *= zoom / cur_zoom;
     ch *= zoom / cur_zoom;
-    DBG("region %d,%d+%dx%d @ %f contents=%dx%d", x, y, w, h, zoom, cw, ch);
+    DBG("region %d,%d+%dx%d @ %f contents=%dx%d", x, y, width, height, zoom, cw, ch);
 
-    if (x + w > cw)
-        w = cw - x;
+    if (x + width > cw)
+        width = cw - x;
 
-    if (y + h > ch)
-        h = ch - y;
+    if (y + height > ch)
+        height = ch - y;
 
     if (x < 0) {
-        w += x;
+        width += x;
         x = 0;
     }
     if (y < 0) {
-        h += y;
+        height += y;
         y = 0;
     }
 
-    return sd->api->pre_render_region(sd, x, y, w, h, zoom);
+    return sd->api->pre_render_region(sd, x, y, width, height, zoom);
 }
 
-Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* o, unsigned int n)
+Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* ewkView, unsigned int number)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->pre_render_relative_radius, EINA_FALSE);
     float cur_zoom;
@@ -1796,65 +1796,65 @@ Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* o, unsigned int n)
         return EINA_FALSE;
 
     cur_zoom = ewk_frame_page_zoom_get(sd->main_frame);
-    return sd->api->pre_render_relative_radius(sd, n, cur_zoom);
+    return sd->api->pre_render_relative_radius(sd, number, cur_zoom);
 }
 
-unsigned int ewk_view_imh_get(const Evas_Object* o)
+unsigned int ewk_view_imh_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->imh;
 }
 
-void ewk_view_pre_render_cancel(Evas_Object* o)
+void ewk_view_pre_render_cancel(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->pre_render_cancel);
     sd->api->pre_render_cancel(sd);
 }
 
-Eina_Bool ewk_view_enable_render(const Evas_Object* o)
+Eina_Bool ewk_view_enable_render(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->enable_render, EINA_FALSE);
     return sd->api->enable_render(sd);
 }
 
-Eina_Bool ewk_view_disable_render(const Evas_Object* o)
+Eina_Bool ewk_view_disable_render(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api->disable_render, EINA_FALSE);
     return sd->api->disable_render(sd);
 }
 
-const char* ewk_view_setting_user_agent_get(const Evas_Object* o)
+const char* ewk_view_setting_user_agent_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.user_agent;
 }
 
-Eina_Bool ewk_view_setting_user_agent_set(Evas_Object* o, const char* user_agent)
+Eina_Bool ewk_view_setting_user_agent_set(Evas_Object* ewkView, const char* userAgent)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.user_agent, user_agent)) {
+    if (eina_stringshare_replace(&priv->settings.user_agent, userAgent)) {
         WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(priv->main_frame->loader()->client());
-        client->setCustomUserAgent(String::fromUTF8(user_agent));
+        client->setCustomUserAgent(String::fromUTF8(userAgent));
     }
     return EINA_TRUE;
 }
 
-const char* ewk_view_setting_user_stylesheet_get(const Evas_Object* o)
+const char* ewk_view_setting_user_stylesheet_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.user_stylesheet;
 }
 
-Eina_Bool ewk_view_setting_user_stylesheet_set(Evas_Object* o, const char* uri)
+Eina_Bool ewk_view_setting_user_stylesheet_set(Evas_Object* ewkView, const char* uri)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.user_stylesheet, uri)) {
         WebCore::KURL kurl(WebCore::KURL(), String::fromUTF8(uri));
@@ -1863,16 +1863,16 @@ Eina_Bool ewk_view_setting_user_stylesheet_set(Evas_Object* o, const char* uri)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_auto_load_images_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_auto_load_images_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.auto_load_images;
 }
 
-Eina_Bool ewk_view_setting_auto_load_images_set(Evas_Object* o, Eina_Bool automatic)
+Eina_Bool ewk_view_setting_auto_load_images_set(Evas_Object* ewkView, Eina_Bool automatic)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     automatic = !!automatic;
     if (priv->settings.auto_load_images != automatic) {
@@ -1882,16 +1882,16 @@ Eina_Bool ewk_view_setting_auto_load_images_set(Evas_Object* o, Eina_Bool automa
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_auto_shrink_images_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_auto_shrink_images_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.auto_shrink_images;
 }
 
-Eina_Bool ewk_view_setting_auto_shrink_images_set(Evas_Object* o, Eina_Bool automatic)
+Eina_Bool ewk_view_setting_auto_shrink_images_set(Evas_Object* ewkView, Eina_Bool automatic)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     automatic = !!automatic;
     if (priv->settings.auto_shrink_images != automatic) {
@@ -1901,31 +1901,31 @@ Eina_Bool ewk_view_setting_auto_shrink_images_set(Evas_Object* o, Eina_Bool auto
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_enable_auto_resize_window_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_enable_auto_resize_window_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.enable_auto_resize_window;
 }
 
-Eina_Bool ewk_view_setting_enable_auto_resize_window_set(Evas_Object* o, Eina_Bool resizable)
+Eina_Bool ewk_view_setting_enable_auto_resize_window_set(Evas_Object* ewkView, Eina_Bool resizable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     priv->settings.enable_auto_resize_window = resizable;
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_enable_scripts_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_enable_scripts_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.enable_scripts;
 }
 
-Eina_Bool ewk_view_setting_enable_scripts_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_enable_scripts_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.enable_scripts != enable) {
@@ -1935,16 +1935,16 @@ Eina_Bool ewk_view_setting_enable_scripts_set(Evas_Object* o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_enable_plugins_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_enable_plugins_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.enable_plugins;
 }
 
-Eina_Bool ewk_view_setting_enable_plugins_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_enable_plugins_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.enable_plugins != enable) {
@@ -1954,16 +1954,16 @@ Eina_Bool ewk_view_setting_enable_plugins_set(Evas_Object* o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_enable_frame_flattening_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.enable_frame_flattening;
 }
 
-Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.enable_frame_flattening != enable) {
@@ -1973,16 +1973,16 @@ Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_scripts_window_open_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_scripts_window_open_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.scripts_window_open;
 }
 
-Eina_Bool ewk_view_setting_scripts_window_open_set(Evas_Object* o, Eina_Bool allow)
+Eina_Bool ewk_view_setting_scripts_window_open_set(Evas_Object* ewkView, Eina_Bool allow)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     allow = !!allow;
     if (priv->settings.scripts_window_open != allow) {
@@ -1992,16 +1992,16 @@ Eina_Bool ewk_view_setting_scripts_window_open_set(Evas_Object* o, Eina_Bool all
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_scripts_can_close_windows_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_scripts_can_close_windows_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.scripts_can_close_windows;
 }
 
-Eina_Bool ewk_view_setting_scripts_can_close_windows_set(Evas_Object* o, Eina_Bool allow)
+Eina_Bool ewk_view_setting_scripts_can_close_windows_set(Evas_Object* ewkView, Eina_Bool allow)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     allow = !!allow;
     if (priv->settings.scripts_can_close_windows != allow) {
@@ -2011,16 +2011,16 @@ Eina_Bool ewk_view_setting_scripts_can_close_windows_set(Evas_Object* o, Eina_Bo
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_resizable_textareas_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_resizable_textareas_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.resizable_textareas;
 }
 
-Eina_Bool ewk_view_setting_resizable_textareas_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_resizable_textareas_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.resizable_textareas != enable) {
@@ -2030,16 +2030,16 @@ Eina_Bool ewk_view_setting_resizable_textareas_set(Evas_Object* o, Eina_Bool ena
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_private_browsing_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_private_browsing_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.private_browsing;
 }
 
-Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.private_browsing != enable) {
@@ -2049,16 +2049,16 @@ Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* o, Eina_Bool enable
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_offline_app_cache_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_offline_app_cache_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.offline_app_cache;
 }
 
-Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.offline_app_cache != enable) {
@@ -2069,16 +2069,16 @@ Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* o, Eina_Bool enabl
 }
 
 
-Eina_Bool ewk_view_setting_caret_browsing_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_caret_browsing_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.caret_browsing;
 }
 
-Eina_Bool ewk_view_setting_caret_browsing_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_caret_browsing_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.caret_browsing != enable) {
@@ -2088,11 +2088,11 @@ Eina_Bool ewk_view_setting_caret_browsing_set(Evas_Object* o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-const char* ewk_view_setting_encoding_custom_get(const Evas_Object* o)
+const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    Evas_Object* main_frame = ewk_view_frame_main_get(o);
+    Evas_Object* main_frame = ewk_view_frame_main_get(ewkView);
     WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
 
     String overrideEncoding = core_frame->loader()->documentLoader()->overrideEncoding();
@@ -2104,11 +2104,11 @@ const char* ewk_view_setting_encoding_custom_get(const Evas_Object* o)
     return priv->settings.encoding_custom;
 }
 
-Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* o, const char* encoding)
+Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char* encoding)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    Evas_Object* main_frame = ewk_view_frame_main_get(o);
+    Evas_Object* main_frame = ewk_view_frame_main_get(ewkView);
     WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
     DBG("%s", encoding);
     if (eina_stringshare_replace(&priv->settings.encoding_custom, encoding))
@@ -2116,25 +2116,25 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* o, const char* encod
     return EINA_TRUE;
 }
 
-const char* ewk_view_setting_encoding_default_get(const Evas_Object* o)
+const char* ewk_view_setting_encoding_default_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.encoding_default;
 }
 
-Eina_Bool ewk_view_setting_encoding_default_set(Evas_Object* o, const char* encoding)
+Eina_Bool ewk_view_setting_encoding_default_set(Evas_Object* ewkView, const char* encoding)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.encoding_default, encoding))
         priv->page_settings->setDefaultTextEncodingName(String::fromUTF8(encoding));
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.encoding_detector != enable) {
@@ -2144,23 +2144,23 @@ Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object* o, Eina_Bool enabl
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_encoding_detector_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_encoding_detector_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.encoding_detector;
 }
 
-Eina_Bool ewk_view_setting_enable_developer_extras_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_enable_developer_extras_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.enable_developer_extras;
 }
 
-Eina_Bool ewk_view_setting_enable_developer_extras_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_enable_developer_extras_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.enable_developer_extras != enable) {
@@ -2170,16 +2170,16 @@ Eina_Bool ewk_view_setting_enable_developer_extras_set(Evas_Object* o, Eina_Bool
     return EINA_TRUE;
 }
 
-int ewk_view_setting_font_minimum_size_get(const Evas_Object* o)
+int ewk_view_setting_font_minimum_size_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.font_minimum_size;
 }
 
-Eina_Bool ewk_view_setting_font_minimum_size_set(Evas_Object* o, int size)
+Eina_Bool ewk_view_setting_font_minimum_size_set(Evas_Object* ewkView, int size)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (priv->settings.font_minimum_size != size) {
         priv->page_settings->setMinimumFontSize(size);
@@ -2188,16 +2188,16 @@ Eina_Bool ewk_view_setting_font_minimum_size_set(Evas_Object* o, int size)
     return EINA_TRUE;
 }
 
-int ewk_view_setting_font_minimum_logical_size_get(const Evas_Object* o)
+int ewk_view_setting_font_minimum_logical_size_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.font_minimum_logical_size;
 }
 
-Eina_Bool ewk_view_setting_font_minimum_logical_size_set(Evas_Object* o, int size)
+Eina_Bool ewk_view_setting_font_minimum_logical_size_set(Evas_Object* ewkView, int size)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (priv->settings.font_minimum_logical_size != size) {
         priv->page_settings->setMinimumLogicalFontSize(size);
@@ -2206,16 +2206,16 @@ Eina_Bool ewk_view_setting_font_minimum_logical_size_set(Evas_Object* o, int siz
     return EINA_TRUE;
 }
 
-int ewk_view_setting_font_default_size_get(const Evas_Object* o)
+int ewk_view_setting_font_default_size_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.font_default_size;
 }
 
-Eina_Bool ewk_view_setting_font_default_size_set(Evas_Object* o, int size)
+Eina_Bool ewk_view_setting_font_default_size_set(Evas_Object* ewkView, int size)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (priv->settings.font_default_size != size) {
         priv->page_settings->setDefaultFontSize(size);
@@ -2224,16 +2224,16 @@ Eina_Bool ewk_view_setting_font_default_size_set(Evas_Object* o, int size)
     return EINA_TRUE;
 }
 
-int ewk_view_setting_font_monospace_size_get(const Evas_Object* o)
+int ewk_view_setting_font_monospace_size_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.font_monospace_size;
 }
 
-Eina_Bool ewk_view_setting_font_monospace_size_set(Evas_Object* o, int size)
+Eina_Bool ewk_view_setting_font_monospace_size_set(Evas_Object* ewkView, int size)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (priv->settings.font_monospace_size != size) {
         priv->page_settings->setDefaultFixedFontSize(size);
@@ -2242,12 +2242,12 @@ Eina_Bool ewk_view_setting_font_monospace_size_set(Evas_Object* o, int size)
     return EINA_TRUE;
 }
 
-const char* ewk_view_font_family_name_get(const Evas_Object* o, Ewk_Font_Family font_family)
+const char* ewk_view_font_family_name_get(const Evas_Object* ewkView, Ewk_Font_Family fontFamily)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
 
-    switch (font_family) {
+    switch (fontFamily) {
     case EWK_FONT_FAMILY_STANDARD:
         return priv->settings.font_standard;
     case EWK_FONT_FAMILY_CURSIVE:
@@ -2264,12 +2264,12 @@ const char* ewk_view_font_family_name_get(const Evas_Object* o, Ewk_Font_Family 
     return 0;
 }
 
-Eina_Bool ewk_view_font_family_name_set(Evas_Object* o, Ewk_Font_Family font_family, const char* name)
+Eina_Bool ewk_view_font_family_name_set(Evas_Object* ewkView, Ewk_Font_Family fontFamily, const char* name)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
-    switch (font_family) {
+    switch (fontFamily) {
     case EWK_FONT_FAMILY_STANDARD:
         if (eina_stringshare_replace(&priv->settings.font_standard, name))
             priv->page_settings->setStandardFontFamily(AtomicString::fromUTF8(name));
@@ -2301,16 +2301,16 @@ Eina_Bool ewk_view_font_family_name_set(Evas_Object* o, Ewk_Font_Family font_fam
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_spatial_navigation_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_spatial_navigation_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.spatial_navigation;
 }
 
-Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.spatial_navigation != enable) {
@@ -2320,16 +2320,16 @@ Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enab
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_local_storage_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_local_storage_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.local_storage;
 }
 
-Eina_Bool ewk_view_setting_local_storage_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_local_storage_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.local_storage != enable) {
@@ -2339,16 +2339,16 @@ Eina_Bool ewk_view_setting_local_storage_set(Evas_Object* o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_page_cache_get(const Evas_Object* o)
+Eina_Bool ewk_view_setting_page_cache_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.page_cache;
 }
 
-Eina_Bool ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable)
+Eina_Bool ewk_view_setting_page_cache_set(Evas_Object* ewkView, Eina_Bool enable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.page_cache != enable) {
@@ -2358,25 +2358,25 @@ Eina_Bool ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-const char* ewk_view_setting_local_storage_database_path_get(const Evas_Object* o)
+const char* ewk_view_setting_local_storage_database_path_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->settings.local_storage_database_path;
 }
 
-Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object* o, const char* path)
+Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object* ewkView, const char* path)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.local_storage_database_path, path))
         priv->page_settings->setLocalStorageDatabasePath(String::fromUTF8(path));
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_minimum_timer_interval_set(Evas_Object* o, double interval)
+Eina_Bool ewk_view_setting_minimum_timer_interval_set(Evas_Object* ewkView, double interval)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (fabs(priv->settings.dom_timer_interval - interval) >= std::numeric_limits<double>::epsilon()) {
         priv->page_settings->setMinDOMTimerInterval(interval);
@@ -2385,16 +2385,16 @@ Eina_Bool ewk_view_setting_minimum_timer_interval_set(Evas_Object* o, double int
     return EINA_TRUE;
 }
 
-double ewk_view_setting_minimum_timer_interval_get(const Evas_Object* o)
+double ewk_view_setting_minimum_timer_interval_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.dom_timer_interval;
 }
 
-Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* o)
+Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     return sd;
 }
 
@@ -2466,10 +2466,10 @@ const Ewk_Scroll_Request* ewk_view_scroll_requests_get(const Ewk_View_Private_Da
  * @note this is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
-void ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+void ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
 {
     EINA_SAFETY_ON_NULL_RETURN(priv);
-    _ewk_view_repaint_add(priv, x, y, w, h);
+    _ewk_view_repaint_add(priv, x, y, width, height);
 }
 
 /**
@@ -2492,11 +2492,11 @@ void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data* priv)
     v->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void ewk_view_scrolls_process(Ewk_View_Smart_Data* sd)
+void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
-    EINA_SAFETY_ON_NULL_RETURN(sd);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
-    if (!sd->api->scrolls_process(sd))
+    EINA_SAFETY_ON_NULL_RETURN(smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    if (!smartData->api->scrolls_process(smartData))
         ERR("failed to process scrolls.");
     _ewk_view_scrolls_flush(priv);
 }
@@ -2535,72 +2535,72 @@ Ewk_View_Paint_Context* ewk_view_paint_context_new(Ewk_View_Private_Data* priv, 
     return ctxt;
 }
 
-void ewk_view_paint_context_free(Ewk_View_Paint_Context* ctxt)
+void ewk_view_paint_context_free(Ewk_View_Paint_Context* context)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
-    delete ctxt->gc;
-    cairo_destroy(ctxt->cr);
-    free(ctxt);
+    EINA_SAFETY_ON_NULL_RETURN(context);
+    delete context->gc;
+    cairo_destroy(context->cr);
+    free(context);
 }
 
-void ewk_view_paint_context_save(Ewk_View_Paint_Context* ctxt)
+void ewk_view_paint_context_save(Ewk_View_Paint_Context* context)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
-    cairo_save(ctxt->cr);
-    ctxt->gc->save();
+    EINA_SAFETY_ON_NULL_RETURN(context);
+    cairo_save(context->cr);
+    context->gc->save();
 }
 
-void ewk_view_paint_context_restore(Ewk_View_Paint_Context* ctxt)
+void ewk_view_paint_context_restore(Ewk_View_Paint_Context* context)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
-    ctxt->gc->restore();
-    cairo_restore(ctxt->cr);
+    EINA_SAFETY_ON_NULL_RETURN(context);
+    context->gc->restore();
+    cairo_restore(context->cr);
 }
 
-void ewk_view_paint_context_clip(Ewk_View_Paint_Context* ctxt, const Eina_Rectangle* area)
+void ewk_view_paint_context_clip(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
+    EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
-    ctxt->gc->clip(WebCore::IntRect(area->x, area->y, area->w, area->h));
+    context->gc->clip(WebCore::IntRect(area->x, area->y, area->w, area->h));
 }
 
-void ewk_view_paint_context_paint(Ewk_View_Paint_Context* ctxt, const Eina_Rectangle* area)
+void ewk_view_paint_context_paint(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
-    EINA_SAFETY_ON_NULL_RETURN(area);
-
-    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
-
-    if (ctxt->view->isTransparent())
-        ctxt->gc->clearRect(rect);
-    ctxt->view->paint(ctxt->gc, rect);
-}
-
-void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* ctxt, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
+    EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
 
     WebCore::IntRect rect(area->x, area->y, area->w, area->h);
 
-    if (ctxt->view->isTransparent())
-        ctxt->gc->clearRect(rect);
-
-    ctxt->view->paintContents(ctxt->gc, rect);
+    if (context->view->isTransparent())
+        context->gc->clearRect(rect);
+    context->view->paint(context->gc, rect);
 }
 
-void ewk_view_paint_context_scale(Ewk_View_Paint_Context* ctxt, float scale_x, float scale_y)
+void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
+    EINA_SAFETY_ON_NULL_RETURN(context);
+    EINA_SAFETY_ON_NULL_RETURN(area);
 
-    ctxt->gc->scale(WebCore::FloatSize(scale_x, scale_y));
+    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
+
+    if (context->view->isTransparent())
+        context->gc->clearRect(rect);
+
+    context->view->paintContents(context->gc, rect);
 }
 
-void ewk_view_paint_context_translate(Ewk_View_Paint_Context* ctxt, float x, float y)
+void ewk_view_paint_context_scale(Ewk_View_Paint_Context* context, float scaleX, float scaleY)
 {
-    EINA_SAFETY_ON_NULL_RETURN(ctxt);
+    EINA_SAFETY_ON_NULL_RETURN(context);
 
-    ctxt->gc->translate(x, y);
+    context->gc->scale(WebCore::FloatSize(scaleX, scaleY));
+}
+
+void ewk_view_paint_context_translate(Ewk_View_Paint_Context* context, float x, float y)
+{
+    EINA_SAFETY_ON_NULL_RETURN(context);
+
+    context->gc->translate(x, y);
 }
 
 Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
@@ -2659,10 +2659,10 @@ Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, cairo_t* cr, cons
  *
  * Emits signal: "ready" with no parameters.
  */
-void ewk_view_ready(Evas_Object* o)
+void ewk_view_ready(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    evas_object_smart_callback_call(o, "ready", 0);
+    DBG("ewkView=%p", ewkView);
+    evas_object_smart_callback_call(ewkView, "ready", 0);
 }
 
 /**
@@ -2673,9 +2673,9 @@ void ewk_view_ready(Evas_Object* o)
  * Emits signal: "inputmethod,changed" with a boolean indicating whether it's
  * enabled or not.
  */
-void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
+void ewk_view_input_method_state_set(Evas_Object* ewkView, Eina_Bool active)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
     WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
 
@@ -2702,7 +2702,7 @@ void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
         }
     }
 
-    evas_object_smart_callback_call(o, "inputmethod,changed", (void*)active);
+    evas_object_smart_callback_call(ewkView, "inputmethod,changed", (void*)active);
 }
 
 /**
@@ -2711,10 +2711,10 @@ void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
  *
  * Emits signal: "title,changed" with pointer to new title string.
  */
-void ewk_view_title_set(Evas_Object* o, const char* title)
+void ewk_view_title_set(Evas_Object* ewkView, const char* title)
 {
-    DBG("o=%p, title=%s", o, title ? title : "(null)");
-    evas_object_smart_callback_call(o, "title,changed", (void*)title);
+    DBG("ewkView=%p, title=%s", ewkView, title ? title : "(null)");
+    evas_object_smart_callback_call(ewkView, "title,changed", (void*)title);
 }
 
 /**
@@ -2723,12 +2723,12 @@ void ewk_view_title_set(Evas_Object* o, const char* title)
  *
  * Emits signal: "uri,changed" with pointer to the new uri string.
  */
-void ewk_view_uri_changed(Evas_Object* o)
+void ewk_view_uri_changed(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     const char* uri = ewk_frame_uri_get(sd->main_frame);
-    DBG("o=%p, uri=%s", o, uri ? uri : "(null)");
-    evas_object_smart_callback_call(o, "uri,changed", (void*)uri);
+    DBG("ewkView=%p, uri=%s", ewkView, uri ? uri : "(null)");
+    evas_object_smart_callback_call(ewkView, "uri,changed", (void*)uri);
 }
 
 /**
@@ -2740,9 +2740,9 @@ void ewk_view_uri_changed(Evas_Object* o)
  *
  * Emits signal: "load,document,finished" with @p frame as the parameter.
  */
-void ewk_view_load_document_finished(Evas_Object* o, Evas_Object* frame)
+void ewk_view_load_document_finished(Evas_Object* ewkView, Evas_Object* frame)
 {
-    evas_object_smart_callback_call(o, "load,document,finished", frame);
+    evas_object_smart_callback_call(ewkView, "load,document,finished", frame);
 }
 
 /**
@@ -2753,10 +2753,10 @@ void ewk_view_load_document_finished(Evas_Object* o, Evas_Object* frame)
  *
  * Emits signal: "load,started" with no parameters.
  */
-void ewk_view_load_started(Evas_Object* o)
+void ewk_view_load_started(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    evas_object_smart_callback_call(o, "load,started", 0);
+    DBG("ewkView=%p", ewkView);
+    evas_object_smart_callback_call(ewkView, "load,started", 0);
 }
 
 /**
@@ -2766,10 +2766,10 @@ void ewk_view_load_started(Evas_Object* o)
  *
  * Emits signal: "load,started" on main frame with no parameters.
  */
-void ewk_view_frame_main_load_started(Evas_Object* o)
+void ewk_view_frame_main_load_started(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    Evas_Object* frame = ewk_view_frame_main_get(o);
+    DBG("ewkView=%p", ewkView);
+    Evas_Object* frame = ewk_view_frame_main_get(ewkView);
     evas_object_smart_callback_call(frame, "load,started", 0);
 }
 
@@ -2781,10 +2781,10 @@ void ewk_view_frame_main_load_started(Evas_Object* o)
  *
  * Emits signal: "load,provisional" on View with no parameters.
  */
-void ewk_view_load_provisional(Evas_Object* o)
+void ewk_view_load_provisional(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    evas_object_smart_callback_call(o, "load,provisional", 0);
+    DBG("ewkView=%p", ewkView);
+    evas_object_smart_callback_call(ewkView, "load,provisional", 0);
 }
 
 /**
@@ -2795,10 +2795,10 @@ void ewk_view_load_provisional(Evas_Object* o)
  *
  * Emits signal: "load,newwindow,show" on view with no parameters.
  */
-void ewk_view_load_show(Evas_Object* o)
+void ewk_view_load_show(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    evas_object_smart_callback_call(o, "load,newwindow,show", 0);
+    DBG("ewkView=%p", ewkView);
+    evas_object_smart_callback_call(ewkView, "load,newwindow,show", 0);
 }
 
 
@@ -2808,10 +2808,10 @@ void ewk_view_load_show(Evas_Object* o)
  *
  * @param o View.
  */
-void ewk_view_frame_main_cleared(Evas_Object* o)
+void ewk_view_frame_main_cleared(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    DBG("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->flush);
     sd->api->flush(sd);
 }
@@ -2824,10 +2824,10 @@ void ewk_view_frame_main_cleared(Evas_Object* o)
  *
  * Emits signal: "icon,received" with no parameters.
  */
-void ewk_view_frame_main_icon_received(Evas_Object* o)
+void ewk_view_frame_main_icon_received(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    Evas_Object* frame = ewk_view_frame_main_get(o);
+    DBG("ewkView=%p", ewkView);
+    Evas_Object* frame = ewk_view_frame_main_get(ewkView);
     evas_object_smart_callback_call(frame, "icon,received", 0);
 }
 
@@ -2841,10 +2841,10 @@ void ewk_view_frame_main_icon_received(Evas_Object* o)
  * @note there should not be any error stuff here, but trying to be
  *       compatible with previous WebKit.
  */
-void ewk_view_load_finished(Evas_Object* o, const Ewk_Frame_Load_Error* error)
+void ewk_view_load_finished(Evas_Object* ewkView, const Ewk_Frame_Load_Error* error)
 {
-    DBG("o=%p, error=%p", o, error);
-    evas_object_smart_callback_call(o, "load,finished", (void*)error);
+    DBG("ewkView=%p, error=%p", ewkView, error);
+    evas_object_smart_callback_call(ewkView, "load,finished", (void*)error);
 }
 
 /**
@@ -2853,10 +2853,10 @@ void ewk_view_load_finished(Evas_Object* o, const Ewk_Frame_Load_Error* error)
  *
  * Emits signal: "load,error" with pointer to Ewk_Frame_Load_Error.
  */
-void ewk_view_load_error(Evas_Object* o, const Ewk_Frame_Load_Error* error)
+void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Frame_Load_Error* error)
 {
-    DBG("o=%p, error=%p", o, error);
-    evas_object_smart_callback_call(o, "load,error", (void*)error);
+    DBG("ewkView=%p, error=%p", ewkView, error);
+    evas_object_smart_callback_call(ewkView, "load,error", (void*)error);
 }
 
 /**
@@ -2865,17 +2865,17 @@ void ewk_view_load_error(Evas_Object* o, const Ewk_Frame_Load_Error* error)
  *
  * Emits signal: "load,progress" with pointer to a double from 0.0 to 1.0.
  */
-void ewk_view_load_progress_changed(Evas_Object* o)
+void ewk_view_load_progress_changed(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
     // Evas_Coord w, h;
     double progress = priv->page->progress()->estimatedProgress();
 
-    DBG("o=%p (p=%0.3f)", o, progress);
+    DBG("ewkView=%p (p=%0.3f)", ewkView, progress);
 
-    evas_object_smart_callback_call(o, "load,progress", &progress);
+    evas_object_smart_callback_call(ewkView, "load,progress", &progress);
 }
 
 /**
@@ -2887,9 +2887,9 @@ void ewk_view_load_progress_changed(Evas_Object* o)
  *
  * Emits signal: "restore" with frame.
  */
-void ewk_view_restore_state(Evas_Object* o, Evas_Object* frame)
+void ewk_view_restore_state(Evas_Object* ewkView, Evas_Object* frame)
 {
-    evas_object_smart_callback_call(o, "restore", frame);
+    evas_object_smart_callback_call(ewkView, "restore", frame);
 }
 
 /**
@@ -2913,12 +2913,12 @@ void ewk_view_restore_state(Evas_Object* o, Evas_Object* frame)
  *
  * @see ewk_window_features_ref().
  */
-Evas_Object* ewk_view_window_create(Evas_Object* o, Eina_Bool javascript, const WebCore::WindowFeatures* coreFeatures)
+Evas_Object* ewk_view_window_create(Evas_Object* ewkView, Eina_Bool javascript, const WebCore::WindowFeatures* coreFeatures)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
 
     if (!sd->api->window_create)
-        return o;
+        return ewkView;
 
     Ewk_Window_Features* window_features = ewk_window_features_new_from_core(coreFeatures);
     if (!window_features)
@@ -2941,11 +2941,11 @@ Evas_Object* ewk_view_window_create(Evas_Object* o, Eina_Bool javascript, const 
  *
  * @param o View to be closed.
  */
-void ewk_view_window_close(Evas_Object* o)
+void ewk_view_window_close(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
 
-    ewk_view_stop(o);
+    ewk_view_stop(ewkView);
     if (!sd->api->window_close)
         return;
     sd->api->window_close(sd);
@@ -2957,9 +2957,9 @@ void ewk_view_window_close(Evas_Object* o)
  *
  * Emits signal: "link,hover,in"
  */
-void ewk_view_mouse_link_hover_in(Evas_Object* o, void* data)
+void ewk_view_mouse_link_hover_in(Evas_Object* ewkView, void* data)
 {
-    evas_object_smart_callback_call(o, "link,hover,in", data);
+    evas_object_smart_callback_call(ewkView, "link,hover,in", data);
 }
 
 /**
@@ -2968,9 +2968,9 @@ void ewk_view_mouse_link_hover_in(Evas_Object* o, void* data)
  *
  * Emits signal: "link,hover,out"
  */
-void ewk_view_mouse_link_hover_out(Evas_Object* o)
+void ewk_view_mouse_link_hover_out(Evas_Object* ewkView)
 {
-    evas_object_smart_callback_call(o, "link,hover,out", 0);
+    evas_object_smart_callback_call(ewkView, "link,hover,out", 0);
 }
 
 /**
@@ -2979,10 +2979,10 @@ void ewk_view_mouse_link_hover_out(Evas_Object* o)
  *
  * Emits signal: "toolbars,visible,set" with a pointer to a boolean.
  */
-void ewk_view_toolbars_visible_set(Evas_Object* o, Eina_Bool visible)
+void ewk_view_toolbars_visible_set(Evas_Object* ewkView, Eina_Bool visible)
 {
-    DBG("o=%p (visible=%d)", o, !!visible);
-    evas_object_smart_callback_call(o, "toolbars,visible,set", &visible);
+    DBG("ewkView=%p (visible=%d)", ewkView, !!visible);
+    evas_object_smart_callback_call(ewkView, "toolbars,visible,set", &visible);
 }
 
 /**
@@ -2996,11 +2996,11 @@ void ewk_view_toolbars_visible_set(Evas_Object* o, Eina_Bool visible)
  *
  * Emits signal: "toolbars,visible,get" with a pointer to a boolean.
  */
-void ewk_view_toolbars_visible_get(Evas_Object* o, Eina_Bool* visible)
+void ewk_view_toolbars_visible_get(Evas_Object* ewkView, Eina_Bool* visible)
 {
-    DBG("%s, o=%p", __func__, o);
+    DBG("%s, o=%p", __func__, ewkView);
     *visible = EINA_FALSE;
-    evas_object_smart_callback_call(o, "toolbars,visible,get", visible);
+    evas_object_smart_callback_call(ewkView, "toolbars,visible,get", visible);
 }
 
 /**
@@ -3012,10 +3012,10 @@ void ewk_view_toolbars_visible_get(Evas_Object* o, Eina_Bool* visible)
  *
  * Emits signal: "statusbar,visible,set" with a pointer to a boolean.
  */
-void ewk_view_statusbar_visible_set(Evas_Object* o, Eina_Bool visible)
+void ewk_view_statusbar_visible_set(Evas_Object* ewkView, Eina_Bool visible)
 {
-    DBG("o=%p (visible=%d)", o, !!visible);
-    evas_object_smart_callback_call(o, "statusbar,visible,set", &visible);
+    DBG("ewkView=%p (visible=%d)", ewkView, !!visible);
+    evas_object_smart_callback_call(ewkView, "statusbar,visible,set", &visible);
 }
 
 /**
@@ -3029,11 +3029,11 @@ void ewk_view_statusbar_visible_set(Evas_Object* o, Eina_Bool visible)
  *
  * Emits signal: "statusbar,visible,get" with a pointer to a boolean.
  */
-void ewk_view_statusbar_visible_get(Evas_Object* o, Eina_Bool* visible)
+void ewk_view_statusbar_visible_get(Evas_Object* ewkView, Eina_Bool* visible)
 {
-    DBG("%s, o=%p", __func__, o);
+    DBG("%s, o=%p", __func__, ewkView);
     *visible = EINA_FALSE;
-    evas_object_smart_callback_call(o, "statusbar,visible,get", visible);
+    evas_object_smart_callback_call(ewkView, "statusbar,visible,get", visible);
 }
 
 /**
@@ -3045,11 +3045,11 @@ void ewk_view_statusbar_visible_get(Evas_Object* o, Eina_Bool* visible)
  *
  * Emits signal: "statusbar,text,set" with a string.
  */
-void ewk_view_statusbar_text_set(Evas_Object* o, const char* text)
+void ewk_view_statusbar_text_set(Evas_Object* ewkView, const char* text)
 {
-    DBG("o=%p (text=%s)", o, text);
+    DBG("ewkView=%p (text=%s)", ewkView, text);
     INF("status bar text set: %s", text);
-    evas_object_smart_callback_call(o, "statusbar,text,set", (void*)text);
+    evas_object_smart_callback_call(ewkView, "statusbar,text,set", (void*)text);
 }
 
 /**
@@ -3061,10 +3061,10 @@ void ewk_view_statusbar_text_set(Evas_Object* o, const char* text)
  *
  * Emits signal: "scrollbars,visible,set" with a pointer to a boolean.
  */
-void ewk_view_scrollbars_visible_set(Evas_Object* o, Eina_Bool visible)
+void ewk_view_scrollbars_visible_set(Evas_Object* ewkView, Eina_Bool visible)
 {
-    DBG("o=%p (visible=%d)", o, !!visible);
-    evas_object_smart_callback_call(o, "scrollbars,visible,set", &visible);
+    DBG("ewkView=%p (visible=%d)", ewkView, !!visible);
+    evas_object_smart_callback_call(ewkView, "scrollbars,visible,set", &visible);
 }
 
 /**
@@ -3078,11 +3078,11 @@ void ewk_view_scrollbars_visible_set(Evas_Object* o, Eina_Bool visible)
  *
  * Emits signal: "scrollbars,visible,get" with a pointer to a boolean.
  */
-void ewk_view_scrollbars_visible_get(Evas_Object* o, Eina_Bool* visible)
+void ewk_view_scrollbars_visible_get(Evas_Object* ewkView, Eina_Bool* visible)
 {
-    DBG("%s, o=%p", __func__, o);
+    DBG("%s, o=%p", __func__, ewkView);
     *visible = EINA_FALSE;
-    evas_object_smart_callback_call(o, "scrollbars,visible,get", visible);
+    evas_object_smart_callback_call(ewkView, "scrollbars,visible,get", visible);
 }
 
 /**
@@ -3094,10 +3094,10 @@ void ewk_view_scrollbars_visible_get(Evas_Object* o, Eina_Bool* visible)
  *
  * Emits signal: "menubar,visible,set" with a pointer to a boolean.
  */
-void ewk_view_menubar_visible_set(Evas_Object* o, Eina_Bool visible)
+void ewk_view_menubar_visible_set(Evas_Object* ewkView, Eina_Bool visible)
 {
-    DBG("o=%p (visible=%d)", o, !!visible);
-    evas_object_smart_callback_call(o, "menubar,visible,set", &visible);
+    DBG("ewkView=%p (visible=%d)", ewkView, !!visible);
+    evas_object_smart_callback_call(ewkView, "menubar,visible,set", &visible);
 }
 
 /**
@@ -3111,11 +3111,11 @@ void ewk_view_menubar_visible_set(Evas_Object* o, Eina_Bool visible)
  *
  * Emits signal: "menubar,visible,get" with a pointer to a boolean.
  */
-void ewk_view_menubar_visible_get(Evas_Object* o, Eina_Bool* visible)
+void ewk_view_menubar_visible_get(Evas_Object* ewkView, Eina_Bool* visible)
 {
-    DBG("%s, o=%p", __func__, o);
+    DBG("%s, o=%p", __func__, ewkView);
     *visible = EINA_FALSE;
-    evas_object_smart_callback_call(o, "menubar,visible,get", visible);
+    evas_object_smart_callback_call(ewkView, "menubar,visible,get", visible);
 }
 
 /**
@@ -3128,10 +3128,10 @@ void ewk_view_menubar_visible_get(Evas_Object* o, Eina_Bool* visible)
  * Emits signal: "tooltip,text,set" with a string. If tooltip must be actually
  * removed, text will be 0 or '\0'
  */
-void ewk_view_tooltip_text_set(Evas_Object* o, const char* text)
+void ewk_view_tooltip_text_set(Evas_Object* ewkView, const char* text)
 {
-    DBG("o=%p text=%s", o, text);
-    evas_object_smart_callback_call(o, "tooltip,text,set", (void*)text);
+    DBG("ewkView=%p text=%s", ewkView, text);
+    evas_object_smart_callback_call(ewkView, "tooltip,text,set", (void*)text);
 }
 
 /**
@@ -3143,19 +3143,19 @@ void ewk_view_tooltip_text_set(Evas_Object* o, const char* text)
  * @sourceID Source id.
  *
  */
-void ewk_view_add_console_message(Evas_Object* o, const char* message, unsigned int lineNumber, const char* sourceID)
+void ewk_view_add_console_message(Evas_Object* ewkView, const char* message, unsigned int lineNumber, const char* sourceID)
 {
-    DBG("o=%p message=%s lineNumber=%u sourceID=%s", o, message, lineNumber, sourceID);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    DBG("ewkView=%p message=%s lineNumber=%u sourceID=%s", ewkView, message, lineNumber, sourceID);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->add_console_message);
     sd->api->add_console_message(sd, message, lineNumber, sourceID);
 }
 
-bool ewk_view_focus_can_cycle(Evas_Object* o, Ewk_Focus_Direction direction)
+bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction)
 {
-    DBG("o=%p direction=%d", o, direction);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, false);
+    DBG("ewkView=%p direction=%d", ewkView, direction);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, false);
 
     if (!sd->api->focus_can_cycle)
@@ -3164,10 +3164,10 @@ bool ewk_view_focus_can_cycle(Evas_Object* o, Ewk_Focus_Direction direction)
     return sd->api->focus_can_cycle(sd, direction);
 }
 
-void ewk_view_run_javascript_alert(Evas_Object* o, Evas_Object* frame, const char* message)
+void ewk_view_run_javascript_alert(Evas_Object* ewkView, Evas_Object* frame, const char* message)
 {
-    DBG("o=%p frame=%p message=%s", o, frame, message);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    DBG("ewkView=%p frame=%p message=%s", ewkView, frame, message);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
 
     if (!sd->api->run_javascript_alert)
@@ -3176,10 +3176,10 @@ void ewk_view_run_javascript_alert(Evas_Object* o, Evas_Object* frame, const cha
     sd->api->run_javascript_alert(sd, frame, message);
 }
 
-Eina_Bool ewk_view_run_javascript_confirm(Evas_Object* o, Evas_Object* frame, const char* message)
+Eina_Bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, Evas_Object* frame, const char* message)
 {
-    DBG("o=%p frame=%p message=%s", o, frame, message);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    DBG("ewkView=%p frame=%p message=%s", ewkView, frame, message);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
 
     if (!sd->api->run_javascript_confirm)
@@ -3188,10 +3188,10 @@ Eina_Bool ewk_view_run_javascript_confirm(Evas_Object* o, Evas_Object* frame, co
     return sd->api->run_javascript_confirm(sd, frame, message);
 }
 
-Eina_Bool ewk_view_run_javascript_prompt(Evas_Object* o, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
+Eina_Bool ewk_view_run_javascript_prompt(Evas_Object* ewkView, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
 {
-    DBG("o=%p frame=%p message=%s", o, frame, message);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    DBG("ewkView=%p frame=%p message=%s", ewkView, frame, message);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
 
     if (!sd->api->run_javascript_prompt)
@@ -3211,10 +3211,10 @@ Eina_Bool ewk_view_run_javascript_prompt(Evas_Object* o, Evas_Object* frame, con
  *
  * @return @c EINA_TRUE if script should be stopped; @c EINA_FALSE otherwise
  */
-Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* o)
+Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* ewkView)
 {
-    DBG("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    DBG("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
 
     if (!sd->api->should_interrupt_javascript)
@@ -3237,16 +3237,16 @@ Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* o)
  * @param expected_size The expected size of this database in order to fulfill
  * site's requirement.
  */
-uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, const char* databaseName, uint64_t current_size, uint64_t expected_size)
+uint64_t ewk_view_exceeded_database_quota(Evas_Object* ewkView, Evas_Object* frame, const char* databaseName, uint64_t currentSize, uint64_t expectedSize)
 {
-    DBG("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    DBG("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, 0);
     if (!sd->api->exceeded_database_quota)
         return 0;
 
-    INF("current_size=%" PRIu64 " expected_size=%" PRIu64, current_size, expected_size);
-    return sd->api->exceeded_database_quota(sd, frame, databaseName, current_size, expected_size);
+    INF("current_size=%" PRIu64 " expected_size=%" PRIu64, currentSize, expectedSize);
+    return sd->api->exceeded_database_quota(sd, frame, databaseName, currentSize, expectedSize);
 }
 
 /**
@@ -3262,28 +3262,28 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, co
  *
  * @return @EINA_FALSE if user canceled file selection; @EINA_TRUE if confirmed.
  */
-Eina_Bool ewk_view_run_open_panel(Evas_Object* o, Evas_Object* frame, Eina_Bool allows_multiple_files, const char* accept_types, Eina_List** selected_filenames)
+Eina_Bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, Eina_Bool allowsMultipleFiles, const char* acceptTypes, Eina_List** selectedFilenames)
 {
-    DBG("o=%p frame=%p allows_multiple_files=%d", o, frame, allows_multiple_files);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    DBG("ewkView=%p frame=%p allows_multiple_files=%d", ewkView, frame, allowsMultipleFiles);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_FALSE);
     Eina_Bool confirm;
 
     if (!sd->api->run_open_panel)
         return EINA_FALSE;
 
-    *selected_filenames = 0;
+    *selectedFilenames = 0;
 
-    confirm = sd->api->run_open_panel(sd, frame, allows_multiple_files, accept_types, selected_filenames);
-    if (!confirm && *selected_filenames)
+    confirm = sd->api->run_open_panel(sd, frame, allowsMultipleFiles, acceptTypes, selectedFilenames);
+    if (!confirm && *selectedFilenames)
         ERR("Canceled file selection, but selected filenames != 0. Free names before return.");
     return confirm;
 }
 
-void ewk_view_repaint(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
 {
-    DBG("o=%p, region=%d,%d + %dx%d", o, x, y, w, h);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    DBG("ewkView=%p, region=%d,%d + %dx%d", ewkView, x, y, width, height);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
     if (!priv->main_frame->contentRenderer()) {
@@ -3291,31 +3291,31 @@ void ewk_view_repaint(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, 
         return;
     }
 
-    _ewk_view_repaint_add(priv, x, y, w, h);
+    _ewk_view_repaint_add(priv, x, y, width, height);
     _ewk_view_smart_changed(sd);
 }
 
-void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, Eina_Bool main_frame)
+void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord dx, Evas_Coord dy, Evas_Coord scrollX, Evas_Coord scrollY, Evas_Coord scrollWidth, Evas_Coord scrollHeight, Evas_Coord centerX, Evas_Coord centerY, Evas_Coord centerWidth, Evas_Coord centerHeight, Eina_Bool mainFrame)
 {
-    DBG("o=%p, delta: %d,%d, scroll: %d,%d+%dx%d, clip: %d,%d+%dx%d",
-        o, dx, dy, sx, sy, sw, sh, cx, cy, cw, ch);
+    DBG("ewkView=%p, delta: %d,%d, scroll: %d,%d+%dx%d, clip: %d,%d+%dx%d",
+        ewkView, dx, dy, scrollX, scrollY, scrollWidth, scrollHeight, centerX, centerY, centerWidth, centerHeight);
 
-    if ((sx != cx) || (sy != cy) || (sw != cw) || (sh != ch))
+    if ((scrollX != centerX) || (scrollY != centerY) || (scrollWidth != centerWidth) || (scrollHeight != centerHeight))
         WRN("scroll region and clip are different! %d,%d+%dx%d and %d,%d+%dx%d",
-            sx, sy, sw, sh, cx, cy, cw, ch);
+            scrollX, scrollY, scrollWidth, scrollHeight, centerX, centerY, centerWidth, centerHeight);
 
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     EINA_SAFETY_ON_TRUE_RETURN(!dx && !dy);
 
-    _ewk_view_scroll_add(priv, dx, dy, sx, sy, sw, sh, main_frame);
+    _ewk_view_scroll_add(priv, dx, dy, scrollX, scrollY, scrollWidth, scrollHeight, mainFrame);
 
     _ewk_view_smart_changed(sd);
 }
 
-WebCore::Page* ewk_view_core_page_get(const Evas_Object* o)
+WebCore::Page* ewk_view_core_page_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     return priv->page;
 }
@@ -3325,13 +3325,13 @@ WebCore::Page* ewk_view_core_page_get(const Evas_Object* o)
  *
  * Emits "frame,created" with the new frame object on success.
  */
-WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* o, Evas_Object* frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer)
+WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* ewkView, Evas_Object* frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer)
 {
-    DBG("o=%p, frame=%p, name=%s, ownerElement=%p, url=%s, referrer=%s",
-        o, frame, name.utf8().data(), ownerElement,
+    DBG("ewkView=%p, frame=%p, name=%s, ownerElement=%p, url=%s, referrer=%s",
+        ewkView, frame, name.utf8().data(), ownerElement,
         url.string().utf8().data(), referrer.utf8().data());
 
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
 
     WTF::RefPtr<WebCore::Frame> cf = _ewk_view_core_frame_new
@@ -3353,17 +3353,17 @@ WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* o, Evas_Objec
     sd->changed.frame_rect = EINA_TRUE;
     _ewk_view_smart_changed(sd);
 
-    evas_object_smart_callback_call(o, "frame,created", frame);
+    evas_object_smart_callback_call(ewkView, "frame,created", frame);
     return cf.release();
 }
 
-WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
+WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
 {
-    DBG("o=%p, frame=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",
-        o, frame, pluginSize.width(), pluginSize.height(), element,
+    DBG("ewkView=%p, frame=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",
+        ewkView, frame, pluginSize.width(), pluginSize.height(), element,
         url.string().utf8().data(), mimeType.utf8().data());
 
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     sd->changed.frame_rect = EINA_TRUE;
     _ewk_view_smart_changed(sd);
 
@@ -3383,14 +3383,14 @@ WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Obj
  *
  * Emits: "popup,create" with a list of Ewk_Menu containing each item's data
  */
-void ewk_view_popup_new(Evas_Object* o, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect)
+void ewk_view_popup_new(Evas_Object* ewkView, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect)
 {
-    INF("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
     if (priv->popup.menu_client)
-        ewk_view_popup_destroy(o);
+        ewk_view_popup_destroy(ewkView);
 
     priv->popup.menu_client = client;
 
@@ -3413,19 +3413,19 @@ void ewk_view_popup_new(Evas_Object* o, WebCore::PopupMenuClient* client, int se
     priv->popup.menu.y = rect.y();
     priv->popup.menu.width = rect.width();
     priv->popup.menu.height = rect.height();
-    evas_object_smart_callback_call(o, "popup,create", &priv->popup.menu);
+    evas_object_smart_callback_call(ewkView, "popup,create", &priv->popup.menu);
 }
 
-Eina_Bool ewk_view_popup_destroy(Evas_Object* o)
+Eina_Bool ewk_view_popup_destroy(Evas_Object* ewkView)
 {
-    INF("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     if (!priv->popup.menu_client)
         return EINA_FALSE;
 
-    evas_object_smart_callback_call(o, "popup,willdelete", &priv->popup.menu);
+    evas_object_smart_callback_call(ewkView, "popup,willdelete", &priv->popup.menu);
 
     void* itemv;
     EINA_LIST_FREE(priv->popup.menu.items, itemv) {
@@ -3439,10 +3439,10 @@ Eina_Bool ewk_view_popup_destroy(Evas_Object* o)
     return EINA_TRUE;
 }
 
-void ewk_view_popup_selected_set(Evas_Object* o, int index)
+void ewk_view_popup_selected_set(Evas_Object* ewkView, int index)
 {
-    INF("o=%p", o);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    INF("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     EINA_SAFETY_ON_NULL_RETURN(priv->popup.menu_client);
 
@@ -3459,10 +3459,10 @@ void ewk_view_popup_selected_set(Evas_Object* o, int index)
  * Emits: "download,request" with an Ewk_Download containing the details of the
  * requested download. The download per se must be handled outside of webkit.
  */
-void ewk_view_download_request(Evas_Object* o, Ewk_Download* download)
+void ewk_view_download_request(Evas_Object* ewkView, Ewk_Download* download)
 {
-    DBG("view=%p", o);
-    evas_object_smart_callback_call(o, "download,request", download);
+    DBG("ewkView=%p", ewkView);
+    evas_object_smart_callback_call(ewkView, "download,request", download);
 }
 
 /**
@@ -3472,9 +3472,9 @@ void ewk_view_download_request(Evas_Object* o, Ewk_Download* download)
  * @param o view.
  * @param frame the frame.
  */
-void ewk_view_js_window_object_clear(Evas_Object* o, Evas_Object* frame)
+void ewk_view_js_window_object_clear(Evas_Object* ewkView, Evas_Object* frame)
 {
-    evas_object_smart_callback_call(o, "js,windowobject,clear", frame);
+    evas_object_smart_callback_call(ewkView, "js,windowobject,clear", frame);
 }
 
 /**
@@ -3485,100 +3485,100 @@ void ewk_view_js_window_object_clear(Evas_Object* o, Evas_Object* frame)
  *
  * Emits signal: "viewport,changed" with no parameters.
  */
-void ewk_view_viewport_attributes_set(Evas_Object* o, const WebCore::ViewportArguments& arguments)
+void ewk_view_viewport_attributes_set(Evas_Object* ewkView, const WebCore::ViewportArguments& arguments)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     priv->viewport_arguments = arguments;
-    evas_object_smart_callback_call(o, "viewport,changed", 0);
+    evas_object_smart_callback_call(ewkView, "viewport,changed", 0);
 }
 
-void ewk_view_viewport_attributes_get(const Evas_Object* o, int* w, int* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio, Eina_Bool* user_scalable)
+void ewk_view_viewport_attributes_get(const Evas_Object* ewkView, int* width, int* height, float* initScale, float* maxScale, float* minScale, float* devicePixelRatio, Eina_Bool* userScalable)
 {
-    WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(o);
+    WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(ewkView);
 
-    if (w)
-        *w = attributes.layoutSize.width();
-    if (h)
-        *h = attributes.layoutSize.height();
-    if (init_scale)
-        *init_scale = attributes.initialScale;
-    if (max_scale)
-        *max_scale = attributes.maximumScale;
-    if (min_scale)
-        *min_scale = attributes.minimumScale;
-    if (device_pixel_ratio)
-        *device_pixel_ratio = attributes.devicePixelRatio;
-    if (user_scalable)
-        *user_scalable = static_cast<bool>(attributes.userScalable);
+    if (width)
+        *width = attributes.layoutSize.width();
+    if (height)
+        *height = attributes.layoutSize.height();
+    if (initScale)
+        *initScale = attributes.initialScale;
+    if (maxScale)
+        *maxScale = attributes.maximumScale;
+    if (minScale)
+        *minScale = attributes.minimumScale;
+    if (devicePixelRatio)
+        *devicePixelRatio = attributes.devicePixelRatio;
+    if (userScalable)
+        *userScalable = static_cast<bool>(attributes.userScalable);
 }
 
-Eina_Bool ewk_view_zoom_range_set(Evas_Object* o, float min_scale, float max_scale)
+Eina_Bool ewk_view_zoom_range_set(Evas_Object* ewkView, float minScale, float maxScale)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
-    if (max_scale < min_scale) {
+    if (maxScale < minScale) {
         WRN("min_scale is larger than max_scale");
         return EINA_FALSE;
     }
 
-    priv->settings.zoom_range.min_scale = min_scale;
-    priv->settings.zoom_range.max_scale = max_scale;
+    priv->settings.zoom_range.min_scale = minScale;
+    priv->settings.zoom_range.max_scale = maxScale;
 
     return EINA_TRUE;
 }
 
-float ewk_view_zoom_range_min_get(const Evas_Object* o)
+float ewk_view_zoom_range_min_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.zoom_range.min_scale;
 }
 
-float ewk_view_zoom_range_max_get(const Evas_Object* o)
+float ewk_view_zoom_range_max_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.zoom_range.max_scale;
 }
 
-Eina_Bool ewk_view_user_scalable_set(Evas_Object* o, Eina_Bool user_scalable)
+Eina_Bool ewk_view_user_scalable_set(Evas_Object* ewkView, Eina_Bool userScalable)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
-    priv->settings.zoom_range.user_scalable = user_scalable;
+    priv->settings.zoom_range.user_scalable = userScalable;
 
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_user_scalable_get(const Evas_Object* o)
+Eina_Bool ewk_view_user_scalable_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     return priv->settings.zoom_range.user_scalable;
 }
 
-float ewk_view_device_pixel_ratio_get(const Evas_Object* o)
+float ewk_view_device_pixel_ratio_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.device_pixel_ratio;
 }
 
-void ewk_view_did_first_visually_nonempty_layout(Evas_Object* o)
+void ewk_view_did_first_visually_nonempty_layout(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     if (!priv->flags.view_cleared) {
-        ewk_view_frame_main_cleared(o);
-        ewk_view_enable_render(o);
+        ewk_view_frame_main_cleared(ewkView);
+        ewk_view_enable_render(ewkView);
         priv->flags.view_cleared = EINA_TRUE;
     }
 }
@@ -3589,21 +3589,21 @@ void ewk_view_did_first_visually_nonempty_layout(Evas_Object* o)
  *
  * @param o view.
  */
-void ewk_view_dispatch_did_finish_loading(Evas_Object* o)
+void ewk_view_dispatch_did_finish_loading(Evas_Object* ewkView)
 {
     /* If we reach this point and rendering is still disabled, WebCore will not
      * trigger the didFirstVisuallyNonEmptyLayout signal anymore. So, we
      * forcefully re-enable the rendering.
      */
-    ewk_view_did_first_visually_nonempty_layout(o);
+    ewk_view_did_first_visually_nonempty_layout(ewkView);
 }
 
-void ewk_view_transition_to_commited_for_newpage(Evas_Object* o)
+void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
-    ewk_view_disable_render(o);
+    ewk_view_disable_render(ewkView);
     priv->flags.view_cleared = EINA_FALSE;
 }
 
@@ -3617,9 +3617,9 @@ void ewk_view_transition_to_commited_for_newpage(Evas_Object* o)
  * @param o View to load
  * @param request Request which contain url to navigate
  */
-Eina_Bool ewk_view_navigation_policy_decision(Evas_Object* o, Ewk_Frame_Resource_Request* request)
+Eina_Bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_TRUE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_TRUE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, EINA_TRUE);
 
     if (!sd->api->navigation_policy_decision)
@@ -3628,13 +3628,13 @@ Eina_Bool ewk_view_navigation_policy_decision(Evas_Object* o, Ewk_Frame_Resource
     return sd->api->navigation_policy_decision(sd, request);
 }
 
-Eina_Bool ewk_view_js_object_add(Evas_Object* o, Ewk_JS_Object* obj, const char* obj_name)
+Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, const char* objectName)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (obj->view) // object has already been added to another ewk_view
+    if (object->view) // object has already been added to another ewk_view
         return EINA_FALSE;
-    obj->name = eina_stringshare_add(obj_name);
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    object->name = eina_stringshare_add(object_name);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     JSC::JSLock lock(JSC::SilenceAssertionsOnly);
@@ -3649,7 +3649,7 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* o, Ewk_JS_Object* obj, const char*
 
     JSC::ExecState* exec = window->globalExec();
 
-    obj->view = o;
+    obj->view = ewkView;
     JSC::JSObject* runtimeObject = (JSC::JSObject*)JSC::Bindings::CInstance::create((NPObject*)obj, root)->createRuntimeObject(exec);
     JSC::Identifier id = JSC::Identifier(exec, obj_name);
 
@@ -3661,9 +3661,9 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* o, Ewk_JS_Object* obj, const char*
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-Eina_Bool ewk_view_protocol_handler_set(Evas_Object* o, const char** protocols, Ewk_View_Resource_Handler_Cb handler, void* context)
+Eina_Bool ewk_view_protocol_handler_set(Evas_Object* ewkView, const char** protocols, Ewk_View_Resource_Handler_Cb handler, void* context)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     if (!handler)
@@ -3675,9 +3675,9 @@ Eina_Bool ewk_view_protocol_handler_set(Evas_Object* o, const char** protocols, 
     return ewk_custom_protocol_handler_set(protocols);
 }
 
-Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* o)
+Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
     Eina_Bool ret = ewk_custom_protocol_handler_all_unset();
 
@@ -3689,9 +3689,9 @@ Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* o)
     return ret;
 }
 
-void* ewk_view_protocol_handler_resource_get(Evas_Object* o, size_t* bytesRead, char** mime, const char* file)
+void* ewk_view_protocol_handler_resource_get(Evas_Object* ewkView, size_t* bytesRead, char** mime, const char* file)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     Ewk_View_Resource_Handler_Cb function = priv->custom_resource_handler.function;
@@ -3710,14 +3710,14 @@ void* ewk_view_protocol_handler_resource_get(Evas_Object* o, size_t* bytesRead, 
  * @param w new content width.
  * @param h new content height.
  */
-void ewk_view_contents_size_changed(Evas_Object* o, int w, int h)
+void ewk_view_contents_size_changed(Evas_Object* ewkView, int width, int height)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->api);
     EINA_SAFETY_ON_NULL_RETURN(sd->api->contents_resize);
 
-    if (!sd->api->contents_resize(sd, w, h))
-        ERR("failed to resize contents to %dx%d", w, h);
+    if (!sd->api->contents_resize(sd, width, height))
+        ERR("failed to resize contents to %dx%d", width, height);
 }
 
 /**
@@ -3728,9 +3728,9 @@ void ewk_view_contents_size_changed(Evas_Object* o, int w, int h)
  *
  * @return page size.
  */
-WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* o)
+WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     WebCore::Frame* main_frame = priv->page->mainFrame();
@@ -3738,28 +3738,28 @@ WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* o)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void ewk_view_need_touch_events_set(Evas_Object* o, bool needed)
+void ewk_view_need_touch_events_set(Evas_Object* ewkView, bool needed)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
 
     priv->flags.need_touch_events = needed;
 }
 
-Eina_Bool ewk_view_need_touch_events_get(const Evas_Object* o)
+Eina_Bool ewk_view_need_touch_events_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->flags.need_touch_events;
 }
 #endif
 
-Eina_Bool ewk_view_mode_set(Evas_Object* o, Ewk_View_Mode view_mode)
+Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
-    switch (view_mode) {
+    switch (viewMode) {
     case EWK_VIEW_MODE_WINDOWED:
         priv->page->setViewMode(WebCore::Page::ViewModeWindowed);
         break;
@@ -3782,11 +3782,11 @@ Eina_Bool ewk_view_mode_set(Evas_Object* o, Ewk_View_Mode view_mode)
     return EINA_TRUE;
 }
 
-Ewk_View_Mode ewk_view_mode_get(const Evas_Object* o)
+Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
 {
     Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;
 
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET(ewkView, sd);
     if (!sd)
         return mode;
     EWK_VIEW_PRIV_GET(sd, priv);
@@ -3821,9 +3821,9 @@ Ewk_View_Mode ewk_view_mode_get(const Evas_Object* o)
  *
  * Emits signal: "editorclientselection,changed" with no parameters.
  */
-void ewk_view_editor_client_selection_changed(Evas_Object* o)
+void ewk_view_editor_client_selection_changed(Evas_Object* ewkView)
 {
-    evas_object_smart_callback_call(o, "editorclient,selection,changed", 0);
+    evas_object_smart_callback_call(ewkView, "editorclient,selection,changed", 0);
 }
 
 /**
@@ -3834,7 +3834,7 @@ void ewk_view_editor_client_selection_changed(Evas_Object* o)
  *
  * Emits signal: "editorclient,contents,changed" with no parameters.
  */
-void ewk_view_editor_client_contents_changed(Evas_Object* o)
+void ewk_view_editor_client_contents_changed(Evas_Object* ewkView)
 {
-    evas_object_smart_callback_call(o, "editorclient,contents,changed", 0);
+    evas_object_smart_callback_call(ewkView, "editorclient,contents,changed", 0);
 }

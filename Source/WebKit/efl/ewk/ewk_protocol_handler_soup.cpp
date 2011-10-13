@@ -51,14 +51,14 @@ static void ewk_custom_protocol_handler_init(EwkCustomProtocolHandler* customPro
     customProtocolHandler->priv->bytesRead = 0;
 }
 
-static void ewk_custom_protocol_handler_finalize(GObject* obj)
+static void ewk_custom_protocol_handler_finalize(GObject* object)
 {
-    EwkProtocolHandlerPrivate* priv  = G_TYPE_INSTANCE_GET_PRIVATE(obj, EWK_TYPE_CUSTOM_PROTOCOL_HANDLER,
+    EwkProtocolHandlerPrivate* priv  = G_TYPE_INSTANCE_GET_PRIVATE(object, EWK_TYPE_CUSTOM_PROTOCOL_HANDLER,
                                                                    EwkProtocolHandlerPrivate);
     if (priv)
         free(priv->mime);
 
-    G_OBJECT_CLASS(ewk_custom_protocol_handler_parent_class)->finalize(obj);
+    G_OBJECT_CLASS(ewk_custom_protocol_handler_parent_class)->finalize(object);
 }
 
 static gboolean ewk_custom_protocol_handler_check_uri(SoupRequest* request, SoupURI* uri, GError** error)

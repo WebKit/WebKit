@@ -72,7 +72,7 @@ struct _Ewk_Tile {
     cairo_t* cairo;
 
     /** Never ever change those after tile is created (respect const!) */
-    const Evas_Coord w, h;        /**< tile size (see TILE_SIZE_AT_ZOOM()) */
+    const Evas_Coord width, height;        /**< tile size (see TILE_SIZE_AT_ZOOM()) */
     const Evas_Colorspace cspace; /**< colorspace */
     const float zoom;             /**< zoom level contents were rendered at */
     const size_t bytes;           /**< bytes used in pixels. keep
@@ -90,7 +90,7 @@ struct _Ewk_Tile {
 /* view */
 Evas_Object* ewk_tiled_backing_store_add(Evas* e);
 
-void ewk_tiled_backing_store_render_cb_set(Evas_Object *o, Eina_Bool (* cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* area), const void* data);
+void ewk_tiled_backing_store_render_cb_set(Evas_Object *o, Eina_Bool (*cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* area), const void* data);
 
 Eina_Bool ewk_tiled_backing_store_scroll_full_offset_set(Evas_Object* o, Evas_Coord x, Evas_Coord y);
 Eina_Bool ewk_tiled_backing_store_scroll_full_offset_add(Evas_Object* o, Evas_Coord dx, Evas_Coord dy);

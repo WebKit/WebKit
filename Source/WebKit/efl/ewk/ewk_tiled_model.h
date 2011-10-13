@@ -34,7 +34,7 @@ void ewk_tile_hide(Ewk_Tile* t);
 Eina_Bool ewk_tile_visible_get(Ewk_Tile* t);
 void ewk_tile_update_full(Ewk_Tile* t);
 void ewk_tile_update_area(Ewk_Tile* t, const Eina_Rectangle* r);
-void ewk_tile_updates_process(Ewk_Tile* t, void (* cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* update), const void* data);
+void ewk_tile_updates_process(Ewk_Tile* t, void (*cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* update), const void* data);
 void ewk_tile_updates_clear(Ewk_Tile* t);
 
 /* cache of unused tiles */

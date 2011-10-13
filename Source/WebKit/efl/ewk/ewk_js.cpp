@@ -83,11 +83,11 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
 }
 
 // These methods are used by NPAI, thats the reason to use bool instead of Eina_Bool.
-static bool ewk_js_property_has(NPObject* np_obj, NPIdentifier name)
+static bool ewk_js_property_has(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -102,14 +102,14 @@ static bool ewk_js_property_has(NPObject* np_obj, NPIdentifier name)
     return fail;
 }
 
-static bool ewk_js_property_get(NPObject* np_obj, NPIdentifier name, NPVariant* result)
+static bool ewk_js_property_get(NPObject* npObject, NPIdentifier name, NPVariant* result)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Variant* value;
     Ewk_JS_Property* prop;
     bool fail = false;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -145,14 +145,14 @@ static bool ewk_js_property_get(NPObject* np_obj, NPIdentifier name, NPVariant* 
     return fail;
 }
 
-static bool ewk_js_property_set(NPObject* np_obj, NPIdentifier name, const NPVariant* np_value)
+static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPVariant* npValue)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Variant* value;
     Ewk_JS_Property* prop;
     bool fail = false;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObj, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -166,7 +166,7 @@ static bool ewk_js_property_set(NPObject* np_obj, NPIdentifier name, const NPVar
         return false;
     }
 
-    ewk_js_npvariant_to_variant(value, np_value);
+    ewk_js_npvariant_to_variant(value, npValue);
     char* prop_name = _NPN_UTF8FromIdentifier(name);
     prop = static_cast<Ewk_JS_Property*>(eina_hash_find(obj->cls->properties, prop_name));
     if (prop && prop->set)
@@ -183,13 +183,13 @@ static bool ewk_js_property_set(NPObject* np_obj, NPIdentifier name, const NPVar
     return fail;
 }
 
-static bool ewk_js_property_remove(NPObject* np_obj, NPIdentifier name)
+static bool ewk_js_property_remove(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Property* prop;
     bool fail = false;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -210,14 +210,14 @@ static bool ewk_js_property_remove(NPObject* np_obj, NPIdentifier name)
     return fail;
 }
 
-static bool ewk_js_properties_enumerate(NPObject* np_obj, NPIdentifier** value, uint32_t* count)
+static bool ewk_js_properties_enumerate(NPObject* npObject, NPIdentifier** value, uint32_t* count)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Eina_Iterator* it;
     char* key;
     int i = 0;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     *count = eina_hash_population(obj->properties);
@@ -235,11 +235,11 @@ static bool ewk_js_properties_enumerate(NPObject* np_obj, NPIdentifier** value, 
     return true;
 }
 
-static bool ewk_js_method_has(NPObject* np_obj, NPIdentifier name)
+static bool ewk_js_method_has(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -249,14 +249,14 @@ static bool ewk_js_method_has(NPObject* np_obj, NPIdentifier name)
     return eina_hash_find(obj->cls->methods, name); // Returns pointer if found(true), 0(false) otherwise.
 }
 
-static bool ewk_js_method_invoke(NPObject* np_obj, NPIdentifier name, const NPVariant* np_args, uint32_t np_arg_count, NPVariant* result)
+static bool ewk_js_method_invoke(NPObject* npObject, NPIdentifier name, const NPVariant* npArgs, uint32_t npArgCount, NPVariant* result)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Method* method;
     Ewk_JS_Variant* args;
     Ewk_JS_Variant* ret_val;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(np_obj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -268,15 +268,15 @@ static bool ewk_js_method_invoke(NPObject* np_obj, NPIdentifier name, const NPVa
     if (!method)
         return false;
 
-    args = static_cast<Ewk_JS_Variant*>(malloc(sizeof(Ewk_JS_Variant)  *np_arg_count));
+    args = static_cast<Ewk_JS_Variant*>(malloc(sizeof(Ewk_JS_Variant)  *npArgCount));
     if (!args) {
         ERR("Could not allocate memory for ewk_js_variant");
         return false;
     }
 
-    for (uint32_t i = 0; i < np_arg_count; i++)
-        ewk_js_npvariant_to_variant(&args[i], &np_args[i]);
-    ret_val = method->invoke(obj, args, np_arg_count);
+    for (uint32_t i = 0; i < npArgCount; i++)
+        ewk_js_npvariant_to_variant(&args[i], &npArgs[i]);
+    ret_val = method->invoke(obj, args, npArgCount);
     ewk_js_variant_to_npvariant(ret_val, result);
 
     ewk_js_variant_free(ret_val);
@@ -284,30 +284,30 @@ static bool ewk_js_method_invoke(NPObject* np_obj, NPIdentifier name, const NPVa
     return true;
 }
 
-static Eina_Bool ewk_js_npobject_property_get(Ewk_JS_Object* obj, const char* name, Ewk_JS_Variant* value)
+static Eina_Bool ewk_js_npobject_property_get(Ewk_JS_Object* jsObject, const char* name, Ewk_JS_Variant* value)
 {
     NPIdentifier id = _NPN_GetStringIdentifier(name);
     NPVariant var;
-    bool fail = _NPN_GetProperty(0, reinterpret_cast<NPObject*>(obj), id, &var);
+    bool fail = _NPN_GetProperty(0, reinterpret_cast<NPObject*>(jsObject), id, &var);
     if (!fail)
         fail = ewk_js_npvariant_to_variant(value, &var);
     return fail;
 }
 
-static Eina_Bool ewk_js_npobject_property_set(Ewk_JS_Object* obj, const char* name, const Ewk_JS_Variant* value)
+static Eina_Bool ewk_js_npobject_property_set(Ewk_JS_Object* jsObject, const char* name, const Ewk_JS_Variant* value)
 {
     NPIdentifier id = _NPN_GetStringIdentifier(name);
     NPVariant var;
     bool fail = ewk_js_variant_to_npvariant(value, &var);
     if (fail)
-        fail = _NPN_SetProperty(0, reinterpret_cast<NPObject*>(obj), id, &var);
+        fail = _NPN_SetProperty(0, reinterpret_cast<NPObject*>(jsObject), id, &var);
     return fail;
 }
 
-static Eina_Bool ewk_js_npobject_property_del(Ewk_JS_Object* obj, const char* name)
+static Eina_Bool ewk_js_npobject_property_del(Ewk_JS_Object* jsObject, const char* name)
 {
     NPIdentifier id = _NPN_GetStringIdentifier(name);
-    return _NPN_RemoveProperty(0, reinterpret_cast<NPObject*>(obj), id);
+    return _NPN_RemoveProperty(0, reinterpret_cast<NPObject*>(jsObject), id);
 }
 
 static void ewk_js_property_free(Ewk_JS_Property* prop)
@@ -327,11 +327,11 @@ static void ewk_js_property_free(Ewk_JS_Property* prop)
  *
  * @return The Ewk_JS_Class created.
  */
-Ewk_JS_Class* ewk_js_class_new(const Ewk_JS_Class_Meta* meta)
+Ewk_JS_Class* ewk_js_class_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
     Ewk_JS_Class* cls;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(meta, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsMetaClass, 0);
 
     cls = static_cast<Ewk_JS_Class*>(malloc(sizeof(Ewk_JS_Class)));
     if (!cls) {
@@ -339,7 +339,7 @@ Ewk_JS_Class* ewk_js_class_new(const Ewk_JS_Class_Meta* meta)
         return 0;
     }
 
-    cls->meta = meta;
+    cls->meta = jsMetaClass;
     cls->default_prop = meta->default_prop;
 
     // Don't free methods since they point to meta class methods(will be freed when meta class is freed).
@@ -364,12 +364,12 @@ Ewk_JS_Class* ewk_js_class_new(const Ewk_JS_Class_Meta* meta)
  *
  * @param cls @a Ewk_JS_Class to be released.
  */
-void ewk_js_class_free(Ewk_JS_Class* cls)
+void ewk_js_class_free(Ewk_JS_Class* jsClass)
 {
-    EINA_SAFETY_ON_NULL_RETURN(cls);
-    eina_hash_free(cls->methods);
-    eina_hash_free(cls->properties);
-    free(cls);
+    EINA_SAFETY_ON_NULL_RETURN(jsClass);
+    eina_hash_free(jsClass->methods);
+    eina_hash_free(jsClass->properties);
+    free(jsClass);
 }
 
 static NPClass EWK_NPCLASS = {
@@ -388,7 +388,7 @@ static NPClass EWK_NPCLASS = {
     0 // NPConstructFunction
 };
 
-static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* np_obj)
+static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
 {
     NPIdentifier* values;
     uint32_t np_props_count;
@@ -398,8 +398,8 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* np_obj)
     Ewk_JS_Property* prop;
     JavaScriptObject* jso;
 
-    if (EINA_MAGIC_CHECK(reinterpret_cast<Ewk_JS_Object*>(np_obj), EWK_JS_OBJECT_MAGIC))
-        return reinterpret_cast<Ewk_JS_Object*>(np_obj);
+    if (EINA_MAGIC_CHECK(reinterpret_cast<Ewk_JS_Object*>(npObject), EWK_JS_OBJECT_MAGIC))
+        return reinterpret_cast<Ewk_JS_Object*>(npObject);
 
     if (!_NPN_Enumerate(0, np_obj, &values, &np_props_count))
         return 0;
@@ -448,7 +448,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* np_obj)
     obj->cls = cls;
     obj->view = 0;
 
-    jso = reinterpret_cast<JavaScriptObject*>(np_obj);
+    jso = reinterpret_cast<JavaScriptObject*>(npObject);
     if (!strcmp("Array", jso->imp->className().ascii().data()))
         obj->type = EWK_JS_OBJECT_ARRAY;
     else if (!strcmp("Function", jso->imp->className().ascii().data()))
@@ -469,7 +469,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* np_obj)
     }
 
     eina_iterator_free(it);
-    obj->base = *reinterpret_cast<JavaScriptObject*>(np_obj);
+    obj->base = *reinterpret_cast<JavaScriptObject*>(npObject);
 
     return obj;
 
@@ -525,7 +525,7 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
     return EINA_TRUE;
 }
 
-Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* meta_cls)
+Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
     Ewk_JS_Object* obj;
 
@@ -538,7 +538,7 @@ Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* meta_cls)
     }
 
     EINA_MAGIC_SET(obj, EWK_JS_OBJECT_MAGIC);
-    obj->cls = ewk_js_class_new(meta_cls);
+    obj->cls = ewk_js_class_new(jsMetaClass);
     obj->view = 0;
     obj->name = 0;
     obj->type = EWK_JS_OBJECT_OBJECT;
@@ -594,47 +594,47 @@ error:
     return 0;
 }
 
-void ewk_js_object_free(Ewk_JS_Object* obj)
+void ewk_js_object_free(Ewk_JS_Object* jsObject)
 {
-    EINA_SAFETY_ON_NULL_RETURN(obj);
-    EINA_MAGIC_CHECK_OR_RETURN(obj);
-    Eina_Bool script_obj = !obj->cls->meta;
+    EINA_SAFETY_ON_NULL_RETURN(jsObject);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject);
+    Eina_Bool script_obj = !jsObject->cls->meta;
 
-    eina_hash_free(obj->properties);
-    eina_stringshare_del(obj->name);
+    eina_hash_free(jsObject->properties);
+    eina_stringshare_del(jsObject->name);
 
-    ewk_js_class_free(const_cast<Ewk_JS_Class*>(obj->cls));
+    ewk_js_class_free(const_cast<Ewk_JS_Class*>(jsObject->cls));
 
-    EINA_MAGIC_SET(obj, EINA_MAGIC_NONE);
+    EINA_MAGIC_SET(jsObject, EINA_MAGIC_NONE);
 
     if (script_obj)
-        free(obj);
+        free(jsObject);
 }
 
-Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* obj)
+Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, 0);
-    return obj->properties;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
+    return jsObject->properties;
 }
 
-const char* ewk_js_object_name_get(const Ewk_JS_Object* obj)
+const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, 0);
-    return obj->name;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
+    return jsObject->name;
 }
 
-Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* obj, Ewk_JS_Variant* args, int arg_count, Ewk_JS_Variant* result)
+Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, int argCount, Ewk_JS_Variant* result)
 {
     NPVariant* np_args;
     NPVariant np_result;
     bool fail = EINA_FALSE;
 
-    EINA_MAGIC_CHECK_OR_RETURN(obj, EINA_FALSE);
-    if (ewk_js_object_type_get(obj) != EWK_JS_OBJECT_FUNCTION)
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, EINA_FALSE);
+    if (ewk_js_object_type_get(jsObject) != EWK_JS_OBJECT_FUNCTION)
         return EINA_FALSE;
-    if (arg_count)
+    if (argCount)
         EINA_SAFETY_ON_NULL_RETURN_VAL(args, EINA_FALSE);
 
     np_args = static_cast<NPVariant*>(malloc(sizeof(NPVariant)  *arg_count));
@@ -643,11 +643,11 @@ Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* obj, Ewk_JS_Variant* args, int arg
         return EINA_FALSE;
     }
 
-    for (int i = 0; i < arg_count; i++)
+    for (int i = 0; i < argCount; i++)
         if (!ewk_js_variant_to_npvariant(&args[i], &np_args[i]))
             goto end;
 
-    if (!(fail = _NPN_InvokeDefault(0, reinterpret_cast<NPObject*>(obj), np_args, arg_count, &np_result)))
+    if (!(fail = _NPN_InvokeDefault(0, reinterpret_cast<NPObject*>(jsObject), np_args, argCount, &np_result)))
         goto end;
     if (result)
         fail = ewk_js_npvariant_to_variant(result, &np_result);
@@ -657,84 +657,84 @@ end:
     return fail;
 }
 
-Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* obj)
+Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EWK_JS_OBJECT_OBJECT);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, EWK_JS_OBJECT_OBJECT);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, EWK_JS_OBJECT_OBJECT);
+    EINA_MAGIC_CHECK_OR_RETURN(jsOobject, EWK_JS_OBJECT_OBJECT);
 
     return obj->type;
 }
 
-void ewk_js_object_type_set(Ewk_JS_Object* obj, Ewk_JS_Object_Type type)
+void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
 {
-    EINA_SAFETY_ON_NULL_RETURN(obj);
-    EINA_MAGIC_CHECK_OR_RETURN(obj);
+    EINA_SAFETY_ON_NULL_RETURN(jsObject);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject);
 
-    obj->type = type;
+    object->type = type;
 }
 
-void ewk_js_variant_free(Ewk_JS_Variant* var)
+void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
 {
-    EINA_SAFETY_ON_NULL_RETURN(var);
-    if (var->type == EWK_JS_VARIANT_STRING)
-        free(var->value.s);
-    else if (var->type == EWK_JS_VARIANT_OBJECT)
-        ewk_js_object_free(var->value.o);
-    free(var);
+    EINA_SAFETY_ON_NULL_RETURN(jsVariant);
+    if (variant->type == EWK_JS_VARIANT_STRING)
+        free(jsVariant->value.s);
+    else if (jsVariant->type == EWK_JS_VARIANT_OBJECT)
+        ewk_js_object_free(jsVariant->value.o);
+    free(jsVariant);
 }
 
-void ewk_js_variant_array_free(Ewk_JS_Variant* var, int count)
+void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
 {
-    EINA_SAFETY_ON_NULL_RETURN(var);
+    EINA_SAFETY_ON_NULL_RETURN(jsVariant);
     for (int i = 0; i < count; i++) {
-        if (var[i].type == EWK_JS_VARIANT_STRING)
-            free(var[i].value.s);
-        else if (var[i].type == EWK_JS_VARIANT_OBJECT)
-            ewk_js_object_free(var[i].value.o);
+        if (jsVariant[i].type == EWK_JS_VARIANT_STRING)
+            free(jsVariant[i].value.s);
+        else if (jsVariant[i].type == EWK_JS_VARIANT_OBJECT)
+            ewk_js_object_free(jsVariant[i].value.o);
     }
-    free(var);
+    free(jsVariant);
 }
 
 #else
 
-Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* obj)
+Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
 {
     return 0;
 }
 
-const char* ewk_js_object_name_get(const Ewk_JS_Object* obj)
+const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
 {
     return 0;
 }
 
-void ewk_js_variant_free(Ewk_JS_Variant* var)
+void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
 {
 }
 
-void ewk_js_variant_array_free(Ewk_JS_Variant* var, int count)
+void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
 {
 }
 
-Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* meta_cls)
+Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
     return 0;
 }
 
-void ewk_js_object_free(Ewk_JS_Object* obj)
+void ewk_js_object_free(Ewk_JS_Object* jsObject)
 {
 }
 
-Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* obj, Ewk_JS_Variant* args, int arg_count, Ewk_JS_Variant* result)
+Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, int argCount, Ewk_JS_Variant* result)
 {
     return EINA_FALSE;
 }
 
-Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* obj)
+Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
 {
     return EWK_JS_OBJECT_INVALID;
 }
 
-void ewk_js_object_type_set(Ewk_JS_Object* obj, Ewk_JS_Object_Type type)
+void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
 {
 }
 

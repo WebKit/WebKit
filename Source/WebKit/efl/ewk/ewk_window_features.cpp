@@ -35,65 +35,65 @@ struct _Ewk_Window_Features {
     WebCore::WindowFeatures* core;
 };
 
-void ewk_window_features_unref(Ewk_Window_Features* window_features)
+void ewk_window_features_unref(Ewk_Window_Features* windowFeatures)
 {
-    EINA_SAFETY_ON_NULL_RETURN(window_features);
-    EINA_SAFETY_ON_FALSE_RETURN(window_features->__ref > 0);
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures);
+    EINA_SAFETY_ON_FALSE_RETURN(windowFeatures->__ref > 0);
 
-    if (--window_features->__ref)
+    if (--windowFeatures->__ref)
         return;
 
-    delete window_features->core;
-    window_features->core = 0;
-    free(window_features);
+    delete windowFeatures->core;
+    windowFeatures->core = 0;
+    free(windowFeatures);
 }
 
-void ewk_window_features_ref(Ewk_Window_Features* window_features)
+void ewk_window_features_ref(Ewk_Window_Features* windowFeatures)
 {
-    EINA_SAFETY_ON_NULL_RETURN(window_features);
-    window_features->__ref++;
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures);
+    windowFeatures->__ref++;
 }
 
-void ewk_window_features_bool_property_get(const Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen)
+void ewk_window_features_bool_property_get(const Ewk_Window_Features* windowFeatures, Eina_Bool* toolbarVisible, Eina_Bool* statusbarVisible, Eina_Bool* scrollbarsVisible, Eina_Bool* menubarVisible, Eina_Bool* locationbarVisible, Eina_Bool* fullScreen)
 {
-    EINA_SAFETY_ON_NULL_RETURN(window_features);
-    EINA_SAFETY_ON_NULL_RETURN(window_features->core);
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures);
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures->core);
 
-    if (toolbar_visible)
-        *toolbar_visible = window_features->core->toolBarVisible;
+    if (toolbarVisible)
+        *toolbarVisible = windowFeatures->core->toolBarVisible;
 
-    if (statusbar_visible)
-        *statusbar_visible = window_features->core->statusBarVisible;
+    if (statusbarVisible)
+        *statusbarVisible = windowFeatures->core->statusBarVisible;
 
-    if (scrollbars_visible)
-        *scrollbars_visible = window_features->core->scrollbarsVisible;
+    if (scrollbarsVisible)
+        *scrollbarsVisible = windowFeatures->core->scrollbarsVisible;
 
-    if (menubar_visible)
-        *menubar_visible = window_features->core->menuBarVisible;
+    if (menubarVisible)
+        *menubarVisible = windowFeatures->core->menuBarVisible;
 
-    if (locationbar_visible)
-        *locationbar_visible = window_features->core->locationBarVisible;
+    if (locationbarVisible)
+        *locationbarVisible = windowFeatures->core->locationBarVisible;
 
-    if (fullscreen)
-        *fullscreen = window_features->core->fullscreen;
+    if (fullScreen)
+        *fullScreen = windowFeatures->core->fullscreen;
 }
 
-void ewk_window_features_int_property_get(const Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h)
+void ewk_window_features_int_property_get(const Ewk_Window_Features* windowFeatures, int* x, int* y, int* width, int* height)
 {
-    EINA_SAFETY_ON_NULL_RETURN(window_features);
-    EINA_SAFETY_ON_NULL_RETURN(window_features->core);
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures);
+    EINA_SAFETY_ON_NULL_RETURN(windowFeatures->core);
 
     if (x)
-        *x = window_features->core->xSet ? static_cast<int>(window_features->core->x) : -1;
+        *x = windowFeatures->core->xSet ? static_cast<int>(windowFeatures->core->x) : -1;
 
     if (y)
-        *y = window_features->core->ySet ? static_cast<int>(window_features->core->y) : -1;
+        *y = windowFeatures->core->ySet ? static_cast<int>(windowFeatures->core->y) : -1;
 
-    if (w)
-        *w = window_features->core->widthSet ? static_cast<int>(window_features->core->width) : -1;
+    if (width)
+        *width = windowFeatures->core->widthSet ? static_cast<int>(windowFeatures->core->width) : -1;
 
-    if (h)
-        *h = window_features->core->heightSet ? static_cast<int>(window_features->core->height) : -1;
+    if (height)
+        *height = windowFeatures->core->heightSet ? static_cast<int>(windowFeatures->core->height) : -1;
 }
 
 /* internal methods ****************************************************/

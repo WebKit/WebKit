@@ -63,10 +63,10 @@ static void ewk_auth_soup_dialog_init(Ewk_Soup_Auth_Dialog* instance)
 {
 }
 
-static void ewk_auth_soup_dialog_session_feature_init(SoupSessionFeatureInterface* feature_interface, gpointer interface_data)
+static void ewk_auth_soup_dialog_session_feature_init(SoupSessionFeatureInterface* featureInterface, gpointer interfaceData)
 {
-    feature_interface->attach = attach;
-    feature_interface->detach = detach;
+    featureInterface->attach = attach;
+    featureInterface->detach = detach;
 }
 
 void ewk_auth_soup_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)

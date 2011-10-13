@@ -95,14 +95,14 @@ static inline Ewk_History_Item* _ewk_history_item_new(WebCore::HistoryItem* core
     return item;
 }
 
-static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVector& core_items)
+static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVector& coreItems)
 {
     Eina_List* ret = 0;
     unsigned int i, size;
 
-    size = core_items.size();
+    size = coreItems.size();
     for (i = 0; i < size; i++) {
-        Ewk_History_Item* item = _ewk_history_item_new(core_items[i].get());
+        Ewk_History_Item* item = _ewk_history_item_new(coreItems[i].get());
         if (item)
             ret = eina_list_append(ret, item);
     }
