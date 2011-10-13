@@ -36,6 +36,8 @@ noinst_LTLIBRARIES += Libraries/libWebKit2APITestCore.la
 Libraries_libWebKit2APITestCore_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.h \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.h \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.h \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp \

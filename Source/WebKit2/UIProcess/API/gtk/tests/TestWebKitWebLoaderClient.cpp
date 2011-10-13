@@ -21,24 +21,16 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
+#include "WebKitTestServer.h"
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>
 
-static SoupURI* kBaseURI = 0;
-static SoupServer* kSoupServer = 0;
-
-static CString getURIForPath(const char* path)
-{
-    SoupURI* uri = soup_uri_new_with_base(kBaseURI, path);
-    GOwnPtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
-    soup_uri_free(uri);
-    return uriString.get();
-}
+static WebKitTestServer* kServer;
 
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 {
-    webkit_web_view_load_uri(test->m_webView, getURIForPath("/redirect").data());
+    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/redirect").data());
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -51,7 +43,7 @@ static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 
 static void testLoadingError(LoadTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_uri(test->m_webView, getURIForPath("/error").data());
+    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/error").data());
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -73,7 +65,7 @@ static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
 {
     webkit_web_view_load_alternate_html(test->m_webView,
                                         "<html><body>Alternate Content</body></html>",
-                                        0, getURIForPath("/alternate").data());
+                                        0, kServer->getURIForPath("/alternate").data());
     test->waitUntilLoadFinished();
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
@@ -84,7 +76,7 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
     webkit_web_view_reload(test->m_webView);
     test->wait(0.25); // Wait for a quarter of a second.
 
-    webkit_web_view_load_uri(test->m_webView, getURIForPath("/normal").data());
+    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 
@@ -95,7 +87,7 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadProgress(LoadTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_uri(test->m_webView, getURIForPath("/normal").data());
+    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
     g_assert_cmpfloat(test->m_estimatedProgress, ==, 1);
 }
@@ -132,12 +124,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
-    kBaseURI = soup_uri_new("http://127.0.0.1/");
-
-    kSoupServer = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
-    soup_uri_set_port(kBaseURI, soup_server_get_port(kSoupServer));
-    soup_server_run_async(kSoupServer);
-    soup_server_add_handler(kSoupServer, 0, serverCallback, 0, 0);
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
 
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-status", testLoadingStatus);
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
@@ -148,4 +136,5 @@ void beforeAll()
 
 void afterAll()
 {
+    delete kServer;
 }

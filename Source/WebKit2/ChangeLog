@@ -1,3 +1,32 @@
+2011-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitTestServer class to WebKit2 GTK+ unit tests library
+        https://bugs.webkit.org/show_bug.cgi?id=70010
+
+        Reviewed by Martin Robinson.
+
+        With this class tests using a soup server only need to implement
+        the soup server callback.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp: Use WebKitTestServer.
+        (testLoadingStatus):
+        (testLoadingError):
+        (testLoadAlternateContent):
+        (testWebViewReload):
+        (testLoadProgress):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebKitTestServer.cpp: Added.
+        (WebKitTestServer::WebKitTestServer):
+        (WebKitTestServer::~WebKitTestServer):
+        (WebKitTestServer::run): Run the soup server and adds the given
+        soup server callback to handle requests.
+        (WebKitTestServer::getURIForPath): Returns the server absolute URI
+        for the given relative path.
+        * UIProcess/API/gtk/tests/WebKitTestServer.h: Added.
+        (WebKitTestServer::baseURI):
+
 2011-10-13  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Fix warnings while generating WebKit2-GTK+ documentation.
