@@ -1,3 +1,13 @@
+2011-10-12  Antoine Labour  <piman@chromium.org>
+
+        Fix CCThreadTest.startPostAndWaitOnCondition
+        https://bugs.webkit.org/show_bug.cgi?id=69967
+
+        Reviewed by Darin Fisher.
+
+        * tests/CCThreadTest.cpp:
+        (WebKit::TEST):
+
 2011-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

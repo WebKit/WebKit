@@ -86,8 +86,17 @@ public:
     bool hit;
 };
 
-TEST(CCThreadTest, DISABLED_startPostAndWaitOnCondition)
+#if OS(WINDOWS) || OS(MAC_OS_X)
+#define MAYBE_startPostAndWaitOnCondition DISABLED_startPostAndWaitOnCondition
+#else
+#define MAYBE_startPostAndWaitOnCondition startPostAndWaitOnCondition
+#endif
+
+TEST(CCThreadTest, MAYBE_startPostAndWaitOnCondition)
 {
+    // CCMainThread is normally initialized by CCLayerTreeHost, but in this case
+    // we may run this test, before any CCLayerTreeHost gets instantiated.
+    CCMainThread::initialize();
     OwnPtr<WebThread> webThread = adoptPtr(webKitPlatformSupport()->createThread("test"));
 
     OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create(webThread.get());
