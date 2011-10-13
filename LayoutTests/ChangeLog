@@ -1,3 +1,13 @@
+2011-10-13  Noel Gordon  <noel.gordon@gmail.com>
+
+        Add regression test: canvas.toDataURL("image/jpeg") should not crash
+        https://bugs.webkit.org/show_bug.cgi?id=69991
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/canvas-toDataURL-jpeg-crash-expected.txt: Added.
+        * fast/canvas/canvas-toDataURL-jpeg-crash.html: Added.
+
 2011-10-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Deprecate event.layerX and event.layerY in WebKit
