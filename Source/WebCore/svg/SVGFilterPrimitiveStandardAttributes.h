@@ -80,6 +80,8 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
+void invalidateFilterPrimitiveParent(SVGElement*);
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

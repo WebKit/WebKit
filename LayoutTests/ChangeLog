@@ -1,3 +1,84 @@
+2011-10-13  Renata Hodovan  <reni@webkit.org>
+
+        FEComponentTransfer element doesn't support dynamic invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=69747
+
+        Adding new tests for feComponentTransfer dynamic changes.
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-amplitude-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-exponent-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-intercept-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-offset-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-slope-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-tableValues-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-dom-type-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-amplitude-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-exponent-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-intercept-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-offset-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-slope-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-tableValues-prop.js: Added.
+        (SVGNumberListToString):
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEComponentTransferElement-svgdom-type-prop.js: Added.
+        (executeTest):
+
 2011-10-13  Deepak Sherveghar  <bpwv64@motorola.com>
 
         REGRESSION (r95381): Standalone video can be focused and draws a focus ring.

@@ -77,9 +77,9 @@ public:
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
 
-    // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
     
 private:
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGComponentTransferFunctionElement)

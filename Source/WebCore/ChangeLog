@@ -1,3 +1,44 @@
+2011-10-13  Renata Hodovan  <reni@webkit.org>
+
+        FEComponentTransfer element doesn't support dynamic invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=69747
+
+        The dynamic changes are captured by the svgAttributeChange() function, and
+        invalidate the filter primitive if necessary.
+        invalidateFilterPrimitiveParent() is a new free function in
+        SVGFilterPrimitiveStanardAttributes what makes the invalidation possible
+        by objects not inherited from SVGFilterPrimitiveStanardAttributes too.
+        This solution was used in SVGFEMergeNodeElement::svgAttributeChanged()
+        previously and now it can use this new function too.
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests: svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html
+               svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop.html
+
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::invalidateFilterPrimitiveParent):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+
 2011-10-13  Deepak Sherveghar  <bpwv64@motorola.com>
 
         REGRESSION (r95381): Standalone video can be focused and draws a focus ring.

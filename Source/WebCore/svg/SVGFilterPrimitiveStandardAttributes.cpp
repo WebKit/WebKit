@@ -169,6 +169,23 @@ bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const NodeRenderingC
     return false;
 }
 
+void invalidateFilterPrimitiveParent(SVGElement* element)
+{
+    if (!element)
+        return;
+
+    ContainerNode* parent = element->parentNode();
+
+    if (!parent)
+        return;
+
+    RenderObject* renderer = parent->renderer();
+    if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+        return;
+
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+}
+
 }
 
 #endif // ENABLE(SVG)
