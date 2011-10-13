@@ -29,41 +29,54 @@
 #include "Event.h"
 
 namespace WebCore {
-    
-    class OverflowEvent : public Event {
-    public:
-        enum orientType {
-            HORIZONTAL = 0,
-            VERTICAL   = 1,
-            BOTH       = 2
-        };
 
-        static PassRefPtr<OverflowEvent> create()
-        {
-            return adoptRef(new OverflowEvent);
-        }
-        static PassRefPtr<OverflowEvent> create(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
-        {
-            return adoptRef(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow));
-        }
+struct OverflowEventInit : public EventInit {
+    OverflowEventInit();
 
-        void initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow);
+    unsigned short orient;
+    bool horizontalOverflow;
+    bool verticalOverflow;
+};
 
-        unsigned short orient() const { return m_orient; }
-        bool horizontalOverflow() const { return m_horizontalOverflow; }
-        bool verticalOverflow() const { return m_verticalOverflow; }
-
-        virtual bool isOverflowEvent() const;
-        
-    private:
-        OverflowEvent();
-        OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow);
-
-        unsigned short m_orient;
-        bool m_horizontalOverflow;
-        bool m_verticalOverflow;
+class OverflowEvent : public Event {
+public:
+    enum orientType {
+        HORIZONTAL = 0,
+        VERTICAL   = 1,
+        BOTH       = 2
     };
+
+    static PassRefPtr<OverflowEvent> create()
+    {
+        return adoptRef(new OverflowEvent);
+    }
+    static PassRefPtr<OverflowEvent> create(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
+    {
+        return adoptRef(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow));
+    }
+    static PassRefPtr<OverflowEvent> create(const AtomicString& type, const OverflowEventInit& initializer)
+    {
+        return adoptRef(new OverflowEvent(type, initializer));
+    }
+
+    void initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow);
+
+    unsigned short orient() const { return m_orient; }
+    bool horizontalOverflow() const { return m_horizontalOverflow; }
+    bool verticalOverflow() const { return m_verticalOverflow; }
+
+    virtual bool isOverflowEvent() const;
+
+private:
+    OverflowEvent();
+    OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow);
+    OverflowEvent(const AtomicString&, const OverflowEventInit&);
+
+    unsigned short m_orient;
+    bool m_horizontalOverflow;
+    bool m_verticalOverflow;
+};
+
 }
 
 #endif // OverflowEvent_h
-

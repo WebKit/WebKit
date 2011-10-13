@@ -29,6 +29,8 @@ PASS (new inner.MessageEvent()).isInner is true
 PASS (new inner.MessageEvent()).constructor.isInner is true
 PASS (new inner.Option()).isInner is true
 PASS (new inner.Option()).constructor.isInner is true
+PASS (new inner.OverflowEvent()).isInner is true
+PASS (new inner.OverflowEvent()).constructor.isInner is true
 PASS (new inner.PageTransitionEvent()).isInner is true
 PASS (new inner.PageTransitionEvent()).constructor.isInner is true
 PASS (new inner.PopStateEvent()).isInner is true

@@ -1,3 +1,19 @@
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
+        Implement an OverflowEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69907
+
+        Reviewed by Adam Barth.
+
+        overflow-event-constructor.html checks the behavior of the OverflowEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Added inner.OverflowEvent().
+        * fast/dom/dom-constructors-expected.txt: Updated the test result.
+        * fast/dom/dom-constructors.html: Removed OverflowEvent from test cases, since now OverflowEvent has a constructor.
+        * fast/events/constructors/overflow-event-constructor-expected.txt: Added.
+        * fast/events/constructors/overflow-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped overflow-event-constructor.html, since V8 does not yet have the OverflowEvent constructor.
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         DOMWindow subobjects can be re-created after navigation

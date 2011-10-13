@@ -1,3 +1,47 @@
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
+        Implement an OverflowEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=69907
+
+        Reviewed by Adam Barth.
+
+        There is no spec for the OverflowEvent constructor
+        since it is WebKit-specific. However, judging from the current
+        IDL of initOverflowEvent(), the constructor IDL should be as follows.
+
+        [Constructor(DOMString type, optional OverflowEventInit eventInitDict)]
+        interface OverflowEvent : Event {
+            ...;
+        }
+
+        dictionary OverflowEventInit : EventInit {
+            unsigned short orient;
+            boolean horizontalOverflow;
+            boolean verticalOverflow;
+        }
+
+        Note: In initOverflowEvent(), we cannot specify |bubbles| and |cancelable|.
+        I do not know why, but we can find a comment in fast/events/script-tests/init-events.js
+        that says "initOverflowEvent has an interface that has a design that's
+        inconsistent with the init functions from other events".
+        On the other hand, the above constructor enables to specify |bubbles| and |cancelable|,
+        which is consistent with other constructors.
+
+        Test: fast/events/constructors/overflow-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the OverflowEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for OverflowEvent.
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEventInit::OverflowEventInit):
+        (WebCore::OverflowEvent::OverflowEvent):
+        (WebCore::OverflowEvent::initOverflowEvent):
+        * dom/OverflowEvent.h: Added a definition for OverflowEventInit.
+        (WebCore::OverflowEvent::create):
+        (WebCore::OverflowEvent::orient):
+        (WebCore::OverflowEvent::horizontalOverflow):
+        (WebCore::OverflowEvent::verticalOverflow):
+        * dom/OverflowEvent.idl: Makes OverflowEvent constructible.
+
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
         Cleanup of HTMLSelectElement
