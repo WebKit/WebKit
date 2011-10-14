@@ -22,7 +22,7 @@ PASS Uint32Array() threw exception TypeError: DOM object constructor cannot be c
 PASS Uint8Array() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS WebKitCSSMatrix() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS WebKitPoint() threw exception TypeError: DOM object constructor cannot be called as a function..
-PASS WebSocket() threw exception TypeError: DOM object custructor cannot be called as a function..
+PASS WebSocket() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS Worker() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS XMLHttpRequest() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS XSLTProcessor() threw exception TypeError: DOM object constructor cannot be called as a function..

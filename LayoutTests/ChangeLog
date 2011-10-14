@@ -1,5 +1,14 @@
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
+        Spelling error in v8WebSocket::constructorCallback error
+        https://bugs.webkit.org/show_bug.cgi?id=63943
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/fast/dom/call-a-constructor-as-a-function-expected.txt:
+
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
         Add missing result.  Yes, it's supposed to be blank.
 
         * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1-expected.png: Added.
