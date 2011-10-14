@@ -119,6 +119,19 @@ class QtPort(WebKitPort):
         search_paths.append(self.port_name)
         return map(self._webkit_baseline_path, search_paths)
 
+    def _skipped_file_search_paths(self):
+        search_paths = set([self.port_name, self.name()])
+        version = self.qt_version()
+        if '4.7' in version:
+            search_paths.add('qt-4.7')
+        elif '4.8' in version:
+            search_paths.add('qt-4.8')
+        elif version:
+            search_paths.add('qt-5.0')
+        if self.get_option('webkit_test_runner'):
+            search_paths.update(['qt-wk2', 'wk2'])
+        return search_paths
+
     def _runtime_feature_list(self):
         return None
 
