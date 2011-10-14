@@ -1,3 +1,11 @@
+2011-10-14  Sam Weinig  <sam@webkit.org>
+
+        Remove the Leopard slaves.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-10-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Inherit settings from Chromium's envsetup.sh, address a NDK todo
