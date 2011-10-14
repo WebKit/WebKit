@@ -32,6 +32,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/KURL.h>
 #include <wtf/text/WTFString.h>
 
@@ -102,7 +103,25 @@ String InjectedBundleHitTestResult::linkTitle() const
 
 WebCore::IntRect InjectedBundleHitTestResult::imageRect() const
 {
-    return m_hitTestResult.imageRect();
+    WebCore::IntRect imageRect = m_hitTestResult.imageRect();
+    if (imageRect.isEmpty())
+        return imageRect;
+        
+    // The image rect in WebCore::HitTestResult is in frame coordinates, but we need it in WKView
+    // coordinates since WebKit2 clients don't have enough context to do the conversion themselves.
+    WebFrame* webFrame = frame();
+    if (!webFrame)
+        return imageRect;
+    
+    WebCore::Frame* coreFrame = webFrame->coreFrame();
+    if (!coreFrame)
+        return imageRect;
+    
+    WebCore::FrameView* view = coreFrame->view();
+    if (!view)
+        return imageRect;
+    
+    return view->contentsToRootView(imageRect);
 }
 
 bool InjectedBundleHitTestResult::isSelected() const

@@ -1,3 +1,29 @@
+2011-10-14  Jeff Miller  <jeffm@apple.com>
+
+        InjectedBundleHitTestResult::imageRect() should return rect in WKView coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=69963
+        
+        Add infrastructure to convert from any frame view's coordinate system to the
+        root view's coordinate system.
+
+        Reviewed by Simon Fraser.
+
+        No new tests (yet), this is covered by <https://bugs.webkit.org/show_bug.cgi?id=70136>.
+
+        * WebCore.exp.in: Exported WebCore::ScrollView::contentsToRootView(), used by InjectedBundleHitTestResult.cpp.
+        
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::rootViewToContents): Added (both point and rect versions).
+        (WebCore::ScrollView::contentsToRootView): Ditto.
+        
+        * platform/ScrollView.h: Added member functions to convert to/from root view coordinates.
+        
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromRootView): Added (both point and rect versions).
+        (WebCore::Widget::convertToRootView): Ditto.
+        
+        * platform/Widget.h: Added member functions to convert to/from root view coordinates.
+
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
         CSSParser: Remove StyleBase usage.

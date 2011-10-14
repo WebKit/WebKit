@@ -1,3 +1,17 @@
+2011-10-14  Jeff Miller  <jeffm@apple.com>
+
+        InjectedBundleHitTestResult::imageRect() should return rect in WKView coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=69963
+        
+        WebKit2 clients only have knowledge of the WKView's coordinate system, they have no way to
+        convert from subframe view coordinates , so any rect that we expose through WK2 APIs should
+        be in WKView coordinates.
+        
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::imageRect): Use WebCore::FrameView::contentsToRootView() to convert the image rect to WKView coordinates.
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual deleteProperty to deletePropertyVirtual

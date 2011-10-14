@@ -197,6 +197,11 @@ public:
     void setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress = false);
     bool scrollbarsSuppressed() const { return m_scrollbarsSuppressed; }
 
+    IntPoint rootViewToContents(const IntPoint&) const;
+    IntPoint contentsToRootView(const IntPoint&) const;
+    IntRect rootViewToContents(const IntRect&) const;
+    IntRect contentsToRootView(const IntRect&) const;
+
     // Event coordinates are assumed to be in the coordinate space of a window that contains
     // the entire widget hierarchy. It is up to the platform to decide what the precise definition
     // of containing window is. (For example on Mac it is the containing NSWindow.)
