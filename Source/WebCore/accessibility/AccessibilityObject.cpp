@@ -486,7 +486,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     VisiblePosition startPosition = visiblePosition;
     while (true) {
         tempPosition = startPosition.previous();
-        if (tempPosition.isNull() || tempPosition.isNull())
+        if (tempPosition.isNull())
             break;
         Position p = tempPosition.deepEquivalent();
         RenderObject* renderer = p.deprecatedNode()->renderer();
