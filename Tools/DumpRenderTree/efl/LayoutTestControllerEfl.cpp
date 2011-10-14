@@ -50,6 +50,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/wtf/text/WTFString.h>
+#include <KURL.h>
 #include <editing/FindOptions.h>
 #include <stdio.h>
 
@@ -178,11 +179,11 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
-    String absoluteUrl = String::fromUTF8(ewk_frame_uri_get(browser->mainFrame()));
-    absoluteUrl.append(url->characters(), url->length());
+    WebCore::KURL baseURL(WebCore::KURL(), String::fromUTF8(ewk_frame_uri_get(browser->mainFrame())));
+    WebCore::KURL absoluteURL(baseURL, WTF::String(url->characters(), url->length()));
 
     JSRetainPtr<JSStringRef> jsAbsoluteURL(
-        Adopt, JSStringCreateWithUTF8CString(absoluteUrl.utf8().data()));
+        Adopt, JSStringCreateWithUTF8CString(absoluteURL.string().utf8().data()));
 
     WorkQueue::shared()->queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
