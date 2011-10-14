@@ -117,6 +117,22 @@ class WatchListParserTest(webkitunittest.TestCase):
         self.assertRaisesRegexp(Exception, r'A rule for definition "WatchList1" is empty, so it should be deleted.',
                                 self._watch_list_parser.parse, watch_list)
 
+    def test_cc_rule_with_invalid_email(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": ["levin+bad+email@chromium.org"],'
+            '     },'
+            '}')
+
+        self.assertRaisesRegexp(Exception, r'The email alias levin\+bad\+email@chromium.org which is in the watchlist is not listed as a contributor in committers\.py',
+                                self._watch_list_parser.parse, watch_list)
+
     def test_empty_message_rule(self):
         watch_list = (
             '{'

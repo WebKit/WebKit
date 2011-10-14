@@ -357,7 +357,7 @@ reviewers_list = [
     Reviewer("David Harrison", "harrison@apple.com", "harrison"),
     Reviewer("David Hyatt", "hyatt@apple.com", ["dhyatt", "hyatt"]),
     Reviewer("David Kilzer", ["ddkilzer@webkit.org", "ddkilzer@apple.com"], "ddkilzer"),
-    Reviewer("David Levin", "levin@chromium.org", "dave_levin"),
+    Reviewer("David Levin", ["levin@chromium.org", "levin+threading@chromium.org", "levin+watchlist@chromium.org"], "dave_levin"),
     Reviewer("Dean Jackson", "dino@apple.com", "dino"),
     Reviewer("Dimitri Glazkov", "dglazkov@chromium.org", "dglazkov"),
     Reviewer("Dirk Pranke", "dpranke@chromium.org", "dpranke"),

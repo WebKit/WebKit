@@ -22,6 +22,22 @@
 
 2011-10-14  David Levin  <levin@chromium.org>
 
+        watchlist: Add a validation check for the email names in the list.
+        https://bugs.webkit.org/show_bug.cgi?id=70154
+
+        Reviewed by Adam Barth.
+
+        If an email is listed which doesn't have a bugzilla log in, then any emails
+        added to the bug along with that email will fail to happen, so try to prevent this
+        from happening by validating that emails added to the watchlist are known to be
+        contributors.
+
+        * Scripts/webkitpy/common/config/committers.py: Add my other email aliases for bugzilla.
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py: Add the check.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py: A unit test for the check.
+
+2011-10-14  David Levin  <levin@chromium.org>
+
         watchlist: If the style check fails, then the watchlist will not be run.
         https://bugs.webkit.org/show_bug.cgi?id=69484
 

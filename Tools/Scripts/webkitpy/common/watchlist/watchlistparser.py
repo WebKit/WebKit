@@ -35,6 +35,7 @@ from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 from webkitpy.common.watchlist.watchlist import WatchList
 from webkitpy.common.watchlist.watchlistrule import WatchListRule
+from webkitpy.common.config.committers import CommitterList
 
 
 class WatchListParser(object):
@@ -128,6 +129,12 @@ class WatchListParser(object):
 
         self._validate_definitions(cc_definitions_set, self._CC_RULES, watch_list)
         self._validate_definitions(messages_definitions_set, self._MESSAGE_RULES, watch_list)
+
+        contributors = CommitterList()
+        for cc_rule in watch_list.cc_rules:
+            for email in cc_rule.instructions():
+                if not contributors.contributor_by_email(email):
+                    raise Exception("The email alias %s which is in the watchlist is not listed as a contributor in committers.py" % email)
 
     def _verify_all_definitions_are_used(self, watch_list, used_definitions):
         definitions_not_used = set(watch_list.definitions.keys())
