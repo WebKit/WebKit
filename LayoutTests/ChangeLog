@@ -1,3 +1,9 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r97522.
+
+        * platform/chromium/fast/harness/results-expected.txt: Tweakaged.
+
 2011-10-14  Beth Dakin  <bdakin@apple.com>
 
         These tests results should really be in the mac-specific directory. They were 
