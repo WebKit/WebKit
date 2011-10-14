@@ -3799,13 +3799,16 @@ BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
 // Random crash of canvas tests.
 BUGWK70013 WIN GPU : canvas/philip/tests/2d.transformation.rotate.wrap.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/arc360.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-arc-360-winding.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-arc-connecting-line.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-drawImage-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-alpha-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-lineWidth-intact-after-strokeRect.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = PASS CRASH
 
