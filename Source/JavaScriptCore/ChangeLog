@@ -1,3 +1,19 @@
+2011-10-14  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT 32_64 - Performance fix for ResolveGlobal
+        https://bugs.webkit.org/show_bug.cgi?id=70096
+
+        Reviewed by Gavin Barraclough.
+
+        Structure check of global object should be a pointer comparison
+        instead of a tag and payload pair comparison. This fix improves
+        SunSpider by 7% on Linux 32, with bitops-bitwise-and improved by 4.75X.
+        Also two trivial fixes for successful 32-bit build are included.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         Speculation failures in ValueToInt32 are causing a 2x slow-down

@@ -29,6 +29,10 @@
 
 #if ENABLE(DFG_JIT)
 
+#if USE(JSVALUE32_64)
+#include "DFGJITCompilerInlineMethods.h"
+#endif
+
 namespace JSC { namespace DFG {
 
 #ifndef NDEBUG

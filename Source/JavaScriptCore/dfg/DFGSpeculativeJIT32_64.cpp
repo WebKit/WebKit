@@ -854,7 +854,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToInt32: {
-        compileValueToInt32(node.child1());
+        compileValueToInt32(node);
         break;
     }
 
@@ -2332,15 +2332,12 @@ void SpeculativeJIT::compile(Node& node)
         // Check Structure of global object
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectGPR);
         m_jit.move(JITCompiler::TrustedImmPtr(resolveInfoAddress), resolveInfoGPR);
-        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
-        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
+        m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), resultPayloadGPR);
 
-        JITCompiler::JumpList structuresNotMatch;
-        structuresNotMatch.append(m_jit.branch32(JITCompiler::NotEqual, resultTagGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag))));
-        structuresNotMatch.append(m_jit.branch32(JITCompiler::NotEqual, resultPayloadGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload))));
+        JITCompiler::Jump structuresNotMatch = m_jit.branchPtr(JITCompiler::NotEqual, resultPayloadGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
 
         // Fast case
-        m_jit.load32(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
+        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
         m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
         m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
         m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
