@@ -1,3 +1,24 @@
+2011-10-13  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Make IDBCursor.value() return an IDBAny object
+        https://bugs.webkit.org/show_bug.cgi?id=70024
+
+        Reviewed by Tony Chang.
+
+        This is to work around the fact that the V8 bindings mechanism does
+        eager deserialization of SerializedScriptValue attributes. This means
+        that the value is fetched from the back-end only once, when the
+        IDBCursor is first wrapped. When the cursor's value changes, this is
+        not reflected.
+
+        We work around this by making IDBCursor.value() return the
+        SerializedScriptValue wrapped in an IDBAny object.
+
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::value):
+        * storage/IDBCursor.h:
+        * storage/IDBCursorWithValue.idl:
+
 2011-10-14  Rémi Duraffort  <remi.duraffort@st.com>
 
         Fix compilation when the JS Debugger is disabled.

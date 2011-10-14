@@ -75,9 +75,9 @@ PassRefPtr<IDBKey> IDBCursor::primaryKey() const
     return m_backend->primaryKey();
 }
 
-PassRefPtr<SerializedScriptValue> IDBCursor::value() const
+PassRefPtr<IDBAny> IDBCursor::value() const
 {
-    return m_backend->value();
+    return IDBAny::create(m_backend->value());
 }
 
 IDBAny* IDBCursor::source() const

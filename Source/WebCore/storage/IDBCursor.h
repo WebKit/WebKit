@@ -62,7 +62,7 @@ public:
     unsigned short direction() const;
     PassRefPtr<IDBKey> key() const;
     PassRefPtr<IDBKey> primaryKey() const;
-    PassRefPtr<SerializedScriptValue> value() const;
+    PassRefPtr<IDBAny> value() const;
     IDBAny* source() const;
 
     PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, ExceptionCode&);

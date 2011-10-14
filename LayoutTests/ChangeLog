@@ -1,3 +1,14 @@
+2011-10-13  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Make IDBCursor.value() return an IDBAny object
+        https://bugs.webkit.org/show_bug.cgi?id=70024
+
+        Reviewed by Tony Chang.
+
+        Update test expectations since more of this test now passes.
+
+        * storage/indexeddb/cursor-inconsistency-expected.txt:
+
 2011-10-13  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, updating Chromium expectations for http/tests/media/video-play-stall.html.
