@@ -1,3 +1,9 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove the duplicelious expectation.
+
+        * platform/chromium/fast/css/getComputedStyle/computed-style-border-image-expected.txt: Removed.
+
 2011-09-28  Robert Hogan  <robert@webkit.org>
 
         Replaced elements squeezed when width is specified as percentage inside a table with Auto layout
