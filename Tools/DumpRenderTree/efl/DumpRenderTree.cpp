@@ -48,7 +48,6 @@
 #include <stdlib.h>
 #include <text/CString.h>
 #include <unistd.h>
-#include <wtf/OwnFastMallocPtr.h>
 #include <wtf/OwnPtr.h>
 
 OwnPtr<DumpRenderTreeChrome> browser;
@@ -76,9 +75,10 @@ static String dumpFramesAsText(Evas_Object* frame)
         result.append("'\n--------\n");
     }
 
-    const OwnFastMallocPtr<char> frameContents(ewk_frame_plain_text_get(frame));
-    result.append(String::fromUTF8(frameContents.get()));
+    char* frameContents = ewk_frame_plain_text_get(frame);
+    result.append(String::fromUTF8(frameContents));
     result.append("\n");
+    free(frameContents);
 
     if (gLayoutTestController->dumpChildFramesAsText()) {
         Eina_List* children = DumpRenderTreeSupportEfl::frameChildren(frame);
@@ -178,11 +178,13 @@ static String getFinalTestURL(const String& testURL)
 
     // Convert the path into a full file URL if it does not look
     // like an HTTP/S URL (doesn't start with http:// or https://).
-    if (!testURL.startsWith("http://") || !testURL.startsWith("https://")) {
-        OwnFastMallocPtr<char> filePath(ecore_file_realpath(testURL.utf8().data()));
+    if (!testURL.startsWith("http://") && !testURL.startsWith("https://")) {
+        char* cFilePath = ecore_file_realpath(testURL.utf8().data());
+        const String filePath = String::fromUTF8(cFilePath);
+        free(cFilePath);
 
-        if (ecore_file_exists(filePath.get()))
-            return String("file://") + String::fromUTF8(filePath.get());
+        if (ecore_file_exists(filePath.utf8().data()))
+            return String("file://") + filePath;
     }
 
     return testURL;
