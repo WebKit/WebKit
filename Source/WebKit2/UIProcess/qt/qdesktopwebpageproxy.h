@@ -57,10 +57,10 @@ private:
     bool handleMouseDoubleClickEvent(QMouseEvent*);
     bool handleWheelEvent(QWheelEvent*);
     bool handleHoverMoveEvent(QHoverEvent*);
-    bool handleDragEnterEvent(QGraphicsSceneDragDropEvent*);
-    bool handleDragLeaveEvent(QGraphicsSceneDragDropEvent*);
-    bool handleDragMoveEvent(QGraphicsSceneDragDropEvent*);
-    bool handleDropEvent(QGraphicsSceneDragDropEvent*);
+    bool handleDragEnterEvent(QDragEnterEvent*);
+    bool handleDragLeaveEvent(QDragLeaveEvent*);
+    bool handleDragMoveEvent(QDragMoveEvent*);
+    bool handleDropEvent(QDropEvent*);
 
     QPoint m_tripleClick;
     QBasicTimer m_tripleClickTimer;

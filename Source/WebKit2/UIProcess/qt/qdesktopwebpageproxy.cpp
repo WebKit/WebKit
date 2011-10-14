@@ -102,14 +102,14 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
         return handleWheelEvent(reinterpret_cast<QWheelEvent*>(ev));
     case QEvent::HoverMove:
         return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
-    case QEvent::GraphicsSceneDragEnter:
-        return handleDragEnterEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::GraphicsSceneDragLeave:
-        return handleDragLeaveEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::GraphicsSceneDragMove:
-        return handleDragMoveEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::GraphicsSceneDrop:
-        return handleDropEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
+    case QEvent::DragEnter:
+        return handleDragEnterEvent(reinterpret_cast<QDragEnterEvent*>(ev));
+    case QEvent::DragLeave:
+        return handleDragLeaveEvent(reinterpret_cast<QDragLeaveEvent*>(ev));
+    case QEvent::DragMove:
+        return handleDragMoveEvent(reinterpret_cast<QDragMoveEvent*>(ev));
+    case QEvent::Drop:
+        return handleDropEvent(reinterpret_cast<QDropEvent*>(ev));
     }
     return QtWebPageProxy::handleEvent(ev);
 }
@@ -171,17 +171,17 @@ bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
     return handleMouseMoveEvent(&me);
 }
 
-bool QDesktopWebPageProxy::handleDragEnterEvent(QGraphicsSceneDragDropEvent* ev)
+bool QDesktopWebPageProxy::handleDragEnterEvent(QDragEnterEvent* ev)
 {
     m_webPageProxy->resetDragOperation();
     // FIXME: Should not use QCursor::pos()
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     m_webPageProxy->dragEntered(&dragData);
     ev->acceptProposedAction();
     return true;
 }
 
-bool QDesktopWebPageProxy::handleDragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
+bool QDesktopWebPageProxy::handleDragLeaveEvent(QDragLeaveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -194,12 +194,12 @@ bool QDesktopWebPageProxy::handleDragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
     return accepted;
 }
 
-bool QDesktopWebPageProxy::handleDragMoveEvent(QGraphicsSceneDragDropEvent* ev)
+bool QDesktopWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
     // FIXME: Should not use QCursor::pos()
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     m_webPageProxy->dragUpdated(&dragData);
     ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragOperation()));
     if (m_webPageProxy->dragOperation() != DragOperationNone)
@@ -209,12 +209,12 @@ bool QDesktopWebPageProxy::handleDragMoveEvent(QGraphicsSceneDragDropEvent* ev)
     return accepted;
 }
 
-bool QDesktopWebPageProxy::handleDropEvent(QGraphicsSceneDragDropEvent* ev)
+bool QDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
     // FIXME: Should not use QCursor::pos()
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     SandboxExtension::Handle handle;
     m_webPageProxy->performDrag(&dragData, String(), handle);
     ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragOperation()));

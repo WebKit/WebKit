@@ -30,7 +30,6 @@
 #include <QStyleOptionGraphicsItem>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qsgcanvas.h>
-#include <QtDeclarative/qsgevent.h>
 #include <QtDeclarative/qsgitem.h>
 #include <QtDeclarative/qsgview.h>
 #include <QtGui/QCursor>
@@ -370,22 +369,22 @@ void QDesktopWebView::hoverLeaveEvent(QHoverEvent* event)
     this->event(event);
 }
 
-void QDesktopWebView::dragMoveEvent(QSGDragEvent* event)
+void QDesktopWebView::dragMoveEvent(QDragMoveEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::dragEnterEvent(QSGDragEvent* event)
+void QDesktopWebView::dragEnterEvent(QDragEnterEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::dragExitEvent(QSGDragEvent* event)
+void QDesktopWebView::dragLeaveEvent(QDragLeaveEvent* event)
 {
     this->event(event);
 }
 
-void QDesktopWebView::dragDropEvent(QSGDragEvent* event)
+void QDesktopWebView::dropEvent(QDropEvent* event)
 {
     this->event(event);
 }

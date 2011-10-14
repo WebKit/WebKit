@@ -38,7 +38,10 @@ class QInputMethodEvent;
 class QKeyEvent;
 class QPainter;
 class QRectF;
-class QSGDragEvent;
+class QDragEnterEvent;
+class QDragMoveEvent;
+class QDragLeaveEvent;
+class QDropEvent;
 class QTouchEvent;
 class QWheelEvent;
 QT_END_NAMESPACE
@@ -105,10 +108,10 @@ protected:
     virtual void hoverEnterEvent(QHoverEvent*);
     virtual void hoverMoveEvent(QHoverEvent*);
     virtual void hoverLeaveEvent(QHoverEvent*);
-    virtual void dragMoveEvent(QSGDragEvent*);
-    virtual void dragEnterEvent(QSGDragEvent*);
-    virtual void dragExitEvent(QSGDragEvent*);
-    virtual void dragDropEvent(QSGDragEvent*);
+    virtual void dragMoveEvent(QDragMoveEvent*);
+    virtual void dragEnterEvent(QDragEnterEvent*);
+    virtual void dragLeaveEvent(QDragLeaveEvent*);
+    virtual void dropEvent(QDropEvent*);
 
     virtual void geometryChanged(const QRectF&, const QRectF&);
     void paint(QPainter*);

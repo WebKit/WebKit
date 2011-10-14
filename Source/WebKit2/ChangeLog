@@ -1,3 +1,32 @@
+2011-10-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Fix build after QSGItem API changes
+        https://bugs.webkit.org/show_bug.cgi?id=69926
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Commit c825865cdd88445aa1db94cdf0da89426919acdb in qtdeclarative changed the
+        signatures of the Drag & Drop event handlers in QSGItem. The SG specific events
+        were replaced with the plain QDrag* events, which are now used for widgets as well
+        as the Qt scene graph.
+
+        This patch adapts the desktop webview as well as the page proxy to handle these
+        kind of events.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebView::dragMoveEvent):
+        (QDesktopWebView::dragEnterEvent):
+        (QDesktopWebView::dragLeaveEvent):
+        (QDesktopWebView::dropEvent):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::handleEvent):
+        (QDesktopWebPageProxy::handleDragEnterEvent):
+        (QDesktopWebPageProxy::handleDragLeaveEvent):
+        (QDesktopWebPageProxy::handleDragMoveEvent):
+        (QDesktopWebPageProxy::handleDropEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+
 2011-10-13  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK][WEBKIT2] Add WebKitSettings GTK+ API.
