@@ -1,5 +1,14 @@
 2011-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Enable NRWT for Qt 4.8 version too, because it is supported after r97461.
+
+        Unreviewed.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+
+2011-10-14  Csaba Osztrogonác  <ossy@webkit.org>
+
         new-run-webkit-tests does not support qt-4.8 results
         https://bugs.webkit.org/show_bug.cgi?id=64071
 
