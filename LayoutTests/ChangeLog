@@ -1,3 +1,32 @@
+2011-10-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectation.
+
+        - Mark some tests flaky on Windows GPU
+        - Update Leopard-specific images.
+
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/floating-replaced-height-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/inline-block-replaced-height-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/inline-replaced-height-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/floating-replaced-height-008-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/inline-block-replaced-height-008-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/inline-replaced-height-008-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
         Implement an OverflowEvent constructor for V8
