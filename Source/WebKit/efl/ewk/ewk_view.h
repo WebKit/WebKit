@@ -166,7 +166,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 2UL
+#define EWK_VIEW_SMART_CLASS_VERSION 3UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.
