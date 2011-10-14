@@ -1,3 +1,10 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac build fix after r97478.
+
+        * src/mac/WebSubstringUtil.mm:
+        (WebKit::WebSubstringUtil::attributedSubstringInRange):
+
 2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
