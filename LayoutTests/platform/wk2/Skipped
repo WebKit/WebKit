@@ -1000,11 +1000,6 @@ fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
 inspector/console/console-long-eval-crash.html
 
-# WebKit2 needs fake key event support
-fullscreen/full-screen-frameset.html
-fullscreen/full-screen-keyboard-disabled.html
-fullscreen/full-screen-keyboard-enabled.html
-
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 fast/dom/HTMLDocument/hasFocus.html
 fast/frames/sandboxed-iframe-navigation-targetlink.html

@@ -62,6 +62,9 @@ http/tests/eventsource/eventsource-reconnect.html
 
 # [WK2] [GTK] Implement KeyDown function for WebKit2 EventSender.
 # https://bugs.webkit.org/show_bug.cgi?id=69410
+fullscreen/full-screen-frameset.html
+fullscreen/full-screen-keyboard-disabled.html
+fullscreen/full-screen-keyboard-enabled.html
 fullscreen/full-screen-remove-ancestor-during-transition.html
 fullscreen/full-screen-request.html
 fullscreen/full-screen-cancel.html

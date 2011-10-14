@@ -356,6 +356,9 @@ fast/writing-mode/japanese-lr-selection.html
 fast/writing-mode/japanese-rl-selection.html
 fast/writing-mode/vertical-lr-replaced-selection.html
 fast/writing-mode/vertical-rl-replaced-selection.html
+fullscreen/full-screen-frameset.html
+fullscreen/full-screen-keyboard-disabled.html
+fullscreen/full-screen-keyboard-enabled.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/file-last-modified.html

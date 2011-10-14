@@ -1,3 +1,13 @@
+2011-10-14  Chang Shu  <cshu@webkit.org>
+
+        [WK2] Unreviewed gardening.
+
+        Some fullscreen tests are passing now on mac WK2 after EventSender support.
+
+        * platform/gtk-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2011-10-14  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed Skipped change to get bot green again.
