@@ -1,3 +1,14 @@
+2011-10-14  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] enable qmltests for qt5
+        https://bugs.webkit.org/show_bug.cgi?id=70037
+
+        Reviewed by Chang Shu.
+
+        Qml tests seem to be disabled for some reason. This patch enables the tests by including qmltests to SUBDIRS.
+
+        * UIProcess/API/qt/tests/tests.pro:
+
 2011-10-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Do not cache m_resizesToContentsLayoutSize on WebKit2's WebPage
