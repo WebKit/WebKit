@@ -1045,6 +1045,13 @@ protected:
 
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
+    {
+        m_jit.moveDouble(arg1, FPRInfo::argumentFPR0);
+        JITCompiler::Call call = m_jit.appendCall(operation);
+        m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
+        return call;
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg result, GPRReg arg1, void* pointer)
     {
         return callOperation((J_DFGOperation_EPP)operation, result, arg1, pointer);
@@ -1265,6 +1272,14 @@ protected:
     }
 
     // These methods add calls to C++ helper functions.
+    JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
+    {
+        resetCallArguments();
+        addCallArgument(arg1);
+        JITCompiler::Call call = m_jit.appendCall(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+        return call;
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, void* pointer)
     {
         resetCallArguments();

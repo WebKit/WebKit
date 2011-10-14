@@ -61,6 +61,7 @@ extern "C" {
     I: Identifier*
     G: GlobalResolveInfo*
 */
+typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);

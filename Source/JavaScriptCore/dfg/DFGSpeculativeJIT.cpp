@@ -617,7 +617,9 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
             GPRReg gpr = result.gpr();
             JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
             
-            speculationCheck(m_jit.jump());
+            silentSpillAllRegisters(gpr);
+            callOperation(toInt32, gpr, fpr);
+            silentFillAllRegisters(gpr);
             
             truncatedToInteger.link(&m_jit);
             integerResult(gpr, m_compileIndex);

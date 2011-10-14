@@ -1,3 +1,22 @@
+2011-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Speculation failures in ValueToInt32 are causing a 2x slow-down
+        in Kraken/stanford-crypto-pbkdf2
+        https://bugs.webkit.org/show_bug.cgi?id=70089
+
+        Reviewed by Gavin Barraclough.
+        
+        If we can't truncate to Int32 using machine code, then don't fail
+        speculation. Just call JSC::toInt32.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual getConstructData to getConstructDataVirtual
