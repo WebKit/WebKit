@@ -24,6 +24,7 @@
 #ifndef Arguments_h
 #define Arguments_h
 
+#include "CodeOrigin.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -54,6 +55,7 @@ namespace JSC {
         bool overrodeCallee : 1;
         bool overrodeCaller : 1;
         bool isStrictMode : 1;
+        bool isInlineFrame : 1; // If true, all arguments are in the extraArguments buffer.
     };
 
 
@@ -169,6 +171,9 @@ namespace JSC {
 
         int numParameters = function->jsExecutable()->parameterCount();
         argc = callFrame->argumentCountIncludingThis();
+        
+        if (callFrame->isInlineCallFrame())
+            ASSERT(argc == numParameters);
 
         if (argc <= numParameters)
             argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numParameters;
@@ -205,6 +210,7 @@ namespace JSC {
         d->numParameters = callee->jsExecutable()->parameterCount();
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
+        d->isInlineFrame = false;
 
         d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers());
 
@@ -232,6 +238,7 @@ namespace JSC {
 
     inline void Arguments::finishCreation(CallFrame* callFrame)
     {
+        ASSERT(!callFrame->isInlineCallFrame());
         finishCreationButDontCopyRegisters(callFrame);
         if (d->isStrictMode)
             copyRegisters(callFrame->globalData());
@@ -239,12 +246,59 @@ namespace JSC {
 
     inline void Arguments::finishCreationAndCopyRegisters(CallFrame* callFrame)
     {
-        finishCreationButDontCopyRegisters(callFrame);
-        copyRegisters(callFrame->globalData());
+        Base::finishCreation(callFrame->globalData());
+        ASSERT(inherits(&s_info));
+        
+        JSFunction* callee;
+
+        ptrdiff_t firstParameterIndex;
+        Register* argv;
+        int numArguments;
+        getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
+        
+        d->numParameters = callee->jsExecutable()->parameterCount();
+        d->firstParameterIndex = firstParameterIndex;
+        d->numArguments = numArguments;
+        
+        if (d->numParameters) {
+            int registerOffset = d->numParameters + RegisterFile::CallFrameHeaderSize;
+            size_t registerArraySize = d->numParameters;
+            
+            OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[registerArraySize]);
+            for (size_t i = 0; i < registerArraySize; ++i)
+                registerArray[i].set(callFrame->globalData(), this, callFrame->registers()[i - registerOffset].jsValue());
+            d->registers = registerArray.get() + d->numParameters + RegisterFile::CallFrameHeaderSize;
+            d->registerArray = registerArray.release();
+        }
+        
+        WriteBarrier<Unknown>* extraArguments;
+        if (callFrame->isInlineCallFrame())
+            ASSERT(d->numArguments == d->numParameters);
+        if (d->numArguments <= d->numParameters)
+            extraArguments = 0;
+        else {
+            unsigned numExtraArguments = d->numArguments - d->numParameters;
+            if (numExtraArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(WriteBarrier<Unknown>))
+                extraArguments = new WriteBarrier<Unknown>[numExtraArguments];
+            else
+                extraArguments = d->extraArgumentsFixedBuffer;
+            for (unsigned i = 0; i < numExtraArguments; ++i)
+                extraArguments[i].set(callFrame->globalData(), this, argv[d->numParameters + i].jsValue());
+        }
+        
+        d->extraArguments = extraArguments;
+
+        d->callee.set(callFrame->globalData(), this, callee);
+        d->overrodeLength = false;
+        d->overrodeCallee = false;
+        d->overrodeCaller = false;
+        d->isInlineFrame = callFrame->isInlineCallFrame();
+        d->isStrictMode = callFrame->codeBlock()->isStrictMode();
     }
 
     inline void Arguments::finishCreation(CallFrame* callFrame, NoParametersType)
     {
+        ASSERT(!callFrame->isInlineCallFrame());
         Base::finishCreation(callFrame->globalData());
         ASSERT(inherits(&s_info));
         ASSERT(!asFunction(callFrame->callee())->jsExecutable()->parameterCount());
@@ -253,6 +307,7 @@ namespace JSC {
 
         d->numParameters = 0;
         d->numArguments = numArguments;
+        d->isInlineFrame = false;
 
         WriteBarrier<Unknown>* extraArguments;
         if (numArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))

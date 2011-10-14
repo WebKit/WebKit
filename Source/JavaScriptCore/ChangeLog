@@ -1,3 +1,65 @@
+2011-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Reflective Arguments retrieval should be hardened for the
+        possibility of inlining
+        https://bugs.webkit.org/show_bug.cgi?id=70068
+
+        Reviewed by Oliver Hunt.
+        
+        CodeBlock can now track, as part of its RareData, the virtual inline
+        stack at callsites. CallFrame walking can now rematerialize "inline"
+        CallFrames by combining the meta-data in CodeBlock with the information
+        already in the JS stack. Arguments can now safely retrieve the
+        arguments from inline CallFrames.
+        
+        The DFG already had the notion of a "CodeOrigin" in preparation for
+        inlining. This notion will now be saved into the CodeBlock, if the DFG
+        had done inlining. So, CodeOrigin has been moved to bytecode/ and has
+        been changed to behave more like a struct since that is how it's
+        meant to be used.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::inlineCallFrames):
+        (JSC::CodeBlock::codeOrigins):
+        (JSC::CodeBlock::hasCodeOrigins):
+        (JSC::CodeBlock::codeOriginForReturn):
+        * bytecode/CodeOrigin.h: Added.
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isSet):
+        (JSC::getCallReturnOffsetForCodeOrigin):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::isInlineCallFrame):
+        (JSC::CallFrame::trueCallerFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::inlineCallFrame):
+        (JSC::ExecState::setInlineCallFrame):
+        (JSC::ExecState::isInlineCallFrame):
+        (JSC::ExecState::trueCallerFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::findFunctionCallFrame):
+        * interpreter/Register.h:
+        (JSC::Register::operator=):
+        (JSC::Register::inlineCallFrame):
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::Arguments::finishCreationButDontCopyRegisters):
+        (JSC::Arguments::finishCreation):
+        (JSC::Arguments::finishCreationAndCopyRegisters):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::parameterCount):
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual deleteProperty to deletePropertyVirtual

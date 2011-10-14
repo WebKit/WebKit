@@ -846,7 +846,7 @@ void SpeculativeJIT::compile(Node& node)
         // to the *next* instruction, since we've already "executed" the
         // SetLocal and whatever other DFG Nodes are associated with the same
         // bytecode index as the SetLocal.
-        ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex());
+        ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex);
         Node& nextNode = at(m_compileIndex + 1);
         
         // Oddly, it's possible for the bytecode index for the next node to be
@@ -859,7 +859,7 @@ void SpeculativeJIT::compile(Node& node)
         // statement) would be dead anyway - so the fact that DFG would have
         // already made the assignment, and baked it into the register file during
         // OSR exit, would not be visible to the old JIT in any way.
-        m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex();
+        m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex;
         
         PredictedType predictedType = node.variableAccessData()->prediction();
         if (isInt32Prediction(predictedType)) {

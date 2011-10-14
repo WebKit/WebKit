@@ -104,6 +104,9 @@ namespace JSC  {
 #if ENABLE(JIT)
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
 #endif
+#if ENABLE(DFG_JIT)
+        InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].inlineCallFrame(); }
+#endif
 #if ENABLE(INTERPRETER)
         Instruction* returnVPC() const { return this[RegisterFile::ReturnPC].vPC(); }
 #endif
@@ -153,11 +156,29 @@ namespace JSC  {
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[RegisterFile::Callee] = Register::withCallee(callee); }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[RegisterFile::CodeBlock] = codeBlock; }
         void setReturnPC(void* value) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = (Instruction*)value; }
+        
+#if ENABLE(DFG_JIT)
+        bool isInlineCallFrame();
+        
+        void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = inlineCallFrame; }
+        
+        // Call this to get the semantically correct JS CallFrame*. This resolves issues
+        // surrounding inlining and the HostCallFrameFlag stuff.
+        CallFrame* trueCallerFrame();
+#else
+        bool isInlineCallFrame() { return false; }
+        
+        CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
+#endif
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
 #ifndef NDEBUG
         RegisterFile* registerFile();
+#endif
+#if ENABLE(DFG_JIT)
+        bool isInlineCallFrameSlow();
+        CallFrame* trueCallerFrameSlow();
 #endif
         ExecState();
         ~ExecState();

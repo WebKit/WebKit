@@ -1446,6 +1446,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\CodeOrigin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\EvalCodeCache.h"
 				>
 			</File>

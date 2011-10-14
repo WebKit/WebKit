@@ -42,6 +42,7 @@ namespace JSC {
     class JSPropertyNameIterator;
     class ScopeChainNode;
 
+    struct InlineCallFrame;
     struct Instruction;
 
     typedef ExecState CallFrame;
@@ -60,6 +61,7 @@ namespace JSC {
         Register& operator=(CodeBlock*);
         Register& operator=(ScopeChainNode*);
         Register& operator=(Instruction*);
+        Register& operator=(InlineCallFrame*);
 
         int32_t i() const;
         JSActivation* activation() const;
@@ -69,6 +71,7 @@ namespace JSC {
         JSPropertyNameIterator* propertyNameIterator() const;
         ScopeChainNode* scopeChain() const;
         Instruction* vPC() const;
+        InlineCallFrame* inlineCallFrame() const;
 
         static Register withInt(int32_t i)
         {
@@ -84,6 +87,7 @@ namespace JSC {
             CallFrame* callFrame;
             CodeBlock* codeBlock;
             Instruction* vPC;
+            InlineCallFrame* inlineCallFrame;
         } u;
     };
 
@@ -135,6 +139,12 @@ namespace JSC {
         return *this;
     }
 
+    ALWAYS_INLINE Register& Register::operator=(InlineCallFrame* inlineCallFrame)
+    {
+        u.inlineCallFrame = inlineCallFrame;
+        return *this;
+    }
+
     ALWAYS_INLINE int32_t Register::i() const
     {
         return jsValue().asInt32();
@@ -153,6 +163,11 @@ namespace JSC {
     ALWAYS_INLINE Instruction* Register::vPC() const
     {
         return u.vPC;
+    }
+
+    ALWAYS_INLINE InlineCallFrame* Register::inlineCallFrame() const
+    {
+        return u.inlineCallFrame;
     }
 
 } // namespace JSC

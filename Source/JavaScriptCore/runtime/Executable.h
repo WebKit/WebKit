@@ -573,7 +573,7 @@ namespace JSC {
 
         const Identifier& name() { return m_name; }
         JSString* nameValue() const { return m_nameValue.get(); }
-        size_t parameterCount() const { return m_parameters->size(); }
+        size_t parameterCount() const { return m_parameters->size(); } // Including 'this'!
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         UString paramString() const;
         SharedSymbolTable* symbolTable() const { return m_symbolTable; }

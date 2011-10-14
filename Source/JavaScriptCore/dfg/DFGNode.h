@@ -66,6 +66,7 @@
 #define DFG_ENABLE_RESTRICTIONS 1
 
 #include "CodeBlock.h"
+#include "CodeOrigin.h"
 #include "DFGOperands.h"
 #include "DFGVariableAccessData.h"
 #include "JSValue.h"
@@ -84,33 +85,6 @@ typedef uint32_t BlockIndex;
 
 struct NodeIndexTraits {
     static NodeIndex defaultValue() { return NoNode; }
-};
-
-// Information used to map back from an exception to any handler/source information,
-// and to implement OSR.
-// (Presently implemented as a bytecode index).
-class CodeOrigin {
-public:
-    CodeOrigin()
-        : m_bytecodeIndex(std::numeric_limits<uint32_t>::max())
-    {
-    }
-    
-    explicit CodeOrigin(uint32_t bytecodeIndex)
-        : m_bytecodeIndex(bytecodeIndex)
-    {
-    }
-    
-    bool isSet() const { return m_bytecodeIndex != std::numeric_limits<uint32_t>::max(); }
-    
-    uint32_t bytecodeIndex() const
-    {
-        ASSERT(isSet());
-        return m_bytecodeIndex;
-    }
-    
-private:
-    uint32_t m_bytecodeIndex;
 };
 
 struct StructureTransitionData {

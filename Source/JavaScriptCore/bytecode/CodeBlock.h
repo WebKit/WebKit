@@ -30,6 +30,7 @@
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
+#include "CodeOrigin.h"
 #include "CompactJITCodeMap.h"
 #include "DFGOSREntry.h"
 #include "EvalCodeCache.h"
@@ -182,6 +183,8 @@ namespace JSC {
     // (given as an offset in bytes into the JIT code) back to
     // the bytecode index of the corresponding bytecode operation.
     // This is then used to look up the corresponding handler.
+    // FIXME: This should be made inlining aware! Currently it isn't
+    // because we never inline code that has exception handlers.
     struct CallReturnOffsetToBytecodeOffset {
         CallReturnOffsetToBytecodeOffset(unsigned callReturnOffset, unsigned bytecodeOffset)
             : callReturnOffset(callReturnOffset)
@@ -616,6 +619,32 @@ namespace JSC {
         }
 #endif
 
+#if ENABLE(DFG_JIT)
+        SegmentedVector<InlineCallFrame, 4>& inlineCallFrames()
+        {
+            createRareDataIfNecessary();
+            return m_rareData->m_inlineCallFrames;
+        }
+        
+        Vector<CodeOriginAtCallReturnOffset>& codeOrigins()
+        {
+            createRareDataIfNecessary();
+            return m_rareData->m_codeOrigins;
+        }
+        
+        // Having code origins implies that there has been some inlining.
+        bool hasCodeOrigins()
+        {
+            return m_rareData && !!m_rareData->m_codeOrigins.size();
+        }
+        
+        CodeOrigin codeOriginForReturn(ReturnAddressPtr returnAddress)
+        {
+            ASSERT(hasCodeOrigins());
+            return binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), getJITCode().offsetOf(returnAddress.value()))->codeOrigin;
+        }
+#endif
+
         // Constant Pool
 
         size_t numberOfIdentifiers() const { return m_identifiers.size(); }
@@ -999,6 +1028,10 @@ namespace JSC {
 #if ENABLE(JIT)
             Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
 #endif
+#if ENABLE(DFG_JIT)
+            SegmentedVector<InlineCallFrame, 4> m_inlineCallFrames;
+            Vector<CodeOriginAtCallReturnOffset> m_codeOrigins;
+#endif
         };
 #if COMPILER(MSVC)
         friend void WTF::deleteOwnedPtr<RareData>(RareData*);
@@ -1104,6 +1137,22 @@ namespace JSC {
         ASSERT(index < FirstConstantRegisterIndex);
         return this[index];
     }
+
+#if ENABLE(DFG_JIT)
+    inline bool ExecState::isInlineCallFrame()
+    {
+        if (LIKELY(!codeBlock() || codeBlock()->getJITType() != JITCode::DFGJIT))
+            return false;
+        return isInlineCallFrameSlow();
+    }
+
+    inline ExecState* ExecState::trueCallerFrame()
+    {
+        if (LIKELY(!codeBlock() || codeBlock()->getJITType() != JITCode::DFGJIT))
+            return callerFrame()->removeHostCallFrameFlag();
+        return trueCallerFrameSlow();
+    }
+#endif
     
 } // namespace JSC
 

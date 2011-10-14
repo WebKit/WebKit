@@ -58,6 +58,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, ExecState* calleeA
         
         dataFlowJIT.compile(jitCode);
     }
+    
     return true;
 }
 

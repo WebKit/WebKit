@@ -294,17 +294,17 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = at(m_compileIndex);
-        m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex();
+        m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex;
         if (!node.shouldGenerate()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
+            fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
             if (node.op == SetLocal)
                 compileMovHint(node);
         } else {
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            fprintf(stderr, "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
+            fprintf(stderr, "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_NODE)
             m_jit.breakpoint();
