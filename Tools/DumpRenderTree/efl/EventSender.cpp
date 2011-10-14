@@ -35,8 +35,10 @@
 #include "EventSender.h"
 
 #include "DumpRenderTree.h"
+#include "DumpRenderTreeChrome.h"
 #include "JSStringUtils.h"
 #include "NotImplemented.h"
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
 #include <JavaScriptCore/JSObjectRef.h>

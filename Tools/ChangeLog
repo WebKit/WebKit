@@ -1,3 +1,10 @@
+2011-10-14  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed; add missing #includes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        * DumpRenderTree/efl/EventSender.cpp:
+
 2011-10-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Correctly get the absolute URL in LayoutTestController::queueLoad()

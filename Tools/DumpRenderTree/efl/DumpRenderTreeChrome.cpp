@@ -33,6 +33,7 @@
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include "NotImplemented.h"
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "WorkQueue.h"
 #include "ewk_private.h" // FIXME: create some WebCoreSupport/DumpRenderTree.cpp instead
 
