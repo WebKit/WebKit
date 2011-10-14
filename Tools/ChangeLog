@@ -1,3 +1,15 @@
+2011-10-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        new-run-webkit-tests does not support qt-4.8 results
+        https://bugs.webkit.org/show_bug.cgi?id=64071
+
+        Roll-back r97252 with unit test fix.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+
 2011-10-13  Ojan Vafai  <ojan@chromium.org>
 
         Make filter-build-webkit exit 1 if the build fails.
