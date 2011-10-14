@@ -1,3 +1,19 @@
+2011-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove #include of <QuartzCore/QuartzCore.h> in a widely-used header.
+
+        Reviewed by Sam Weinig.
+
+        * platform/PlatformScreen.h: Typedef PlatformDisplayID to a uint32_t.
+        * platform/graphics/DisplayRefreshMonitor.h: Typedef CVDisplayLinkRef as
+        an opaque type to avoid bringing in QuartzCore.h, and move displayLinkCallback
+        to the .cpp file since it uses Core Video types.
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::displayLinkCallback): Make this a local static function, that
+        calls a member fuction on the object.
+        (WebCore::DisplayRefreshMonitor::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+
 2011-10-13  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: High frequency memory warnings cause Safari to hog the CPU doing useless garbage collection

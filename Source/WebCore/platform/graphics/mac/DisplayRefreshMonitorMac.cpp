@@ -35,20 +35,14 @@
 
 namespace WebCore {
 
-CVReturn DisplayRefreshMonitor::displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, const CVTimeStamp* outputTime, CVOptionFlags, CVOptionFlags*, void* data)
+static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, const CVTimeStamp* outputTime, CVOptionFlags, CVOptionFlags*, void* data)
 {
     DisplayRefreshMonitor* monitor = static_cast<DisplayRefreshMonitor*>(data);
-    
-    MutexLocker lock(monitor->m_mutex);
-    if (!monitor->m_scheduled)
-        return kCVReturnSuccess;
 
     double nowSeconds = static_cast<double>(now->videoTime) / static_cast<double>(now->videoTimeScale);
     double outputTimeSeconds = static_cast<double>(outputTime->videoTime) / static_cast<double>(outputTime->videoTimeScale);
-    double webKitNow = currentTime();
-    monitor->m_timestamp = webKitNow - nowSeconds + outputTimeSeconds;
-    
-    callOnMainThread(DisplayRefreshMonitor::refreshDisplayOnMainThread, monitor);
+    monitor->displayLinkFired(nowSeconds, outputTimeSeconds);
+
     return kCVReturnSuccess;
 }
  
@@ -74,7 +68,7 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
         if (error)
             return false;
 
-        error = CVDisplayLinkSetOutputCallback(m_displayLink, DisplayRefreshMonitor::displayLinkCallback, this);
+        error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
         if (error)
             return false;
 
@@ -88,6 +82,18 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
     MutexLocker lock(m_mutex);
     m_scheduled = true;
     return true;
+}
+
+void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTimeSeconds)
+{
+    MutexLocker lock(m_mutex);
+    if (!m_scheduled)
+        return;
+
+    double webKitNow = currentTime();
+    m_timestamp = webKitNow - nowSeconds + outputTimeSeconds;
+    
+    callOnMainThread(refreshDisplayOnMainThread, this);
 }
 
 }

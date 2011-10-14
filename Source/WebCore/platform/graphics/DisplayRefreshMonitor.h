@@ -32,6 +32,10 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+typedef struct __CVDisplayLink *CVDisplayLinkRef;
+#endif
+
 namespace WebCore {
 
 class DisplayRefreshMonitor;
@@ -101,8 +105,10 @@ private:
     Vector<DisplayRefreshMonitorClient*> m_clients;
     
 #if PLATFORM(MAC)
+public:
+    void displayLinkFired(double nowSeconds, double outputTimeSeconds);
+private:
     static void refreshDisplayOnMainThread(void* data);
-    static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, const CVTimeStamp* outputTime, CVOptionFlags, CVOptionFlags*, void* data);
 
     CVDisplayLinkRef m_displayLink;
 #endif
