@@ -26,6 +26,7 @@
 #ifndef MemoryPressureHandler_h
 #define MemoryPressureHandler_h
 
+#include <time.h>
 #include <wtf/Platform.h>
 
 namespace WebCore {

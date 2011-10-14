@@ -1,3 +1,9 @@
+2011-10-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Unreviewed buildfix after r97433.
+
+        * platform/MemoryPressureHandler.h: Add a missing include.
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         Spelling error in v8WebSocket::constructorCallback error
