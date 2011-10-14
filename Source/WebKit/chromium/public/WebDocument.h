@@ -54,6 +54,9 @@ class WebNodeList;
 class WebString;
 class WebURL;
 
+// Temporary hack to ease Chromium/WebKit commit.
+#define WEBKIT_WEBDOCUMENT_HAS_FULLSCREENELEMENT 1
+
 // Provides readonly access to some properties of a DOM document.
 class WebDocument : public WebNode {
 public:
@@ -99,6 +102,7 @@ public:
     WEBKIT_EXPORT WebNode focusedNode() const;
     WEBKIT_EXPORT WebDocumentType doctype() const;
     WEBKIT_EXPORT void cancelFullScreen();
+    WEBKIT_EXPORT WebElement fullScreenElement() const;
 
     // Accessibility support. These methods should only be called on the
     // top-level document, because one accessibility cache spans all of

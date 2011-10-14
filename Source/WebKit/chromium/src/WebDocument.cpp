@@ -65,7 +65,7 @@ WebURL WebDocument::url() const
     return constUnwrap<Document>()->url();
 }
 
-WebSecurityOrigin WebDocument::securityOrigin() const 
+WebSecurityOrigin WebDocument::securityOrigin() const
 {
     if (!constUnwrap<Document>())
         return WebSecurityOrigin();
@@ -88,7 +88,7 @@ WebFrame* WebDocument::frame() const
 }
 
 bool WebDocument::isHTMLDocument() const
-{  
+{
     return constUnwrap<Document>()->isHTMLDocument();
 }
 
@@ -98,7 +98,7 @@ bool WebDocument::isXHTMLDocument() const
 }
 
 bool WebDocument::isPluginDocument() const
-{  
+{
     return constUnwrap<Document>()->isPluginDocument();
 }
 
@@ -187,6 +187,15 @@ void WebDocument::cancelFullScreen()
 #if ENABLE(FULLSCREEN_API)
     unwrap<Document>()->webkitCancelFullScreen();
 #endif
+}
+
+WebElement WebDocument::fullScreenElement() const
+{
+    Element* fullScreenElement = 0;
+#if ENABLE(FULLSCREEN_API)
+    fullScreenElement = constUnwrap<Document>()->webkitCurrentFullScreenElement();
+#endif
+    return WebElement(fullScreenElement);
 }
 
 WebAccessibilityObject WebDocument::accessibilityObject() const
