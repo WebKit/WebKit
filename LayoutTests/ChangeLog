@@ -1,3 +1,9 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r97481.
+
+        * platform/chromium/test_expectations.txt: Updated.
+
 2011-10-14  Beth Dakin  <bdakin@apple.com>
 
         Text drawn via -webkit-background-clip:text should be non-blurry with all scaling 

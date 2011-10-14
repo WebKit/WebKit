@@ -3795,6 +3795,7 @@ BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
 BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
 BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
+BUGCR99899 MAC : storage/domstorage/events/case-sensitive.html = CRASH PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
@@ -3818,3 +3819,6 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = PASS C
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
+
+// Waiting on new results
+BUG_DGLAZKOV : fast/css/clip-text-in-scaled-div.html = FAIL
