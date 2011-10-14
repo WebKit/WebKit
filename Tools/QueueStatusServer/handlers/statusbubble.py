@@ -37,12 +37,12 @@ from model.queues import Queue
 
 
 class StatusBubble(webapp.RequestHandler):
-    def _build_bubble(self, queue, attachment):
+    def _build_bubble(self, queue, attachment, queue_position):
         queue_status = attachment.status_for_queue(queue)
         bubble = {
             "name": queue.short_name().lower(),
             "attachment_id": attachment.id,
-            "queue_position": attachment.position_in_queue(queue),
+            "queue_position": queue_position,
             "state": attachment.state_from_queue_status(queue_status) if queue_status else "none",
             "status": queue_status,
         }
@@ -61,7 +61,11 @@ class StatusBubble(webapp.RequestHandler):
         for queue in Queue.all():
             if not self._have_status_for(attachment, queue):
                 continue
-            bubbles.append(self._build_bubble(queue, attachment))
+            queue_position = attachment.position_in_queue(queue)
+            if queue_position and queue_position >= 100:
+                # This queue is so far behind it's not even worth showing.
+                continue
+            bubbles.append(self._build_bubble(queue, attachment, queue_position))
             # If even one ews has status, we don't show the submit-to-ews button.
             if queue.is_ews():
                 show_submit_to_ews = False

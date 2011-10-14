@@ -1,3 +1,15 @@
+2011-10-14  Adam Barth  <abarth@webkit.org>
+
+        Hide status bubbles from queues which are very far behind
+        https://bugs.webkit.org/show_bug.cgi?id=70133
+
+        Reviewed by Eric Seidel.
+
+        The mac-ews is so far behind that we shouldn't show its status bubble.
+        The status bubble just makes contributors sad.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Write unit test to ensure style-checker-filter option is passed properly in webkit-patch
