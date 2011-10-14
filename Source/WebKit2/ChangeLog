@@ -1,3 +1,60 @@
+2011-10-13  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK][WEBKIT2] Add WebKitSettings GTK+ API.
+        https://bugs.webkit.org/show_bug.cgi?id=68371
+
+        Reviewed by Martin Robinson.
+
+        WebKitSettings GTK+ object is created and first set of
+        API's are written to get or set the properties of WebKitSettings.
+
+        * GNUmakefile.am: Added new files for compilation.
+        * UIProcess/API/gtk/WebKitSettings.cpp: Added.
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate): Constructor.
+        (webKitSettingsSetProperty): Set property function.
+        (webKitSettingsGetProperty): Get property function.
+        (webKitSettingsFinalize): Class finalize function.
+        (webkit_settings_class_init): Class init function.
+        (webkit_settings_init): Instance init function.
+        (webkit_settings_new): Creates WebKitSettings GObject.
+        (webkit_settings_get_enable_javascript): Function to get 'enable-javascript' property.
+        (webkit_settings_set_enable_javascript): Function to set 'enable-javascript' property.
+        (webkit_settings_get_auto_load_images): Get the 'auto-load-images' property.
+        (webkit_settings_set_auto_load_images): Set the 'auto-load-images' property.
+        (webkit_settings_get_load_icons_ignoring_image_load_setting): Function to get
+        'load-icons-ignoring-image-load-setting' property.
+        (webkit_settings_set_load_icons_ignoring_image_load_setting): Function to set
+        'load-icons-ignoring-image-load-setting' property.
+        (webkit_settings_get_enable_offline_web_application_cache): Function to get
+        'enable-offline-web-application-cache' property.
+        (webkit_settings_set_enable_offline_web_application_cache): Function to set
+        'enable-offline-web-application-cache' property.
+        (webkit_settings_get_enable_html5_local_storage): Get the property 'enable-html5-local-storage'.
+        (webkit_settings_set_enable_html5_local_storage): Set the property 'enable-html5-local-storage'.
+        (webkit_settings_get_enable_html5_database): Get the property 'enable-html5-database'.
+        (webkit_settings_set_enable_html5_database): Set the property 'enable-html5-database'.
+        (webkit_settings_get_enable_xss_auditor): Get property 'enable-xss-editor'.
+        (webkit_settings_set_enable_xss_auditor): Set property 'enable-xss-editor'.
+        (webkit_settings_get_enable_frame_flattening): Get the property 'enable-frame-flattening'.
+        (webkit_settings_set_enable_frame_flattening): Set the property 'enable-frame-flattening'.
+        (webkit_settings_get_enable_plugins): Get the property 'enable-plugins'.
+        (webkit_settings_set_enable_plugins): Set the property 'enable-plugins'.
+        (webkit_settings_get_enable_java): Function to get 'enable-java' property.
+        (webkit_settings_set_enable_java): Function to set 'enable-java' property.
+        (webkit_settings_get_javascript_can_open_windows_automatically): Get the property
+        'javascript-can-open-windows-automatically'.
+        (webkit_settings_set_javascript_can_open_windows_automatically): Set the property
+        'javascript-can-open-windows-automatically'.
+        (webkit_settings_get_enable_hyperlink_auditing): Get 'enable-hyperlink-auditing' property.
+        (webkit_settings_set_enable_hyperlink_auditing): Set 'enable-hyperlink-auditing' property.
+        * UIProcess/API/gtk/WebKitSettings.h: Added. Public API's.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Added new test.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp: Added.
+        (testWebKitSettings): Add WebKitSetting unit test.
+        (beforeAll): Pre-test function.
+        (afterAll): Post-test function.
+        * UIProcess/API/gtk/webkit2.h: Add WebKitSettings.h to exposed API list.
+
 2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual getConstructData to getConstructDataVirtual

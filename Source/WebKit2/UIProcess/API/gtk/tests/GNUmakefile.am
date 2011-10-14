@@ -1,7 +1,8 @@
 TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitWebContext \
 	Programs/WebKit2APITests/TestWebKitWebView \
-	Programs/WebKit2APITests/TestWebKitWebLoaderClient
+	Programs/WebKit2APITests/TestWebKitWebLoaderClient \
+	Programs/WebKit2APITests/TestWebKitSettings
 
 noinst_PROGRAMS += $(TEST_PROGS)
 webkit2_tests_cppflags = \
@@ -62,3 +63,8 @@ Programs_WebKit2APITests_TestWebKitWebLoaderClient_CPPFLAGS = $(webkit2_tests_cp
 Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
 
+Programs_WebKit2APITests_TestWebKitSettings_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitSettings.cpp
+Programs_WebKit2APITests_TestWebKitSettings_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitSettings_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitSettings_LDFLAGS = $(webkit2_tests_ldflags)
