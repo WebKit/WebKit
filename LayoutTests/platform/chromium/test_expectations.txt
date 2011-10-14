@@ -3825,3 +3825,4 @@ BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-s
 
 // Waiting on new results
 BUG_DGLAZKOV : fast/css/clip-text-in-scaled-div.html = FAIL
+BUG_DGLAZKOV : fast/css/getComputedStyle/computed-style-border-image.html = TEXT

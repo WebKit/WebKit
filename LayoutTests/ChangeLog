@@ -1,3 +1,9 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r97502.
+
+        * platform/chromium/test_expectations.txt: Updated expectations.
+
 2011-10-14  Simon Fraser  <simon.fraser@apple.com>
 
         Web Inspector: WebProcess crashes hard when inspecting elements with border-images applied
