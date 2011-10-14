@@ -39,6 +39,7 @@ class CheckStyle(AbstractStep):
         return AbstractStep.options() + [
             Options.non_interactive,
             Options.check_style,
+            Options.check_style_filter,
             Options.git_commit,
         ]
 
@@ -53,6 +54,10 @@ class CheckStyle(AbstractStep):
 
         args.append("--diff-files")
         args.extend(self._changed_files(state))
+
+        if self._options.check_style_filter:
+            args.append("--filter")
+            args.extend(self._options.check_style_filter)
 
         try:
             self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)

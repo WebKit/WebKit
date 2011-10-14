@@ -35,6 +35,7 @@ class Options(object):
     cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
     check_builders = make_option("--ignore-builders", action="store_false", dest="check_builders", default=True, help="DEPRECATED: Will be removed any time after 11/01/11.")
     check_style = make_option("--ignore-style", action="store_false", dest="check_style", default=True, help="Don't check to see if the patch has proper style before uploading.")
+    check_style_filter = make_option("--check-style-filter", action="store", type="string", dest="check_style_filter", default=None, help="Filter style-checker rules (see check-webkit-style --help).")
     clean = make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches")
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
     comment = make_option("--comment", action="store", type="string", dest="comment", help="Comment to post to bug.")

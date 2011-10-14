@@ -72,6 +72,7 @@ class DownloadCommandsTest(CommandsTest):
         options.build = True
         options.build_style = True
         options.check_style = True
+        options.check_style_filter = None
         options.clean = True
         options.close_bug = True
         options.force_clean = False

@@ -126,6 +126,9 @@ class LandCowboy(AbstractSequencedCommand):
         steps.CloseBugForLandDiff,
     ]
 
+    def _prepare_state(self, options, args, tool):
+        options.check_style_filter = "-changelog"
+
 
 class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here

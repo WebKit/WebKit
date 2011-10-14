@@ -31,8 +31,9 @@ from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 
 
 class ChangeLogChecker(object):
-
     """Processes text lines for checking style."""
+
+    categories = set(['changelog/bugnumber', 'changelog/filechangedescriptionwhitespace'])
 
     def __init__(self, file_path, handle_style_error, should_line_be_checked):
         self.file_path = file_path

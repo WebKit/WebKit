@@ -311,6 +311,7 @@ def _all_categories():
     # Take the union across all checkers.
     categories = CommonCategories.union(CppChecker.categories)
     categories = categories.union(TestExpectationsChecker.categories)
+    categories = categories.union(ChangeLogChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for

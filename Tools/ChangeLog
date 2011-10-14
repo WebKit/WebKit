@@ -1,3 +1,18 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Plumb style-checker filter up to command options and make land-cowboy use it.
+        https://bugs.webkit.org/show_bug.cgi?id=70119
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/style/checker.py: Added ChangeLogChecker categories to the big list.
+        * Scripts/webkitpy/style/checkers/changelog.py: Declared categories, used in ChangeLogChecker.
+        * Scripts/webkitpy/tool/commands/download.py: Made LandCowboy use filter.
+        * Scripts/webkitpy/tool/commands/download_unittest.py: Tweaked the test.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/steps/checkstyle.py: Made check_style_filter work.
+        * Scripts/webkitpy/tool/steps/options.py: Added new option, check-style-filter.
+
 2011-10-14  Sam Weinig  <sam@webkit.org>
 
         Remove the Leopard slaves.

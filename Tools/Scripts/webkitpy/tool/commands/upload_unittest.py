@@ -60,6 +60,7 @@ Bug 50002 has no non-obsolete patches, ignoring.
         options = MockOptions()
         options.cc = None
         options.check_style = True
+        options.check_style_filter = None
         options.comment = None
         options.description = "MOCK description"
         options.request_commit = False
@@ -108,6 +109,7 @@ extra comment
         options = MockOptions()
         options.cc = None
         options.check_style = True
+        options.check_style_filter = None
         options.comment = None
         options.description = "MOCK description"
         options.request_commit = False
