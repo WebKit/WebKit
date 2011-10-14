@@ -490,11 +490,11 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, InspectorA
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(static_cast<CSSStyleSheet*>(styleSheet));
     result->pushObject(inspectorStyleSheet->buildObjectForStyleSheetInfo());
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
-        StyleBase* styleBase = styleSheet->item(i);
-        if (styleBase->isImportRule()) {
-            StyleBase* importedStyleSheet = static_cast<CSSImportRule*>(styleBase)->styleSheet();
-            if (importedStyleSheet && importedStyleSheet->isCSSStyleSheet())
-                collectStyleSheets(static_cast<CSSStyleSheet*>(importedStyleSheet), result);
+        CSSRule* rule = styleSheet->item(i);
+        if (rule->isImportRule()) {
+            CSSStyleSheet* importedStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet();
+            if (importedStyleSheet)
+                collectStyleSheets(importedStyleSheet, result);
         }
     }
 }

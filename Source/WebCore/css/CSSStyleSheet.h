@@ -105,6 +105,13 @@ public:
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
+    void append(PassRefPtr<CSSRule>);
+    void insert(unsigned index, PassRefPtr<CSSRule>);
+    void remove(unsigned index);
+
+    unsigned length() const { return m_children.size(); }
+    CSSRule* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
+
 private:
     CSSStyleSheet(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset);
     CSSStyleSheet(CSSStyleSheet* parentSheet, const String& originalURL, const KURL& finalURL, const String& charset);
@@ -113,6 +120,7 @@ private:
     virtual bool isCSSStyleSheet() const { return true; }
     virtual String type() const { return "text/css"; }
 
+    Vector<RefPtr<CSSRule> > m_children;
     OwnPtr<CSSNamespace> m_namespaces;
     String m_charset;
     bool m_loadCompleted : 1;

@@ -78,6 +78,11 @@ XSLStyleSheet::~XSLStyleSheet()
 {
     if (!m_stylesheetDocTaken)
         xmlFreeDoc(m_stylesheetDoc);
+
+    for (unsigned i = 0; i < length(); ++i) {
+        ASSERT(item(i)->parent() == this);
+        item(i)->setParent(0);
+    }
 }
 
 bool XSLStyleSheet::isLoading()

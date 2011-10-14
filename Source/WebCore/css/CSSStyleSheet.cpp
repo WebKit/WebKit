@@ -85,6 +85,39 @@ CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const KURL&
 
 CSSStyleSheet::~CSSStyleSheet()
 {
+    // For style rules outside the document, .parentStyleSheet can become null even if the style rule
+    // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
+    // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
+    for (unsigned i = 0; i < length(); ++i) {
+        ASSERT(item(i)->parent() == this);
+        item(i)->setParent(0);
+    }
+}
+
+void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
+{
+    CSSRule* c = child.get();
+    ASSERT(c->isRule());
+    m_children.append(child);
+    c->insertedIntoParent();
+}
+
+void CSSStyleSheet::insert(unsigned index, PassRefPtr<CSSRule> child)
+{
+    CSSRule* c = child.get();
+    ASSERT(c->isRule());
+    if (index >= length())
+        m_children.append(child);
+    else
+        m_children.insert(index, child);
+    c->insertedIntoParent();
+}
+
+void CSSStyleSheet::remove(unsigned index)
+{
+    if (index >= length())
+        return;
+    m_children.remove(index);
 }
 
 CSSRule *CSSStyleSheet::ownerRule() const
@@ -209,7 +242,7 @@ bool CSSStyleSheet::isLoading()
 {
     unsigned len = length();
     for (unsigned i = 0; i < len; ++i) {
-        StyleBase* rule = item(i);
+        CSSRule* rule = item(i);
         if (rule->isImportRule() && static_cast<CSSImportRule*>(rule)->isLoading())
             return true;
     }
@@ -289,11 +322,7 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
         CSSStyleSheet* styleSheet = styleSheetQueue.takeFirst();
 
         for (unsigned i = 0; i < styleSheet->length(); ++i) {
-            StyleBase* styleBase = styleSheet->item(i);
-            if (!styleBase->isRule())
-                continue;
-            
-            CSSRule* rule = static_cast<CSSRule*>(styleBase);
+            CSSRule* rule = styleSheet->item(i);
             if (rule->isImportRule()) {
                 if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
                     styleSheetQueue.append(ruleStyleSheet);

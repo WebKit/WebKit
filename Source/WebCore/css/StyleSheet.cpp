@@ -56,38 +56,6 @@ StyleSheet::~StyleSheet()
 {
     if (m_media)
         m_media->setParent(0);
-
-    // For style rules outside the document, .parentStyleSheet can become null even if the style rule
-    // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
-    // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
-    for (unsigned i = 0; i < length(); ++i) {
-        ASSERT(item(i)->parent() == this);
-        item(i)->setParent(0);
-    }
-}
-
-void StyleSheet::append(PassRefPtr<StyleBase> child)
-{
-    StyleBase* c = child.get();
-    m_children.append(child);
-    c->insertedIntoParent();
-}
-
-void StyleSheet::insert(unsigned index, PassRefPtr<StyleBase> child)
-{
-    StyleBase* c = child.get();
-    if (index >= length())
-        m_children.append(child);
-    else
-        m_children.insert(index, child);
-    c->insertedIntoParent();
-}
-
-void StyleSheet::remove(unsigned index)
-{
-    if (index >= length())
-        return;
-    m_children.remove(index);
 }
 
 StyleSheet* StyleSheet::parentStyleSheet() const

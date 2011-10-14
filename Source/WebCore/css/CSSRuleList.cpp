@@ -22,10 +22,8 @@
 #include "config.h"
 #include "CSSRuleList.h"
 
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
-#include "StyleSheet.h"
-#include "WebKitCSSKeyframeRule.h"
+#include "CSSStyleSheet.h"
 
 namespace WebCore {
 
@@ -33,15 +31,15 @@ CSSRuleList::CSSRuleList()
 {
 }
 
-CSSRuleList::CSSRuleList(StyleSheet* styleSheet, bool omitCharsetRules)
+CSSRuleList::CSSRuleList(CSSStyleSheet* styleSheet, bool omitCharsetRules)
     : m_styleSheet(styleSheet)
 {
     if (styleSheet && omitCharsetRules) {
         m_styleSheet = 0;
         for (unsigned i = 0; i < styleSheet->length(); ++i) {
-            StyleBase* style = styleSheet->item(i);
-            if (style->isRule() && !style->isCharsetRule())
-                append(static_cast<CSSRule*>(style));
+            CSSRule* rule = styleSheet->item(i);
+            if (!rule->isCharsetRule())
+                append(static_cast<CSSRule*>(rule));
         }
     }
 }
@@ -57,11 +55,8 @@ unsigned CSSRuleList::length() const
 
 CSSRule* CSSRuleList::item(unsigned index)
 {
-    if (m_styleSheet) {
-        StyleBase* rule = m_styleSheet->item(index);
-        ASSERT(!rule || rule->isRule());
-        return static_cast<CSSRule*>(rule);
-    }
+    if (m_styleSheet)
+        return m_styleSheet->item(index);
 
     if (index < m_lstCSSRules.size())
         return m_lstCSSRules[index].get();

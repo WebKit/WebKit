@@ -1,3 +1,83 @@
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleSheet should only ever contain CSSRules.
+        https://bugs.webkit.org/show_bug.cgi?id=70116
+
+        Reviewed by Antti Koivisto.
+
+        Move child management from the StyleSheet class down into
+        CSSStyleSheet and XSLStyleSheet. XSLStyleSheet continues to
+        manage StyleBase objects, while CSSStyleSheet now only contains
+        CSSRule.
+
+        This is enforced at both compile time and runtime with explicit
+        types and assertions.
+
+        * css/CSSRule.h:
+        (WebCore::CSSRule::isRule):
+
+            Promoted to a public method so we can use it in assertions.
+
+        * css/CSSRuleList.h:
+        (WebCore::CSSRuleList::create):
+        (WebCore::CSSRuleList::styleSheet):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+
+            Change backing to a CSSStyleSheet instead of a StyleSheet.
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::item):
+
+            Remove redundant assertions.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::isLoading):
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleSet::addRulesFromSheet):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+
+            Use more specific CSSRule* since that's what we get from
+            CSSStyleSheet::item() now.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::~StyleSheet):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::~CSSStyleSheet):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+
+            Orphaning logic from ~StyleSheet() moved to subclass dtors.
+
+        * css/StyleSheet.h:
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::length):
+        (WebCore::CSSStyleSheet::item):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::append):
+        (WebCore::CSSStyleSheet::insert):
+        (WebCore::CSSStyleSheet::remove):
+
+            Moved from StyleSheet and changed to only accept CSSRules.
+
+        * css/StyleSheet.h:
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::length):
+        (WebCore::XSLStyleSheet::item):
+        (WebCore::XSLStyleSheet::append):
+        (WebCore::XSLStyleSheet::insert):
+        (WebCore::XSLStyleSheet::remove):
+
+            Moved from StyleSheet though still uses StyleBase.
+
 2011-10-14 Yuji Sanachan <sanachan.y@gmail.com>
 
         Include dom/ExceptionCode.h instead of Filesystem APIs headers

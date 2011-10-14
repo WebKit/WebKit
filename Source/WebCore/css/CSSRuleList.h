@@ -30,11 +30,11 @@
 namespace WebCore {
 
 class CSSRule;
-class StyleSheet;
+class CSSStyleSheet;
 
 class CSSRuleList : public RefCounted<CSSRuleList> {
 public:
-    static PassRefPtr<CSSRuleList> create(StyleSheet* styleSheet, bool omitCharsetRules = false)
+    static PassRefPtr<CSSRuleList> create(CSSStyleSheet* styleSheet, bool omitCharsetRules = false)
     {
         return adoptRef(new CSSRuleList(styleSheet, omitCharsetRules));
     }
@@ -53,13 +53,13 @@ public:
 
     void append(CSSRule*);
 
-    StyleSheet* styleSheet() { return m_styleSheet.get(); }
+    CSSStyleSheet* styleSheet() { return m_styleSheet.get(); }
 
 private:
     CSSRuleList();
-    CSSRuleList(StyleSheet*, bool omitCharsetRules);
+    CSSRuleList(CSSStyleSheet*, bool omitCharsetRules);
 
-    RefPtr<StyleSheet> m_styleSheet;
+    RefPtr<CSSStyleSheet> m_styleSheet;
     Vector<RefPtr<CSSRule> > m_lstCSSRules; // FIXME: Want to eliminate, but used by IE rules() extension and still used by media rules.
 };
 

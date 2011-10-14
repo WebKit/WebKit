@@ -256,25 +256,25 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
 {
     StringBuilder cssText;
     for (unsigned i = 0; i < styleSheet->length(); ++i) {
-        StyleBase* item = styleSheet->item(i);
-        String itemText = item->cssText();
+        CSSRule* rule = styleSheet->item(i);
+        String itemText = rule->cssText();
         if (!itemText.isEmpty()) {
             cssText.append(itemText);
             if (i < styleSheet->length() - 1)
                 cssText.append("\n\n");
         }
         // Some rules have resources associated with them that we need to retrieve.
-        if (item->isImportRule()) {
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(item);
+        if (rule->isImportRule()) {
+            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
             KURL importURL = styleSheet->document()->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
             serializeCSSStyleSheet(importRule->styleSheet(), importURL);
-        } else if (item->isFontFaceRule()) {
+        } else if (rule->isFontFaceRule()) {
             // FIXME: Add support for font face rule. It is not clear to me at this point if the actual otf/eot file can
             // be retrieved from the CSSFontFaceRule object.
-        } else if (item->isStyleRule())
-            retrieveResourcesForCSSRule(static_cast<CSSStyleRule*>(item));
+        } else if (rule->isStyleRule())
+            retrieveResourcesForCSSRule(static_cast<CSSStyleRule*>(rule));
     }
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {

@@ -56,14 +56,13 @@ public:
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
 
+    virtual bool isRule() const { return true; }
+
 protected:
     CSSRule(CSSStyleSheet* parent)
         : StyleBase(parent)
     {
     }
-
-private:
-    virtual bool isRule() const { return true; }
 };
 
 } // namespace WebCore

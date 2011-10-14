@@ -36,13 +36,6 @@ class StyleSheet : public StyleBase {
 public:
     virtual ~StyleSheet();
 
-    unsigned length() const { return m_children.size(); }
-    StyleBase* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
-
-    void append(PassRefPtr<StyleBase>);
-    void insert(unsigned index, PassRefPtr<StyleBase>);
-    void remove(unsigned index);
-
     bool disabled() const { return m_disabled; }
     void setDisabled(bool disabled) { m_disabled = disabled; styleSheetChanged(); }
 
@@ -80,7 +73,6 @@ protected:
 private:
     virtual bool isStyleSheet() const { return true; }
 
-    Vector<RefPtr<StyleBase> > m_children;
     Node* m_parentNode;
     String m_originalURL;
     KURL m_finalURL;

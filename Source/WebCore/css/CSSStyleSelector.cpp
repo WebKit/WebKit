@@ -1994,16 +1994,16 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
     int len = sheet->length();
 
     for (int i = 0; i < len; i++) {
-        StyleBase* item = sheet->item(i);
-        if (item->isStyleRule())
-            addStyleRule(static_cast<CSSStyleRule*>(item));
-        else if (item->isImportRule()) {
-            CSSImportRule* import = static_cast<CSSImportRule*>(item);
+        CSSRule* rule = sheet->item(i);
+        if (rule->isStyleRule())
+            addStyleRule(static_cast<CSSStyleRule*>(rule));
+        else if (rule->isImportRule()) {
+            CSSImportRule* import = static_cast<CSSImportRule*>(rule);
             if (!import->media() || medium.eval(import->media(), styleSelector))
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector);
         }
-        else if (item->isMediaRule()) {
-            CSSMediaRule* r = static_cast<CSSMediaRule*>(item);
+        else if (rule->isMediaRule()) {
+            CSSMediaRule* r = static_cast<CSSMediaRule*>(rule);
             CSSRuleList* rules = r->cssRules();
 
             if ((!r->media() || medium.eval(r->media(), styleSelector)) && rules) {
@@ -2023,12 +2023,12 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                     }
                 }   // for rules
             }   // if rules
-        } else if (item->isFontFaceRule() && styleSelector) {
+        } else if (rule->isFontFaceRule() && styleSelector) {
             // Add this font face to our set.
-            const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
+            const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(rule);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
-        } else if (item->isKeyframesRule())
-            styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(item));
+        } else if (rule->isKeyframesRule())
+            styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
