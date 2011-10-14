@@ -1,3 +1,20 @@
+2011-10-13  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: High frequency memory warnings cause Safari to hog the CPU doing useless garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=69774
+
+        Throttle the processing of memory pressure events to no more often than once every 5 seconds.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        * platform/MemoryPressureHandler.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
         Implement an OverflowEvent constructor for V8

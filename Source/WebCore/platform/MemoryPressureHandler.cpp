@@ -38,11 +38,16 @@ MemoryPressureHandler& memoryPressureHandler()
 
 MemoryPressureHandler::MemoryPressureHandler() 
     : m_installed(false)
+    , m_lastRespondTime(0)
 {
 }
 
 #if !PLATFORM(MAC) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 void MemoryPressureHandler::install() { }
+
+void MemoryPressureHandler::uninstall() { }
+
+void MemoryPressureHandler::holdOff(unsigned) { }
 
 void MemoryPressureHandler::respondToMemoryPressure() { }
 #endif
