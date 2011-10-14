@@ -2,6 +2,7 @@
 <div>FIXME: Run these as part of the layout test suite?</div>
 
 <script>CODE_REVIEW_UNITTEST = true</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 <script src="code-review.js"></script>
 <pre id="output"></pre>
 <script>
@@ -74,6 +75,12 @@ function ASSERT_EQUAL(actual, expected) {
     else
         log('FAILED:\ngot:\n' + actual + '\nexpected:\n' + expected + '');
 }
+
+var links = tracLinks('foo/bar/baz.cpp', '');
+ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar/baz.h');
+
+var links = tracLinks('foo/bar.cpp/qux.mm', '');
+ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h');
 
 // Basic setItem.
 var ls = new MockLocalStorage();

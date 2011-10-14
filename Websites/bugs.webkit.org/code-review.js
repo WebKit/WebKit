@@ -184,7 +184,7 @@ var CODE_REVIEW_UNITTEST;
 
   if (CODE_REVIEW_UNITTEST)
     window['DraftCommentSaver'] = DraftCommentSaver;
-  
+
   DraftCommentSaver.prototype._json = function() {
     var comments = $('.comment');
     var comment_store = [];
@@ -623,8 +623,20 @@ var CODE_REVIEW_UNITTEST;
     var trac_links = $('<a target="_blank">annotate</a><a target="_blank">revision log</a>');
     trac_links[0].href = 'http://trac.webkit.org/browser/trunk/' + file_name + '?annotate=blame' + url_hash;
     trac_links[1].href = 'http://trac.webkit.org/log/trunk/' + file_name;
+    var implementation_suffix_list = ['.cpp', '.mm'];
+    for (var i = 0; i < implementation_suffix_list.length; ++i) {
+      var suffix = implementation_suffix_list[i];
+      if (file_name.lastIndexOf(suffix) == file_name.length - suffix.length) {
+        trac_links.prepend('<a target="_blank">header</a>');
+        var stem = file_name.substr(0, file_name.length - suffix.length);
+        trac_links[0].href= 'http://trac.webkit.org/log/trunk/' + stem + '.h';
+      }
+    }
     return trac_links;
   }
+
+  if (CODE_REVIEW_UNITTEST)
+    window.tracLinks = tracLinks;
 
   function addExpandLinks(file_name) {
     if (file_name.indexOf('ChangeLog') != -1)
@@ -1059,6 +1071,8 @@ var CODE_REVIEW_UNITTEST;
   }
 
   $(document).ready(function() {
+    if (CODE_REVIEW_UNITTEST)
+      return;
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
