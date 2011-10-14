@@ -1,3 +1,10 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r97487.
+
+        * platform/chromium-cg-mac-snowleopard/fast/css/clip-text-in-scaled-div-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-14  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] unskipping full screen layout tests. We will do rebaselines later.

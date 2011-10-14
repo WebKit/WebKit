@@ -3822,7 +3822,6 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = PASS C
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
-
+BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
 // Waiting on new results
-BUG_DGLAZKOV : fast/css/clip-text-in-scaled-div.html = FAIL
 BUG_DGLAZKOV : fast/css/getComputedStyle/computed-style-border-image.html = TEXT
