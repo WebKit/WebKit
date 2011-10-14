@@ -1,3 +1,25 @@
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
+        CSSParser: Remove StyleBase usage.
+        https://bugs.webkit.org/show_bug.cgi?id=70150
+
+        Reviewed by Darin Adler.
+
+        Split CSSParser::m_parsedStyleObjects into two vectors of
+        CSSRules and MediaLists.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createMediaList):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/CSSParser.h:
+
 2011-10-14  Adam Barth  <abarth@webkit.org>
 
         canvas getImageData should explain why it throws SECURITY_ERR

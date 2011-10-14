@@ -7146,7 +7146,7 @@ MediaList* CSSParser::createMediaList()
 {
     RefPtr<MediaList> list = MediaList::create();
     MediaList* result = list.get();
-    m_parsedStyleObjects.append(list.release());
+    m_parsedMediaLists.append(list.release());
     return result;
 }
 
@@ -7156,7 +7156,7 @@ CSSRule* CSSParser::createCharsetRule(const CSSParserString& charset)
         return 0;
     RefPtr<CSSCharsetRule> rule = CSSCharsetRule::create(m_styleSheet, charset);
     CSSCharsetRule* result = rule.get();
-    m_parsedStyleObjects.append(rule.release());
+    m_parsedRules.append(rule.release());
     return result;
 }
 
@@ -7166,7 +7166,7 @@ CSSRule* CSSParser::createImportRule(const CSSParserString& url, MediaList* medi
         return 0;
     RefPtr<CSSImportRule> rule = CSSImportRule::create(m_styleSheet, url, media);
     CSSImportRule* result = rule.get();
-    m_parsedStyleObjects.append(rule.release());
+    m_parsedRules.append(rule.release());
     return result;
 }
 
@@ -7177,7 +7177,7 @@ CSSRule* CSSParser::createMediaRule(MediaList* media, CSSRuleList* rules)
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<CSSMediaRule> rule = CSSMediaRule::create(m_styleSheet, media, rules);
     CSSMediaRule* result = rule.get();
-    m_parsedStyleObjects.append(rule.release());
+    m_parsedRules.append(rule.release());
     return result;
 }
 
@@ -7195,7 +7195,7 @@ WebKitCSSKeyframesRule* CSSParser::createKeyframesRule()
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<WebKitCSSKeyframesRule> rule = WebKitCSSKeyframesRule::create(m_styleSheet);
     WebKitCSSKeyframesRule* rulePtr = rule.get();
-    m_parsedStyleObjects.append(rule.release());
+    m_parsedRules.append(rule.release());
     return rulePtr;
 }
 
@@ -7211,7 +7211,7 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
             deleteFontFaceOnlyValues();
         rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
         result = rule.get();
-        m_parsedStyleObjects.append(rule.release());
+        m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
             ASSERT(m_currentRuleData);
             m_currentRuleData->styleSourceData->styleBodyRange = m_ruleBodyRange;
@@ -7251,7 +7251,7 @@ CSSRule* CSSParser::createFontFaceRule()
     rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
     clearProperties();
     CSSFontFaceRule* result = rule.get();
-    m_parsedStyleObjects.append(rule.release());
+    m_parsedRules.append(rule.release());
     return result;
 }
 
@@ -7324,7 +7324,7 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
         rule->adoptSelectorVector(selectorVector);
         rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
         pageRule = rule.get();
-        m_parsedStyleObjects.append(rule.release());
+        m_parsedRules.append(rule.release());
     }
     clearProperties();
     return pageRule;
@@ -7390,7 +7390,7 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
     clearProperties();
 
     WebKitCSSKeyframeRule* keyframePtr = keyframe.get();
-    m_parsedStyleObjects.append(keyframe.release());
+    m_parsedRules.append(keyframe.release());
     return keyframePtr;
 }
 

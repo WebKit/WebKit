@@ -53,7 +53,6 @@ class CSSValueList;
 class Document;
 class MediaList;
 class MediaQueryExp;
-class StyleBase;
 class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
 class CSSWrapShape;
@@ -344,7 +343,8 @@ private:
     bool m_allowImportRules;
     bool m_allowNamespaceDeclarations;
 
-    Vector<RefPtr<StyleBase> > m_parsedStyleObjects;
+    Vector<RefPtr<CSSRule> > m_parsedRules;
+    Vector<RefPtr<MediaList> > m_parsedMediaLists;
     Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;
     HashSet<CSSParserSelector*> m_floatingSelectors;
     HashSet<Vector<OwnPtr<CSSParserSelector> >*> m_floatingSelectorVectors;
