@@ -233,6 +233,8 @@ bool canMergeLists(Element* firstList, Element* secondList);
 // Functions returning VisibleSelection
 VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
+
+Position adjustedSelectionStartForStyleComputation(const VisibleSelection&);
     
 
 // Miscellaneous functions on Text

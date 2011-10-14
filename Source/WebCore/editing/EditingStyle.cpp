@@ -46,6 +46,7 @@
 #include "RenderStyle.h"
 #include "StyledElement.h"
 #include "htmlediting.h"
+#include "visible_units.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -102,6 +103,10 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
 }
 
 static RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
+enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
+static int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
+static bool hasTransparentBackgroundColor(CSSStyleDeclaration*);
+static PassRefPtr<CSSValue> backgroundColorInEffect(Node*);
 
 class HTMLElementEquivalent {
 public:
@@ -585,9 +590,15 @@ static const int textOnlyProperties[] = {
     CSSPropertyColor,
 };
 
+TriState EditingStyle::triStateOfStyle(EditingStyle* style) const
+{
+    if (!style || !style->m_mutableStyle)
+        return FalseTriState;
+    return triStateOfStyle(style->m_mutableStyle.get(), DoNotIgnoreTextOnlyProperties);
+}
+
 TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties shouldIgnoreTextOnlyProperties) const
 {
-    // FIXME: take care of background-color in effect
     RefPtr<CSSMutableStyleDeclaration> difference = getPropertiesNotIn(m_mutableStyle.get(), styleToCompare);
 
     if (shouldIgnoreTextOnlyProperties == IgnoreTextOnlyProperties)
@@ -599,6 +610,33 @@ TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, Shou
         return FalseTriState;
 
     return MixedTriState;
+}
+
+TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
+{
+    if (!selection.isCaretOrRange())
+        return FalseTriState;
+
+    if (selection.isCaret())
+        return triStateOfStyle(EditingStyle::styleAtSelectionStart(selection).get());
+
+    TriState state = FalseTriState;
+    for (Node* node = selection.start().deprecatedNode(); node; node = node->traverseNextNode()) {
+        RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
+        if (nodeStyle) {
+            TriState nodeState = triStateOfStyle(nodeStyle.get(), node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
+            if (node == selection.start().deprecatedNode())
+                state = nodeState;
+            else if (state != nodeState && node->isTextNode()) {
+                state = MixedTriState;
+                break;
+            }
+        }
+        if (node == selection.end().deprecatedNode())
+            break;
+    }
+
+    return state;
 }
 
 bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const
@@ -1069,7 +1107,50 @@ void EditingStyle::forceInline()
     const bool propertyIsImportant = true;
     m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueInline, propertyIsImportant);
 }
-    
+
+int EditingStyle::legacyFontSize(Document* document) const
+{
+    RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);
+    if (!cssValue || !cssValue->isPrimitiveValue())
+        return 0;
+    return legacyFontSizeFromCSSValue(document, static_cast<CSSPrimitiveValue*>(cssValue.get()),
+        m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
+}
+
+PassRefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection& selection, bool shouldUseBackgroundColorInEffect)
+{
+    if (selection.isNone())
+        return 0;
+
+    Position position = adjustedSelectionStartForStyleComputation(selection);
+
+    // If the pos is at the end of a text node, then this node is not fully selected. 
+    // Move it to the next deep equivalent position to avoid removing the style from this node. 
+    // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead. 
+    // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold. 
+    Node* positionNode = position.containerNode(); 
+    if (selection.isRange() && positionNode && positionNode->isTextNode() && position.computeOffsetInContainerNode() == positionNode->maxCharacterOffset()) 
+        position = nextVisuallyDistinctCandidate(position); 
+
+    Element* element = position.element();
+    if (!element)
+        return 0;
+
+    RefPtr<EditingStyle> style = EditingStyle::create(element, EditingStyle::AllProperties);
+    style->mergeTypingStyle(element->document());
+
+    // If background color is transparent, traverse parent nodes until we hit a different value or document root
+    // Also, if the selection is a range, ignore the background color at the start of selection,
+    // and find the background color of the common ancestor.
+    if (shouldUseBackgroundColorInEffect && (selection.isRange() || hasTransparentBackgroundColor(style->m_mutableStyle.get()))) {
+        RefPtr<Range> range(selection.toNormalizedRange());
+        ExceptionCode ec = 0;
+        if (PassRefPtr<CSSValue> value = backgroundColorInEffect(range->commonAncestorContainer(ec)))
+            style->setProperty(CSSPropertyBackgroundColor, value->cssText());
+    }
+
+    return style;
+}
 
 static void reconcileTextDecorationProperties(CSSMutableStyleDeclaration* style)
 {    

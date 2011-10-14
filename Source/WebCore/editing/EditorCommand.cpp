@@ -134,7 +134,7 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, CSSValue* value)
 {
     ExceptionCode ec = 0;
-    RefPtr<EditingStyle> selectionStyle = frame->editor()->selectionStartStyle();
+    RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame->selection()->selection());
     if (!selectionStyle || !selectionStyle->style())
         return false;
 

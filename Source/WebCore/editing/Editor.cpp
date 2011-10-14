@@ -509,9 +509,9 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
         client()->respondToChangedContents();
 }
 
+#if PLATFORM(MAC)
 const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
-#if !PLATFORM(QT)
     hasMultipleFonts = false;
 
     if (!m_frame->selection()->isRange()) {
@@ -532,13 +532,11 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     const SimpleFontData* font = 0;
-
     RefPtr<Range> range = m_frame->selection()->toNormalizedRange();
-    Node* startNode = range->editingStartPosition().deprecatedNode();
-    if (startNode) {
+    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame->selection()->selection()).deprecatedNode()) {
         Node* pastEnd = range->pastLastNode();
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
-        // unreproducible case where this didn't happen, so check for nil also.
+        // unreproducible case where this didn't happen, so check for null also.
         for (Node* n = startNode; n && n != pastEnd; n = n->traverseNextNode()) {
             RenderObject* renderer = n->renderer();
             if (!renderer)
@@ -555,10 +553,8 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     return font;
-#else
-    return 0;
-#endif
 }
+#endif
 
 WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbeddings) const
 {
@@ -875,72 +871,25 @@ void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditActi
 
 bool Editor::selectionStartHasStyle(int propertyID, const String& value) const
 {
-    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, value);
-    RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
-    if (!selectionStyle || !selectionStyle->style())
-        return false;
-    return style->triStateOfStyle(selectionStyle->style()) == TrueTriState;
+    return EditingStyle::create(propertyID, value)->triStateOfStyle(
+        EditingStyle::styleAtSelectionStart(m_frame->selection()->selection(), propertyID == CSSPropertyBackgroundColor).get());
 }
 
 TriState Editor::selectionHasStyle(int propertyID, const String& value) const
 {
-    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, value);
-    if (!m_frame->selection()->isCaretOrRange())
-        return FalseTriState;
-
-    if (m_frame->selection()->isCaret()) {
-        RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
-        if (!selectionStyle || !selectionStyle->style())
-            return FalseTriState;
-        return style->triStateOfStyle(selectionStyle->style());
-    }
-
-    TriState state = FalseTriState;
-    for (Node* node = m_frame->selection()->start().deprecatedNode(); node; node = node->traverseNextNode()) {
-        RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
-        if (nodeStyle) {
-            TriState nodeState = style->triStateOfStyle(nodeStyle.get(), node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
-            if (node == m_frame->selection()->start().deprecatedNode())
-                state = nodeState;
-            else if (state != nodeState && node->isTextNode()) {
-                state = MixedTriState;
-                break;
-            }
-        }
-        if (node == m_frame->selection()->end().deprecatedNode())
-            break;
-    }
-
-    return state;
+    return EditingStyle::create(propertyID, value)->triStateOfStyle(m_frame->selection()->selection());
 }
 
 String Editor::selectionStartCSSPropertyValue(int propertyID)
 {
-    RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
+    RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(m_frame->selection()->selection(),
+        propertyID == CSSPropertyBackgroundColor);
     if (!selectionStyle || !selectionStyle->style())
         return String();
 
-    String value = selectionStyle->style()->getPropertyValue(propertyID);
-
-    // If background color is transparent, traverse parent nodes until we hit a different value or document root
-    // Also, if the selection is a range, ignore the background color at the start of selection,
-    // and find the background color of the common ancestor.
-    if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle->style()))) {
-        RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
-        ExceptionCode ec = 0;
-        if (PassRefPtr<CSSValue> value = backgroundColorInEffect(range->commonAncestorContainer(ec)))
-            return value->cssText();
-    }
-
-    if (propertyID == CSSPropertyFontSize) {
-        RefPtr<CSSValue> cssValue = selectionStyle->style()->getPropertyCSSValue(CSSPropertyFontSize);
-        if (cssValue->isPrimitiveValue()) {
-            value = String::number(legacyFontSizeFromCSSValue(m_frame->document(), static_cast<CSSPrimitiveValue*>(cssValue.get()),
-                selectionStyle->shouldUseFixedDefaultFontSize(), AlwaysUseLegacyFontSize));
-        }
-    }
-
-    return value;
+    if (propertyID == CSSPropertyFontSize)
+        return String::number(selectionStyle->legacyFontSize(m_frame->document()));
+    return selectionStyle->style()->getPropertyValue(propertyID);
 }
 
 void Editor::indent()
@@ -2781,31 +2730,6 @@ void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction edi
     m_frame->selection()->setTypingStyle(typingStyle);
 }
 
-PassRefPtr<EditingStyle> Editor::selectionStartStyle() const
-{
-    if (m_frame->selection()->isNone())
-        return 0;
-
-    RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
-    Position position = range->editingStartPosition();
-
-    // If the pos is at the end of a text node, then this node is not fully selected. 
-    // Move it to the next deep equivalent position to avoid removing the style from this node. 
-    // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead. 
-    // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold. 
-    Node* positionNode = position.containerNode(); 
-    if (m_frame->selection()->isRange() && positionNode && positionNode->isTextNode() && position.computeOffsetInContainerNode() == positionNode->maxCharacterOffset()) 
-        position = nextVisuallyDistinctCandidate(position); 
-
-    Element* element = position.element();
-    if (!element)
-        return 0;
-
-    RefPtr<EditingStyle> style = EditingStyle::create(element, EditingStyle::AllProperties);
-    style->mergeTypingStyle(m_frame->document());
-    return style;
-}
-
 void Editor::textFieldDidBeginEditing(Element* e)
 {
     if (client())
@@ -2872,6 +2796,7 @@ void Editor::applyEditingStyleToElement(Element* element) const
     ASSERT(!ec);
 }
 
+#if PLATFORM(MAC)
 RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
 {
     nodeToRemove = 0;
@@ -2905,6 +2830,7 @@ RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
     nodeToRemove = styleElement.get();
     return styleElement->renderer() ? styleElement->renderer()->style() : 0;
 }
+#endif
 
 // Searches from the beginning of the document if nothing is selected.
 bool Editor::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)

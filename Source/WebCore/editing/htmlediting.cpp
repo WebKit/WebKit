@@ -1195,4 +1195,29 @@ VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, No
     return updatedSelection;
 }
 
+Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selection)
+{
+    // This function is used by range style computations to avoid bugs like:
+    // <rdar://problem/4017641> REGRESSION (Mail): you can only bold/unbold a selection starting from end of line once
+    // It is important to skip certain irrelevant content at the start of the selection, so we do not wind up 
+    // with a spurious "mixed" style.
+
+    VisiblePosition visiblePosition = selection.start();
+    if (visiblePosition.isNull())
+        return Position();
+
+    // if the selection is a caret, just return the position, since the style
+    // behind us is relevant
+    if (selection.isCaret())
+        return visiblePosition.deepEquivalent();
+
+    // if the selection starts just before a paragraph break, skip over it
+    if (isEndOfParagraph(visiblePosition))
+        return visiblePosition.next().deepEquivalent().downstream();
+
+    // otherwise, make sure to be at the start of the first selected node,
+    // instead of possibly at the end of the last node before the selection
+    return visiblePosition.deepEquivalent().downstream();
+}
+
 } // namespace WebCore

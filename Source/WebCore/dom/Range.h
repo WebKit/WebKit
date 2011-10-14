@@ -111,8 +111,6 @@ public:
     Node* firstNode() const;
     Node* pastLastNode() const;
 
-    Position editingStartPosition() const;
-
     Node* shadowTreeRootNode() const;
 
     IntRect boundingBox();

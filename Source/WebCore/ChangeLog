@@ -1,5 +1,37 @@
 2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Move selectionStartStyle and selectionHasStyle to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=69882
+
+        Reviewed by Enrica Casucci.
+
+        Moved selectionHasStyle and selectionStartStyle from Editor to EditingStyle.
+        Also moved much of code in Editor::selectionStartCSSPropertyValue to method of EditingStyle.
+
+        In addition, moved Range::editingStartPosition to htmlediting where it belongs
+        and renamed it to adjustedSelectionStartForStyleComputation.
+
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::triStateOfStyle): Extracted from selectionHasStyle.
+        (WebCore::EditingStyle::legacyFontSize): Extracted from selectionStartCSSPropertyValue.
+        (WebCore::EditingStyle::styleAtSelectionStart): Moved from Editor::selectionStartStyle.
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::selectionStartHasStyle):
+        (WebCore::Editor::selectionHasStyle):
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList):
+        * editing/htmlediting.cpp:
+        (WebCore::adjustedSelectionStartForStyleComputation): Moved from Range::editingStartPosition.
+        * editing/htmlediting.h:
+
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Redundant comparison in AccessibilityObject.cpp updateAXLineStartForVisiblePosition
         https://bugs.webkit.org/show_bug.cgi?id=70074
 
