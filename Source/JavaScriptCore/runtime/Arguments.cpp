@@ -322,7 +322,7 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool Arguments::deleteProperty(ExecState* exec, unsigned i) 
+bool Arguments::deletePropertyVirtual(ExecState* exec, unsigned i) 
 {
     return deleteProperty(this, exec, i);
 }
@@ -344,7 +344,7 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, unsigned i)
     return JSObject::deleteProperty(thisObject, exec, Identifier(exec, UString::number(i)));
 }
 
-bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName) 
+bool Arguments::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName) 
 {
     return deleteProperty(this, exec, propertyName);
 }

@@ -391,7 +391,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, length - 1);
-        thisObj->deleteProperty(exec, length - 1);
+        thisObj->deletePropertyVirtual(exec, length - 1);
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
     }
     return JSValue::encode(result);
@@ -443,12 +443,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (obj2)
             thisObj->put(exec, k, obj2);
         else
-            thisObj->deleteProperty(exec, k);
+            thisObj->deletePropertyVirtual(exec, k);
 
         if (obj)
             thisObj->put(exec, lk1, obj);
         else
-            thisObj->deleteProperty(exec, lk1);
+            thisObj->deletePropertyVirtual(exec, lk1);
     }
     return JSValue::encode(thisObj);
 }
@@ -473,9 +473,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
                 if (JSValue obj = getProperty(exec, thisObj, k))
                     thisObj->put(exec, k - 1, obj);
                 else
-                    thisObj->deleteProperty(exec, k - 1);
+                    thisObj->deletePropertyVirtual(exec, k - 1);
             }
-            thisObj->deleteProperty(exec, length - 1);
+            thisObj->deletePropertyVirtual(exec, length - 1);
         }
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
     }
@@ -609,10 +609,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                     if (JSValue v = getProperty(exec, thisObj, k + deleteCount))
                         thisObj->put(exec, k + additionalArgs, v);
                     else
-                        thisObj->deleteProperty(exec, k + additionalArgs);
+                        thisObj->deletePropertyVirtual(exec, k + additionalArgs);
                 }
                 for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
-                    thisObj->deleteProperty(exec, k - 1);
+                    thisObj->deletePropertyVirtual(exec, k - 1);
             }
         } else {
             if ((!begin) && (isJSArray(&exec->globalData(), thisObj)))
@@ -622,7 +622,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                     if (JSValue obj = getProperty(exec, thisObj, k + deleteCount - 1))
                         thisObj->put(exec, k + additionalArgs - 1, obj);
                     else
-                        thisObj->deleteProperty(exec, k + additionalArgs - 1);
+                        thisObj->deletePropertyVirtual(exec, k + additionalArgs - 1);
                 }
             }
         }
@@ -652,7 +652,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
                 if (JSValue v = getProperty(exec, thisObj, k - 1))
                     thisObj->put(exec, k + nrArgs - 1, v);
                 else
-                    thisObj->deleteProperty(exec, k + nrArgs - 1);
+                    thisObj->deletePropertyVirtual(exec, k + nrArgs - 1);
             }
         }
     }

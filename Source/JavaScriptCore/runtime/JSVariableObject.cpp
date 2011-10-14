@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSVariableObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }

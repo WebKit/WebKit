@@ -123,24 +123,24 @@ void JSCell::put(JSCell* cell, ExecState* exec, unsigned identifier, JSValue val
     cell->toObject(exec, exec->lexicalGlobalObject())->put(exec, identifier, value);
 }
 
-bool JSCell::deleteProperty(ExecState* exec, const Identifier& identifier)
+bool JSCell::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)
 {
     return deleteProperty(this, exec, identifier);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& identifier)
 {
-    return cell->toObject(exec, exec->lexicalGlobalObject())->deleteProperty(exec, identifier);
+    return cell->toObject(exec, exec->lexicalGlobalObject())->deletePropertyVirtual(exec, identifier);
 }
 
-bool JSCell::deleteProperty(ExecState* exec, unsigned identifier)
+bool JSCell::deletePropertyVirtual(ExecState* exec, unsigned identifier)
 {
     return deleteProperty(this, exec, identifier);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, unsigned identifier)
 {
-    return cell->toObject(exec, exec->lexicalGlobalObject())->deleteProperty(exec, identifier);
+    return cell->toObject(exec, exec->lexicalGlobalObject())->deletePropertyVirtual(exec, identifier);
 }
 
 JSObject* JSCell::toThisObject(ExecState* exec) const

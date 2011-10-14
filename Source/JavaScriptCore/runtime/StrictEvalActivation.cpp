@@ -35,7 +35,7 @@ StrictEvalActivation::StrictEvalActivation(ExecState* exec)
 {
 }
 
-bool StrictEvalActivation::deleteProperty(ExecState* exec, const Identifier& identifier)
+bool StrictEvalActivation::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)
 {
     return deleteProperty(this, exec, identifier);
 }

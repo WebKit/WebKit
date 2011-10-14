@@ -205,7 +205,7 @@ void JSActivation::putWithAttributes(ExecState* exec, const Identifier& property
     JSObject::putWithAttributes(exec, propertyName, value, attributes, true, slot);
 }
 
-bool JSActivation::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSActivation::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }

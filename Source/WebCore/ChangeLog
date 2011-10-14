@@ -1,3 +1,50 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual deleteProperty to deletePropertyVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69884
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Renamed virtual versions of deleteProperty to deletePropertyVirtual in prepration for 
+        adding the static deleteProperty to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same name.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::deletePropertyVirtual):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::deletePropertyVirtual):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::deletePropertyVirtual):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::deletePropertyVirtual):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::deletePropertyVirtual):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deletePropertyVirtual):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject removeWebScriptKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_RemoveProperty):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::removeMember):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::deletePropertyVirtual):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::deletePropertyVirtual):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::deletePropertyVirtual):
+        * bridge/runtime_object.h:
+
 2011-10-14  Simon Fraser  <simon.fraser@apple.com>
 
         Web Inspector: WebProcess crashes hard when inspecting elements with border-images applied

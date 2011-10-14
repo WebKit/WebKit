@@ -102,7 +102,7 @@ namespace JSC {
             JSArray::put(thisObject, exec, propertyName, v);
         }
 
-        virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName)
+        virtual bool deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
         {
             return deleteProperty(this, exec, propertyName);
         }
@@ -115,7 +115,7 @@ namespace JSC {
             return JSArray::deleteProperty(thisObject, exec, propertyName);
         }
 
-        virtual bool deleteProperty(ExecState* exec, unsigned propertyName)
+        virtual bool deletePropertyVirtual(ExecState* exec, unsigned propertyName)
         {
             return deleteProperty(this, exec, propertyName);
         }

@@ -184,9 +184,9 @@ private:
     virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
     static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
-    virtual bool deleteProperty(ExecState*, const Identifier&);
+    virtual bool deletePropertyVirtual(ExecState*, const Identifier&);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
-    virtual bool deleteProperty(ExecState*, unsigned);
+    virtual bool deletePropertyVirtual(ExecState*, unsigned);
     static bool deleteProperty(JSCell*, ExecState*, unsigned);
 
     virtual bool hasInstance(ExecState* exec, JSValue value, JSValue proto);

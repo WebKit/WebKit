@@ -266,7 +266,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, const Identifi
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSCallbackObject<Parent>::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }
@@ -316,7 +316,7 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, con
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, unsigned propertyName)
+bool JSCallbackObject<Parent>::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }
@@ -324,7 +324,7 @@ bool JSCallbackObject<Parent>::deleteProperty(ExecState* exec, unsigned property
 template <class Parent>
 bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return static_cast<JSCallbackObject*>(cell)->deleteProperty(exec, Identifier::from(exec, propertyName));
+    return static_cast<JSCallbackObject*>(cell)->deletePropertyVirtual(exec, Identifier::from(exec, propertyName));
 }
 
 template <class Parent>

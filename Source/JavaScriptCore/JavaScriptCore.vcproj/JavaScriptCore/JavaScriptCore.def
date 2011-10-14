@@ -144,12 +144,13 @@ EXPORTS
     ?deleteOwnedPtr@WTF@@YAXPAUHDC__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHFONT__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHRGN__@@@Z
-    ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
-    ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@I@Z
-    ?deleteProperty@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
-    ?deleteProperty@JSObject@JSC@@UAE_NPAVExecState@2@I@Z
-    ?deleteProperty@JSVariableObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
-    ?deleteProperty@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
+    ?deleteProperty@JSObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@@Z
+    ?deleteProperty@JSVariableObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@@Z
+    ?deletePropertyVirtual@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
+    ?deletePropertyVirtual@JSCell@JSC@@UAE_NPAVExecState@2@I@Z
+    ?deletePropertyVirtual@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
+    ?deletePropertyVirtual@JSObject@JSC@@UAE_NPAVExecState@2@I@Z
+    ?deletePropertyVirtual@JSVariableObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@@Z

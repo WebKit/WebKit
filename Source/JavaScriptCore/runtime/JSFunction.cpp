@@ -333,7 +333,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSFunction::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }

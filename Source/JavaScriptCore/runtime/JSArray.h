@@ -174,9 +174,9 @@ namespace JSC {
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
-        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-        virtual bool deleteProperty(ExecState*, unsigned propertyName);
+        virtual bool deletePropertyVirtual(ExecState*, unsigned propertyName);
         static bool deleteProperty(JSCell*, ExecState*, unsigned propertyName);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         static void visitChildren(JSCell*, SlotVisitor&);

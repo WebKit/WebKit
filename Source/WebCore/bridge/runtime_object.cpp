@@ -242,7 +242,7 @@ void RuntimeObject::put(JSCell* cell, ExecState* exec, const Identifier& propert
     instance->end();
 }
 
-bool RuntimeObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool RuntimeObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }

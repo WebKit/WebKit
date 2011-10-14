@@ -60,9 +60,9 @@ public:
     virtual void put(ExecState*, unsigned propertyName, JSValue);
     static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
     
-    virtual bool deleteProperty(ExecState* exec, const Identifier &propertyName);
+    virtual bool deletePropertyVirtual(ExecState*, const Identifier &propertyName);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier &propertyName);
-    virtual bool deleteProperty(ExecState* exec, unsigned propertyName);
+    virtual bool deletePropertyVirtual(ExecState*, unsigned propertyName);
     static bool deleteProperty(JSCell*, ExecState*, unsigned propertyName);
     
     unsigned getLength() const { return getConcreteArray()->getLength(); }

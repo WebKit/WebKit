@@ -1,3 +1,73 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual deleteProperty to deletePropertyVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69884
+
+        Reviewed by Darin Adler.
+
+        Renamed virtual versions of deleteProperty to deletePropertyVirtual in prepration for 
+        adding the static deleteProperty to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same name.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::deletePropertyVirtual):
+        (JSC::::deleteProperty):
+        * API/JSObjectRef.cpp:
+        (JSObjectDeleteProperty):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::deletePropertyVirtual):
+        (JSC::DebuggerActivation::deleteProperty):
+        * debugger/DebuggerActivation.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deletePropertyVirtual):
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::deletePropertyVirtual):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::deletePropertyVirtual):
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::deletePropertyVirtual):
+        (JSC::JSCell::deleteProperty):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deletePropertyVirtual):
+        * runtime/JSFunction.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::deletePropertyVirtual):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deletePropertyVirtual):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::deletePropertyVirtual):
+        * runtime/JSVariableObject.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::deletePropertyVirtual):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::deletePropertyVirtual):
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::deletePropertyVirtual):
+        * runtime/StringObject.h:
+
 2011-10-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Inherit settings from Chromium's envsetup.sh, address a NDK todo

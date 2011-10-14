@@ -1113,7 +1113,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
     }
     
     JSLock lock(SilenceAssertionsOnly);
-    object->deleteProperty(exec, propertyName);
+    object->deletePropertyVirtual(exec, propertyName);
     exec->clearException();    
     return true;
 }
@@ -1140,7 +1140,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
     }
     
     JSLock lock(SilenceAssertionsOnly);
-    object->deleteProperty(exec, propertyName);
+    object->deletePropertyVirtual(exec, propertyName);
     exec->clearException();    
     return true;
 }

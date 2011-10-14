@@ -403,7 +403,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(SilenceAssertionsOnly);
-    [self _imp]->deleteProperty(exec, Identifier(exec, stringToUString(String(key))));
+    [self _imp]->deletePropertyVirtual(exec, Identifier(exec, stringToUString(String(key))));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);

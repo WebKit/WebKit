@@ -86,7 +86,7 @@ void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& property
     JSObject::put(cell, exec, propertyName, value, slot);
 }
 
-bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool StringObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }

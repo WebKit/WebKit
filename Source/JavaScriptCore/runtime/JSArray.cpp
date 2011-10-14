@@ -507,7 +507,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
 }
 
-bool JSArray::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSArray::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }
@@ -518,7 +518,7 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& pr
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return thisObject->deleteProperty(exec, i);
+        return thisObject->deletePropertyVirtual(exec, i);
 
     if (propertyName == exec->propertyNames().length)
         return false;
@@ -526,7 +526,7 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& pr
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-bool JSArray::deleteProperty(ExecState* exec, unsigned i)
+bool JSArray::deletePropertyVirtual(ExecState* exec, unsigned i)
 {
     return deleteProperty(this, exec, i);
 }
@@ -564,7 +564,7 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, unsigned i)
     thisObject->checkConsistency();
 
     if (i > MAX_ARRAY_INDEX)
-        return thisObject->deleteProperty(exec, Identifier::from(exec, i));
+        return thisObject->deletePropertyVirtual(exec, Identifier::from(exec, i));
 
     return false;
 }

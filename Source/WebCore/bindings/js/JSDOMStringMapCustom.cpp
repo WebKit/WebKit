@@ -57,7 +57,7 @@ void JSDOMStringMap::getOwnPropertyNames(ExecState* exec, PropertyNameArray& pro
     Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSDOMStringMap::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     AtomicString stringName = identifierToAtomicString(propertyName);
     if (!m_impl->contains(stringName))

@@ -274,7 +274,7 @@ CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
     return CallTypeHost;
 }
 
-bool ObjcFallbackObjectImp::deleteProperty(ExecState* exec, const Identifier& identifier)
+bool ObjcFallbackObjectImp::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)
 {
     return deleteProperty(this, exec, identifier);
 }

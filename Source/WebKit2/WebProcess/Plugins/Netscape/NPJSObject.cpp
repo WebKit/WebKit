@@ -213,14 +213,14 @@ bool NPJSObject::removeProperty(NPIdentifier propertyName)
             return false;
         }
         
-        m_jsObject->deleteProperty(exec, identifier);
+        m_jsObject->deletePropertyVirtual(exec, identifier);
     } else {
         if (!m_jsObject->hasProperty(exec, identifierRep->number())) {
             exec->clearException();
             return false;
         }
 
-        m_jsObject->deleteProperty(exec, identifierRep->number());
+        m_jsObject->deletePropertyVirtual(exec, identifierRep->number());
     }
 
     exec->clearException();

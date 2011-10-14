@@ -1,3 +1,21 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual deleteProperty to deletePropertyVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69884
+
+        Reviewed by Darin Adler.
+
+        Renamed virtual versions of deleteProperty to deletePropertyVirtual in prepration for 
+        adding the static deleteProperty to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same name.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::deletePropertyVirtual):
+        (WebKit::JSNPObject::deleteProperty):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::removeProperty):
+
 2011-10-14  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Add documentation for WebKitPluginError and WebKitPolicyError.

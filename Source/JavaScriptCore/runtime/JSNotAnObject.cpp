@@ -94,7 +94,7 @@ void JSNotAnObject::put(JSCell*, ExecState* exec, unsigned, JSValue)
     ASSERT_UNUSED(exec, exec->hadException());
 }
 
-bool JSNotAnObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSNotAnObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }
@@ -105,7 +105,7 @@ bool JSNotAnObject::deleteProperty(JSCell*, ExecState* exec, const Identifier&)
     return false;
 }
 
-bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned propertyName)
+bool JSNotAnObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
     return deleteProperty(this, exec, propertyName);
 }
