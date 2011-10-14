@@ -1,3 +1,20 @@
+2011-10-14  Adam Barth  <abarth@webkit.org>
+
+        tables/mozilla/bugs/bug9024.html has never worked
+        https://bugs.webkit.org/show_bug.cgi?id=67744
+
+        Reviewed by Eric Seidel.
+
+        Previously, this script had just errored out.  This patch removes the
+        scripts, which lets us share the same baseline across all the ports.
+
+        * platform/chromium-win/tables/mozilla/bugs/bug9024-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug9024-expected.txt: Removed.
+        * platform/mac/tables/mozilla/bugs/bug9024-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug9024-expected.txt: Removed.
+        * tables/mozilla/bugs/bug9024-expected.txt: Added.
+        * tables/mozilla/bugs/bug9024.html:
+
 2011-10-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.
