@@ -409,6 +409,8 @@ CFHTTPMessageRef WKGetCFURLResponseHTTPResponse(CFURLResponseRef);
 CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
 void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
+CIFormat WKCIGetRGBA8Format(void);
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 typedef enum {
