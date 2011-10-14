@@ -1908,7 +1908,20 @@ sub buildChromiumMakefile($$@)
         $makeArgs = $1 if /^--makeargs=(.*)/i;
     }
     $makeArgs = "-j$numCpus" if not $makeArgs;
-    my $command = "make -fMakefile.chromium $makeArgs BUILDTYPE=$config $target";
+    my $command = "";
+
+    # Building the WebKit Chromium port for Android requires us to cross-
+    # compile, which will be set up by Chromium's envsetup.sh. The script itself
+    # will verify that the installed NDK is indeed available.
+    if (isChromiumAndroid()) {
+        $command .= "bash -c \"source " . sourceDir() . "/Source/WebKit/chromium/build/android/envsetup.sh && ";
+        $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/third_party/android-ndk-r6b";
+        $ENV{WEBKIT_ANDROID_BUILD} = 1;
+    }
+
+    $command .= "make -fMakefile.chromium $makeArgs BUILDTYPE=$config $target";
+    $command .= "\"" if isChromiumAndroid();
+
     print "$command\n";
     return system $command;
 }
@@ -1963,29 +1976,13 @@ sub buildChromium($@)
     }
 
     my $result = 1;
-    if (isChromiumAndroid()) {
-        # Building Chromium for Android needs to cross-compile using the
-        # Toolchains supplied by the Android NDK.
-        my $ndkBaseDir = sourceDir() . "/Source/WebKit/chromium/third_party/android-ndk-r6";
-        my $platform = isDarwin() ? "darwin-x86" : "linux-x86";
-
-        my $toolchainBase = $ndkBaseDir . "/toolchains/arm-linux-androideabi-4.4.3/prebuilt/" . $platform . "/bin/arm-linux-androideabi-";
-
-        $ENV{AR} = $toolchainBase . "ar";
-        $ENV{CC} = $toolchainBase . "gcc";
-        $ENV{CXX} = $toolchainBase . "g++";
-        $ENV{LINK} = $toolchainBase . "gcc";
-        $ENV{RANLIB} = $toolchainBase . "ranlib";
-        $ENV{STRIP} = $toolchainBase . "strip";
-
-        $result = buildChromiumMakefile("all", $clean);
-    } elsif (isDarwin()) {
+    if (isDarwin() && !isChromiumAndroid()) {
         # Mac build - builds the root xcode project.
         $result = buildXCodeProject("Source/WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/WebKit.sln", $clean);
-    } elsif (isLinux()) {
+    } elsif (isLinux() || isChromiumAndroid()) {
         # Linux build - build using make.
         $result = buildChromiumMakefile("all", $clean, @options);
     } else {

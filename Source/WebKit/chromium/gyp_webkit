@@ -33,6 +33,7 @@
 import glob
 import os
 import shlex
+import subprocess
 import sys
 
 script_dir = os.path.dirname(__file__)
@@ -77,6 +78,18 @@ if __name__ == '__main__':
 
   args = sys.argv[1:]
 
+  # When building the WebKit Chromium port for Android, we have to cross-compile
+  # the source to ARM, check for the right Android NDK and set the appropriate
+  # GYP flags. Chromium's envsetup.sh script will handle these steps, but as it
+  # exports variables and commands we have to re-call ourselves afterwards.
+  if 'WEBKIT_ANDROID_BUILD' in os.environ:
+    if not '--no-envsetup-recursion' in args:
+      envsetup_location = os.path.join(chrome_src, 'build', 'android', 'envsetup.sh')
+      exit(subprocess.call(['bash', '-c', 'source %s && python gyp_webkit --no-envsetup-recursion %s' % (envsetup_location, ' '.join(args))]))
+    else:
+      os.environ['CC.target'] = os.environ['CROSS_CC']
+      args.remove('--no-envsetup-recursion')
+
   # Add includes.
   args.extend(['-I' + i for i in additional_include_files(args)])
 
@@ -90,7 +103,7 @@ if __name__ == '__main__':
     args.append('--no-circular-check')
 
   # On linux, we want gyp to output a makefile (default is scons).
-  if sys.platform.startswith('linux') or 'GYP_ANDROID_BUILD' in os.environ:
+  if sys.platform.startswith('linux') or 'WEBKIT_ANDROID_BUILD' in os.environ:
     args.extend(['-fmake',
                  '--suffix=.chromium',
                  '--toplevel-dir=../../..',

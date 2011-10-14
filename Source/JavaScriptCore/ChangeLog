@@ -1,3 +1,12 @@
+2011-10-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Inherit settings from Chromium's envsetup.sh, address a NDK todo
+        https://bugs.webkit.org/show_bug.cgi?id=70028
+
+        Reviewed by Adam Barth.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2011-10-14  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT 32_64 - Performance fix for ResolveGlobal
