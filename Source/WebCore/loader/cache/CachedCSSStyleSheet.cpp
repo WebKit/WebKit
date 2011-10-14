@@ -52,7 +52,8 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient* c)
 {
-    if (!isLoading() && c->resourceClientType() == CachedStyleSheetClient::expectedType())
+    ASSERT(c->resourceClientType() == CachedStyleSheetClient::expectedType());
+    if (!isLoading())
         static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 

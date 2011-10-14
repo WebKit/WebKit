@@ -50,8 +50,10 @@ public:
         size_t size = m_clientVector.size();
         while (m_index < size) {
             CachedResourceClient* next = m_clientVector[m_index++];
-            if (m_clientSet.contains(next) && (T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType()))
+            if (m_clientSet.contains(next)) {
+                ASSERT(T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType());
                 return static_cast<T*>(next);
+            }
         }
         
         return 0;
