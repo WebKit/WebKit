@@ -723,9 +723,10 @@ class MockStatusServer(object):
 
 # FIXME: Unify with common.system.executive_mock.MockExecutive.
 class MockExecutive(object):
-    def __init__(self, should_log=False, should_throw=False):
+    def __init__(self, should_log=False, should_throw=False, should_throw_when_run=None):
         self._should_log = should_log
         self._should_throw = should_throw
+        self._should_throw_when_run = should_throw_when_run or set()
         # FIXME: Once executive wraps os.getpid() we can just use a static pid for "this" process.
         self._running_pids = [os.getpid()]
 
@@ -735,6 +736,8 @@ class MockExecutive(object):
     def run_and_throw_if_fail(self, args, quiet=False, cwd=None):
         if self._should_log:
             log("MOCK run_and_throw_if_fail: %s, cwd=%s" % (args, cwd))
+        if self._should_throw_when_run.intersection(args):
+            raise ScriptError("Exception for %s" % args)
         return "MOCK output of child process"
 
     def run_command(self,
@@ -840,11 +843,11 @@ class MockWeb(object):
 
 
 class MockTool(object):
-    def __init__(self, log_executive=False):
+    def __init__(self, log_executive=False, executive_throws_when_run=None):
         self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
-        self.executive = MockExecutive(should_log=log_executive)
+        self.executive = MockExecutive(should_log=log_executive, should_throw_when_run=executive_throws_when_run)
         self.web = MockWeb()
         self.workspace = MockWorkspace()
         self._irc = None

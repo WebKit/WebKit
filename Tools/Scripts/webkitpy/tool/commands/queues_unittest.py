@@ -446,7 +446,26 @@ The commit-queue is continuing to process your patch.
 
 
 class StyleQueueTest(QueuesTest):
-    def test_style_queue(self):
+    def test_style_queue_with_style_exception(self):
+        expected_stderr = {
+            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
+            "next_work_item": "",
+            "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'check-style', '--force-clean', '--non-interactive', '--parent-command=style-queue', 10000], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000], cwd=/mock-checkout
+MOCK: update_status: style-queue Fail
+MOCK: release_work_item: style-queue 10000\n""",
+            "handle_unexpected_error": "Mock error message\n",
+            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=50000, cc=[]\n--- Begin comment ---\nAttachment 10000 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
+        }
+        expected_exceptions = {
+            "process_work_item": ScriptError,
+            "handle_script_error": SystemExit,
+        }
+        tool = MockTool(log_executive=True, executive_throws_when_run=set(['check-style']))
+        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, expected_exceptions=expected_exceptions, tool=tool)
+
+    def test_style_queue_with_watch_list_exception(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
             "next_work_item": "",
@@ -461,5 +480,5 @@ MOCK: release_work_item: style-queue 10000\n""",
         expected_exceptions = {
             "handle_script_error": SystemExit,
         }
-        tool = MockTool(log_executive=True)
+        tool = MockTool(log_executive=True, executive_throws_when_run=set(['apply-watchlist-local']))
         self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, expected_exceptions=expected_exceptions, tool=tool)

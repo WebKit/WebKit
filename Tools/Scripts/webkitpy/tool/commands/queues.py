@@ -419,8 +419,17 @@ class StyleQueue(AbstractReviewQueue):
         return True
 
     def review_patch(self, patch):
-        self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
-        self.run_webkit_patch(["apply-watchlist-local", patch.bug_id()])
+        try:
+            # Run the style checks.
+            self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
+        finally:
+            # Apply the watch list.
+            try:
+                self.run_webkit_patch(["apply-watchlist-local", patch.bug_id()])
+            except ScriptError, e:
+                # Don't turn the style bot block red due to watchlist errors.
+                pass
+
         return True
 
     @classmethod

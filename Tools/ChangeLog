@@ -1,3 +1,16 @@
+2011-10-14  David Levin  <levin@chromium.org>
+
+        watchlist: If the style check fails, then the watchlist will not be run.
+        https://bugs.webkit.org/show_bug.cgi?id=69484
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/queues.py: Run the watch list even
+        if the style part fails and don't allow watch list failures turn the
+        bot run red.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py: Appropriate unit tests.
+        * Scripts/webkitpy/tool/mocktool.py: Add support to make an executive command throw.
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Plumb style-checker filter up to command options and make land-cowboy use it.
