@@ -44,12 +44,14 @@ public:
         return adoptRef(new SVGImage(observer));
     }
 
+    virtual bool isSVGImage() const { return true; }
+
 private:
     virtual ~SVGImage();
 
     virtual String filenameExtension() const;
 
-    virtual void setContainerSize(const LayoutSize&);
+    virtual void setContainerSize(const IntSize&);
     virtual bool usesContainerSize() const;
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;

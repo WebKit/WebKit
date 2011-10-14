@@ -24,6 +24,7 @@
 #define CachedImage_h
 
 #include "CachedResource.h"
+#include "ImageBySizeCache.h"
 #include "CachedResourceClient.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
@@ -34,6 +35,7 @@ namespace WebCore {
 
 class CachedResourceLoader;
 class MemoryCache;
+class RenderObject;
 
 class CachedImage : public CachedResource, public ImageObserver {
     friend class MemoryCache;
@@ -45,24 +47,23 @@ public:
     
     virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
-    Image* image() const; // Returns the nullImage() if the image is not available yet.
+    Image* image(); // Returns the nullImage() if the image is not available yet.
+    Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
 
     std::pair<Image*, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
     bool willPaintBrokenImage() const; 
 
-    bool canRender(float multiplier) const { return !errorOccurred() && !imageSize(multiplier).isEmpty(); }
+    bool canRender(const RenderObject* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
     // These are only used for SVGImage right now
-    void setImageContainerSize(const IntSize&);
+    void setContainerSizeForRenderer(const RenderObject*, const IntSize&);
     bool usesImageContainerSize() const;
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
     
-    // Both of these methods take a zoom multiplier that can be used to increase the natural size of the image by the
-    // zoom.
-    IntSize imageSize(float multiplier) const;  // returns the size of the complete image.
-    IntRect imageRect(float multiplier) const;  // The size of the currently decoded portion of the image.
+    // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
+    IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
 
     virtual void didAddClient(CachedResourceClient*);
     
@@ -91,6 +92,10 @@ public:
     virtual void changedInRect(const Image*, const IntRect&);
 
 private:
+    Image* lookupImageForSize(const IntSize&) const;
+    Image* lookupImageForRenderer(const RenderObject*) const;
+    PassRefPtr<Image> lookupOrCreateImageForRenderer(const RenderObject*);
+
     void createImage();
     size_t maximumDecodedImageSize();
     // If not null, changeRect is the changed part of the image.
@@ -100,6 +105,7 @@ private:
     void checkShouldPaintBrokenImage();
 
     RefPtr<Image> m_image;
+    mutable ImageBySizeCache m_svgImageCache;
     Timer<CachedImage> m_decodedDataDeletionTimer;
     bool m_shouldPaintBrokenImage;
 };

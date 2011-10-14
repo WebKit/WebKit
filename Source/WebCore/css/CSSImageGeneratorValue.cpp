@@ -47,62 +47,25 @@ CSSImageGeneratorValue::~CSSImageGeneratorValue()
 void CSSImageGeneratorValue::addClient(RenderObject* renderer, const IntSize& size)
 {
     ref();
-    if (!size.isEmpty())
-        m_sizes.add(size);
-    
-    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
-    if (it == m_clients.end())
-        m_clients.add(renderer, SizeCountPair(size, 1));
-    else {
-        SizeCountPair& sizeCount = it->second;
-        ++sizeCount.second;
-    }
+    m_imageCache.addClient(renderer, size);
 }
 
 void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
 {
-    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
-    ASSERT(it != m_clients.end());
-
-    SizeCountPair& sizeCount = it->second;
-    IntSize size = sizeCount.first;
-    if (!size.isEmpty()) {
-        m_sizes.remove(size);
-        if (!m_sizes.contains(size))
-            m_images.remove(size);
-    }
-    
-    if (!--sizeCount.second)
-        m_clients.remove(renderer);
-
+    m_imageCache.removeClient(renderer);
     deref();
 }
 
 Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& size)
 {
-    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
-    ASSERT(it != m_clients.end());
-
-    SizeCountPair& sizeCount = it->second;
-    IntSize oldSize = sizeCount.first;
-    if (oldSize != size) {
-        // If renderer is the only client, make sure we don't delete this.
-        RefPtr<CSSImageGeneratorValue> protect(this);
-        removeClient(renderer);
-        addClient(renderer, size);
-    }
-    
-    // Don't generate an image for empty sizes.
-    if (size.isEmpty())
-        return 0;
-    
-    // Look up the image in our cache.
-    return m_images.get(size).get();
+    // If renderer is the only client, make sure we don't delete this, if the size changes (as this will result in addClient/removeClient calls).
+    RefPtr<CSSImageGeneratorValue> protect(this);
+    return m_imageCache.getImage(renderer, size);
 }
 
 void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> image)
 {
-    m_images.add(size, image);
+    m_imageCache.putImage(size, image);
 }
 
 StyleGeneratedImage* CSSImageGeneratorValue::generatedImage()

@@ -112,7 +112,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
-    Image* image = cachedImage->image();
+    Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
 
     GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);

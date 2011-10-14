@@ -54,15 +54,15 @@ public:
 
     void resetAnimation();
 
-    virtual PassRefPtr<Image> image(int /* width */ = 0, int /* height */ = 0) const { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
+    virtual PassRefPtr<Image> image(int /* width */ = 0, int /* height */ = 0) const { return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : nullImage(); }
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
-    virtual void setImageContainerSize(const IntSize& size) const;
+    virtual void setContainerSizeForRenderer(const IntSize&);
     virtual bool usesImageContainerSize() const { return m_cachedImage ? m_cachedImage->usesImageContainerSize() : false; }
     virtual bool imageHasRelativeWidth() const { return m_cachedImage ? m_cachedImage->imageHasRelativeWidth() : false; }
     virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
 
-    virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSize(multiplier) : IntSize(); }
+    virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : IntSize(); }
 
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 

@@ -439,7 +439,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->image()->getNSImage();
+    return cachedImage->imageForRenderer(renderer)->getNSImage();
 }
 
 @end
@@ -464,7 +464,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (NSData *)cachedImage->image()->getTIFFRepresentation();
+    return (NSData *)cachedImage->imageForRenderer(renderer)->getTIFFRepresentation();
 }
 
 - (NSURL *)_getURLAttribute:(NSString *)name

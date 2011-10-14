@@ -1,3 +1,224 @@
+2011-10-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Prepare SVGImage intrinsic size negotiation: Introduce an IntSize <-> SVGImage cache in CachedImage
+        https://bugs.webkit.org/show_bug.cgi?id=69416
+
+        Reviewed by Antti Koivisto.
+
+        Refactor ImageBySizeCache out of CSSImageGeneratorValue as CachedImage wants to use the same type of cache for its purposes.
+        When introducing the SVGImage intrinsic size negotiation the container size of an SVGImage is dependant on the place where
+        it gets embedded (eg width/height attributes of host documents <img> force a certain size).
+
+        Currently CachedImage only contains a single RefPtr<Image>, which it constructs out of the decoded data.
+        Multiple RenderObjects share the same CachedImages, when embedding eg. a SVG document in a <html:img> or using it in a background-image for a <div>.
+        Consider the case where two RenderObjects use the same CachedImage, each with a different container size (200x100 vs 100x200) and the embedded
+        document contains a viewBox and some arbitary preserveAspectRatio settings. To honour these we have to relayout the document with the desired
+        size (percentual unit resolving etc, all depend on the RenderSVGRoots size).
+
+        With the current design this is hard to realize, w/o requring to relayout the embedded document for each embedder that uses an SVGImage.
+        This patch introduces a cache right within CachedImage, which manages a map of images to certain sizes, by utilizing the new ImageBySizeCache.
+
+        CachedImage::imageForRenderer() takes a RenderObject* parameter, which it uses to look up the last set image container size for a renderer.
+        Using that size it queries the cache whether it already has an SVGImage for that size, if not it gets created, by creating a whole
+        new instance of SVGImage, filling it with the already decoded data, and passing on a fixed image container size, which overrides the
+        size that RenderSVGRoot reports, when computeReplacedLogicalWidth/Height is called and thus laying out the document at the desired size.
+        This image is then put in the cache for further reusability.
+
+        Likewise CachedImage::setContainerSizeForRenderer() now takes a RenderObject* parameter and stores that in the cache with an associated container size.
+        It requires to touch several files which use CachedImage throughout WebCore/WebKit/WebKit2.
+
+        The actual cache is not yet turned on yet, so this is not a functional change so far, as it needs some other changes to SVGImage,
+        which will come with the master patch in bug 47156.
+
+        No new tests yet, as the new cache isn't turned on yet.
+
+        * CMakeLists.txt: Add rendering/ImageBySizeCache.* to build.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored): Use new CachedImage::imageSizeForRenderer(RenderObject*) method.
+        * bindings/objc/DOM.mm: Ditto (for CachedImage::image()).
+        (-[DOMElement image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::variantFromObject): Ditto (for CachedImage::image()).
+        * css/CSSCanvasValue.cpp: s/m_clients/clients()/, which now live in the ImageBySizeCache instead of CSSImageGeneratorValue.
+        (WebCore::CSSCanvasValue::canvasChanged):
+        (WebCore::CSSCanvasValue::canvasResized):
+        (WebCore::CSSCanvasValue::image):
+        * css/CSSGradientValue.cpp: Ditto.
+        (WebCore::CSSGradientValue::image):
+        * css/CSSImageGeneratorValue.cpp: Move the sizes/clients/images cache into a new ImageBySizeCache class, to make it usable for CachedImage as well.
+        (WebCore::CSSImageGeneratorValue::addClient): Adapt to move.
+        (WebCore::CSSImageGeneratorValue::removeClient): Ditto.
+        (WebCore::CSSImageGeneratorValue::getImage): Ditto.
+        (WebCore::CSSImageGeneratorValue::putImage): Ditto.
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::CSSImageGeneratorValue::clients): Forwarded to the ImageBySizeCache.
+        * editing/DeleteButtonController.cpp: 
+        (WebCore::isDeletableElement): CachedImage::canRender() now takes a RenderObject* parameter.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::width): Use new CachedImage::imageSizeForRenderer(RenderObject*) method.
+        (WebCore::HTMLImageElement::height): Ditto.
+        (WebCore::HTMLImageElement::naturalWidth): Ditto.
+        (WebCore::HTMLImageElement::naturalHeight): Ditto.
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::finish): Ditto.
+        (WebCore::ImageDocument::scale): Ditto.
+        (WebCore::ImageDocument::resizeImageToFit): Ditto.
+        (WebCore::ImageDocument::imageUpdated): Ditto.
+        (WebCore::ImageDocument::restoreImageSize): Ditto.
+        (WebCore::ImageDocument::imageFitsInWindow): Ditto.
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::isOriginClean): Ditto.
+        (WebCore::size): Ditto (for CachedImage::imageSizeForRenderer()).
+        (WebCore::CanvasRenderingContext2D::drawImage): Ditto.
+        (WebCore::CanvasRenderingContext2D::createPattern): Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Ditto.
+        * loader/cache/CachedImage.cpp: Add currently _disabled_ cache for SVGImages. The intrinsic size negotiation will need to use multiple SVGImages
+        for each requested size (equal to the size of the embedding place for the image) - make it possible to cache these SVGImages, and maintain a cache
+        for them. The hash code is a 1:1 refactoring from the already present code in CSSImageGeneratorValue, now named 'ImageBySizeCache'.
+        (WebCore::CachedImage::lookupImageForSize): Looks up an Image from the cache for a given IntSize. Currently turned off.
+        (WebCore::CachedImage::lookupImageForRenderer): Looks up an Image from the cache for a given renderer. Currently turned off.
+        (WebCore::CachedImage::lookupOrCreateImageForRenderer): Looks up an Image from the cache or creates a new SVGImage for a given size and caches it, if possible. Currently turned off.
+        All following changes share this: Don't operate on m_image directly, instead always look up one from the cache for a given size or renderer - if that's not present fallback to m_image.
+        When an SVGImage is first created by CachedImage::createImage() and stored in m_image, the cache remains empty.
+
+        If eg. <img width="30" height="70" src="foo.svg"> is used which implies a container size of 30x70 a new SVGImage is created with the additional information of a 30x70 container size
+        which is immediately passed to the SVGImage after its creation. This SVGImage is put in the ImageBySizeCache associated with a container size of 30x70.
+        We now have two SVGImage objects present, one living in CachedImage::m_image, created by createImage() during data decoding, and one living in the ImageBySizeCache
+        created by lookupOrCreateImageForRenderer() associated with the 30x70 container. The first SVGImage::size() will return a value as defined in the referenced foo.svg,
+        whereas the SVGImage::size() call of the new SVGImage living in the cache reports 30x70 and renders according to that.
+
+        Whenever any method of CachedImage is called with a RenderObject* or IntSize, we can't just operate on m_image anymore but instead have to lookup the right
+        images for a certain renderer/size from the cache and operate on these. When calling eg. CachedImage::image() with a null renderer, m_image is returned.
+        When passing with a valid renderer only cache lookups are done if the m_image is actually a SVGImage, otherwhise lookupImageForSize/Renderer will just return the m_image.
+        There is no logical change induced for non-SVGImage derived images.
+
+        CachedImage::image() of course needs a RenderObject* parameter now, to identify which of the images from the cache to use, if the underlying image is a SVGImage.
+        Luckily these information are already present in StyleCachedImage/StyleImage & friends and only need to be added for some additional methods.
+        (WebCore::CachedImage::image): FIXME
+        (WebCore::CachedImage::imageForRenderer): Call lookupOrCreateImageForRenderer() instead of returning m_image, if it's not null. Its a no-op for non SVGImage derived objects.
+        (WebCore::CachedImage::setContainerSizeForRenderer): For non-SVGImages, just pass on the size to the m_image. For SVGImages, associate the passed in renderer with the IntSize in the cache.
+                                                             This does NOT create the SVGImage yet, this is delayed until imageForRenderer() is called for a given renderer that wants this size.
+        (WebCore::CachedImage::imageSize): Don't operate on m_image, ask lookupImageForRenderer() with the incoming renderer.
+        (WebCore::CachedImage::imageRect): Ditto.
+        (WebCore::CachedImage::clear): Force clearing the m_svgImageCache.
+        (WebCore::CachedImage::data): Call m_image->size() instead of imageSize(), to avoid having to pass a null renderer to imageSize() as here no renderer is available yet.
+        (WebCore::CachedImage::destroyDecodedData): Don't destroy decoded data for SVG images, as m_data needs to be accessable at any time to construct a cloned SVGImage.
+                                                    In future we don't need this anymore if we make sure multiple SVGImages share the same trees, but that's for a follow-up patch.
+        (WebCore::CachedImage::decodedSizeChanged): Don't operate on m_image, ask lookupImageForRenderer() with the incoming renderer.
+        (WebCore::CachedImage::didDraw): Ditto.
+        (WebCore::CachedImage::shouldPauseAnimation): Ditto.
+        (WebCore::CachedImage::animationAdvanced): Ditto.
+        (WebCore::CachedImage::changedInRect): Ditto. (eg. when leaving out this change animated SVG images wouldn't update anymore, as the animation didn't happen on m_image!)
+        * loader/cache/CachedImage.h: imageForRenderer/canRender/setContainerSizeForRenderer/imageSizeForRenderer now all take a RenderObject* parameter to identifiy the current user of the image.
+        (WebCore::CachedImage::canRender): Pass on the incoming renderer to imageSizeForRenderer().
+        * page/DragController.cpp:
+        (WebCore::getImage): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor): Ditto.
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame): Ditto.
+        (WebCore::PageSerializer::addImageToResources): Ditto.
+        (WebCore::PageSerializer::retrieveResourcesForCSSDeclaration): Ditto.
+        * page/PageSerializer.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject): Ditto.
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/graphics/Image.h:
+        (WebCore::Image::isSVGImage): Add boolean helper to identify SVGImages, just like isBitmapImage().
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::declareAndWriteDragImage): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/mac/HTMLConverter.mm:
+        (fileWrapperForElement): Ditto.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage): Ditto.
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeImageToDataObject): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/wince/PasteboardWinCE.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::image): Ditto.
+        * rendering/ImageBySizeCache.cpp: Copied from WebCore/css/CSSImageGeneratorValue.cpp, to preserve history for the original cache code.
+        (WebCore::ImageBySizeCache::ImageBySizeCache): Straight copy from CSSImageGeneratorValue, renamed to ImageBySizeCache, removing all but the cache relevant code.
+        (WebCore::ImageBySizeCache::addClient): Ditto.
+        (WebCore::ImageBySizeCache::removeClient): Ditto.
+        (WebCore::ImageBySizeCache::getImage): Ditto.
+        (WebCore::ImageBySizeCache::putImage): Ditto.
+        (WebCore::ImageBySizeCache::clear): New function, that clears the cache, introduced for the needs of CachedImage.
+        (WebCore::ImageBySizeCache::imageForSize): New function to query an Image* for a given IntSize, introduced for the needs of CachedImage.
+        (WebCore::ImageBySizeCache::sizeForClient): New function to query an IntSize for a given renderer.
+        * rendering/ImageBySizeCache.h: Copied from WebCore/css/CSSImageGeneratorValue.h.
+        (WebCore::ImageBySizeCache::clients):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer): CachedImage::canRender() now takes a RenderObject* parameter.
+        (WebCore::InlineFlowBox::paintBoxDecorations): Ditto.
+        (WebCore::InlineFlowBox::paintMask): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages): Ditto.
+        (WebCore::RenderBox::repaintLayerRectsForImage): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Ditto.
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Ditto (for CachedImage::setContainerSizeForRenderer()).
+        (WebCore::RenderBoxModelObject::paintNinePieceImage): Ditto.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageSizeForError): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        (WebCore::RenderImage::setImageSizeForAltText): Ditto.
+        (WebCore::RenderImage::computeReplacedLogicalWidth): FIXME
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::setContainerSizeForRenderer): Pass on m_renderer to CachedImage::setContainerSizeForRenderer().
+        * rendering/RenderImageResource.h: Remove constness from setContainerSizeForRenderer.
+        (WebCore::RenderImageResource::image): Pass on m_renderer to CachedImage::image().
+        (WebCore::RenderImageResource::imageSize): Pass on m_renderer to CachedImage::imageSizeForRenderer().
+        * rendering/RenderImageResourceStyleImage.h:
+        (WebCore::RenderImageResourceStyleImage::setContainerSizeForRenderer): Remove constness, pass on m_renderer to StyleImage::setContainerSizeForRenderer().
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        (WebCore::RenderLayerBacking::updateImageContents): Ditto.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths): CachedImage::setContainerSizeForRenderer() now takes a RenderObject* parameter.
+        * rendering/RenderObject.cpp:
+        (WebCore::mustRepaintFillLayers): CachedImage::canRender() now takes a RenderObject* parameter.
+        (WebCore::RenderObject::borderImageIsLoadedAndCanBeRendered): Ditto.
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::canRender): Pass on incoming renderer to CachedImage::canRender().
+        (WebCore::StyleCachedImage::imageSize): Pass on incoming renderer to CachedImage::imageSizeForRenderer().
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer): Pass on incoming renderer to CachedImage::setContainerSizeForRenderer().
+        (WebCore::StyleCachedImage::addClient): Remove unneeded return statment in void method.
+        (WebCore::StyleCachedImage::removeClient): Ditto.
+        (WebCore::StyleCachedImage::image): Pass on incoming renderer to CachedImage::image().
+        * rendering/style/StyleCachedImage.h: Add RenderObject* parameter to canRender()/setContainerSizeForRenderer(). image() already has one, that was unused so far.
+        * rendering/style/StyleGeneratedImage.cpp: Inlined setContainerSizeForRenderer.
+        * rendering/style/StyleGeneratedImage.h: 
+        (WebCore::StyleGeneratedImage::setContainerSizeForRenderer): Add RenderObject* parameter.
+        * rendering/style/StyleImage.h:
+        (WebCore::StyleImage::canRender): Ditto.
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::setContainerSizeForRenderer): Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build): Use new CachedImage::imageForRenderer(RenderObject*) method.
+        * svg/graphics/SVGImage.cpp: Cleanup file, the include hack seems not needed anymore.
+        (WebCore::SVGImage::setContainerSize): s/LayoutSize/IntSize/ to match the code in platform/.
+        * svg/graphics/SVGImage.h: Ditto.
+        (WebCore::SVGImage::isSVGImage): Return true.
+
 2011-10-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Uninitialized read in WebCore::*Font* / HB_GSUB_Select_Feature

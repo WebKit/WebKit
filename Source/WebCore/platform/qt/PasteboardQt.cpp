@@ -162,7 +162,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
-    Image* image = cachedImage->image();
+    Image* image = cachedImage->imageForRenderer(node->renderer());
     ASSERT(image);
 
     QPixmap* pixmap = image->nativeImageForCurrentFrame();

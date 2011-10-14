@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +26,13 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGImage.h"
 
 #include "CachedPage.h"
 #include "DocumentLoader.h"
+#include "EmptyClients.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include "FloatRect.h"
@@ -48,11 +51,6 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
-
-// Moving this #include above FrameLoader.h causes the Windows build to fail due to warnings about
-// alignment in Timer<FrameLoader>. It seems that the definition of EmptyFrameLoaderClient is what
-// causes this (removing that definition fixes the warnings), but it isn't clear why.
-#include "EmptyClients.h" // NOLINT
 
 namespace WebCore {
 
@@ -101,7 +99,7 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
-void SVGImage::setContainerSize(const LayoutSize& containerSize)
+void SVGImage::setContainerSize(const IntSize& containerSize)
 {
     if (containerSize.isEmpty())
         return;

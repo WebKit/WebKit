@@ -1202,7 +1202,7 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     if (style && style->cursors()) {
         const CursorList* cursors = style->cursors();
         for (unsigned i = 0; i < cursors->size(); ++i) {
-            const CachedImage* cimage = 0;
+            CachedImage* cimage = 0;
             StyleImage* image = (*cursors)[i].image();
             if (image && image->isCachedImage())
                 cimage = static_cast<StyleCachedImage*>(image)->cachedImage();
@@ -1210,11 +1210,11 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
                 continue;
             IntPoint hotSpot = (*cursors)[i].hotSpot();
             // Limit the size of cursors so that they cannot be used to cover UI elements in chrome.
-            IntSize size = cimage->image()->size();
+            IntSize size = cimage->imageForRenderer(renderer)->size();
             if (size.width() > 128 || size.height() > 128)
                 continue;
             if (!cimage->errorOccurred())
-                return Cursor(cimage->image(), hotSpot);
+                return Cursor(cimage->imageForRenderer(renderer), hotSpot);
         }
     }
 

@@ -224,10 +224,10 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
 {
     // Shove image data into a DataObject for use as a file
     CachedImage* cachedImage = getCachedImage(element);
-    if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
+    if (!cachedImage || !cachedImage->imageForRenderer(element->renderer()) || !cachedImage->isLoaded())
         return;
 
-    SharedBuffer* imageBuffer = cachedImage->image()->data();
+    SharedBuffer* imageBuffer = cachedImage->imageForRenderer(element->renderer())->data();
     if (!imageBuffer || !imageBuffer->size())
         return;
 

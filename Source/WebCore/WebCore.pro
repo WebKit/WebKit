@@ -1121,6 +1121,7 @@ SOURCES += \
     rendering/FixedTableLayout.cpp \
     rendering/HitTestingTransformState.cpp \
     rendering/HitTestResult.cpp \
+    rendering/ImageBySizeCache.cpp \
     rendering/InlineBox.cpp \
     rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
@@ -2181,6 +2182,7 @@ HEADERS += \
     rendering/FixedTableLayout.h \
     rendering/HitTestingTransformState.h \
     rendering/HitTestResult.h \
+    rendering/ImageBySizeCache.h \
     rendering/InlineBox.h \
     rendering/InlineFlowBox.h \
     rendering/InlineTextBox.h \

@@ -378,7 +378,7 @@ QVariant QtPixmapInstance::variantFromObject(JSObject* object, QMetaType::Type h
         if (!cachedImage)
             goto returnEmptyVariant;
 
-        Image* image = cachedImage->image();
+        Image* image = cachedImage->imageForRenderer(imageElement->renderer());
         if (!image)
             goto returnEmptyVariant;
 

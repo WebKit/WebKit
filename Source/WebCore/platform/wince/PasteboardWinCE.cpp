@@ -208,7 +208,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
     CachedImage* cachedImage = static_cast<CachedImage*>(renderer->cachedImage());
     ASSERT(cachedImage);
-    Image* image = cachedImage->image();
+    Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
 
     clear();

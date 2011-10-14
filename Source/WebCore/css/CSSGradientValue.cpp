@@ -48,7 +48,7 @@ PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize&
 
     bool cacheable = isCacheable();
     if (cacheable) {
-        if (!m_clients.contains(renderer))
+        if (!clients().contains(renderer))
             return 0;
 
         // Need to look up our size.  Create a string of width*height to use as a hash key.

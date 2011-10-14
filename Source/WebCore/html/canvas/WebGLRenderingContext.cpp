@@ -3172,7 +3172,7 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         return;
     }
 
-    texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->image(),
+    texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->imageForRenderer(image->renderer()),
                    m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
@@ -3373,7 +3373,7 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         ec = SECURITY_ERR;
         return;
     }
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->image(),
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->imageForRenderer(image->renderer()),
                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 

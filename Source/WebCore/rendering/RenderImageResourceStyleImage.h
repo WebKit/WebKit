@@ -49,7 +49,7 @@ public:
     virtual PassRefPtr<Image> image(int width = 0, int height = 0) const { return m_styleImage->image(m_renderer, IntSize(width, height)); }
     virtual bool errorOccurred() const { return m_styleImage->errorOccurred(); }
 
-    virtual void setImageContainerSize(const IntSize& size) const { m_styleImage->setImageContainerSize(size); }
+    virtual void setContainerSizeForRenderer(const IntSize& size) { m_styleImage->setContainerSizeForRenderer(m_renderer, size); }
     virtual bool usesImageContainerSize() const { return m_styleImage->usesImageContainerSize(); }
     virtual bool imageHasRelativeWidth() const { return m_styleImage->imageHasRelativeWidth(); }
     virtual bool imageHasRelativeHeight() const { return m_styleImage->imageHasRelativeHeight(); }

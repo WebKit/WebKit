@@ -46,7 +46,7 @@ public:
     virtual bool imageHasRelativeWidth() const { return !m_fixedSize; }
     virtual bool imageHasRelativeHeight() const { return !m_fixedSize; }
     virtual bool usesImageContainerSize() const { return !m_fixedSize; }
-    virtual void setImageContainerSize(const IntSize&);
+    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize& containerSize) { m_containerSize = containerSize; }
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;

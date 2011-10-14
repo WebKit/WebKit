@@ -282,9 +282,9 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
         m_writableData = new QMimeData;
 
     CachedImage* cachedImage = getCachedImage(element);
-    if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
+    if (!cachedImage || !cachedImage->imageForRenderer(element->renderer()) || !cachedImage->isLoaded())
         return;
-    QPixmap* pixmap = cachedImage->image()->nativeImageForCurrentFrame();
+    QPixmap* pixmap = cachedImage->imageForRenderer(element->renderer())->nativeImageForCurrentFrame();
     if (pixmap)
         m_writableData->setImageData(*pixmap);
 

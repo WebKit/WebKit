@@ -82,7 +82,7 @@ static const int maxAltTextHeight = 256;
 IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 {
     ASSERT_ARG(newImage, newImage);
-    ASSERT_ARG(newImage, newImage->image());
+    ASSERT_ARG(newImage, newImage->imageForRenderer(this));
 
     IntSize imageSize;
     if (newImage->willPaintBrokenImage()) {
@@ -91,7 +91,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else
-        imageSize = newImage->image()->size();
+        imageSize = newImage->imageForRenderer(this)->size();
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
@@ -103,7 +103,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
 {
     IntSize imageSize;
-    if (newImage && newImage->image())
+    if (newImage && newImage->imageForRenderer(this))
         imageSize = imageSizeForError(newImage);
     else if (!m_altText.isEmpty() || newImage) {
         // If we'll be displaying either text or an image, add a little padding.
@@ -518,7 +518,7 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
     if (m_imageResource->imageHasRelativeWidth())
         if (RenderObject* cb = isPositioned() ? container() : containingBlock()) {
             if (cb->isBox())
-                m_imageResource->setImageContainerSize(LayoutSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
+                m_imageResource->setContainerSizeForRenderer(LayoutSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
         }
 
     LayoutUnit logicalWidth;

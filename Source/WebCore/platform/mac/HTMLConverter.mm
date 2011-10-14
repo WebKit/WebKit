@@ -1759,7 +1759,7 @@ static NSFileWrapper *fileWrapperForElement(Element* element)
     if (!wrapper) {
         RenderImage* renderer = toRenderImage(element->renderer());
         if (renderer->cachedImage() && !renderer->cachedImage()->errorOccurred()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->image()->getTIFFRepresentation())];
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->imageForRenderer(renderer)->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];
         }

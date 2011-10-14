@@ -32,11 +32,11 @@
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "IntRect.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -66,12 +66,12 @@ typedef struct _GdkPixbuf GdkPixbuf;
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatPoint;
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class SharedBuffer;
-class AffineTransform;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
@@ -87,6 +87,7 @@ public:
     static PassRefPtr<Image> loadPlatformResource(const char* name);
     static bool supportsType(const String&); 
 
+    virtual bool isSVGImage() const { return false; }
     virtual bool isBitmapImage() const { return false; }
     virtual bool currentFrameHasAlpha() { return false; }
 

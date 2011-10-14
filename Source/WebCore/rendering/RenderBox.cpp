@@ -1016,7 +1016,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
             // We have to check that the mask images to be rendered contain at least one image that can be actually used in rendering
             // before pushing the transparency layer.
             for (const FillLayer* fillLayer = maskLayers->next(); fillLayer; fillLayer = fillLayer->next()) {
-                if (fillLayer->image() && fillLayer->image()->canRender(style()->effectiveZoom())) {
+                if (fillLayer->image() && fillLayer->image()->canRender(this, style()->effectiveZoom())) {
                     pushTransparencyLayer = true;
                     // We found one image that can be used in rendering, exit the loop
                     break;
@@ -1130,7 +1130,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     RenderBox* layerRenderer = 0;
 
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
-        if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(style()->effectiveZoom())) {
+        if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(this, style()->effectiveZoom())) {
             // Now that we know this image is being used, compute the renderer and the rect
             // if we haven't already
             if (!layerRenderer) {

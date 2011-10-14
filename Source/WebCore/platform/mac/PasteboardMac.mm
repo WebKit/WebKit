@@ -309,7 +309,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     [m_pasteboard.get() declareTypes:types owner:nil];
     writeURL(m_pasteboard.get(), types, cocoaURL, nsStringNilIfEmpty(title), frame);
     
-    Image* image = cachedImage->image();
+    Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
     
     [m_pasteboard.get() setData:[image->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];

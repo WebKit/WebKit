@@ -611,7 +611,7 @@ static Image* getImage(Element* element)
     ASSERT(element);
     CachedImage* cachedImage = getCachedImage(element);
     return (cachedImage && !cachedImage->errorOccurred()) ?
-        cachedImage->image() : 0;
+        cachedImage->imageForRenderer(element->renderer()) : 0;
 }
 
 static void prepareClipboardForImageDrag(Frame* src, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)

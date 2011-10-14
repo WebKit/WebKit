@@ -83,9 +83,9 @@ using namespace HTMLNames;
 
 static const char* const defaultFont = "10px sans-serif";
 
-static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrigin)
+static bool isOriginClean(CachedImage* cachedImage, HTMLImageElement* image, SecurityOrigin* securityOrigin)
 {
-    if (!cachedImage->image()->hasSingleSecurityOrigin())
+    if (!cachedImage->imageForRenderer(image->renderer())->hasSingleSecurityOrigin())
         return false;
     if (cachedImage->passesAccessControlCheck(securityOrigin))
         return true;
@@ -1220,7 +1220,7 @@ void CanvasRenderingContext2D::applyShadow()
 static LayoutSize size(HTMLImageElement* image)
 {
     if (CachedImage* cachedImage = image->cachedImage())
-        return cachedImage->imageSize(1.0f); // FIXME: Not sure about this.
+        return cachedImage->imageSizeForRenderer(image->renderer(), 1.0f); // FIXME: Not sure about this.
     return IntSize();
 }
 
@@ -1320,7 +1320,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     checkOrigin(image);
 
-    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+    c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
     didDraw(normalizedDstRect);
 }
 
@@ -1631,11 +1631,11 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
         return 0;
 
     CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage || !image->cachedImage()->image())
+    if (!cachedImage || !image->cachedImage()->imageForRenderer(image->renderer()))
         return CanvasPattern::create(Image::nullImage(), repeatX, repeatY, true);
 
-    bool originClean = isOriginClean(cachedImage, canvas()->securityOrigin());
-    return CanvasPattern::create(cachedImage->image(), repeatX, repeatY, originClean);
+    bool originClean = isOriginClean(cachedImage, image, canvas()->securityOrigin());
+    return CanvasPattern::create(cachedImage->imageForRenderer(image->renderer()), repeatX, repeatY, originClean);
 }
 
 PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,

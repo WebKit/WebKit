@@ -61,7 +61,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* image)
         return false;
 
     CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage->image()->hasSingleSecurityOrigin())
+    if (!cachedImage->imageForRenderer(image->renderer())->hasSingleSecurityOrigin())
         return true;
 
     return wouldTaintOrigin(cachedImage->response().url()) && !cachedImage->passesAccessControlCheck(canvas()->securityOrigin());

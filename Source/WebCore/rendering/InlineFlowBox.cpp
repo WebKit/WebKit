@@ -1074,7 +1074,7 @@ void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, 
 void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     StyleImage* img = fillLayer->image();
-    bool hasFillImage = img && img->canRender(renderer()->style()->effectiveZoom());
+    bool hasFillImage = img && img->canRender(renderer(), renderer()->style()->effectiveZoom());
     if ((!hasFillImage && !renderer()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
         boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
     else {
@@ -1206,7 +1206,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
         if (parent() && renderer()->style()->hasBorder()) {
             const NinePieceImage& borderImage = renderer()->style()->borderImage();
             StyleImage* borderImageSource = borderImage.image();
-            bool hasBorderImage = borderImageSource && borderImageSource->canRender(styleToUse->effectiveZoom());
+            bool hasBorderImage = borderImageSource && borderImageSource->canRender(renderer(), styleToUse->effectiveZoom());
             if (hasBorderImage && !borderImageSource->isLoaded())
                 return; // Don't paint anything while we wait for the image to load.
 
@@ -1280,7 +1280,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, frameRect.size());
     paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), paintRect, compositeOp);
     
-    bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer()->style()->effectiveZoom());
+    bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer(), renderer()->style()->effectiveZoom());
     if (!hasBoxImage || !maskBoxImage->isLoaded())
         return; // Don't paint anything while we wait for the image to load.
 

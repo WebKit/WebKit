@@ -58,11 +58,6 @@ IntSize StyleGeneratedImage::imageSize(const RenderObject* renderer, float multi
     return m_containerSize;
 }
 
-void StyleGeneratedImage::setImageContainerSize(const IntSize& size)
-{
-    m_containerSize = size;
-}
-
 void StyleGeneratedImage::addClient(RenderObject* renderer)
 {
     m_generator->addClient(renderer, IntSize());

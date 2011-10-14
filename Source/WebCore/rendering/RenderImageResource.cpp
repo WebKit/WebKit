@@ -89,14 +89,11 @@ void RenderImageResource::resetAnimation()
         m_renderer->repaint();
 }
 
-void RenderImageResource::setImageContainerSize(const IntSize& size) const
+void RenderImageResource::setContainerSizeForRenderer(const IntSize& imageContainerSize)
 {
     ASSERT(m_renderer);
-
-    if (!m_cachedImage)
-        return;
-
-    m_cachedImage->setImageContainerSize(size);
+    if (m_cachedImage)
+        m_cachedImage->setContainerSizeForRenderer(m_renderer, imageContainerSize);
 }
 
 Image* RenderImageResource::nullImage()

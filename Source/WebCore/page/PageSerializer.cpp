@@ -231,7 +231,7 @@ void PageSerializer::serializeFrame(Frame* frame)
             HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(element);
             KURL url = document->completeURL(imageElement->getAttribute(HTMLNames::srcAttr));
             CachedImage* cachedImage = imageElement->cachedImage();
-            addImageToResources(cachedImage, url);
+            addImageToResources(cachedImage, imageElement->renderer(), url);
         } else if (element->hasTagName(HTMLNames::linkTag)) {
             HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(element);
             StyleSheet* sheet = linkElement->sheet();
@@ -288,7 +288,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
     }
 }
 
-void PageSerializer::addImageToResources(CachedImage* image, const KURL& url)
+void PageSerializer::addImageToResources(CachedImage* image, RenderObject* imageRenderer, const KURL& url)
 {
     if (!url.isValid() || m_resourceURLs.contains(url))
         return;
@@ -297,7 +297,7 @@ void PageSerializer::addImageToResources(CachedImage* image, const KURL& url)
         return;
 
     String mimeType = image->response().mimeType();
-    m_resources->append(Resource(url, mimeType, image->image()->data()));
+    m_resources->append(Resource(url, mimeType, imageRenderer ? image->imageForRenderer(imageRenderer)->data() : image->image()->data()));
     m_resourceURLs.add(url);
 }
 
@@ -337,7 +337,7 @@ void PageSerializer::retrieveResourcesForCSSDeclaration(CSSStyleDeclaration* sty
         CachedImage* image = static_cast<StyleCachedImage*>(styleImage)->cachedImage();
 
         KURL url = cssStyleSheet->document()->completeURL(image->url());
-        addImageToResources(image, url);
+        addImageToResources(image, 0, url);
     }
 }
 

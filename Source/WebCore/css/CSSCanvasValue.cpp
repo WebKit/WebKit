@@ -47,16 +47,16 @@ String CSSCanvasValue::cssText() const
 void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)
 {
     IntRect imageChangeRect = enclosingIntRect(changedRect);
-    RenderObjectSizeCountMap::const_iterator end = m_clients.end();
-    for (RenderObjectSizeCountMap::const_iterator curr = m_clients.begin(); curr != end; ++curr)
-        curr->first->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
+    RenderObjectSizeCountMap::const_iterator end = clients().end();
+    for (RenderObjectSizeCountMap::const_iterator curr = clients().begin(); curr != end; ++curr)
+        const_cast<RenderObject*>(curr->first)->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }
 
 void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
 {
-    RenderObjectSizeCountMap::const_iterator end = m_clients.end();
-    for (RenderObjectSizeCountMap::const_iterator curr = m_clients.begin(); curr != end; ++curr)
-        curr->first->imageChanged(static_cast<WrappedImagePtr>(this));
+    RenderObjectSizeCountMap::const_iterator end = clients().end();
+    for (RenderObjectSizeCountMap::const_iterator curr = clients().begin(); curr != end; ++curr)
+        const_cast<RenderObject*>(curr->first)->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
 void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement* element)
@@ -85,7 +85,7 @@ HTMLCanvasElement* CSSCanvasValue::element(Document* document)
 
 PassRefPtr<Image> CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)
 {
-    ASSERT(m_clients.contains(renderer));
+    ASSERT(clients().contains(renderer));
     HTMLCanvasElement* elt = element(renderer->document());
     if (!elt || !elt->buffer())
         return 0;

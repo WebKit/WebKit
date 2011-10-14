@@ -40,14 +40,14 @@ public:
     
     CachedImage* cachedImage() const { return m_image.get(); }
 
-    virtual bool canRender(float multiplier) const;
+    virtual bool canRender(const RenderObject*, float multiplier) const;
     virtual bool isLoaded() const;
     virtual bool errorOccurred() const;
     virtual IntSize imageSize(const RenderObject*, float multiplier) const;
     virtual bool imageHasRelativeWidth() const;
     virtual bool imageHasRelativeHeight() const;
     virtual bool usesImageContainerSize() const;
-    virtual void setImageContainerSize(const IntSize&);
+    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&);
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;

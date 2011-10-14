@@ -629,7 +629,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     Color bgColor = color;
     StyleImage* bgImage = bgLayer->image();
-    bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(style()->effectiveZoom());
+    bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style()->effectiveZoom());
     
     // When this style flag is set, change existing background colors and images to a solid white background.
     // If there's no bg color or image, leave it untouched to avoid affecting transparency.
@@ -803,7 +803,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, LayoutSize positioningAreaSize) const
 {
     StyleImage* image = fillLayer->image();
-    image->setImageContainerSize(positioningAreaSize); // Use the box established by background-origin.
+    image->setContainerSizeForRenderer(this, positioningAreaSize); // Use the box established by background-origin.
 
     EFillSizeType type = fillLayer->size().type;
 
@@ -988,7 +988,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     if (!styleImage->isLoaded())
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
-    if (!styleImage->canRender(style->effectiveZoom()))
+    if (!styleImage->canRender(this, style->effectiveZoom()))
         return false;
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
@@ -1005,7 +1005,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     LayoutUnit rightWithOutset = rect.maxX() + rightOutset;
     LayoutRect borderImageRect = LayoutRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
 
-    styleImage->setImageContainerSize(borderImageRect.size());
+    styleImage->setContainerSizeForRenderer(this, borderImageRect.size());
     LayoutSize imageSize = styleImage->imageSize(this, 1.0f);
     LayoutUnit imageWidth = imageSize.width();
     LayoutUnit imageHeight = imageSize.height();
