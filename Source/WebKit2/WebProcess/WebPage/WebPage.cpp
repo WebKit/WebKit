@@ -665,19 +665,19 @@ void WebPage::layoutIfNeeded()
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
+    FrameView* view = m_page->mainFrame()->view();
+
 #if ENABLE(TILED_BACKING_STORE)
     // If we are resizing to content ignore external attempts.
-    if (!m_resizesToContentsLayoutSize.isEmpty())
+    if (view->useFixedLayout())
         return;
 #endif
 
     if (m_viewSize == viewSize)
         return;
 
-    Frame* frame = m_page->mainFrame();
-    
-    frame->view()->resize(viewSize);
-    frame->view()->setNeedsLayout();
+    view->resize(viewSize);
+    view->setNeedsLayout();
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), viewSize));
     
     m_viewSize = viewSize;
@@ -693,39 +693,42 @@ void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 
 void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
 {
-    if (m_resizesToContentsLayoutSize == targetLayoutSize)
+    FrameView* view = m_page->mainFrame()->view();
+
+    if (view->fixedLayoutSize() == targetLayoutSize)
         return;
 
-    m_resizesToContentsLayoutSize = targetLayoutSize;
+    bool fixedLayout = !targetLayoutSize.isEmpty();
 
-    Frame* frame = m_page->mainFrame();
-    if (m_resizesToContentsLayoutSize.isEmpty()) {
-        frame->view()->setDelegatesScrolling(false);
-        frame->view()->setUseFixedLayout(false);
-        frame->view()->setPaintsEntireContents(false);
-    } else {
-        frame->view()->setDelegatesScrolling(true);
-        frame->view()->setUseFixedLayout(true);
-        frame->view()->setPaintsEntireContents(true);
-        frame->view()->setFixedLayoutSize(m_resizesToContentsLayoutSize);
+    if (fixedLayout)
+        view->setFixedLayoutSize(targetLayoutSize);
+
+    // Set view attributes based on whether fixed layout is used.
+    view->setDelegatesScrolling(fixedLayout);
+    view->setUseFixedLayout(fixedLayout);
+    view->setPaintsEntireContents(fixedLayout);
+
+    // Schedule a layout to use the new target size.
+    if (!view->layoutPending()) {
+        view->setNeedsLayout();
+        view->scheduleRelayout();
     }
-    frame->view()->forceLayout();
 }
 
 void WebPage::resizeToContentsIfNeeded()
 {
-    if (m_resizesToContentsLayoutSize.isEmpty())
+    FrameView* view = m_page->mainFrame()->view();
+
+    if (!view->useFixedLayout())
         return;
 
-    Frame* frame = m_page->mainFrame();
-
-    IntSize contentSize = frame->view()->contentsSize();
+    IntSize contentSize = view->contentsSize();
     if (contentSize == m_viewSize)
         return;
 
     m_viewSize = contentSize;
-    frame->view()->resize(m_viewSize);
-    frame->view()->setNeedsLayout();
+    view->resize(m_viewSize);
+    view->setNeedsLayout();
 }
 #endif
 

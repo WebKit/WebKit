@@ -1113,14 +1113,22 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebPage* webPage = m_frame->page();
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
+    FrameView* view = m_frame->coreFrame()->view();
 
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
 
 #if ENABLE(TILED_BACKING_STORE)
-    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->visibleContentRect().size() : IntSize();
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
+    IntSize currentVisibleContentSize;
+    IntSize fixedLayoutSize;
 
-    if (isMainFrame && webPage->resizesToContentsEnabled()) {
+    if (view) {
+        currentVisibleContentSize = view->visibleContentRect().size();
+        fixedLayoutSize = view->fixedLayoutSize();
+    }
+
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, fixedLayoutSize, !fixedLayoutSize.isEmpty());
+
+    if (isMainFrame && !fixedLayoutSize.isEmpty()) {
         m_frame->coreFrame()->view()->setDelegatesScrolling(true);
         m_frame->coreFrame()->view()->setPaintsEntireContents(true);
         // The HistoryController will update the scroll position later if needed.
