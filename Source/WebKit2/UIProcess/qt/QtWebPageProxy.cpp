@@ -156,7 +156,6 @@ void QtWebPageProxy::init()
         policyClient.version = kWKPagePolicyClientCurrentVersion;
         policyClient.clientInfo = m_policyInterface;
         policyClient.decidePolicyForNavigationAction = qt_wk_decidePolicyForNavigationAction;
-        policyClient.decidePolicyForResponse = qt_wk_decidePolicyForResponse;
         WKPageSetPagePolicyClient(toAPI(m_webPageProxy.get()), &policyClient);
     }
 }
