@@ -41,6 +41,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasStyle.h"
+#include "Console.h"
 #include "ExceptionCode.h"
 #include "FloatConversion.h"
 #include "FontCache.h"
@@ -55,6 +56,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
+#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StrokeStyleApplier.h"
@@ -1757,6 +1759,8 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
 PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     if (!canvas()->originClean()) {
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
+        canvas()->document()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String(), 0);
         ec = SECURITY_ERR;
         return 0;
     }

@@ -1,3 +1,27 @@
+2011-10-14  Adam Barth  <abarth@webkit.org>
+
+        canvas getImageData should explain why it throws SECURITY_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=70088
+
+        Reviewed by Darin Adler.
+
+        Update test results to show the new error message.
+
+        * http/tests/canvas/philip/tests/security.drawImage.canvas-expected.txt:
+        * http/tests/canvas/philip/tests/security.drawImage.image-expected.txt:
+        * http/tests/canvas/philip/tests/security.pattern.canvas.fillStyle-expected.txt:
+        * http/tests/canvas/philip/tests/security.pattern.canvas.strokeStyle-expected.txt:
+        * http/tests/canvas/philip/tests/security.pattern.cross-expected.txt:
+        * http/tests/canvas/philip/tests/security.pattern.image.fillStyle-expected.txt:
+        * http/tests/canvas/philip/tests/security.pattern.image.strokeStyle-expected.txt:
+        * http/tests/security/canvas-remote-read-data-url-svg-image-expected.txt:
+        * http/tests/security/canvas-remote-read-redirect-to-remote-image-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-blocked-then-allowed-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-redirect-expected.txt:
+        * http/tests/security/canvas-remote-read-svg-image-expected.txt:
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations after r97502.

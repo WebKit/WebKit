@@ -1,3 +1,16 @@
+2011-10-14  Adam Barth  <abarth@webkit.org>
+
+        canvas getImageData should explain why it throws SECURITY_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=70088
+
+        Reviewed by Darin Adler.
+
+        Log as message to the console when getImageData fails because the
+        canvas is tainted.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
         Inspector: Remove StyleBase usage.
