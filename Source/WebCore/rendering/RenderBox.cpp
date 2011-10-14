@@ -1271,6 +1271,39 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location)
     return clipRect;
 }
 
+enum IntrinsicDimension { LogicalHeightDimension, LogicalWidthDimension };
+
+static bool shouldExpandToIntrinsicDimension(RenderBlock* cb, IntrinsicDimension dimension)
+{
+    // This function allows images to size correctly to their intrinsic height/width when inside table cells 
+    // that only have percent or auto height/width.
+    // It's only interested in inspecting as far as the containing table, if there is one.
+    bool inTableCell = false;
+    while (cb && !cb->isRenderView()) {
+        if (cb->isTableCell())
+            inTableCell = true;
+
+        if (dimension == LogicalHeightDimension && !cb->style()->logicalHeight().isAuto() && !cb->style()->logicalHeight().isPercent())
+            return false;
+        if (dimension == LogicalWidthDimension && !cb->style()->logicalWidth().isAuto() && !cb->style()->logicalWidth().isPercent())
+            return false;
+
+        if (cb->isTable())
+            break;
+
+        cb = cb->containingBlock();
+    }
+    return inTableCell;
+}
+
+LayoutUnit RenderBox::containingBlockReplacedLogicalWidthForContent() const
+{
+    RenderBlock* cb = containingBlock();
+    if (shouldExpandToIntrinsicDimension(cb, LogicalWidthDimension))
+        return max(shrinkToAvoidFloats() ? cb->availableLogicalWidthForLine(logicalTop(), false) : cb->availableLogicalWidth(), intrinsicLogicalWidth());
+    return containingBlockLogicalWidthForContent();
+}
+
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
     RenderBlock* cb = containingBlock();
@@ -2177,7 +2210,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            const LayoutUnit cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
+            const LayoutUnit cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockReplacedLogicalWidthForContent();
             if (cw > 0)
                 return computeContentBoxLogicalWidth(logicalWidth.calcMinValue(cw));
         }
@@ -2237,14 +2270,9 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
                 // table cells using percentage heights.
                 // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
                 // https://bugs.webkit.org/show_bug.cgi?id=46997
-                while (cb && !cb->isRenderView() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
-                    if (cb->isTableCell()) {
-                        // Don't let table cells squeeze percent-height replaced elements
-                        // <http://bugs.webkit.org/show_bug.cgi?id=15359>
-                        availableHeight = max(availableHeight, intrinsicLogicalHeight());
-                        return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
-                    }
-                    cb = cb->containingBlock();
+                if (shouldExpandToIntrinsicDimension(toRenderBlock(cb), LogicalHeightDimension)) {
+                    availableHeight = max(availableHeight, intrinsicLogicalHeight());
+                    return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
                 }
             }
             return computeContentBoxLogicalHeight(logicalHeight.calcValue(availableHeight));

@@ -4,6 +4,8 @@
 
 
 
+
+
 Button
 Button
 
@@ -18,91 +20,64 @@ Button
 
 
 
-
-
-
-
-
-
-This is a searchable index. Enter search keywords: 
-This is a searchable index. Enter search keywords: 
 
 
 
 
 This test checks that replaced elements with percentage heights within table cells have the correct height.
+Note, some of the button height tests fail on the Windows ports. See bug #34071.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getComputedStyleForElement(document.getElementById('canvas-75'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('canvas-75'), 'height') is '112px'
-PASS getComputedStyleForElement(document.getElementById('canvas-100'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('canvas-100'), 'height') is '150px'
-PASS getComputedStyleForElement(document.getElementById('embed-75'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('embed-75'), 'height') is '112px'
-PASS getComputedStyleForElement(document.getElementById('embed-100'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('embed-100'), 'height') is '150px'
-PASS getComputedStyleForElement(document.getElementById('img-75'), 'width') is '75px'
-PASS getComputedStyleForElement(document.getElementById('img-75'), 'height') is '75px'
-PASS getComputedStyleForElement(document.getElementById('img-100'), 'width') is '100px'
-PASS getComputedStyleForElement(document.getElementById('img-100'), 'height') is '100px'
-PASS getComputedStyleForElement(document.getElementById('object-75'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('object-75'), 'height') is '112px'
-PASS getComputedStyleForElement(document.getElementById('object-100'), 'width') is '300px'
-PASS getComputedStyleForElement(document.getElementById('object-100'), 'height') is '150px'
-PASS getComputedStyleForElement(document.getElementById('button-75'), 'width') is '51px'
-PASS getComputedStyleForElement(document.getElementById('button-75'), 'height') is '15px'
-PASS getComputedStyleForElement(document.getElementById('button-100'), 'width') is '51px'
-PASS getComputedStyleForElement(document.getElementById('button-100'), 'height') is '15px'
-PASS getComputedStyleForElement(document.getElementById('input-button-75'), 'width') is '16px'
-PASS getComputedStyleForElement(document.getElementById('input-button-75'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-button-100'), 'width') is '16px'
-PASS getComputedStyleForElement(document.getElementById('input-button-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'width') is '12px'
-PASS getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'height') is '4px'
-PASS getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'width') is '12px'
-PASS getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'height') is '6px'
-PASS getComputedStyleForElement(document.getElementById('input-file-75'), 'width') is '237px'
-PASS getComputedStyleForElement(document.getElementById('input-file-75'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('input-file-100'), 'width') is '237px'
-PASS getComputedStyleForElement(document.getElementById('input-file-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-image-75'), 'width') is '75px'
-PASS getComputedStyleForElement(document.getElementById('input-image-75'), 'height') is '75px'
-PASS getComputedStyleForElement(document.getElementById('input-image-100'), 'width') is '100px'
-PASS getComputedStyleForElement(document.getElementById('input-image-100'), 'height') is '100px'
-FAIL getComputedStyleForElement(document.getElementById('input-password-75'), 'width') should be 148px. Was 146px.
-PASS getComputedStyleForElement(document.getElementById('input-password-75'), 'height') is '8px'
-FAIL getComputedStyleForElement(document.getElementById('input-password-100'), 'width') should be 148px. Was 146px.
-PASS getComputedStyleForElement(document.getElementById('input-password-100'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('input-radio-75'), 'width') is '12px'
-FAIL getComputedStyleForElement(document.getElementById('input-radio-75'), 'height') should be 4px. Was 2px.
-PASS getComputedStyleForElement(document.getElementById('input-radio-100'), 'width') is '12px'
-FAIL getComputedStyleForElement(document.getElementById('input-radio-100'), 'height') should be 6px. Was 3px.
-PASS getComputedStyleForElement(document.getElementById('input-reset-75'), 'width') is '45px'
-PASS getComputedStyleForElement(document.getElementById('input-reset-75'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-reset-100'), 'width') is '45px'
-PASS getComputedStyleForElement(document.getElementById('input-reset-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-submit-75'), 'width') is '54px'
-PASS getComputedStyleForElement(document.getElementById('input-submit-75'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('input-submit-100'), 'width') is '54px'
-PASS getComputedStyleForElement(document.getElementById('input-submit-100'), 'height') is '18px'
-FAIL getComputedStyleForElement(document.getElementById('input-text-75'), 'width') should be 148px. Was 146px.
-PASS getComputedStyleForElement(document.getElementById('input-text-75'), 'height') is '8px'
-FAIL getComputedStyleForElement(document.getElementById('input-text-100'), 'width') should be 148px. Was 146px.
-PASS getComputedStyleForElement(document.getElementById('input-text-100'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('isindex-75'), 'width') is '142px'
-PASS getComputedStyleForElement(document.getElementById('isindex-75'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('isindex-100'), 'width') is '142px'
-PASS getComputedStyleForElement(document.getElementById('isindex-100'), 'height') is '13px'
-PASS getComputedStyleForElement(document.getElementById('select-75'), 'width') is '68px'
-PASS getComputedStyleForElement(document.getElementById('select-75'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('select-100'), 'width') is '68px'
-PASS getComputedStyleForElement(document.getElementById('select-100'), 'height') is '18px'
-PASS getComputedStyleForElement(document.getElementById('textarea-75'), 'width') is '163px'
-PASS getComputedStyleForElement(document.getElementById('textarea-75'), 'height') is '19px'
-PASS getComputedStyleForElement(document.getElementById('textarea-100'), 'width') is '163px'
-PASS getComputedStyleForElement(document.getElementById('textarea-100'), 'height') is '26px'
+PASS getWidth('canvas-75') is '224px'
+PASS getHeight('canvas-75') is '112px'
+PASS getWidth('canvas-100') is '300px'
+PASS getHeight('canvas-100') is '150px'
+PASS getWidth('embed-75') is '300px'
+PASS getHeight('embed-75') is '112px'
+PASS getWidth('embed-100') is '300px'
+PASS getHeight('embed-100') is '150px'
+PASS getWidth('img-75') is '75px'
+PASS getHeight('img-75') is '75px'
+PASS getWidth('img-100') is '100px'
+PASS getHeight('img-100') is '100px'
+PASS getWidth('img-75-nested') is '75px'
+PASS getHeight('img-75-nested') is '75px'
+PASS getWidth('img-100-nested') is '100px'
+PASS getHeight('img-100-nested') is '100px'
+PASS getWidth('object-75') is '300px'
+PASS getHeight('object-75') is '112px'
+PASS getWidth('object-100') is '300px'
+PASS getHeight('object-100') is '150px'
+PASS getWidth('button-75') is getWidth('button-100')
+PASS getHeight('button-75') != '0px' is true
+FAIL getHeight('button-75') should be 16px. Was 10px.
+PASS getWidth('input-button-75') is getWidth('input-button-100')
+PASS getHeight('input-button-75') != '0px' is true
+FAIL getHeight('input-button-75') should be 16px. Was 10px.
+PASS getWidth('input-checkbox-75') is getWidth('input-checkbox-100')
+PASS getHeight('input-checkbox-75') != '0px' is true
+PASS getHeight('input-checkbox-75') is 75% of getHeight('input-checkbox-100').
+PASS getWidth('input-file-75') is getWidth('input-file-100')
+PASS getHeight('input-file-75') != '0px' is true
+PASS getHeight('input-file-75') is 75% of getHeight('input-file-100').
+PASS getWidth('input-image-75') is '75px'
+PASS getHeight('input-image-75') is '75px'
+PASS getWidth('input-image-100') is '100px'
+PASS getHeight('input-image-100') is '100px'
+PASS getWidth('input-radio-75') is getWidth('input-radio-100')
+PASS getHeight('input-radio-75') != '0px' is true
+PASS getHeight('input-radio-75') is 75% of getHeight('input-radio-100').
+PASS getWidth('input-reset-75') is getWidth('input-reset-100')
+PASS getHeight('input-reset-75') != '0px' is true
+FAIL getHeight('input-reset-75') should be 16px. Was 10px.
+PASS getWidth('input-submit-75') is getWidth('input-submit-100')
+PASS getHeight('input-submit-75') != '0px' is true
+FAIL getHeight('input-submit-75') should be 16px. Was 10px.
+PASS getWidth('select-75') is getWidth('select-100')
+PASS getHeight('select-75') != '0px' is true
+FAIL getHeight('select-75') should be 18px. Was 13px.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,22 @@
+2011-09-28  Robert Hogan  <robert@webkit.org>
+
+        Replaced elements squeezed when width is specified as percentage inside a table with Auto layout
+        https://bugs.webkit.org/show_bug.cgi?id=29447
+
+        If inserting a 'replaced' element (e.g. image, plugin) in a table cell that is not descendant from
+        a block with fixed layout then do not squeeze the element, let it use its intrinsic width and height.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/replaced/table-percent-width.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::shouldExpandToIntrinsicDimension):
+        (WebCore::RenderBox::containingBlockReplacedLogicalWidthForContent):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        * rendering/RenderBox.h:
+
 2011-10-14  Cary Clark  <caryclark@google.com>
 
         [Chromium Skia on Mac] Improve focus ring

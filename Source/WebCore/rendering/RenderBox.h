@@ -297,6 +297,7 @@ public:
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
     LayoutUnit containingBlockLogicalWidthForContentInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
+    LayoutUnit containingBlockReplacedLogicalWidthForContent() const;
     
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
