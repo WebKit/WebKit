@@ -24,6 +24,11 @@
 
 #include "ClassNodeList.h"
 #include "DynamicNodeList.h"
+
+#if ENABLE(MICRODATA)
+#include "MicroDataItemList.h"
+#endif
+
 #include "NameNodeList.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
@@ -56,7 +61,12 @@ public:
 
     typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCacheNS;
     TagNodeListCacheNS m_tagNodeListCacheNS;
- 
+
+#if ENABLE(MICRODATA)
+    typedef HashMap<String, MicroDataItemList*> MicroDataItemListCache;
+    MicroDataItemListCache m_microDataItemListCache;
+#endif
+
     LabelsNodeList* m_labelsNodeListCache;
  
     static PassOwnPtr<NodeListsNodeData> create()
@@ -66,6 +76,11 @@ public:
     
     void invalidateCaches();
     void invalidateCachesThatDependOnAttributes();
+
+#if ENABLE(MICRODATA)
+    void invalidateMicrodataItemListCaches();
+#endif
+
     bool isEmpty() const;
 
 private:

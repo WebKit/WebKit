@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems must be case sensitive.</p>
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/BAR" id="two"></div>
+<div id="console"></div>
+
+<script>
+shouldBeTrue("document.getItems('http://example.com/Foo').length == 0");
+shouldBeTrue("document.getItems('http://example.com/foo').length == 1");
+
+shouldBeTrue("document.getItems('http://example.com/BAR').length == 1");
+shouldBeTrue("document.getItems('http://example.com/bar').length == 0");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

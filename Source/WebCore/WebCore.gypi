@@ -5224,6 +5224,8 @@
             'dom/MessageEvent.h',
             'dom/MessagePort.cpp',
             'dom/MessagePortChannel.cpp',
+            'dom/MicroDataItemList.cpp',
+            'dom/MicroDataItemList.h',
             'dom/MouseEvent.cpp',
             'dom/MouseRelatedEvent.cpp',
             'dom/MutationCallback.h',

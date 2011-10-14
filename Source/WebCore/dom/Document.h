@@ -159,6 +159,10 @@ class RequestAnimationFrameCallback;
 class ScriptedAnimationController;
 #endif
 
+#if ENABLE(MICRODATA)
+class MicroDataItemList;
+#endif
+
 typedef int ExceptionCode;
 
 class FormElementKey {
@@ -1096,6 +1100,11 @@ public:
     void didRemoveWheelEventHandler();
     
     bool visualUpdatesAllowed() const;
+
+#if ENABLE(MICRODATA)
+    PassRefPtr<NodeList> getItems(const String& typeNames);
+    void removeCachedMicroDataItemList(MicroDataItemList*, const String&);
+#endif
     
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);

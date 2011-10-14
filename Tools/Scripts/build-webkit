@@ -106,6 +106,7 @@ my (
     $mediaStreamSupport,
     $meterTagSupport,
     $mhtmlSupport,
+    $microdataSupport,
     $mutationObserversSupport,
     $netscapePluginSupport,
     $notificationsSupport,
@@ -261,6 +262,9 @@ my @features = (
 
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", default => 0, value => \$mhtmlSupport },
+
+    { option => "microdata", desc => "Toggle Microdata support",
+      define => "ENABLE_MICRODATA", default => 0, value => \$microdataSupport },
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },

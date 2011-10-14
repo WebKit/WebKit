@@ -101,6 +101,9 @@ BUGCR20404 : editing/execCommand/copy-without-selection.html = TEXT
 BUGWK63933 : fast/canvas/canvas-webkitLineDash.html = FAIL
 BUGWK63933 : fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
 
+// Microdata DOM API is not yet enabled.
+BUGWK68610 SKIP : fast/dom/MicroData = PASS
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

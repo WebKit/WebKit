@@ -2275,6 +2275,23 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
+#if ENABLE(MICRODATA)
+void Node::itemTypeAttributeChanged()
+{
+    Node * rootNode = document();
+
+    if (!rootNode->hasRareData())
+        return;
+
+    NodeRareData* data = rootNode->rareData();
+
+    if (!data->nodeLists())
+        return;
+
+    data->nodeLists()->invalidateMicrodataItemListCaches();
+}
+#endif
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)
@@ -2424,7 +2441,20 @@ void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
         it->second->invalidateCache();
     if (m_labelsNodeListCache)
         m_labelsNodeListCache->invalidateCache();
+
+#if ENABLE(MICRODATA)
+    invalidateMicrodataItemListCaches();
+#endif
 }
+
+#if ENABLE(MICRODATA)
+void NodeListsNodeData::invalidateMicrodataItemListCaches()
+{
+    MicroDataItemListCache::iterator itemListCacheEnd = m_microDataItemListCache.end();
+    for (MicroDataItemListCache::iterator it = m_microDataItemListCache.begin(); it != itemListCacheEnd; ++it)
+        it->second->invalidateCache();
+}
+#endif
 
 bool NodeListsNodeData::isEmpty() const
 {
@@ -2442,6 +2472,10 @@ bool NodeListsNodeData::isEmpty() const
         return false;
     if (!m_nameNodeListCache.isEmpty())
         return false;
+#if ENABLE(MICRODATA)
+    if (!m_microDataItemListCache.isEmpty())
+        return false;
+#endif
 
     if (m_labelsNodeListCache)
         return false;

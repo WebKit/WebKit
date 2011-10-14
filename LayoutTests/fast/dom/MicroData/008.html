@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems must not find items with itemtype but not itemscope.</p>
+<div itemscope itemtype="http://example.com/foo"></div>
+<div itemtype="http://example.com/bar"></div>
+<div id="console"></div>
+<script>
+shouldBeTrue("document.getItems('http://example.com/bar').length == 0");
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

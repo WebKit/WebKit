@@ -1,3 +1,60 @@
+2011-10-13  Arko Saha  <arko@motorola.com>
+
+        Microdata: Basic implementation of document.getItems() method.
+        https://bugs.webkit.org/show_bug.cgi?id=68610
+
+        Reviewed by Ryosuke Niwa.
+
+        Added ENABLE(MICRODATA) feature flag. Implement document.getItems() DOM API.
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/complete/microdata.html
+
+        Tests: fast/dom/MicroData/001.html
+               fast/dom/MicroData/002.html
+               fast/dom/MicroData/003.html
+               fast/dom/MicroData/004.html
+               fast/dom/MicroData/005.html
+               fast/dom/MicroData/006.html
+               fast/dom/MicroData/007.html
+               fast/dom/MicroData/008.html
+               fast/dom/MicroData/009.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * dom/Document.cpp:
+        (WebCore::Document::getItems): Returns NodeList of the element in the Document that
+        create items, that are not part of other items, and that are of one of the types
+        given in the argument. If no tokens specified/undefined in the argument, then
+        return a NodeList containing all top level microdata items.
+        (WebCore::Document::removeCachedMicroDataItemList): Remove Microdata item node list
+        from cache.
+        * dom/Document.h:
+        * dom/Document.idl: Added getItems() microdata DOM API.
+        * dom/MicroDataItemList.cpp: Added.
+        (WebCore::MicroDataItemList::MicroDataItemList):
+        (WebCore::MicroDataItemList::~MicroDataItemList):
+        (WebCore::MicroDataItemList::nodeMatches):
+        * dom/MicroDataItemList.h: Added.
+        (WebCore::MicroDataItemList::create):
+        * dom/Node.cpp:
+        (WebCore::Node::itemTypeAttributeChanged): It is responsible to invalidate the Microdata
+        item node cache when itemType attribute changes.
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes):
+        (WebCore::NodeListsNodeData::invalidateMicrodataItemListCaches): Invalidate Microdata item
+        list cache.
+        (WebCore::NodeListsNodeData::isEmpty):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * features.pri:
+        * html/HTMLAttributeNames.in: Added itemid, itemprop, itemscope, itemtype attributes.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Handle itemtype attribute change.
+        * html/HTMLElement.idl: Added itemid, itemprop, itemscope, itemtypes microdata attributes.
+
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
         Stricter management of WebKitCSSKeyframeRules.

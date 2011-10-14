@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that live NodeList must notice when itemscope attribute changes.</p>
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/bar" id="two"></div>
+<script>
+var one = document.getElementById('one');
+var two = document.getElementById('two');
+
+runTest(document.getItems(), [one, two], "This test page contain two microdata items");
+
+// Remove itemscope attribute
+one.removeAttribute('itemscope');
+runTest(document.getItems(), [two], "Removing itemscope attribute should reflect in the NodeList");
+
+// Setting itemscope attribute
+one.setAttribute('itemscope','itemscope');
+runTest(document.getItems(), [one, two], "Set itemscope attribute should reflect in the NodeList");
+
+// Setting itemscope attribute to false
+two.itemScope = false;
+runTest(document.getItems(), [one], "Set element.itemScope to false should notice in the NodeList");
+
+// Setting itemscope attribute to true
+two.itemScope = true;
+runTest(document.getItems(), [one, two], "Set element.itemScope to true should notice in the NodeList");
+
+document.write("<br>TEST COMPLETE");
+</script>
+</body>
+</html>

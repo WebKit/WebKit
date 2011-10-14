@@ -66,6 +66,10 @@ module html {
 
                  attribute boolean spellcheck;
 
+                 attribute [Conditional=MICRODATA, Reflect] boolean itemScope;
+                 attribute [Conditional=MICRODATA, Reflect] DOMString itemType;
+                 attribute [Conditional=MICRODATA, Reflect] DOMString itemId;
+
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString titleDisplayString;
 #endif

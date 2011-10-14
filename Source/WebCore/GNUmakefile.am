@@ -577,6 +577,14 @@ webcore_cppflags += -DENABLE_MHTML=1
 endif  # END ENABLE_MHTML
 
 # ---
+# HTML5 Microdata support
+# ---
+if ENABLE_MICRODATA
+FEATURE_DEFINES += ENABLE_MICRODATA=1
+webcore_cppflags += -DENABLE_MICRODATA=1
+endif  # END ENABLE_MICRODATA
+
+# ---
 # Register Protocol Handler support
 # ---
 if ENABLE_REGISTER_PROTOCOL_HANDLER

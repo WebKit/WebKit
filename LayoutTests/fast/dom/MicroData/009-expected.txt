@@ -1,0 +1,13 @@
+This test ensures that document.getItems must not contain the items that have the itemprop attribute set. It must return a NodeList containing the top-level microdata items in the document.
+
+Name: Amanda
+
+Band: Jazz Band (12 players)
+
+PASS document.getItems().length == 6 is true
+PASS document.getItems().length == 4 is true
+PASS document.getItems().length == 5 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

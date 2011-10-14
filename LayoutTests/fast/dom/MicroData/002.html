@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems().length must return the correct number of MicroData Items in the Document.
+<br>Also it tests that document.getItems must return a live NodeList.
+</p>
+
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/bar" id="two"></div>
+<div itemscope itemtype="http://example.com/foo" id="three">
+<div itemscope itemtype="http://example.com/f1" id="four"></div>
+</div>
+
+<script>
+var one = document.getElementById('one');
+var two = document.getElementById('two');
+var three = document.getElementById('three');
+var four = document.getElementById('four');
+
+runTest(document.getItems(), [one, two, three, four], "document.getItems() without aurgument");
+runTest(document.getItems(''), [one, two, three, four], "document.getItems() with empty string in the aurgument");
+runTest(document.getItems('http://example.com/foo'), [one, three], "document.getItems() with 'http://example.com/foo' itemtype in the aurgument");
+runTest(document.getItems('http://example.com/bar'), [two], "document.getItems() with 'http://example.com/bar' itemtype in the aurgument");
+runTest(document.getItems('http://example.com/f1'), [four], "document.getItems() with 'http://example.com/f1' itemtype in the aurgument");
+
+var element = createElem('div', {itemscope:'itemscope'});
+
+// Append newly created item to body
+document.body.appendChild(element);
+runTest(document.getItems(), [one, two, three, four, element], "Newly appended item should be noticed in the NodeList");
+
+// Remove the element
+document.body.removeChild(element);
+runTest(document.getItems(), [one, two, three, four], "Removing item should be noticed in the NodeList");
+
+document.write("<br>TEST COMPLETE");
+</script>
+</body>
+</html>

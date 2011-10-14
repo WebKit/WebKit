@@ -175,6 +175,10 @@ module core {
 
         NodeList getElementsByName(in [Optional=CallWithDefaultValue] DOMString elementName);
 
+#if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
+        NodeList getItems(in [ConvertUndefinedOrNullToNullString, Optional=CallWithDefaultValue] DOMString typeNames);
+#endif
+
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
                  attribute [Custom] Location location;
 #endif

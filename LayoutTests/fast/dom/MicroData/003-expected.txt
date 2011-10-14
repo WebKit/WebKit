@@ -1,0 +1,9 @@
+This test ensures that live NodeList must notice when itemscope attribute changes.
+
+This test page contain two microdata items: PASS
+Removing itemscope attribute should reflect in the NodeList: PASS
+Set itemscope attribute should reflect in the NodeList: PASS
+Set element.itemScope to false should notice in the NodeList: PASS
+Set element.itemScope to true should notice in the NodeList: PASS
+
+TEST COMPLETE

@@ -1225,6 +1225,8 @@ webcore_sources += \
 	Source/WebCore/dom/MessagePortChannel.h \
 	Source/WebCore/dom/MessagePort.cpp \
 	Source/WebCore/dom/MessagePort.h \
+	Source/WebCore/dom/MicroDataItemList.cpp \
+	Source/WebCore/dom/MicroDataItemList.h \
 	Source/WebCore/dom/MouseEvent.cpp \
 	Source/WebCore/dom/MouseEvent.h \
 	Source/WebCore/dom/MouseRelatedEvent.cpp \

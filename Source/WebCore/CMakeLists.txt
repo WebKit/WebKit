@@ -549,6 +549,7 @@ SET(WebCore_SOURCES
     dom/MessageEvent.cpp
     dom/MessagePortChannel.cpp
     dom/MessagePort.cpp
+    dom/MicroDataItemList.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp

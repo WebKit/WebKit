@@ -515,6 +515,7 @@ SOURCES += \
     dom/MessageEvent.cpp \
     dom/MessagePort.cpp \
     dom/MessagePortChannel.cpp \
+    dom/MicroDataItemList.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
@@ -1533,6 +1534,7 @@ HEADERS += \
     dom/MessageEvent.h \
     dom/MessagePortChannel.h \
     dom/MessagePort.h \
+    dom/MicroDataItemList.h \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
     dom/MutationCallback.h \

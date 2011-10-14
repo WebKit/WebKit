@@ -2422,3 +2422,6 @@ fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
 http/tests/inspector/resource-tree/resource-tree-document-url.html
 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
 http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
+
+# Microdata DOM API is not yet enabled.
+BUGWK68610 SKIP : fast/dom/MicroData = PASS

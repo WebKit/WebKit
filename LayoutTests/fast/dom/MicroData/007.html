@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests that document.getItems NodeList must be in source tree order.</p>
+
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/bar" id="two"></div>
+<div itemscope itemtype="http://example.com/foo" id="three">
+<div itemscope itemtype="data:text/plain," id="four"></div>
+</div>
+<div itemscope id="five"></div>
+<div id="console"></div>
+<script>
+var nodeList = document.getItems('http://example.com/bar data:text/plain, http://example.com/foo');
+
+shouldBe("nodeList[0].id", "'one'");
+shouldBe("nodeList[1].id", "'two'");
+shouldBe("nodeList[2].id", "'three'");
+shouldBe("nodeList[3].id", "'four'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

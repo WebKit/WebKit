@@ -1,0 +1,7 @@
+This test ensures that document.getItems must not find items with itemtype but not itemscope.
+
+PASS document.getItems('http://example.com/bar').length == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

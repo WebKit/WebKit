@@ -1,0 +1,10 @@
+This tests that document.getItems NodeList must be in source tree order.
+
+PASS nodeList[0].id is 'one'
+PASS nodeList[1].id is 'two'
+PASS nodeList[2].id is 'three'
+PASS nodeList[3].id is 'four'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

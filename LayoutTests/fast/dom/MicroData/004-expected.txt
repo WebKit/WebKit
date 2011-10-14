@@ -1,0 +1,10 @@
+This test ensures that document.getItems must be case sensitive.
+
+PASS document.getItems('http://example.com/Foo').length == 0 is true
+PASS document.getItems('http://example.com/foo').length == 1 is true
+PASS document.getItems('http://example.com/BAR').length == 1 is true
+PASS document.getItems('http://example.com/bar').length == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems DOM API must exist.</p>
+<div id="console"></div>
+<script>
+var NodeList = document.getItems;
+shouldBeDefined("NodeList");
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

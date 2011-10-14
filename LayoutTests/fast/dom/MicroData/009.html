@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems must not contain the items that have the itemprop attribute set.
+It must return a NodeList containing the top-level microdata items in the document.</p>
+
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/bar" id="two"></div>
+
+<div itemscope>
+<p>Name: <span itemprop="name">Amanda</span></p>
+<p>Band: <span itemprop="band" itemscope> <span itemprop="name">Jazz Band</span> (<span itemprop="size">12</span> players)</span></p>
+</div>
+
+<div itemscope itemtype="http://example.com/foo" id="three">
+<div itemscope itemtype="http://example.com/f1" id="four"></div>
+</div>
+<div itemscope id="five"></div>
+<div id="console"></div>
+<script>
+shouldBeTrue("document.getItems().length == 6");
+
+document.getElementById('one').setAttribute('itemprop', 'test');
+document.getElementById('five').setAttribute('itemprop', 'test');
+shouldBeTrue("document.getItems().length == 4");
+
+document.getElementById('five').removeAttribute('itemprop');
+shouldBeTrue("document.getItems().length == 5");
+
+var successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

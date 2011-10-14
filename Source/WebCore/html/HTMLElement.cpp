@@ -195,6 +195,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
             addCSSProperty(attr, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalIgnoringCase(value, "false"))
             addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueNone);
+#if ENABLE(MICRODATA)
+    } else if (attr->name() == itemtypeAttr) {
+        itemTypeAttributeChanged();
+#endif
     }
 // standard events
     else if (attr->name() == onclickAttr) {

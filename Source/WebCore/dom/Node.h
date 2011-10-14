@@ -516,6 +516,7 @@ public:
     void notifyLocalNodeListsAttributeChanged();
     void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
+
     void removeCachedNameNodeList(NameNodeList*, const String&);
     void removeCachedTagNodeList(TagNodeList*, const AtomicString&);
     void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
@@ -579,6 +580,10 @@ public:
 
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
+
+#if ENABLE(MICRODATA)
+    void itemTypeAttributeChanged();
+#endif
 
 private:
     enum NodeFlags {

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that live NodeList must notice when itemtype changes.</p>
+<div itemscope itemtype="http://example.com/foo" id="one"></div>
+<div itemscope itemtype="http://example.com/foo" id="two"></div>
+
+<script>
+var one = document.getElementById('one');
+var two = document.getElementById('two');
+
+runTest(document.getItems('http://example.com/foo'), [one, two], "This test page contain two microdata items");
+
+// Remove itemtype attribute
+one.removeAttribute('itemtype');
+runTest(document.getItems('http://example.com/foo'), [two], "NodeList must notice on remove attribute itemtype");
+
+// Set itemtype attribute
+one.setAttribute('itemtype','http://example.com/foo');
+runTest(document.getItems('http://example.com/foo'), [one, two], "NodeList must notice on set attribute itemtype");
+
+document.write("<br>TEST COMPLETE");
+</script>
+</body>
+</html>

@@ -417,6 +417,14 @@ AC_ARG_ENABLE(meter_tag,
               [],[enable_meter_tag="yes"])
 AC_MSG_RESULT([$enable_meter_tag])
 
+# check whether to enable HTML5 Microdata support
+AC_MSG_CHECKING([whether to enable HTML5 Microdata support])
+AC_ARG_ENABLE(microdata,
+              AC_HELP_STRING([--enable-microdata],
+                             [enable HTML5 microdata support [default=no]]),
+              [],[enable_microdata="no"])
+AC_MSG_RESULT([$enable_microdata])
+
 # check whether to enable page visibility API.
 AC_MSG_CHECKING([whether to enable Page Visibility API support])
 AC_ARG_ENABLE(page_visibility_api,
@@ -1137,6 +1145,7 @@ AM_CONDITIONAL([ENABLE_3D_RENDERING],[test "$enable_3d_rendering" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_TAG],[test "$enable_meter_tag" = "yes"])
+AM_CONDITIONAL([ENABLE_MICRODATA],[test "$enable_microdata" = "yes"])
 AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" = "yes"])
 AM_CONDITIONAL([ENABLE_PROGRESS_TAG],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
@@ -1262,6 +1271,7 @@ Features:
  Media statistics                                         : $enable_media_statistics
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 meter element support                              : $enable_meter_tag
+ HTML5 microdata support                                  : $enable_microdata
  Page Visibility API support                              : $enable_page_visibility_api
  HTML5 progress element support                           : $enable_progress_tag
  HTML5 client-side session and persistent storage support : $enable_dom_storage

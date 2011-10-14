@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests that document.getItems must locate items when parameters are separated by spaces.
+<br>This test also ensure that document.getItems must ignore duplicated tokens.
+</p>
+<div itemscope itemtype="http://example.com/foo"></div>
+<div itemscope itemtype="http://example.com/bar">
+<div itemscope itemtype="data:text/plain"></div>
+</div>
+<div id="console"></div>
+<script>
+shouldBeTrue("document.getItems(' http://example.com/foo http://example.com/bar ').length == 2");
+shouldBeTrue("document.getItems(' http://example.com/foo  data:text/plain  ').length == 2");
+shouldBeTrue("document.getItems('  http://example.com/foo  data:text/plain  http://example.com/foo').length == 2");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
