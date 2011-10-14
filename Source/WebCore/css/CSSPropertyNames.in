@@ -348,7 +348,7 @@ z-index
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
--webkit-flow
+-webkit-flow-into
 -webkit-region-overflow
 -webkit-wrap-shape
 -webkit-region-break-after

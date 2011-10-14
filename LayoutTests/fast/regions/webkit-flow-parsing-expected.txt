@@ -1,34 +1,25 @@
-Test parsing of the CSS webkit-flow property.
+Test parsing of the CSS webkit-flow-into property.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS test("-webkit-flow: auto") is "auto"
-PASS test("-webkit-flow: initial") is "initial"
-PASS test("-webkit-flow: inherit") is "inherit"
-PASS test("-webkit-flow: 'first-flow'") is "first-flow"
-PASS test("-webkit-flow: 'first flow'") is "'first flow'"
-PASS test("-webkit-flow: 'auto';") is "auto"
-PASS test("-webkit-flow: ''") is "auto"
-PASS test("-webkit-flow: ;") is ""
-PASS test("-webkit-flow: 1") is ""
-PASS test("-webkit-flow: 1.2") is ""
-PASS test("-webkit-flow: -1") is ""
-PASS test("-webkit-flow: 12px") is ""
-PASS test("-webkit-flow: first-flow;") is ""
-PASS test("-webkit-flow: first flow") is ""
+PASS test("-webkit-flow-into: auto") is "auto"
+PASS test("-webkit-flow-into: first-flow") is "first-flow"
+PASS test("-webkit-flow-into: 'first flow'") is ""
+PASS test("-webkit-flow-into: ;") is ""
+PASS test("-webkit-flow-into: 1") is ""
+PASS test("-webkit-flow-into: 1.2") is ""
+PASS test("-webkit-flow-into: -1") is ""
+PASS test("-webkit-flow-into: 12px") is ""
 PASS testComputedStyle("auto") is "auto"
 PASS testComputedStyle("") is "auto"
-PASS testComputedStyle("'auto'") is "auto"
-PASS testComputedStyle("'first-flow'") is "first-flow"
-PASS testComputedStyle("first-flow") is "auto"
-PASS testComputedStyle("inherited") is "auto"
-PASS testComputedStyle("initial") is "auto"
+PASS testComputedStyle("'first-flow'") is "auto"
+PASS testComputedStyle("first-flow") is "first-flow"
 PASS testComputedStyle("12px") is "auto"
 PASS testNotInherited("auto", "auto") is "auto"
-PASS testNotInherited("auto", "'child-flow'") is "child-flow"
-PASS testNotInherited("'parent-flow'", "auto") is "auto"
-PASS testNotInherited("'parent-flow'", "'child-flow'") is "child-flow"
+PASS testNotInherited("auto", "child-flow") is "child-flow"
+PASS testNotInherited("parent-flow", "auto") is "auto"
+PASS testNotInherited("parent-flow", "child-flow") is "child-flow"
 PASS successfullyParsed is true
 
 TEST COMPLETE

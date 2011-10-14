@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 
 <style>
-#DIV1 { -webkit-flow:'flowA'; }
-#SPAN2 { -webkit-flow: 'flowB'; }
-#DIV3 { -webkit-flow: 'flowC'; }
+#DIV1 { -webkit-flow-into:flowA; }
+#SPAN2 { -webkit-flow-into: flowB; }
+#DIV3 { -webkit-flow-into: flowC; }
 
 #REGION1, #REGION2, #REGION3 {
     width: 100%;
@@ -27,7 +27,7 @@
 function test(name, flow, before) {
     var el = document.createElement("div");
     el.id = name;
-    el.setAttribute("style", "-webkit-flow:'"+ flow +"'");
+    el.setAttribute("style", "-webkit-flow-into:"+ flow);
     el.innerHTML = name + " - " + flow;
     if (before)
         document.body.insertBefore(el, document.getElementById(before));

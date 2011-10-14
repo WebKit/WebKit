@@ -274,7 +274,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
     CSSPropertyWebkitWritingMode,
-    CSSPropertyWebkitFlow,
+    CSSPropertyWebkitFlowInto,
     CSSPropertyWebkitRegionOverflow,
     CSSPropertyWebkitRegionBreakAfter,
     CSSPropertyWebkitRegionBreakBefore,
@@ -1983,7 +1983,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
-        case CSSPropertyWebkitFlow:
+        case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
             return primitiveValueCache->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);

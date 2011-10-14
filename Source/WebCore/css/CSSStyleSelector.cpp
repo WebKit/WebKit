@@ -3415,9 +3415,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMarqueeStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeBehavior, MarqueeBehavior)      
         return;
-    case CSSPropertyWebkitFlow:
+    case CSSPropertyWebkitFlowInto:
         if (isInitial)
-            HANDLE_INITIAL_COND(CSSPropertyWebkitFlow, FlowThread);
+            HANDLE_INITIAL_COND(CSSPropertyWebkitFlowInto, FlowThread);
         if (isInherit) {
             m_style->setFlowThread(nullAtom);
             return;

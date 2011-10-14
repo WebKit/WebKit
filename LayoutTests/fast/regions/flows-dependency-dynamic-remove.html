@@ -1,34 +1,30 @@
 <!DOCTYPE HTML>
 
 <style>
-.flowA { -webkit-flow: 'flowA'; }
-.flowB { -webkit-flow: 'flowB'; }
-.flowC { -webkit-flow: 'flowC'; }
+.flowA { -webkit-flow-into: flowA; }
+.flowB { -webkit-flow-into: flowB; }
+.flowC { -webkit-flow-into: flowC; }
 
 .regionFlowA { content: -webkit-from-flow('flowA'); }
 .regionFlowB { content: -webkit-from-flow('flowB'); }
 .regionFlowC { content: -webkit-from-flow('flowC'); }
-
-.index1 { -webkit-content-order: 1; }
-.index2 { -webkit-content-order: 2; }
-.index3 { -webkit-content-order: 3; }
 </style>
 
 <div class="flowA">
-    <div class="regionFlowB index1"></div>
+    <div class="regionFlowB"></div>
 </div>
 
 <div class="flowB">
-    <div class="regionFlowC index1"></div>
+    <div class="regionFlowC"></div>
 </div>
 
 <div class="flowC">
     <!-- The following region will initially be invalid. Removing regionFlowC should make it valid again. -->
-    <div class="regionFlowA index1"></div>
+    <div class="regionFlowA"></div>
 </div>
 
 <!-- Force the creation of the flows. In the future we might avoid creating flows if there are no reachable regions. -->
-<div class="regionFlowA index2"></div>
+<div class="regionFlowA"></div>
 
 <script>
     document.body.offsetTop;    // force layout

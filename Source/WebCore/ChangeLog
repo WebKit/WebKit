@@ -1,3 +1,23 @@
+2011-10-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Change -webkit-flow to -webkit-flow-into
+        https://bugs.webkit.org/show_bug.cgi?id=70014
+
+        Reviewed by David Hyatt.
+
+        1. -webkit-flow is renamed to -webkit-flow-into
+        2. -webkit-flow-into takes <ident> instead of strings
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::validFlowName):
+        (WebCore::CSSParser::parseFlowThread):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-10-12  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Remove SQLite backing store

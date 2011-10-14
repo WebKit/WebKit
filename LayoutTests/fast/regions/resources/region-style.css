@@ -17,7 +17,7 @@
 }
 
 .flowArticle {
-    -webkit-flow: "article";
+    -webkit-flow-into: article;
 }
 
 .regionArticle {

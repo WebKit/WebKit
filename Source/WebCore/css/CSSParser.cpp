@@ -1640,7 +1640,7 @@ bool CSSParser::parseValue(int propId, bool important)
         else
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
         break;
-    case CSSPropertyWebkitFlow:
+    case CSSPropertyWebkitFlowInto:
         return parseFlowThread(propId, important);
     case CSSPropertyWebkitRegionOverflow:
         if (id == CSSValueAuto || id == CSSValueBreak)
@@ -6507,10 +6507,21 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 }
 #endif
 
-// auto | <flow_name>
+static bool validFlowName(const String& flowName)
+{
+    if (equalIgnoringCase(flowName, "auto")
+        || equalIgnoringCase(flowName, "default")
+        || equalIgnoringCase(flowName, "inherit")
+        || equalIgnoringCase(flowName, "initial")
+        || equalIgnoringCase(flowName, "none"))
+        return false;
+    return true;
+}
+
+// auto | <ident>
 bool CSSParser::parseFlowThread(int propId, bool important)
 {
-    ASSERT(propId == CSSPropertyWebkitFlow);
+    ASSERT(propId == CSSPropertyWebkitFlowInto);
 
     if (m_valueList->size() != 1)
         return false;
@@ -6519,21 +6530,23 @@ bool CSSParser::parseFlowThread(int propId, bool important)
     if (!value)
         return false;
 
+    if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+
     if (value->id == CSSValueAuto) {
         addProperty(propId, primitiveValueCache()->createIdentifierValue(value->id), important);
         return true;
     }
 
-    if (!value->id && value->unit == CSSPrimitiveValue::CSS_STRING) {
-        String inputProperty = String(value->string);
-        if (!inputProperty.isEmpty())
-            addProperty(propId, primitiveValueCache()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING), important);
-        else
-            addProperty(propId, primitiveValueCache()->createIdentifierValue(CSSValueAuto), important);
-        return true;
-    }
+    String inputProperty = String(value->string);
+    if (!inputProperty.isEmpty()) {
+        if (!validFlowName(inputProperty))
+            return false;
+        addProperty(propId, primitiveValueCache()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING), important);
+    } else
+        addProperty(propId, primitiveValueCache()->createIdentifierValue(CSSValueAuto), important);
 
-    return false;
+    return true;
 }
 
 // The region name is now specified as an argument to the content property:
