@@ -1,5 +1,14 @@
 2011-10-13  Sam Weinig  <sam@webkit.org>
 
+        Another SnowLeopard build fix.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::cachedImage):
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        (-[WKPasteboardOwner initWithImage:WebCore::]):
+
+2011-10-13  Sam Weinig  <sam@webkit.org>
+
         Fix SnowLeopard build.
 
         * UIProcess/WebPageProxy.cpp:

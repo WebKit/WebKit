@@ -102,14 +102,14 @@ void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, c
     m_page->send(Messages::WebPageProxy::SetDragImage(frame->view()->contentsToWindow(point), handle, linkDrag));
 }
 
-static CachedImage* cachedImage(Element* element)
+static WebCore::CachedImage* cachedImage(Element* element)
 {
     RenderObject* renderer = element->renderer();
     if (!renderer)
         return 0;
     if (!renderer->isRenderImage())
         return 0;
-    CachedImage* image = toRenderImage(renderer)->cachedImage();
+    WebCore::CachedImage* image = toRenderImage(renderer)->cachedImage();
     if (!image || image->errorOccurred()) 
         return 0;
     return image;
@@ -128,7 +128,7 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
 
     Element* coreElement = core(element);
 
-    CachedImage* image = cachedImage(coreElement);
+    WebCore::CachedImage* image = cachedImage(coreElement);
 
     NSString *extension = @"";
     if (image) {
@@ -225,7 +225,7 @@ static CachedImageClient* promisedDataClient()
     _image = 0;
 }
 
-- (id)initWithImage:(CachedImage*)image
+- (id)initWithImage:(WebCore::CachedImage*)image
 {
     self = [super init];
     if (!self)
