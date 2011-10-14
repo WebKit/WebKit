@@ -745,4 +745,23 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     }
 }
 
+PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& size) const
+{
+    // Make the buffer larger if the context's transform is scaling it so we need a higher
+    // resolution than one pixel per unit. Also set up a corresponding scale factor on the
+    // graphics context.
+
+    AffineTransform transform = getCTM();
+    IntSize scaledSize(size.width() * transform.xScale(), size.height() * transform.yScale());
+
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(scaledSize);
+    if (!buffer)
+        return nullptr;
+
+    buffer->context()->scale(FloatSize(static_cast<float>(scaledSize.width()) / size.width(),
+        static_cast<float>(scaledSize.height()) / size.height()));
+
+    return buffer.release();
+}
+
 }

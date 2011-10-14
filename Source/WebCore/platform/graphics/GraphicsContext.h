@@ -409,6 +409,10 @@ namespace WebCore {
         void setCTM(const AffineTransform&);
         AffineTransform getCTM() const;
 
+        // Create an image buffer compatible with this context, with suitable resolution
+        // for drawing into the buffer and then into this context.
+        PassOwnPtr<ImageBuffer> createCompatibleBuffer(const IntSize&) const;
+
 #if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);
         const AffineTransform& affineTransform() const;

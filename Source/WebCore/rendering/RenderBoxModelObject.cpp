@@ -594,24 +594,6 @@ static LayoutRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* conte
     return adjustedRect;
 }
 
-static PassOwnPtr<ImageBuffer> createDeviceScaledImageBuffer(IntSize imageSize, float deviceScaleFactor)
-{
-    // To create an image of the appropriate resolution, we need to scale imageRect's size
-    // by the device scale factor.
-    IntSize scaledImageSize = imageSize;
-    scaledImageSize.scale(deviceScaleFactor);
-
-    OwnPtr<ImageBuffer> scaledImageBuffer = ImageBuffer::create(scaledImageSize);
-    if (!scaledImageBuffer)
-        return nullptr;
-
-    // Scale the whole context by the device scale factor so that all of the clips set up at 
-    // the appropriate size.
-    scaledImageBuffer->context()->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-
-    return scaledImageBuffer.release();
-}
-
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderObject* backgroundObject)
 {
@@ -705,7 +687,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskRect.intersect(paintInfo.rect);
         
         // Now create the mask.
-        OwnPtr<ImageBuffer> maskImage = createDeviceScaledImageBuffer(maskRect.size(), WebCore::deviceScaleFactor(frame()));
+        OwnPtr<ImageBuffer> maskImage = context->createCompatibleBuffer(maskRect.size());
         if (!maskImage)
             return;
         
