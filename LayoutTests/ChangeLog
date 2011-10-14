@@ -1,3 +1,9 @@
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        Add missing result.  Yes, it's supposed to be blank.
+
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1-expected.png: Added.
+
 2011-10-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectation.
