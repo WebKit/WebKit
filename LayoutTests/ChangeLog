@@ -1,3 +1,12 @@
+2011-10-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+         - Skip a failing test.
+         - Typo fix after r97471.
+        * platform/qt/http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2-expected.txt: Added after r97388.
+
 2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip MicroData tests on Mac and WinCairo as well.
