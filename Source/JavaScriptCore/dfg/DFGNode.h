@@ -29,7 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 /* DFG_ENABLE() - turn on a specific features in the DFG JIT */
-#define DFG_ENABLE(FEATURE) (defined DFG_ENABLE_##DFG_FEATURE && DFG_ENABLE_##DFG_FEATURE)
+#define DFG_ENABLE(DFG_FEATURE) (defined DFG_ENABLE_##DFG_FEATURE && DFG_ENABLE_##DFG_FEATURE)
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define DFG_ENABLE_DEBUG_VERBOSE 0

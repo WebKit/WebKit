@@ -1,3 +1,11 @@
+2011-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Rubber stamped Stephanie Lewis.
+        
+        DFG_ENABLE() macro was always returning false.
+
+        * dfg/DFGNode.h:
+
 2011-10-13  Gavin Barraclough  <baraclough@apple.com>
 
         Speculative build fix for !DFG builds.
