@@ -1,3 +1,24 @@
+2011-10-13  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70064
+        
+        The NPObjectWrapper class used by V8 bindings in Chromium to wrap the window
+        script object was allocating an instance of itself in the NPAllocate
+        implementation and returning this pointer. It should be returning a pointer
+        to the wrapped NPObject structure (NPProxyObject). The member function
+        getUnderlyingNPObject should return 0 if we fail to find the underlying NPObject
+        for the call. It was incorrectly returning a pointer to the same NPObject in
+        this case which could cause recursion. 
+
+        Reviewed by Nate Chapin.
+
+        No new tests as there is no change in functionality.
+
+        * bindings/v8/NPObjectWrapper.cpp:
+        (WebCore::NPObjectWrapper::getObjectForCall):
+        (WebCore::NPObjectWrapper::NPAllocate):
+        * bindings/v8/NPObjectWrapper.h:
+
 2011-10-13  Arthur Hsu  <arthurhsu@chromium.org>
 
         Ensure font loaded before calling Skia to drawPosText in Chrome sandbox

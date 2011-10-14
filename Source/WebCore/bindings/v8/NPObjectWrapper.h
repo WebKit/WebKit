@@ -39,7 +39,7 @@ namespace WebCore {
 // object to be cleared out when this object is destroyed. This is to ensure
 // that callers trying to access the underlying object don't crash while
 // invoking methods on the NPObject.
-class NPObjectWrapper : public NPObject {
+class NPObjectWrapper {
 public:
     // Creates an instance of the NPObjectWrapper class and wraps the object
     // passed in.

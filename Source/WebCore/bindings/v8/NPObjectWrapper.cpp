@@ -55,21 +55,25 @@ NPClass NPObjectWrapper::m_npClassWrapper = {
 };
 
 NPObjectWrapper::NPObjectWrapper(NPObject* obj)
-    : m_wrappedNPObject(obj) {
+    : m_wrappedNPObject(obj)
+{
 }
 
-NPObject* NPObjectWrapper::create(NPObject* object) {
+NPObject* NPObjectWrapper::create(NPObject* object)
+{
     ASSERT(object);
     NPProxyObject* proxyObject = reinterpret_cast<NPProxyObject*>(_NPN_CreateObject(0, &m_npClassWrapper));
     proxyObject->wrapper = new NPObjectWrapper(object);
     return reinterpret_cast<NPObject*>(proxyObject);
 }
 
-void NPObjectWrapper::clear() {
+void NPObjectWrapper::clear()
+{
     m_wrappedNPObject = 0;   
 }
 
-NPObjectWrapper* NPObjectWrapper::getWrapper(NPObject* obj) {
+NPObjectWrapper* NPObjectWrapper::getWrapper(NPObject* obj)
+{
     if (&m_npClassWrapper == obj->_class) {
         NPProxyObject* proxyObject = reinterpret_cast<NPProxyObject*>(obj);
         return proxyObject->wrapper;
@@ -77,58 +81,69 @@ NPObjectWrapper* NPObjectWrapper::getWrapper(NPObject* obj) {
     return 0;
 }
 
-NPObject* NPObjectWrapper::getUnderlyingNPObject(NPObject* obj) {
+NPObject* NPObjectWrapper::getUnderlyingNPObject(NPObject* obj)
+{
     NPObjectWrapper* wrapper = getWrapper(obj);
     return wrapper ? wrapper->m_wrappedNPObject : 0;
 }
 
-NPObject* NPObjectWrapper::getObjectForCall(NPObject* obj) {
-  NPObject* actualObject = getUnderlyingNPObject(obj);
-  return actualObject ? actualObject : obj;
+NPObject* NPObjectWrapper::getObjectForCall(NPObject* obj)
+{
+    NPObject* actualObject = getUnderlyingNPObject(obj);
+    return actualObject ? actualObject : 0;
 }
 
-NPObject* NPObjectWrapper::NPAllocate(NPP, NPClass*) {
-    return reinterpret_cast<NPObject*>(new NPObjectWrapper(0));
+NPObject* NPObjectWrapper::NPAllocate(NPP, NPClass*)
+{
+    return reinterpret_cast<NPObject*>(new NPProxyObject);
 }
 
-void NPObjectWrapper::NPDeallocate(NPObject* obj) {
+void NPObjectWrapper::NPDeallocate(NPObject* obj)
+{
     NPProxyObject* proxyObject = reinterpret_cast<NPProxyObject*>(obj);
     delete proxyObject->wrapper;
     delete proxyObject;
 }
 
-void NPObjectWrapper::NPPInvalidate(NPObject* obj) {
+void NPObjectWrapper::NPPInvalidate(NPObject* obj)
+{
     NPObject* actualObject = getObjectForCall(obj);
     if (actualObject && actualObject->_class->invalidate)
         actualObject->_class->invalidate(actualObject);
 }
 
-bool NPObjectWrapper::NPHasMethod(NPObject* obj, NPIdentifier name) {
+bool NPObjectWrapper::NPHasMethod(NPObject* obj, NPIdentifier name)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_HasMethod(0, actualObject, name) : false;
 }
 
-bool NPObjectWrapper::NPInvoke(NPObject* obj, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result) {
+bool NPObjectWrapper::NPInvoke(NPObject* obj, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_Invoke(0, actualObject, name, args, argCount, result) : false;
 }
 
-bool NPObjectWrapper::NPInvokeDefault(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result) {
+bool NPObjectWrapper::NPInvokeDefault(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_InvokeDefault(0, actualObject, args, argCount, result) : false;
 }
  
-bool NPObjectWrapper::NPHasProperty(NPObject* obj, NPIdentifier name) {
+bool NPObjectWrapper::NPHasProperty(NPObject* obj, NPIdentifier name)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_HasProperty(0, actualObject, name) : false;
 }
 
-bool NPObjectWrapper::NPGetProperty(NPObject* obj, NPIdentifier name, NPVariant* result) {
+bool NPObjectWrapper::NPGetProperty(NPObject* obj, NPIdentifier name, NPVariant* result)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_GetProperty(0, actualObject, name, result) : false;
 }
 
-bool NPObjectWrapper::NPSetProperty(NPObject* obj, NPIdentifier name, const NPVariant* value) {
+bool NPObjectWrapper::NPSetProperty(NPObject* obj, NPIdentifier name, const NPVariant* value)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_SetProperty(0, actualObject, name, value) : false;
 }
@@ -138,17 +153,20 @@ bool NPObjectWrapper::NPRemoveProperty(NPObject* obj, NPIdentifier name) {
     return actualObject ? _NPN_RemoveProperty(0, actualObject, name) : false;
 }
 
-bool NPObjectWrapper::NPNEnumerate(NPObject* obj, NPIdentifier** value, uint32_t* count) {
+bool NPObjectWrapper::NPNEnumerate(NPObject* obj, NPIdentifier** value, uint32_t* count)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_Enumerate(0, actualObject, value, count) : false;
 }
 
-bool NPObjectWrapper::NPNConstruct(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result) {
+bool NPObjectWrapper::NPNConstruct(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
     NPObject* actualObject = getObjectForCall(obj);
     return actualObject ? _NPN_Construct(0, actualObject, args, argCount, result) : false;
 }
 
-bool NPObjectWrapper::NPInvokePrivate(NPP npp, NPObject* obj, bool isDefault, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result) {
+bool NPObjectWrapper::NPInvokePrivate(NPP npp, NPObject* obj, bool isDefault, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
     NPObject* actualObject = getObjectForCall(obj);
     if (!actualObject)
         return false;
