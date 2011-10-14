@@ -145,7 +145,6 @@ void InspectorRuntimeAgent::setScriptDebugServer(ScriptDebugServer* scriptDebugS
 {
     m_scriptDebugServer = scriptDebugServer;
 }
-#endif
 
 #if ENABLE(WORKERS)
 void InspectorRuntimeAgent::pauseWorkerContext(WorkerContext* context)
@@ -162,7 +161,8 @@ void InspectorRuntimeAgent::resume()
 {
     m_paused = false;
 }
-#endif
+#endif // ENABLE(WORKERS)
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 } // namespace WebCore
 

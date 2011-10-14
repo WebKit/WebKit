@@ -78,10 +78,10 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void setScriptDebugServer(ScriptDebugServer*);
-#endif
 #if ENABLE(WORKERS)
     void pauseWorkerContext(WorkerContext*);
     void resume();
+#endif
 #endif
 
 protected:

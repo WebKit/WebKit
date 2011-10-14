@@ -809,8 +809,10 @@ void InspectorInstrumentation::willEvaluateWorkerScript(WorkerContext* workerCon
     InstrumentingAgents* instrumentingAgents = instrumentationForWorkerContext(workerContext);
     if (!instrumentingAgents)
         return;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorRuntimeAgent* runtimeAgent = instrumentingAgents->inspectorRuntimeAgent())
         runtimeAgent->pauseWorkerContext(workerContext);
+#endif
 }
 
 void InspectorInstrumentation::workerContextTerminatedImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* proxy)

@@ -1,3 +1,20 @@
+2011-10-14  Rémi Duraffort  <remi.duraffort@st.com>
+
+        Fix compilation when the JS Debugger is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=70007
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerInspectorController.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+
 2011-10-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Prepare SVGImage intrinsic size negotiation: Introduce an IntSize <-> SVGImage cache in CachedImage

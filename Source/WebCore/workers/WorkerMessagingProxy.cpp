@@ -380,7 +380,9 @@ void WorkerMessagingProxy::disconnectFromInspector()
     m_pageInspector = 0;
     if (m_askedToTerminate)
         return;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
+#endif
 }
 
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
@@ -393,7 +395,9 @@ void WorkerMessagingProxy::sendMessageToInspector(const String& message)
 {
     if (m_askedToTerminate)
         return;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
+#endif
 }
 #endif
 

@@ -210,10 +210,12 @@ void WorkerInspectorController::dispatchMessageFromFrontend(const String& messag
         m_backendDispatcher->dispatch(message);
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 void WorkerInspectorController::resume()
 {
     m_runtimeAgent->resume();
 }
+#endif
 
 }
 
