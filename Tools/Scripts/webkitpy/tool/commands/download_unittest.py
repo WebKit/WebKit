@@ -124,6 +124,31 @@ MockWatchList: determine_cc_and_messages
         self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
+    def test_land_cowboy(self):
+        expected_stderr = """MOCK run_and_throw_if_fail: ['mock-prepare-ChangeLog', '--email=MOCK email', '--merge-base=None', 'MockFile1'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1', '--filter', '-changelog'], cwd=/mock-checkout
+MOCK run_command: ['ruby', '-I', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch/prettify.rb'], cwd=None
+MOCK: user.open_url: file://...
+Was that diff correct?
+Building WebKit
+MOCK run_and_throw_if_fail: ['mock-build-webkit'], cwd=/mock-checkout
+Running Python unit tests
+MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
+Running Perl unit tests
+MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
+Running Bindings tests
+MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
+Running JavaScriptCore tests
+MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
+Running run-webkit-tests
+MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+No bug id provided.
+"""
+        mock_tool = MockTool(log_executive=True)
+        self.assert_execute_outputs(LandCowboy(), [50000], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
+
     def test_land_red_builders(self):
         expected_stderr = 'Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 50000\n'
         mock_tool = MockTool()

@@ -1,3 +1,13 @@
+2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Write unit test to ensure style-checker-filter option is passed properly in webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=70143
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py: Added a test for land-cowboy. Not so cowboy after all.
+        * Scripts/webkitpy/tool/steps/checkstyle.py: Fixed a bug, discovered by the newly added test.
+
 2011-10-14  David Levin  <levin@chromium.org>
 
         watchlist: If the style check fails, then the watchlist will not be run.
