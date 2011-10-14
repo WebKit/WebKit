@@ -1,5 +1,12 @@
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
+        Unreviewed, actually remove StyleList.* after r97640.
+
+        * css/StyleList.cpp: Removed.
+        * css/StyleList.h: Removed.
+
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
         Merge StyleList into StyleSheet.
         https://bugs.webkit.org/show_bug.cgi?id=70100
 
