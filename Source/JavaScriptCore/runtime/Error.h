@@ -98,7 +98,7 @@ namespace JSC {
             return JSValue::encode(jsNull());
         }
     
-        ConstructType getConstructData(ConstructData& constructData)
+        virtual ConstructType getConstructDataVirtual(ConstructData& constructData)
         {
             constructData.native.function = constructThrowTypeError;
             return ConstructTypeHost;

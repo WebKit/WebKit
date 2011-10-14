@@ -51,7 +51,7 @@ namespace JSC {
         
     private:
         ErrorConstructor(JSGlobalObject*, Structure*);
-        virtual ConstructType getConstructData(ConstructData&);
+        virtual ConstructType getConstructDataVirtual(ConstructData&);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };

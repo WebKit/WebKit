@@ -48,7 +48,7 @@ namespace JSC {
     private:
         FunctionConstructor(JSGlobalObject*, Structure*);
         void finishCreation(ExecState*, FunctionPrototype*);
-        virtual ConstructType getConstructData(ConstructData&);
+        virtual ConstructType getConstructDataVirtual(ConstructData&);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };

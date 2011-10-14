@@ -175,7 +175,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
     }
 
     ConstructData constructData;
-    ConstructType constructType = constructor->getConstructData(constructData);
+    ConstructType constructType = constructor->getConstructDataVirtual(constructData);
     if (constructType == ConstructTypeNone)
         return ScriptObject();
 

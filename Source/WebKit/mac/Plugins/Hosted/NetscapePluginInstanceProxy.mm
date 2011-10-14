@@ -978,7 +978,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     JSLock lock(SilenceAssertionsOnly);
 
     ConstructData constructData;
-    ConstructType constructType = object->getConstructData(constructData);
+    ConstructType constructType = object->getConstructDataVirtual(constructData);
     if (constructType == ConstructTypeNone)
         return false;
 

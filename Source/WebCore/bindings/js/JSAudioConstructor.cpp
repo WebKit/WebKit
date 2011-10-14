@@ -75,7 +75,7 @@ static EncodedJSValue JSC_HOST_CALL constructAudio(ExecState* exec)
         HTMLAudioElement::createForJSConstructor(document, src))));
 }
 
-ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSAudioConstructor::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }

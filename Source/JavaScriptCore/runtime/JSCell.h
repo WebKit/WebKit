@@ -74,7 +74,7 @@ namespace JSC {
         const JSObject* getObject() const; // NULL if not an object
         
         static CallType getCallData(JSCell*, CallData&);
-        virtual ConstructType getConstructData(ConstructData&);
+        virtual ConstructType getConstructDataVirtual(ConstructData&);
         static ConstructType getConstructData(JSCell*, ConstructData&);
 
         // Basic conversions.
@@ -237,7 +237,7 @@ namespace JSC {
 
     inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
     {
-        ConstructType result = value.isCell() ? value.asCell()->getConstructData(constructData) : ConstructTypeNone;
+        ConstructType result = value.isCell() ? value.asCell()->getConstructDataVirtual(constructData) : ConstructTypeNone;
         ASSERT(result == ConstructTypeNone || value.isValidCallee());
         return result;
     }

@@ -53,7 +53,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exe
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
-ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
+ConstructType ErrorConstructor::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }

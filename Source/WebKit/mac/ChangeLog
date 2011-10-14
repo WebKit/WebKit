@@ -1,3 +1,16 @@
+2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual getConstructData to getConstructDataVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69872
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed virtual getConstructData functions to getConstructDataVirtual to 
+        avoid conflicts when we add static getConstructData to the MethodTable.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::construct):
+
 2011-10-13  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70050

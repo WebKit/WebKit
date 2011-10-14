@@ -1,3 +1,67 @@
+2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual getConstructData to getConstructDataVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69872
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed virtual getConstructData functions to getConstructDataVirtual to 
+        avoid conflicts when we add static getConstructData to the MethodTable.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::getConstructDataVirtual):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getConstructDataVirtual):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getConstructDataVirtual):
+        * runtime/ArrayConstructor.h:
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::getConstructDataVirtual):
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getConstructDataVirtual):
+        * runtime/DateConstructor.h:
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::getConstructDataVirtual):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::getConstructDataVirtual):
+        * runtime/ErrorConstructor.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::getConstructDataVirtual):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getConstructDataVirtual):
+        * runtime/JSCell.h:
+        (JSC::getConstructData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getConstructDataVirtual):
+        * runtime/JSFunction.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::getConstructDataVirtual):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getConstructDataVirtual):
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getConstructDataVirtual):
+        * runtime/ObjectConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getConstructDataVirtual):
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getConstructDataVirtual):
+        * runtime/StringConstructor.h:
+
 2011-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         Rubber stamped Stephanie Lewis.

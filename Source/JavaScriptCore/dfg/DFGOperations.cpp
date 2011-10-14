@@ -161,7 +161,7 @@ JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
     
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
+    ASSERT(constructor->getConstructDataVirtual(constructData) == ConstructTypeJS);
 #endif
     
     JSGlobalData& globalData = exec->globalData();

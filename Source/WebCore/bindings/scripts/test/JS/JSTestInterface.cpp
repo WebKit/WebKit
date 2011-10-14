@@ -96,7 +96,7 @@ public:
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestInterface(JSC::ExecState*);
-    virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+    virtual JSC::ConstructType getConstructDataVirtual(JSC::ConstructData&);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
@@ -132,7 +132,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     return JSValue::encode(asObject(toJS(exec, static_cast<JSTestInterfaceConstructor*>(exec->callee())->globalObject(), TestInterface::create(context))));
 }
 
-ConstructType JSTestInterfaceConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSTestInterfaceConstructor::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }

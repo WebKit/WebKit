@@ -97,7 +97,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exe
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args));
 }
 
-ConstructType ArrayConstructor::getConstructData(ConstructData& constructData)
+ConstructType ArrayConstructor::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }

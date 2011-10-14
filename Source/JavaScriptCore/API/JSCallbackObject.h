@@ -193,7 +193,7 @@ private:
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-    virtual ConstructType getConstructData(ConstructData&);
+    virtual ConstructType getConstructDataVirtual(ConstructData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 

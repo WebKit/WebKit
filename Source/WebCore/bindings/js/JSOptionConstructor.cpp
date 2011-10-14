@@ -75,7 +75,7 @@ static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), element.release())));
 }
 
-ConstructType JSOptionConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSOptionConstructor::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }

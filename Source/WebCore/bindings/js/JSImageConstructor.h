@@ -46,7 +46,7 @@ namespace WebCore {
     private:
         JSImageConstructor(JSC::Structure*, JSDOMGlobalObject*);
         void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
-        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        virtual JSC::ConstructType getConstructDataVirtual(JSC::ConstructData&);
         static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     };
 

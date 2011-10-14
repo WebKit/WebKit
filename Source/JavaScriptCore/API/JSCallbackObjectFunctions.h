@@ -328,7 +328,7 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, uns
 }
 
 template <class Parent>
-ConstructType JSCallbackObject<Parent>::getConstructData(ConstructData& constructData)
+ConstructType JSCallbackObject<Parent>::getConstructDataVirtual(ConstructData& constructData)
 {
     return getConstructData(this, constructData);
 }
