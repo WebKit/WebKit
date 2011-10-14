@@ -220,13 +220,13 @@ static void setupFontFeatures(const FontFeatureSettings* settings, HB_FaceRec_* 
     if (hbFace->gpos)
         HB_GPOS_Clear_Features(hbFace->gpos);
 
-    HB_UShort scriptIndex;
+    HB_UShort scriptIndex = 0;
     HB_GSUB_Select_Script(hbFace->gsub, HB_MAKE_TAG('D', 'F', 'L', 'T'), &scriptIndex);
     size_t numFeatures = settings->size();
     for (size_t i = 0; i < numFeatures; ++i) {
         if (!settings->at(i).value())
             continue;
-        HB_UShort featureIndex;
+        HB_UShort featureIndex = 0;
         const UChar* tag = settings->at(i).tag().characters();
         HB_UInt feature = HB_MAKE_TAG(tag[0], tag[1], tag[2], tag[3]);
         if (hbFace->gsub && HB_GSUB_Select_Feature(hbFace->gsub, feature, scriptIndex, 0xffff, &featureIndex) == HB_Err_Ok)
