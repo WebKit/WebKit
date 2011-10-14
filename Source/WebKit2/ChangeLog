@@ -3,6 +3,16 @@
         Do not cache m_resizesToContentsLayoutSize on WebKit2's WebPage
         https://bugs.webkit.org/show_bug.cgi?id=66134
 
+        Unreviewed build fix after r97462.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
+2011-10-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Do not cache m_resizesToContentsLayoutSize on WebKit2's WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=66134
+
         Reviewed by Simon Hausmann.
 
         Do the resize to contents on the web process side.

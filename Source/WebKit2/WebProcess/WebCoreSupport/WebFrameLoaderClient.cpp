@@ -1113,7 +1113,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebPage* webPage = m_frame->page();
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
-    FrameView* view = m_frame->coreFrame()->view();
 
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
 
@@ -1121,7 +1120,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     IntSize currentVisibleContentSize;
     IntSize fixedLayoutSize;
 
-    if (view) {
+    if (FrameView* view = m_frame->coreFrame()->view()) {
         currentVisibleContentSize = view->visibleContentRect().size();
         fixedLayoutSize = view->fixedLayoutSize();
     }
