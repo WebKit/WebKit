@@ -1,3 +1,12 @@
+2011-10-14  Brian Salomon  <bsalomon@google.com>
+
+        [chromium skia] Add media/video-playing-and-pause.html to test expectations pending rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=70125
+
+        Reviewed by Stephen White.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-14  Chang Shu  <cshu@webkit.org>
 
         [WK2] Unreviewed gardening.
