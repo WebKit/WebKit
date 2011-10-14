@@ -285,7 +285,7 @@ PassRefPtr<CSSRule> CSSParser::parseRule(CSSStyleSheet* sheet, const String& str
     return m_rule.release();
 }
 
-PassRefPtr<CSSRule> CSSParser::parseKeyframeRule(CSSStyleSheet *sheet, const String &string)
+PassRefPtr<WebKitCSSKeyframeRule> CSSParser::parseKeyframeRule(CSSStyleSheet *sheet, const String &string)
 {
     setStyleSheet(sheet);
     setupParser("@-webkit-keyframe-rule{ ", string, "} ");

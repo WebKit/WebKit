@@ -65,7 +65,7 @@ public:
 
     void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
     PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
-    PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
+    PassRefPtr<WebKitCSSKeyframeRule> parseKeyframeRule(CSSStyleSheet*, const String&);
     static bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important, bool strict);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
@@ -258,7 +258,7 @@ public:
     int m_id;
     CSSStyleSheet* m_styleSheet;
     RefPtr<CSSRule> m_rule;
-    RefPtr<CSSRule> m_keyframe;
+    RefPtr<WebKitCSSKeyframeRule> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
     CSSParserValueList* m_valueList;
     CSSProperty** m_parsedProperties;

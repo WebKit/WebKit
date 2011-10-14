@@ -1,5 +1,38 @@
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
+        Stricter management of WebKitCSSKeyframeRules.
+        https://bugs.webkit.org/show_bug.cgi?id=70109
+
+        Reviewed by Antti Koivisto.
+
+        Covered by existing tests.
+
+        * css/CSSParser.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseKeyframeRule):
+
+            Return a WebKitCSSKeyframeRule instead of a CSSRule.
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::deleteRule):
+
+            Moved style sheet orphaning logic for @-webkit-keyframe
+            from CSSRuleList into WebKitCSSKeyframesRule::deleteRule()
+            since that's the only caller operating on those rules.
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::length):
+        (WebCore::WebKitCSSKeyframesRule::item):
+        (WebCore::WebKitCSSKeyframesRule::insertRule):
+
+            Change isKeyframeRule() checks to assertions since we know
+            our rules are always WebKitCSSKeyframeRules. Also tidied up.
+
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
         Unreviewed, actually remove StyleList.* after r97640.
 
         * css/StyleList.cpp: Removed.

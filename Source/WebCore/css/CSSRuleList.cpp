@@ -75,11 +75,6 @@ void CSSRuleList::deleteRule(unsigned index)
     if (index >= m_lstCSSRules.size())
         return;
 
-    if (m_lstCSSRules[index]->isKeyframeRule()) {
-        if (CSSMutableStyleDeclaration* style = static_cast<WebKitCSSKeyframeRule*>(m_lstCSSRules[index].get())->style())
-            style->setParent(0);
-    }
-
     m_lstCSSRules[index]->setParent(0);
     m_lstCSSRules.remove(index);
 }
