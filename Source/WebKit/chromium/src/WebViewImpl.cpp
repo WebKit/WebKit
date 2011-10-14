@@ -1443,7 +1443,7 @@ bool WebViewImpl::confirmComposition(const WebString& text)
 bool WebViewImpl::compositionRange(size_t* location, size_t* length)
 {
     Frame* focused = focusedWebCoreFrame();
-    if (!focused || !m_imeAcceptEvents)
+    if (!focused || !focused->selection() || !m_imeAcceptEvents)
         return false;
     Editor* editor = focused->editor();
     if (!editor || !editor->hasComposition())
@@ -1453,7 +1453,7 @@ bool WebViewImpl::compositionRange(size_t* location, size_t* length)
     if (!range.get())
         return false;
 
-    if (TextIterator::locationAndLengthFromRange(range.get(), *location, *length))
+    if (TextIterator::getLocationAndLengthFromRange(focused->selection()->rootEditableElementOrDocumentElement(), range.get(), *location, *length))
         return true;
     return false;
 }
@@ -1519,7 +1519,7 @@ bool WebViewImpl::getSelectionOffsetsAndTextInEditableContent(WebString& text, s
     size_t location;
     size_t length;
     RefPtr<Range> range = selection->selection().firstRange();
-    if (!range || !TextIterator::locationAndLengthFromRange(range.get(), location, length))
+    if (!range || !TextIterator::getLocationAndLengthFromRange(selection->rootEditableElementOrDocumentElement(), range.get(), location, length))
         return false;
 
     if (selection->selection().isBaseFirst()) {
@@ -1632,7 +1632,7 @@ bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
     if (!range.get())
         return false;
 
-    if (TextIterator::locationAndLengthFromRange(range.get(), *location, *length))
+    if (TextIterator::getLocationAndLengthFromRange(selection->rootEditableElementOrDocumentElement(), range.get(), *location, *length))
         return true;
     return false;
 }

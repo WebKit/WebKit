@@ -1,3 +1,20 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
+        https://bugs.webkit.org/show_bug.cgi?id=69964
+
+        Reviewed by Enrica Casucci.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::firstRectForCharacterRange):
+        (WebKit::WebFrameImpl::characterIndexForPoint):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::compositionRange):
+        (WebKit::WebViewImpl::getSelectionOffsetsAndTextInEditableContent):
+        (WebKit::WebViewImpl::caretOrSelectionRange):
+        * src/mac/WebSubstringUtil.mm:
+        (WebKit::WebSubstringUtil::attributedSubstringInRange):
+
 2011-10-13  Arko Saha  <arko@motorola.com>
 
         Microdata: Basic implementation of document.getItems() method.

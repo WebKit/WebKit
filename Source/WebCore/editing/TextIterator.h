@@ -99,7 +99,7 @@ public:
      
     static int rangeLength(const Range*, bool spacesForReplacedElements = false);
     static PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
-    static bool locationAndLengthFromRange(const Range*, size_t& location, size_t& length);
+    static bool getLocationAndLengthFromRange(Element* scope, const Range*, size_t& location, size_t& length);
     static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:

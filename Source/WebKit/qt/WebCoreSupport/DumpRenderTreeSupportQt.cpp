@@ -616,9 +616,7 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page,
     if ((location + length < location) && (location + length))
         length = 0;
 
-    Element* selectionRoot = frame->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, location, length);
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
 
     if (!range)
         return QVariantList();

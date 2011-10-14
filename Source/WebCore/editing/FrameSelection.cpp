@@ -114,6 +114,12 @@ FrameSelection::FrameSelection(Frame* frame)
         m_selection.setIsDirectional(true);
 }
 
+Element* FrameSelection::rootEditableElementOrDocumentElement() const
+{
+    Element* selectionRoot = m_selection.rootEditableElement();
+    return selectionRoot ? selectionRoot : m_frame->document()->documentElement();
+}
+
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;

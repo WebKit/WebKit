@@ -59,10 +59,7 @@ NSAttributedString* WebSubstringUtil::attributedSubstringInRange(WebFrame* webFr
     if (frame->view()->needsLayout())
         frame->view()->layout();
 
-    Element* selectionRoot = frame->selection()->rootEditableElement();
-    selectionRoot = selectionRoot ? selectionRoot : frame->document()->documentElement();
-
-    RefPtr<Range> range(TextIterator::rangeFromLocationAndLength(selectionRoot, location, length));
+    RefPtr<Range> range(TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), selectionRoot, location, length));
     if (!range)
         return nil;
 

@@ -1,3 +1,22 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
+        https://bugs.webkit.org/show_bug.cgi?id=69964
+
+        Reviewed by Enrica Casucci.
+
+        Extracted the logic to determine the scope element as FrameSelection::rootEditableElementOrDocumentElement
+        and deployed it in WebKit layer. Made locationAndLengthFromRange take a scope element and renamed it to
+        getLocationAndLengthFromRange.
+
+        * WebCore.exp.in:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::rootEditableElementOrDocumentElement):
+        * editing/FrameSelection.h:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::getLocationAndLengthFromRange):
+        * editing/TextIterator.h:
+
 2011-10-13  Arko Saha  <arko@motorola.com>
 
         Microdata: Basic implementation of document.getItems() method.

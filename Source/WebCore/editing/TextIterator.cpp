@@ -2476,16 +2476,13 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int r
     return resultRange.release();
 }
 
-bool TextIterator::locationAndLengthFromRange(const Range* range, size_t& location, size_t& length)
+bool TextIterator::getLocationAndLengthFromRange(Element* scope, const Range* range, size_t& location, size_t& length)
 {
     location = notFound;
     length = 0;
 
     if (!range->startContainer())
         return false;
-
-    Element* selectionRoot = range->ownerDocument()->frame()->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : range->ownerDocument()->documentElement();
 
     // The critical assumption is that this only gets called with ranges that
     // concentrate on a given area containing the selection root. This is done

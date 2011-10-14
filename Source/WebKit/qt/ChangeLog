@@ -1,3 +1,13 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
+        https://bugs.webkit.org/show_bug.cgi?id=69964
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::firstRectForCharacterRange):
+
 2011-10-13  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
 
         [Qt] GeolocationClient cleanups

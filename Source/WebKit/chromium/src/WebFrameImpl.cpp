@@ -1114,9 +1114,7 @@ bool WebFrameImpl::firstRectForCharacterRange(unsigned location, unsigned length
     if ((location + length < location) && (location + length))
         length = 0;
 
-    Element* selectionRoot = frame()->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : frame()->document()->documentElement();
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, location, length);
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame()->selection()->rootEditableElementOrDocumentElement(), location, length);
     if (!range)
         return false;
     IntRect intRect = frame()->editor()->firstRectForRange(range.get());
@@ -1138,7 +1136,7 @@ size_t WebFrameImpl::characterIndexForPoint(const WebPoint& webPoint) const
         return notFound;
 
     size_t location, length;
-    TextIterator::locationAndLengthFromRange(range.get(), location, length);
+    TextIterator::getLocationAndLengthFromRange(frame()->selection()->rootEditableElementOrDocumentElement(), range.get(), location, length);
     return location;
 }
 

@@ -1,3 +1,13 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
+        https://bugs.webkit.org/show_bug.cgi?id=69964
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::firstRectForCharacterRange):
+
 2011-09-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move drag-and-drop code which can be shared with WebKit2 to WebCore

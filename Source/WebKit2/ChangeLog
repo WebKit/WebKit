@@ -1,3 +1,16 @@
+2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent
+        https://bugs.webkit.org/show_bug.cgi?id=69964
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::getSelectedRange):
+        (WebKit::WebPage::characterIndexForPoint):
+        (WebKit::convertToRange):
+
 2011-10-14  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK] r97438: Inconsistent use of flattening vs flattering in function names/comments
