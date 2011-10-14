@@ -21,9 +21,9 @@ webkit2_tests_cppflags = \
 	$(LIBSOUP_CFLAGS)
 
 webkit2_tests_ldadd = \
+	Libraries/libWebKit2APITestCore.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	Libraries/libWebKit2APITestCore.la \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \

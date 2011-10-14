@@ -1,3 +1,12 @@
+2011-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build is broken with new ld
+        https://bugs.webkit.org/show_bug.cgi?id=70097
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+
 2011-10-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Fix build after QSGItem API changes
