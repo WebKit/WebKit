@@ -1,3 +1,10 @@
+2011-10-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed Skipped change to get bot green again.
+
+        * platform/wincairo/Skipped: Skipped all animations, since tests do
+        not exactly match Windows results on Apple test output.
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations after r97481.
