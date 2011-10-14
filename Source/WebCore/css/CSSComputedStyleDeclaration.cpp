@@ -363,7 +363,7 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
             
         if (image.imageSlices().bottom() == image.imageSlices().top() && image.imageSlices().right() == image.imageSlices().left()) {
             bottom = top;
-            right = left;
+            left = right;
         } else {
             if (image.imageSlices().bottom().isPercent())
                 bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -415,7 +415,7 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
         
         if (box.bottom() == box.top() && box.right() == box.left()) {
             bottom = top;
-            right = left;
+            left = right;
         } else {
             if (box.bottom().isRelative())
                 bottom = primitiveValueCache->createValue(box.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);

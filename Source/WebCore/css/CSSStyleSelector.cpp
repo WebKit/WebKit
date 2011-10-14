@@ -4523,7 +4523,9 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
         imageProperty = CSSPropertyWebkitMaskBoxImageSource;
     else
         imageProperty = property;
-    image.setImage(styleImage(imageProperty, borderImage->imageValue()));
+        
+    if (CSSValue* imageValue = borderImage->imageValue())
+        image.setImage(styleImage(imageProperty, imageValue));
 
     // Map in the image slices.
     mapNinePieceImageSlice(borderImage->m_imageSlice.get(), image);
