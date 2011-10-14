@@ -1,3 +1,41 @@
+2011-10-14  Cary Clark  <caryclark@google.com>
+
+        [Chromium Skia on Mac] Improve focus ring
+        https://bugs.webkit.org/show_bug.cgi?id=70124
+
+        Reviewed by Eric Seidel.
+        
+        The focus ring code formerly outset the bounds of
+        the component rectangles by fractional amounts. Because
+        the rectangles are SkIRect (integer based), the fractional
+        outset had no effect.
+
+        The equivalent code in GraphicsContextMac.mm computes
+        the curve radius and rectangle outset with integers, so
+        the use of floats in Skia's case, besides not working,
+        is unnecessary.
+
+        The Skia code also failed to take the offset into account.
+        In LayoutTests, the focus rings either have an offset of
+        0 or 2. The CoreGraphics code increases the ring's rectangles
+        by the offset, then passes the result to wkDrawFocusRing.
+
+        I did not find any documentation about how wkDrawFocusRing
+        further inflates the focus ring, but empirically I determined
+        that adding 2 to the offset generated rings with identical
+        outer diameters.
+ 
+        With these adjustments, the layout tests generate focus rings
+        in the Skia on Mac case that match the coverage of the
+        Chromium CG-based platform, in particular, matching:
+        
+        editing/inserting/editable-inline-element.html
+        editing/selection/3690703-2.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::getFocusRingOutset):
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2011-10-14  Chang Shu  <cshu@webkit.org>
 
         [Qt] Enable fullscreen api on Qt
