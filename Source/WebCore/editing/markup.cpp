@@ -428,7 +428,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     return lastClosed;
 }
 
-bool isNonTableCellHTMLBlockElement(const Node* node)
+static bool isNonTableCellHTMLBlockElement(const Node* node)
 {
     return node->hasTagName(listingTag)
         || node->hasTagName(olTag)

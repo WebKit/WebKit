@@ -1,3 +1,10 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r97497.
+
+        * editing/markup.cpp:
+        (WebCore::isNonTableCellHTMLBlockElement):
+
 2011-10-14  Daniel Cheng  <dcheng@chromium.org>
 
         Context-aware HTML paste for Chromium
