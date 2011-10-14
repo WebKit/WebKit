@@ -1,3 +1,42 @@
+2011-10-14  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70120
+        [Chromium] Pass MessagePortArray to SerializedScriptValue::serialize/deserialize.
+        This patch augments SerializedScriptValue with MessagePortArray* parameter to implement MessagePort 
+        transfer within the message in the future.
+
+        Reviewed by David Levin.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/v8/SerializedScriptValue.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DOMWindow::postMessageCallback):
+        (WebCore::V8DOMWindow::webkitPostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::postMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::webkitPostMessageCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8MessagePort::postMessageCallback):
+        (WebCore::V8MessagePort::webkitPostMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8Worker::postMessageCallback):
+        (WebCore::V8Worker::webkitPostMessageCallback):
+        * workers/Worker.idl:
+
 2011-10-14  Jeff Miller  <jeffm@apple.com>
 
         InjectedBundleHitTestResult::imageRect() should return rect in WKView coordinates

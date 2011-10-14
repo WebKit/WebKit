@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
     switch (event->dataType()) {
     case MessageEvent::DataTypeSerializedScriptValue:
         if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
-            result = serializedValue->deserialize();
+            result = serializedValue->deserialize(event->ports());
         else
             result = v8::Null();
         break;

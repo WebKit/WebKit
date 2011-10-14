@@ -46,6 +46,7 @@
 #include "Int16Array.h"
 #include "Int32Array.h"
 #include "Int8Array.h"
+#include "MessagePort.h"
 #include "SharedBuffer.h"
 #include "Uint16Array.h"
 #include "Uint32Array.h"
@@ -1840,7 +1841,6 @@ private:
 };
 
 } // namespace
-
 void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
                                                       v8::PropertyAttribute attribute, SerializedScriptValue* value)
 {
@@ -1856,15 +1856,15 @@ void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> obj
     deserializeAndSetProperty(object, propertyName, attribute, value.get());
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, bool& didThrow)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, bool& didThrow)
 {
-    return adoptRef(new SerializedScriptValue(value, didThrow));
+    return adoptRef(new SerializedScriptValue(value, messagePorts, didThrow));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value)
 {
     bool didThrow;
-    return adoptRef(new SerializedScriptValue(value, didThrow));
+    return adoptRef(new SerializedScriptValue(value, 0, didThrow));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String& data)
@@ -1920,7 +1920,7 @@ SerializedScriptValue::SerializedScriptValue()
 {
 }
 
-SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& didThrow)
+SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, MessagePortArray*, bool& didThrow)
 {
     didThrow = false;
     Writer writer;
@@ -1965,7 +1965,7 @@ SerializedScriptValue::SerializedScriptValue(const String& wireData)
     m_data = wireData.crossThreadString();
 }
 
-v8::Handle<v8::Value> SerializedScriptValue::deserialize()
+v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray*)
 {
     if (!m_data.impl())
         return v8::Null();
