@@ -69,9 +69,9 @@ using namespace WebKit;
 
 @interface WKPasteboardOwner : NSObject
 {
-    CachedResourceHandle<CachedImage> _image;
+    CachedResourceHandle<WebCore::CachedImage> _image;
 }
-- (id)initWithImage:(CachedImage*)image;
+- (id)initWithImage:(WebCore::CachedImage*)image;
 @end
 
 namespace WebKit {

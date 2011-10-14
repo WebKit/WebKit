@@ -2642,7 +2642,7 @@ void WebPageProxy::setToolTip(const String& toolTip)
     m_pageClient->toolTipChanged(oldToolTip, m_toolTip);
 }
 
-void WebPageProxy::setCursor(const Cursor& cursor)
+void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
 {
     m_pageClient->setCursor(cursor);
 }
