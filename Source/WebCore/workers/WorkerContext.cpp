@@ -82,6 +82,8 @@
 #include "FileSystemCallbacks.h"
 #include "LocalFileSystem.h"
 #include "SyncCallbackHelper.h"
+#else
+#include "ExceptionCode.h"
 #endif
 
 namespace WebCore {

@@ -1,3 +1,14 @@
+2011-10-14 Yuji Sanachan <sanachan.y@gmail.com>
+
+        Include dom/ExceptionCode.h instead of Filesystem APIs headers
+        to fix compile error when ENABLE_WORKERS=1 and ENABLE_FILE_SYSTEM=0
+        https://bugs.webkit.org/show_bug.cgi?id=70036
+
+        Reviewed by Darin Adler.
+
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScript):
+
 2011-10-14  Darin Adler  <darin@apple.com>
 
         Text drawn via -webkit-background-clip:text should be non-blurry with all scaling 
