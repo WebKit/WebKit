@@ -1,5 +1,16 @@
 2011-10-13  Kentaro Hara  <haraken@chromium.org>
 
+        Implement an OverflowEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=70017
+
+        Reviewed by Adam Barth.
+
+        Enabled overflow-event-constructor.html, since now V8 has the OverflowEvent constructor.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
         Implement a BeforeLoadEvent constructor for V8
         https://bugs.webkit.org/show_bug.cgi?id=69980
 

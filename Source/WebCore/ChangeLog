@@ -1,3 +1,15 @@
+2011-10-13  Kentaro Hara  <haraken@chromium.org>
+
+        Implement an OverflowEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=70017
+
+        Reviewed by Adam Barth.
+
+        Test: fast/events/constructors/overflow-event-constructor.html
+
+        * bindings/v8/custom/V8EventConstructors.cpp: Added an OverflowEvent constructor.
+        * dom/OverflowEvent.idl: Replaced 'JSCustomConstructor' with 'CustomConstructor'.
+
 2011-10-13  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=70064
