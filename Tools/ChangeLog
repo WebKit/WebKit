@@ -1,3 +1,12 @@
+2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        land-cowboy should at least check style.
+        https://bugs.webkit.org/show_bug.cgi?id=70073
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/download.py: Added CheckStyle step to LandCowboy command.
+
 2011-10-13  Tony Chang  <tony@chromium.org>
 
         fix regex in layout test times dashboard

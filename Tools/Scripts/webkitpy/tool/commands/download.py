@@ -118,6 +118,7 @@ class LandCowboy(AbstractSequencedCommand):
     steps = [
         steps.PrepareChangeLog,
         steps.EditChangeLog,
+        steps.CheckStyle,
         steps.ConfirmDiff,
         steps.Build,
         steps.RunTests,
