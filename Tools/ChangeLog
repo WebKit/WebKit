@@ -1,3 +1,36 @@
+2011-10-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add DumpRenderTreeSupportEfl
+        https://bugs.webkit.org/show_bug.cgi?id=68458
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make the calls in DumpRenderTree use DumpRenderTreeSupportEfl.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::initialize): Turn on mock scrollbars.
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+        (DumpRenderTreeChrome::onDocumentLoadFinished):
+        * DumpRenderTree/efl/GCControllerEfl.cpp:
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::counterValueForElementById):
+        (LayoutTestController::pageNumberForElementById):
+        (LayoutTestController::numberOfPages):
+        (LayoutTestController::workerThreadCount):
+        (LayoutTestController::findString):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        (LayoutTestController::numberOfActiveAnimations):
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+
 2011-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable NRWT for Qt 4.8 version too, because it is supported after r97461.

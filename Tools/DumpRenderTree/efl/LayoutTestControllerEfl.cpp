@@ -37,9 +37,10 @@
 #include "LayoutTestController.h"
 
 #include "DumpRenderTree.h"
+#include "DumpRenderTreeChrome.h"
 #include "JSStringUtils.h"
 #include "NotImplemented.h"
-#include "OwnFastMallocPtr.h"
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include "ewk_private.h"
@@ -49,6 +50,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/wtf/text/WTFString.h>
+#include <editing/FindOptions.h>
 #include <stdio.h>
 
 LayoutTestController::~LayoutTestController()
@@ -90,8 +92,9 @@ void LayoutTestController::display()
 
 JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
 {
-    OwnFastMallocPtr<char> counterValue(ewk_frame_counter_value_by_element_id_get(browser->mainFrame(), id->ustring().utf8().data()));
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(counterValue.get()));
+    const Evas_Object* mainFrame = browser->mainFrame();
+    const String counterValue(DumpRenderTreeSupportEfl::counterValueByElementId(mainFrame, id->ustring().utf8().data()));
+    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(counterValue.utf8().data()));
 }
 
 void LayoutTestController::keepWebHistory()
@@ -119,12 +122,12 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
 {
-    return ewk_frame_page_number_by_element_id_get(browser->mainFrame(), id->ustring().utf8().data(), pageWidth, pageHeight);
+    return DumpRenderTreeSupportEfl::numberOfPagesForElementId(browser->mainFrame(), id->ustring().utf8().data(), pageWidth, pageHeight);
 }
 
 int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 {
-    return ewk_frame_page_number_get(browser->mainFrame(), pageWidth, pageHeight);
+    return DumpRenderTreeSupportEfl::numberOfPages(browser->mainFrame(), pageWidth, pageHeight);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char*, int) const
@@ -156,7 +159,7 @@ size_t LayoutTestController::webHistoryItemCount()
 
 unsigned LayoutTestController::workerThreadCount() const
 {
-    return ewk_util_worker_thread_count();
+    return DumpRenderTreeSupportEfl::workerThreadCount();
 }
 
 void LayoutTestController::notifyDone()
@@ -453,10 +456,9 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
     if (!JSValueIsNumber(context, lengthValue))
         return false;
 
-    bool caseSensitive = true;
-    bool forward = true;
-    bool wrap = false;
-    size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
+    WebCore::FindOptions options = 0;
+
+    const size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
     for (size_t i = 0; i < length; ++i) {
         JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
         if (!JSValueIsString(context, value))
@@ -465,14 +467,20 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
         JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, 0));
 
         if (equals(optionName, "CaseInsensitive"))
-            caseSensitive = false;
+            options |= WebCore::CaseInsensitive;
+        else if (equals(optionName, "AtWordStarts"))
+            options |= WebCore::AtWordStarts;
+        else if (equals(optionName, "TreatMedialCapitalAsWordStart"))
+            options |= WebCore::TreatMedialCapitalAsWordStart;
         else if (equals(optionName, "Backwards"))
-            forward = false;
+            options |= WebCore::Backwards;
         else if (equals(optionName, "WrapAround"))
-            wrap = true;
+            options |= WebCore::WrapAround;
+        else if (equals(optionName, "StartInSelection"))
+            options |= WebCore::StartInSelection;
     }
 
-    return !!ewk_view_text_search(browser->mainView(), target->ustring().utf8().data(), caseSensitive, forward, wrap);
+    return DumpRenderTreeSupportEfl::findString(browser->mainView(), target->ustring().utf8().data(), options);
 }
 
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
@@ -593,32 +601,32 @@ void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
-    return ewk_frame_animation_pause(browser->mainFrame(), animationName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return DumpRenderTreeSupportEfl::pauseAnimation(browser->mainFrame(), animationName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
-    return ewk_frame_transition_pause(browser->mainFrame(), propertyName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return DumpRenderTreeSupportEfl::pauseTransition(browser->mainFrame(), propertyName->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
 {
-    return ewk_frame_svg_animation_pause(browser->mainFrame(), animationId->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
+    return DumpRenderTreeSupportEfl::pauseSVGAnimation(browser->mainFrame(), animationId->ustring().utf8().data(), elementId->ustring().utf8().data(), time);
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
-    return ewk_frame_animation_active_number_get(browser->mainFrame());
+    return DumpRenderTreeSupportEfl::activeAnimationsCount(browser->mainFrame());
 }
 
 void LayoutTestController::suspendAnimations() const
 {
-    ewk_frame_animation_suspend(browser->mainFrame());
+    DumpRenderTreeSupportEfl::suspendAnimations(browser->mainFrame());
 }
 
 void LayoutTestController::resumeAnimations() const
 {
-    ewk_frame_animation_resume(browser->mainFrame());
+    DumpRenderTreeSupportEfl::resumeAnimations(browser->mainFrame());
 }
 
 void LayoutTestController::overridePreference(JSStringRef, JSStringRef)

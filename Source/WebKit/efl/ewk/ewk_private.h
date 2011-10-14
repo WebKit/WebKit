@@ -77,6 +77,14 @@ struct Ewk_Window_Object_Cleared_Event {
     Evas_Object* frame;
 };
 
+namespace EWKPrivate {
+
+WebCore::Frame *coreFrame(const Evas_Object *ewkFrame);
+WebCore::Page *corePage(const Evas_Object *ewkView);
+WebCore::HistoryItem *coreHistoryItem(const Ewk_History_Item *ewkHistoryItem);
+
+} // namespace EWKPrivate
+
 void ewk_view_ready(Evas_Object* o);
 void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active);
 void ewk_view_title_set(Evas_Object* o, const char* title);
@@ -147,21 +155,15 @@ void ewk_view_js_window_object_clear(Evas_Object* o, Evas_Object* frame);
 #endif
 
 int ewk_util_dpi_get();
-void ewk_util_javascript_gc_collect();
-void ewk_util_javascript_gc_alternate_thread_collect(Eina_Bool waitUntilDone);
-unsigned ewk_util_javascript_gc_object_count_get();
-unsigned ewk_util_worker_thread_count();
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
 Eina_Bool ewk_view_need_touch_events_get(const Evas_Object*);
 #endif
 
+Ewk_History_Item *ewk_history_item_new_from_core(WebCore::HistoryItem *core);
 Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* history);
 void ewk_history_free(Ewk_History* history);
-char* ewk_history_item_target_get(const Ewk_History_Item* item);
-Eina_Bool ewk_history_item_target_is(const Ewk_History_Item* item);
-Eina_List* ewk_history_item_children_get(const Ewk_History_Item* item);
 
 #if ENABLE(CONTEXT_MENUS)
 Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuController* controller);

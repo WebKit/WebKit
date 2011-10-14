@@ -30,19 +30,20 @@
 #include "config.h"
 #include "GCController.h"
 
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "ewk_private.h"
 
 void GCController::collect() const
 {
-    ewk_util_javascript_gc_collect();
+    DumpRenderTreeSupportEfl::garbageCollectorCollect();
 }
 
 void GCController::collectOnAlternateThread(bool waitUntilDone) const
 {
-    ewk_util_javascript_gc_alternate_thread_collect(waitUntilDone);
+    DumpRenderTreeSupportEfl::garbageCollectorCollectOnAlternateThread(waitUntilDone);
 }
 
 size_t GCController::getJSObjectCount() const
 {
-    return ewk_util_javascript_gc_object_count_get();
+    return DumpRenderTreeSupportEfl::javaScriptObjectsCount();
 }

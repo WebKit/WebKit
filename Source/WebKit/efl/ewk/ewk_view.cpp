@@ -3845,3 +3845,14 @@ void ewk_view_editor_client_contents_changed(Evas_Object* ewkView)
 {
     evas_object_smart_callback_call(ewkView, "editorclient,contents,changed", 0);
 }
+
+namespace EWKPrivate {
+
+WebCore::Page *corePage(const Evas_Object *ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    return priv->page;
+}
+
+} // namespace EWKPrivate

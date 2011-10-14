@@ -21,9 +21,7 @@
 #include "config.h"
 #include "ewk_util.h"
 
-#include "bindings/js/GCController.h"
 #include "ewk_private.h"
-#include "workers/WorkerThread.h"
 #include <eina_safety_checks.h>
 
 #ifdef HAVE_ECORE_X
@@ -108,53 +106,6 @@ Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t
     evas_object_resize(image, w, h); // helpful but not really required
 
     return image;
-}
-
-/**
- * @internal
- *
- * Performs garbage collection of JavaScript objects.
- */
-void ewk_util_javascript_gc_collect()
-{
-    WebCore::gcController().garbageCollectNow();
-}
-
-/**
- * @internal
- *
- * Performs garbage collection of JavaScript objects in a separate thread.
- *
- * @param waitUntilDone If @c TRUE, wait the garbage collection thread to finish; if @c FALSE,
- * return as soon as the thread has been created.
- */
-void ewk_util_javascript_gc_alternate_thread_collect(Eina_Bool waitUntilDone)
-{
-    WebCore::gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
-}
-
-/**
- * @internal
- *
- * Returns the number of current JavaScript objects.
- */
-unsigned ewk_util_javascript_gc_object_count_get()
-{
-    return WebCore::JSDOMWindow::commonJSGlobalData()->heap.objectCount();
-}
-
-/**
- * @internal
- *
- * Returns the number of current worked threads.
- */
-unsigned ewk_util_worker_thread_count()
-{
-#if ENABLE(WORKERS)
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 /**

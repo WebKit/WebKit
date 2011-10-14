@@ -29,7 +29,6 @@
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoaderClientEfl.h"
-#include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLHeadElement.h"
@@ -1656,3 +1655,13 @@ void ewk_frame_editor_client_contents_changed(Evas_Object* ewkFrame)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
     ewk_view_editor_client_contents_changed(sd->view);
 }
+
+namespace EWKPrivate {
+
+WebCore::Frame *coreFrame(const Evas_Object *ewkFrame)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
+    return sd->frame;
+}
+
+} // namespace EWKPrivate

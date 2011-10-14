@@ -1,3 +1,71 @@
+2011-10-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add DumpRenderTreeSupportEfl
+        https://bugs.webkit.org/show_bug.cgi?id=68458
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This class is similar to their counterparts present in the Qt and GTK+
+        ports, and it is responsible for providing an interface to certain
+        WebCore methods needed by DumpRenderTree.
+
+        * CMakeListsEfl.txt: Conditionally add the svg directories to the
+        include path.
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp: Added.
+        (DumpRenderTreeSupportEfl::DumpRenderTreeSupportEfl):
+        (DumpRenderTreeSupportEfl::~DumpRenderTreeSupportEfl):
+        (DumpRenderTreeSupportEfl::activeAnimationsCount):
+        (DumpRenderTreeSupportEfl::clearFrameName):
+        (DumpRenderTreeSupportEfl::clearOpener):
+        (DumpRenderTreeSupportEfl::counterValueByElementId):
+        (DumpRenderTreeSupportEfl::frameChildren):
+        (DumpRenderTreeSupportEfl::frameParent):
+        (DumpRenderTreeSupportEfl::layoutFrame):
+        (DumpRenderTreeSupportEfl::numberOfPages):
+        (DumpRenderTreeSupportEfl::numberOfPagesForElementId):
+        (DumpRenderTreeSupportEfl::pauseAnimation):
+        (DumpRenderTreeSupportEfl::pauseSVGAnimation):
+        (DumpRenderTreeSupportEfl::pauseTransition):
+        (DumpRenderTreeSupportEfl::pendingUnloadEventCount):
+        (DumpRenderTreeSupportEfl::renderTreeDump):
+        (DumpRenderTreeSupportEfl::responseMimeType):
+        (DumpRenderTreeSupportEfl::resumeAnimations):
+        (DumpRenderTreeSupportEfl::selectionRectangle):
+        (DumpRenderTreeSupportEfl::suitableDRTFrameName):
+        (DumpRenderTreeSupportEfl::suspendAnimations):
+        (DumpRenderTreeSupportEfl::findString):
+        (DumpRenderTreeSupportEfl::garbageCollectorCollect):
+        (DumpRenderTreeSupportEfl::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupportEfl::javaScriptObjectsCount):
+        (DumpRenderTreeSupportEfl::workerThreadCount):
+        (DumpRenderTreeSupportEfl::childHistoryItems):
+        (DumpRenderTreeSupportEfl::historyItemTarget):
+        (DumpRenderTreeSupportEfl::isTargetItem):
+        (DumpRenderTreeSupportEfl::setMockScrollbarsEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h: Added.
+        * ewk/ewk_frame.cpp:
+        (EWKPrivate::coreFrame): Export the WebCore::Frame* related to an
+        ewk_frame.
+        * ewk/ewk_history.cpp: Remove functions which have been moved to
+        DumpRenderTreeSupportEfl.
+        (_ewk_history_item_list_get): _ewk_history_item_new ->
+        ewk_history_item_new_from_core.
+        (ewk_history_history_item_back_get): Ditto.
+        (ewk_history_history_item_current_get): Ditto.
+        (ewk_history_history_item_forward_get): Ditto.
+        (ewk_history_history_item_nth_get): Ditto.
+        (ewk_history_item_new): Ditto.
+        (ewk_history_item_new_from_core): Rename from _ewk_history_item_new.
+        (EWKPrivate::coreHistoryItem): Export the WebCore::HistoryItem*
+        related to an Ewk_History_Item.
+        * ewk/ewk_private.h: Create the EWKPrivate namespace, remove functions
+        which have been moved to DumpRenderTreeSupportEfl.
+        * ewk/ewk_util.cpp: Remove functions which have been moved to
+        DumpRenderTreeSupportEfl.
+        * ewk/ewk_view.cpp:
+        (EWKPrivate::corePage): Export the WebCore::Page* related to an
+        ewk_view.
+
 2011-10-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL]: Move from FileChooserSettings deprecatedAcceptType to acceptMIMETypes

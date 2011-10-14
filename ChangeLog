@@ -1,3 +1,13 @@
+2011-10-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add DumpRenderTreeSupportEfl
+        https://bugs.webkit.org/show_bug.cgi?id=68458
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/cmake/eflsymbols.filter: Export DumpRenderTreeSupportEfl
+        symbols so that DumpRenderTree can link to them.
+
 2011-10-12  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(XHTMLMP) and associated code

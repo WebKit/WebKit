@@ -33,8 +33,10 @@
 
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeChrome.h"
+#include "IntRect.h"
 #include "PixelDumpSupportCairo.h"
 #include "RefPtrCairo.h"
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "ewk_private.h"
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
@@ -55,11 +57,11 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
         return 0;
 
     if (drawSelectionRect) {
-        int x, y, rectWidth, rectHeight;
+        const WebCore::IntRect selectionRect = DumpRenderTreeSupportEfl::selectionRectangle(mainFrame);
 
-        if (ewk_frame_selection_rectangle_get(mainFrame, &x, &y, &rectWidth, &rectHeight)) {
+        if (!selectionRect.isEmpty()) {
             cairo_set_line_width(context.get(), 1.0);
-            cairo_rectangle(context.get(), x, y, rectWidth, rectHeight);
+            cairo_rectangle(context.get(), selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
             cairo_set_source_rgba(context.get(), 1.0, 0.0, 0.0, 1.0);
             cairo_stroke(context.get());
         }
