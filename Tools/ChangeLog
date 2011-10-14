@@ -1,3 +1,16 @@
+2011-10-13  Ojan Vafai  <ojan@chromium.org>
+
+        Make filter-build-webkit exit 1 if the build fails.
+        https://bugs.webkit.org/show_bug.cgi?id=70080
+
+        Reviewed by Eric Seidel.
+
+        This only works if you redirect stderr to stdout, but it at least makes it possible.
+        This is useful if you want to run a followup command (e.g. run-webkit-tests) but
+        only if the build succeeds.
+
+        * Scripts/filter-build-webkit:
+
 2011-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         land-cowboy should at least check style.

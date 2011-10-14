@@ -118,6 +118,7 @@ if ($logUnfilteredOutput) {
 print OUTPUT_HANDLE HTML_HEADER if ($outputFormat eq "html");
 
 my $buildFinished;
+my $buildFailed = 0;
 while (my $line = <>) {
     print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
     
@@ -151,6 +152,10 @@ while (my $line = <>) {
         my ($command, $path) = ($1, basename($2));
         printLine("$command $path", STYLE_PLAIN);
     } else {
+        # This only gets hit if stderr is redirected to stdout.
+        if ($line =~ /\*\* BUILD FAILED \*\*/) {
+            $buildFailed = 1;
+        }
         printLine($line, $buildFinished ? STYLE_SUCCESS : STYLE_ALERT);
     }
 }
@@ -160,7 +165,7 @@ print OUTPUT_HANDLE HTML_FOOTER if ($outputFormat eq "html");
 close(OUTPUT_HANDLE);
 close(UNFILTERED_OUTPUT_HANDLE) if ($logUnfilteredOutput);
 
-exit 0;
+exit $buildFailed;
 
 sub printLine($$)
 {
