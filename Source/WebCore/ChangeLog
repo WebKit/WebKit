@@ -1,3 +1,15 @@
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
+        Don't assert that CSSRules are CSSRules.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * css/CSSRule.h:
+        (WebCore::CSSRule::isRule):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::append):
+        (WebCore::CSSStyleSheet::insert):
+
 2011-10-14  Beth Dakin  <bdakin@apple.com>
 
         Attempted Leopard build fix.

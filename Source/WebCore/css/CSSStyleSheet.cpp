@@ -97,7 +97,6 @@ CSSStyleSheet::~CSSStyleSheet()
 void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
 {
     CSSRule* c = child.get();
-    ASSERT(c->isRule());
     m_children.append(child);
     c->insertedIntoParent();
 }
@@ -105,7 +104,6 @@ void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
 void CSSStyleSheet::insert(unsigned index, PassRefPtr<CSSRule> child)
 {
     CSSRule* c = child.get();
-    ASSERT(c->isRule());
     if (index >= length())
         m_children.append(child);
     else
