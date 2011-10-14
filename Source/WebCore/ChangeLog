@@ -1,3 +1,10 @@
+2011-10-14  Beth Dakin  <bdakin@apple.com>
+
+        Attempted Leopard build fix.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer):
+
 2011-10-14  Andreas Kling  <kling@webkit.org>
 
         CSSStyleSheet should only ever contain CSSRules.
