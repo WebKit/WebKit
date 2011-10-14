@@ -1,3 +1,10 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip MicroData tests on Mac and WinCairo as well.
+
+        * platform/mac/Skipped:
+        * platform/wincairo/Skipped:
+
 2011-10-13  Arko Saha  <arko@motorola.com>
 
         Microdata: Basic implementation of document.getItems() method.
