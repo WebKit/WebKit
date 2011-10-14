@@ -100,11 +100,10 @@ WebMediaPlayer* WebMediaPlayerClientImpl::mediaPlayer() const
 
 WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
 {
-    // VideoLayerChromium may outlive this object so make sure all frames are
-    // released.
+    // VideoLayerChromium may outlive this object so clear the back pointer.
 #if USE(ACCELERATED_COMPOSITING)
     if (m_videoLayer.get())
-        m_videoLayer->releaseCurrentFrame();
+        m_videoLayer->releaseProvider();
 #endif
 }
 
@@ -219,13 +218,6 @@ WebKit::WebURL WebMediaPlayerClientImpl::sourceURL() const
 void WebMediaPlayerClientImpl::load(const String& url)
 {
     m_url = url;
-
-    // Video frame object is owned by WebMediaPlayer. Before destroying
-    // WebMediaPlayer all frames need to be released.
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_videoLayer.get())
-        m_videoLayer->releaseCurrentFrame();
-#endif
 
     if (m_preload == MediaPlayer::None) {
         m_webMediaPlayer.clear();
@@ -579,23 +571,24 @@ bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 
 VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
 {
-    VideoFrameChromium* videoFrame = 0;
-    if (m_webMediaPlayer.get()) {
+    ASSERT(!m_currentVideoFrame);
+    if (m_webMediaPlayer && !m_currentVideoFrame) {
         WebVideoFrame* webkitVideoFrame = m_webMediaPlayer->getCurrentFrame();
         if (webkitVideoFrame)
-            videoFrame = new VideoFrameChromiumImpl(webkitVideoFrame);
+            m_currentVideoFrame = adoptPtr(new VideoFrameChromiumImpl(webkitVideoFrame));
     }
-    return videoFrame;
+    return m_currentVideoFrame.get();
 }
 
 void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
 {
-    if (videoFrame) {
+    if (videoFrame && videoFrame == m_currentVideoFrame) {
         if (m_webMediaPlayer.get()) {
             m_webMediaPlayer->putCurrentFrame(
                 VideoFrameChromiumImpl::toWebVideoFrame(videoFrame));
         }
-        delete videoFrame;
+        ASSERT(videoFrame == m_currentVideoFrame);
+        m_currentVideoFrame.clear();
     }
 }
 #endif

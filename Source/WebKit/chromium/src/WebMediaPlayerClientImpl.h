@@ -156,6 +156,7 @@ private:
 
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
+    OwnPtr<WebCore::VideoFrameChromium> m_currentVideoFrame;
     String m_url;
     bool m_delayingLoad;
     WebCore::MediaPlayer::Preload m_preload;

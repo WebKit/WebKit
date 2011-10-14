@@ -53,9 +53,7 @@ public:
     virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*);
     virtual bool drawsContent() const { return true; }
 
-    // This function is called by VideoFrameProvider. When this method is called
-    // putCurrentFrame() must be called to return the frame currently held.
-    void releaseCurrentFrame();
+    void releaseProvider();
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
@@ -87,10 +85,6 @@ private:
     enum { MaxPlanes = 3 };
     Texture m_textures[MaxPlanes];
     unsigned m_planes;
-
-    // This will be null for the entire duration of video playback if hardware
-    // decoding is not being used.
-    VideoFrameChromium* m_currentFrame;
 };
 
 }

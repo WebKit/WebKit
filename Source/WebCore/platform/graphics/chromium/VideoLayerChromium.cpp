@@ -56,7 +56,6 @@ VideoLayerChromium::VideoLayerChromium(CCLayerDelegate* delegate, VideoFrameProv
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
     , m_planes(0)
-    , m_currentFrame(0)
 {
 }
 
@@ -75,12 +74,11 @@ void VideoLayerChromium::cleanupResources()
     LayerChromium::cleanupResources();
     for (unsigned i = 0; i < MaxPlanes; ++i)
         m_textures[i].m_texture.clear();
-    releaseCurrentFrame();
 }
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, TextureAllocator* allocator)
 {
-    if (!m_delegate)
+    if (!m_delegate || !m_provider)
         return;
 
     if (m_dirtyRect.isEmpty() && texturesValid()) {
@@ -269,13 +267,9 @@ void VideoLayerChromium::updateTexture(GraphicsContext3D* context, TextureAlloca
     }
 }
 
-void VideoLayerChromium::releaseCurrentFrame()
+void VideoLayerChromium::releaseProvider()
 {
-    if (!m_currentFrame)
-        return;
-
-    m_provider->putCurrentFrame(m_currentFrame);
-    m_currentFrame = 0;
+    m_provider = 0;
 }
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2011-10-14  Justin Schuh  <jschuh@chromium.org>
+
+        Clear WebMediaPlayerClientImpl back pointer on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=69973
+
+        Reviewed by James Robinson.
+
+        Clear the backpointer and remove the unused m_currentFrame
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::releaseProvider):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-10-13  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Make IDBCursor.value() return an IDBAny object

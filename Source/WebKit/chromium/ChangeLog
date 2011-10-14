@@ -1,3 +1,19 @@
+2011-10-14  Justin Schuh  <jschuh@chromium.org>
+
+        Clear WebMediaPlayerClientImpl back pointer on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=69973
+
+        Reviewed by James Robinson.
+
+        Clear the backpointer and remove the unused m_currentFrame
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::load):
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        * src/WebMediaPlayerClientImpl.h:
+
 2011-10-14  Polina Sokolova  <polina@chromium.org>
 
         Make it possible for plugins to get current fullscreen element.
