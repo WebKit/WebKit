@@ -1,3 +1,46 @@
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
+        Merge StyleList into StyleSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=70100
+
+        Reviewed by Antti "printf" Koivisto.
+
+        Merge all functionality from StyleList into StyleSheet,
+        since StyleSheet was the only subclass of StyleList anyway.
+
+        Also removed FIXME's about throwing exceptions in CSSRuleList
+        since they were incorrect. The call sites already handle the
+        relevant cases.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        (WebCore::CSSRuleList::length):
+        (WebCore::CSSRuleList::item):
+        (WebCore::CSSRuleList::deleteRule):
+        (WebCore::CSSRuleList::append):
+        (WebCore::CSSRuleList::insertRule):
+        * css/CSSRuleList.h:
+        (WebCore::CSSRuleList::create):
+        (WebCore::CSSRuleList::styleSheet):
+        * css/StyleList.cpp: Removed.
+        * css/StyleList.h: Removed.
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        (WebCore::StyleSheet::append):
+        (WebCore::StyleSheet::insert):
+        (WebCore::StyleSheet::remove):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::length):
+        (WebCore::StyleSheet::item):
+
 2011-10-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Change -webkit-flow to -webkit-flow-into

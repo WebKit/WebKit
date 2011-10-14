@@ -26,7 +26,7 @@
 namespace WebCore {
 
 StyleSheet::StyleSheet(StyleSheet* parentSheet, const String& originalURL, const KURL& finalURL)
-    : StyleList(parentSheet)
+    : StyleBase(parentSheet)
     , m_parentNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -35,7 +35,7 @@ StyleSheet::StyleSheet(StyleSheet* parentSheet, const String& originalURL, const
 }
 
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
-    : StyleList(0)
+    : StyleBase(0)
     , m_parentNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -44,7 +44,7 @@ StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& 
 }
 
 StyleSheet::StyleSheet(StyleBase* owner, const String& originalURL, const KURL& finalURL)
-    : StyleList(owner)
+    : StyleBase(owner)
     , m_parentNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -64,6 +64,30 @@ StyleSheet::~StyleSheet()
         ASSERT(item(i)->parent() == this);
         item(i)->setParent(0);
     }
+}
+
+void StyleSheet::append(PassRefPtr<StyleBase> child)
+{
+    StyleBase* c = child.get();
+    m_children.append(child);
+    c->insertedIntoParent();
+}
+
+void StyleSheet::insert(unsigned index, PassRefPtr<StyleBase> child)
+{
+    StyleBase* c = child.get();
+    if (index >= length())
+        m_children.append(child);
+    else
+        m_children.insert(index, child);
+    c->insertedIntoParent();
+}
+
+void StyleSheet::remove(unsigned index)
+{
+    if (index >= length())
+        return;
+    m_children.remove(index);
 }
 
 StyleSheet* StyleSheet::parentStyleSheet() const

@@ -2442,8 +2442,6 @@
             'css/ShadowValue.cpp',
             'css/ShadowValue.h',
             'css/StyleBase.cpp',
-            'css/StyleList.cpp',
-            'css/StyleList.h',
             'css/StyleMedia.cpp',
             'css/StyleMedia.h',
             'css/StyleSheet.cpp',

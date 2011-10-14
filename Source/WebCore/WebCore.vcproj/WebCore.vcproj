@@ -33566,14 +33566,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\StyleList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\StyleList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\StyleMedia.cpp"
 				>
 			</File>

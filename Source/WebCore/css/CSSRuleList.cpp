@@ -24,7 +24,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
-#include "StyleList.h"
+#include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
 
 namespace WebCore {
@@ -33,14 +33,13 @@ CSSRuleList::CSSRuleList()
 {
 }
 
-CSSRuleList::CSSRuleList(StyleList* list, bool omitCharsetRules)
+CSSRuleList::CSSRuleList(StyleSheet* styleSheet, bool omitCharsetRules)
+    : m_styleSheet(styleSheet)
 {
-    m_list = list;
-    if (list && omitCharsetRules) {
-        m_list = 0;
-        unsigned len = list->length();
-        for (unsigned i = 0; i < len; ++i) {
-            StyleBase* style = list->item(i);
+    if (styleSheet && omitCharsetRules) {
+        m_styleSheet = 0;
+        for (unsigned i = 0; i < styleSheet->length(); ++i) {
+            StyleBase* style = styleSheet->item(i);
             if (style->isRule() && !style->isCharsetRule())
                 append(static_cast<CSSRule*>(style));
         }
@@ -53,13 +52,13 @@ CSSRuleList::~CSSRuleList()
 
 unsigned CSSRuleList::length() const
 {
-    return m_list ? m_list->length() : m_lstCSSRules.size();
+    return m_styleSheet ? m_styleSheet->length() : m_lstCSSRules.size();
 }
 
 CSSRule* CSSRuleList::item(unsigned index)
 {
-    if (m_list) {
-        StyleBase* rule = m_list->item(index);
+    if (m_styleSheet) {
+        StyleBase* rule = m_styleSheet->item(index);
         ASSERT(!rule || rule->isRule());
         return static_cast<CSSRule*>(rule);
     }
@@ -71,12 +70,10 @@ CSSRule* CSSRuleList::item(unsigned index)
 
 void CSSRuleList::deleteRule(unsigned index)
 {
-    ASSERT(!m_list);
+    ASSERT(!m_styleSheet);
 
-    if (index >= m_lstCSSRules.size()) {
-        // FIXME: Should we throw an INDEX_SIZE_ERR exception here?
+    if (index >= m_lstCSSRules.size())
         return;
-    }
 
     if (m_lstCSSRules[index]->isKeyframeRule()) {
         if (CSSMutableStyleDeclaration* style = static_cast<WebKitCSSKeyframeRule*>(m_lstCSSRules[index].get())->style())
@@ -89,27 +86,20 @@ void CSSRuleList::deleteRule(unsigned index)
 
 void CSSRuleList::append(CSSRule* rule)
 {
-    ASSERT(!m_list);
-    if (!rule) {
-        // FIXME: Should we throw an exception?
+    ASSERT(!m_styleSheet);
+
+    if (!rule)
         return;
-    }
 
     m_lstCSSRules.append(rule);
 }
 
 unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
 {
-    ASSERT(!m_list);
-    if (!rule) {
-        // FIXME: Should we throw an exception?
-        return 0;
-    }
+    ASSERT(!m_styleSheet);
 
-    if (index > m_lstCSSRules.size()) {
-        // FIXME: Should we throw an INDEX_SIZE_ERR exception here?
+    if (!rule || index > m_lstCSSRules.size())
         return 0;
-    }
 
     m_lstCSSRules.insert(index, rule);
     return index;

@@ -1057,8 +1057,6 @@ webcore_sources += \
 	Source/WebCore/css/ShadowValue.h \
 	Source/WebCore/css/StyleBase.cpp \
 	Source/WebCore/css/StyleBase.h \
-	Source/WebCore/css/StyleList.cpp \
-	Source/WebCore/css/StyleList.h \
 	Source/WebCore/css/StyleMedia.cpp \
 	Source/WebCore/css/StyleMedia.h \
 	Source/WebCore/css/StyleSheet.cpp \

@@ -481,7 +481,6 @@ SET(WebCore_SOURCES
     css/SelectorChecker.cpp
     css/ShadowValue.cpp
     css/StyleBase.cpp
-    css/StyleList.cpp
     css/StyleMedia.cpp
     css/StyleSheet.cpp
     css/StyleSheetList.cpp
