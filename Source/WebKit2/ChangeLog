@@ -1,5 +1,14 @@
 2011-10-14  Nayan Kumar K  <nayankk@motorola.com>
 
+        [WebKit2][gtk] Add documentation for WebKitPluginError and WebKitPolicyError.
+        https://bugs.webkit.org/show_bug.cgi?id=70016
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitError.h:
+
+2011-10-14  Nayan Kumar K  <nayankk@motorola.com>
+
         [WebKit2][gtk] Skip TestWebKitSettings test.
         https://bugs.webkit.org/show_bug.cgi?id=70129
 
