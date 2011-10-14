@@ -766,8 +766,8 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
 BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
-// We haven't implemented the WebKit fullscreen API yet
-BUGCR73923 SKIP : fullscreen = TIMEOUT FAIL
+// probably just need rebaselining.
+BUGCR73923 : fullscreen = TIMEOUT FAIL
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED

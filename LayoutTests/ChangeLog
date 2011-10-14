@@ -1,3 +1,11 @@
+2011-10-14  Kenji Imasaki  <imasaki@chromium.org>
+
+        [Chromium] unskipping full screen layout tests. We will do rebaselines later.
+        https://bugs.webkit.org/show_bug.cgi?id=70144
+        Reviewed by David Levin.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-14  Adam Barth  <abarth@webkit.org>
 
         canvas getImageData should explain why it throws SECURITY_ERR
