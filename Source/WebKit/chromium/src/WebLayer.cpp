@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebLayer.h"
 
+#include "Color.h"
 #include "LayerChromium.h"
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
@@ -233,6 +234,16 @@ void WebLayer::setTransform(const SkMatrix44& matrix)
 SkMatrix44 WebLayer::transform() const
 {
     return skMatrix44FromTransformationMatrix(m_private->transform());
+}
+
+void WebLayer::setDebugBorderColor(const WebColor& color)
+{
+    m_private->setDebugBorderColor(color);
+}
+
+void WebLayer::setDebugBorderWidth(float width)
+{
+    m_private->setDebugBorderWidth(width);
 }
 
 WebLayer::WebLayer(const PassRefPtr<LayerChromium>& node)

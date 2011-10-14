@@ -1,3 +1,15 @@
+2011-10-13  Antoine Labour  <piman@chromium.org>
+
+        Expose layer debug borders to WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=70079
+
+        Reviewed by Darin Fisher.
+
+        * public/WebLayer.h:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setDebugBorderColor):
+        (WebKit::WebLayer::setDebugBorderWidth):
+
 2011-10-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove layerX / layerY from the Chromium API

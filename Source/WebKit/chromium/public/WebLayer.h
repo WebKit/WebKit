@@ -26,6 +26,7 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
+#include "WebColor.h"
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
@@ -91,6 +92,9 @@ public:
 
     WEBKIT_EXPORT void setTransform(const SkMatrix44&);
     WEBKIT_EXPORT SkMatrix44 transform() const;
+
+    WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
+    WEBKIT_EXPORT void setDebugBorderWidth(float);
 
     template<typename T> T to()
     {
