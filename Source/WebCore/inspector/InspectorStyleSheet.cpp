@@ -110,32 +110,25 @@ static PassRefPtr<InspectorObject> buildSourceRangeObject(const SourceRange& ran
     return result.release();
 }
 
-static PassRefPtr<CSSRuleList> asCSSRuleList(StyleBase* styleBase)
+static PassRefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
 {
-    if (!styleBase)
+    if (!styleSheet)
         return 0;
 
-    if (styleBase->isCSSStyleSheet())
-        return CSSRuleList::create(static_cast<CSSStyleSheet*>(styleBase), true);
-    if (styleBase->isRule()) {
-        unsigned ruleType = static_cast<CSSRule*>(styleBase)->type();
-        RefPtr<CSSRuleList> result = 0;
+    return CSSRuleList::create(styleSheet, true);
+}
 
-        switch (ruleType) {
-        case CSSRule::MEDIA_RULE:
-            result = static_cast<CSSMediaRule*>(styleBase)->cssRules();
-            break;
-        case CSSRule::WEBKIT_KEYFRAMES_RULE:
-            result = static_cast<WebKitCSSKeyframesRule*>(styleBase)->cssRules();
-            break;
-        case CSSRule::IMPORT_RULE:
-        case CSSRule::PAGE_RULE:
-        default:
-            return 0;
-        }
+static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
+{
+    if (!rule)
+        return 0;
 
-        return result.release();
-    }
+    if (rule->isMediaRule())
+        return static_cast<CSSMediaRule*>(rule)->cssRules();
+
+    if (rule->isKeyframesRule())
+        return static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
+
     return 0;
 }
 

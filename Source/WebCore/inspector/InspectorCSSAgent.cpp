@@ -168,12 +168,12 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
 }
 
 // static
-CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(StyleBase* styleBase)
+CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(CSSRule* rule)
 {
-    if (!styleBase)
+    if (!rule)
         return 0;
 
-    StyleSheet* styleSheet = styleBase->stylesheet();
+    StyleSheet* styleSheet = rule->stylesheet();
     if (styleSheet && styleSheet->isCSSStyleSheet())
         return static_cast<CSSStyleSheet*>(styleSheet);
 
@@ -181,11 +181,9 @@ CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(StyleBase* styleBase)
 }
 
 // static
-CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(StyleBase* styleBase)
+CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 {
-    if (!styleBase->isStyleRule())
-        return 0;
-    CSSRule* rule = static_cast<CSSRule*>(styleBase);
+    // NOTE: CSSPageRule inherits from CSSStyleRule, so isStyleRule() is not enough.
     if (rule->type() != CSSRule::STYLE_RULE)
         return 0;
     return static_cast<CSSStyleRule*>(rule);

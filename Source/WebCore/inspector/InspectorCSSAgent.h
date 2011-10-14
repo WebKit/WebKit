@@ -48,15 +48,14 @@ class InspectorFrontend;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
-class StyleBase;
 
 #if ENABLE(INSPECTOR)
 
 class InspectorCSSAgent : public InspectorDOMAgent::DOMListener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
-    static CSSStyleSheet* parentStyleSheet(StyleBase*);
-    static CSSStyleRule* asCSSStyleRule(StyleBase*);
+    static CSSStyleSheet* parentStyleSheet(CSSRule*);
+    static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
     InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
     ~InspectorCSSAgent();

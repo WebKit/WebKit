@@ -1,3 +1,22 @@
+2011-10-14  Andreas Kling  <kling@webkit.org>
+
+        Inspector: Remove StyleBase usage.
+        https://bugs.webkit.org/show_bug.cgi?id=70138
+
+        Reviewed by Antti Koivisto.
+
+        Be fully specific about whether we're operating on a CSSRule or
+        a CSSStyleSheet.
+
+        No behavior change expected, this merely is a cleanup.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::parentStyleSheet):
+        (WebCore::InspectorCSSAgent::asCSSStyleRule):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual deleteProperty to deletePropertyVirtual
