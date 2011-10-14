@@ -41,7 +41,7 @@ class IDBFactoryBackendImpl;
 
 class IDBLevelDBBackingStore : public IDBBackingStore {
 public:
-    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl*);
+    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*);
     virtual ~IDBLevelDBBackingStore();
 
     virtual void getDatabaseNames(Vector<String>& foundNames);
@@ -75,7 +75,6 @@ public:
     virtual PassRefPtr<Cursor> openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
 
     virtual PassRefPtr<Transaction> createTransaction();
-    virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const { return IDBFactoryBackendInterface::LevelDBBackingStore; }
 
     static bool backingStoreExists(SecurityOrigin*, const String& name, const String& pathBase);
 

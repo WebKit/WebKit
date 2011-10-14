@@ -132,7 +132,7 @@ IDBLevelDBBackingStore::~IDBLevelDBBackingStore()
     m_comparator.clear();
 }
 
-PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
+PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
     String pathBase = pathBaseArg;
 

@@ -1,3 +1,35 @@
+2011-10-12  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Remove SQLite backing store
+        https://bugs.webkit.org/show_bug.cgi?id=69620
+
+        Reviewed by Darin Fisher.
+
+        Remove the SQLite backing store implementation; it is not used anymore.
+        Also remove the maximumSize parameter, it is not used either.
+
+        No new functionality, so no new tests.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * storage/IDBBackingStore.h:
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::getDatabaseNames):
+        (WebCore::IDBFactory::open):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::computeFileIdentifier):
+        (WebCore::computeUniqueIdentifier):
+        (WebCore::IDBFactoryBackendImpl::getDatabaseNames):
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::openBackingStore):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::open):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBSQLiteBackingStore.cpp: Removed.
+        * storage/IDBSQLiteBackingStore.h: Removed.
+
 2011-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix mac builds. r97448 broke them.

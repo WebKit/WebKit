@@ -51,16 +51,23 @@ public:
 
     virtual ~WebIDBFactory() { }
 
+    // FIXME: Delete when Chromium rolls.
     enum BackingStoreType {
         DefaultBackingStore,
         LevelDBBackingStore,
         SQLiteBackingStore
     };
 
-    virtual void getDatabaseNames(WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Delete when Chromium rolls.
+    virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { getDatabaseNames(callbacks, origin, frame, dataDir); }
+
+    virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { getDatabaseNames(callbacks, origin, frame, dataDir, 0, LevelDBBackingStore); }
+
+    // FIXME: Delete when Chromium rolls.
+    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { open(name, callbacks, origin, frame, dataDir); }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { open(name, callbacks, origin, frame, dataDir, 0, LevelDBBackingStore); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };

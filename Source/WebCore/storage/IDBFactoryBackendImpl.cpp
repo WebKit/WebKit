@@ -33,7 +33,6 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBLevelDBBackingStore.h"
-#include "IDBSQLiteBackingStore.h"
 #include "IDBTransactionCoordinator.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
@@ -43,14 +42,15 @@
 
 namespace WebCore {
 
-static String computeFileIdentifier(SecurityOrigin* securityOrigin, IDBFactoryBackendInterface::BackingStoreType type)
+static String computeFileIdentifier(SecurityOrigin* securityOrigin)
 {
-    return securityOrigin->databaseIdentifier() + String::format("@%d", type);
+    static const char kLevelDBFileSuffix[] = "@1";
+    return securityOrigin->databaseIdentifier() + kLevelDBFileSuffix;
 }
 
-static String computeUniqueIdentifier(const String& name, SecurityOrigin* securityOrigin, IDBFactoryBackendInterface::BackingStoreType type)
+static String computeUniqueIdentifier(const String& name, SecurityOrigin* securityOrigin)
 {
-    return computeFileIdentifier(securityOrigin, type) + name;
+    return computeFileIdentifier(securityOrigin) + name;
 }
 
 IDBFactoryBackendImpl::IDBFactoryBackendImpl()
@@ -80,11 +80,9 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
     m_backingStoreMap.remove(fileIdentifier);
 }
 
-void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
 {
-    ASSERT(backingStoreType != DefaultBackingStore);
-
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir, maximumSize, backingStoreType);
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
@@ -100,12 +98,9 @@ void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks,
     callbacks->onSuccess(databaseNames.release());
 }
 
-void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
 {
-    ASSERT(backingStoreType != DefaultBackingStore);
-
-    const String fileIdentifier = computeFileIdentifier(securityOrigin.get(), backingStoreType);
-    const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get(), backingStoreType);
+    const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
 
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
@@ -116,7 +111,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     }
 
     // FIXME: Everything from now on should be done on another thread.
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir, maximumSize, backingStoreType);
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
@@ -127,22 +122,19 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }
 
-PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDir)
 {
-    ASSERT(backingStoreType != DefaultBackingStore);
-
-    const String fileIdentifier = computeFileIdentifier(securityOrigin.get(), backingStoreType);
+    const String fileIdentifier = computeFileIdentifier(securityOrigin.get());
 
     RefPtr<IDBBackingStore> backingStore;
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
-    if (it2 != m_backingStoreMap.end() && (backingStoreType == it2->second->backingStoreType()))
+    if (it2 != m_backingStoreMap.end())
         backingStore = it2->second;
     else {
-        if (backingStoreType == SQLiteBackingStore)
-            backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 #if USE(LEVELDB)
-        else if (backingStoreType == LevelDBBackingStore)
-            backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+        backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, fileIdentifier, this);
+#else
+        ASSERT_NOT_REACHED();
 #endif
     }
 

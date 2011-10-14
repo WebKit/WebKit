@@ -3396,8 +3396,6 @@ webcore_sources += \
 	Source/WebCore/storage/IDBObjectStore.h \
 	Source/WebCore/storage/IDBRequest.cpp \
 	Source/WebCore/storage/IDBRequest.h \
-	Source/WebCore/storage/IDBSQLiteBackingStore.cpp \
-	Source/WebCore/storage/IDBSQLiteBackingStore.h \
 	Source/WebCore/storage/IDBTransactionBackendInterface.h \
 	Source/WebCore/storage/IDBTransactionCoordinator.h \
 	Source/WebCore/storage/IDBTransaction.cpp \

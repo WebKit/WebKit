@@ -108,7 +108,6 @@ public:
         virtual void rollback() = 0;
     };
     virtual PassRefPtr<Transaction> createTransaction() = 0;
-    virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const = 0;
 };
 
 } // namespace WebCore

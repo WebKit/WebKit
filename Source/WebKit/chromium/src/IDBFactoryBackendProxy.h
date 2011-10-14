@@ -44,8 +44,8 @@ public:
     static PassRefPtr<WebCore::IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendProxy();
 
-    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
-    virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
+    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
+    virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
 
 private:
     IDBFactoryBackendProxy();

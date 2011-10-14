@@ -64,7 +64,7 @@ IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 {
 }
 
-void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
 {
     WebSecurityOrigin origin(prpOrigin);
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
@@ -75,10 +75,10 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks
         return;
     }
 
-    m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebIDBFactory::BackingStoreType>(backingStoreType));
+    m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
 {
     WebSecurityOrigin origin(prpOrigin);
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
@@ -88,7 +88,7 @@ void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> c
         return;
     }
 
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebIDBFactory::BackingStoreType>(backingStoreType));
+    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
 } // namespace WebKit

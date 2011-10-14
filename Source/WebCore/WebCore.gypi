@@ -4830,8 +4830,6 @@
             'storage/IDBPendingTransactionMonitor.h',
             'storage/IDBRequest.cpp',
             'storage/IDBRequest.h',
-            'storage/IDBSQLiteBackingStore.cpp',
-            'storage/IDBSQLiteBackingStore.h',
             'storage/IDBTransaction.cpp',
             'storage/IDBTransaction.h',
             'storage/IDBTransactionBackendImpl.cpp',
