@@ -1,3 +1,15 @@
+2011-10-14  Beth Dakin  <bdakin@apple.com>
+
+        These tests results should really be in the mac-specific directory. They were 
+        added earlier today with https://bugs.webkit.org/show_bug.cgi?id=68641
+
+        Rubber-stamped by Andy Estes and Jon Honeycutt.
+
+        * fast/css/clip-text-in-scaled-div-expected.png: Removed.
+        * fast/css/clip-text-in-scaled-div-expected.txt: Removed.
+        * platform/mac/fast/css/clip-text-in-scaled-div-expected.png: Added.
+        * platform/mac/fast/css/clip-text-in-scaled-div-expected.txt: Added.
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Remove the duplicelious expectation.
