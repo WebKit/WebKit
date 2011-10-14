@@ -1,3 +1,14 @@
+2011-10-14  Chang Shu  <cshu@webkit.org>
+
+        [Qt] Enable fullscreen api on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=70131
+
+        As a result, we have 3 passed tests.
+
+        Reviewed by Noam Rosenthal.
+
+        * features.pri:
+
 2011-10-14  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70148

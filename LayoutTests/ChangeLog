@@ -1,3 +1,18 @@
+2011-10-14  Chang Shu  <cshu@webkit.org>
+
+        [Qt] Enable fullscreen api on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=70131
+
+        As a result, we have 3 passed tests.
+        fullscreen/full-screen-api.html
+        fullscreen/full-screen-iframe-not-allowed.html
+        fullscreen/full-screen-remove-ancestor-during-transition.html
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations after r97487.

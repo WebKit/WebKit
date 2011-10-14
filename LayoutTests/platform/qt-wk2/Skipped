@@ -240,15 +240,6 @@ svg/W3C-SVG-1.1/struct-cond-02-t.svg
 http/tests/appcache/auth.html
 http/tests/xmlhttprequest/logout.html
 
-# WebKit2 needs fullscreen support
-fullscreen/full-screen-css.html
-fullscreen/full-screen-iframe-allowed.html
-fullscreen/full-screen-iframe-not-allowed.html
-fullscreen/full-screen-remove-ancestor.html
-fullscreen/full-screen-remove.html
-fullscreen/full-screen-request.html
-fullscreen/full-screen-twice.html
-
 # Unexplained failures that were formerly in the setCanOpenWindows or setCloseRemainingWindowsWhenComplete lists.
 http/tests/security/cross-frame-access-call.html
 http/tests/security/frameNavigation/opener.html
