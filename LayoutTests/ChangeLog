@@ -1,3 +1,9 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows rebaseline after r97522.
+
+        * platform/win/fast/harness/results-expected.txt:
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations after r97522.
