@@ -1,3 +1,16 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        nrwt's results.html should show crashed tests before flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=66041
+
+        Reviewed by Ojan Vafai.
+
+        Fixed the over by changing the order in which we aggregate results.
+
+        * fast/harness/resources/results-test.js: Added a test.
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2011-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations after r97502.

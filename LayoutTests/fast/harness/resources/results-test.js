@@ -495,6 +495,20 @@ function runTests()
         assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[2], 'table', 'expected'));
     });
 
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar.html'] = mockExpectation('TEXT', 'PASS');
+    subtree['crash.html'] = mockExpectation('IMAGE', 'CRASH');
+    subtree['flaky-fail.html'] = mockExpectation('PASS TEXT', 'IMAGE PASS');
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+
+        var resultText = document.body.textContent;
+        assertTrue(resultText.indexOf('crash.html') != -1);
+        assertTrue(resultText.indexOf('flaky-fail.html') != -1);
+        assertTrue(resultText.indexOf('crash.html') < resultText.indexOf('flaky-fail.html'));
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 

@@ -1030,14 +1030,14 @@ function generatePage()
     if (globalState().results.interrupted)
         html += "<p class='stopped-running-early-message'>Testing exited early.</p>"
 
+    if (globalState().crashTests.length)
+        html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
+
     html += failingTestsTable(globalState().nonFlakyFailingTests,
         'Tests where results did not match expected results', 'results-table');
 
     html += failingTestsTable(globalState().flakyTests,
         'Flaky tests (failed the first run and got a different result on retry)', 'flaky-tests-table');
-
-    if (globalState().crashTests.length)
-        html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
 
     if (globalState().timeoutTests.length)
         html += testList(globalState().timeoutTests, 'Tests that timed out', 'timeout-tests-table');
