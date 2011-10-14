@@ -173,10 +173,12 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     if (PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::HTMLFormat, buffer)) {
         String markup;
         KURL srcURL;
-        PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL);
+        unsigned fragmentStart = 0;
+        unsigned fragmentEnd = 0;
+        PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL, &fragmentStart, &fragmentEnd);
 
         RefPtr<DocumentFragment> fragment =
-            createFragmentFromMarkup(frame->document(), markup, srcURL, FragmentScriptingNotAllowed);
+            createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, FragmentScriptingNotAllowed);
         if (fragment)
             return fragment.release();
     }

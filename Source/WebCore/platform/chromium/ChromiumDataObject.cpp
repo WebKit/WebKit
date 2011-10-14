@@ -160,7 +160,8 @@ String ChromiumDataObject::getData(const String& type, bool& success)
                 PasteboardPrivate::StandardBuffer;
             String htmlText;
             KURL sourceURL;
-            PlatformSupport::clipboardReadHTML(buffer, &htmlText, &sourceURL);
+            unsigned ignored;
+            PlatformSupport::clipboardReadHTML(buffer, &htmlText, &sourceURL, &ignored, &ignored);
             success = !htmlText.isEmpty();
             return htmlText;
         }

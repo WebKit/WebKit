@@ -168,11 +168,11 @@ String PlatformSupport::clipboardReadPlainText(
 
 void PlatformSupport::clipboardReadHTML(
     PasteboardPrivate::ClipboardBuffer buffer,
-    String* htmlText, KURL* sourceURL)
+    String* htmlText, KURL* sourceURL, unsigned* fragmentStart, unsigned* fragmentEnd)
 {
     WebURL url;
     *htmlText = webKitPlatformSupport()->clipboard()->readHTML(
-        static_cast<WebClipboard::Buffer>(buffer), &url);
+        static_cast<WebClipboard::Buffer>(buffer), &url, fragmentStart, fragmentEnd);
     *sourceURL = url;
 }
 

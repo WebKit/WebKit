@@ -97,7 +97,8 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
     if (type() == mimeTypeTextHTML) {
         String html;
         KURL ignoredSourceURL;
-        PlatformSupport::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL);
+        unsigned ignored;
+        PlatformSupport::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL, &ignored, &ignored);
         callback->scheduleCallback(m_context, html);
         return;
     }

@@ -63,7 +63,14 @@ public:
     virtual bool isFormatAvailable(Format, Buffer) { return false; }
 
     virtual WebString readPlainText(Buffer) { return WebString(); }
-    virtual WebString readHTML(Buffer, WebURL*) { return WebString(); }
+    // fragmentStart and fragmentEnd are indexes into the returned markup that
+    // indicate the start and end of the fragment if the returned markup
+    // contains additional context. If there is no additional context,
+    // fragmentStart will be zero and fragmentEnd will be the same as the length
+    // of the returned markup.
+    virtual WebString readHTML(
+        Buffer buffer, WebURL* pageURL, unsigned* fragmentStart,
+        unsigned* fragmentEnd) { return WebString(); }
     virtual WebData readImage(Buffer) { return WebData(); }
 
     // Returns an identifier which can be used to determine whether the data
@@ -87,7 +94,7 @@ public:
     // paste, drag and drop, and selection copy (on X).
     virtual WebVector<WebString> readAvailableTypes(
         Buffer, bool* containsFilenames) { return WebVector<WebString>(); }
-    // Returns true if the requested type was successfully read from the buffer. 
+    // Returns true if the requested type was successfully read from the buffer.
     virtual bool readData(
         Buffer, const WebString& type, WebString* data,
         WebString* metadata) { return false; }

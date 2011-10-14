@@ -71,6 +71,8 @@ public:
 
     String serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly);
 
+    static void appendComment(StringBuilder& out, const String& comment);
+
 protected:
     virtual void appendString(const String&);
     void appendStartTag(Node*, Namespaces* = 0);
@@ -86,7 +88,6 @@ protected:
     void appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
     EntityMask entityMaskForText(Text*) const;
     virtual void appendText(StringBuilder& out, Text*);
-    void appendComment(StringBuilder& out, const String& comment);
     void appendDocumentType(StringBuilder& result, const DocumentType*);
     void appendProcessingInstruction(StringBuilder& out, const String& target, const String& data);
     virtual void appendElement(StringBuilder& out, Element*, Namespaces*);

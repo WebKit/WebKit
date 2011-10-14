@@ -1,3 +1,35 @@
+2011-10-14  Daniel Cheng  <dcheng@chromium.org>
+
+        Context-aware HTML paste for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=62112
+
+        Reviewed by Ryosuke Niwa.
+
+        Add createFragmentFromMarkupWithContext which understands enough about DOM structure to
+        retain necessary elements to preserve structure and appearance when extracting a subset of
+        a DOM tree.
+
+        Covered by existing layout tests.
+
+        * editing/MarkupAccumulator.h:
+        * editing/markup.cpp:
+        (WebCore::isNonTableCellHTMLBlockElement):
+        (WebCore::isHTMLBlockElement):
+        (WebCore::ancestorToRetainStructureAndAppearanceForBlock):
+        (WebCore::ancestorToRetainStructureAndAppearance):
+        (WebCore::ancestorToRetainStructureAndAppearanceWithNoRenderer):
+        (WebCore::findNodesSurroundingContext):
+        (WebCore::trimFragment):
+        (WebCore::createFragmentFromMarkupWithContext):
+        * editing/markup.h:
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::getData):
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::getAsString):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PlatformSupport.h:
+
 2011-10-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Inherit settings from Chromium's envsetup.sh, address a NDK todo

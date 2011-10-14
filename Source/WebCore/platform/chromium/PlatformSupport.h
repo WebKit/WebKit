@@ -98,7 +98,7 @@ public:
     static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
 
     static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
-    static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*);
+    static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*, unsigned* fragmentStart, unsigned* fragmentEnd);
     static PassRefPtr<SharedBuffer> clipboardReadImage(PasteboardPrivate::ClipboardBuffer);
     static uint64_t clipboardGetSequenceNumber();
 
