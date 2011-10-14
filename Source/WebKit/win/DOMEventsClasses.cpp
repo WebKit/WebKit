@@ -256,13 +256,13 @@ HRESULT STDMETHODCALLTYPE DOMUIEvent::charCode(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMUIEvent::layerX( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::unused1(
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMUIEvent::layerY( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::unused2(
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;

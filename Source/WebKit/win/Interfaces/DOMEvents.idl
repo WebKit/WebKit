@@ -390,11 +390,9 @@ interface IDOMUIEvent : IDOMEvent
     //readonly attribute long                 charCode;
     HRESULT charCode([out, retval] long* result);
 
-    //readonly attribute long                 layerX;
-    HRESULT layerX([out, retval] long* result);
+    HRESULT unused1([out, retval] long* result);
 
-    //readonly attribute long                 layerY;
-    HRESULT layerY([out, retval] long* result);
+    HRESULT unused2([out, retval] long* result);
 
     //readonly attribute long                 pageX;
     HRESULT pageX([out, retval] long* result);

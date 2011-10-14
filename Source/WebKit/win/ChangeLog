@@ -1,3 +1,25 @@
+2011-10-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove layerX / layerY from the Windows API
+        https://bugs.webkit.org/show_bug.cgi?id=70051
+
+        Reviewed by Darin Adler.
+
+        Renamed layerX to unused1 and layerY to unused2 to keep the
+        binary compatibility.
+
+        * DOMEventsClasses.cpp:
+        (DOMUIEvent::unused1):
+        (DOMUIEvent::unused2):
+        * DOMEventsClasses.h:
+        (DOMKeyboardEvent::unused1):
+        (DOMKeyboardEvent::unused2):
+        (DOMMouseEvent::unused1):
+        (DOMMouseEvent::unused2):
+        (DOMWheelEvent::unused1):
+        (DOMWheelEvent::unused2):
+        * Interfaces/DOMEvents.idl:
+
 2011-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
