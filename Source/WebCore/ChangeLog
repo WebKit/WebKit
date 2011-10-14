@@ -1,3 +1,17 @@
+2011-10-14  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70148
+        Should switch to CoreUI version of CorrectionDot, GrammarDot, and SpellingDot
+        -and corresponding-
+        <rdar://problem/10208281>
+
+        Reviewed by Anders Carlsson.
+
+        Use NS*Dot whenever it's available, and fallback to *Dot only when it is not.
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::createPatternColor):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+
 2011-10-14  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70120
