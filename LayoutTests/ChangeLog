@@ -1,3 +1,9 @@
+2011-10-13  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, updating Chromium expectations for http/tests/media/video-play-stall.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-13  Adam Barth  <abarth@webkit.org>
 
         Spelling error in v8WebSocket::constructorCallback error
