@@ -1,3 +1,9 @@
+2011-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix mac builds. r97448 broke them.
+
+        * WebCore.xcodeproj/project.pbxproj: Set ImageBySizeCache.h role to private.
+
 2011-10-14  Justin Schuh  <jschuh@chromium.org>
 
         Clear WebMediaPlayerClientImpl back pointer on destruction

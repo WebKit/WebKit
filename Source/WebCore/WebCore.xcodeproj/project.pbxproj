@@ -1716,7 +1716,7 @@
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		71CCB49C144824AC00C676D6 /* ImageBySizeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71CCB49A144824AC00C676D6 /* ImageBySizeCache.cpp */; };
-		71CCB49D144824AC00C676D6 /* ImageBySizeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 71CCB49B144824AC00C676D6 /* ImageBySizeCache.h */; };
+		71CCB49D144824AC00C676D6 /* ImageBySizeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 71CCB49B144824AC00C676D6 /* ImageBySizeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		750D029311D0E7F300BD1B27 /* RenderInputSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */; };
