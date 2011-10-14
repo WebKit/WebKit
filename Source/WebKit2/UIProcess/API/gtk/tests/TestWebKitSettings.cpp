@@ -73,7 +73,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_xss_auditor(settings, FALSE);
     g_assert(!webkit_settings_get_enable_xss_auditor(settings));
 
-    // Frame flattering is disabled by default.
+    // Frame flattening is disabled by default.
     g_assert(!webkit_settings_get_enable_frame_flattening(settings));
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
     g_assert(webkit_settings_get_enable_frame_flattening(settings));

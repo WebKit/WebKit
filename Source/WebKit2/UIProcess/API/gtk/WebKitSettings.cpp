@@ -71,7 +71,7 @@ enum {
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
     PROP_ENABLE_HTML5_DATABASE,
     PROP_ENABLE_XSS_AUDITOR,
-    PROP_ENABLE_FRAME_FLATTERING,
+    PROP_ENABLE_FRAME_FLATTENING,
     PROP_ENABLE_PLUGINS,
     PROP_ENABLE_JAVA,
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
@@ -104,7 +104,7 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_XSS_AUDITOR:
         webkit_settings_set_enable_xss_auditor(settings, g_value_get_boolean(value));
         break;
-    case PROP_ENABLE_FRAME_FLATTERING:
+    case PROP_ENABLE_FRAME_FLATTENING:
         webkit_settings_set_enable_frame_flattening(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_PLUGINS:
@@ -151,7 +151,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
     case PROP_ENABLE_XSS_AUDITOR:
         g_value_set_boolean(value, webkit_settings_get_enable_xss_auditor(settings));
         break;
-    case PROP_ENABLE_FRAME_FLATTERING:
+    case PROP_ENABLE_FRAME_FLATTENING:
         g_value_set_boolean(value, webkit_settings_get_enable_frame_flattening(settings));
         break;
     case PROP_ENABLE_PLUGINS:
@@ -313,7 +313,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     *
     */
     g_object_class_install_property(gObjectClass,
-                                    PROP_ENABLE_FRAME_FLATTERING,
+                                    PROP_ENABLE_FRAME_FLATTENING,
                                     g_param_spec_boolean("enable-frame-flattening",
                                                          _("Enable frame flattening"),
                                                          _("Whether to enable frame flattening."),

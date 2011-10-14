@@ -1,3 +1,20 @@
+2011-10-14  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] r97438: Inconsistent use of flattening vs flattering in function names/comments
+        https://bugs.webkit.org/show_bug.cgi?id=70092
+
+        Reviewed by Martin Robinson.
+
+        Fixes the miss-spelling of 'PROP_ENABLE_FRAME_FLATTENING' as 'PROP_ENABLE_FRAME_FLATTERING'
+        introduced with change set r97438.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Property name correction.
+        (webKitSettingsGetProperty): Property name correction.
+        (webkit_settings_class_init): Property name correction.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Spelling correction.
+
 2011-10-14  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] enable qmltests for qt5
