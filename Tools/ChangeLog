@@ -1,3 +1,18 @@
+2011-10-15  Robert Hogan  <robert@webkit.org>
+
+        [webkit-patch] Put Source/Tools changes at the top of patches, LayoutTests at the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=70056
+
+        Reviewed by Adam Barth.
+
+        The preferred file-order for patches is LayoutTests at the end and
+        ChangeLogs before everything else in a subdirectory. Specify this in a git 'orderfile' and use 
+        it when creating patches for review and landing.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/config/orderfile: Added.
+
 2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port

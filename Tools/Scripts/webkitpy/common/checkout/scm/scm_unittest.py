@@ -1000,6 +1000,60 @@ class GitTest(SCMTest):
         patch = scm.create_patch()
         self.assertFalse(re.search(r'Subversion Revision:', patch))
 
+    def test_orderfile(self):
+        os.mkdir("Tools")
+        os.mkdir("Source")
+        os.mkdir("LayoutTests")
+        os.mkdir("Websites")
+
+        # Slash should always be the right path separator since we use cygwin on Windows.
+        Tools_ChangeLog = "Tools/ChangeLog"
+        write_into_file_at_path(Tools_ChangeLog, "contents")
+        Source_ChangeLog = "Source/ChangeLog"
+        write_into_file_at_path(Source_ChangeLog, "contents")
+        LayoutTests_ChangeLog = "LayoutTests/ChangeLog"
+        write_into_file_at_path(LayoutTests_ChangeLog, "contents")
+        Websites_ChangeLog = "Websites/ChangeLog"
+        write_into_file_at_path(Websites_ChangeLog, "contents")
+
+        Tools_ChangeFile = "Tools/ChangeFile"
+        write_into_file_at_path(Tools_ChangeFile, "contents")
+        Source_ChangeFile = "Source/ChangeFile"
+        write_into_file_at_path(Source_ChangeFile, "contents")
+        LayoutTests_ChangeFile = "LayoutTests/ChangeFile"
+        write_into_file_at_path(LayoutTests_ChangeFile, "contents")
+        Websites_ChangeFile = "Websites/ChangeFile"
+        write_into_file_at_path(Websites_ChangeFile, "contents")
+
+        run_command(['git', 'add', 'Tools/ChangeLog'])
+        run_command(['git', 'add', 'LayoutTests/ChangeLog'])
+        run_command(['git', 'add', 'Source/ChangeLog'])
+        run_command(['git', 'add', 'Websites/ChangeLog'])
+        run_command(['git', 'add', 'Tools/ChangeFile'])
+        run_command(['git', 'add', 'LayoutTests/ChangeFile'])
+        run_command(['git', 'add', 'Source/ChangeFile'])
+        run_command(['git', 'add', 'Websites/ChangeFile'])
+        scm = self.tracking_scm
+        scm.commit_locally_with_message('message')
+
+        patch = scm.create_patch()
+        self.assertTrue(re.search(r'Tools/ChangeLog', patch).start() < re.search(r'Tools/ChangeFile', patch).start())
+        self.assertTrue(re.search(r'Websites/ChangeLog', patch).start() < re.search(r'Websites/ChangeFile', patch).start())
+        self.assertTrue(re.search(r'Source/ChangeLog', patch).start() < re.search(r'Source/ChangeFile', patch).start())
+        self.assertTrue(re.search(r'LayoutTests/ChangeLog', patch).start() < re.search(r'LayoutTests/ChangeFile', patch).start())
+
+        self.assertTrue(re.search(r'Source/ChangeLog', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+        self.assertTrue(re.search(r'Tools/ChangeLog', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+        self.assertTrue(re.search(r'Websites/ChangeLog', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+
+        self.assertTrue(re.search(r'Source/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+        self.assertTrue(re.search(r'Tools/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+        self.assertTrue(re.search(r'Websites/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeLog', patch).start())
+
+        self.assertTrue(re.search(r'Source/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeFile', patch).start())
+        self.assertTrue(re.search(r'Tools/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeFile', patch).start())
+        self.assertTrue(re.search(r'Websites/ChangeFile', patch).start() < re.search(r'LayoutTests/ChangeFile', patch).start())
+
     def test_exists(self):
         scm = self.untracking_scm
         self._shared_test_exists(scm, scm.commit_locally_with_message)
