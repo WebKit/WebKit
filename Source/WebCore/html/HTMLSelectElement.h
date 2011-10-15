@@ -139,7 +139,7 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    void setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange = true);
+    void setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange);
     void deselectItemsWithoutValidation(Element* excludeElement = 0);
     void parseMultipleAttribute(const Attribute*);
     int lastSelectedListIndex() const;
@@ -183,7 +183,7 @@ private:
 
 inline void HTMLSelectElement::setSelectedIndex(int index, bool deselect)
 {
-    setSelectedIndex(index, deselect, false);
+    setSelectedIndex(index, deselect, false, false);
 }
 
 inline bool HTMLSelectElement::usesMenuList() const

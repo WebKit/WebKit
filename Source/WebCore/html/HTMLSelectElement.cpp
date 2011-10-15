@@ -233,7 +233,7 @@ void HTMLSelectElement::setValue(const String &value)
     for (unsigned i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag)) {
             if (static_cast<HTMLOptionElement*>(items[i])->value() == value) {
-                setSelectedIndex(optionIndex, true);
+                setSelectedIndex(optionIndex);
                 return;
             }
             optionIndex++;
@@ -1006,7 +1006,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
             handled = false;
 
         if (handled && static_cast<size_t>(listIndex) < listItems.size())
-            setSelectedIndex(listToOptionIndex(listIndex));
+            setSelectedIndex(listToOptionIndex(listIndex), true, false, true);
 
         if (handled)
             event->setDefaultHandled();
@@ -1073,7 +1073,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         int listIndex = optionToListIndex(selectedIndex());
         if (keyCode == '\r') {
             // listIndex should already be selected, but this will fire the onchange handler.
-            setSelectedIndex(listToOptionIndex(listIndex), true, true);
+            setSelectedIndex(listToOptionIndex(listIndex), true, true, true);
             handled = true;
         }
 #endif
@@ -1385,7 +1385,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         // Fold the option string and check if its prefix is equal to the folded prefix.
         String text = optionElement->textIndentedToRespectGroupLabel();
         if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded)) {
-            setSelectedIndex(listToOptionIndex(index));
+            setSelectedIndex(listToOptionIndex(index), true, false, true);
             if (!usesMenuList())
                 listBoxOnChange();
 
@@ -1418,7 +1418,7 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
         if (optionElement->selected())
             optionElement->setSelectedState(false);
         else
-            setSelectedIndex(index, false, true);
+            setSelectedIndex(index, false, true, true);
     }
 
     if (usesMenuList())

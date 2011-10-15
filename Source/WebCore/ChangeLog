@@ -1,3 +1,26 @@
+2011-10-15  Darin Adler  <darin@apple.com>
+
+        REGRESSION(r97533): fast/forms/select-script-onchange.html failed after
+        https://bugs.webkit.org/show_bug.cgi?id=70173
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setValue): Removed unneeded boolean argument
+        [true for deselect].
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Added explicit
+        boolean arguments for all calls to setSelectedIndex to restore pre-r97533
+        behavior.
+        (WebCore::HTMLSelectElement::typeAheadFind): Ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Ditto.
+
+        * html/HTMLSelectElement.h:
+        Removed default of true for userDrivenChange. Each caller should pass it
+        explicitly. Longer term we should use an enum instead of a boolean or find
+        some other way of avoiding the argument.
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        Pass false for userDrivenChange as the old code did pre-r97533.
+
 2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port
