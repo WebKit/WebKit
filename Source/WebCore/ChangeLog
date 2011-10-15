@@ -1,3 +1,18 @@
+2011-10-15  Michael Nordman  <michaeln@google.com>
+
+        [Chromium] Some WebSQLDatabase in worker bug fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=70071
+
+        - Test for a NULL webView WebWorkerClientImpl.
+        - Avoid altering Database instance lifetimes during WorkerThread::stop().
+
+        Existing tests coverage applies.
+
+        Reviewed by David Levin.
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+
 2011-10-14  Adam Barth  <abarth@webkit.org>
 
         Update expected results.

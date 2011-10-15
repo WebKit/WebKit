@@ -193,6 +193,8 @@ void WebWorkerClientImpl::workerContextDestroyed()
 bool WebWorkerClientImpl::allowFileSystem() 
 {
     WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
+    if (!webView)
+        return false;
     return !webView->permissionClient() || webView->permissionClient()->allowFileSystem(m_webFrame);
 }
 
@@ -204,8 +206,10 @@ void WebWorkerClientImpl::openFileSystem(WebFileSystem::Type type, long long siz
 
 bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) 
 {
-     WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
-     return !webView->permissionClient() || webView->permissionClient()->allowDatabase(m_webFrame, name, displayName, estimatedSize);
+    WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
+    if (!webView)
+        return false;
+    return !webView->permissionClient() || webView->permissionClient()->allowDatabase(m_webFrame, name, displayName, estimatedSize);
 }
  
 void WebWorkerClientImpl::dispatchDevToolsMessage(const WebString& message)
