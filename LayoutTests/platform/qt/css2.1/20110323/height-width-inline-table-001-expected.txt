@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x168 layerType: background only
+layer at (8,54) size 100x100
+  RenderBlock (positioned) zI: -1 {DIV} at (8,54) size 100x100 [bgcolor=#FF0000]
+layer at (0,0) size 800x168 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x168
+    RenderBody {BODY} at (8,16) size 784x144
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 316x22
+          text run at (0,0) width 316: "Test passes if there is a filled green square and "
+        RenderInline {STRONG} at (0,0) size 44x22
+          RenderText {#text} at (316,0) size 44x22
+            text run at (316,0) width 44: "no red"
+        RenderText {#text} at (360,0) size 4x22
+          text run at (360,0) width 4: "."
+      RenderBlock (anonymous) at (0,38) size 784x106
+        RenderTable {DIV} at (0,0) size 100x100 [bgcolor=#008000] [border: (25px solid #008000)]
+        RenderText {#text} at (0,0) size 0x0
