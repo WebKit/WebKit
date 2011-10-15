@@ -1,3 +1,16 @@
+2011-10-14  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [FileSystem API] restricted Unicode characters in names
+        https://bugs.webkit.org/show_bug.cgi?id=69657
+
+        Reviewed by Adam Barth.
+
+        * fast/filesystem/op-restricted-unicode-expected.txt: Added.
+        * fast/filesystem/op-restricted-unicode.html: Added.
+        * fast/filesystem/resources/op-restricted-unicode.js: Added.
+        (testCases.name.precondition.tests):
+        (testCases):
+
 2011-10-14  Gavin Barraclough  <baraclough@apple.com>
 
         Most built-in properties are not deletable
