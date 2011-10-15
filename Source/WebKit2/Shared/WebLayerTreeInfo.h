@@ -34,7 +34,6 @@ using namespace WebCore;
 namespace WebKit {
 
 typedef uint32_t WebLayerID;
-enum { InvalidWebLayerID = 0 };
 
 struct WebLayerUpdateInfo {
     WebLayerUpdateInfo() { }
@@ -55,7 +54,6 @@ struct WebLayerInfo {
     WebLayerID parent;
     WebLayerID replica;
     WebLayerID mask;
-    int64_t imageBackingStoreID;
 
     FloatPoint pos;
     FloatPoint3D anchorPoint;
@@ -73,8 +71,6 @@ struct WebLayerInfo {
             bool masksToBounds : 1;
             bool preserves3D : 1;
             bool contentNeedsDisplay : 1;
-            bool imageIsUpdated: 1;
-            bool isRootLayer: 1;
         };
         unsigned int flags;
     };

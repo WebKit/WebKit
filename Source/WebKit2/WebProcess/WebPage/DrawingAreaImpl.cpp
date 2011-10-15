@@ -673,13 +673,5 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_lastDisplayTime = currentTime();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-void DrawingAreaImpl::didReceiveLayerTreeHostMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didReceiveLayerTreeHostMessage(connection, messageID, arguments);
-}
-#endif
-
 
 } // namespace WebKit
