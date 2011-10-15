@@ -1520,7 +1520,7 @@ void FrameSelection::selectAll()
     Document* document = m_frame->document();
 
     if (document->focusedNode() && document->focusedNode()->hasTagName(selectTag)) {
-        HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(document->focusedNode());
+        HTMLSelectElement* selectElement = toHTMLSelectElement(document->focusedNode());
         if (selectElement->canSelectAll()) {
             selectElement->selectAll();
             return;

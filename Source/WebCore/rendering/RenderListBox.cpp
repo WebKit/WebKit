@@ -106,7 +106,7 @@ void RenderListBox::updateFromElement()
     FontCachePurgePreventer fontCachePurgePreventer;
 
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
+        const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
         int size = numItems();
         
         float width = 0;
@@ -167,7 +167,7 @@ void RenderListBox::layout()
 
 void RenderListBox::scrollToRevealSelection()
 {    
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toHTMLSelectElement(node());
 
     m_scrollToRevealSelectionAfterLayout = false;
 
@@ -213,7 +213,7 @@ void RenderListBox::computePreferredLogicalWidths()
 
 int RenderListBox::size() const
 {
-    int specifiedSize = toSelectElement(static_cast<Element*>(node()))->size();
+    int specifiedSize = toHTMLSelectElement(node())->size();
     if (specifiedSize > 1)
         return max(minSize, specifiedSize);
     return min(max(minSize, numItems()), maxDefaultSize);
@@ -227,7 +227,7 @@ int RenderListBox::numVisibleItems() const
 
 int RenderListBox::numItems() const
 {
-    return toSelectElement(static_cast<Element*>(node()))->listItems().size();
+    return toHTMLSelectElement(node())->listItems().size();
 }
 
 LayoutUnit RenderListBox::listHeight() const
@@ -314,7 +314,7 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
     if (!isSpatialNavigationEnabled(frame()))
         return RenderBlock::addFocusRingRects(rects, additionalOffset);
 
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toHTMLSelectElement(node());
 
     // Focus the last selected item.
     int selectedItem = select->activeSelectionEndListIndex();
@@ -370,8 +370,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<HTMLElement*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
     Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
@@ -422,8 +421,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    const Vector<HTMLElement*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
     Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
@@ -519,7 +517,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
         return;
 
     m_inAutoscroll = true;
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    HTMLSelectElement* select = toHTMLSelectElement(node());
     select->updateListBoxSelection(!select->multiple());
     m_inAutoscroll = false;
 }
@@ -548,7 +546,7 @@ void RenderListBox::autoscroll()
 
     int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
-        HTMLSelectElement* select = toSelectElement(static_cast<Element*>(node()));
+        HTMLSelectElement* select = toHTMLSelectElement(node());
         m_inAutoscroll = true;
 
         if (!select->multiple())
@@ -562,7 +560,7 @@ void RenderListBox::autoscroll()
 
 void RenderListBox::stopAutoscroll()
 {
-    toSelectElement(static_cast<Element*>(node()))->listBoxOnChange();
+    toHTMLSelectElement(node())->listBoxOnChange();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
@@ -598,9 +596,8 @@ bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranul
 
 void RenderListBox::valueChanged(unsigned listIndex)
 {
-    Element* element = static_cast<Element*>(node());
-    HTMLSelectElement* select = toSelectElement(element);
-    select->setSelectedIndex(select->listToOptionIndex(listIndex));
+    HTMLSelectElement* element = toHTMLSelectElement(node());
+    element->setSelectedIndex(element->listToOptionIndex(listIndex));
     element->dispatchFormControlChangeEvent();
 }
 
@@ -680,7 +677,7 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
-    const Vector<HTMLElement*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
+    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
     int size = numItems();
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 

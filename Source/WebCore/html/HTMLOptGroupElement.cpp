@@ -84,7 +84,7 @@ void HTMLOptGroupElement::recalcSelectOptions()
     while (select && !select->hasTagName(selectTag))
         select = select->parentNode();
     if (select)
-        static_cast<HTMLSelectElement*>(select)->setRecalcListItems();
+        toHTMLSelectElement(select)->setRecalcListItems();
 }
 
 void HTMLOptGroupElement::attach()
@@ -131,7 +131,7 @@ HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
     if (!select)
        return 0;
     
-    return static_cast<HTMLSelectElement*>(select);
+    return toHTMLSelectElement(select);
 }
 
 void HTMLOptGroupElement::accessKeyAction(bool)

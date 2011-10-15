@@ -1,3 +1,148 @@
+2011-10-14  Darin Adler  <darin@apple.com>
+
+        Follow up the recent HTMLSelectElement improvements with a little bit more
+        https://bugs.webkit.org/show_bug.cgi?id=70139
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring, covered by existing tests.
+
+        Mostly, this adds a toHTMLSelectElement and uses it wherever possible.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::canSetSelectedChildrenAttribute): Use toHTMLSelectElement.
+        (WebCore::AccessibilityListBox::addChildren): Ditto. Also removed unneeded toHTMLElement.
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::addChildren): Ditto.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMultiSelectable): Ditto.
+        (WebCore::AccessibilityRenderObject::stringValue): Removed checks on the type of the
+        underlying node, since other code already assumes that a menu list renderer is only
+        created for a select element. Streamlined the code a bit and removed some unneeded
+        local variables.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::indexSetter): Use toHTMLSelectElement.
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove): Ditto.
+        (WebCore::JSHTMLSelectElement::indexSetter): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll): Ditto.
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect): Ditto.
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::recalcSelectOptions): Ditto.
+        (WebCore::HTMLOptGroupElement::ownerSelectElement): Ditto.
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::selected): Changed code to call renamed
+        updateListItemSelectedStates rather than the confusing old name
+        recalcListItemsIfNeeded.
+        (WebCore::HTMLOptionElement::childrenChanged): Changed to call
+        optionElementChildrenChanged rather than calling childrenChanged,
+        because the children of the select element did not change!
+        (WebCore::HTMLOptionElement::ownerSelectElement): Use toHTMLSelectElement.
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add): Use toHTMLSelectElement.
+        (WebCore::HTMLOptionsCollection::remove): Use toHTMLSelectElement.
+        (WebCore::HTMLOptionsCollection::selectedIndex): Use toHTMLSelectElement.
+        (WebCore::HTMLOptionsCollection::setSelectedIndex): Use toHTMLSelectElement.
+        (WebCore::HTMLOptionsCollection::setLength): Use toHTMLSelectElement.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser): Call setSelectedIndex
+        without the now-unneeded internal suffix.
+        (WebCore::HTMLSelectElement::parseMappedAttribute): When the code says that
+        we should "determine selectedness of the items", call updateListItemSelectedStates
+        rather than the confusingly named recalcListItemsIfNeeded.
+        (WebCore::HTMLSelectElement::updateListItemSelectedStates): Renamed
+        recalcListItemsIfNeeded to this, since that's what this function is for.
+        (WebCore::HTMLSelectElement::optionElementChildrenChanged): Added. Does
+        the same work as childrenChanged, although it does not call up to the
+        base class childrenChanged function. Later we might find we can remove
+        some of the work here, for example it's not clear we should call the
+        accessibility childrenChanged function.
+        (WebCore::HTMLSelectElement::nextValidIndex): Changed this to a member function
+        and made it get the list items itself rather than requiring they be passed in.
+        (WebCore::HTMLSelectElement::nextSelectableListIndex): Updated for change to
+        nextValidIndex.
+        (WebCore::HTMLSelectElement::previousSelectableListIndex): Ditto.
+        (WebCore::HTMLSelectElement::firstSelectableListIndex): Ditto.
+        (WebCore::HTMLSelectElement::lastSelectableListIndex): Ditto.
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway): Ditto.
+        (WebCore::HTMLSelectElement::listItems): Removed unneeded const_cast, since
+        recalcListItems is now a const member function. Call recalcListItems by that
+        name instead of recalcListItemsInternal.
+        (WebCore::HTMLSelectElement::recalcListItems): Renamed from recalcListItemsInternal
+        and made this a const member function. The data members that this needs to modify
+        are now mutable.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Renamed from setSelectedIndexInternal.
+        Changed call to updateValidity to instead call setNeedsValidityCheck, since both
+        do the same thing.
+        (WebCore::HTMLSelectElement::parseMultipleAttribute): Ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Updated for change to
+        nextValidIndex, removed unneeded comparison with zero that's already handled by
+        casting to an unsigned type, and use setSelectedIndex instead of using
+        setSelectedIndexInternal since they are both the same thing.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Removed another unneeded
+        comparision with zero that's handled by casting to an unsigned type.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): Use size_t instead of unsigned
+        for a vector index.
+        (WebCore::HTMLSelectElement::typeAheadFind): Use setSelectedIndex instead of
+        setSelectedIndexInternal.
+        (WebCore::HTMLSelectElement::insertedIntoTree): Removed unneeded explicit boolean
+        when calling a function that already has a default value of true.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Use setSelectedIndex
+        instead of setSelectedIndexInternal.
+
+        * html/HTMLSelectElement.h: Made childrenChanged private. Added
+        optionElementChildrenChanged. Renamed recalcListItemsIfNeeded to the clearer
+        updateListItemSelectedStates. Removed unused listBoxSelectItem. Removed
+        updateValidity after changing all callers to instead call setNeedsValidityCheck.
+        Made canSelectAll and selectAll non-virtual. Removed recalcListItemsInternal
+        since it's the same thing as recalcListItems now. Renamed setSelectedIndexInternal
+        to setSelectedIndex since it's the same function, just with a few arguments we
+        don't want to allow outside callers to pass. Changed nextValidIndex into a
+        non-static member function. Made m_listItems and m_shouldRecalcListItems mutable.
+        Added a toHTMLSelectElement function, modeled on the toElement function.
+
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::valueMissing): Use toHTMLSelectElement.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Ditto.
+        (WebCore::RenderListBox::scrollToRevealSelection): Ditto.
+        (WebCore::RenderListBox::size): Ditto.
+        (WebCore::RenderListBox::numItems): Ditto.
+        (WebCore::RenderListBox::addFocusRingRects): Ditto.
+        (WebCore::RenderListBox::paintItemForeground): Ditto.
+        (WebCore::RenderListBox::paintItemBackground): Ditto.
+        (WebCore::RenderListBox::panScroll): Ditto.
+        (WebCore::RenderListBox::autoscroll): Ditto.
+        (WebCore::RenderListBox::stopAutoscroll): Ditto.
+        (WebCore::RenderListBox::valueChanged): Ditto.
+        (WebCore::RenderListBox::nodeAtPoint): Ditto.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth): Ditto.
+        (WebCore::RenderMenuList::updateFromElement): Ditto.
+        (WebCore::RenderMenuList::setTextFromOption): Ditto.
+        (WebCore::RenderMenuList::showPopup): Ditto.
+        (WebCore::RenderMenuList::valueChanged): Ditto.
+        (WebCore::RenderMenuList::listBoxSelectItem): Ditto.
+        (WebCore::RenderMenuList::multiple): Ditto.
+        (WebCore::RenderMenuList::didSetSelectedIndex): Ditto.
+        (WebCore::RenderMenuList::didUpdateActiveOption): Ditto.
+        (WebCore::RenderMenuList::itemText): Ditto.
+        (WebCore::RenderMenuList::itemAccessibilityText): Ditto.
+        (WebCore::RenderMenuList::itemToolTip): Ditto.
+        (WebCore::RenderMenuList::itemIsEnabled): Ditto. Also use the
+        disabled function instead of the virtual isEnabledFormControl
+        function to check if the optgroup is enabled.
+        (WebCore::RenderMenuList::itemStyle): Ditto.
+        (WebCore::RenderMenuList::itemBackgroundColor): Ditto.
+        (WebCore::RenderMenuList::listSize): Ditto.
+        (WebCore::RenderMenuList::selectedIndex): Ditto.
+        (WebCore::RenderMenuList::itemIsSeparator): Ditto.
+        (WebCore::RenderMenuList::itemIsLabel): Ditto.
+        (WebCore::RenderMenuList::itemIsSelected): Ditto.
+        (WebCore::RenderMenuList::setTextFromItem): Ditto.
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual put to putVirtual

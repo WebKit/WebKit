@@ -166,7 +166,7 @@ void HTMLOptionElement::setValue(const String& value)
 bool HTMLOptionElement::selected()
 {
     if (HTMLSelectElement* select = ownerSelectElement())
-        select->recalcListItemsIfNeeded();
+        select->updateListItemSelectedStates();
     return m_data.selected();
 }
 
@@ -188,9 +188,8 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    HTMLSelectElement* select = ownerSelectElement();
-    if (select)
-        select->childrenChanged(changedByParser);
+    if (HTMLSelectElement* select = ownerSelectElement())
+        select->optionElementChildrenChanged();
     HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
@@ -203,7 +202,7 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
     if (!select)
         return 0;
 
-    return static_cast<HTMLSelectElement*>(select);
+    return toHTMLSelectElement(select);
 }
 
 bool HTMLOptionElement::defaultSelected() const

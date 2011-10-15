@@ -34,7 +34,7 @@ using namespace HTMLNames;
 
 JSValue JSHTMLSelectElement::remove(ExecState* exec)
 {
-    HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
+    HTMLSelectElement& select = *toHTMLSelectElement(impl());
 
     // The remove function can take either an option object or the index of an option.
     if (HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0)))
@@ -62,7 +62,7 @@ void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned
 
 void JSHTMLSelectElement::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
-    selectIndexSetter(static_cast<HTMLSelectElement*>(impl()), exec, index, value);
+    selectIndexSetter(toHTMLSelectElement(impl()), exec, index, value);
 }
 
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -61,10 +61,10 @@ public:
 
     PassRefPtr<HTMLOptionsCollection> options();
 
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    void optionElementChildrenChanged();
 
     void setRecalcListItems();
-    void recalcListItemsIfNeeded();
+    void updateListItemSelectedStates();
 
     const Vector<HTMLElement*>& listItems() const;
 
@@ -85,12 +85,8 @@ public:
 
     void scrollToSelection();
 
-    void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
-
-    void updateValidity() { setNeedsValidityCheck(); }
-
-    virtual bool canSelectAll() const;
-    virtual void selectAll();
+    bool canSelectAll() const;
+    void selectAll();
     int listToOptionIndex(int listIndex) const;
     void listBoxOnChange();
     int optionToListIndex(int optionIndex) const;
@@ -143,8 +139,7 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    void recalcListItemsInternal(bool updateSelectedStates = true);
-    void setSelectedIndexInternal(int optionIndex, bool deselect = true, bool fireOnChangeNow = false, bool userDrivenChange = true);
+    void setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange = true);
     void deselectItemsWithoutValidation(Element* excludeElement = 0);
     void parseMultipleAttribute(const Attribute*);
     int lastSelectedListIndex() const;
@@ -159,16 +154,18 @@ private:
         SkipBackwards = -1,
         SkipForwards = 1
     };
-    static int nextValidIndex(const Vector<HTMLElement*>& listItems, int listIndex, SkipDirection, int skip);
+    int nextValidIndex(int listIndex, SkipDirection, int skip) const;
     int nextSelectableListIndex(int startIndex) const;
     int previousSelectableListIndex(int startIndex) const;
     int firstSelectableListIndex() const;
     int lastSelectableListIndex() const;
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+
     CollectionCache m_collectionInfo;
-    // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, or HTMLHRElement.
-    Vector<HTMLElement*> m_listItems;
+    // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, and HTMLHRElement objects.
+    mutable Vector<HTMLElement*> m_listItems;
     Vector<bool> m_lastOnChangeSelection;
     Vector<bool> m_cachedStateForActiveSelection;
     DOMTimeStamp m_lastCharTime;
@@ -181,10 +178,13 @@ private:
     bool m_userDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;
-    bool m_shouldRecalcListItems;
+    mutable bool m_shouldRecalcListItems;
 };
 
-HTMLSelectElement* toSelectElement(Element*);
+inline void HTMLSelectElement::setSelectedIndex(int index, bool deselect)
+{
+    setSelectedIndex(index, deselect, false);
+}
 
 inline bool HTMLSelectElement::usesMenuList() const
 {
@@ -194,6 +194,26 @@ inline bool HTMLSelectElement::usesMenuList() const
     return !m_multiple && m_size <= 1;
 #endif
 }
+
+HTMLSelectElement* toHTMLSelectElement(Node*);
+const HTMLSelectElement* toHTMLSelectElement(const Node*);
+void toHTMLSelectElement(const HTMLSelectElement*); // This overload will catch anyone doing an unnecessary cast.
+
+#ifdef NDEBUG
+
+// The debug versions of these, with assertions, are not inlined.
+
+inline HTMLSelectElement* toHTMLSelectElement(Node* node)
+{
+    return static_cast<HTMLSelectElement*>(node);
+}
+
+inline const HTMLSelectElement* toHTMLSelectElement(const Node* node)
+{
+    return static_cast<const HTMLSelectElement*>(node);
+}
+
+#endif
 
 } // namespace
 

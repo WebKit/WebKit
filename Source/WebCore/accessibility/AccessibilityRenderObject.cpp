@@ -663,7 +663,7 @@ bool AccessibilityRenderObject::isMultiSelectable() const
     
     if (!m_renderer->isBoxModelObject() || !toRenderBoxModelObject(m_renderer)->isListBox())
         return false;
-    return m_renderer->node() && static_cast<HTMLSelectElement*>(m_renderer->node())->multiple();
+    return m_renderer->node() && toHTMLSelectElement(m_renderer->node())->multiple();
 }
 
 bool AccessibilityRenderObject::isReadOnly() const
@@ -1145,21 +1145,14 @@ String AccessibilityRenderObject::stringValue() const
     
     if (cssBox && cssBox->isMenuList()) {
         // RenderMenuList will go straight to the text() of its selected item.
-        // This has to be overriden in the case where the selected item has an aria label
-        Node* node = m_renderer->node();
-        if (node && node->isHTMLElement() && node->hasTagName(selectTag)) {
-            HTMLSelectElement* selectNode = static_cast<HTMLSelectElement*>(node);
-            int selectedIndex = selectNode->selectedIndex();
-            const Vector<HTMLElement*> listItems = selectNode->listItems();
-        
-            Element* selectedOption = 0;
-            if (selectedIndex >= 0 && selectedIndex < (int)listItems.size()) 
-                selectedOption = listItems[selectedIndex];
-            if (selectedOption) {
-                String overridenDescription = selectedOption->getAttribute(aria_labelAttr);
-                if (!overridenDescription.isNull())
-                    return overridenDescription;
-            }
+        // This has to be overridden in the case where the selected item has an ARIA label.
+        HTMLSelectElement* selectElement = toHTMLSelectElement(m_renderer->node());
+        int selectedIndex = selectElement->selectedIndex();
+        const Vector<HTMLElement*> listItems = selectElement->listItems();
+        if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
+            const AtomicString& overriddenDescription = listItems[selectedIndex]->fastGetAttribute(aria_labelAttr);
+            if (!overriddenDescription.isNull())
+                return overriddenDescription;
         }
         return toRenderMenuList(m_renderer)->text();
     }

@@ -117,10 +117,8 @@ bool ValidityState::valueMissing() const
         HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(element);
         return textArea->valueMissing(textArea->value());
     }
-    if (element->hasTagName(selectTag)) {
-        HTMLSelectElement* select = static_cast<HTMLSelectElement*>(element);
-        return select->valueMissing();
-    }
+    if (element->hasTagName(selectTag))
+        return toHTMLSelectElement(element)->valueMissing();
     return false;
 }
 

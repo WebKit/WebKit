@@ -134,7 +134,7 @@ HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
     ShadowRoot* shadow = shadowRoot();
     ASSERT(shadow);
-    return shadow ? static_cast<HTMLSelectElement*>(shadow->firstChild()) : 0;
+    return shadow ? toHTMLSelectElement(shadow->firstChild()) : 0;
 }
 
 } // namespace
