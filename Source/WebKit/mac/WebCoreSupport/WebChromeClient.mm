@@ -505,19 +505,20 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& prompt, co
 {
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:);
+    NSString *defaultString = defaultText;
     if ([delegate respondsToSelector:selector]) {
-        result = (NSString *)CallUIDelegate(m_webView, selector, prompt, defaultText, kit(frame));
+        result = (NSString *)CallUIDelegate(m_webView, selector, prompt, defaultString, kit(frame));
         return !result.isNull();
     }
 
     // Call the old version of the delegate method if it is implemented.
     selector = @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:);
     if ([delegate respondsToSelector:selector]) {
-        result = (NSString *)CallUIDelegate(m_webView, selector, prompt, defaultText);
+        result = (NSString *)CallUIDelegate(m_webView, selector, prompt, defaultString);
         return !result.isNull();
     }
 
-    result = [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(frame)];
+    result = [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultString initiatedByFrame:kit(frame)];
     return !result.isNull();
 }
 

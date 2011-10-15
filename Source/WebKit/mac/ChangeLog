@@ -1,3 +1,24 @@
+2011-10-14  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/70158> Fix clang compiler warnings
+
+        Reviewed by Darin Adler.
+
+        The following two methods in WebDelegateImplementationCaching.h
+        are ambiguous in WebChromeClient::runJavaScriptPrompt() because
+        the compiler can't decide how to convert the WTF::String
+        defaultText argument:
+
+            id CallUIDelegate(WebView *, SEL, id, id);
+            id CallUIDelegate(WebView *, SEL, id, BOOL);
+
+        The fix is to perform the conversion explicitly.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::runJavaScriptPrompt): Extract a defaultString
+        variable to convert the WTF::String to an NSString*, then
+        use defaultString in place of defaultText.
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual put to putVirtual
