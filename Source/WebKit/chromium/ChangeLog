@@ -1,3 +1,13 @@
+2011-10-15  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Populate WebMouseEvent movementX/Y on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=70167
+
+        Reviewed by Adam Barth.
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::setWebEventLocationFromEventInView):
+
 2011-10-15  Antoine Labour  <piman@chromium.org>
 
         Add WebAcceleratedContentLayer backed by a texture to support accelerated content hosting

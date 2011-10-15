@@ -575,6 +575,9 @@ static inline void setWebEventLocationFromEventInView(WebMouseEvent* result,
 
     result->windowX = result->x;
     result->windowY = result->y;
+
+    result->movementX = [event deltaX];
+    result->movementY = [event deltaY];
 }
 
 WebKeyboardEvent WebInputEventFactory::keyboardEvent(NSEvent* event)
