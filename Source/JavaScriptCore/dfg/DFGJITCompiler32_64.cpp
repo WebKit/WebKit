@@ -562,7 +562,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         for (unsigned i = 0; i < m_calls.size(); ++i) {
             if (m_calls[i].m_handlesExceptions) {
                 unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_calls[i].m_call);
-                unsigned exceptionInfo = m_calls[i].m_codeOrigin.bytecodeIndex();
+                unsigned exceptionInfo = m_calls[i].m_codeOrigin.bytecodeIndex;
                 m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
             }
         }

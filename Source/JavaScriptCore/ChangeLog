@@ -1,3 +1,13 @@
+2011-10-15  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Trivial fix for a missing change in r97512
+        https://bugs.webkit.org/show_bug.cgi?id=70166
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::link):
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename getOwnPropertySlot to getOwnPropertySlotVirtual
