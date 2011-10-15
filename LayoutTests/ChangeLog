@@ -1,5 +1,15 @@
 2011-10-15  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [FileSystem API] File readonly attributes test
+        https://bugs.webkit.org/show_bug.cgi?id=69687
+
+        Reviewed by Adam Barth.
+
+        * fast/filesystem/simple-readonly-file-object-expected.txt: Added.
+        * fast/filesystem/simple-readonly-file-object.html: Added.
+
+2011-10-15  Mark Pilgrim  <pilgrim@chromium.org>
+
         [File API] URL methods required arguments
         https://bugs.webkit.org/show_bug.cgi?id=69692
 
