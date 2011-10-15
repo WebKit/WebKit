@@ -95,7 +95,7 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
 # FIXME: This should be share more logic with AssignToCommitter and CleanPendingCommit
 class CleanReviewQueue(AbstractDeclarativeCommand):
     name = "clean-review-queue"
-    help_text = "Clear r? on obsolete patches so they do not appear in the pending-commit list."
+    help_text = "Clear r? on obsolete patches so they do not appear in the pending-review list."
 
     def execute(self, options, args, tool):
         queue_url = "http://webkit.org/pending-review"
