@@ -237,7 +237,15 @@ void RenderTable::computeLogicalWidth()
     LengthType logicalWidthType = style()->logicalWidth().type();
     if (logicalWidthType > Relative && style()->logicalWidth().isPositive()) {
         // Percent or fixed table
-        setLogicalWidth(style()->logicalWidth().calcMinValue(containerWidthInInlineDirection));
+        // HTML tables size as though CSS width includes border/padding, CSS tables do not.
+        LayoutUnit borders = 0;
+        if (!node()->hasTagName(tableTag)) {
+            bool collapsing = collapseBorders();
+            LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
+            LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
+            borders = borderAndPaddingBefore + borderAndPaddingAfter;
+        }
+        setLogicalWidth(style()->logicalWidth().calcMinValue(containerWidthInInlineDirection) + borders);
         setLogicalWidth(max(minPreferredLogicalWidth(), logicalWidth()));
     } else {
         // Subtract out any fixed margins from our available width for auto width tables.
@@ -360,8 +368,9 @@ void RenderTable::layout()
     Length logicalHeightLength = style()->logicalHeight();
     LayoutUnit computedLogicalHeight = 0;
     if (logicalHeightLength.isFixed()) {
-        // Tables size as though CSS height includes border/padding.
-        computedLogicalHeight = logicalHeightLength.value() - (borderAndPaddingBefore + borderAndPaddingAfter);
+        // HTML tables size as though CSS height includes border/padding, CSS tables do not.
+        LayoutUnit borders = node()->hasTagName(tableTag) ? (borderAndPaddingBefore + borderAndPaddingAfter) : 0;
+        computedLogicalHeight = logicalHeightLength.value() - borders;
     } else if (logicalHeightLength.isPercent())
         computedLogicalHeight = computePercentageLogicalHeight(logicalHeightLength);
     computedLogicalHeight = max<LayoutUnit>(0, computedLogicalHeight);

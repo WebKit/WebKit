@@ -1,3 +1,89 @@
+2011-10-08  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: height-width-table-001.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69709
+
+        Reviewed by Simon Fraser.
+
+        * css2.1/20110323/abspos-containing-block-initial-001-ref.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-001.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004-ref-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004-ref-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004-ref.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004a-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004a-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004a.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004b-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004b-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004b.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004c-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004c-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004c.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004d-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004d-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004d.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004d.htm.1: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004e-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004e-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004e.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004f-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-004f-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-004f.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005-ref-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-005-ref-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005-ref.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005a-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-005a-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005a.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005b-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-005b-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005b.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005c-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-005c-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005c.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005d-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-005d-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-005d.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-007-ref.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-007.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009-ref-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-009-ref-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009-ref.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009a-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-009a-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009a.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009b-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-009b-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009b.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009e-expected.png: Added
+        * css2.1/20110323/abspos-containing-block-initial-009e-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009e.htm: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009f-expected.png: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009f-expected.txt: Added.
+        * css2.1/20110323/abspos-containing-block-initial-009f.htm: Added.
+        * css2.1/20110323/height-width-inline-table-001.htm: Added.
+        * css2.1/20110323/height-width-table-001.htm: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-ref-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-ref-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-expected.png: Added
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.png: Added
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/height-width-inline-table-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/height-width-table-001-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/table-root-expected.txt: Removed.
+        * platform/mac/fast/backgrounds/positioned-root-expected.png: Removed.
+        * platform/mac/fast/backgrounds/table-root-expected.png: Removed.
+        * platform/mac/fast/backgrounds/table-root-expected.txt: Removed.
+        * platform/qt/fast/backgrounds/positioned-root-expected.png: Removed.
+        * platform/qt/fast/backgrounds/positioned-root-expected.txt: Removed.
+        * platform/qt/fast/backgrounds/table-root-expected.png: Removed.
+        * platform/qt/fast/backgrounds/table-root-expected.txt: Removed.
+
 2011-10-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: some string keys not properly stored and retrieved

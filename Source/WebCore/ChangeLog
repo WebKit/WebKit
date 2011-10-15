@@ -1,3 +1,27 @@
+2011-10-08  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: height-width-table-001.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69709
+
+        Reviewed by Simon Fraser.
+
+        CSS 2.1 expects CSS table elements to treat fixed height/width as
+        excluding table borders, but HTML table elements to treat fixed height/width as
+        including them.
+        
+        See http://lists.w3.org/Archives/Public/www-style/2011Jan/0178.html
+            http://lists.w3.org/Archives/Public/public-css-testsuite/2011Oct/0005.html
+            
+        It looks like some clarification is pending in the specs, but the new behaviour
+        lets WebKit pass the following tests in the suite CSS and also match FF:
+          height-width-table-001.htm
+          height-width-inline-table-001.htm
+          abspos-containing-block-initial-004d.htm
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::layout):
+
 2011-10-15  Darin Adler  <darin@apple.com>
 
         Make toHTMLElement fail to compile if you try to use it on an HTMLElement*
