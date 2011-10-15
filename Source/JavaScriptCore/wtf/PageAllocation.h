@@ -43,11 +43,6 @@
 #include <windows.h>
 #endif
 
-#if OS(SYMBIAN)
-#include <e32hal.h>
-#include <e32std.h>
-#endif
-
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif

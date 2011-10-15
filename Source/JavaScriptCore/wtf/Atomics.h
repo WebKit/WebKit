@@ -69,7 +69,7 @@
 #include <atomic.h>
 #elif OS(ANDROID)
 #include <sys/atomics.h>
-#elif COMPILER(GCC) && !OS(SYMBIAN)
+#elif COMPILER(GCC)
 #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
 #include <ext/atomicity.h>
 #else
@@ -108,7 +108,7 @@ inline int atomicDecrement(int volatile* addend) { return static_cast<int>(atomi
 inline int atomicIncrement(int volatile* addend) { return __atomic_inc(addend); }
 inline int atomicDecrement(int volatile* addend) { return __atomic_dec(addend); }
 
-#elif COMPILER(GCC) && !CPU(SPARC64) && !OS(SYMBIAN) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
+#elif COMPILER(GCC) && !CPU(SPARC64) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
 #define WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED 1
 
 inline int atomicIncrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, 1) + 1; }

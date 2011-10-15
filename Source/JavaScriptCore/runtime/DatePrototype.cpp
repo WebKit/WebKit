@@ -201,8 +201,8 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 {
 #if HAVE(LANGINFO_H)
     static const nl_item formats[] = { D_T_FMT, D_FMT, T_FMT };
-#elif (OS(WINCE) && !PLATFORM(QT)) || OS(SYMBIAN)
-     // strftime() does not support '#' on WinCE or Symbian
+#elif (OS(WINCE) && !PLATFORM(QT))
+     // strftime() does not support '#' on WinCE
     static const char* const formatStrings[] = { "%c", "%x", "%X" };
 #else
     static const char* const formatStrings[] = { "%#c", "%#x", "%X" };

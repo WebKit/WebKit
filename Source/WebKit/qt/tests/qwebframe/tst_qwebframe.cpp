@@ -625,8 +625,8 @@ private slots:
     void setHtmlWithJSAlert();
     void ipv6HostEncoding();
     void metaData();
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN) && !defined(QT_NO_COMBOBOX)
-    // as maemo 5 && symbian do not use QComboBoxes to implement the popups
+#if !defined(Q_WS_MAEMO_5) && !defined(QT_NO_COMBOBOX)
+    // as maemo 5 does not use QComboBoxes to implement the popups
     // this test does not make sense for it.
     void popupFocus();
 #endif
@@ -2674,7 +2674,7 @@ void tst_QWebFrame::metaData()
     QCOMPARE(metaData.value("nonexistant"), QString());
 }
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN) && !defined(QT_NO_COMBOBOX)
+#if !defined(Q_WS_MAEMO_5) && !defined(QT_NO_COMBOBOX)
 void tst_QWebFrame::popupFocus()
 {
     QWebView view;

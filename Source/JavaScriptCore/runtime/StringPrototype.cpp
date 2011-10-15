@@ -680,11 +680,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
         dpos = 0;
     else if (!(dpos <= len)) // true for NaN
         dpos = len;
-#if OS(SYMBIAN)
-    // Work around for broken NaN compare operator
-    else if (isnan(dpos))
-        dpos = len;
-#endif
 
     size_t result = s.reverseFind(u2, static_cast<unsigned>(dpos));
     if (result == notFound)

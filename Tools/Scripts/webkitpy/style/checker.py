@@ -213,14 +213,6 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 
-    ([# Qt Symbian platform plugin has no config.h or header guard.
-      # Qt code uses '_' in some places (such as private slots
-      # and on test xxx_data methos on tests).
-      "Source/WebKit/qt/symbian/platformplugin/"],
-     ["-readability/naming",
-      "-build/header_guard",
-      "-build/include_order"]),
-
     ([# glu's libtess is third-party code, and doesn't follow WebKit style.
       "Source/ThirdParty/glu"],
      ["-readability",

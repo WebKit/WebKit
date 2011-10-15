@@ -84,7 +84,7 @@ public:
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
         , useFrameFlattening(true)
 #else
         , useFrameFlattening(false)
@@ -105,11 +105,7 @@ public:
         , useTestFonts(false)
 #endif
         , printLoadedUrls(false)
-#if defined(Q_OS_SYMBIAN)
-        , startMaximized(true)
-#else
         , startMaximized(false)
-#endif
     {
     }
 

@@ -3752,39 +3752,10 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         // Nothing
 #elif defined Q_WS_X11
         "X11; "
-#elif defined Q_OS_SYMBIAN
-        "Symbian"
 #else
         "Unknown; "
 #endif
     );
-
-#if defined Q_OS_SYMBIAN
-        QSysInfo::SymbianVersion symbianVersion = QSysInfo::symbianVersion();
-        switch (symbianVersion) {
-        case QSysInfo::SV_9_2:
-            firstPartTemp += QString::fromLatin1("OS/9.2; ");
-            break;
-        case QSysInfo::SV_9_3:
-            firstPartTemp += QString::fromLatin1("OS/9.3; ");
-            break;                
-        case QSysInfo::SV_9_4:
-            firstPartTemp += QString::fromLatin1("OS/9.4; ");
-            break;
-        case QSysInfo::SV_SF_2:
-            firstPartTemp += QString::fromLatin1("/2; ");
-            break;
-        case QSysInfo::SV_SF_3:
-            firstPartTemp += QString::fromLatin1("/3; ");
-            break;
-        case QSysInfo::SV_SF_4:
-            firstPartTemp += QString::fromLatin1("/4; ");
-            break;
-        default:
-            firstPartTemp += QString::fromLatin1("; ");
-            break;
-        }
-#endif
 
 #if defined(QT_NO_OPENSSL)
         // No SSL support
@@ -3857,22 +3828,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Sun Solaris");
 #elif defined Q_OS_ULTRIX
         firstPartTemp += QString::fromLatin1("DEC Ultrix");
-#elif defined Q_OS_SYMBIAN
-        firstPartTemp += QLatin1Char(' ');
-        QSysInfo::S60Version s60Version = QSysInfo::s60Version();
-        switch (s60Version) {
-        case QSysInfo::SV_S60_3_1:
-            firstPartTemp += QString::fromLatin1("Series60/3.1");
-            break;
-        case QSysInfo::SV_S60_3_2:
-            firstPartTemp += QString::fromLatin1("Series60/3.2");
-            break;
-        case QSysInfo::SV_S60_5_0:
-            firstPartTemp += QString::fromLatin1("Series60/5.0");
-            break;
-        default:
-            break;
-        }
 #elif defined Q_OS_UNIX
         firstPartTemp += QString::fromLatin1("UNIX BSD/SYSV system");
 #elif defined Q_OS_UNIXWARE
@@ -3911,7 +3866,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 
         QString thirdPartTemp;
         thirdPartTemp.reserve(150);
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         thirdPartTemp += QLatin1String(" Mobile Safari/");
 #else
         thirdPartTemp += QLatin1String(" Safari/");

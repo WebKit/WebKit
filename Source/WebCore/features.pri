@@ -136,8 +136,8 @@ contains(MOBILITY_CONFIG, sensors) {
    MOBILITY *= sensors
 }
 
-# systeminfo support if QtMobility systeminfo module exists, but only for symbian, maemo and meego
-symbian|maemo5|maemo6 {
+# systeminfo support if QtMobility systeminfo module exists, but only for maemo and meego
+maemo5|maemo6 {
     !contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=.) {
         contains(MOBILITY_CONFIG, systeminfo) {
             DEFINES += WTF_USE_QT_MOBILITY_SYSTEMINFO=1

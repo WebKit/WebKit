@@ -50,11 +50,6 @@
 #include <inttypes.h>
 #endif
 
-#if OS(SYMBIAN)
-#include <e32def.h>
-#include <e32debug.h>
-#endif
-
 #ifdef NDEBUG
 /* Disable ASSERT* macros in release mode. */
 #define ASSERTIONS_DISABLED_DEFAULT 1
@@ -165,12 +160,7 @@ WTF_EXPORT_PRIVATE void WTFReportBacktrace();
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
 #ifndef CRASH
-#if OS(SYMBIAN)
-#define CRASH() do { \
-    __DEBUGGER(); \
-    User::Panic(_L("Webkit CRASH"),0); \
-} while (false)
-#elif COMPILER(CLANG)
+#if COMPILER(CLANG)
 #define CRASH() do { \
     WTFReportBacktrace(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
@@ -223,7 +213,7 @@ WTF_EXPORT_PRIVATE void WTFReportBacktrace();
 #undef ERROR
 #endif
 
-#if OS(WINDOWS) || OS(SYMBIAN)
+#if OS(WINDOWS)
 /* FIXME: Change to use something other than ASSERT to avoid this conflict with the underlying platform */
 #undef ASSERT
 #endif

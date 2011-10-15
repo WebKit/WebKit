@@ -83,70 +83,10 @@ CONFIG(release) {
 
 
 DESTDIR = $$OUTPUT_DIR/lib
-symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 
 moduleFile=$$PWD/qt_webkit_version.pri
 isEmpty(QT_BUILD_TREE):include($$moduleFile)
 VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
-
-symbian {
-    TARGET.EPOCALLOWDLLDATA=1
-    # DRM and Allfiles capabilites need to be audited to be signed on Symbian
-    # For regular users that is not possible, so use the CONFIG(production) flag is added
-    # To use all capabilies add CONFIG+=production
-    CONFIG(production) {
-        TARGET.CAPABILITY = All -Tcb
-    } else {
-        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
-    }
-    isEmpty(QT_LIBINFIX) {
-        TARGET.UID3 = 0x200267C2
-    } else {
-        TARGET.UID3 = 0xE00267C2
-    }
-    
-    sisheader = "; SIS header: name, uid, version" \
-                "$${LITERAL_HASH}{\"$$TARGET\"},($$TARGET.UID3),$$QT_WEBKIT_MAJOR_VERSION,$$QT_WEBKIT_MINOR_VERSION,$$QT_WEBKIT_PATCH_VERSION,TYPE=SA,RU"
-    webkitsisheader.pkg_prerules = sisheader
-
-    webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
-    v8:webkitlibs.sources += v8.dll
-
-    webkitlibs.path = /sys/bin
-    vendorinfo = \
-        "; Localised Vendor name" \
-        "%{\"Nokia\"}" \
-        " " \
-        "; Unique Vendor name" \
-        ":\"Nokia, Qt\"" \
-        " "
-    webkitlibs.pkg_prerules = vendorinfo
-
-    webkitbackup.sources = symbian/backup_registration.xml
-    webkitbackup.path = /private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
-
-    contains(QT_CONFIG, declarative) {
-         declarativeImport.sources = $$QT_BUILD_TREE/imports/QtWebKit/qmlwebkitplugin$${QT_LIBINFIX}.dll
-         declarativeImport.sources += declarative/qmldir
-         declarativeImport.path = c:$$QT_IMPORTS_BASE_DIR/QtWebKit
-         DEPLOYMENT += declarativeImport
-    }
-
-    platformplugin.sources = $$OUTPUT_DIR/plugins/QtWebKit/platformplugin$${QT_LIBINFIX}.dll
-    platformplugin.path = c:$$QT_PLUGINS_BASE_DIR/QtWebKit
-
-    DEPLOYMENT += webkitsisheader webkitlibs webkitbackup platformplugin
-    !CONFIG(production):CONFIG-=def_files
-
-    # Need to build these sources here because of exported symbols
-    SOURCES += \
-        $$SOURCE_DIR/WebCore/plugins/symbian/PluginViewSymbian.cpp \
-        $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.cpp
-
-    HEADERS += \
-        $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.h \
-        $$SOURCE_DIR/WebCore/plugins/symbian/npinterface.h
-}
 
 !static: DEFINES += QT_MAKEDLL
 
@@ -212,7 +152,7 @@ webkit2 {
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
-    unix:!symbian {
+    unix {
         maemo5 {
             HEADERS += $$PWD/WebCoreSupport/QtMaemoWebPopup.h
             SOURCES += $$PWD/WebCoreSupport/QtMaemoWebPopup.cpp
@@ -299,51 +239,23 @@ contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
 }
 
-!symbian-abld:!symbian-sbsv2 {
-    modfile.files = $$moduleFile
-    modfile.path = $$[QMAKE_MKSPECS]/modules
+modfile.files = $$moduleFile
+modfile.path = $$[QMAKE_MKSPECS]/modules
 
-    INSTALLS += modfile
-} else {
-    # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
-
-    inst_modfile.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-    inst_modfile.input = moduleFile
-    inst_modfile.output = $$[QMAKE_MKSPECS]/modules
-    inst_modfile.CONFIG = no_clean
-
-    QMAKE_EXTRA_COMPILERS += inst_modfile
-
-    install.depends += compiler_inst_modfile_make_all
-    QMAKE_EXTRA_TARGETS += install
-}
+INSTALLS += modfile
 
 exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
 WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
-!symbian-abld:!symbian-sbsv2 {
-    headers.files = $$WEBKIT_INSTALL_HEADERS
+headers.files = $$WEBKIT_INSTALL_HEADERS
 
-    !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
-    else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+!isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
+else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
 
-    !isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
-    else: target.path = $$[QT_INSTALL_LIBS]
+!isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
+else: target.path = $$[QT_INSTALL_LIBS]
 
-    INSTALLS += target headers
-} else {
-    # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
-    inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-    inst_headers.input = WEBKIT_INSTALL_HEADERS
-    inst_headers.CONFIG = no_clean no_link target_predeps
-
-    !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-    else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-
-    QMAKE_EXTRA_COMPILERS += inst_headers
-
-    install.depends += compiler_inst_headers_make_all
-}
+INSTALLS += target headers
 
 unix {
     CONFIG += create_pc create_prl
@@ -376,14 +288,3 @@ mac {
     QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
 }
 
-symbian {
-    shared {
-        contains(CONFIG, def_files) {
-            DEF_FILE=symbian
-            # defFilePath is for Qt4.6 compatibility
-            defFilePath=symbian
-        } else {
-            MMP_RULES += EXPORTUNFROZEN
-        }
-    }
-}

@@ -80,13 +80,6 @@ static inline unsigned getCPUTime()
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
     
     return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
-#elif OS(SYMBIAN)
-    RThread current;
-    TTimeIntervalMicroSeconds cpuTime;
-
-    TInt err = current.GetCpuTime(cpuTime);
-    ASSERT_WITH_MESSAGE(err == KErrNone, "GetCpuTime failed with %d", err);
-    return cpuTime.Int64() / 1000;
 #else
     // FIXME: We should return the time the current thread has spent executing.
 

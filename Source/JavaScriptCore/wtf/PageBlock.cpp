@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PageBlock.h"
 
-#if OS(UNIX) && !OS(SYMBIAN)
+#if OS(UNIX)
 #include <unistd.h>
 #endif
 
@@ -35,16 +35,11 @@
 #include <windows.h>
 #endif
 
-#if OS(SYMBIAN)
-#include <e32hal.h>
-#include <e32std.h>
-#endif
-
 namespace WTF {
 
 static size_t s_pageSize;
 
-#if OS(UNIX) && !OS(SYMBIAN)
+#if OS(UNIX)
 
 inline size_t systemPageSize()
 {
@@ -60,24 +55,6 @@ inline size_t systemPageSize()
     GetSystemInfo(&system_info);
     size = system_info.dwPageSize;
     return size;
-}
-
-#elif OS(SYMBIAN)
-
-inline size_t systemPageSize()
-{
-#if CPU(ARMV5_OR_LOWER)
-    // The moving memory model (as used in ARMv5 and earlier platforms)
-    // on Symbian OS limits the number of chunks for each process to 16. 
-    // To mitigate this limitation increase the pagesize to allocate
-    // fewer, larger chunks. Set the page size to 256 Kb to compensate
-    // for moving memory model limitation
-    return 256 * 1024;
-#else
-    static TInt page_size = 0;
-    UserHal::PageSizeInBytes(page_size);
-    return page_size;
-#endif
 }
 
 #endif

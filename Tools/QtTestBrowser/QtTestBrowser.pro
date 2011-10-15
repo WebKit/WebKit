@@ -44,7 +44,7 @@ QT += network
 macx:QT+=xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
-unix:!mac:!symbian:!embedded {
+unix:!mac:!embedded {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }
@@ -60,12 +60,6 @@ linux-* {
     QMAKE_RPATHDIR =
 } else {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
-
-symbian {
-    TARGET.UID3 = 0xA000E543
-    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices Location
-    MMP_RULES *= pageddata
 }
 
 contains(QT_CONFIG, opengl) {

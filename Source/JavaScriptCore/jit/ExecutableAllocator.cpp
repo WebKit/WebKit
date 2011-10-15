@@ -134,7 +134,7 @@ void ExecutableAllocator::dumpProfile()
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 
-#if OS(WINDOWS) || OS(SYMBIAN)
+#if OS(WINDOWS)
 #error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
 #endif
 

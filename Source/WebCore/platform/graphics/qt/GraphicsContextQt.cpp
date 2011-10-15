@@ -227,15 +227,8 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
     if (!painter)
         return;
 
-#if OS(SYMBIAN)
-    if (painter->paintEngine()->type() == QPaintEngine::OpenVG)
-        antiAliasingForRectsAndLines = true;
-    else
-        antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
-#else
     // Use the default the QPainter was constructed with.
     antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
-#endif
 
     // Used for default image interpolation quality.
     initialSmoothPixmapTransformHint = painter->testRenderHint(QPainter::SmoothPixmapTransform);

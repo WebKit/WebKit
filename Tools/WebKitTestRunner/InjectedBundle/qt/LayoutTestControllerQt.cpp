@@ -63,7 +63,7 @@ void LayoutTestController::platformInitialize()
     // which makes the use of QFontDatabase unnecessary.
     // See https://bugs.webkit.org/show_bug.cgi?id=53427
     QWebSettings::clearMemoryCaches();
-#if !(defined(Q_OS_SYMBIAN) && QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
+#if !(QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
     QFontDatabase::removeAllApplicationFonts();
 #endif
     activateFonts();

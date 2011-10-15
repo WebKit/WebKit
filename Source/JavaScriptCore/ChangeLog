@@ -1,3 +1,43 @@
+2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port
+        https://bugs.webkit.org/show_bug.cgi?id=69920
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+        * heap/MarkStack.h:
+        (JSC::::shrinkAllocation):
+        * jit/ExecutableAllocator.cpp:
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/JITStubs.cpp:
+        * jsc.pro:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLastIndexOf):
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Atomics.h:
+        * wtf/MathExtras.h:
+        * wtf/OSAllocator.h:
+        (WTF::OSAllocator::decommitAndRelease):
+        * wtf/OSAllocatorSymbian.cpp: Removed.
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * wtf/PageAllocation.h:
+        * wtf/PageAllocatorSymbian.h: Removed.
+        * wtf/PageBlock.cpp:
+        * wtf/Platform.h:
+        * wtf/StackBounds.cpp:
+        * wtf/wtf.pri:
+
 2011-10-15  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Trivial fix for a missing change in r97512

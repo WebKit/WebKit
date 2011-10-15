@@ -81,9 +81,6 @@ template<> inline CSSPrimitiveValue::operator unsigned short() const
     return 0;
 }
 
-// FIXME: Temp build fix for Symbian. 
-//Symbian treats unsigned short as int and below specilization contructor becomes duplicate incase of symbian.
-#if !OS(SYMBIAN)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(int i)
     : m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
@@ -99,7 +96,6 @@ template<> inline CSSPrimitiveValue::operator int() const
     ASSERT_NOT_REACHED();
     return 0;
 }
-#endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned i)
     : m_type(CSS_NUMBER)

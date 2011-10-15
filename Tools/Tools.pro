@@ -10,9 +10,9 @@ exists($$PWD/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += DumpRenderTree/qt/Imag
 
 webkit2 {
     exists($$PWD/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
-    !symbian:exists($$PWD/WebKitTestRunner/WebKitTestRunner.pro): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
+    exists($$PWD/WebKitTestRunner/WebKitTestRunner.pro): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 }
 
-!win32:!symbian:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+!win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     exists($$PWD/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro): SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }

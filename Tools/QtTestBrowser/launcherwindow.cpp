@@ -775,13 +775,11 @@ void LauncherWindow::screenshot()
 {
     QPixmap pixmap = QPixmap::grabWidget(m_view);
     QLabel* label = 0;
-#if !defined(Q_OS_SYMBIAN)
     label = new QLabel;
     label->setAttribute(Qt::WA_DeleteOnClose);
     label->setWindowTitle("Screenshot - Preview");
     label->setPixmap(pixmap);
     label->show();
-#endif
 
 #ifndef QT_NO_FILEDIALOG
     QString fileName = QFileDialog::getSaveFileName(label, "Screenshot");
@@ -983,7 +981,7 @@ void LauncherWindow::showFPS(bool enable)
     view->setFrameRateMeasurementEnabled(enable);
 
     if (!enable) {
-#if defined(Q_WS_MAEMO_5) && defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
         setWindowTitle("");
 #else
         statusBar()->clearMessage();
@@ -1093,7 +1091,7 @@ void LauncherWindow::updateFPS(int fps)
 {
     QString fpsStatusText = QString("Current FPS: %1").arg(fps);
 
-#if defined(Q_WS_MAEMO_5) && defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
     setWindowTitle(fpsStatusText);
 #else
     statusBar()->showMessage(fpsStatusText);

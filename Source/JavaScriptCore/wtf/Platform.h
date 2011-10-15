@@ -386,11 +386,6 @@
 #define WTF_OS_WINDOWS 1
 #endif
 
-/* OS(SYMBIAN) - Symbian */
-#if defined (__SYMBIAN32__)
-#define WTF_OS_SYMBIAN 1
-#endif
-
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
     || OS(ANDROID)          \
@@ -401,7 +396,6 @@
     || OS(OPENBSD)          \
     || OS(QNX)              \
     || OS(SOLARIS)          \
-    || OS(SYMBIAN)          \
     || defined(unix)        \
     || defined(__unix)      \
     || defined(__unix__)
@@ -486,7 +480,7 @@
 #define WTF_USE_MERSENNE_TWISTER_19937 1
 #endif
 
-#if PLATFORM(QT) && OS(UNIX) && !OS(SYMBIAN) && !OS(DARWIN)
+#if PLATFORM(QT) && OS(UNIX) && !OS(DARWIN)
 #define WTF_USE_PTHREAD_BASED_QT 1
 #endif
 
@@ -628,7 +622,7 @@
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
 
-#if OS(UNIX) && !OS(SYMBIAN)
+#if OS(UNIX)
 #define HAVE_SIGNAL_H 1
 #endif
 
@@ -645,7 +639,7 @@
 #endif
 
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
-    && !OS(SYMBIAN) && !OS(RVCT) \
+    && !OS(RVCT) \
     && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
@@ -693,19 +687,6 @@
 #endif
 #define HAVE_VIRTUALALLOC 1
 
-#elif OS(SYMBIAN)
-
-#define HAVE_ERRNO_H 1
-#define HAVE_MMAP 0
-#define HAVE_SBRK 1
-
-#define HAVE_SYS_TIME_H 1
-#define HAVE_STRINGS_H 1
-
-#if !COMPILER(RVCT)
-#define HAVE_SYS_PARAM_H 1
-#endif
-
 #elif OS(QNX)
 
 #define HAVE_ERRNO_H 1
@@ -745,7 +726,7 @@
 #if PLATFORM(QT)
 /* We must not customize the global operator new and delete for the Qt port. */
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#if !OS(UNIX) || OS(SYMBIAN)
+#if !OS(UNIX)
 #define USE_SYSTEM_MALLOC 1
 #endif
 #endif
@@ -1086,7 +1067,7 @@
    breakages one port at a time. */
 #define WTF_USE_EXPORT_MACROS 0
 
-#if (PLATFORM(QT) && !OS(SYMBIAN)) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 

@@ -265,7 +265,7 @@ inline bool isWithinIntRange(float x)
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
 }
 
-#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS) && !OS(SYMBIAN)
+#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
 using std::isfinite;
 using std::isinf;
 using std::isnan;

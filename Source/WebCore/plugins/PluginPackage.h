@@ -36,11 +36,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 
-#if OS(SYMBIAN)
-class QPluginLoader;
-class NPInterface;
-#endif
-
 namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;
     typedef HashMap<String, Vector<String> > MIMEToExtensionsMap;
@@ -80,9 +75,6 @@ namespace WebCore {
         int compare(const PluginPackage&) const;
         PluginQuirkSet quirks() const { return m_quirks; }
         const PlatformModuleVersion& version() const { return m_moduleVersion; }
-#if OS(SYMBIAN)
-        NPInterface* npInterface() const { return m_npInterface; }
-#endif // OS(SYMBIAN)
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
         bool ensurePluginLoaded();
@@ -92,10 +84,6 @@ namespace WebCore {
     private:
         PluginPackage(const String& path, const time_t& lastModified);
 
-#if OS(SYMBIAN)
-        NPInterface* m_npInterface;
-        QPluginLoader* m_pluginLoader;
-#endif // OS(SYMBIAN)
         bool fetchInfo();
         bool isPluginBlacklisted();
         void determineQuirks(const String& mimeType);

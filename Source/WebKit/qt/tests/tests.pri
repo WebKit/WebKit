@@ -29,15 +29,11 @@ qt5 {
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
-symbian {
-    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices WriteDeviceData
-}
-
 # Use the Qt Mobile theme if it is in the CONFIG
 use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 
 # This define is used by some tests to look up resources in the source tree
-!symbian: DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
+DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
 
 DEFINES -= QT_ASCII_CAST_WARNINGS
 

@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-// Currently Qt allows three connections per host on symbian and six
-// for everyone else. The limit can be found in qhttpnetworkconnection.cpp.
+// The limit can be found in qhttpnetworkconnection.cpp.
 // To achieve the best result we want WebKit to schedule the jobs so we
 // are using the limit as found in Qt. To allow Qt to fill its queue
 // and prepare jobs we will schedule two more downloads.
@@ -37,11 +36,7 @@ namespace WebCore {
 // and 2 ready to re-fill the pipeline.
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
-#ifdef Q_OS_SYMBIAN
-    return 3 * (1 + 3 + 2);
-#else
     return 6 * (1 + 3 + 2);
-#endif
 }
 
 QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) const

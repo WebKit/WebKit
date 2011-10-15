@@ -30,23 +30,13 @@ JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD/wtf \
     $$PWD/wtf/gobject \
     $$PWD/wtf/qt \
-    $$PWD/wtf/symbian \
     $$PWD/wtf/unicode \
     $$PWD/yarr \
     $$PWD/API \
     $$PWD/ForwardingHeaders \
     $$JSC_GENERATED_SOURCES_DIR
 
-symbian {
-    PREPEND_INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
-}
-
-symbian {
-    LIBS += -lhal
-    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
-}
+INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
 
 win32-g++* {
     LIBS += -lpthreadGC2
@@ -80,12 +70,6 @@ defineTest(prependJavaScriptCoreLib) {
     win32-msvc*|wince*|win32-icc {
         LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
         LIBS = -L$$pathToJavaScriptCoreOutput $$LIBS
-        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
-    } else:symbian {
-        LIBS = -l$${JAVASCRIPTCORE_TARGET}.lib $$LIBS
-        # The default symbian build system does not use library paths at all. However when building with
-        # qmake's symbian makespec that uses Makefiles
-        QMAKE_LIBDIR += $$pathToJavaScriptCoreOutput
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else {
         # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW

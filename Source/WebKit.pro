@@ -53,12 +53,4 @@ build-qtscript {
         JavaScriptCore/qt/benchmarks
 }
 
-symbian {
-    exists($$PWD/WebKit/qt/symbian/platformplugin): SUBDIRS += WebKit/qt/symbian/platformplugin
-
-    # Forward the install target to WebCore. A workaround since INSTALLS is not implemented for symbian
-    install.commands = $(MAKE) -C WebCore install
-    QMAKE_EXTRA_TARGETS += install
-}
-
 include(WebKit/qt/docs/docs.pri)

@@ -58,7 +58,7 @@ namespace WTF {
 // Bug 26276 - Need a mechanism to determine stack extent
 //
 // These platforms should now be working correctly:
-//     DARWIN, QNX, UNIX, SYMBIAN
+//     DARWIN, QNX, UNIX
 // These platforms are not:
 //     WINDOWS, SOLARIS, OPENBSD, WINCE
 //
@@ -126,17 +126,6 @@ void StackBounds::initialize()
     pthread_stackseg_np(thread, &stack);
     m_origin = stack.ss_sp;
     m_bound = estimateStackBound(m_origin);
-}
-
-#elif OS(SYMBIAN)
-
-void StackBounds::initialize()
-{
-    TThreadStackInfo info;
-    RThread thread;
-    thread.StackInfo(info);
-    m_origin = (void*)info.iBase;
-    m_bound = (void*)info.iLimit;
 }
 
 #elif OS(UNIX)

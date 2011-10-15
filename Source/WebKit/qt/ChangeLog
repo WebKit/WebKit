@@ -1,3 +1,67 @@
+2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port
+        https://bugs.webkit.org/show_bug.cgi?id=69920
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::setPage):
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        * QtWebKit.pro:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::populate):
+        * declarative/declarative.pro:
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::setPage):
+        * symbian: Removed.
+        * symbian/backup_registration.xml: Removed.
+        * symbian/bwins: Removed.
+        * symbian/bwins/QtWebKitu.def: Removed.
+        * symbian/eabi: Removed.
+        * symbian/eabi/QtWebKitu.def: Removed.
+        * symbian/platformplugin: Removed.
+        * symbian/platformplugin/HTML5VideoPlugin.cpp: Removed.
+        * symbian/platformplugin/HTML5VideoPlugin.h: Removed.
+        * symbian/platformplugin/HTML5VideoWidget.cpp: Removed.
+        * symbian/platformplugin/HTML5VideoWidget.h: Removed.
+        * symbian/platformplugin/OverlayWidget.cpp: Removed.
+        * symbian/platformplugin/OverlayWidget.h: Removed.
+        * symbian/platformplugin/PlayerButton.cpp: Removed.
+        * symbian/platformplugin/PlayerButton.h: Removed.
+        * symbian/platformplugin/PlayerLabel.cpp: Removed.
+        * symbian/platformplugin/PlayerLabel.h: Removed.
+        * symbian/platformplugin/WebPlugin.cpp: Removed.
+        * symbian/platformplugin/WebPlugin.h: Removed.
+        * symbian/platformplugin/images: Removed.
+        * symbian/platformplugin/images/button_cannotplay.png: Removed.
+        * symbian/platformplugin/images/button_close.png: Removed.
+        * symbian/platformplugin/images/button_pause.png: Removed.
+        * symbian/platformplugin/images/button_play.png: Removed.
+        * symbian/platformplugin/images/button_sound_off.png: Removed.
+        * symbian/platformplugin/images/button_sound_on.png: Removed.
+        * symbian/platformplugin/images/loading_buffering_1.png: Removed.
+        * symbian/platformplugin/images/loading_buffering_2.png: Removed.
+        * symbian/platformplugin/images/loading_buffering_3.png: Removed.
+        * symbian/platformplugin/images/loading_buffering_4.png: Removed.
+        * symbian/platformplugin/platformplugin.pro: Removed.
+        * symbian/platformplugin/platformplugin.qrc: Removed.
+        * symbian/platformplugin/qss: Removed.
+        * symbian/platformplugin/qss/OverlayWidget.qss: Removed.
+        * symbian/platformplugin/qwebkitplatformplugin.h: Removed.
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::focusInputTypes):
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::focusInputTypes):
+        * tests/tests.pri:
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual put to putVirtual

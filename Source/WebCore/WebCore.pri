@@ -127,35 +127,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit/qt/WebCoreSupport \
     $$WEBCORE_INCLUDEPATH
 
-# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
-# are included before platform headers.
-symbian {
-    PREPEND_INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
-}
-
-symbian {
-    v8 {
-        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
-        LIBS += -llibpthread
-    }
-
-    # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
-    # Move RW-section base address to start from 0x1000000 instead of the toolchain default 0x400000.
-    QMAKE_LFLAGS.ARMCC += --rw-base 0x1000000
-    QMAKE_LFLAGS.GCCE += -Tdata 0x1000000
-
-    CONFIG += do_not_build_as_thumb
-
-    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-    # Symbian plugin support
-    LIBS += -lefsrv
-
-    # Test if symbian OS comes with sqlite
-    exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
-}
+INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
 
 contains(DEFINES, ENABLE_XSLT=1) {
     contains(DEFINES, WTF_USE_LIBXML2=1) {
@@ -182,7 +154,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
-    unix:!symbian {
+    unix {
         mac {
             INCLUDEPATH += platform/mac
             # Note: XP_MACOSX is defined in npapi.h
@@ -256,7 +228,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
 contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
-    !symbian:!win32-*:contains(QT_CONFIG, opengl) {
+    !win32-*:contains(QT_CONFIG, opengl) {
         DEFINES += WTF_USE_TEXTURE_MAPPER_GL
         QT *= opengl
     }
@@ -312,7 +284,7 @@ unix|win32-g++* {
     QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
     qt5: QMAKE_PKGCONFIG_REQUIRES += QtWidgets
 }
-unix:!mac:!symbian:CONFIG += link_pkgconfig
+unix:!mac:CONFIG += link_pkgconfig
 
 # Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
 *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
@@ -327,10 +299,6 @@ defineTest(prependWebCoreLib) {
     win32-msvc*|wince*|win32-icc {
         LIBS = -l$$WEBCORE_TARGET $$LIBS
         LIBS = -L$$pathToWebCoreOutput $$LIBS
-        POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
-    } else:symbian {
-        LIBS = -l$${WEBCORE_TARGET}.lib $$LIBS
-        QMAKE_LIBDIR += $$pathToWebCoreOutput
         POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
     } else {
         QMAKE_LIBDIR = $$pathToWebCoreOutput $$QMAKE_LIBDIR

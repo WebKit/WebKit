@@ -22,17 +22,6 @@ contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 
-symbian: {
-    TARGET.EPOCALLOWDLLDATA=1
-    CONFIG(production) {
-        TARGET.CAPABILITY = All -Tcb
-    } else {
-        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
-    }
-    load(armcc_warnings)
-    TARGET = $$TARGET$${QT_LIBINFIX}
-}
-
 include(../../../WebKit.pri)
 
 QT += declarative
@@ -65,9 +54,5 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
-
-symbian:{
-    TARGET.UID3 = 0x20021321
-}
 
 INSTALLS += target qmldir

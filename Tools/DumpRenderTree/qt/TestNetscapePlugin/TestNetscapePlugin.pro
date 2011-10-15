@@ -52,7 +52,7 @@ mac {
 
 DEFINES -= QT_ASCII_CAST_WARNINGS
 
-!win32:!embedded:!mac:!symbian {
+!win32:!embedded:!mac {
     LIBS += -lX11
     DEFINES += XP_UNIX
 }

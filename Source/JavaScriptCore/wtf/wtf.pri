@@ -71,7 +71,6 @@ HEADERS += \
     wtf/PackedIntVector.h \
     wtf/PageAllocationAligned.h \
     wtf/PageAllocation.h \
-    wtf/PageAllocatorSymbian.h \
     wtf/PageBlock.h \
     wtf/PageReservation.h \
     wtf/ParallelJobsGeneric.h \
@@ -196,6 +195,5 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
     }
 }
 
-unix:!symbian: SOURCES += wtf/OSAllocatorPosix.cpp
-symbian: SOURCES += wtf/OSAllocatorSymbian.cpp
+unix: SOURCES += wtf/OSAllocatorPosix.cpp
 win*|wince*: SOURCES += wtf/OSAllocatorWin.cpp

@@ -2699,17 +2699,11 @@ contains (CONFIG, use_system_icu) {
     SOURCES += platform/text/TextBreakIteratorICU.cpp
 }
 
-symbian {
-    SOURCES += \
-        plugins/symbian/PluginDatabaseSymbian.cpp \
-        plugins/symbian/PluginPackageSymbian.cpp
-}
-
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
     SOURCES += plugins/npapi.cpp
 
-    unix:!symbian {
+    unix {
         mac {
             SOURCES += \
                 plugins/mac/PluginPackageMac.cpp
@@ -3862,7 +3856,7 @@ contains(CONFIG, texmap) {
         platform/graphics/texmap/TextureMapperNode.cpp \
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 
-    !symbian:!win32-*:contains(QT_CONFIG, opengl) {
+    !win32-*:contains(QT_CONFIG, opengl) {
         HEADERS += platform/graphics/opengl/TextureMapperGL.h
         SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
         CONFIG += opengl-shims

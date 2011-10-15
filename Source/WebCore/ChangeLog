@@ -1,3 +1,45 @@
+2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port
+        https://bugs.webkit.org/show_bug.cgi?id=69920
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests as there is no new functionality.
+
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+        * config.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator int):
+        * features.pri:
+        * page/NavigatorBase.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+        * plugins/PluginDatabase.cpp:
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::unload):
+        * plugins/PluginPackage.h:
+        (WebCore::PluginPackage::version):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        * plugins/PluginView.h:
+        * plugins/npapi.h:
+        * plugins/symbian: Removed.
+        * plugins/symbian/PluginContainerSymbian.cpp: Removed.
+        * plugins/symbian/PluginContainerSymbian.h: Removed.
+        * plugins/symbian/PluginDatabaseSymbian.cpp: Removed.
+        * plugins/symbian/PluginPackageSymbian.cpp: Removed.
+        * plugins/symbian/PluginViewSymbian.cpp: Removed.
+        * plugins/symbian/npinterface.h: Removed.
+
 2011-10-08  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: height-width-table-001.htm

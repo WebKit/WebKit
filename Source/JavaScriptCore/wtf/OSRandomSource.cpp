@@ -29,10 +29,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if OS(SYMBIAN)
-#include <e32math.h>
-#endif
-
 #if OS(UNIX)
 #include <fcntl.h>
 #include <unistd.h>
@@ -48,19 +44,7 @@ namespace WTF {
 #if USE(OS_RANDOMNESS)
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
-#if OS(SYMBIAN)
-    TInt random;
-    while (length > sizeof(random)) {
-        random = Math::Random();
-        memcpy(buffer, &random, sizeof(random));
-        length -= sizeof(random);
-        buffer += sizeof(random);
-    }
-    if (length > 0) {
-        random = Math::Random();
-        memcpy(buffer, &random, length);
-    }
-#elif OS(UNIX)
+#if OS(UNIX)
     int fd = open("/dev/urandom", O_RDONLY, 0);
     if (fd < 0)
         CRASH(); // We need /dev/urandom for this API to work...

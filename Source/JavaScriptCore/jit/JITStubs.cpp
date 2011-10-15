@@ -101,7 +101,6 @@ namespace JSC {
      || OS(OPENBSD)             \
      || OS(SOLARIS)             \
      || (OS(HPUX) && CPU(IA64)) \
-     || OS(SYMBIAN)             \
      || OS(NETBSD)
     // ELF platform
 #define HIDE_SYMBOL(name) ".hidden " #name

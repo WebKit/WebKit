@@ -77,10 +77,9 @@ inline void* OSAllocator::reserveAndCommit(size_t reserveSize, size_t commitSize
 inline void OSAllocator::decommitAndRelease(void* releaseBase, size_t releaseSize, void* decommitBase, size_t decommitSize)
 {
     ASSERT(decommitBase >= releaseBase && (static_cast<char*>(decommitBase) + decommitSize) <= (static_cast<char*>(releaseBase) + releaseSize));
-#if OS(WINCE) || OS(SYMBIAN)
+#if OS(WINCE)
     // On most platforms we can actually skip this final decommit; releasing the VM will
     // implicitly decommit any physical memory in the region. This is not true on WINCE.
-    // On Symbian, this makes implementation simpler and better aligned with the RChunk API
     decommit(decommitBase, decommitSize);
 #else
     UNUSED_PARAM(decommitBase);

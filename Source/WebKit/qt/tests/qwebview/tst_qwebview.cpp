@@ -31,15 +31,8 @@
 #include <qwebelement.h>
 #include <qwebframe.h>
 
-#ifdef Q_OS_SYMBIAN
-#define VERIFY_INPUTMETHOD_HINTS(actual, expect) \
-    QVERIFY(actual & Qt::ImhNoAutoUppercase); \
-    QVERIFY(actual & Qt::ImhNoPredictiveText); \
-    QVERIFY(actual & expect);
-#else
 #define VERIFY_INPUTMETHOD_HINTS(actual, expect) \
     QVERIFY(actual == expect);
-#endif
 
 class tst_QWebView : public QObject
 {
@@ -253,7 +246,7 @@ void tst_QWebView::focusInputTypes()
     // 'text' type
     QWebElement inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=text]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
     QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
 #else
@@ -300,7 +293,7 @@ void tst_QWebView::focusInputTypes()
     // 'text' type
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=text]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
     QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
 #else
@@ -317,12 +310,7 @@ void tst_QWebView::focusInputTypes()
     // 'text area' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("textarea"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-#if defined(Q_OS_SYMBIAN)
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
-#else
     QVERIFY(webView.inputMethodHints() == Qt::ImhNone);
-#endif
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 }
 

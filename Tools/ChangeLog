@@ -1,3 +1,34 @@
+2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port
+        https://bugs.webkit.org/show_bug.cgi?id=69920
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::screenshot):
+        (LauncherWindow::showFPS):
+        (LauncherWindow::updateFPS):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::buildUI):
+        * Scripts/webkitpy/style/checker.py: Remove rules for the
+        WebKit/qt/symbian/platformplugin directory.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Tools.pro:
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp:
+        (WTR::LayoutTestController::platformInitialize):
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::isExistingLibrary):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
         Fix typo in webkitpy help

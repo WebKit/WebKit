@@ -199,16 +199,6 @@ SOURCES += \
 
 # Generated files, simply list them for JavaScriptCore
 
-symbian: {
-    symbian-abld|symbian-sbsv2 {
-        MMP_RULES += ALWAYS_BUILD_AS_ARM
-    }  else {
-        QMAKE_CFLAGS -= --thumb
-        QMAKE_CXXFLAGS -= --thumb
-    }
-    QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-}
-
 lessThan(QT_GCC_MAJOR_VERSION, 5) {
     # GCC 4.5 and before
     lessThan(QT_GCC_MINOR_VERSION, 6) {

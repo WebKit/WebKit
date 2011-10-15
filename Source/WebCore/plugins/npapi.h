@@ -57,7 +57,7 @@
 #define JRIEnv  void
 #endif
 
-#if defined(_WIN32) && !defined(__SYMBIAN32__)
+#ifdef _WIN32
 #include <windows.h>
 #ifndef XP_WIN
 #define XP_WIN 1
@@ -93,11 +93,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <stdio.h>
-#endif
-
-#if defined(XP_SYMBIAN)
-#include <QEvent>
-#include <QRegion>
 #endif
 
 /*----------------------------------------------------------------------*/
@@ -525,8 +520,6 @@ typedef EventRecord NPEvent;
 #else
 typedef void*  NPEvent;
 #endif
-#elif defined(XP_SYMBIAN)
-typedef QEvent NPEvent;
 #elif defined(XP_WIN)
 typedef struct _NPEvent
 {
@@ -557,8 +550,6 @@ typedef CGPathRef NPCGRegion;
 typedef HRGN NPRegion;
 #elif defined(XP_UNIX)
 typedef Region NPRegion;
-#elif defined(XP_SYMBIAN)
-typedef QRegion* NPRegion;
 #else
 typedef void *NPRegion;
 #endif
