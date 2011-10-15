@@ -202,7 +202,7 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec) const
     return jsEmptyString(exec);
 }
     
-bool RegExpConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool RegExpConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

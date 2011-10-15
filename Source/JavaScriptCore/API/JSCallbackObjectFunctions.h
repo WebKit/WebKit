@@ -124,20 +124,27 @@ UString JSCallbackObject<Parent>::className() const
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSCallbackObject<Parent>::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+template <class Parent>
+bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
+    JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         // optional optimization to bypass getProperty in cases when we only need to know if the property exists
         if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
             APICallbackShim callbackShim(exec);
             if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
-                slot.setCustom(this, callbackGetter);
+                slot.setCustom(thisObject, callbackGetter);
                 return true;
             }
         } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
@@ -162,7 +169,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(ExecState* exec, const Identif
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (staticValues->contains(propertyName.impl())) {
-                JSValue value = getStaticValue(exec, propertyName);
+                JSValue value = thisObject->getStaticValue(exec, propertyName);
                 if (value) {
                     slot.setValue(value);
                     return true;
@@ -172,20 +179,20 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(ExecState* exec, const Identif
         
         if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (staticFunctions->contains(propertyName.impl())) {
-                slot.setCustom(this, staticFunctionGetter);
+                slot.setCustom(thisObject, staticFunctionGetter);
                 return true;
             }
         }
     }
     
-    return Parent::getOwnPropertySlot(exec, propertyName, slot);
+    return Parent::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     PropertySlot slot;
-    if (getOwnPropertySlot(exec, propertyName, slot)) {
+    if (getOwnPropertySlotVirtual(exec, propertyName, slot)) {
         // Ideally we should return an access descriptor, but returning a value descriptor is better than nothing.
         JSValue value = slot.getValue(exec, propertyName);
         if (!exec->hadException())
@@ -536,7 +543,7 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
     
     // Check for cached or override property.
     PropertySlot slot2(thisObj);
-    if (thisObj->Parent::getOwnPropertySlot(exec, propertyName, slot2))
+    if (Parent::getOwnPropertySlot(thisObj, exec, propertyName, slot2))
         return slot2.getValue(exec, propertyName);
     
     for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {

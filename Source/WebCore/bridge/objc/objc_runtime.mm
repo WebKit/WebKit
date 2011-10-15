@@ -205,7 +205,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+bool ObjcFallbackObjectImp::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);
 }

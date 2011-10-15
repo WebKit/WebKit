@@ -197,7 +197,7 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
     return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
-bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSFunction::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -258,7 +258,7 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     
     if (propertyName == exec->propertyNames().prototype) {
         PropertySlot slot;
-        getOwnPropertySlot(exec, propertyName, slot);
+        getOwnPropertySlotVirtual(exec, propertyName, slot);
         return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
     }
     
@@ -291,7 +291,7 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     if (!isHostFunction() && (mode == IncludeDontEnumProperties)) {
         // Make sure prototype has been reified.
         PropertySlot slot;
-        getOwnPropertySlot(exec, exec->propertyNames().prototype, slot);
+        getOwnPropertySlotVirtual(exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
         propertyNames.add(exec->propertyNames().caller);
@@ -316,7 +316,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot;
-        thisObject->getOwnPropertySlot(exec, propertyName, slot);
+        thisObject->getOwnPropertySlotVirtual(exec, propertyName, slot);
     }
     if (thisObject->jsExecutable()->isStrictMode()) {
         if (propertyName == exec->propertyNames().arguments) {

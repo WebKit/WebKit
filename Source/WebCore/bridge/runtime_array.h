@@ -50,9 +50,9 @@ public:
     virtual ~RuntimeArray();
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
+    virtual bool getOwnPropertySlotVirtual(ExecState*, unsigned, PropertySlot&);
     static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

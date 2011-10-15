@@ -54,7 +54,7 @@ Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject
     return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), classInfo);
 }
 
-bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSByteArray::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -82,7 +82,7 @@ bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-bool JSByteArray::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSByteArray::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

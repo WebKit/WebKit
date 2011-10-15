@@ -92,7 +92,7 @@ void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& prope
     }
 }
 
-bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool ObjectPrototype::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -105,7 +105,7 @@ bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned
     return JSNonFinalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool ObjectPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

@@ -59,7 +59,7 @@ void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringP
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool StringConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool StringConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

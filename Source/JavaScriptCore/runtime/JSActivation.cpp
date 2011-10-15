@@ -141,7 +141,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
     return true;
 }
 
-bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSActivation::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

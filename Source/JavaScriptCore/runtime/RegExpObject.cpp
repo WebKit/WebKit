@@ -91,7 +91,7 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->d->lastIndex);
 }
 
-bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool RegExpObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

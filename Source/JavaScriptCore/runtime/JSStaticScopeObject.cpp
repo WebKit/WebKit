@@ -91,7 +91,7 @@ bool JSStaticScopeObject::isDynamicScope(bool&) const
     return false;
 }
 
-bool JSStaticScopeObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSStaticScopeObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

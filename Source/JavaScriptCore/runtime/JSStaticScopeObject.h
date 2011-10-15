@@ -44,7 +44,7 @@ namespace JSC{
         static void visitChildren(JSCell*, SlotVisitor&);
         bool isDynamicScope(bool& requiresDynamicChecks) const;
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual void putVirtual(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);

@@ -62,7 +62,7 @@ void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     putDirect(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
 }
 
-bool ErrorPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool ErrorPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

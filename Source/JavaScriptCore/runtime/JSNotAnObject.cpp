@@ -45,7 +45,7 @@ JSValue JSNotAnObject::defaultValue(ExecState* exec, PreferredPrimitiveType) con
     return jsNumber(0);
 }
 
-bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+bool JSNotAnObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);
 }
@@ -57,7 +57,7 @@ bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, const Identifie
     return false;
 }
 
-bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSNotAnObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

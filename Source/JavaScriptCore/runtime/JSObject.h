@@ -101,9 +101,9 @@ namespace JSC {
         bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         bool getPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
@@ -524,7 +524,7 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Ide
     return false;
 }
 
-ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -541,7 +541,7 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identif
 {
     if (!structure()->typeInfo().overridesGetOwnPropertySlot())
         return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
-    return getOwnPropertySlot(exec, propertyName, slot);
+    return getOwnPropertySlotVirtual(exec, propertyName, slot);
 }
 
 // Fast call to get a property where we may not yet have converted the string to an
@@ -579,7 +579,7 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
 {
     JSObject* object = this;
     while (true) {
-        if (object->getOwnPropertySlot(exec, propertyName, slot))
+        if (object->getOwnPropertySlotVirtual(exec, propertyName, slot))
             return true;
         JSValue prototype = object->prototype();
         if (!prototype.isObject())
@@ -800,7 +800,7 @@ inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot
     }
     JSCell* cell = const_cast<JSCell*>(asCell());
     while (true) {
-        if (cell->getOwnPropertySlot(exec, propertyName, slot))
+        if (cell->getOwnPropertySlotVirtual(exec, propertyName, slot))
             return slot.getValue(exec, propertyName);
         JSValue prototype = asObject(cell)->prototype();
         if (!prototype.isObject())

@@ -96,7 +96,7 @@ bool JSBoundFunction::hasInstance(ExecState* exec, JSValue value, JSValue)
     return m_targetFunction->hasInstance(exec, value, proto);
 }
 
-bool JSBoundFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSBoundFunction::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

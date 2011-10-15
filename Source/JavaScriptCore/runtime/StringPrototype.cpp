@@ -145,7 +145,7 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject*, JSString*
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
-bool StringPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool StringPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

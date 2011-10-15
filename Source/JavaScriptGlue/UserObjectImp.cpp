@@ -123,7 +123,7 @@ JSValue UserObjectImp::userObjectGetter(ExecState*, JSValue slotBase, const Iden
     return result;
 }
 
-bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool UserObjectImp::getOwnPropertySlotVirtual(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

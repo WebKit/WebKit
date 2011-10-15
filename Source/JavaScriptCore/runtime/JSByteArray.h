@@ -88,9 +88,9 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const JSC::ClassInfo* = &s_info);
 
-        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-        virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
         static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void putVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);

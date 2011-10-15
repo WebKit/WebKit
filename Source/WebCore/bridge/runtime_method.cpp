@@ -69,7 +69,7 @@ JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, const Identifi
     return jsNumber(thisObj->_methodList->at(0)->numParameters());
 }
 
-bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool RuntimeMethod::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

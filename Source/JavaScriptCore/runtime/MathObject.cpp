@@ -104,7 +104,7 @@ void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 }
 
-bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool MathObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

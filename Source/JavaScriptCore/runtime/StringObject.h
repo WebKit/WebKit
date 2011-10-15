@@ -46,9 +46,9 @@ namespace JSC {
         }
         static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 

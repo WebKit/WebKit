@@ -85,7 +85,7 @@ void DateConstructor::finishCreation(ExecState* exec, DatePrototype* datePrototy
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }
 
-bool DateConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool DateConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

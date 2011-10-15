@@ -88,7 +88,8 @@ public:
         return ptr;
     }
 
-    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -113,9 +114,14 @@ void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(ExecState* 
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestSerializedScriptValueInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
-bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, &JSTestSerializedScriptValueInterfaceConstructorTable, this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, &JSTestSerializedScriptValueInterfaceConstructorTable, static_cast<JSTestSerializedScriptValueInterfaceConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -168,10 +174,16 @@ JSObject* JSTestSerializedScriptValueInterface::createPrototype(ExecState* exec,
     return JSTestSerializedScriptValueInterfacePrototype::create(exec->globalData(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
-bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestSerializedScriptValueInterface::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, &JSTestSerializedScriptValueInterfaceTable, this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSTestSerializedScriptValueInterface* thisObject = static_cast<JSTestSerializedScriptValueInterface*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, &JSTestSerializedScriptValueInterfaceTable, thisObject, propertyName, slot);
 }
 
 bool JSTestSerializedScriptValueInterface::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

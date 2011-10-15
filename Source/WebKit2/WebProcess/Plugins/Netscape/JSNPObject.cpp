@@ -252,7 +252,7 @@ ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& construc
     return ConstructTypeHost;
 }
 
-bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSNPObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

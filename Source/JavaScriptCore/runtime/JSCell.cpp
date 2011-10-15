@@ -69,7 +69,7 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData&)
     return ConstructTypeNone;
 }
 
-bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+bool JSCell::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);
 }
@@ -86,7 +86,7 @@ bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier&
     return true;
 }
 
-bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySlot& slot)
+bool JSCell::getOwnPropertySlotVirtual(ExecState* exec, unsigned identifier, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, identifier, slot);
 }

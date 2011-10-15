@@ -131,7 +131,7 @@ namespace JSC {
         void finishCreation(ExecState*, NativeExecutable*, int length, const Identifier& name);
         void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);

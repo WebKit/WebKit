@@ -93,14 +93,14 @@ UString JSObject::className() const
     return info->className;
 }
 
-bool JSObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool JSObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return static_cast<JSObject*>(cell)->getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    return static_cast<JSObject*>(cell)->getOwnPropertySlotVirtual(exec, Identifier::from(exec, propertyName), slot);
 }
 
 static void throwSetterError(ExecState* exec)
@@ -281,7 +281,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& p
 bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) const
 {
     PropertySlot slot;
-    return const_cast<JSObject*>(this)->getOwnPropertySlot(exec, propertyName, slot);
+    return const_cast<JSObject*>(this)->getOwnPropertySlotVirtual(exec, propertyName, slot);
 }
 
 bool JSObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)

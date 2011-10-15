@@ -1,3 +1,142 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename getOwnPropertySlot to getOwnPropertySlotVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69810
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed the virtual version of getOwnPropertySlot to getOwnPropertySlotVirtual
+        in preparation for when we add the static getOwnPropertySlot to the MethodTable 
+        in ClassInfo.
+
+        Also added a few static getOwnPropertySlot functions where they had been overlooked 
+        before (especially in CodeGeneratorJS.pm).
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlotVirtual):
+        (JSC::::getOwnPropertySlot):
+        (JSC::::getOwnPropertyDescriptor):
+        (JSC::::staticFunctionGetter):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertySlotVirtual):
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlotVirtual):
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getOwnPropertySlotVirtual):
+        (JSC::ArrayConstructor::getOwnPropertySlot):
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlotVirtual):
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertySlotVirtual):
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertySlotVirtual):
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertySlotVirtual):
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertySlotVirtual):
+        * runtime/ErrorPrototype.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlotVirtual):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlotVirtual):
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSArray.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::getOwnPropertySlotVirtual):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertySlotVirtual):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertySlotVirtual):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlotVirtual):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::getOwnPropertyNames):
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertySlotVirtual):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertySlotVirtual):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::JSONObject::getOwnPropertySlotVirtual):
+        (JSC::Walker::walk):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotVirtual):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::hasOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnPropertySlotVirtual):
+        (JSC::JSCell::fastGetOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSValue::get):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::getOwnPropertySlotVirtual):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlotVirtual):
+        (JSC::JSString::getOwnPropertySlot):
+        * runtime/JSString.h:
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticValueSlot):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertySlotVirtual):
+        * runtime/MathObject.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlotVirtual):
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertySlotVirtual):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getOwnPropertySlotVirtual):
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::getOwnPropertySlotVirtual):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlotVirtual):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertySlotVirtual):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlotVirtual):
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertySlotVirtual):
+        * runtime/RegExpPrototype.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getOwnPropertySlotVirtual):
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertySlotVirtual):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertySlotVirtual):
+        * runtime/StringPrototype.h:
+
 2011-10-14  Gavin Barraclough  <baraclough@apple.com>
 
         Most built-in properties are not deletable

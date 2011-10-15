@@ -443,7 +443,7 @@ void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     // The constructor will be added later, after DateConstructor has been built.
 }
 
-bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool DatePrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

@@ -189,7 +189,8 @@ public:
         return ptr;
     }
 
-    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -214,9 +215,14 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
-bool JSTestObjConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestObjConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -306,9 +312,15 @@ JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject
     return getDOMPrototype<JSTestObj>(exec, globalObject);
 }
 
-bool JSTestObjPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestObjPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSTestObjPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSTestObjPrototype* thisObject = static_cast<JSTestObjPrototype*>(cell);
+    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
 bool JSTestObjPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -335,10 +347,16 @@ JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObje
     return JSTestObjPrototype::create(exec->globalData(), globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
-bool JSTestObj::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestObj::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, this, propertyName, slot);
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
 }
 
 bool JSTestObj::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

@@ -180,7 +180,7 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
@@ -342,7 +342,7 @@ namespace JSC {
     inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, const Identifier& propertyName)
     {
         PropertySlot slot;
-        if (JSVariableObject::getOwnPropertySlot(exec, propertyName, slot))
+        if (JSVariableObject::getOwnPropertySlot(this, exec, propertyName, slot))
             return true;
         bool slotIsWriteable;
         return symbolTableGet(propertyName, slot, slotIsWriteable);

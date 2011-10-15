@@ -125,7 +125,7 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool ArrayPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

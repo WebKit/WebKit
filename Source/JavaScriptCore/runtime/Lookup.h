@@ -270,7 +270,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
 
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
+            return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
         if (entry->attributes() & Function)
             return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
@@ -308,7 +308,7 @@ namespace JSC {
     template <class ParentImp>
     inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
     {
-        if (static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertySlot(exec, propertyName, slot))
+        if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
             return true;
 
         const HashEntry* entry = table->entry(exec, propertyName);
@@ -350,7 +350,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
 
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
+            return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
         ASSERT(!(entry->attributes() & Function));
 

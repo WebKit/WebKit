@@ -1,5 +1,23 @@
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Rename getOwnPropertySlot to getOwnPropertySlotVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69810
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed the virtual version of getOwnPropertySlot to getOwnPropertySlotVirtual
+        in preparation for when we add the static getOwnPropertySlot to the MethodTable 
+        in ClassInfo.
+
+        Also added a few static getOwnPropertySlot functions where they had been overlooked 
+        before (especially in CodeGeneratorJS.pm).
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::getOwnPropertySlotVirtual):
+        * UserObjectImp.h:
+
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Rename virtual put to putVirtual
         https://bugs.webkit.org/show_bug.cgi?id=69851
 

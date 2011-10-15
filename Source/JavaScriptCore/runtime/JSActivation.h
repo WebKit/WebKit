@@ -61,7 +61,7 @@ namespace JSC {
 
         virtual bool isActivationObject() const { return true; }
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
 

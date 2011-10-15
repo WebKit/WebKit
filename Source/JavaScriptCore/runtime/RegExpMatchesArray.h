@@ -43,7 +43,7 @@ namespace JSC {
         void finishCreation(JSGlobalData&, RegExpConstructorPrivate* data);
 
     private:
-        virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+        virtual bool getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
         {
             return getOwnPropertySlot(this, exec, propertyName, slot);
         }
@@ -56,7 +56,7 @@ namespace JSC {
             return JSArray::getOwnPropertySlot(thisObject, exec, propertyName, slot);
         }
 
-        virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+        virtual bool getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
         {
             return getOwnPropertySlot(this, exec, propertyName, slot);
         }

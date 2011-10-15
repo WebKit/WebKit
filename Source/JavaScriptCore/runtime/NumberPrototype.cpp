@@ -83,7 +83,7 @@ void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     ASSERT(inherits(&s_info));
 }
 
-bool NumberPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool NumberPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

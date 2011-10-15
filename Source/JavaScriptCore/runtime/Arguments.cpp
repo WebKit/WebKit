@@ -145,7 +145,7 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     }
 }
 
-bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
+bool Arguments::getOwnPropertySlotVirtual(ExecState* exec, unsigned i, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, i, slot);
 }
@@ -188,35 +188,41 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     defineOwnProperty(exec, exec->propertyNames().callee, descriptor, false);
 }
 
-bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool Arguments::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    Arguments* thisObject = static_cast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
-        if (i < d->numParameters) {
-            slot.setValue(d->registers[d->firstParameterIndex + i].get());
+    if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        if (i < thisObject->d->numParameters) {
+            slot.setValue(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get());
         } else
-            slot.setValue(d->extraArguments[i - d->numParameters].get());
+            slot.setValue(thisObject->d->extraArguments[i - thisObject->d->numParameters].get());
         return true;
     }
 
-    if (propertyName == exec->propertyNames().length && LIKELY(!d->overrodeLength)) {
-        slot.setValue(jsNumber(d->numArguments));
+    if (propertyName == exec->propertyNames().length && LIKELY(!thisObject->d->overrodeLength)) {
+        slot.setValue(jsNumber(thisObject->d->numArguments));
         return true;
     }
 
-    if (propertyName == exec->propertyNames().callee && LIKELY(!d->overrodeCallee)) {
-        if (!d->isStrictMode) {
-            slot.setValue(d->callee.get());
+    if (propertyName == exec->propertyNames().callee && LIKELY(!thisObject->d->overrodeCallee)) {
+        if (!thisObject->d->isStrictMode) {
+            slot.setValue(thisObject->d->callee.get());
             return true;
         }
-        createStrictModeCalleeIfNecessary(exec);
+        thisObject->createStrictModeCalleeIfNecessary(exec);
     }
 
-    if (propertyName == exec->propertyNames().caller && d->isStrictMode)
-        createStrictModeCallerIfNecessary(exec);
+    if (propertyName == exec->propertyNames().caller && thisObject->d->isStrictMode)
+        thisObject->createStrictModeCallerIfNecessary(exec);
 
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
 bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

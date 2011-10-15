@@ -523,7 +523,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
             value = asArray(m_object.get())->getIndex(index);
         else {
             PropertySlot slot(m_object.get());
-            if (!m_object->getOwnPropertySlot(exec, index, slot))
+            if (!m_object->getOwnPropertySlotVirtual(exec, index, slot))
                 slot.setUndefined();
             if (exec->hadException())
                 return false;
@@ -541,7 +541,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
         // Get the value.
         PropertySlot slot(m_object.get());
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        if (!m_object->getOwnPropertySlot(exec, propertyName, slot))
+        if (!m_object->getOwnPropertySlotVirtual(exec, propertyName, slot))
             return true;
         JSValue value = slot.getValue(exec, propertyName);
         if (exec->hadException())
@@ -598,7 +598,7 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, Exe
 
 // ECMA 15.8
 
-bool JSONObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSONObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -693,7 +693,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     inValue = array->getIndex(index);
                 else {
                     PropertySlot slot;
-                    if (array->getOwnPropertySlot(m_exec, index, slot))
+                    if (array->getOwnPropertySlotVirtual(m_exec, index, slot))
                         inValue = slot.getValue(m_exec, index);
                     else
                         inValue = jsUndefined();
@@ -755,7 +755,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 PropertySlot slot;
-                if (object->getOwnPropertySlot(m_exec, properties[index], slot))
+                if (object->getOwnPropertySlotVirtual(m_exec, properties[index], slot))
                     inValue = slot.getValue(m_exec, properties[index]);
                 else
                     inValue = jsUndefined();

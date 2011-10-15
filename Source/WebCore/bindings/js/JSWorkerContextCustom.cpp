@@ -72,7 +72,7 @@ void JSWorkerContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Look for overrides before looking at any of our own properties.
-    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))
+    if (JSGlobalObject::getOwnPropertySlot(this, exec, propertyName, slot))
         return true;
     return false;
 }

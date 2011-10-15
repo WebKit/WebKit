@@ -423,7 +423,7 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     }
 }
 
-bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSGlobalObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

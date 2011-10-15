@@ -41,7 +41,7 @@ void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
     setInternalValue(globalData, string);
 }
 
-bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool StringObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
@@ -54,7 +54,7 @@ bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
     
-bool StringObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool StringObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }

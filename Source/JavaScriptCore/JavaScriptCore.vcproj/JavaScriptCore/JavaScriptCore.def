@@ -200,15 +200,12 @@ EXPORTS
     ?getOwnPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@JSVariableObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@StringObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
-    ?getOwnPropertySlot@JSArray@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSString@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@JSString@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
-    ?getOwnPropertySlot@StringObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
+    ?getOwnPropertySlot@JSArray@JSC@@SA_NPAVJSCell@2@PAVExecState@2@IAAVPropertySlot@2@@Z
+    ?getOwnPropertySlot@JSGlobalObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
+    ?getOwnPropertySlotVirtual@JSCell@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
+    ?getOwnPropertySlotVirtual@JSCell@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
+    ?getOwnPropertySlotVirtual@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
+    ?getOwnPropertySlotVirtual@JSObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getPropertyDescriptor@JSObject@JSC@@QAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z

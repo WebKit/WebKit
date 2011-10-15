@@ -153,7 +153,7 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
 
 bool QtInstance::getOwnPropertySlot(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return object->JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(object, exec, propertyName, slot);
 }
 
 void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

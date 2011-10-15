@@ -54,7 +54,7 @@ public:
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
     virtual JSValue callAsFunction(ExecState *exec);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertySlotVirtual(ExecState *, const Identifier&, PropertySlot&);
     static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
     virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

@@ -67,7 +67,7 @@ RegExpPrototype::RegExpPrototype(JSGlobalObject* globalObject, Structure* struct
 {
 }
 
-bool RegExpPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool RegExpPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getOwnPropertySlot(this, exec, propertyName, slot);
 }
