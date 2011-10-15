@@ -51,6 +51,7 @@ BEGIN {
        &chdirWebKit
        &checkFrameworks
        &currentSVNRevision
+       &debugSafari
        &passedConfiguration
        &productDir
        &runMacWebKitApp
@@ -2032,34 +2033,55 @@ sub runMacWebKitApp($;$)
     return system { $appPath } $appPath, @ARGV;
 }
 
+sub execMacWebKitAppForDebugging($)
+{
+    my ($appPath) = @_;
+
+    my $gdbPath = "/usr/bin/gdb";
+    die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
+
+    my $productDir = productDir();
+    print "Starting @{[basename($appPath)]} under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+    my @architectureFlags = ("-arch", architecture());
+    exec { $gdbPath } $gdbPath, @architectureFlags, $appPath or die;
+}
+
+sub debugSafari
+{
+    if (isAppleMacWebKit()) {
+        checkFrameworks();
+        execMacWebKitAppForDebugging(safariPath());
+    }
+
+    if (isAppleWinWebKit()) {
+        setupCygwinEnv();
+        my $productDir = productDir();
+        chomp($ENV{WEBKITNIGHTLY} = `cygpath -wa "$productDir"`);
+        my $safariPath = safariPath();
+        chomp($safariPath = `cygpath -wa "$safariPath"`);
+        return system { $vcBuildPath } $vcBuildPath, "/debugexe", "\"$safariPath\"", @ARGV;
+    }
+
+    return 1; # Unsupported platform; can't debug Safari on this platform.
+}
+
 sub runSafari
 {
-    my ($debugger) = @_;
 
     if (isAppleMacWebKit()) {
-        if ($debugger) {
-            return system "$FindBin::Bin/gdb-safari", argumentsForConfiguration();
-        }
         return runMacWebKitApp(safariPath());
     }
 
     if (isAppleWinWebKit()) {
         my $result;
         my $productDir = productDir();
-        if ($debugger) {
-            setupCygwinEnv();
-            chomp($ENV{WEBKITNIGHTLY} = `cygpath -wa "$productDir"`);
-            my $safariPath = safariPath();
-            chomp($safariPath = `cygpath -wa "$safariPath"`);
-            $result = system $vcBuildPath, "/debugexe", "\"$safariPath\"", @ARGV;
-        } else {
-            my $webKitLauncherPath = File::Spec->catfile(productDir(), "WebKit.exe");
-            $result = system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
-        }
-        return $result if $result;
+        my $webKitLauncherPath = File::Spec->catfile(productDir(), "WebKit.exe");
+        return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 
-    return 1;
+    return 1; # Unsupported platform; can't run Safari on this platform.
 }
 
 sub runMiniBrowser
@@ -2074,20 +2096,7 @@ sub runMiniBrowser
 sub debugMiniBrowser
 {
     if (isAppleMacWebKit()) {
-        my $gdbPath = "/usr/bin/gdb";
-        die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
-
-        my $productDir = productDir();
-
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = 'YES';
-
-        my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
-
-        print "Starting MiniBrowser under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit2 in $productDir.\n";
-        my @architectureFlags = ("-arch", architecture());
-        exec $gdbPath, @architectureFlags, $miniBrowserPath or die;
-        return;
+        execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     }
     
     return 1;
@@ -2112,19 +2121,7 @@ sub runWebKitTestRunner
 sub debugWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
-        my $gdbPath = "/usr/bin/gdb";
-        die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
-
-        my $productDir = productDir();
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = 'YES';
-
-        my $webKitTestRunnerPath = "$productDir/WebKitTestRunner";
-
-        print "Starting WebKitTestRunner under gdb with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
-        my @architectureFlags = ("-arch", architecture());
-        exec $gdbPath, @architectureFlags, $webKitTestRunnerPath or die;
-        return;
+        execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "WebKitTestRunner"));
     }
 
     return 1;

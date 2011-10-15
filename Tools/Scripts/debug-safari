@@ -35,4 +35,4 @@ use webkitdirs;
 
 setConfiguration();
 
-exit exitStatus(runSafari(1));
+exit exitStatus(debugSafari());
