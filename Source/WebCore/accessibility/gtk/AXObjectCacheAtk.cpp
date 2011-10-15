@@ -84,7 +84,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     g_signal_emit_by_name(object->wrapper(), "selection-changed");
 
     // Find the item where the selection change was triggered from.
-    HTMLSelectElement* select = toSelectElement(static_cast<Element*>(object->node()));
+    HTMLSelectElement* select = toHTMLSelectElement(object->node());
     if (!select)
         return;
     int changedItemIndex = select->activeSelectionStartListIndex();

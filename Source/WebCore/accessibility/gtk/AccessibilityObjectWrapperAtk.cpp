@@ -962,7 +962,7 @@ static AccessibilityObject* optionFromSelection(AtkSelection* selection, gint i)
         if (!renderer)
             return 0;
 
-        HTMLSelectElement* selectNode = toSelectElement(static_cast<Element*>(renderer->node()));
+        HTMLSelectElement* selectNode = toHTMLSelectElement(renderer->node());
         int selectedIndex = selectNode->selectedIndex();
         const Vector<HTMLElement*> listItems = selectNode->listItems();
 
@@ -1039,11 +1039,8 @@ static gint webkit_accessible_selection_get_selection_count(AtkSelection* select
         if (!renderer)
             return 0;
 
-        HTMLSelectElement* selectNode = toSelectElement(static_cast<Element*>(renderer->node()));
-        int selectedIndex = selectNode->selectedIndex();
-        const Vector<HTMLElement*> listItems = selectNode->listItems();
-
-        return selectedIndex >= 0 && selectedIndex < static_cast<int>(listItems.size());
+        int selectedIndex = toHTMLSelectElement(renderer->node())->selectedIndex();
+        return selectedIndex >= 0 && selectedIndex < static_cast<int>(toHTMLSelectElement(renderer->node())->listItems().size());
     }
 
     return 0;

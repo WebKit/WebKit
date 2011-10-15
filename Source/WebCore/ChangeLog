@@ -1,3 +1,13 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK build fix after r97533.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::notifyChildrenSelectionChange):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (optionFromSelection):
+        (webkit_accessible_selection_get_selection_count):
+
 2011-10-14  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/70158> Fix clang compiler warnings
