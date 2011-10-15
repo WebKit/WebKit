@@ -1,6 +1,6 @@
 S15.9.5.23_A1_T2
 
-FAIL SputnikError: #2: The Date.prototype.getUTCSeconds property has not the attributes DontDelete
+PASS 
 
 TEST COMPLETE
 

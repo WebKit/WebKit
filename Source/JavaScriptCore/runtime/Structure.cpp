@@ -172,6 +172,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
     , m_specificFunctionThrashCount(0)
     , m_preventExtensions(false)
     , m_didTransition(false)
+    , m_staticFunctionReified(false)
 {
 }
 
@@ -192,6 +193,7 @@ Structure::Structure(JSGlobalData& globalData)
     , m_specificFunctionThrashCount(0)
     , m_preventExtensions(false)
     , m_didTransition(false)
+    , m_staticFunctionReified(false)
 {
 }
 
@@ -210,6 +212,7 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
     , m_preventExtensions(previous->m_preventExtensions)
     , m_didTransition(true)
+    , m_staticFunctionReified(previous->m_staticFunctionReified)
 {
     if (previous->m_globalObject)
         m_globalObject.set(globalData, this, previous->m_globalObject.get());

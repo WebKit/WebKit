@@ -176,6 +176,63 @@ namespace JSC {
             return entry(identifier);
         }
 
+        class ConstIterator {
+        public:
+            ConstIterator(const HashTable* table, int position)
+                : m_table(table)
+                , m_position(position)
+            {
+                skipInvalidKeys();
+            }
+
+            const HashEntry* operator->()
+            {
+                return &m_table->table[m_position];
+            }
+
+            const HashEntry* operator*()
+            {
+                return &m_table->table[m_position];
+            }
+
+            bool operator!=(const ConstIterator& other)
+            {
+                ASSERT(m_table == other.m_table);
+                return m_position != other.m_position;
+            }
+            
+            ConstIterator& operator++()
+            {
+                ASSERT(m_position < m_table->compactSize);
+                ++m_position;
+                skipInvalidKeys();
+                return *this;
+            }
+
+        private:
+            void skipInvalidKeys()
+            {
+                ASSERT(m_position <= m_table->compactSize);
+                while (m_position < m_table->compactSize && !m_table->table[m_position].key())
+                    ++m_position;
+                ASSERT(m_position <= m_table->compactSize);
+            }
+            
+            const HashTable* m_table;
+            int m_position;
+        };
+
+        ConstIterator begin(JSGlobalData& globalData) const
+        {
+            initializeIfNeeded(&globalData);
+            return ConstIterator(this, 0);
+        }
+        ConstIterator end(JSGlobalData& globalData) const
+        {
+            initializeIfNeeded(&globalData);
+            return ConstIterator(this, compactSize);
+        }
+
     private:
         ALWAYS_INLINE const HashEntry* entry(const Identifier& identifier) const
         {
@@ -199,7 +256,7 @@ namespace JSC {
         void createTable(JSGlobalData*) const;
     };
 
-    void setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
+    bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
 
     /**
      * This method does it all (looking in the hashtable, checking for function
@@ -216,10 +273,9 @@ namespace JSC {
             return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
         if (entry->attributes() & Function)
-            setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        else
-            slot.setCacheableCustom(thisObj, entry->propertyGetter());
+            return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
+        slot.setCacheableCustom(thisObj, entry->propertyGetter());
         return true;
     }
 
@@ -232,11 +288,14 @@ namespace JSC {
             return thisObj->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor);
  
         PropertySlot slot;
-        if (entry->attributes() & Function)
-            setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        else
-            slot.setCustom(thisObj, entry->propertyGetter());
+        if (entry->attributes() & Function) {
+            bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
+            if (present)
+                descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+            return present;
+        }
 
+        slot.setCustom(thisObj, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
@@ -256,8 +315,7 @@ namespace JSC {
         if (!entry)
             return false;
 
-        setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        return true;
+        return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
     }
     
     /**
@@ -276,9 +334,10 @@ namespace JSC {
             return false;
         
         PropertySlot slot;
-        setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
-        return true;
+        bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
+        if (present)
+            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+        return present;
     }
 
     /**
@@ -331,12 +390,10 @@ namespace JSC {
         if (!entry)
             return false;
 
-        if (entry->attributes() & Function) { // function: put as override property
-            if (LIKELY(value.isCell()))
-                thisObj->putDirect(exec->globalData(), propertyName, value.asCell());
-            else
-                thisObj->putDirect(exec->globalData(), propertyName, value);
-        } else if (!(entry->attributes() & ReadOnly))
+        // If this is a function put it as an override property.
+        if (entry->attributes() & Function)
+            thisObj->putDirect(exec->globalData(), propertyName, value);
+        else if (!(entry->attributes() & ReadOnly))
             entry->propertyPutter()(exec, thisObj, value);
 
         return true;

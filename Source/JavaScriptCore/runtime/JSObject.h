@@ -74,7 +74,7 @@ namespace JSC {
         friend class JIT;
         friend class JSCell;
         friend class MarkedBlock;
-        friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
+        friend bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
         typedef JSCell Base;
@@ -209,6 +209,9 @@ namespace JSC {
         bool isSealed(JSGlobalData& globalData) { return structure()->isSealed(globalData); }
         bool isFrozen(JSGlobalData& globalData) { return structure()->isFrozen(globalData); }
         bool isExtensible() { return structure()->isExtensible(); }
+
+        bool staticFunctionsReified() { return structure()->staticFunctionsReified(); }
+        void reifyStaticFunctionsForDelete(ExecState* exec);
 
         void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage.get()) == static_cast<const void*>(this + 1); }

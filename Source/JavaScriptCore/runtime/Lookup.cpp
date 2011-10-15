@@ -71,13 +71,18 @@ void HashTable::deleteTable() const
     }
 }
 
-void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
     ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & Function);
     WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(exec->globalData(), propertyName);
 
     if (!location) {
+        // If a property is ever deleted from an object with a static table, then we reify
+        // all static functions at that time - after this we shouldn't be re-adding anything.
+        if (thisObj->staticFunctionsReified())
+            return false;
+    
         JSFunction* function;
         JSGlobalObject* globalObject = thisObj->globalObject();
 #if ENABLE(JIT)
@@ -92,6 +97,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     }
 
     slot.setValue(thisObj, location->get(), thisObj->offsetForLocation(location));
+    return true;
 }
 
 } // namespace JSC

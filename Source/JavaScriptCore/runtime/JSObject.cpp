@@ -256,6 +256,10 @@ bool JSObject::deletePropertyVirtual(ExecState* exec, const Identifier& property
 bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     JSObject* thisObject = static_cast<JSObject*>(cell);
+
+    if (!thisObject->staticFunctionsReified())
+        thisObject->reifyStaticFunctionsForDelete(exec);
+
     unsigned attributes;
     JSCell* specificValue;
     if (thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
@@ -571,6 +575,37 @@ void JSObject::preventExtensions(JSGlobalData& globalData)
 {
     if (isExtensible())
         setStructure(globalData, Structure::preventExtensionsTransition(globalData, structure()));
+}
+
+// This presently will flatten to an uncachable dictionary; this is suitable
+// for use in delete, we may want to do something different elsewhere.
+void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
+{
+    ASSERT(!staticFunctionsReified());
+    JSGlobalData& globalData = exec->globalData();
+
+    // If this object's ClassInfo has no static properties, then nothing to reify!
+    // We can safely set the flag to avoid the expensive check again in the future.
+    if (!classInfo()->hasStaticProperties()) {
+        structure()->setStaticFunctionsReified();
+        return;
+    }
+
+    if (!structure()->isUncacheableDictionary())
+        setStructure(globalData, Structure::toUncacheableDictionaryTransition(globalData, structure()));
+
+    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
+        const HashTable* hashTable = info->propHashTable(globalObject()->globalExec());
+        if (!hashTable)
+            continue;
+        PropertySlot slot;
+        for (HashTable::ConstIterator iter = hashTable->begin(globalData); iter != hashTable->end(globalData); ++iter) {
+            if (iter->attributes() & Function)
+                setUpStaticFunctionSlot(globalObject()->globalExec(), *iter, this, Identifier(&globalData, iter->key()), slot);
+        }
+    }
+
+    structure()->setStaticFunctionsReified();
 }
 
 void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& propertyName)

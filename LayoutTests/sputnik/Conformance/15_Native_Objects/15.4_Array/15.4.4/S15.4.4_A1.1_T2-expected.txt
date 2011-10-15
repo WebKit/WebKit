@@ -1,6 +1,6 @@
 S15.4.4_A1.1_T2
 
-FAIL SputnikError: #1: delete Array.prototype.toString; var Array.prototype = Object(); Array.prototype.toString() === "[object " + "Array" + "]". Actual: 
+PASS 
 
 TEST COMPLETE
 

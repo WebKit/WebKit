@@ -1,3 +1,60 @@
+2011-10-14  Gavin Barraclough  <baraclough@apple.com>
+
+        Most built-in properties are not deletable
+        https://bugs.webkit.org/show_bug.cgi?id=61014
+
+        Reviewed by Filip Pizlo.
+
+        Our static hash tables don't allow for deleting properties.
+        This is the cause of a bunch of expected failures in LayoutTests/sputnik.
+
+        This fixes the problem by reifying all static functions immediately prior
+        to the first deletion.  Reification is tracked by a flag on the structure,
+        so properties will no longer 'bounce-back' on later access.
+
+        Theoretically there could probably also be an issue with custom accessor
+        properties, but we probably do not really require any of these to be
+        Configurable anyway. I'll follow up with a separate patch to address this.
+
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::hasStaticProperties):
+            - detects static property tables.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+            - call reifyStaticFunctions before deletion.
+        (JSC::JSObject::reifyStaticFunctions):
+            - If the class has static functions, set them up now.
+        * runtime/JSObject.h:
+        (JSC::JSObject::staticFunctionsReified):
+            - returns true if static functions have been reified,
+              and as such should no longer be added.
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+            - If static functions have been reified do not add.
+        * runtime/Lookup.h:
+        (JSC::HashTable::ConstIterator::ConstIterator):
+        (JSC::HashTable::ConstIterator::operator->):
+        (JSC::HashTable::ConstIterator::operator*):
+        (JSC::HashTable::ConstIterator::operator!=):
+        (JSC::HashTable::ConstIterator::operator++):
+        (JSC::HashTable::ConstIterator::skipInvalidKeys):
+        (JSC::HashTable::begin):
+        (JSC::HashTable::end):
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticFunctionDescriptor):
+            - setUpStaticFunctionSlot may not add, returns a bool.
+        (JSC::lookupPut):
+            - remove redundant branch.
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+            - initialize new flag in constructors.
+        * runtime/Structure.h:
+        (JSC::Structure::staticFunctionsReified):
+        (JSC::Structure::setStaticFunctionsReified):
+            - added flag
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual put to putVirtual

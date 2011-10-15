@@ -26,6 +26,7 @@
 #ifndef Structure_h
 #define Structure_h
 
+#include "ClassInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
 #include "JSType.h"
@@ -162,6 +163,16 @@ namespace JSC {
         JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
         void getPropertyNames(JSGlobalData&, PropertyNameArray&, EnumerationMode mode);
 
+        bool staticFunctionsReified()
+        {
+            return m_staticFunctionReified;
+        }
+
+        void setStaticFunctionsReified()
+        {
+            m_staticFunctionReified = true;
+        }
+
         const ClassInfo* classInfo() const { return m_classInfo; }
 
         static ptrdiff_t prototypeOffset()
@@ -281,7 +292,7 @@ namespace JSC {
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_preventExtensions : 1;
         unsigned m_didTransition : 1;
-        // 8 free bits
+        unsigned m_staticFunctionReified;
     };
 
     inline size_t Structure::get(JSGlobalData& globalData, const Identifier& propertyName)

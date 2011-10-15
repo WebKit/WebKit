@@ -1,6 +1,6 @@
 S15.5.4.1_A1_T2
 
-FAIL SputnikError: #3: __constr = String.prototype.constructor; __instance = new __constr("choosing one"); delete String.prototype.toString; __instance.toString() === __to_string_result. Actual: __instance.toString() ===choosing one __to_string_result ===[object String]
+PASS [object String]
 
 TEST COMPLETE
 

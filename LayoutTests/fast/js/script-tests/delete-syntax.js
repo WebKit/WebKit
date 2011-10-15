@@ -51,5 +51,22 @@ shouldBeTrue('delete (window["nonexistent"])');
 shouldBeTrue('delete "x"');
 shouldBeTrue('delete (2 + 3)');
 
+var mathCos = Math.cos;
+delete Math.sin;
+Math.tan = null;
+// Try deleting & overwriting static properties.
+shouldBe("Math.cos", "mathCos");
+shouldBe("Math.sin", "undefined");
+shouldBe("Math.tan", "null");
+
+var regExpPrototypeCompile = RegExp.prototype.compile;
+RegExp.prototype.test = null;
+Object.preventExtensions(RegExp.prototype);
+delete RegExp.prototype.exec;
+// Reverse order of delete & overwrite, tests delete after preventExtensions.
+shouldBe("RegExp.prototype.compile", "regExpPrototypeCompile");
+shouldBe("RegExp.prototype.exec", "undefined");
+shouldBe("RegExp.prototype.test", "null");
+
 var successfullyParsed = true;
 

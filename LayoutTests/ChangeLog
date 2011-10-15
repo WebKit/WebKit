@@ -1,3 +1,69 @@
+2011-10-14  Gavin Barraclough  <baraclough@apple.com>
+
+        Most built-in properties are not deletable
+        https://bugs.webkit.org/show_bug.cgi?id=61014
+
+        Reviewed by Filip Pizlo.
+
+        Mostly checking in passing results, added a couple of extra test cases to fast/js/delete-syntax.
+
+        * fast/js/delete-syntax-expected.txt:
+        * fast/js/script-tests/delete-syntax.js:
+        * ietestcenter/Javascript/11.4.1-4.a-10-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/S15.4.4_A1.1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/S15.5.4.1_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/S15.5.4_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/S15.5.4_A3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.2/S15.6.2.1_A4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.3/15.6.3.1_Boolean.prototype/S15.6.3.1_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.4/S15.6.4_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.2/S15.7.2.1_A4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.3/15.7.3.1_Number.prototype/S15.7.3.1_A2_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.4/S15.7.4_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.2_Date.parse/S15.9.4.2_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.3_Date.UTC/S15.9.4.3_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.10_Date.prototype.getFullYear/S15.9.5.10_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.11_Date.prototype.getUTCFullYear/S15.9.5.11_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.12_Date.prototype.getMonth/S15.9.5.12_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.13_Date.prototype.getUTCMonth/S15.9.5.13_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.14_Date.prototype.getDate/S15.9.5.14_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.15_Date.prototype.getUTCDate/S15.9.5.15_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.16_Date.prototype.getDay/S15.9.5.16_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.17_Date.prototype.getUTCDay/S15.9.5.17_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.18_Date.prototype.getHours/S15.9.5.18_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.19_Date.prototype.getUTCHours/S15.9.5.19_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.20_Date.prototype.getMinutes/S15.9.5.20_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.21_Date.prototype.getUTCMinutes/S15.9.5.21_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.22_Date.prototype.getSeconds/S15.9.5.22_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.23_Date.prototype.getUTCSeconds/S15.9.5.23_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.24_Date.prototype.getMilliseconds/S15.9.5.24_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.25_Date.prototype.getUTCMilliseconds/S15.9.5.25_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.26_Date.prototype.getTimezoneOffset/S15.9.5.26_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.27_Date.prototype.setTime/S15.9.5.27_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.28_Date.prototype.setMilliseconds/S15.9.5.28_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.29_Date.prototype.setUTCMilliseconds/S15.9.5.29_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.2_Date.prototype.toString/S15.9.5.2_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.30_Date.prototype.setSeconds/S15.9.5.30_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.31_Date.prototype.setUTCSeconds/S15.9.5.31_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.32_Date.prototype.setMinutes/S15.9.5.32_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.33_Date.prototype.setUTCMinutes/S15.9.5.33_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.34_Date.prototype.setHours/S15.9.5.34_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.35_Date.prototype.setUTCHours/S15.9.5.35_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.36_Date.prototype.setDate/S15.9.5.36_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.37_Date.prototype.setUTCDate/S15.9.5.37_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.38_Date.prototype.setMonth/S15.9.5.38_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.39_Date.prototype.setUTCMonth/S15.9.5.39_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.3_Date.prototype.toDateString/S15.9.5.3_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.40_Date.prototype.setFullYear/S15.9.5.40_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.41_Date.prototype.setUTCFullYear/S15.9.5.41_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.42_Date.prototype.toUTCString/S15.9.5.42_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.4_Date.prototype.toTimeString/S15.9.5.4_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.5_Date.prototype.toLocaleString/S15.9.5.5_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.6_Date.prototype.toLocaleDateString/S15.9.5.6_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.7_Date.prototype.toLocaleTimeString/S15.9.5.7_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.8_Date.prototype.valueOf/S15.9.5.8_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.9_Date.prototype.getTime/S15.9.5.9_A1_T2-expected.txt:
+
 2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows rebaseline after r97522.

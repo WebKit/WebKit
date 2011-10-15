@@ -23,6 +23,12 @@ PASS delete (window.nonexistent) is true
 PASS delete (window["nonexistent"]) is true
 PASS delete "x" is true
 PASS delete (2 + 3) is true
+PASS Math.cos is mathCos
+PASS Math.sin is undefined
+PASS Math.tan is null
+PASS RegExp.prototype.compile is regExpPrototypeCompile
+PASS RegExp.prototype.exec is undefined
+PASS RegExp.prototype.test is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

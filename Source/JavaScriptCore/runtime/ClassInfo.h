@@ -75,6 +75,15 @@ namespace JSC {
             return false;
         }
 
+        bool hasStaticProperties() const
+        {
+            for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+                if (ci->staticPropHashTable || ci->classPropHashTableGetterFunction)
+                    return true;
+            }
+            return false;
+        }
+
         const HashTable* staticPropHashTable;
         typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
         const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
