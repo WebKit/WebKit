@@ -1,5 +1,20 @@
 2011-10-14  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [FileSystem API] readonly attributes test
+        https://bugs.webkit.org/show_bug.cgi?id=69655
+
+        Reviewed by Adam Barth.
+
+        * fast/filesystem/resources/simple-readonly.js: Added.
+        (setReadonlyProperty):
+        (errorCallback):
+        (getFileCallback):
+        (successCallback):
+        * fast/filesystem/simple-readonly-expected.txt: Added.
+        * fast/filesystem/simple-readonly.html: Added.
+
+2011-10-14  Mark Pilgrim  <pilgrim@chromium.org>
+
         [FileSystem API] restricted Unicode characters in names
         https://bugs.webkit.org/show_bug.cgi?id=69657
 
