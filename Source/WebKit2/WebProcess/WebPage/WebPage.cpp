@@ -2168,6 +2168,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             m_drawingArea->didReceiveDrawingAreaMessage(connection, messageID, arguments);
         return;
     }
+
+#if ENABLE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
+    if (messageID.is<CoreIPC::MessageClassLayerTreeHost>()) {
+        if (m_drawingArea)
+            m_drawingArea->didReceiveLayerTreeHostMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
     
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspector>()) {

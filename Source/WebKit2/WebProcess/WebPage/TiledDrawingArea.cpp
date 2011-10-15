@@ -177,6 +177,10 @@ void TiledDrawingArea::removeTile(int tileID)
     m_webPage->send(Messages::DrawingAreaProxy::RemoveTile(tileID));
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void TiledDrawingArea::didReceiveLayerTreeHostMessage(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments) { }
+#endif
 } // namespace WebKit
+
 
 #endif // TILED_BACKING_STORE
