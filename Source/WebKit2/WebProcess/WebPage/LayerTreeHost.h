@@ -26,13 +26,20 @@
 #ifndef LayerTreeHost_h
 #define LayerTreeHost_h
 
+#include <CoreIPC/MessageID.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+namespace CoreIPC {
+class ArgumentDecoder;
+class Connection;
+}
+
 namespace WebCore {
-    class IntRect;
-    class IntSize;
-    class GraphicsLayer;
+class FloatPoint;
+class IntRect;
+class IntSize;
+class GraphicsLayer;
 }
 
 namespace WebKit {
@@ -72,6 +79,14 @@ public:
     virtual void pauseRendering() { }
     virtual void resumeRendering() { }
 
+#if ENABLE(TILED_BACKING_STORE)
+    virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float scale) { }
+    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
+    virtual void setVisibleContentRectForLayer(int layerID, const WebCore::IntRect&) { }
+    virtual void renderNextFrame() { }
+    virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+#endif
+
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
@@ -80,6 +95,11 @@ protected:
     explicit LayerTreeHost(WebPage*);
 
     WebPage* m_webPage;
+
+
+#if ENABLE(TILED_BACKING_STORE)
+    bool m_waitingForUIProcess;
+#endif
 };
 
 #if !PLATFORM(WIN) && !PLATFORM(QT)

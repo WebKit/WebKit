@@ -28,6 +28,10 @@
 
 #include "WebPageProxy.h"
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "LayerTreeHostProxy.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -52,5 +56,17 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollOffset)
     m_scrollOffset += scrollOffset;
     sizeDidChange();
 }
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+void DrawingAreaProxy::updateViewport()
+{
+    m_webPageProxy->setViewNeedsDisplay(viewportVisibleRect());
+}
+
+WebCore::IntRect DrawingAreaProxy::contentsRect() const
+{
+    return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
+}
+#endif
 
 } // namespace WebKit

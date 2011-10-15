@@ -26,41 +26,38 @@
 #include "config.h"
 #include "LayerTreeContext.h"
 
-#include "NotImplemented.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace WebKit {
 
 LayerTreeContext::LayerTreeContext()
+    : webLayerID(0)
 {
-    notImplemented();
 }
 
 LayerTreeContext::~LayerTreeContext()
 {
-    notImplemented();
 }
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder*) const
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    notImplemented();
+    encoder->encode(webLayerID);
 }
 
-bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&)
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& context)
 {
-    notImplemented();
-    return true;
+    return decoder->decode(context.webLayerID);
 }
 
 bool LayerTreeContext::isEmpty() const
 {
-    notImplemented();
-    return true;
+    return !webLayerID;
 }
 
-bool operator==(const LayerTreeContext&, const LayerTreeContext&)
+bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
 {
-    notImplemented();
-    return true;
+    return a.webLayerID == b.webLayerID;
 }
 
 } // namespace WebKit
