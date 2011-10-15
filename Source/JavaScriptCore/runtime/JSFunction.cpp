@@ -300,7 +300,7 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSFunction::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

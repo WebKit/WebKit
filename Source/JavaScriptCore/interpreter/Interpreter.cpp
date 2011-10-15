@@ -791,7 +791,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == LiteralParser::JSONPPathEntryTypeDeclare) {
                 if (globalObject->hasProperty(callFrame, JSONPPath[0].m_pathEntryName)) {
                     PutPropertySlot slot;
-                    globalObject->put(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                    globalObject->putVirtual(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 } else
                     globalObject->putWithAttributes(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, DontEnum | DontDelete);
                 // var declarations return undefined
@@ -1251,14 +1251,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             const Identifier& ident = codeBlock->variable(i);
             if (!variableObject->hasProperty(callFrame, ident)) {
                 PutPropertySlot slot;
-                variableObject->put(callFrame, ident, jsUndefined(), slot);
+                variableObject->putVirtual(callFrame, ident, jsUndefined(), slot);
             }
         }
 
         for (int i = 0; i < numFunctions; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PutPropertySlot slot;
-            variableObject->put(callFrame, function->name(), function->make(callFrame, scopeChain), slot);
+            variableObject->putVirtual(callFrame, function->name(), function->make(callFrame, scopeChain), slot);
         }
     }
 

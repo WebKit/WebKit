@@ -3661,7 +3661,7 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, co
     JSC::Identifier id = JSC::Identifier(exec, obj_name);
 
     JSC::PutPropertySlot slot;
-    window->put(exec, id, runtimeObject, slot);
+    window->putVirtual(exec, id, runtimeObject, slot);
     return EINA_TRUE;
 #else
     return EINA_FALSE;

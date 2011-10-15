@@ -142,7 +142,7 @@ bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState *exec, unsigned in
     return JSObject::getOwnPropertySlot(thisObject, exec, index, slot);
 }
 
-void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RuntimeArray::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }
@@ -165,7 +165,7 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& property
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void RuntimeArray::put(ExecState* exec, unsigned index, JSValue value)
+void RuntimeArray::putVirtual(ExecState* exec, unsigned index, JSValue value)
 {
     put(this, exec, index, value);
 }

@@ -97,7 +97,7 @@ bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned pro
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-void JSByteArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSByteArray::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }
@@ -114,7 +114,7 @@ void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSByteArray::put(ExecState* exec, unsigned propertyName, JSValue value)
+void JSByteArray::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)
 {
     put(this, exec, propertyName, value);
 }

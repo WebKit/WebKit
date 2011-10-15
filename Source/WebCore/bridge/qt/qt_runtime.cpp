@@ -960,7 +960,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             JSValue val = convertQVariantToValue(exec, root.get(), i.value());
             if (val) {
                 PutPropertySlot slot;
-                ret->put(exec, Identifier(exec, reinterpret_cast_ptr<const UChar *>(s.constData()), s.length()), val, slot);
+                ret->putVirtual(exec, Identifier(exec, reinterpret_cast_ptr<const UChar *>(s.constData()), s.length()), val, slot);
                 // ### error case?
             }
             ++i;

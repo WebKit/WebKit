@@ -1,3 +1,39 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual put to putVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69851
+
+        Reviewed by Darin Adler.
+
+        Renamed virtual versions of put to putVirtual in prepration for 
+        adding the static put to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same 
+        name.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectSetProperty):
+        * UserObjectImp.cpp:
+        (UserObjectImp::putVirtual):
+        * UserObjectImp.h:
+
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual put to putVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69851
+
+        Reviewed by Darin Adler.
+
+        Renamed virtual versions of put to putVirtual in prepration for 
+        adding the static put to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same 
+        name.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectSetProperty):
+        * UserObjectImp.cpp:
+        (UserObjectImp::putVirtual):
+        * UserObjectImp.h:
+
 2011-10-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualized JSCell::toNumber

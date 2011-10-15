@@ -145,7 +145,7 @@ bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSV
         return 0;
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    scriptObject->put(exec, propertyName, value, slot);
+    scriptObject->putVirtual(exec, propertyName, value, slot);
     return true;
 }
 

@@ -277,7 +277,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
         jsObject->putWithAttributes(exec, name, jsValue, attributes);
     else {
         PutPropertySlot slot;
-        jsObject->put(exec, name, jsValue, slot);
+        jsObject->putVirtual(exec, name, jsValue, slot);
     }
 
     if (exec->hadException()) {
@@ -312,7 +312,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
     
-    jsObject->put(exec, propertyIndex, jsValue);
+    jsObject->putVirtual(exec, propertyIndex, jsValue);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());

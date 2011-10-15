@@ -761,7 +761,7 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
     return JSTestObj::getConstructor(exec, domObject->globalObject());
 }
 
-void JSTestObj::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSTestObj::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

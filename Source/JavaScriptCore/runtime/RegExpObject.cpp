@@ -165,7 +165,7 @@ JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
     return asRegExpObject(slotBase)->getLastIndex();
 }
 
-void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RegExpObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

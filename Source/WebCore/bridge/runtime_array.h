@@ -55,9 +55,9 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
     static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+    virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-    virtual void put(ExecState*, unsigned propertyName, JSValue);
+    virtual void putVirtual(ExecState*, unsigned propertyName, JSValue);
     static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
     
     virtual bool deletePropertyVirtual(ExecState*, const Identifier &propertyName);

@@ -135,7 +135,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     reset(prototype());
 }
 
-void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSGlobalObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }
@@ -159,7 +159,7 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
 
     JSValue valueBefore = getDirect(exec->globalData(), propertyName);
     PutPropertySlot slot;
-    JSVariableObject::put(exec, propertyName, value, slot);
+    JSVariableObject::put(this, exec, propertyName, value, slot);
     if (!valueBefore) {
         JSValue valueAfter = getDirect(exec->globalData(), propertyName);
         if (valueAfter)

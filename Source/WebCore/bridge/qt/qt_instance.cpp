@@ -158,7 +158,7 @@ bool QtInstance::getOwnPropertySlot(JSObject* object, ExecState* exec, const Ide
 
 void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    object->JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(object, exec, propertyName, value, slot);
 }
 
 void QtInstance::removeCachedMethod(JSObject* method)

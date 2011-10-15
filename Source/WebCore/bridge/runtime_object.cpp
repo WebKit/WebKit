@@ -216,7 +216,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(ExecState *exec, const Identifier& 
     return instance->getOwnPropertyDescriptor(this, exec, propertyName, descriptor);
 }
 
-void RuntimeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RuntimeObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

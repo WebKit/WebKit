@@ -107,9 +107,9 @@ namespace JSC {
         static bool getOwnPropertySlot(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue value, PutPropertySlot&);
+        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        virtual void put(ExecState*, unsigned propertyName, JSValue value);
+        virtual void putVirtual(ExecState*, unsigned propertyName, JSValue);
         static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         virtual void putWithAttributes(JSGlobalData*, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot);
@@ -809,10 +809,10 @@ inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot
 inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell())) {
-        synthesizeObject(exec)->put(exec, propertyName, value, slot);
+        synthesizeObject(exec)->putVirtual(exec, propertyName, value, slot);
         return;
     }
-    asCell()->put(exec, propertyName, value, slot);
+    asCell()->putVirtual(exec, propertyName, value, slot);
 }
 
 inline void JSValue::putDirect(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
@@ -825,10 +825,10 @@ inline void JSValue::putDirect(ExecState* exec, const Identifier& propertyName, 
 inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
 {
     if (UNLIKELY(!isCell())) {
-        synthesizeObject(exec)->put(exec, propertyName, value);
+        synthesizeObject(exec)->putVirtual(exec, propertyName, value);
         return;
     }
-    asCell()->put(exec, propertyName, value);
+    asCell()->putVirtual(exec, propertyName, value);
 }
 
 ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)

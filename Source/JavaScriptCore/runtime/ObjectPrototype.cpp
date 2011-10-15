@@ -75,7 +75,7 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
     ASSERT(inherits(&s_info));
 }
 
-void ObjectPrototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void ObjectPrototype::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

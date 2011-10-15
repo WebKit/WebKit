@@ -188,9 +188,9 @@ bool NPJSObject::setProperty(NPIdentifier propertyName, const NPVariant* value)
     JSValue jsValue = m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), *value);
     if (identifierRep->isString()) {
         PutPropertySlot slot;
-        m_jsObject->put(exec, identifierFromIdentifierRep(exec, identifierRep), jsValue, slot);
+        m_jsObject->putVirtual(exec, identifierFromIdentifierRep(exec, identifierRep), jsValue, slot);
     } else
-        m_jsObject->put(exec, identifierRep->number(), jsValue);
+        m_jsObject->putVirtual(exec, identifierRep->number(), jsValue);
     exec->clearException();
     
     return true;

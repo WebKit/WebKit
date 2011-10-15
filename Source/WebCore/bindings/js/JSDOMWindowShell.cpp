@@ -115,9 +115,9 @@ bool JSDOMWindowShell::getOwnPropertyDescriptor(ExecState* exec, const Identifie
     return m_window->getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void JSDOMWindowShell::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSDOMWindowShell::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    m_window->put(exec, propertyName, value, slot);
+    m_window->putVirtual(exec, propertyName, value, slot);
 }
 
 void JSDOMWindowShell::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)

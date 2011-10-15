@@ -148,14 +148,14 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
         int start = d->lastOvector()[2 * i];
         if (start >= 0)
-            JSArray::put(exec, i, jsSubstring(exec, d->lastInput, start, d->lastOvector()[2 * i + 1] - start));
+            JSArray::put(this, exec, i, jsSubstring(exec, d->lastInput, start, d->lastOvector()[2 * i + 1] - start));
         else
-            JSArray::put(exec, i, jsUndefined());
+            JSArray::put(this, exec, i, jsUndefined());
     }
 
     PutPropertySlot slot;
-    JSArray::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector()[0]), slot);
-    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input), slot);
+    JSArray::put(this, exec, exec->propertyNames().index, jsNumber(d->lastOvector()[0]), slot);
+    JSArray::put(this, exec, exec->propertyNames().input, jsString(exec, d->input), slot);
 
     delete d;
     setSubclassData(0);
@@ -292,7 +292,7 @@ JSValue regExpConstructorRightContext(ExecState* exec, JSValue slotBase, const I
     return asRegExpConstructor(slotBase)->getRightContext(exec);
 }
 
-void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RegExpConstructor::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

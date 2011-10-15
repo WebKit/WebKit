@@ -96,7 +96,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
             return;
         }
 
-        array->JSArray::put(exec, index, value);
+        JSArray::put(array, exec, index, value);
         return;
     }
 
@@ -357,7 +357,7 @@ void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* 
 {
     // We should only get here if index is outside the existing vector.
     ASSERT(!array->canSetIndex(index));
-    array->JSArray::put(exec, index, JSValue::decode(encodedValue));
+    JSArray::put(array, exec, index, JSValue::decode(encodedValue));
 }
 
 EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)
@@ -374,13 +374,13 @@ EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray* array)
 void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
-    base->put(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->putVirtual(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
-    base->put(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->putVirtual(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)

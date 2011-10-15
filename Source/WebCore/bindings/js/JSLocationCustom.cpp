@@ -139,7 +139,7 @@ bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JS
     const HashEntry* entry = JSLocation::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (!entry) {
         if (sameDomainAccess)
-            JSObject::put(exec, propertyName, value, slot);
+            JSObject::put(this, exec, propertyName, value, slot);
         return true;
     }
 

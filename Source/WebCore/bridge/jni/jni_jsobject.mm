@@ -348,7 +348,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    _imp->put(exec, Identifier(exec, JavaString(memberName).impl()), convertJObjectToValue(exec, value), slot);
+    _imp->putVirtual(exec, Identifier(exec, JavaString(memberName).impl()), convertJObjectToValue(exec, value), slot);
 }
 
 
@@ -393,7 +393,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->put(exec, (unsigned)index, convertJObjectToValue(exec, value));
+    _imp->putVirtual(exec, (unsigned)index, convertJObjectToValue(exec, value));
 }
 
 

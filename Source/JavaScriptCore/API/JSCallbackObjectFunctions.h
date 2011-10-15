@@ -201,7 +201,7 @@ bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(ExecState* exec, const I
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSCallbackObject<Parent>::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

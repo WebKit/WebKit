@@ -103,24 +103,24 @@ bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned identifi
     return true;
 }
 
-void JSCell::put(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
+void JSCell::putVirtual(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, identifier, value, slot);
 }
 
 void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
-    cell->toObject(exec, exec->lexicalGlobalObject())->put(exec, identifier, value, slot);
+    cell->toObject(exec, exec->lexicalGlobalObject())->putVirtual(exec, identifier, value, slot);
 }
 
-void JSCell::put(ExecState* exec, unsigned identifier, JSValue value)
+void JSCell::putVirtual(ExecState* exec, unsigned identifier, JSValue value)
 {
     put(this, exec, identifier, value);
 }
 
 void JSCell::put(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value)
 {
-    cell->toObject(exec, exec->lexicalGlobalObject())->put(exec, identifier, value);
+    cell->toObject(exec, exec->lexicalGlobalObject())->putVirtual(exec, identifier, value);
 }
 
 bool JSCell::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)

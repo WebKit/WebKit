@@ -70,14 +70,14 @@ bool DebuggerActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const
     return static_cast<DebuggerActivation*>(cell)->m_activation->getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void DebuggerActivation::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void DebuggerActivation::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }
 
 void DebuggerActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    static_cast<DebuggerActivation*>(cell)->m_activation->put(exec, propertyName, value, slot);
+    static_cast<DebuggerActivation*>(cell)->m_activation->putVirtual(exec, propertyName, value, slot);
 }
 
 void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)

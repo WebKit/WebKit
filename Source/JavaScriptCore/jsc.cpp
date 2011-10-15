@@ -182,7 +182,7 @@ protected:
 
         JSObject* array = constructEmptyArray(globalExec());
         for (size_t i = 0; i < arguments.size(); ++i)
-            array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
+            array->putVirtual(globalExec(), i, jsString(globalExec(), arguments[i]));
         putDirect(globalData, Identifier(globalExec(), "arguments"), array);
     }
 

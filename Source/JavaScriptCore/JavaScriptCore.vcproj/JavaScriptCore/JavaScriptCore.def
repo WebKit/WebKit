@@ -272,14 +272,14 @@ EXPORTS
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ
-    ?put@JSCell@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
-    ?put@JSCell@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
-    ?put@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
+    ?put@JSGlobalObject@JSC@@SAXPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?put@JSObject@JSC@@SAXPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
-    ?put@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
-    ?put@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
-    ?put@StringObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?putDirectInternal@JSObject@JSC@@AAE_NAAVJSGlobalData@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@PAVJSCell@2@@Z
+    ?putVirtual@JSCell@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
+    ?putVirtual@JSCell@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
+    ?putVirtual@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
+    ?putVirtual@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
+    ?putVirtual@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
     ?putWithAttributes@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@@Z

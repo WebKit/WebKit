@@ -74,7 +74,7 @@ bool StringObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void StringObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void StringObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     put(this, exec, propertyName, value, slot);
 }

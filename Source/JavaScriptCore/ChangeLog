@@ -1,3 +1,108 @@
+2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename virtual put to putVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=69851
+
+        Reviewed by Darin Adler.
+
+        Renamed virtual versions of put to putVirtual in prepration for 
+        adding the static put to the MethodTable in ClassInfo since the 
+        compiler gets mad if the virtual and static versions have the same 
+        name.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::putVirtual):
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        (JSObjectSetPropertyAtIndex):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::putVirtual):
+        (JSC::DebuggerActivation::put):
+        * debugger/DebuggerActivation.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::putVirtual):
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putProperty):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::putVirtual):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putVirtual):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::putVirtual):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::putVirtual):
+        (JSC::JSCell::put):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::putVirtual):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::putVirtual):
+        (JSC::JSGlobalObject::putWithAttributes):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::putVirtual):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putVirtual):
+        (JSC::JSObject::put):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSValue::put):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::putVirtual):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::putVirtual):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::fillArrayInstance):
+        (JSC::RegExpConstructor::putVirtual):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::putVirtual):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::putVirtual):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::putVirtual):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+
 2011-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         Reflective Arguments retrieval should be hardened for the

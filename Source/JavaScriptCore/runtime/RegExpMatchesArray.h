@@ -76,7 +76,7 @@ namespace JSC {
             return JSArray::getOwnPropertyDescriptor(exec, propertyName, descriptor);
         }
 
-        virtual void put(ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
+        virtual void putVirtual(ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
         {
             put(this, exec, propertyName, v, slot);
         }
@@ -89,7 +89,7 @@ namespace JSC {
             JSArray::put(thisObject, exec, propertyName, v, slot);
         }
         
-        virtual void put(ExecState* exec, unsigned propertyName, JSValue v)
+        virtual void putVirtual(ExecState* exec, unsigned propertyName, JSValue v)
         {
             put(this, exec, propertyName, v);
         }

@@ -793,9 +793,9 @@ sub GenerateHeader
 
     # Getters
     if ($hasSetter) {
-        push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@headerContent, "    virtual void putVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@headerContent, "    virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
+        push(@headerContent, "    virtual void putVirtual(JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     }
@@ -1050,7 +1050,7 @@ sub GenerateHeader
         "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
-        push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@headerContent, "    virtual void putVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n");
     }
@@ -1473,7 +1473,7 @@ sub GenerateImplementation
     }
 
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
-        push(@implContent, "void ${className}Prototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
+        push(@implContent, "void ${className}Prototype::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    put(this, exec, propertyName, value, slot);\n");
         push(@implContent, "}\n\n");
@@ -1742,7 +1742,7 @@ sub GenerateImplementation
 
         if ($hasSetter) {
             if (!$dataNode->extendedAttributes->{"CustomPutFunction"}) {
-                push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
+                push(@implContent, "void ${className}::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    put(this, exec, propertyName, value, slot);\n");
                 push(@implContent, "}\n\n");
@@ -1773,7 +1773,7 @@ sub GenerateImplementation
             }
 
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-                push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue value)\n");
+                push(@implContent, "void ${className}::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    put(this, exec, propertyName, value);\n");
                 push(@implContent, "}\n\n");
