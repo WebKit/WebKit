@@ -1808,14 +1808,19 @@ inline void replaceExistingEntries(Vector<T>& target, Vector<T>& source)
         target[i] = source[i];
 }
 
-void CodeBlock::copyDataFromAlternative()
+void CodeBlock::copyDataFrom(CodeBlock* alternative)
 {
-    if (!m_alternative)
+    if (!alternative)
         return;
     
-    replaceExistingEntries(m_constantRegisters, m_alternative->m_constantRegisters);
-    replaceExistingEntries(m_functionDecls, m_alternative->m_functionDecls);
-    replaceExistingEntries(m_functionExprs, m_alternative->m_functionExprs);
+    replaceExistingEntries(m_constantRegisters, alternative->m_constantRegisters);
+    replaceExistingEntries(m_functionDecls, alternative->m_functionDecls);
+    replaceExistingEntries(m_functionExprs, alternative->m_functionExprs);
+}
+
+void CodeBlock::copyDataFromAlternative()
+{
+    copyDataFrom(m_alternative.get());
 }
 
 #if ENABLE(JIT)

@@ -45,6 +45,7 @@ namespace JSC {
     struct ExceptionInfo;
     
     enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
+    enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
     class ExecutableBase : public JSCell {
         friend class JIT;
@@ -460,6 +461,8 @@ namespace JSC {
             ASSERT(m_codeBlockForConstruct);
             return *m_codeBlockForConstruct;
         }
+        
+        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ExecState*, ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec = 0)
         {
@@ -605,6 +608,14 @@ namespace JSC {
 
         JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec, JITCode::JITType);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec, JITCode::JITType);
+        
+        OwnPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return m_codeBlockForCall;
+            ASSERT(kind == CodeForConstruct);
+            return m_codeBlockForConstruct;
+        }
         
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         unsigned m_numCapturedVariables : 31;

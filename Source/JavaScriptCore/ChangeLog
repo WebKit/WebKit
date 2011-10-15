@@ -1,3 +1,31 @@
+2011-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        FunctionExecutable should expose the ability to create unattached FunctionCodeBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=70157
+
+        Reviewed by Geoff Garen.
+        
+        Added FunctionExecutable::produceCodeBlockFor() and rewired compileForCallInternal()
+        and compileForConstructInternal() to use this method. This required more cleanly
+        exposing some of CodeBlock's tiering functionality and moving the CompilationKind
+        enum to Executable.h, as this was the easiest way to make it available to the
+        declarations/definitions of CodeBlock, FunctionExecutable, and BytecodeGenerator.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::copyDataFrom):
+        (JSC::CodeBlock::copyDataFromAlternative):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setAlternative):
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::codeBlockFor):
+
 2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port

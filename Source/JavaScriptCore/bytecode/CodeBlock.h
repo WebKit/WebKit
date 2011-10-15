@@ -248,6 +248,7 @@ namespace JSC {
         
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
+        void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
         
         void visitAggregate(SlotVisitor&);
 
@@ -732,6 +733,7 @@ namespace JSC {
 
         void shrinkToFit();
         
+        void copyDataFrom(CodeBlock* alternative);
         void copyDataFromAlternative();
         
         // Functions for controlling when tiered compilation kicks in. This
@@ -1106,7 +1108,7 @@ namespace JSC {
         // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
         // in the destructor.
-        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
+        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative = nullptr)
             : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, SharedSymbolTable::create().leakRef(), isConstructor, alternative)
         {
         }

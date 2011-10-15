@@ -168,7 +168,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     OwnPtr<CodeBlock> previousCodeBlock = m_evalCodeBlock.release();
     ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
     m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChainNode->localDepth(), previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? BytecodeGenerator::OptimizingCompilation : BytecodeGenerator::FirstCompilation)));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
     if ((exception = generator->generate())) {
         m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
         evalNode->destroyData();
@@ -298,7 +298,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     OwnPtr<CodeBlock> previousCodeBlock = m_programCodeBlock.release();
     ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
     m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider(), previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? BytecodeGenerator::OptimizingCompilation : BytecodeGenerator::FirstCompilation)));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
     if ((exception = generator->generate())) {
         m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
         programNode->destroyData();
@@ -406,17 +406,14 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
     return error;
 }
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
+PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ExecState* exec, ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
-#if !ENABLE(JIT)
-    UNUSED_PARAM(jitType);
-#endif
-    JSObject* exception = 0;
+    exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
     RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!body) {
         ASSERT(exception);
-        return exception;
+        return nullptr;
     }
     if (m_forceUsesArguments)
         body->setUsesArguments();
@@ -425,26 +422,42 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
     JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
 
-    OwnPtr<CodeBlock> previousCodeBlock = m_codeBlockForCall.release();
-    ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
-    m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), false, previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get(), !!m_codeBlockForCall->alternative() ? BytecodeGenerator::OptimizingCompilation : BytecodeGenerator::FirstCompilation)));
-    if ((exception = generator->generate())) {
-        m_codeBlockForCall = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForCall->releaseAlternative());
-        body->destroyData();
-        return exception;
-    }
+    OwnPtr<FunctionCodeBlock> result;
+    ASSERT((compilationKind == FirstCompilation) == !codeBlockFor(specializationKind));
+    result = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), specializationKind == CodeForConstruct));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, result->symbolTable(), result.get(), compilationKind)));
+    exception = generator->generate();
+    body->destroyData();
+    if (exception)
+        return nullptr;
 
+    result->copyDataFrom(codeBlockFor(specializationKind).get());
+    return result.release();
+}
+
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
+{
+#if !ENABLE(JIT)
+    UNUSED_PARAM(jitType);
+#endif
+    JSObject* exception;
+    JSGlobalData* globalData = scopeChainNode->globalData;
+    
+    ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
+    if (!newCodeBlock)
+        return exception;
+
+    newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForCall.release()));
+    m_codeBlockForCall = newCodeBlock.release();
+    
     m_numParametersForCall = m_codeBlockForCall->m_numParameters;
     ASSERT(m_numParametersForCall);
     m_numCapturedVariables = m_codeBlockForCall->m_numCapturedVars;
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
-    body->destroyData();
-    m_codeBlockForCall->copyDataFromAlternative();
-
 #if ENABLE(JIT)
-    if (exec->globalData().canUseJIT()) {
+    if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
             dfgCompiled = DFG::tryCompileFunction(exec, calleeArgsExec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
@@ -457,7 +470,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
                 m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
                 return 0;
             }
-            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
+            m_jitCodeForCall = JIT::compile(globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
@@ -488,40 +501,24 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 {
     UNUSED_PARAM(jitType);
     
-    JSObject* exception = 0;
+    JSObject* exception;
     JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
-    if (!body) {
-        ASSERT(exception);
+    
+    ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
+    if (!newCodeBlock)
         return exception;
-    }
-    if (m_forceUsesArguments)
-        body->setUsesArguments();
-    body->finishParsing(m_parameters, m_name);
-    recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
 
-    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
-
-    OwnPtr<CodeBlock> previousCodeBlock = m_codeBlockForConstruct.release();
-    ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
-    m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), true, previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get(), !!m_codeBlockForConstruct->alternative() ? BytecodeGenerator::OptimizingCompilation : BytecodeGenerator::FirstCompilation)));
-    if ((exception = generator->generate())) {
-        m_codeBlockForConstruct = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForConstruct->releaseAlternative());
-        body->destroyData();
-        return exception;
-    }
-
+    newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForConstruct.release()));
+    m_codeBlockForConstruct = newCodeBlock.release();
+    
     m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
     ASSERT(m_numParametersForConstruct);
     m_numCapturedVariables = m_codeBlockForConstruct->m_numCapturedVars;
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
-    body->destroyData();
-    m_codeBlockForConstruct->copyDataFromAlternative();
-
 #if ENABLE(JIT)
-    if (exec->globalData().canUseJIT()) {
+    if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
             dfgCompiled = DFG::tryCompileFunction(exec, calleeArgsExec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
@@ -534,7 +531,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
                 m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
                 return 0;
             }
-            m_jitCodeForConstruct = JIT::compile(scopeChainNode->globalData, m_codeBlockForConstruct.get(), &m_jitCodeForConstructWithArityCheck);
+            m_jitCodeForConstruct = JIT::compile(globalData, m_codeBlockForConstruct.get(), &m_jitCodeForConstructWithArityCheck);
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
