@@ -254,7 +254,7 @@ function generatePage()
     appendTreemap($('map'), g_webTree);
 
     if (g_currentState.treemapfocus)
-        focusPath(webtree, g_currentState.treemapfocus)
+        focusPath(g_webTree, g_currentState.treemapfocus)
 
     g_isGeneratingPage = false;
 }
