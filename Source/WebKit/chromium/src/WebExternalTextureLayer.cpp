@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,55 +24,52 @@
  */
 
 #include "config.h"
+#include "WebExternalTextureLayer.h"
 
-#if USE(ACCELERATED_COMPOSITING)
+#include "WebExternalTextureLayerImpl.h"
+#include "WebFloatRect.h"
 
-#include "PluginLayerChromium.h"
+namespace WebKit {
 
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
-
-namespace WebCore {
-
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(CCLayerDelegate* delegate)
+WebExternalTextureLayer WebExternalTextureLayer::create(WebLayerClient* client)
 {
-    return adoptRef(new PluginLayerChromium(delegate));
+    return WebExternalTextureLayer(WebExternalTextureLayerImpl::create(client));
 }
 
-PluginLayerChromium::PluginLayerChromium(CCLayerDelegate* delegate)
-    : LayerChromium(delegate)
-    , m_textureId(0)
-    , m_flipped(true)
+void WebExternalTextureLayer::setTextureId(unsigned id)
+{
+    unwrap<WebExternalTextureLayerImpl>()->setTextureId(id);
+}
+
+unsigned WebExternalTextureLayer::textureId() const
+{
+    return constUnwrap<WebExternalTextureLayerImpl>()->textureId();
+}
+
+void WebExternalTextureLayer::setFlipped(bool flipped)
+{
+    unwrap<WebExternalTextureLayerImpl>()->setFlipped(flipped);
+}
+
+bool WebExternalTextureLayer::flipped() const
+{
+    return constUnwrap<WebExternalTextureLayerImpl>()->flipped();
+}
+
+WebExternalTextureLayer::WebExternalTextureLayer(const PassRefPtr<WebExternalTextureLayerImpl>& node)
+    : WebLayer(node)
 {
 }
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
+WebExternalTextureLayer& WebExternalTextureLayer::operator=(const PassRefPtr<WebExternalTextureLayerImpl>& node)
 {
-    return CCPluginLayerImpl::create(m_layerId);
+    m_private = node;
+    return *this;
 }
 
-void PluginLayerChromium::setTextureId(unsigned id)
+WebExternalTextureLayer::operator PassRefPtr<WebExternalTextureLayerImpl>() const
 {
-    m_textureId = id;
-    setNeedsCommit();
+    return static_cast<WebExternalTextureLayerImpl*>(m_private.get());
 }
 
-void PluginLayerChromium::setFlipped(bool flipped)
-{
-    m_flipped = flipped;
-    setNeedsCommit();
-}
-
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
-{
-    LayerChromium::pushPropertiesTo(layer);
-
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-    pluginLayer->setFlipped(m_flipped);
-}
-
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebKit

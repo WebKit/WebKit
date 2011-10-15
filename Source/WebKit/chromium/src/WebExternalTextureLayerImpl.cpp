@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,55 +24,45 @@
  */
 
 #include "config.h"
+#include "WebExternalTextureLayerImpl.h"
 
-#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsContext.h"
+#include "WebCanvas.h"
+#include "WebLayerClient.h"
 
-#include "PluginLayerChromium.h"
+using namespace WebCore;
 
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
+namespace WebKit {
 
-namespace WebCore {
-
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(CCLayerDelegate* delegate)
+PassRefPtr<WebExternalTextureLayerImpl> WebExternalTextureLayerImpl::create(WebLayerClient* client)
 {
-    return adoptRef(new PluginLayerChromium(delegate));
+    return adoptRef(new WebExternalTextureLayerImpl(client));
 }
 
-PluginLayerChromium::PluginLayerChromium(CCLayerDelegate* delegate)
-    : LayerChromium(delegate)
-    , m_textureId(0)
-    , m_flipped(true)
+WebExternalTextureLayerImpl::WebExternalTextureLayerImpl(WebLayerClient* client)
+    : PluginLayerChromium(this)
+    , m_client(client)
+{
+    setFlipped(false);
+}
+
+WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl()
 {
 }
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
+bool WebExternalTextureLayerImpl::drawsContent() const
 {
-    return CCPluginLayerImpl::create(m_layerId);
+    return !!textureId();
 }
 
-void PluginLayerChromium::setTextureId(unsigned id)
+void WebExternalTextureLayerImpl::paintContents(GraphicsContext&, const IntRect&)
 {
-    m_textureId = id;
-    setNeedsCommit();
 }
 
-void PluginLayerChromium::setFlipped(bool flipped)
+void WebExternalTextureLayerImpl::notifySyncRequired()
 {
-    m_flipped = flipped;
-    setNeedsCommit();
+    if (m_client)
+        m_client->notifyNeedsComposite();
 }
 
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
-{
-    LayerChromium::pushPropertiesTo(layer);
-
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-    pluginLayer->setFlipped(m_flipped);
-}
-
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+} // namespace WebKit

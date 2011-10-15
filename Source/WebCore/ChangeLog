@@ -1,3 +1,30 @@
+2011-10-15  Antoine Labour  <piman@chromium.org>
+
+        Add WebAcceleratedContentLayer backed by a texture to support accelerated content hosting
+        https://bugs.webkit.org/show_bug.cgi?id=70084
+
+        Reviewed by James Robinson.
+
+        Covered by existing compositing/ tests
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::pluginLayerProgramFlip):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::PluginLayerChromium):
+        (WebCore::PluginLayerChromium::setTextureId):
+        (WebCore::PluginLayerChromium::setFlipped):
+        (WebCore::PluginLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::flipped):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (WebCore::CCPluginLayerImpl::setFlipped):
+
 2011-10-15  Michael Nordman  <michaeln@google.com>
 
         [Chromium] Some WebSQLDatabase in worker bug fixes.

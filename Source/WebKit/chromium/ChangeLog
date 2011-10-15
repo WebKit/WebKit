@@ -1,3 +1,33 @@
+2011-10-15  Antoine Labour  <piman@chromium.org>
+
+        Add WebAcceleratedContentLayer backed by a texture to support accelerated content hosting
+        https://bugs.webkit.org/show_bug.cgi?id=70084
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * public/WebExternalTextureLayer.h: Added.
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::~WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::operator=):
+        * src/WebExternalTextureLayer.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCPluginLayerImpl.h.
+        (WebKit::WebExternalTextureLayer::create):
+        (WebKit::WebExternalTextureLayer::setTextureId):
+        (WebKit::WebExternalTextureLayer::textureId):
+        (WebKit::WebExternalTextureLayer::setFlipped):
+        (WebKit::WebExternalTextureLayer::flipped):
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::operator=):
+        (WebKit::WebExternalTextureLayer::operator PassRefPtr<WebExternalTextureLayerImpl>):
+        * src/WebExternalTextureLayerImpl.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCPluginLayerImpl.h.
+        (WebKit::WebExternalTextureLayerImpl::create):
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::drawsContent):
+        (WebKit::WebExternalTextureLayerImpl::paintContents):
+        (WebKit::WebExternalTextureLayerImpl::notifySyncRequired):
+        * src/WebExternalTextureLayerImpl.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCPluginLayerImpl.h.
+
 2011-10-15  Michael Nordman  <michaeln@google.com>
 
         [Chromium] Some WebSQLDatabase in worker bug fixes.

@@ -34,11 +34,31 @@
 #include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
+namespace {
+
+struct PluginProgramBinding {
+    template<class Program> void set(Program* program)
+    {
+        ASSERT(program && program->initialized());
+        programId = program->program();
+        samplerLocation = program->fragmentShader().samplerLocation();
+        matrixLocation = program->vertexShader().matrixLocation();
+        alphaLocation = program->fragmentShader().alphaLocation();
+    }
+    int programId;
+    int samplerLocation;
+    int matrixLocation;
+    int alphaLocation;
+};
+
+} // anonymous namespace
+
 namespace WebCore {
 
 CCPluginLayerImpl::CCPluginLayerImpl(int id)
     : CCLayerImpl(id)
     , m_textureId(0)
+    , m_flipped(true)
 {
 }
 
@@ -49,8 +69,12 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
-    const CCPluginLayerImpl::Program* program = layerRenderer->pluginLayerProgram();
-    ASSERT(program && program->initialized());
+    PluginProgramBinding binding;
+    if (m_flipped)
+        binding.set(layerRenderer->pluginLayerProgramFlip());
+    else
+        binding.set(layerRenderer->pluginLayerProgram());
+
     GraphicsContext3D* context = layerRenderer->context();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
@@ -62,11 +86,11 @@ void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
-    GLC(context, context->useProgram(program->program()));
-    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(context, context->useProgram(binding.programId));
+    GLC(context, context->uniform1i(binding.samplerLocation, 0));
     layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
-                                    program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation(),
+                                    binding.matrixLocation,
+                                    binding.alphaLocation,
                                     -1);
 }
 

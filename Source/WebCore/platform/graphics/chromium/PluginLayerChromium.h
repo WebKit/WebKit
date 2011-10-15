@@ -43,12 +43,17 @@ public:
 
     void setTextureId(unsigned textureId);
     unsigned textureId() const { return m_textureId; }
+    void setFlipped(bool);
+    bool flipped() const { return m_flipped; }
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
-private:
+protected:
     explicit PluginLayerChromium(CCLayerDelegate*);
+
+private:
     unsigned m_textureId;
+    bool m_flipped;
 };
 
 }

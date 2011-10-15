@@ -208,6 +208,8 @@ protected:
     // hold context-dependent resources such as textures.
     virtual void cleanupResources();
 
+    void setNeedsCommit();
+
     FloatRect m_dirtyRect;
 
     RefPtr<LayerChromium> m_maskLayer;
@@ -219,8 +221,6 @@ protected:
     int m_layerId;
 
 private:
-    void setNeedsCommit();
-
     void setParent(LayerChromium*);
     bool hasAncestor(LayerChromium*) const;
 

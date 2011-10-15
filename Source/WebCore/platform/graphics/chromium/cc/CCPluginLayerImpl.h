@@ -40,13 +40,15 @@ public:
     }
     virtual ~CCPluginLayerImpl();
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
 
     virtual void draw(LayerRendererChromium*);
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     void setTextureId(unsigned id) { m_textureId = id; }
+    void setFlipped(bool flipped) { m_flipped = flipped; }
 
 private:
     explicit CCPluginLayerImpl(int);
@@ -54,6 +56,7 @@ private:
     virtual const char* layerTypeAsString() const { return "PluginLayer"; }
 
     unsigned m_textureId;
+    bool m_flipped;
 };
 
 }

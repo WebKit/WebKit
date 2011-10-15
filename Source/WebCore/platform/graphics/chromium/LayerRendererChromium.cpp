@@ -752,6 +752,17 @@ const CCPluginLayerImpl::Program* LayerRendererChromium::pluginLayerProgram()
     return m_pluginLayerProgram.get();
 }
 
+const CCPluginLayerImpl::ProgramFlip* LayerRendererChromium::pluginLayerProgramFlip()
+{
+    if (!m_pluginLayerProgramFlip)
+        m_pluginLayerProgramFlip = adoptPtr(new CCPluginLayerImpl::ProgramFlip(m_context.get()));
+    if (!m_pluginLayerProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::pluginLayerProgramFlip::initialize", this, 0);
+        m_pluginLayerProgramFlip->initialize(m_context.get());
+    }
+    return m_pluginLayerProgramFlip.get();
+}
+
 const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgram()
 {
     if (!m_videoLayerRGBAProgram)
@@ -797,6 +808,8 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_canvasLayerProgram->cleanup(m_context.get());
     if (m_pluginLayerProgram)
         m_pluginLayerProgram->cleanup(m_context.get());
+    if (m_pluginLayerProgramFlip)
+        m_pluginLayerProgramFlip->cleanup(m_context.get());
     if (m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram->cleanup(m_context.get());
     if (m_renderSurfaceMaskProgramAA)
@@ -818,6 +831,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_tilerProgramSwizzleAA.clear();
     m_canvasLayerProgram.clear();
     m_pluginLayerProgram.clear();
+    m_pluginLayerProgramFlip.clear();
     m_renderSurfaceMaskProgram.clear();
     m_renderSurfaceMaskProgramAA.clear();
     m_renderSurfaceProgram.clear();
