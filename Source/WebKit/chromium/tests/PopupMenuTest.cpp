@@ -74,7 +74,7 @@ public:
     {
         m_selectIndex = listIndex;
         if (m_node) {
-            HTMLSelectElement* select = toSelectElement(static_cast<Element*>(m_node));
+            HTMLSelectElement* select = toHTMLSelectElement(m_node);
             select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireEvents);
         }
     }
