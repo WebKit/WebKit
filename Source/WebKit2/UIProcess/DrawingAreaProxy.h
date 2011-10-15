@@ -27,11 +27,9 @@
 #ifndef DrawingAreaProxy_h
 #define DrawingAreaProxy_h
 
-#include <CoreIPC/MessageID.h>
 #include "DrawingAreaInfo.h"
-#include <WebCore/IntRect.h>
-#include <WebCore/IntSize.h>
 #include <stdint.h>
+#include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(QT)
@@ -47,17 +45,13 @@ namespace CoreIPC {
 }
 
 namespace WebCore {
-    class FloatPoint;
-    class TransformationMatrix;
+    class IntRect;
 }
 
 namespace WebKit {
 
 class LayerTreeContext;
-class LayerTreeHostProxy;
 class UpdateInfo;
-class WebLayerTreeInfo;
-class WebLayerUpdateInfo;
 class WebPageProxy;
 
 class DrawingAreaProxy {
@@ -83,24 +77,6 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    virtual void updateViewport();
-    virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
-    virtual WebCore::IntRect contentsRect() const;
-    virtual bool isBackingStoreReady() const { return true; }
-    virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity) { }
-
-#if ENABLE(TILED_BACKING_STORE)
-    virtual void setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale) { }
-    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
-    virtual void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
-    virtual void updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
-    virtual void removeTileForLayer(int layerID, int tileID) { }
-    virtual void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments) { }
-
-    WebPageProxy* page() { return m_webPageProxy; }
-#endif
-#endif
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 
@@ -109,10 +85,6 @@ protected:
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;
-
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    OwnPtr<LayerTreeHostProxy> m_layerTreeHostProxy;
-#endif
 
 private:
     virtual void sizeDidChange() = 0;

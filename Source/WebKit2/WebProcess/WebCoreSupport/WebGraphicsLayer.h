@@ -27,40 +27,19 @@
 #include "IntSize.h"
 #include "RunLoop.h"
 #include "ShareableBitmap.h"
-#include "TiledBackingStore.h"
-#include "TiledBackingStoreClient.h"
-#include "TiledBackingStoreRemoteTile.h"
 #include "TransformationMatrix.h"
-#include "UpdateInfo.h"
 #include "WebLayerTreeInfo.h"
 #include "WebProcess.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
 namespace WebKit {
-
-class WebLayerTreeTileClient {
-public:
-    // TiledBackingStoreRemoteTileClient
-    virtual void createTile(WebLayerID, int tileID, const UpdateInfo&) = 0;
-    virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&) = 0;
-    virtual void removeTile(WebLayerID, int tileID) = 0;
-    virtual bool layerTreeTileUpdatesAllowed() const = 0;
-    virtual int64_t adoptImageBackingStore(Image*) = 0;
-    virtual void releaseImageBackingStore(int64_t) = 0;
-    virtual void didSyncCompositingStateForLayer(const WebLayerInfo&) = 0;
-    virtual void didDeleteLayer(WebLayerID) = 0;
-};
+class WebPage;
 }
 
 namespace WebCore {
 
-class WebGraphicsLayer : public WebCore::GraphicsLayer
-#if ENABLE(TILED_BACKING_STORE)
-                       , public TiledBackingStoreClient
-                       , public WebKit::TiledBackingStoreRemoteTileClient
-#endif
-{
+class WebGraphicsLayer : public WebCore::GraphicsLayer {
 public:
     WebGraphicsLayer(GraphicsLayerClient*);
     virtual ~WebGraphicsLayer();
@@ -94,13 +73,13 @@ public:
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const FloatRect&);
     void setContentsNeedsDisplay();
-    void setVisibleContentRect(const IntRect&);
-    void setVisibleContentRectTrajectoryVector(const FloatPoint&);
-    virtual void syncCompositingState(const FloatRect&);
+    virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
-    void setRootLayer(bool);
 
     WebKit::WebLayerID id() const;
+    const WebKit::WebLayerInfo& layerInfo() const;
+    FloatRect needsDisplayRect() const;
+    static Vector<WebKit::WebLayerID> takeLayersToDelete();
     static WebGraphicsLayer* layerByID(WebKit::WebLayerID);
     bool isModified() const { return m_modified; }
     void didSynchronize();
@@ -108,51 +87,21 @@ public:
     void notifyAnimationStarted(double);
 
     static void initFactory();
-
-#if ENABLE(TILED_BACKING_STORE)
-    // TiledBackingStoreClient
-    virtual void tiledBackingStorePaintBegin();
-    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
-    virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
-    virtual bool tiledBackingStoreUpdatesAllowed() const;
-    virtual IntRect tiledBackingStoreContentsRect();
-    virtual IntRect tiledBackingStoreVisibleRect();
-    virtual Color tiledBackingStoreBackgroundColor() const;
-
-    // TiledBackingStoreRemoteTileClient
-    virtual void createTile(int tileID, const WebKit::UpdateInfo&);
-    virtual void updateTile(int tileID, const WebKit::UpdateInfo&);
-    virtual void removeTile(int tileID);
-
-    void setLayerTreeTileClient(WebKit::WebLayerTreeTileClient* client) { m_layerTreeTileClient = client; }
-    WebKit::WebLayerTreeTileClient* layerTreeTileClient() const;
-
-    bool isReadyForTileBufferSwap() const;
-    void updateTileBuffersRecursively();
-    void setContentsScale(float);
-    void updateContentBuffers();
-#endif
+    static void sendLayersToUIProcess(WebCore::GraphicsLayer*, WebKit::WebPage*);
 
 private:
     WebKit::WebLayerInfo m_layerInfo;
-    WebKit::WebLayerTreeTileClient* m_layerTileClient;
+    RefPtr<WebKit::ShareableBitmap> m_backingStore;
     RefPtr<Image> m_image;
     FloatRect m_needsDisplayRect;
-    IntRect m_visibleContentRect;
-    bool m_needsDisplay : 1;
-    bool m_modified : 1;
-    bool m_contentNeedsDisplay : 1;
-    bool m_hasPendingAnimations : 1;
-    bool m_inUpdateMode : 2;
+    bool m_needsDisplay;
+    bool m_modified;
+    bool m_contentNeedsDisplay;
+    bool m_hasPendingAnimations;
+
+    float m_contentScale;
 
     void notifyChange();
-
-#if ENABLE(TILED_BACKING_STORE)
-    WebKit::WebLayerTreeTileClient* m_layerTreeTileClient;
-    OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
-    OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
-    float m_contentsScale;
-#endif
 };
 
 WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer*);

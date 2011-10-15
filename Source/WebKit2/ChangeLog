@@ -1,3 +1,78 @@
+2011-10-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97549.
+        http://trac.webkit.org/changeset/97549
+        https://bugs.webkit.org/show_bug.cgi?id=70174
+
+        It broke the SL build (Requested by Ossy_weekend on #webkit).
+
+        * DerivedSources.pro:
+        * Platform/CoreIPC/MessageID.h:
+        * Scripts/webkit2/messages.py:
+        * Shared/LayerTreeContext.h:
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit::WebLayerInfo::encode):
+        (WebKit::WebLayerInfo::decode):
+        * Shared/WebLayerTreeInfo.h:
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * UIProcess/DrawingAreaProxy.cpp:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/LayerTreeHostProxy.h: Removed.
+        * UIProcess/LayerTreeHostProxy.messages.in: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp: Removed.
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::deletedLayerIDs):
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::~WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::removeFromParent):
+        (WebCore::WebGraphicsLayer::setContentsRect):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::setNeedsDisplay):
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::WebGraphicsLayer::didSynchronize):
+        (WebCore::WebGraphicsLayer::layerInfo):
+        (WebCore::WebGraphicsLayer::syncCompositingState):
+        (WebCore::WebGraphicsLayer::needsDisplayRect):
+        (WebCore::WebGraphicsLayer::takeLayersToDelete):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::divideIntoTiles):
+        (WebCore::collectCompositingInfoForThisLayer):
+        (WebCore::collectCompositingInfoRecursively):
+        (WebCore::WebGraphicsLayer::sendLayersToUIProcess):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.messages.in: Removed.
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h: Removed.
+
 2011-10-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Synchronize tiling with accelerated compositing

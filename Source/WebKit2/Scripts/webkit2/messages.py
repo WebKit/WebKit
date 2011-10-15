@@ -382,8 +382,6 @@ def headers_for_type(type):
         'WebKit::InjectedBundleUserMessageEncoder': [],
         'WebKit::WebContextUserMessageEncoder': [],
         'WebKit::WebGestureEvent': ['"WebEvent.h"'],
-        'WebKit::WebLayerID': ['"WebLayerTreeInfo.h"'],
-        'WebKit::WebLayerInfo': ['"WebLayerTreeInfo.h"'],
         'WebKit::WebKeyboardEvent': ['"WebEvent.h"'],
         'WebKit::WebMouseEvent': ['"WebEvent.h"'],
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
