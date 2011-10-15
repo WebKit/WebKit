@@ -1,3 +1,13 @@
+2011-10-15  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [File API] URL methods required arguments
+        https://bugs.webkit.org/show_bug.cgi?id=69692
+
+        Reviewed by Adam Barth.
+
+        * fast/files/url-required-arguments-expected.txt: Added.
+        * fast/files/url-required-arguments.html: Added.
+
 2011-10-14  Mark Pilgrim  <pilgrim@chromium.org>
 
         [File API] Test how FileReader substitutes illegal UTF-8 characters
