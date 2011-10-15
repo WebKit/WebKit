@@ -1,3 +1,16 @@
+2011-10-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: some string keys not properly stored and retrieved
+        https://bugs.webkit.org/show_bug.cgi?id=62348
+
+        Reviewed by Tony Chang.
+
+        Just adding Mark Pilgrim's test case from bug; this was fixed at some
+        point, presumably when we moved to LevelDB.
+
+        * storage/indexeddb/odd-strings-expected.txt: Added.
+        * storage/indexeddb/odd-strings.html: Added.
+
 2011-10-15  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] File readonly attributes test

@@ -1,0 +1,148 @@
+Test IndexedDB odd value datatypes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+IDBCursor = window.IDBCursor || window.webkitIDBCursor;
+PASS IDBCursor == null is false
+IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+PASS IDBKeyRange == null is false
+opening a database named null
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+opening a database named faihu
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+opening a database named unpaired surrogate
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+opening a database named fffe
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+opening a database named ffff
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+opening a database named line separator
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.add(key, key);
+db.close()
+
+reopening a database named null
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+
+reopening a database named faihu
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+
+reopening a database named unpaired surrogate
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+
+reopening a database named fffe
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+
+reopening a database named ffff
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+
+reopening a database named line separator
+indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)
+db = event.target.result
+request = db.setVersion('1')
+trans = event.target.result
+objectStore = trans.objectStore(testData[nextToOpen].name);
+key = testData[nextToOpen].name
+request = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].name
+PASS cursor.value is testData[nextToOpen].name
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
