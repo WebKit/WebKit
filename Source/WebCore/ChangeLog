@@ -1,3 +1,10 @@
+2011-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r97533.
+
+        * html/HTMLSelectElementWin.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+
 2011-10-14  Darin Adler  <darin@apple.com>
 
         Follow up the recent HTMLSelectElement improvements with a little bit more

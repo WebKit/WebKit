@@ -49,7 +49,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
     int index = selectedIndex();
     ASSERT(index >= 0);
     ASSERT(index < listItems().size());
-    setSelectedIndexInternal(index);
+    setSelectedIndex(index);
     event->setDefaultHandled();
     return true;
 }
