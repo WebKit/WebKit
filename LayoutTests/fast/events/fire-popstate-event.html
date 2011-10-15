@@ -3,14 +3,12 @@
 <link rel="stylesheet" href="../js/resources/js-test-style.css">
 <script src="../js/resources/js-test-pre.js"></script>
 <body style="min-width: 5000px; min-height: 5000px">
-<p id="description"></p>
-<div id="console"></div>
 <script>
 description('Checks that the popstate event fires when dispatched via createEvent');
 
 onpopstate = function(event)
 {
-    if(!!event.state && !!event.state.testValue) 
+    if(!!event.state && !!event.state.testValue)
     {
         testPassed('Popstate state: (' + event.state.testValue +')');
     }

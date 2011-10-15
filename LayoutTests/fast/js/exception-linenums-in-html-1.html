@@ -4,8 +4,6 @@
 <script src="resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 <script>
 description('This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console.  It differs from <span style="font-family: monospace;">exception-linenums.html</span> in that the line numbers are derived from within the HTML source, not a JavaScript source file.');
 
@@ -23,7 +21,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '21');
+shouldBe("e.line", '19');
 
 e = undefined;
 try {
@@ -33,7 +31,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '31');
+shouldBe("e.line", '29');
 
 e = undefined;
 try {
@@ -43,7 +41,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '41');
+shouldBe("e.line", '39');
 
 e = undefined;
 try {
@@ -53,7 +51,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '51');
+shouldBe("e.line", '49');
 
 e = undefined;
 // Raises an exception inside a function to check that its line number
@@ -64,7 +62,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '14');
+shouldBe("e.line", '12');
 
 var successfullyParsed = true;
 </script>

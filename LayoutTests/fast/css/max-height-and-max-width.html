@@ -16,7 +16,7 @@ function doTest()
     box.style['max-height'] = "20px";
     box.style['max-width'] = "30px";
 
-    document.getElementById("body").appendChild(box);    
+    document.getElementById("body").appendChild(box);
 
     var style = window.getComputedStyle(box);
     if(style.getPropertyValue("max-height") == style.getPropertyValue("max-width"))
@@ -29,7 +29,5 @@ function doTest()
 </script>
 </head>
 <body onload="doTest()" id="body">
-<p id="description"></p>
-<div id="console"></div>
 </body>
 </html>

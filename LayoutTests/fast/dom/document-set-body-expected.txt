@@ -1,5 +1,8 @@
 Tests setting document.body
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS document1.body = iframe1 threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 PASS iframe1.parentNode is document.body
 PASS document1.body = document1.createElement('iframe') threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.

@@ -10,8 +10,6 @@
 </style>
 </head>
 <body onload="start()">
-<p id="description"></p>
-<div id="console"></div>
 <script>
     window.jsTestIsAsync = true;
 
@@ -22,7 +20,7 @@
         shouldBe(expr + ".title", "'testSheet'");
 
         eval(expr).foo = "bar";
-        
+
         gc();
 
         shouldBe(expr + ".foo", "'bar'");

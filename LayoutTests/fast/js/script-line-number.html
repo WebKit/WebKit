@@ -5,20 +5,18 @@
 <script src="resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 
 <!-- Ensure that lines in a document.write() do not count. -->
 <script>
 document.write("\n\n\n");
 </script>
 
-<script src="resources/script-line-number.js" onload="try { nonExistentFunctionOnLine16(); } catch (e) { assertErrorOnLine(e, 16); }"></script>
+<script src="resources/script-line-number.js" onload="try { nonExistentFunctionOnLine14(); } catch (e) { assertErrorOnLine(e, 14); }"></script>
 <script>
 try {
-    nonExistentFunctionOnLine19();
+    nonExistentFunctionOnLine17();
 } catch (e) {
-    assertErrorOnLine(e, 19);
+    assertErrorOnLine(e, 17);
 }
 </script>
 <script src="resources/js-test-post.js"></script>

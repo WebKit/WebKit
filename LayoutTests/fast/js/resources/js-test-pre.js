@@ -2,30 +2,54 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText(window.enablePixelTesting);
 
-function description(msg, quiet)
-{
-    // For MSIE 6 compatibility
-    var span = document.createElement("span");
-    if (quiet)
-        span.innerHTML = '<p>' + msg + '</p><p>On success, you will see no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
-    else
-        span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+var description, debug;
 
-    var description = document.getElementById("description");
-    if (description.firstChild)
-        description.replaceChild(span, description.firstChild);
-    else
-        description.appendChild(span);
-}
+(function() {
+
+    function getOrCreate(id, tagName)
+    {
+        var element = document.getElementById(id);
+        if (element)
+            return element;
+
+        element = document.createElement(tagName);
+        element.id = id;
+        var refNode;
+        var parent = document.body || document.documentElement;
+        if (id == "description")
+            refNode = getOrCreate("console", "div");
+        else
+            refNode = parent.firstChild;
+
+        parent.insertBefore(element, refNode);
+        return element;
+    }
+
+    description = function description(msg, quiet)
+    {
+        // For MSIE 6 compatibility
+        var span = document.createElement("span");
+        if (quiet)
+            span.innerHTML = '<p>' + msg + '</p><p>On success, you will see no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+        else
+            span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+
+        var description = getOrCreate("description", "p");
+        if (description.firstChild)
+            description.replaceChild(span, description.firstChild);
+        else
+            description.appendChild(span);
+    };
+
+    debug = function debug(msg)
+    {
+        var span = document.createElement("span");
+        getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
+        span.innerHTML = msg + '<br />';
+    };
+})();
 
 function descriptionQuiet(msg) { description(msg, true); }
-
-function debug(msg)
-{
-    var span = document.createElement("span");
-    document.getElementById("console").appendChild(span); // insert it first so XHTML knows the namespace
-    span.innerHTML = msg + '<br />';
-}
 
 function escapeHTML(text)
 {

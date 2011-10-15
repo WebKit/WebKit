@@ -1,3 +1,17 @@
+2011-10-15  Erik Arvidsson  <arv@chromium.org>
+
+        JS Test Harness: Make console and description elements optional in the HTML
+        https://bugs.webkit.org/show_bug.cgi?id=69881
+
+        Reviewed by Darin Adler.
+
+        This makes the description element and the console element in the HTML files
+        optional and these gets created as needed by the call to description() and debug().
+
+        This removes the description and console elements from a lots of files in LayoutTests/fast/
+
+        * fast/js/resources/js-test-pre.js:
+
 2011-10-15  Robert Hogan  <robert@webkit.org>
 
         Missed mac result from r97555

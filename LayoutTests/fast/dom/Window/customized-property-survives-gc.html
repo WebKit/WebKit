@@ -4,8 +4,6 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 
 <script>
 description("This tests that customized properties on window.location and window.navigator won't get lost after garbage collection. Results may be different when run manually, since forcing GC may not be exposed in all applications. Browsers disagree about what happens to properties on window.screen, window.history, and others through 'toolbar' in the list below, but the behavior of window.location and window.navigator is consistent.");

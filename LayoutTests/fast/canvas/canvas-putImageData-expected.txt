@@ -1,4 +1,3 @@
-
 This test ensures that putImageData works correctly, the end result should be a 100x100px green square.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -167,4 +166,5 @@ PASS context.putImageData(buffer, 0, 0, 0, 0, 0, undefined) threw exception Erro
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 

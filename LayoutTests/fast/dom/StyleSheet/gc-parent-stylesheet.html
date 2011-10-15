@@ -4,8 +4,6 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body onload="test()">
-<p id="description"></p>
-<div id="console"></div>
 <script>
 window.jsTestIsAsync = true;
 description("Test that CSS stylesheets don't lose custom properties on GC when only reachable through child rules.");
@@ -17,7 +15,7 @@ function test()
     sheet.insertRule("div { color:black }", 0);
     rule = sheet.rules[0];
     sheet = null;
-    
+
     gc();
     setTimeout(function() {
         gc();

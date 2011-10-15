@@ -4,15 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS typeof e.sourceURL is "string"
-PASS e.line is 21
+PASS e.line is 19
 PASS typeof e.sourceURL is "string"
-PASS e.line is 31
+PASS e.line is 29
 PASS typeof e.sourceURL is "string"
-PASS e.line is 41
+PASS e.line is 39
 PASS typeof e.sourceURL is "string"
-PASS e.line is 51
+PASS e.line is 49
 PASS typeof e.sourceURL is "string"
-PASS e.line is 14
+PASS e.line is 12
 PASS successfullyParsed is true
 
 TEST COMPLETE

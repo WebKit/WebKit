@@ -5,9 +5,9 @@
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p>Tests setting document.body</p>
-<div id="console"></div>
 <script>
+description("Tests setting document.body");
+
 iframe1 = document.createElement('iframe');
 document.body.appendChild(iframe1);
 document1 = iframe1.contentDocument.implementation.createHTMLDocument("document");

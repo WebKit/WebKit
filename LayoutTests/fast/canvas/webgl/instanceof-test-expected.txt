@@ -1,4 +1,4 @@
- Tests that instanceof works on WebGL objects.
+Tests that instanceof works on WebGL objects.
 
 PASS gl instanceof WebGLRenderingContext is true
 PASS gl.createBuffer() instanceof WebGLBuffer is true
