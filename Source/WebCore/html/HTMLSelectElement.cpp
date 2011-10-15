@@ -674,7 +674,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             continue;
         }
 
-        HTMLElement* current = static_cast<HTMLElement*>(currentNode);
+        HTMLElement* current = toHTMLElement(currentNode);
 
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.

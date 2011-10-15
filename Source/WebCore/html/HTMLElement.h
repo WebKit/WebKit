@@ -121,6 +121,9 @@ inline const HTMLElement* toHTMLElement(const Node* node)
     return static_cast<const HTMLElement*>(node);
 }
 
+// This will catch anyone doing an unnecessary cast.
+void toHTMLElement(const HTMLElement*);
+
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document)
     : StyledElement(tagName, document, CreateHTMLElement)
 {

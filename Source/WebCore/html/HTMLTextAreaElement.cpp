@@ -272,7 +272,7 @@ HTMLElement* HTMLTextAreaElement::innerTextElement() const
 {
     Node* node = shadowRoot()->firstChild();
     ASSERT(!node || node->hasTagName(divTag));
-    return static_cast<HTMLElement*>(node);
+    return toHTMLElement(node);
 }
 
 void HTMLTextAreaElement::rendererWillBeDestroyed()

@@ -935,9 +935,9 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* sty
         return;
 
     RefPtr<EditingStyle> newInlineStyle = style;
-    if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->inlineStyleDecl()) {
+    if (node->isHTMLElement() && toHTMLElement(node)->inlineStyleDecl()) {
         newInlineStyle = style->copy();
-        newInlineStyle->mergeInlineStyleOfElement(static_cast<HTMLElement*>(node), EditingStyle::OverrideValues);
+        newInlineStyle->mergeInlineStyleOfElement(toHTMLElement(node), EditingStyle::OverrideValues);
     }
 
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
@@ -1414,7 +1414,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            CSSMutableStyleDeclaration* existingStyle = toHTMLElement(styleContainer)->inlineStyleDecl();
+            CSSMutableStyleDeclaration* existingStyle = styleContainer->inlineStyleDecl();
             if (existingStyle)
                 setNodeAttribute(styleContainer, styleAttr, existingStyle->cssText() + styleChange.cssStyle());
             else

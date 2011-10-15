@@ -49,15 +49,12 @@ bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* 
 
 JSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slotBase));
-    HTMLElement* element = toHTMLElement(thisObj->impl());
-
-    Node* frame = element->children()->namedItem(identifierToAtomicString(propertyName));
-    if (Document* doc = static_cast<HTMLFrameElement*>(frame)->contentDocument()) {
-        if (JSDOMWindowShell* window = toJSDOMWindowShell(doc->frame(), currentWorld(exec)))
+    HTMLElement* element = static_cast<JSHTMLElement*>(asObject(slotBase))->impl();
+    Node* frameElement = element->children()->namedItem(identifierToAtomicString(propertyName));
+    if (Document* document = static_cast<HTMLFrameElement*>(frameElement)->contentDocument()) {
+        if (JSDOMWindowShell* window = toJSDOMWindowShell(document->frame(), currentWorld(exec)))
             return window;
     }
-
     return jsUndefined();
 }
 

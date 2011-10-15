@@ -4073,7 +4073,7 @@ KURL Document::openSearchDescriptionURL()
 
     RefPtr<HTMLCollection> children = head()->children();
     for (Node* child = children->firstItem(); child; child = children->nextItem()) {
-        if (!child->isHTMLElement() || !static_cast<HTMLElement*>(child)->hasTagName(linkTag))
+        if (!child->hasTagName(linkTag))
             continue;
         HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(child);
         if (!equalIgnoringCase(linkElement->type(), openSearchMIMEType) || !equalIgnoringCase(linkElement->rel(), openSearchRelation))

@@ -1,3 +1,39 @@
+2011-10-15  Darin Adler  <darin@apple.com>
+
+        Make toHTMLElement fail to compile if you try to use it on an HTMLElement*
+        https://bugs.webkit.org/show_bug.cgi?id=70164
+
+        Reviewed by Adam Barth.
+
+        Refactoring covered by existing tests.
+
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter): Removed unneeded casts and
+        some unneeded local variables as well. Changed the name of the local variable
+        for the HTMLFrameElement to frameElement to avoid confusion with the Frame.
+        * dom/Document.cpp:
+        (WebCore::Document::openSearchDescriptionURL): Removed unneeded HTMLElement
+        check; we can call hasTagName directly on a Node and that takes care of
+        checking both that it's an HTMLElement and checking the tag name.
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::nodeMatches): Use toHTMLElement instead of
+        a cast. Also changed hasAttribute calls to fastHasAttribute and getAttribute
+        calls to fastGetAttribute since these are neither style attributes nor SVG
+        animatables.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Use toHTMLElement.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Ditto.
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show): Removed unneeded toHTMLElement call.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterHTML): Use toHTMLElement.
+        * html/HTMLElement.h: Added toHTMLElement overload to catch calls when the
+        pointer is already HTMLElement* or a pointer to a class derived from it.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems): Use toHTMLElement.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElement): Use toHTMLElement.
+
 2011-10-15  Antoine Labour  <piman@chromium.org>
 
         Add WebAcceleratedContentLayer backed by a texture to support accelerated content hosting

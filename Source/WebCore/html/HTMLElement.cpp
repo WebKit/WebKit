@@ -404,7 +404,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    RefPtr<HTMLElement> parent = static_cast<HTMLElement*>(p);
+    RefPtr<HTMLElement> parent = toHTMLElement(p);
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 

@@ -32,6 +32,8 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 
+using namespace HTMLNames;
+
 namespace WebCore {
 
 MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames)
@@ -51,14 +53,14 @@ bool MicroDataItemList::nodeMatches(Element* testNode) const
     if (!testNode->isHTMLElement())
         return false;
 
-    HTMLElement* testElement = static_cast<HTMLElement*>(testNode);
-    if (!testElement->hasAttribute(HTMLNames::itemscopeAttr) || testElement->hasAttribute(HTMLNames::itempropAttr))
+    HTMLElement* testElement = toHTMLElement(testNode);
+    if (!testElement->fastHasAttribute(itemscopeAttr) || testElement->fastHasAttribute(itempropAttr))
         return false;
 
     if (!m_typeNames.size())
         return true;
 
-    return m_typeNames.contains(testElement->getAttribute(HTMLNames::itemtypeAttr));
+    return m_typeNames.contains(testElement->fastGetAttribute(itemtypeAttr));
 }
 
 } // namespace WebCore
