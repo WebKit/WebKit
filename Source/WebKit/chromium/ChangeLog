@@ -1,3 +1,14 @@
+2011-10-15  Adam Barth  <abarth@webkit.org>
+
+        Remove unused ENABLE(SKIA_GPU)
+        https://bugs.webkit.org/show_bug.cgi?id=70192
+
+        Reviewed by Daniel Bates.
+
+        There do not appear to be any references to this macro.
+
+        * features.gypi:
+
 2011-10-15  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Populate WebMouseEvent movementX/Y on Mac
