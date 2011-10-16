@@ -86,9 +86,6 @@ static void initMIMETypeEntensionMap()
         // FIXME: Custom font works only when MIME is "text/plain"
         mimetypeMap.add("ttf", "text/plain"); // "font/ttf"
         mimetypeMap.add("otf", "text/plain"); // "font/otf"
-#if ENABLE(WBXML)
-        mimetypeMap.add("wbxml", "application/vnd.wap.wmlc");
-#endif
     }
 }
 
