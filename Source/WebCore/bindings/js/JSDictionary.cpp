@@ -101,7 +101,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& res
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)
 {
-    result = SerializedScriptValue::create(exec, value);
+    result = SerializedScriptValue::create(exec, value, 0);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)

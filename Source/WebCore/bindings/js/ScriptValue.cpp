@@ -102,12 +102,12 @@ bool ScriptValue::isFunction() const
 
 PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, SerializationErrorMode throwExceptions)
 {
-    return SerializedScriptValue::create(scriptState, jsValue(), throwExceptions);
+    return SerializedScriptValue::create(scriptState, jsValue(), 0, throwExceptions);
 }
 
 ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
 {
-    return ScriptValue(scriptState->globalData(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), throwExceptions));
+    return ScriptValue(scriptState->globalData(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), 0, throwExceptions));
 }
 
 #if ENABLE(INSPECTOR)

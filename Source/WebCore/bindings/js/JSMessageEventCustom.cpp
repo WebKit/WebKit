@@ -53,8 +53,10 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     JSValue result;
     switch (event->dataType()) {
     case MessageEvent::DataTypeSerializedScriptValue:
-        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
-            result = serializedValue->deserialize(exec, globalObject(), NonThrowing);
+        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue()) {
+            MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
+            result = serializedValue->deserialize(exec, globalObject(), ports, NonThrowing);
+        }
         else
             result = jsNull();
         break;
@@ -89,14 +91,11 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
     return constructArray(exec, globalObject(), list);
 }
 
-JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
+static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec, bool doTransfer)
 {
     const UString& typeArg = exec->argument(0).toString(exec);
     bool canBubbleArg = exec->argument(1).toBoolean(exec);
     bool cancelableArg = exec->argument(2).toBoolean(exec);
-    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3));
-    if (exec->hadException())
-        return jsUndefined();
     const UString& originArg = exec->argument(4).toString(exec);
     const UString& lastEventIdArg = exec->argument(5).toString(exec);
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
@@ -107,21 +106,30 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
         if (exec->hadException())
             return jsUndefined();
     }
-
-    MessageEvent* event = static_cast<MessageEvent*>(this->impl());
+    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3), doTransfer ? messagePorts.get() : 0);
+    if (exec->hadException())
+        return jsUndefined();
+ 
+    MessageEvent* event = static_cast<MessageEvent*>(jsEvent->impl());
     event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg.release(), ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
     JSValue result;
     if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
-        result = serializedValue->deserialize(exec, globalObject(), NonThrowing);
+        result = serializedValue->deserialize(exec, jsEvent->globalObject(), event->ports(), NonThrowing);
     else
         result = jsNull();
-    m_data.set(exec->globalData(), this, result);
+    jsEvent->m_data.set(exec->globalData(), jsEvent, result);
     return jsUndefined();
+
+}
+
+JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
+{
+    return handleInitMessageEvent(this, exec, false);
 }
 
 JSC::JSValue JSMessageEvent::webkitInitMessageEvent(JSC::ExecState* exec)
 {
-    return initMessageEvent(exec);
+    return handleInitMessageEvent(this, exec, true);
 }
 
 } // namespace WebCore

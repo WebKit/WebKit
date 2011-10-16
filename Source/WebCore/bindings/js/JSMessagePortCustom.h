@@ -48,9 +48,9 @@ namespace WebCore {
     template <typename T>
     inline JSC::JSValue handlePostMessage(JSC::ExecState* exec, T* impl)
     {
-        RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0));
         MessagePortArray portArray;
         fillMessagePortArray(exec, exec->argument(1), portArray);
+        RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0), &portArray);
         if (exec->hadException())
             return JSC::jsUndefined();
 

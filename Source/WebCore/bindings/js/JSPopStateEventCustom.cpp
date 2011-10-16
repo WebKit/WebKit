@@ -41,7 +41,7 @@ JSValue JSPopStateEvent::state(ExecState* exec) const
     PopStateEvent* event = static_cast<PopStateEvent*>(impl());
     SerializedScriptValue* serializedState = event->serializedState();
     if (serializedState)
-        return serializedState->deserialize(exec, globalObject());
+        return serializedState->deserialize(exec, globalObject(), 0);
     if (!event->state().hasNoValue())
         return event->state().jsValue();
     return jsNull();

@@ -38,6 +38,8 @@ typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
 
+class MessagePort;
+typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
  
 enum SerializationReturnCode {
     SuccessfullyCompleted,
@@ -54,8 +56,10 @@ class SharedBuffer;
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
-    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, SerializationErrorMode = Throwing);
-    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef value, JSValueRef* exception);
+    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, SerializationErrorMode = Throwing);
+    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, MessagePortArray*,  JSValueRef* exception);
+    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
+
     static PassRefPtr<SerializedScriptValue> create(const String&);
     static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
@@ -67,7 +71,8 @@ public:
 
     String toString();
     
-    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, SerializationErrorMode = Throwing);
+    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
+    JSValueRef deserialize(JSContextRef, JSValueRef* exception, MessagePortArray*);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
     const Vector<uint8_t>& data() { return m_data; }

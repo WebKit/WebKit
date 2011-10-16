@@ -164,7 +164,7 @@ void JSHistory::getOwnPropertyNames(ExecState* exec, PropertyNameArray& property
 
 JSValue JSHistory::pushState(ExecState* exec)
 {
-    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0));
+    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0), 0);
     if (exec->hadException())
         return jsUndefined();
 
@@ -188,7 +188,7 @@ JSValue JSHistory::pushState(ExecState* exec)
 
 JSValue JSHistory::replaceState(ExecState* exec)
 {
-    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0));
+    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0), 0);
     if (exec->hadException())
         return jsUndefined();
 

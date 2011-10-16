@@ -1,3 +1,36 @@
+2011-10-16  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70186
+        Pass MessagePortArray to JSC's SerializedScriptValue::serialize/deserialize.
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::JSDOMWindow::webkitPostMessage):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data):
+        (WebCore::handleInitMessageEvent):
+        (WebCore::JSMessageEvent::initMessageEvent):
+        (WebCore::JSMessageEvent::webkitInitMessageEvent):
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage):
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::serialize):
+        (WebCore::ScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+
 2011-10-16  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r96620): Float-avoiding block positioned incorrectly in right-to-left block
