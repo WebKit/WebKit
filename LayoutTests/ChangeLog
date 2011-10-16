@@ -1,3 +1,10 @@
+2011-10-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/files/url-required-arguments-expected.txt: Added.
+
 2011-10-16  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r96620): Float-avoiding block positioned incorrectly in right-to-left block
