@@ -1812,7 +1812,7 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
 LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart,
     LayoutUnit childLogicalWidth, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
-    LayoutUnit startPosition = logicalLeftOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
+    LayoutUnit startPosition = startOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
 
     // Add in our start margin.
     LayoutUnit oldPosition = startPosition + childMarginStart;

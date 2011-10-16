@@ -1,3 +1,17 @@
+2011-10-16  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r96620): Float-avoiding block positioned incorrectly in right-to-left block
+        https://bugs.webkit.org/show_bug.cgi?id=70197
+
+        Reviewed by Dave Kilzer.
+
+        Test: fast/block/float/avoidance-rtl.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats): Changed
+        logicalLeftOffsetForContent() to startOffsetForContent() to get the right value in the
+        right-to-left case.
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)
