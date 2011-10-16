@@ -581,7 +581,7 @@ const SkBitmap* PlatformContextSkia::bitmap() const
 
 bool PlatformContextSkia::isNativeFontRenderingAllowed()
 {
-#if ENABLE(SKIA_TEXT)
+#if USE(SKIA_TEXT)
     return false;
 #else
     if (isAccelerated())

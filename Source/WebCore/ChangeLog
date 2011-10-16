@@ -1,3 +1,23 @@
+2011-10-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(SKIA_TEXT) to USE(SKIA_TEXT)
+        https://bugs.webkit.org/show_bug.cgi?id=70191
+
+        Reviewed by Daniel Bates.
+
+        SKIA_TEXT is not a WebKit feature.  It's a macro that determines
+        whether we use a feature of the underly library (Skia).
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-10-15  Eric Carlson  <eric.carlson@apple.com>
 
         Make VIDEO_TRACK compile with warnings as errors enabled

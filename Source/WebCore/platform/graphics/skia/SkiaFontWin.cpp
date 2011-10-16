@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-#if !ENABLE(SKIA_TEXT)
+#if !USE(SKIA_TEXT)
 bool windowsCanHandleDrawTextShadow(GraphicsContext* context)
 {
     FloatSize shadowOffset;

@@ -318,7 +318,7 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
     HGDIOBJ oldFont = 0;
     int curX = x;
     bool firstRun = true;
-#if !ENABLE(SKIA_TEXT)
+#if !USE(SKIA_TEXT)
     bool useWindowsDrawing = windowsCanHandleTextDrawing(graphicsContext);
 #endif
 
@@ -399,7 +399,7 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
             // Pass 0 in when there is no justification.
             const int* justify = shaping.m_justify.size() == 0 ? 0 : &shaping.m_justify[fromGlyph];
 
-#if ENABLE(SKIA_TEXT)
+#if USE(SKIA_TEXT)
             const int* advances = shaping.m_justify.size() ?
                                       &shaping.m_justify[fromGlyph]
                                     : &shaping.m_advance[fromGlyph];
@@ -418,7 +418,7 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
             // adjusted for each font.
             bool textOutOk = false;
             for (int executions = 0; executions < 2; ++executions) {
-#if ENABLE(SKIA_TEXT)
+#if USE(SKIA_TEXT)
                 SkPoint origin;
                 origin.fX = curX + + innerOffset;
                 origin.fY = y + m_ascent;

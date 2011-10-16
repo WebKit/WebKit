@@ -41,7 +41,7 @@ namespace WebCore {
 class GraphicsContext;
 class PlatformContextSkia;
 
-#if !ENABLE(SKIA_TEXT)
+#if !USE(SKIA_TEXT)
 // The functions below are used for more complex font drawing (effects such as
 // stroking and more complex transforms) than Windows supports directly. Since
 // Windows drawing is faster you should use windowsCanHandleTextDrawing first to

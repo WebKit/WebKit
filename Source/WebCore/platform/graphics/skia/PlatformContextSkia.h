@@ -170,7 +170,7 @@ public:
     // Returns if the context allows rendering of fonts using native platform
     // APIs. If false is returned font rendering is performed using the skia
     // text drawing APIs.
-    // if SKIA_TEXT is enabled, this always returns false
+    // if USE(SKIA_TEXT) is enabled, this always returns false
     bool isNativeFontRenderingAllowed();
 
     void getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const;

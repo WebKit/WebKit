@@ -41,7 +41,7 @@
 #include "SkiaFontWin.h"
 #include "UniscribeHelperTextRun.h"
 
-#if !ENABLE(SKIA_TEXT)
+#if !USE(SKIA_TEXT)
 #include "TransparencyWin.h"
 #include "skia/ext/skia_utils_win.h"
 #endif
@@ -52,7 +52,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if !ENABLE(SKIA_TEXT)
+#if !USE(SKIA_TEXT)
 namespace {
 
 bool canvasHasMultipleLayers(const SkCanvas* canvas)
@@ -380,7 +380,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-#if ENABLE(SKIA_TEXT)
+#if USE(SKIA_TEXT)
 void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,
@@ -575,7 +575,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke)
         return;
 
-#if ENABLE(SKIA_TEXT)
+#if USE(SKIA_TEXT)
     HDC hdc = 0;
 #else
     TransparencyAwareUniscribePainter painter(graphicsContext, this, run, from, to, point);
