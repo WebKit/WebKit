@@ -39,6 +39,8 @@ class TextTrackCueList;
 // Listener to CueLoader.
 class CueLoaderClient {
 public:
+    virtual ~CueLoaderClient() { }
+
     // Queries CueLoader for newest cues.
     virtual void fetchNewCuesFromLoader(CueLoader*) = 0;
     virtual void removeCuesFromIndex(const TextTrackCueList*) = 0;
@@ -46,6 +48,8 @@ public:
 
 class CueLoader {
 public:
+    virtual ~CueLoader() { }
+
     void setCueLoaderClient(CueLoaderClient*);
 
     // Informs client that new cues have been loaded.

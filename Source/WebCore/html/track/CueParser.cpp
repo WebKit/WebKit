@@ -66,7 +66,7 @@ void CueParser::load(const String& url, ScriptExecutionContext* context, CuePars
     m_loader = ThreadableLoader::create(context, this, request, options);
 }
 
-bool CueParser::supportsType(const String& url)
+bool CueParser::supportsType(const String&)
 {
     // FIXME(62893): check against a list of supported types
     return false;

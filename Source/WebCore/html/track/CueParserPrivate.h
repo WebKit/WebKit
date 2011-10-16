@@ -42,6 +42,8 @@ namespace WebCore {
 
 class CueParserPrivateClient {
 public:
+    virtual ~CueParserPrivateClient() { }
+
     virtual void newCuesParsed() = 0;
 };
 

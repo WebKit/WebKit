@@ -47,6 +47,8 @@ class TextTrackCue;
 
 class CueParserClient {
 public:
+    virtual ~CueParserClient() { }
+
     virtual void newCuesParsed() = 0;
     virtual void trackLoadStarted() = 0;
     virtual void trackLoadError() = 0;
