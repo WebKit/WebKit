@@ -149,7 +149,7 @@ public:
 
     void paint();
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void setTileOwnership(TileOwnership ownership) { m_state.tileOwnership = ownership; }
     int createContentsTile(float scale);
     void removeContentsTile(int id);
@@ -233,7 +233,7 @@ private:
 
     Vector<OwnedTile> m_ownedTiles;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     struct ExternallyManagedTileBuffer {
         FloatRect sourceRect;
         FloatRect targetRect;
@@ -290,7 +290,7 @@ private:
         bool needsRepaint;
         IntRect visibleRect;
         float contentScale;
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
         TileOwnership tileOwnership;
 #endif
         State()
@@ -307,7 +307,7 @@ private:
             , mightHaveOverlaps(false)
             , needsRepaint(false)
             , contentScale(1.0f)
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
             , tileOwnership(OwnedTiles)
 #endif
         {

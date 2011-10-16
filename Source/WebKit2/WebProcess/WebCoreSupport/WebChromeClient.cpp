@@ -401,7 +401,7 @@ void WebChromeClient::scroll(const IntSize& scrollOffset, const IntRect& scrollR
     m_page->drawingArea()->scroll(intersection(scrollRect, clipRect), scrollOffset);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 {
     m_page->pageDidRequestScroll(scrollOffset);
@@ -427,7 +427,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
 #if PLATFORM(QT)
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (frame->page()->mainFrame() == frame)
         m_page->resizeToContentsIfNeeded();
 #endif

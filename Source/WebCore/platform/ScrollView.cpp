@@ -376,7 +376,7 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
         return;
     }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (delegatesScrolling()) {
         hostWindow()->delegatedScrollRequested(scrollPoint);
         return;

@@ -1,3 +1,30 @@
+2011-10-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(TILED_BACKING_STORE) to USE(TILED_BACKING_STORE)
+        https://bugs.webkit.org/show_bug.cgi?id=70194
+
+        Reviewed by Daniel Bates.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::_q_scaleChanged):
+        (QGraphicsWebView::QGraphicsWebView):
+        (QGraphicsWebView::paint):
+        (QGraphicsWebView::isTiledBackingStoreFrozen):
+        (QGraphicsWebView::setTiledBackingStoreFrozen):
+        * Api/qwebframe.cpp:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::invalidateWindow):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::createOrDeleteOverlay):
+        * WebCoreSupport/PageClientQt.h:
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+
 2011-10-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] [Symbian] Remove support for the Symbian platform for the QtWebKit port

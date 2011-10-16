@@ -282,7 +282,7 @@ WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
     return frame->view()->verticalScrollbar();
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, const QRegion& clip)
 {
     ASSERT(frame->tiledBackingStore());

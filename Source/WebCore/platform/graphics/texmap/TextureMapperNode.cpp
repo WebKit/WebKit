@@ -173,7 +173,7 @@ void TextureMapperNode::computeAllTransforms()
 
 void TextureMapperNode::computeTiles()
 {
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (m_state.tileOwnership == ExternallyManagedTiles)
         return;
 #endif
@@ -235,7 +235,7 @@ void TextureMapperNode::computeTiles()
         m_ownedTiles.remove(tilesToRemove[i]);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 static void clampRect(IntRect& rect, int dimension)
 {
     rect.shiftXEdgeTo(rect.x() - rect.x() % dimension);
@@ -283,7 +283,7 @@ bool TextureMapperNode::collectVisibleContentsRects(NodeRectMap& rectMap, const 
 
 void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
 {
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (m_state.tileOwnership == ExternallyManagedTiles)
         return;
 #endif
@@ -393,7 +393,7 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
         return;
     }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     Vector<ExternallyManagedTile> tilesToPaint;
 
     if (m_state.tileOwnership == ExternallyManagedTiles) {
@@ -604,7 +604,7 @@ TextureMapperNode::~TextureMapperNode()
         m_parent->m_children.remove(m_parent->m_children.find(this));
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 int TextureMapperNode::createContentsTile(float scale)
 {
     static int nextID = 0;
@@ -688,7 +688,7 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
 {
     int changeMask = graphicsLayer->changeMask();
     const TextureMapperNode::ContentData& pendingContent = graphicsLayer->pendingContent();
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     swapContentsBuffers();
 #endif
     if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty() && pendingContent.needsDisplayRect.isEmpty() && !pendingContent.needsDisplay)

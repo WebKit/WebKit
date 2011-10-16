@@ -97,7 +97,7 @@ public:
 
     virtual void toolTipChanged(const String&, const String&) = 0;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
 #endif
 #if PLATFORM(QT)

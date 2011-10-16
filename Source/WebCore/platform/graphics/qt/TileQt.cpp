@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TileQt.h"
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "GraphicsContext.h"
 #include "TiledBackingStore.h"

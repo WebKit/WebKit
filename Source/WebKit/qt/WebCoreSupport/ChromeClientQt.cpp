@@ -404,7 +404,7 @@ IntRect ChromeClientQt::windowResizerRect() const
 
 void ChromeClientQt::invalidateWindow(const IntRect& windowRect, bool)
 {
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (platformPageClient()) {
         WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(m_webPage->mainFrame())->tiledBackingStore();
         if (!backingStore)
@@ -443,7 +443,7 @@ void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect,
     emit m_webPage->scrollRequested(delta.width(), delta.height(), scrollViewRect);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void ChromeClientQt::delegatedScrollRequested(const IntPoint& point)
 {
     QPoint currentPosition(m_webPage->mainFrame()->scrollPosition());
@@ -649,7 +649,7 @@ ChromeClient::CompositingTriggerFlags ChromeClientQt::allowedCompositingTriggers
 
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
 {
     if (!platformPageClient() || !m_webPage)

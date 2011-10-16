@@ -97,7 +97,7 @@ public:
     static QWebFrame* kit(const WebCore::Frame*);
 
     void renderRelativeCoords(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void renderFromTiledBackingStore(WebCore::GraphicsContext*, const QRegion& clip);
 #endif
 

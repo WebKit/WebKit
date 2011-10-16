@@ -20,7 +20,7 @@
 #ifndef TileQt_h
 #define TileQt_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "IntPoint.h"
 #include "IntRect.h"

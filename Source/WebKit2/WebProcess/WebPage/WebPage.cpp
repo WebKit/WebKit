@@ -667,7 +667,7 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
     FrameView* view = m_page->mainFrame()->view();
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     // If we are resizing to content ignore external attempts.
     if (view->useFixedLayout())
         return;
@@ -683,7 +683,7 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     m_viewSize = viewSize;
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 {
     Frame* frame = m_page->mainFrame();
@@ -986,7 +986,7 @@ void WebPage::pageDidScroll()
     send(Messages::WebPageProxy::PageDidScroll());
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebPage::pageDidRequestScroll(const IntPoint& point)
 {
     send(Messages::WebPageProxy::PageDidRequestScroll(point));

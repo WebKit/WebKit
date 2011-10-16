@@ -66,7 +66,7 @@ messages -> WebPageProxy {
     DidFailToInitializePlugin(WTF::String mimeType)
     NumWheelEventHandlersChanged(unsigned count)
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntPoint point)
 #endif
 #if PLATFORM(QT)

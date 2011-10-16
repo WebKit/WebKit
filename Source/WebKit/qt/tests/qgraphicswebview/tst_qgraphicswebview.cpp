@@ -48,7 +48,7 @@ private slots:
     void setPalette();
 #endif
     void renderHints();
-#if defined(ENABLE_TILED_BACKING_STORE) && ENABLE_TILED_BACKING_STORE
+#if defined(WTF_USE_TILED_BACKING_STORE) && WTF_USE_TILED_BACKING_STORE
     void bug56929();
 #endif
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
@@ -200,7 +200,7 @@ void tst_QGraphicsWebView::widgetsRenderingThroughCache()
     QCOMPARE(referencePixmap.toImage(), viewWithTiling.toImage());
 }
 
-#if defined(ENABLE_TILED_BACKING_STORE) && ENABLE_TILED_BACKING_STORE
+#if defined(WTF_USE_TILED_BACKING_STORE) && WTF_USE_TILED_BACKING_STORE
 void tst_QGraphicsWebView::bug56929()
 {
     // When rendering from tiles sychronous layout should not be triggered

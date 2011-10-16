@@ -1116,7 +1116,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     IntSize currentVisibleContentSize;
     IntSize fixedLayoutSize;
 

@@ -44,7 +44,7 @@
 #include "FrameWin.h"
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 #include "TiledBackingStoreClient.h"
 #endif
 
@@ -70,7 +70,7 @@ namespace WebCore {
     class RenderPart;
     class TiledBackingStore;
 
-#if !ENABLE(TILED_BACKING_STORE)
+#if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };
 #endif
 
@@ -246,7 +246,7 @@ namespace WebCore {
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     // FIXME: The tiled backing store belongs in FrameView, not Frame.
 
     public:

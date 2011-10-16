@@ -20,7 +20,7 @@
 #ifndef Tile_h
 #define Tile_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "IntPoint.h"
 #include "IntPointHash.h"

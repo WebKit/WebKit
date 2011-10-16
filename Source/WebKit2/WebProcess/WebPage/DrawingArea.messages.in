@@ -26,7 +26,7 @@ messages -> DrawingArea {
     SuspendPainting()
     ResumePainting()
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     SetSize(WebCore::IntSize viewSize)
     SetVisibleContentRectAndScale(WebCore::IntRect visibleContentRect, float scale)
     SetVisibleContentRectTrajectoryVector(WebCore::FloatPoint trajectoryVector)

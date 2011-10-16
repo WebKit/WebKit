@@ -1,5 +1,53 @@
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
+        Rename ENABLE(TILED_BACKING_STORE) to USE(TILED_BACKING_STORE)
+        https://bugs.webkit.org/show_bug.cgi?id=70194
+
+        Reviewed by Daniel Bates.
+
+        TILED_BACKING_STORE isn't a web platform feature.  It's an
+        implementation strategy for WebKit that's used by some ports
+        and not by others.
+
+        * features.pri:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::setView):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::doDeferredRepaints):
+        * page/Settings.cpp:
+        (WebCore::Settings::setTiledBackingStoreEnabled):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/graphics/Tile.h:
+        * platform/graphics/TiledBackingStore.cpp:
+        * platform/graphics/TiledBackingStore.h:
+        * platform/graphics/TiledBackingStoreBackend.h:
+        * platform/graphics/TiledBackingStoreClient.h:
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::~GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::recache):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        * platform/graphics/qt/TileQt.cpp:
+        * platform/graphics/qt/TileQt.h:
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::computeTiles):
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperNode::State::State):
+
+2011-10-15  Adam Barth  <abarth@webkit.org>
+
         Remove the last remnant of WBXML
         https://bugs.webkit.org/show_bug.cgi?id=70187
 

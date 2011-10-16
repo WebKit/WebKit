@@ -112,7 +112,7 @@
 #include "SVGDocumentExtensions.h"
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
 #endif
 
@@ -183,7 +183,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     WebKitFontFamilyNames::init();
 
     if (!ownerElement) {
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
         // Top level frame only for now.
         setTiledBackingStoreEnabled(page->settings()->tiledBackingStoreEnabled());
 #endif
@@ -282,7 +282,7 @@ void Frame::setView(PassRefPtr<FrameView> view)
     // pulled from the back/forward cache, reset this flag.
     loader()->resetMultipleFormSubmissionProtection();
     
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (m_view && tiledBackingStore())
         m_view->setPaintsEntireContents(true);
 #endif
@@ -886,7 +886,7 @@ void Frame::createView(const IntSize& viewportSize,
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void Frame::setTiledBackingStoreEnabled(bool enabled)
 {
     if (!enabled) {

@@ -809,7 +809,7 @@ void Settings::setLoadDeferringEnabled(bool enabled)
 void Settings::setTiledBackingStoreEnabled(bool enabled)
 {
     m_tiledBackingStoreEnabled = enabled;
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (m_page->mainFrame())
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif

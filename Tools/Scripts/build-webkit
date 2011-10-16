@@ -303,7 +303,7 @@ my @features = (
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
-      define => "ENABLE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
+      define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },

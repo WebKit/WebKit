@@ -98,7 +98,7 @@ private:
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void setSize(const WebCore::IntSize& viewSize) { }
     virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float) { }
     virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }

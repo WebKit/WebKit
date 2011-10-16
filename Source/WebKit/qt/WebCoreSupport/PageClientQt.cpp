@@ -219,7 +219,7 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
 #if USE(ACCELERATED_COMPOSITING)
         useOverlay = useOverlay || rootGraphicsLayer;
 #endif
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
         useOverlay = useOverlay || QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
 #endif
     }
@@ -304,7 +304,7 @@ void PageClientQGraphicsWidget::markForSync(bool scheduleSync)
 
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void PageClientQGraphicsWidget::updateTiledBackingStoreScale()
 {
     WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
@@ -382,7 +382,7 @@ QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
     return graphicsView->mapFromScene(view->boundingRect()).boundingRect();
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 QRectF PageClientQGraphicsWidget::graphicsItemVisibleRect() const
 {
     if (!view->scene())

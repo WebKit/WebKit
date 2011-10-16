@@ -305,7 +305,7 @@ public:
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 
     void pageDidScroll();
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void setFixedVisibleContentRect(const WebCore::IntRect&);
     void setResizesToContentsUsingLayoutSize(const WebCore::IntSize& targetLayoutSize);
@@ -656,7 +656,7 @@ private:
     InjectedBundlePageFullScreenClient m_fullScreenClient;
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     WebCore::IntSize m_resizesToContentsLayoutSize;
 #endif
 

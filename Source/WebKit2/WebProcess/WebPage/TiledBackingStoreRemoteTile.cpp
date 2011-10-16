@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TiledBackingStoreRemoteTile.h"
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -141,4 +141,4 @@ void TiledBackingStoreRemoteTileBackend::paintCheckerPattern(WebCore::GraphicsCo
 
 } // namespace WebKit
 
-#endif // TILED_BACKING_STORE
+#endif // USE(TILED_BACKING_STORE)

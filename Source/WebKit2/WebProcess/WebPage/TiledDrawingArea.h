@@ -26,7 +26,7 @@
 #ifndef TiledDrawingArea_h
 #define TiledDrawingArea_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "DrawingArea.h"
 #include "TiledBackingStoreClient.h"
@@ -85,6 +85,6 @@ private:
 
 } // namespace WebKit
 
-#endif // TILED_BACKING_STORE
+#endif // USE(TILED_BACKING_STORE)
 
 #endif // TiledDrawingArea_h

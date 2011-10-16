@@ -112,7 +112,7 @@ private:
     virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void scroll(const WebCore::IntSize& scrollOffset, const WebCore::IntRect& scrollRect, const WebCore::IntRect& clipRect) OVERRIDE;
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const WebCore::IntPoint& scrollOffset) OVERRIDE;
 #endif
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const OVERRIDE;

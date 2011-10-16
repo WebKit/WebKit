@@ -78,7 +78,7 @@
 #include "SVGSVGElement.h"
 #endif
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
 #endif
 
@@ -1765,7 +1765,7 @@ void FrameView::repaintContentRectangle(const LayoutRect& r, bool immediate)
     if (!shouldUpdate(immediate))
         return;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     if (frame()->tiledBackingStore()) {
         frame()->tiledBackingStore()->invalidate(r);
         return;
@@ -1856,7 +1856,7 @@ void FrameView::doDeferredRepaints()
     }
     unsigned size = m_repaintRects.size();
     for (unsigned i = 0; i < size; i++) {
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
         if (frame()->tiledBackingStore()) {
             frame()->tiledBackingStore()->invalidate(m_repaintRects[i]);
             continue;

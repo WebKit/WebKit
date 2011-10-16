@@ -340,7 +340,7 @@ public:
 #if PLATFORM(EFL)
     Evas_Object* viewObject();
 #endif
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void setFixedVisibleContentRect(const WebCore::IntRect&);
 #endif
 
@@ -505,7 +505,7 @@ public:
 
     void preferencesDidChange();
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
 #endif
 
@@ -661,7 +661,7 @@ private:
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
 #endif
 

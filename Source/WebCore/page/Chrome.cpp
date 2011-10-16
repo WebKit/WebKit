@@ -94,7 +94,7 @@ void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, con
     m_client->scroll(scrollDelta, rectToScroll, clipRect);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void Chrome::delegatedScrollRequested(const IntPoint& scrollPoint)
 {
     m_client->delegatedScrollRequested(scrollPoint);

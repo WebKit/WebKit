@@ -26,7 +26,7 @@
 #ifndef TiledBackingStoreRemoteTile_h
 #define TiledBackingStoreRemoteTile_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "Tile.h"
 #include "TiledBackingStore.h"
@@ -94,6 +94,6 @@ private:
 
 } // namespace WebKit
 
-#endif // TILED_BACKING_STORE
+#endif // USE(TILED_BACKING_STORE)
 
 #endif // TiledBackingStoreRemoteTile

@@ -201,7 +201,7 @@ public:
 
     void createOrDeleteOverlay();
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     void updateTiledBackingStoreScale();
     virtual QRectF graphicsItemVisibleRect() const;
 #endif

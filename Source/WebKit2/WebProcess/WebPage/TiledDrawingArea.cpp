@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TiledDrawingArea.h"
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "DrawingAreaProxyMessages.h"
 #include "MessageID.h"
@@ -179,4 +179,4 @@ void TiledDrawingArea::removeTile(int tileID)
 
 } // namespace WebKit
 
-#endif // TILED_BACKING_STORE
+#endif // USE(TILED_BACKING_STORE)

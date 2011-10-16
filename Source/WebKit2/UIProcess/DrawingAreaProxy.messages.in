@@ -27,7 +27,7 @@ messages -> DrawingAreaProxy {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     CreateTile(int tileID, WebKit::UpdateInfo updateInfo)
     UpdateTile(int tileID, WebKit::UpdateInfo updateInfo)
     DidRenderFrame()

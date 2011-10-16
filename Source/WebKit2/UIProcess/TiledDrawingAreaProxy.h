@@ -26,7 +26,7 @@
 #ifndef TiledDrawingAreaProxy_h
 #define TiledDrawingAreaProxy_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "DrawingAreaProxy.h"
 #include <WebCore/GraphicsContext.h>
@@ -108,6 +108,6 @@ private:
 
 } // namespace WebKit
 
-#endif // TILED_BACKING_STORE
+#endif // USE(TILED_BACKING_STORE)
 
 #endif // TiledDrawingAreaProxy_h

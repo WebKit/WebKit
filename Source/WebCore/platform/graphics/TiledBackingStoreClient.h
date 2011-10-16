@@ -22,7 +22,8 @@
 
 namespace WebCore {
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
+
 class Color;
 class GraphicsContext;
 

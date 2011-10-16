@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TiledDrawingAreaProxy.h"
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
 #include "MessageID.h"

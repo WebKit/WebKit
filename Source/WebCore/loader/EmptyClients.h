@@ -161,7 +161,7 @@ public:
     virtual void invalidateContentsAndWindow(const IntRect&, bool) { }
     virtual void invalidateContentsForSlowScroll(const IntRect&, bool) {};
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) { }
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint&) { }
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)

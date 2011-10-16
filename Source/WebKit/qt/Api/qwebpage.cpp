@@ -1201,7 +1201,7 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
             }
         }
     }
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     else if (event->propertyName() == "_q_TiledBackingStoreTileSize") {
         WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
         if (!frame->tiledBackingStore())

@@ -97,7 +97,7 @@ private:
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) { }
 #endif
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void snapshotTaken(const UpdateInfo&) { }
     virtual void createTile(int tileID, const UpdateInfo& updateInfo) { }
     virtual void updateTile(int tileID, const UpdateInfo& updateInfo) { }

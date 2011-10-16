@@ -95,7 +95,7 @@ messages -> WebPage {
     SetUserAgent(WTF::String userAgent)
     SetCustomTextEncodingName(WTF::String encodingName)
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     SetFixedVisibleContentRect(WebCore::IntRect rect)
     SetResizesToContentsUsingLayoutSize(WebCore::IntSize size)
 #endif

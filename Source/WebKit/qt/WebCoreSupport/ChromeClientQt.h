@@ -118,7 +118,7 @@ public:
     virtual void invalidateContentsAndWindow(const IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
     virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint& scrollPoint);
 #endif
 
@@ -155,7 +155,7 @@ public:
 #endif
     virtual bool allowsAcceleratedCompositing() const;
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
     virtual IntRect visibleRectForTiledBackingStore() const;
 #endif
 

@@ -752,7 +752,7 @@ void WebPageProxy::executeEditCommand(const String& commandName)
     process()->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
 }
     
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebPageProxy::setFixedVisibleContentRect(const IntRect& rect)
 {
     if (!isValid())
@@ -1391,7 +1391,7 @@ void WebPageProxy::preferencesDidChange()
     process()->send(Messages::WebPage::PreferencesDidChange(pageGroup()->preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebPageProxy::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
 {
     process()->send(Messages::WebPage::SetResizesToContentsUsingLayoutSize(targetLayoutSize), m_pageID);
@@ -2135,7 +2135,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, frame);
 }
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
 {
     m_pageClient->pageDidRequestScroll(point);

@@ -20,7 +20,7 @@
 #ifndef TiledBackingStoreBackend_h
 #define TiledBackingStoreBackend_h
 
-#if ENABLE(TILED_BACKING_STORE)
+#if USE(TILED_BACKING_STORE)
 
 #include "PassOwnPtr.h"
 #include "Tile.h"
