@@ -97,9 +97,13 @@ my $harnessName = "old-run-webkit-tests";
 
 if (useNewRunWebKitTests()) {
     $harnessName = "new-run-webkit-tests";
-    push(@ARGV, "--child-processes=1");
-    print "Running new-run-webkit-tests with one child process.\n";
-    print "For more parallelism, run new-run-webkit-tests directly.\n";
+
+    if (!grep(/--child-processes/, @ARGV)) {
+        push(@ARGV, "--child-processes=1");
+        print "Running new-run-webkit-tests with one child process.\n";
+        print "For more parallelism, run new-run-webkit-tests directly.\n";
+    }
+
     if (runningOnBuildBot()) {
         push(@ARGV, "--verbose");
     }

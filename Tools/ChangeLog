@@ -1,3 +1,15 @@
+2011-10-15  Ojan Vafai  <ojan@chromium.org>
+
+        run-webkit-tests should accept --child-processes
+        https://bugs.webkit.org/show_bug.cgi?id=69713
+
+        Reviewed by Adam Barth.
+
+        Only set --child-processes=1 if --child-processes it not
+        passed on the commandline.
+
+        * Scripts/run-webkit-tests:
+
 2011-10-15  Daniel Bates  <dbates@webkit.org>
 
         Extract common gdb code into its own function; Remove script gdb-safari
