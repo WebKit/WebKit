@@ -31,8 +31,6 @@
 #include "config.h"
 #include "StorageEventDispatcher.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 
@@ -52,5 +50,3 @@ void StorageEventDispatcher::dispatch(const String& key, const String& oldValue,
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

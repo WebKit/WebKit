@@ -200,10 +200,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
-#if ENABLE(DOM_STORAGE)
     StorageTracker::initializeTracker(parameters.localStorageDirectory, 0);
     m_localStorageDirectory = parameters.localStorageDirectory;
-#endif
 
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);

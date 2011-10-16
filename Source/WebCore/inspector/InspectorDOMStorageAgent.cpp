@@ -30,7 +30,7 @@
 
 #include "InspectorDOMStorageAgent.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(DOM_STORAGE)
+#if ENABLE(INSPECTOR)
 
 #include "Database.h"
 #include "DOMWindow.h"
@@ -193,4 +193,4 @@ void InspectorDOMStorageAgent::clearResources()
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(DOM_STORE)
+#endif // ENABLE(INSPECTOR)

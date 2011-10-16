@@ -26,8 +26,6 @@
 #ifndef StorageNamespace_h
 #define StorageNamespace_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 
 #include <wtf/PassRefPtr.h>
@@ -56,7 +54,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageNamespace_h

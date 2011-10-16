@@ -29,8 +29,6 @@
 */
 
 #include "config.h"
-
-#if ENABLE(DOM_STORAGE)
 #include "V8Storage.h"
 
 #include "Storage.h"
@@ -153,5 +151,3 @@ v8::Handle<v8::Boolean> V8Storage::namedPropertyDeleter(v8::Local<v8::String> na
 }
 
 } // namespace WebCore
-
-#endif

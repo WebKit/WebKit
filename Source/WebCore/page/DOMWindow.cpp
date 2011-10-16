@@ -422,10 +422,8 @@ DOMWindow::~DOMWindow()
 #endif
     ASSERT(!m_location);
     ASSERT(!m_media);
-#if ENABLE(DOM_STORAGE)
     ASSERT(!m_sessionStorage);
     ASSERT(!m_localStorage);
-#endif
     ASSERT(!m_applicationCache);
 #if ENABLE(NOTIFICATIONS)
     ASSERT(!m_notifications);
@@ -530,8 +528,7 @@ void DOMWindow::clear()
     if (m_media)
         m_media->disconnectFrame();
     m_media = 0;
-    
-#if ENABLE(DOM_STORAGE)
+
     if (m_sessionStorage)
         m_sessionStorage->disconnectFrame();
     m_sessionStorage = 0;
@@ -539,7 +536,6 @@ void DOMWindow::clear()
     if (m_localStorage)
         m_localStorage->disconnectFrame();
     m_localStorage = 0;
-#endif
 
     if (m_applicationCache)
         m_applicationCache->disconnectFrame();
@@ -679,7 +675,6 @@ Location* DOMWindow::location() const
     return m_location.get();
 }
 
-#if ENABLE(DOM_STORAGE)
 Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 {
     if (m_sessionStorage || !isCurrentlyDisplayedInFrame())
@@ -732,7 +727,6 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     m_localStorage = Storage::create(m_frame, storageArea.release());
     return m_localStorage.get();
 }
-#endif
 
 #if ENABLE(NOTIFICATIONS)
 NotificationCenter* DOMWindow::webkitNotifications() const

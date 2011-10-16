@@ -172,9 +172,7 @@ public:
     static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
-#if ENABLE(DOM_STORAGE)
     static void didUseDOMStorage(Page*, StorageArea*, bool isLocalStorage, Frame*);
-#endif
 
 #if ENABLE(WORKERS)
     static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, const KURL&);
@@ -305,9 +303,7 @@ private:
     static void didOpenDatabaseImpl(InstrumentingAgents*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
-#if ENABLE(DOM_STORAGE)
     static void didUseDOMStorageImpl(InstrumentingAgents*, StorageArea*, bool isLocalStorage, Frame*);
-#endif
 
 #if ENABLE(WORKERS)
     static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*, const KURL&);
@@ -939,7 +935,6 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
 #endif
 }
 
-#if ENABLE(DOM_STORAGE)
 inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
 #if ENABLE(INSPECTOR)
@@ -947,7 +942,6 @@ inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* 
         didUseDOMStorageImpl(instrumentingAgents, storageArea, isLocalStorage, frame);
 #endif
 }
-#endif
 
 #if ENABLE(WORKERS)
 inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, const KURL& url)

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#if ENABLE(DOM_STORAGE)
-
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/StorageTrackerClient.h>
 
@@ -41,5 +39,3 @@ public:
 private:
     WebStorageTrackerClient();
 };
-
-#endif

@@ -30,8 +30,6 @@
 #ifndef StorageEventDispatcher_h
 #define StorageEventDispatcher_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 #include "StorageArea.h"
 
@@ -48,7 +46,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageEventDispatcher_h

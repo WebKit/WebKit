@@ -26,8 +26,6 @@
 #ifndef StorageTracker_h
 #define StorageTracker_h
 
-#if ENABLE(DOM_STORAGE)
-    
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/HashSet.h>
@@ -116,7 +114,5 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageTracker_h

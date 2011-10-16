@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageEventDispatcher.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "Document.h"
 #include "DOMWindow.h"
 #include "EventNames.h"
@@ -82,5 +80,3 @@ void StorageEventDispatcher::dispatch(const String& key, const String& oldValue,
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

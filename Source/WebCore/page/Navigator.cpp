@@ -167,7 +167,6 @@ Geolocation* Navigator::geolocation() const
     return m_geolocation.get();
 }
 
-#if ENABLE(DOM_STORAGE)
 void Navigator::getStorageUpdates()
 {
     if (!m_frame)
@@ -181,7 +180,6 @@ void Navigator::getStorageUpdates()
     if (localStorage)
         localStorage->unlock();
 }
-#endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 static HashSet<String>* protocolWhitelist;

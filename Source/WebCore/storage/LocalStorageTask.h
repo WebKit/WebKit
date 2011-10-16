@@ -26,8 +26,6 @@
 #ifndef LocalStorageTask_h
 #define LocalStorageTask_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
@@ -71,7 +69,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // LocalStorageTask_h

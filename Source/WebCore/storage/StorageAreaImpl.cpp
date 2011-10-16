@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageAreaImpl.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "Page.h"
@@ -266,5 +264,3 @@ void StorageAreaImpl::blockUntilImportComplete() const
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

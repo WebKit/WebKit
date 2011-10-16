@@ -120,9 +120,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 #if ENABLE(SQL_DATABASE)
         , 0
 #endif
-#if ENABLE(DOM_STORAGE)
         , 0
-#endif
     );
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -150,9 +148,7 @@ void WorkerInspectorController::connectFrontend()
         0, // InspectorCSSAgent
         0, // InspectorConsoleAgent
         0, // InspectorDOMAgent
-#if ENABLE(DOM_STORAGE)
         0, // InspectorDOMStorageAgent
-#endif
 #if ENABLE(SQL_DATABASE)
         0, // InspectorDatabaseAgent
 #endif

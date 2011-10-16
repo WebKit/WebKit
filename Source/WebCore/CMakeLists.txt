@@ -355,6 +355,8 @@ SET(WebCore_IDL_FILES
     plugins/DOMPlugin.idl
     plugins/DOMPluginArray.idl
 
+    storage/Storage.idl
+    storage/StorageEvent.idl
     storage/StorageInfo.idl
     storage/StorageInfoErrorCallback.idl
     storage/StorageInfoQuotaCallback.idl
@@ -1471,13 +1473,6 @@ IF (ENABLE_INDEXED_DATABASE)
         storage/IDBObjectStore.idl
         storage/IDBRequest.idl
         storage/IDBTransaction.idl
-    )
-ENDIF ()
-
-IF (ENABLE_DOM_STORAGE)
-    LIST(APPEND WebCore_IDL_FILES
-        storage/Storage.idl
-        storage/StorageEvent.idl
     )
 ENDIF ()
 

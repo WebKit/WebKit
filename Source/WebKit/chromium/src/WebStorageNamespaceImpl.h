@@ -31,8 +31,6 @@
 #ifndef WebStorageNamespaceImpl_h
 #define WebStorageNamespaceImpl_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageNamespaceImpl.h"
 #include "WebStorageNamespace.h"
 
@@ -51,7 +49,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // WebStorageNamespaceImpl_h

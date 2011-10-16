@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(DOM_STORAGE) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "InspectorDOMStorageResource.h"
 
@@ -120,5 +120,5 @@ bool InspectorDOMStorageResource::operator==(const EventListener& listener)
 
 } // namespace WebCore
 
-#endif // ENABLE(DOM_STORAGE) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)
 

@@ -46,13 +46,10 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Pasteboard.h"
+#include "Storage.h"
 
 #if ENABLE(SQL_DATABASE)
 #include "Database.h"
-#endif
-
-#if ENABLE(DOM_STORAGE)
-#include "Storage.h"
 #endif
 
 #include "markup.h"
@@ -75,9 +72,7 @@ InjectedScriptHost::InjectedScriptHost()
 #if ENABLE(SQL_DATABASE)
     , m_databaseAgent(0)
 #endif
-#if ENABLE(DOM_STORAGE)
     , m_domStorageAgent(0)
-#endif
     , m_frontend(0)
     , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
@@ -94,9 +89,7 @@ void InjectedScriptHost::disconnect()
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent = 0;
 #endif
-#if ENABLE(DOM_STORAGE)
     m_domStorageAgent = 0;
-#endif
     m_frontend = 0;
 }
 
@@ -147,14 +140,12 @@ int InjectedScriptHost::databaseIdImpl(Database* database)
 }
 #endif
 
-#if ENABLE(DOM_STORAGE)
 int InjectedScriptHost::storageIdImpl(Storage* storage)
 {
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);
     return 0;
 }
-#endif
 
 #if ENABLE(WORKERS)
 long InjectedScriptHost::nextWorkerId()

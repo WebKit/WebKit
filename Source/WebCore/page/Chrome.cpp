@@ -43,15 +43,12 @@
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StorageNamespace.h"
 #include "WindowFeatures.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(DOM_STORAGE)
-#include "StorageNamespace.h"
-#endif
 
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
@@ -185,12 +182,10 @@ Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const 
 {
     Page* newPage = m_client->createWindow(frame, request, features, action);
 
-#if ENABLE(DOM_STORAGE)
     if (newPage) {
         if (StorageNamespace* oldSessionStorage = m_page->sessionStorage(false))
             newPage->setSessionStorage(oldSessionStorage->copy());
     }
-#endif
 
     return newPage;
 }

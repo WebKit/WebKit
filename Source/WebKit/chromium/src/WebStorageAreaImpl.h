@@ -31,8 +31,6 @@
 #ifndef WebStorageAreaImpl_h
 #define WebStorageAreaImpl_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageAreaImpl.h"
 #include "WebStorageArea.h"
 
@@ -77,7 +75,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // WebStorageAreaImpl_h

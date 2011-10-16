@@ -25,9 +25,7 @@
 
 module storage {
 
-    interface [
-        Conditional=DOM_STORAGE
-    ] StorageEvent : Event {
+    interface StorageEvent : Event {
         readonly attribute [ConvertNullStringTo=Null] DOMString key;
         readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;
         readonly attribute [ConvertNullStringTo=Null] DOMString newValue;

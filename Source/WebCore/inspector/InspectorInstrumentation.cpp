@@ -657,10 +657,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
             databaseAgent->clearResources();
 #endif
-#if ENABLE(DOM_STORAGE)
         if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
             domStorageAgent->clearResources();
-#endif
         if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
             domAgent->setDocument(mainFrame->document());
 
@@ -772,7 +770,6 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents* instrume
 }
 #endif
 
-#if ENABLE(DOM_STORAGE)
 void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrumentingAgents, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
     InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
@@ -781,7 +778,6 @@ void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrum
     if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
         domStorageAgent->didUseDOMStorage(storageArea, isLocalStorage, frame);
 }
-#endif
 
 #if ENABLE(WORKERS)
 void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* workerContextProxy, const KURL& url)

@@ -122,9 +122,7 @@ Settings::Settings(Page* page)
     , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
     , m_deviceWidth(480)
     , m_deviceHeight(854)
-#if ENABLE(DOM_STORAGE)
     , m_sessionStorageQuota(StorageMap::noQuota)
-#endif
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
     , m_isSpatialNavigationEnabled(false)
@@ -408,12 +406,10 @@ void Settings::setLocalStorageEnabled(bool localStorageEnabled)
     m_localStorageEnabled = localStorageEnabled;
 }
 
-#if ENABLE(DOM_STORAGE)
 void Settings::setSessionStorageQuota(unsigned sessionStorageQuota)
 {
     m_sessionStorageQuota = sessionStorageQuota;
 }
-#endif
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {

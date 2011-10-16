@@ -208,12 +208,10 @@ bool Event::isSVGZoomEvent() const
 }
 #endif
 
-#if ENABLE(DOM_STORAGE)
 bool Event::isStorageEvent() const
 {
     return false;
 }
-#endif
 
 #if ENABLE(INDEXED_DATABASE)
 bool Event::isIDBVersionChangeEvent() const

@@ -67,9 +67,7 @@ public:
         , m_inspectorResourceAgent(0)
         , m_inspectorRuntimeAgent(0)
         , m_inspectorTimelineAgent(0)
-#if ENABLE(DOM_STORAGE)
         , m_inspectorDOMStorageAgent(0)
-#endif
 #if ENABLE(SQL_DATABASE)
         , m_inspectorDatabaseAgent(0)
 #endif
@@ -109,16 +107,17 @@ public:
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
-#if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
-#endif
+
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
 #endif
+
     InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
     void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
     void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
@@ -143,9 +142,7 @@ private:
     InspectorResourceAgent* m_inspectorResourceAgent;
     InspectorRuntimeAgent* m_inspectorRuntimeAgent;
     InspectorTimelineAgent* m_inspectorTimelineAgent;
-#if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
-#endif
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
 #endif

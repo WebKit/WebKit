@@ -706,9 +706,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
         WebKitInitializeDatabasesIfNecessary();
 #endif
 
-#if ENABLE(DOM_STORAGE)
         WebKitInitializeStorageIfNecessary();
-#endif
         WebKitInitializeApplicationCachePathIfNecessary();
         patchMailRemoveAttributesMethod();
         

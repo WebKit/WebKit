@@ -68,17 +68,14 @@
 #include "SharedBuffer.h"
 #include "SpeechInput.h"
 #include "SpeechInputClient.h"
+#include "StorageArea.h"
+#include "StorageNamespace.h"
 #include "TextResourceDecoder.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
-
-#if ENABLE(DOM_STORAGE)
-#include "StorageArea.h"
-#include "StorageNamespace.h"
-#endif
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "GeolocationController.h"
@@ -835,7 +832,6 @@ void Page::setDebugger(JSC::Debugger* debugger)
         frame->script()->attachDebugger(m_debugger);
 }
 
-#if ENABLE(DOM_STORAGE)
 StorageNamespace* Page::sessionStorage(bool optionalCreate)
 {
     if (!m_sessionStorage && optionalCreate)
@@ -848,7 +844,6 @@ void Page::setSessionStorage(PassRefPtr<StorageNamespace> newStorage)
 {
     m_sessionStorage = newStorage;
 }
-#endif
 
 void Page::setCustomHTMLTokenizerTimeDelay(double customHTMLTokenizerTimeDelay)
 {

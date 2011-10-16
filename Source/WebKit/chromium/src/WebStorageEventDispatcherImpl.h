@@ -31,8 +31,6 @@
 #ifndef WebStorageEventDispatcherImpl_h
 #define WebStorageEventDispatcherImpl_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageEventDispatcherImpl.h"
 #include "WebStorageEventDispatcher.h"
 #include <wtf/OwnPtr.h>
@@ -52,7 +50,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // WebStorageEventDispatcherImpl_h

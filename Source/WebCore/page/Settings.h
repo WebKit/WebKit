@@ -152,13 +152,11 @@ namespace WebCore {
         void setLocalStorageEnabled(bool);
         bool localStorageEnabled() const { return m_localStorageEnabled; }
 
-#if ENABLE(DOM_STORAGE)
         // Allow clients concerned with memory consumption to set a quota on session storage
         // since the memory used won't be released until the Page is destroyed.
         // Default is noQuota.
         void setSessionStorageQuota(unsigned);
         unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
-#endif
 
         // When this option is set, WebCore will avoid storing any record of browsing activity
         // that may persist on disk or remain displayed when the option is reset.
@@ -498,9 +496,7 @@ namespace WebCore {
         size_t m_maximumDecodedImageSize;
         int m_deviceWidth;
         int m_deviceHeight;
-#if ENABLE(DOM_STORAGE)
         unsigned m_sessionStorageQuota;
-#endif
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
         bool m_isSpatialNavigationEnabled : 1;

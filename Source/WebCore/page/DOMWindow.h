@@ -358,11 +358,9 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);
 #endif
 
-#if ENABLE(DOM_STORAGE)
         // HTML 5 key/value storage
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
-#endif
 
 #if ENABLE(FILE_SYSTEM)
         // They are placed here and in all capital letters so they can be checked against the constants in the
@@ -455,10 +453,8 @@ namespace WebCore {
         String m_status;
         String m_defaultStatus;
 
-#if ENABLE(DOM_STORAGE)
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
-#endif
 
 #if ENABLE(INDEXED_DATABASE)
         mutable RefPtr<IDBFactory> m_idbFactory;

@@ -31,8 +31,6 @@
 #include "config.h"
 #include "WebStorageAreaImpl.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "ExceptionCode.h"
 
 #include "WebString.h"
@@ -93,5 +91,3 @@ void WebStorageAreaImpl::clear(const WebURL& url, bool& somethingCleared)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)

@@ -139,6 +139,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StaticHashSetNodeList.h"
+#include "StorageEvent.h"
 #include "StyleSheetList.h"
 #include "TextEvent.h"
 #include "TextResourceDecoder.h"
@@ -165,10 +166,6 @@
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
-#endif
-
-#if ENABLE(DOM_STORAGE)
-#include "StorageEvent.h"
 #endif
 
 #if ENABLE(XPATH)
@@ -3556,10 +3553,8 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     else if (eventType == "WebGLContextEvent")
         event = WebGLContextEvent::create();
 #endif
-#if ENABLE(DOM_STORAGE)
     else if (eventType == "StorageEvent")
         event = StorageEvent::create();
-#endif
 #if ENABLE(SVG)
     else if (eventType == "SVGEvents")
         event = Event::create();

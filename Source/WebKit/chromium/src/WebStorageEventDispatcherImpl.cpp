@@ -31,8 +31,6 @@
 #include "config.h"
 #include "WebStorageEventDispatcherImpl.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "KURL.h"
 #include "SecurityOrigin.h"
 
@@ -69,5 +67,3 @@ void WebStorageEventDispatcherImpl::dispatchStorageEvent(const WebString& key, c
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)

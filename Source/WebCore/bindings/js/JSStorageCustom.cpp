@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(DOM_STORAGE)
-
 #include "JSStorageCustom.h"
 
 #include "PlatformString.h"
@@ -99,5 +96,3 @@ bool JSStorage::putDelegate(ExecState* exec, const Identifier& propertyName, JSV
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

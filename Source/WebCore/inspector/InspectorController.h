@@ -137,9 +137,7 @@ private:
 #if ENABLE(SQL_DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
 #endif
-#if ENABLE(DOM_STORAGE)
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
-#endif
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
     RefPtr<InspectorResourceAgent> m_resourceAgent;

@@ -26,8 +26,6 @@
 #ifndef StorageAreaImpl_h
 #define StorageAreaImpl_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageArea.h"
 
 #include <wtf/PassRefPtr.h>
@@ -83,7 +81,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageAreaImpl_h

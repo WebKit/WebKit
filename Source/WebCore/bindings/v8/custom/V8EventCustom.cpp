@@ -156,10 +156,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
     if (impl->isErrorEvent())
         return toV8(static_cast<ErrorEvent*>(impl));
 #endif
-#if ENABLE(DOM_STORAGE)
     if (impl->isStorageEvent())
         return toV8(static_cast<StorageEvent*>(impl));
-#endif
 #if ENABLE(INDEXED_DATABASE)
     if (impl->isIDBVersionChangeEvent())
         return toV8(static_cast<IDBVersionChangeEvent*>(impl));

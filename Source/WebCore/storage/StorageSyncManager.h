@@ -26,8 +26,6 @@
 #ifndef StorageSyncManager_h
 #define StorageSyncManager_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 
 #include <wtf/PassRefPtr.h>
@@ -66,7 +64,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageSyncManager_h

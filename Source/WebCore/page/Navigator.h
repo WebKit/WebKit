@@ -58,10 +58,8 @@ public:
 
     Geolocation* geolocation() const;
 
-#if ENABLE(DOM_STORAGE)
     // Relinquishes the storage lock, if one exists.
     void getStorageUpdates();
-#endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
     void registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode&);

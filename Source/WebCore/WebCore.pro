@@ -332,6 +332,7 @@ v8 {
         bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSProcessingInstructionCustom.cpp \
         bindings/js/JSScriptProfileNodeCustom.cpp \
+        bindings/js/JSStorageCustom.cpp \
         bindings/js/JSStyleSheetCustom.cpp \
         bindings/js/JSStyleSheetListCustom.cpp \
         bindings/js/JSTextCustom.cpp \
@@ -1221,6 +1222,18 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
+    storage/LocalStorageTask.cpp \
+    storage/LocalStorageThread.cpp \
+    storage/Storage.cpp \
+    storage/StorageAreaImpl.cpp \
+    storage/StorageAreaSync.cpp \
+    storage/StorageEvent.cpp \
+    storage/StorageEventDispatcher.cpp \
+    storage/StorageMap.cpp \
+    storage/StorageNamespace.cpp \
+    storage/StorageNamespaceImpl.cpp \
+    storage/StorageSyncManager.cpp \
+    storage/StorageTracker.cpp \
     testing/Internals.cpp \
     xml/DOMParser.cpp \
     xml/XMLHttpRequest.cpp \
@@ -2353,6 +2366,41 @@ HEADERS += \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
     rendering/svg/SVGTextRunRenderingContext.h \
+    storage/AbstractDatabase.h \
+    storage/ChangeVersionWrapper.h \
+    storage/DatabaseAuthorizer.h \
+    storage/Database.h \
+    storage/DatabaseCallback.h \
+    storage/DatabaseSync.h \
+    storage/DatabaseTask.h \
+    storage/DatabaseThread.h \
+    storage/DatabaseTracker.h \
+    storage/LocalStorageTask.h \
+    storage/LocalStorageThread.h \
+    storage/OriginQuotaManager.h \
+    storage/OriginUsageRecord.h \
+    storage/SQLCallbackWrapper.h \
+    storage/SQLResultSet.h \
+    storage/SQLResultSetRowList.h \
+    storage/SQLStatement.h \
+    storage/SQLStatementSync.h \
+    storage/SQLTransaction.h \
+    storage/SQLTransactionClient.h \
+    storage/SQLTransactionCoordinator.h \
+    storage/SQLTransactionSync.h \
+    storage/SQLTransactionSyncCallback.h \
+    storage/StorageArea.h \
+    storage/StorageAreaImpl.h \
+    storage/StorageAreaSync.h \
+    storage/StorageEvent.h \
+    storage/StorageEventDispatcher.h \
+    storage/Storage.h \
+    storage/StorageMap.h \
+    storage/StorageNamespace.h \
+    storage/StorageNamespaceImpl.h \
+    storage/StorageSyncManager.h \
+    storage/StorageTracker.h \
+    storage/StorageTrackerClient.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \
@@ -2860,63 +2908,6 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
         dom/StringCallback.cpp \
         platform/qt/DataTransferItemQt.cpp \
         platform/qt/DataTransferItemsQt.cpp
-}
-
-contains(DEFINES, ENABLE_DOM_STORAGE=1) {
-    HEADERS += \
-        storage/AbstractDatabase.h \
-        storage/ChangeVersionWrapper.h \
-        storage/DatabaseAuthorizer.h \
-        storage/Database.h \
-        storage/DatabaseCallback.h \
-        storage/DatabaseSync.h \
-        storage/DatabaseTask.h \
-        storage/DatabaseThread.h \
-        storage/DatabaseTracker.h \
-        storage/LocalStorageTask.h \
-        storage/LocalStorageThread.h \
-        storage/OriginQuotaManager.h \
-        storage/OriginUsageRecord.h \
-        storage/SQLCallbackWrapper.h \
-        storage/SQLResultSet.h \
-        storage/SQLResultSetRowList.h \
-        storage/SQLStatement.h \
-        storage/SQLStatementSync.h \
-        storage/SQLTransaction.h \
-        storage/SQLTransactionClient.h \
-        storage/SQLTransactionCoordinator.h \
-        storage/SQLTransactionSync.h \
-        storage/SQLTransactionSyncCallback.h \
-        storage/StorageArea.h \
-        storage/StorageAreaImpl.h \
-        storage/StorageAreaSync.h \
-        storage/StorageEvent.h \
-        storage/StorageEventDispatcher.h \
-        storage/Storage.h \
-        storage/StorageMap.h \
-        storage/StorageNamespace.h \
-        storage/StorageNamespaceImpl.h \
-        storage/StorageSyncManager.h \
-        storage/StorageTracker.h \
-        storage/StorageTrackerClient.h
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSStorageCustom.cpp
-    }
-    SOURCES += \
-        storage/LocalStorageTask.cpp \
-        storage/LocalStorageThread.cpp \
-        storage/Storage.cpp \
-        storage/StorageAreaImpl.cpp \
-        storage/StorageAreaSync.cpp \
-        storage/StorageEvent.cpp \
-        storage/StorageEventDispatcher.cpp \
-        storage/StorageMap.cpp \
-        storage/StorageNamespace.cpp \
-        storage/StorageNamespaceImpl.cpp \
-        storage/StorageSyncManager.cpp \
-        storage/StorageTracker.cpp
 }
 
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {

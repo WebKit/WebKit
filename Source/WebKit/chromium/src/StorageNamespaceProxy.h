@@ -26,8 +26,6 @@
 #ifndef StorageNamespaceProxy_h
 #define StorageNamespaceProxy_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 
@@ -55,7 +53,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageNamespaceProxy_h

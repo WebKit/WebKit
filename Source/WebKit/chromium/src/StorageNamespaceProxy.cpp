@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageNamespaceProxy.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "Page.h"
@@ -108,5 +106,3 @@ void StorageNamespaceProxy::sync()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

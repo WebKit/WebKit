@@ -62,9 +62,7 @@ public:
 #if ENABLE(SQL_DATABASE)
             , InspectorDatabaseAgent* databaseAgent
 #endif
-#if ENABLE(DOM_STORAGE)
             , InspectorDOMStorageAgent* domStorageAgent
-#endif
         )
     {
         m_inspectorAgent = inspectorAgent;
@@ -72,9 +70,7 @@ public:
 #if ENABLE(SQL_DATABASE)
         m_databaseAgent = databaseAgent;
 #endif
-#if ENABLE(DOM_STORAGE)
         m_domStorageAgent = domStorageAgent;
-#endif
     }
     void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
     void clearFrontend() { m_frontend = 0; }
@@ -94,9 +90,7 @@ public:
 #if ENABLE(SQL_DATABASE)
     int databaseIdImpl(Database*);
 #endif
-#if ENABLE(DOM_STORAGE)
     int storageIdImpl(Storage*);
-#endif
 #if ENABLE(WORKERS)
     long nextWorkerId();
     void didCreateWorker(long id, const String& url, bool isSharedWorker);
@@ -111,9 +105,7 @@ private:
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_databaseAgent;
 #endif
-#if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* m_domStorageAgent;
-#endif
     InspectorFrontend* m_frontend;
     long m_lastWorkerId;
     Vector<RefPtr<Node> > m_inspectedNodes;

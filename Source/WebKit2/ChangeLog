@@ -1,3 +1,16 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(DOM_STORAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=70189
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(TILED_BACKING_STORE) to USE(TILED_BACKING_STORE)

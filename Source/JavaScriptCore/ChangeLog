@@ -1,3 +1,12 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(DOM_STORAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=70189
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-10-15  Dan Horák <dan@danny.cz>
 
         The s390 and s390x architectures both use 64-bit double type

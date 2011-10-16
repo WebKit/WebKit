@@ -44,9 +44,7 @@ module window {
         readonly attribute [EnabledAtRuntime] Geolocation geolocation;
 #endif
 
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         void getStorageUpdates();
-#endif
 
 #if defined(ENABLE_REGISTER_PROTOCOL_HANDLER) && ENABLE_REGISTER_PROTOCOL_HANDLER
         void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)

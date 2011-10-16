@@ -1,3 +1,30 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(DOM_STORAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=70189
+
+        Reviewed by Eric Seidel.
+
+        * features.gypi:
+        * src/StorageAreaProxy.cpp:
+        * src/StorageAreaProxy.h:
+        * src/StorageEventDispatcherChromium.cpp:
+        * src/StorageEventDispatcherImpl.cpp:
+        * src/StorageEventDispatcherImpl.h:
+        * src/StorageNamespaceProxy.cpp:
+        * src/StorageNamespaceProxy.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableLocalStorage):
+        (WebKit::WebRuntimeFeatures::isLocalStorageEnabled):
+        (WebKit::WebRuntimeFeatures::enableSessionStorage):
+        (WebKit::WebRuntimeFeatures::isSessionStorageEnabled):
+        * src/WebStorageAreaImpl.cpp:
+        * src/WebStorageAreaImpl.h:
+        * src/WebStorageEventDispatcherImpl.cpp:
+        * src/WebStorageEventDispatcherImpl.h:
+        * src/WebStorageNamespaceImpl.cpp:
+        * src/WebStorageNamespaceImpl.h:
+
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(SKIA_TEXT) to USE(SKIA_TEXT)

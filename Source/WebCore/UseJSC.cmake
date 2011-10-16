@@ -109,6 +109,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp
+    bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
     bindings/js/JSTextCustom.cpp
@@ -174,12 +175,6 @@ IF (ENABLE_SQL_DATABASE)
         bindings/js/JSSQLResultSetRowListCustom.cpp
         bindings/js/JSSQLTransactionCustom.cpp
         bindings/js/JSSQLTransactionSyncCustom.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_DOM_STORAGE)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSStorageCustom.cpp
     )
 ENDIF ()
 

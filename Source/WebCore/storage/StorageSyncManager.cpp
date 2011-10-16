@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageSyncManager.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "EventNames.h"
 #include "FileSystem.h"
 #include "Frame.h"
@@ -108,6 +106,5 @@ void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>
     if (m_thread)
         m_thread->scheduleTask(LocalStorageTask::createDeleteEmptyDatabase(area.get()));
 }
-} // namespace WebCore
 
-#endif // ENABLE(DOM_STORAGE)
+} // namespace WebCore

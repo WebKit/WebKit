@@ -81,7 +81,6 @@ my (
     $detailsSupport,
     $deviceOrientationSupport,
     $directoryUploadSupport,
-    $domStorageSupport,
     $fileSystemSupport,
     $filtersSupport,
     $fullscreenAPISupport,
@@ -187,9 +186,6 @@ my @features = (
 
     { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
       define => "ENABLE_MUTATION_OBSERVERS", default => 0, value => \$mutationObserversSupport },
-
-    { option => "dom-storage", desc => "Toggle DOM Storage Support",
-      define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
 
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },

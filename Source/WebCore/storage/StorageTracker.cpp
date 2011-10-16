@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageTracker.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "DatabaseThread.h"
 #include "FileSystem.h"
 #include "LocalStorageTask.h"
@@ -590,5 +588,3 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
 }
     
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

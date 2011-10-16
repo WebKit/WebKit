@@ -26,8 +26,6 @@
 #ifndef StorageAreaProxy_h
 #define StorageAreaProxy_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "StorageArea.h"
 
 namespace WebKit { class WebStorageArea; }
@@ -60,7 +58,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageAreaProxy_h

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageEvent.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "Storage.h"
 
 namespace WebCore {
@@ -75,5 +73,3 @@ void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bo
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

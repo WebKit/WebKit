@@ -104,9 +104,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(SQL_DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
-#if ENABLE(DOM_STORAGE)
     , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
-#endif
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page)))
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
@@ -131,9 +129,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(SQL_DATABASE)
         , m_databaseAgent.get()
 #endif
-#if ENABLE(DOM_STORAGE)
         , m_domStorageAgent.get()
-#endif
     );
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -213,9 +209,7 @@ void InspectorController::connectFrontend()
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->setFrontend(m_inspectorFrontend.get());
 #endif
-#if ENABLE(DOM_STORAGE)
     m_domStorageAgent->setFrontend(m_inspectorFrontend.get());
-#endif
 #if ENABLE(WORKERS)
     m_workerAgent->setFrontend(m_inspectorFrontend.get());
 #endif
@@ -235,9 +229,7 @@ void InspectorController::connectFrontend()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_domDebuggerAgent.get(),
 #endif
-#if ENABLE(DOM_STORAGE)
         m_domStorageAgent.get(),
-#endif
 #if ENABLE(SQL_DATABASE)
         m_databaseAgent.get(),
 #endif
@@ -288,9 +280,7 @@ void InspectorController::disconnectFrontend()
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->clearFrontend();
 #endif
-#if ENABLE(DOM_STORAGE)
     m_domStorageAgent->clearFrontend();
-#endif
     m_pageAgent->clearFrontend();
 #if ENABLE(WORKERS)
     m_workerAgent->clearFrontend();
@@ -342,9 +332,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->restore();
 #endif
-#if ENABLE(DOM_STORAGE)
     m_domStorageAgent->restore();
-#endif
 #if ENABLE(WORKERS)
     m_workerAgent->restore();
 #endif

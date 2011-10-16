@@ -26,8 +26,6 @@
 #ifndef StorageNamespaceImpl_h
 #define StorageNamespaceImpl_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 #include "SecurityOriginHash.h"
 #include "StorageArea.h"
@@ -76,7 +74,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageNamespaceImpl_h

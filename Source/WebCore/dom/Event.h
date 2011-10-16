@@ -136,9 +136,7 @@ namespace WebCore {
 #if ENABLE(SVG)
         virtual bool isSVGZoomEvent() const;
 #endif
-#if ENABLE(DOM_STORAGE)
         virtual bool isStorageEvent() const;
-#endif
 #if ENABLE(INDEXED_DATABASE)
         virtual bool isIDBVersionChangeEvent() const;
 #endif

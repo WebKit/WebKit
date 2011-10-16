@@ -1,3 +1,12 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(DOM_STORAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=70189
+
+        Reviewed by Eric Seidel.
+
+        * fast/events/event-creation.html:
+
 2011-10-15  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Make console and description elements optional in the HTML

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageNamespaceImpl.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "SecurityOriginHash.h"
 #include "StorageAreaImpl.h"
 #include "StorageMap.h"
@@ -173,5 +171,3 @@ void StorageNamespaceImpl::sync()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

@@ -140,7 +140,6 @@
     shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent').constructor === window.XMLHttpRequestProgressEvent");
 
-    // #if ENABLE(DOM_STORAGE)
     // StorageEvent
     shouldBeTrue("document.createEvent('StorageEvent') instanceof window.StorageEvent");
     shouldBeTrue("document.createEvent('StorageEvent') instanceof window.Event");

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LocalStorageTask.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "LocalStorageThread.h"
 #include "StorageAreaSync.h"
 #include "StorageTracker.h"
@@ -108,5 +106,3 @@ void LocalStorageTask::performTask()
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

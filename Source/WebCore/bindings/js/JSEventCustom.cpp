@@ -52,6 +52,7 @@
 #include "JSPopStateEvent.h"
 #include "JSProgressEvent.h"
 #include "JSSpeechInputEvent.h"
+#include "JSStorageEvent.h"
 #include "JSTextEvent.h"
 #include "JSUIEvent.h"
 #include "JSWebKitAnimationEvent.h"
@@ -70,6 +71,7 @@
 #include "PopStateEvent.h"
 #include "ProgressEvent.h"
 #include "SpeechInputEvent.h"
+#include "StorageEvent.h"
 #include "TextEvent.h"
 #include "UIEvent.h"
 #include "WebKitAnimationEvent.h"
@@ -77,11 +79,6 @@
 #include "WheelEvent.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <runtime/JSLock.h>
-
-#if ENABLE(DOM_STORAGE)
-#include "JSStorageEvent.h"
-#include "StorageEvent.h"
-#endif
 
 #if ENABLE(SVG)
 #include "JSSVGZoomEvent.h"
@@ -176,10 +173,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ProgressEvent, event);
     } else if (event->isBeforeLoadEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, BeforeLoadEvent, event);
-#if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, StorageEvent, event);
-#endif
 #if ENABLE(INDEXED_DATABASE)
     else if (event->isIDBVersionChangeEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, IDBVersionChangeEvent, event);

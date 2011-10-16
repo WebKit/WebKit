@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LocalStorageThread.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "LocalStorageTask.h"
 #include "StorageAreaSync.h"
 #include <wtf/MainThread.h>
@@ -101,5 +99,3 @@ void LocalStorageThread::performTerminate()
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

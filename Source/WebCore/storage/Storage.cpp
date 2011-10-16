@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Storage.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "Frame.h"
 #include "Page.h"
 #include "Settings.h"
@@ -112,5 +110,3 @@ bool Storage::contains(const String& key) const
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

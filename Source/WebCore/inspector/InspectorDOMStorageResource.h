@@ -31,8 +31,6 @@
 #ifndef InspectorDOMStorageResource_h
 #define InspectorDOMStorageResource_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "EventListener.h"
 #include "InspectorFrontend.h"
 
@@ -84,7 +82,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif
 
 #endif // InspectorDOMStorageResource_h

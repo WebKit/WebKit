@@ -27,8 +27,6 @@
 #include "config.h"
 #include "StorageAreaProxy.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -175,5 +173,3 @@ bool StorageAreaProxy::canAccessStorage(Frame* frame) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)

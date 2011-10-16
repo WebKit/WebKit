@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(DOM_STORAGE)
-
 #import "WebStorageTrackerClient.h"
 
 #import "WebSecurityOriginInternal.h"
@@ -78,5 +76,3 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdenti
 
     dispatchDidModifyOrigin(origin);
 }
-
-#endif

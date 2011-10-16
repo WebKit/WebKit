@@ -23,8 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#if ENABLE(DOM_STORAGE)
-
 void WebKitInitializeStorageIfNecessary();
-
-#endif

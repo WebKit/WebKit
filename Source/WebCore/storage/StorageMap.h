@@ -26,8 +26,6 @@
 #ifndef StorageMap_h
 #define StorageMap_h
 
-#if ENABLE(DOM_STORAGE)
-
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -70,7 +68,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
 
 #endif // StorageMap_h

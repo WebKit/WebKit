@@ -1,3 +1,113 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(DOM_STORAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=70189
+
+        Reviewed by Eric Seidel.
+
+        As discussed on webkit-dev, we are reducing the complexity of WebKit by
+        removing unnecessary configuration options.  DOMStorage is not a core
+        part of the web platform.  It should always be enabled.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.exp.in:
+        * WebCore.pro:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::storageIdCallback):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::isStorageEvent):
+        * dom/Event.h:
+        * dom/Node.cpp:
+        * features.pri:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::disconnect):
+        (WebCore::InjectedScriptHost::storageIdImpl):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        * inspector/InspectorDOMStorageResource.cpp:
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didUseDOMStorageImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didUseDOMStorage):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * inspector/generate-inspector-idl:
+        * page/Chrome.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::localStorage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::getStorageUpdates):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::closeLocalStorage):
+        * page/PageGroup.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSessionStorageQuota):
+        * page/Settings.h:
+        (WebCore::Settings::sessionStorageQuota):
+        * storage/LocalStorageTask.cpp:
+        * storage/LocalStorageTask.h:
+        * storage/LocalStorageThread.cpp:
+        * storage/LocalStorageThread.h:
+        * storage/Storage.cpp:
+        * storage/Storage.h:
+        * storage/Storage.idl:
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::scheduleSync):
+        * storage/StorageAreaSync.h:
+        * storage/StorageEvent.cpp:
+        * storage/StorageEvent.h:
+        * storage/StorageEvent.idl:
+        * storage/StorageEventDispatcher.cpp:
+        * storage/StorageEventDispatcher.h:
+        * storage/StorageMap.cpp:
+        * storage/StorageMap.h:
+        * storage/StorageNamespace.cpp:
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::scheduleDeleteEmptyDatabase):
+        * storage/StorageSyncManager.h:
+        * storage/StorageTracker.cpp:
+        * storage/StorageTracker.h:
+
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(SKIA_TEXT) to USE(SKIA_TEXT)

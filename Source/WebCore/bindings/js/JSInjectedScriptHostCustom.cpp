@@ -48,11 +48,9 @@
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
-#include "ScriptValue.h"
-#if ENABLE(DOM_STORAGE)
-#include "Storage.h"
 #include "JSStorage.h"
-#endif
+#include "ScriptValue.h"
+#include "Storage.h"
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
@@ -183,11 +181,9 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-#if ENABLE(DOM_STORAGE)
     Storage* storage = toStorage(exec->argument(0));
     if (storage)
         return jsNumber(impl()->storageIdImpl(storage));
-#endif
     return jsUndefined();
 }
 

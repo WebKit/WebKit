@@ -58,36 +58,28 @@ bool WebRuntimeFeatures::isDatabaseEnabled()
 #endif
 }
 
+// FIXME: Remove the ability to enable this feature at runtime.
 void WebRuntimeFeatures::enableLocalStorage(bool enable)
 {
-#if ENABLE(DOM_STORAGE)
     RuntimeEnabledFeatures::setLocalStorageEnabled(enable);
-#endif
 }
 
+// FIXME: Remove the ability to enable this feature at runtime.
 bool WebRuntimeFeatures::isLocalStorageEnabled()
 {
-#if ENABLE(DOM_STORAGE)
     return RuntimeEnabledFeatures::localStorageEnabled();
-#else
-    return false;
-#endif
 }
 
+// FIXME: Remove the ability to enable this feature at runtime.
 void WebRuntimeFeatures::enableSessionStorage(bool enable)
 {
-#if ENABLE(DOM_STORAGE)
     RuntimeEnabledFeatures::setSessionStorageEnabled(enable);
-#endif
 }
 
+// FIXME: Remove the ability to enable this feature at runtime.
 bool WebRuntimeFeatures::isSessionStorageEnabled()
 {
-#if ENABLE(DOM_STORAGE)
     return RuntimeEnabledFeatures::sessionStorageEnabled();
-#else
-    return false;
-#endif
 }
 
 void WebRuntimeFeatures::enableMediaPlayer(bool enable)

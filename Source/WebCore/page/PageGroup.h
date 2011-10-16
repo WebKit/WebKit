@@ -53,14 +53,13 @@ namespace WebCore {
 
         static void closeLocalStorage();
 
-#if ENABLE(DOM_STORAGE)
         static void clearLocalStorageForAllOrigins();
         static void clearLocalStorageForOrigin(SecurityOrigin*);
         // DumpRenderTree helper that triggers a StorageArea sync.
         static void syncLocalStorage();
-#endif
+
         static unsigned numberOfPageGroups();
-        
+
         const HashSet<Page*>& pages() const { return m_pages; }
 
         void addPage(Page*);
@@ -79,10 +78,9 @@ namespace WebCore {
         const String& name() { return m_name; }
         unsigned identifier() { return m_identifier; }
 
-#if ENABLE(DOM_STORAGE)
         StorageNamespace* localStorage();
         bool hasLocalStorage() { return m_localStorage; }
-#endif
+
 #if ENABLE(INDEXED_DATABASE)
         IDBFactoryBackendInterface* idbFactory();
         bool hasIDBFactory() { return m_factoryBackend; }
@@ -121,9 +119,7 @@ namespace WebCore {
         bool m_visitedLinksPopulated;
 
         unsigned m_identifier;
-#if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_localStorage;
-#endif
 #if ENABLE(INDEXED_DATABASE)
         RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
 #endif

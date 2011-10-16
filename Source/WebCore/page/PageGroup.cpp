@@ -99,7 +99,6 @@ PageGroup* PageGroup::pageGroup(const String& groupName)
 
 void PageGroup::closeLocalStorage()
 {
-#if ENABLE(DOM_STORAGE)
     if (!pageGroups)
         return;
 
@@ -109,10 +108,7 @@ void PageGroup::closeLocalStorage()
         if (it->second->hasLocalStorage())
             it->second->localStorage()->close();
     }
-#endif
 }
-
-#if ENABLE(DOM_STORAGE)
 
 void PageGroup::clearLocalStorageForAllOrigins()
 {
@@ -157,8 +153,6 @@ unsigned PageGroup::numberOfPageGroups()
 
     return pageGroups->size();
 }
-
-#endif
 
 void PageGroup::addPage(Page* page)
 {
@@ -246,7 +240,6 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
         removeAllVisitedLinks();
 }
 
-#if ENABLE(DOM_STORAGE)
 StorageNamespace* PageGroup::localStorage()
 {
     if (!m_localStorage) {
@@ -262,8 +255,6 @@ StorageNamespace* PageGroup::localStorage()
 
     return m_localStorage.get();
 }
-
-#endif
 
 #if ENABLE(INDEXED_DATABASE)
 IDBFactoryBackendInterface* PageGroup::idbFactory()

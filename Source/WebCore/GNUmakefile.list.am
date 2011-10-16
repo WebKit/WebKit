@@ -466,7 +466,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLStatementErrorCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransaction.h \
 	DerivedSources/WebCore/JSSQLTransactionSync.h \
+	DerivedSources/WebCore/JSStorage.cpp \
 	DerivedSources/WebCore/JSStorage.h \
+	DerivedSources/WebCore/JSStorageEvent.cpp \
+	DerivedSources/WebCore/JSStorageEvent.h \
 	DerivedSources/WebCore/JSStorageInfo.h \
 	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
 	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
@@ -4217,16 +4220,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBTransaction.cpp \
 	DerivedSources/WebCore/JSIDBTransaction.h
 endif # END ENABLE_INDEXED_DATABASE
-
-# ----
-# HTML5 client-side session and persistent storage
-# ----
-if ENABLE_DOM_STORAGE
-webcore_built_sources += \
-	DerivedSources/WebCore/JSStorage.cpp \
-	DerivedSources/WebCore/JSStorageEvent.cpp \
-	DerivedSources/WebCore/JSStorageEvent.h
-endif # END ENABLE_DOM_STORAGE
 
 # ----
 # FileSystem API support

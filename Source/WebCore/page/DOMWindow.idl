@@ -169,12 +169,12 @@ module window {
         [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+
         readonly attribute [EnabledAtRuntime] Storage sessionStorage
             getter raises(DOMException);
         readonly attribute [EnabledAtRuntime] Storage localStorage
             getter raises(DOMException);
-#endif
+
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
@@ -547,7 +547,7 @@ module window {
         attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
         attribute [Conditional=WEB_SOCKETS] CloseEventConstructor CloseEvent;
-        attribute [Conditional=DOM_STORAGE] StorageEventConstructor StorageEvent;
+        attribute StorageEventConstructor StorageEvent;
         attribute [Conditional=WEB_AUDIO] AudioProcessingEventConstructor AudioProcessingEvent;
         attribute [Conditional=WEB_AUDIO] OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
         attribute [Conditional=INPUT_SPEECH] SpeechInputEventConstructor SpeechInputEvent;
@@ -614,9 +614,7 @@ module window {
         attribute ClientRectConstructor ClientRect;
         attribute ClientRectListConstructor ClientRectList;
 
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
-#endif
 
         attribute [CustomGetter, Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructor Audio; // Usable with the new operator
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;

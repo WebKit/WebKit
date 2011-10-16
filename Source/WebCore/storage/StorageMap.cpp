@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageMap.h"
 
-#if ENABLE(DOM_STORAGE)
-
 namespace WebCore {
 
 PassRefPtr<StorageMap> StorageMap::create(unsigned quota)
@@ -183,5 +181,3 @@ void StorageMap::importItem(const String& key, const String& value)
 }
 
 }
-
-#endif // ENABLE(DOM_STORAGE)

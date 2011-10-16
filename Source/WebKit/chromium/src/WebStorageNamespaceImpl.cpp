@@ -31,10 +31,7 @@
 #include "config.h"
 #include "WebStorageNamespaceImpl.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "SecurityOrigin.h"
-
 #include "WebStorageAreaImpl.h"
 #include "WebString.h"
 
@@ -76,5 +73,3 @@ void WebStorageNamespaceImpl::close()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DOM_STORAGE)

@@ -84,6 +84,7 @@
 #include "SelectorQuery.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
+#include "StorageEvent.h"
 #include "TagNodeList.h"
 #include "Text.h"
 #include "TextEvent.h"
@@ -101,10 +102,6 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(DOM_STORAGE)
-#include "StorageEvent.h"
-#endif
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"

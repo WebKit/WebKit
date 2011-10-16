@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StorageAreaSync.h"
 
-#if ENABLE(DOM_STORAGE)
-
 #include "EventNames.h"
 #include "FileSystem.h"
 #include "HTMLElement.h"
@@ -521,7 +519,5 @@ void StorageAreaSync::scheduleSync()
 {
     syncTimerFired(&m_syncTimer);
 }
-    
-} // namespace WebCore
 
-#endif // ENABLE(DOM_STORAGE)
+} // namespace WebCore

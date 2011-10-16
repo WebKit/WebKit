@@ -84,9 +84,7 @@ namespace WebCore {
     class Settings;
     class SpeechInput;
     class SpeechInputClient;
-#if ENABLE(DOM_STORAGE)
     class StorageNamespace;
-#endif
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
 #endif
@@ -274,10 +272,8 @@ namespace WebCore {
         static void allVisitedStateChanged(PageGroup*);
         static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
 
-#if ENABLE(DOM_STORAGE)
         StorageNamespace* sessionStorage(bool optionalCreate = true);
         void setSessionStorage(PassRefPtr<StorageNamespace>);
-#endif
 
         void setCustomHTMLTokenizerTimeDelay(double);
         bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
@@ -400,9 +396,7 @@ namespace WebCore {
 
         bool m_canStartMedia;
 
-#if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_sessionStorage;
-#endif
 
 #if ENABLE(NOTIFICATIONS)
         NotificationPresenter* m_notificationPresenter;

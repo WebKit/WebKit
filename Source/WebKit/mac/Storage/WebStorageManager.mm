@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(DOM_STORAGE)
-
 #import "WebSecurityOriginInternal.h"
 #import "WebStorageManagerPrivate.h"
 #import "WebStorageManagerInternal.h"
@@ -123,5 +121,3 @@ void WebKitInitializeStorageIfNecessary()
 }
 
 @end
-
-#endif
