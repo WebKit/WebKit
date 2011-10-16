@@ -24,7 +24,10 @@
 
 #include "JSTestInterface.h"
 
+#include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "TestInterface.h"
+#include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -72,35 +75,6 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable = { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
-class JSTestInterfaceConstructor : public DOMConstructorObject {
-private:
-    JSTestInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
-
-public:
-    typedef DOMConstructorObject Base;
-    static JSTestInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-    {
-        JSTestInterfaceConstructor* ptr = new (JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(structure, globalObject);
-        ptr->finishCreation(exec, globalObject);
-        return ptr;
-    }
-
-    virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
-    static const JSC::ClassInfo s_info;
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
-    }
-protected:
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestInterface(JSC::ExecState*);
-    virtual JSC::ConstructType getConstructDataVirtual(JSC::ConstructData&);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-};
-
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
 JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -132,10 +106,25 @@ bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(ExecState* exec, const
 
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
 {
-    ScriptExecutionContext* context = static_cast<JSTestInterfaceConstructor*>(exec->callee())->scriptExecutionContext();
+    JSTestInterfaceConstructor* jsConstructor = static_cast<JSTestInterfaceConstructor*>(exec->callee());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    ExceptionCode ec = 0;
+    const String& str1(ustringToString(exec->argument(0).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    const String& str2(ustringToString(exec->argument(1).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(exec, createReferenceError(exec, "Reference error"));
-    return JSValue::encode(asObject(toJS(exec, static_cast<JSTestInterfaceConstructor*>(exec->callee())->globalObject(), TestInterface::create(context))));
+        return throwVMError(exec, createReferenceError(exec, "TestInterface constructor associated document is unavailable"));
+    RefPtr<TestInterface> object = TestInterface::create(context, str1, str2, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
 }
 
 ConstructType JSTestInterfaceConstructor::getConstructDataVirtual(ConstructData& constructData)

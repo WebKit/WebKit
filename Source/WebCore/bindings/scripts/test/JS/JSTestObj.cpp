@@ -175,32 +175,6 @@ COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrong
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
 
-class JSTestObjConstructor : public DOMConstructorObject {
-private:
-    JSTestObjConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
-
-public:
-    typedef DOMConstructorObject Base;
-    static JSTestObjConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-    {
-        JSTestObjConstructor* ptr = new (JSC::allocateCell<JSTestObjConstructor>(*exec->heap())) JSTestObjConstructor(structure, globalObject);
-        ptr->finishCreation(exec, globalObject);
-        return ptr;
-    }
-
-    virtual bool getOwnPropertySlotVirtual(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
-    static const JSC::ClassInfo s_info;
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
-    }
-protected:
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
-};
-
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -1075,7 +1049,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* exe
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
     imp->voidMethod();
     return JSValue::encode(jsUndefined());
 }
@@ -1097,7 +1070,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->voidMethodWithArgs(intArg, strArg, objArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1110,7 +1082,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethod(ExecState* exec
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
 
     JSC::JSValue result = jsNumber(imp->intMethod());
     return JSValue::encode(result);
@@ -1134,7 +1105,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(ExecSta
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-
     JSC::JSValue result = jsNumber(imp->intMethodWithArgs(intArg, strArg, objArg));
     return JSValue::encode(result);
 }
@@ -1147,7 +1117,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->objMethod()));
     return JSValue::encode(result);
@@ -1171,7 +1140,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->objMethodWithArgs(intArg, strArg, objArg)));
     return JSValue::encode(result);
 }
@@ -1192,7 +1160,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->methodThatRequiresAllArgs(strArg, objArg)));
     return JSValue::encode(result);
@@ -1216,7 +1183,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->methodThatRequiresAllArgsAndThrows(strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
@@ -1233,7 +1199,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     RefPtr<SerializedScriptValue> serializedArg(SerializedScriptValue::create(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->serializedValue(serializedArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1249,7 +1214,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
     RefPtr<IDBKey> key(createIDBKeyFromValue(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->idbKey(key);
     return JSValue::encode(jsUndefined());
 }
@@ -1275,7 +1239,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     OptionsObject* ooo(toOptionsObject(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->optionsObject(oo, ooo);
     return JSValue::encode(jsUndefined());
 }
@@ -1289,7 +1252,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-
     imp->methodWithException(ec);
     setDOMException(exec, ec);
     return JSValue::encode(jsUndefined());
@@ -1330,7 +1292,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(Ex
     log* intArg(tolog(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->customArgsAndException(intArg, scriptArguments, callStack, ec);
     setDOMException(exec, ec);
     return JSValue::encode(jsUndefined());
@@ -1377,7 +1338,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrame(ExecStat
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
-
     imp->withDynamicFrame(dynamicFrame);
     return JSValue::encode(jsUndefined());
 }
@@ -1396,7 +1356,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndArg(Ex
     int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->withDynamicFrameAndArg(dynamicFrame, intArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1425,7 +1384,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOption
     int optionalArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->withDynamicFrameAndOptionalArg(dynamicFrame, intArg, optionalArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1444,7 +1402,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, ScriptController::processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
@@ -1473,7 +1430,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     int optionalArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, ScriptController::processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
@@ -1486,7 +1442,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecS
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
     imp->withScriptStateVoid(exec);
     return JSValue::encode(jsUndefined());
 }
@@ -1499,7 +1454,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->withScriptStateObj(exec)));
     if (exec->hadException())
@@ -1516,7 +1470,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-
     imp->withScriptStateVoidException(exec, ec);
     setDOMException(exec, ec);
     return JSValue::encode(jsUndefined());
@@ -1531,7 +1484,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->withScriptStateObjException(exec, ec)));
     setDOMException(exec, ec);
@@ -1551,7 +1503,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-
     imp->withScriptExecutionContext(scriptContext);
     return JSValue::encode(jsUndefined());
 }
@@ -1574,7 +1525,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
     int opt(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->methodWithOptionalArg(opt);
     return JSValue::encode(jsUndefined());
 }
@@ -1600,7 +1550,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     int opt(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->methodWithNonOptionalArgAndOptionalArg(nonOpt, opt);
     return JSValue::encode(jsUndefined());
 }
@@ -1629,7 +1578,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     int opt2(exec->argument(2).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
     return JSValue::encode(jsUndefined());
 }
@@ -1647,7 +1595,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
         return JSValue::encode(jsUndefined());
     }
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
-
     imp->methodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -1668,7 +1615,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
         return JSValue::encode(jsUndefined());
     }
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(1)), castedThis->globalObject());
-
     imp->methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
     return JSValue::encode(jsUndefined());
 }
@@ -1689,7 +1635,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
         }
         callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
     }
-
     imp->methodWithCallbackAndOptionalArg(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -1703,7 +1648,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
 
     JSC::JSValue result = jsString(exec, imp->conditionalMethod1());
     return JSValue::encode(result);
@@ -1720,7 +1664,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecSt
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
     imp->conditionalMethod2();
     return JSValue::encode(jsUndefined());
 }
@@ -1736,7 +1679,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecSt
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
     imp->conditionalMethod3();
     return JSValue::encode(jsUndefined());
 }
@@ -1757,7 +1699,6 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
     const String& strArg(ustringToString(exec->argument(1).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->overloadedMethod(objArg, strArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1783,7 +1724,6 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
     int intArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->overloadedMethod(objArg, intArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1799,7 +1739,6 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
     const String& strArg(ustringToString(exec->argument(0).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->overloadedMethod(strArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1815,7 +1754,6 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
     int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
     imp->overloadedMethod(intArg);
     return JSValue::encode(jsUndefined());
 }
@@ -1833,7 +1771,6 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
         return JSValue::encode(jsUndefined());
     }
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
-
     imp->overloadedMethod(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -1864,7 +1801,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethod(ExecState* ex
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-
     imp->classMethod();
     return JSValue::encode(jsUndefined());
 }
@@ -1888,7 +1824,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
     int arg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
 
     JSC::JSValue result = jsNumber(imp->classMethodWithOptional(arg));
     return JSValue::encode(result);

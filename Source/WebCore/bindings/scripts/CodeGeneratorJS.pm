@@ -1079,11 +1079,10 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    # Conditionally emit the constructor object's declaration
-    if ($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"} || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
+        $headerIncludes{"JSDOMBinding.h"} = 1;
         GenerateConstructorDeclaration(\@headerContent, $className, $dataNode);
     }
-
 
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
@@ -1372,8 +1371,6 @@ sub GenerateImplementation
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
 
         my $protoClassName = "${className}Prototype";
-
-        GenerateConstructorDeclaration(\@implContent, $className, $dataNode) unless ($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"});
         GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode);
     }
 
@@ -2037,33 +2034,7 @@ sub GenerateImplementation
                     push(@implContent, "    $svgPropertyType& podImp = imp->propertyReference();\n");
                 }
 
-                my $numParameters = @{$function->parameters};
-
-                my $requiresAllArguments;
-                my $requiresAllArgumentsDefault = "";
-                if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
-                    $requiresAllArgumentsDefault = "Raise";
-                }
-                $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
-                if ($requiresAllArguments) {
-                    my $numMandatoryParams = @{$function->parameters};
-                    foreach my $param (reverse(@{$function->parameters})) {
-                        if ($param->extendedAttributes->{"Optional"}) {
-                            $numMandatoryParams--;
-                        } else {
-                            last;
-                        }
-                    }
-                    if ($numMandatoryParams > 0)
-                    {
-                        push(@implContent, "    if (exec->argumentCount() < $numMandatoryParams)\n");
-                        if ($requiresAllArguments eq "Raise") {
-                            push(@implContent, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
-                        } else {
-                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                        }
-                    }
-                }
+                GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
 
                 if (@{$function->raisesExceptions}) {
                     push(@implContent, "    ExceptionCode ec = 0;\n");
@@ -2080,151 +2051,8 @@ sub GenerateImplementation
                 } elsif ($function->signature->name eq "removeEventListener") {
                     push(@implContent, GenerateEventListenerCall($className, "remove"));
                 } else {
-                    my $argsIndex = 0;
-                    my $paramIndex = 0;
-                    my $functionString = (($svgPropertyOrListPropertyType and !$svgListPropertyType) ? "podImp." : "imp->") . $functionImplementationName . "(";
-                    my $hasOptionalArguments = 0;
-
-                    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                        push(@implContent, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
-                        push(@implContent, "    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;\n");
-                        push(@implContent, "    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));\n");
-                        $implIncludes{"ScriptArguments.h"} = 1;
-                        $implIncludes{"ScriptCallStack.h"} = 1;
-                        $implIncludes{"ScriptCallStackFactory.h"} = 1;
-                    }
-
-                    my $callWith = $function->signature->extendedAttributes->{"CallWith"};
-                    if ($callWith) {
-                        my $callWithArg = "COMPILE_ASSERT(false)";
-                        if ($callWith eq "DynamicFrame") {
-                            push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
-                            push(@implContent, "    if (!dynamicFrame)\n");
-                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                            $callWithArg = "dynamicFrame";
-                        } elsif ($callWith eq "ScriptState") {
-                            $callWithArg = "exec";
-                        } elsif ($callWith eq "ScriptExecutionContext") {
-                            push(@implContent, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
-                            push(@implContent, "    if (!scriptContext)\n");
-                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                            $callWithArg = "scriptContext"; 
-                        }
-                        $functionString .= ", " if $paramIndex;
-                        $functionString .= $callWithArg;
-                        $paramIndex++;
-                    }
-
-                    $implIncludes{"ExceptionCode.h"} = 1;
-                    $implIncludes{"JSDOMBinding.h"} = 1;
-                    foreach my $parameter (@{$function->parameters}) {
-                        # Optional callbacks should be treated differently, because they always have a default value (0),
-                        # and we can reduce the number of overloaded functions that take a different number of parameters.
-                        # Optional arguments with default values [Optional=CallWithDefaultValue] should not generate an early call.
-                        my $optional = $parameter->extendedAttributes->{"Optional"};        
-                        if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
-                            # Generate early call if there are enough parameters.
-                            if (!$hasOptionalArguments) {
-                                push(@implContent, "\n    size_t argsCount = exec->argumentCount();\n");
-                                $hasOptionalArguments = 1;
-                            }
-                            push(@implContent, "    if (argsCount <= $argsIndex) {\n");
-                            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $svgPropertyType, $implClassName);
-                            push(@implContent, "    }\n\n");
-                        }
-
-                        my $name = $parameter->name;
-                        my $argType = $codeGenerator->StripModule($parameter->type);
-
-                        if ($argType eq "XPathNSResolver") {
-                            push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
-                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
-                            push(@implContent, "    if (!resolver) {\n");
-                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($argsIndex));\n");
-                            push(@implContent, "        if (exec->hadException())\n");
-                            push(@implContent, "            return JSValue::encode(jsUndefined());\n");
-                            push(@implContent, "        resolver = customResolver.get();\n");
-                            push(@implContent, "    }\n");
-                        } elsif ($parameter->extendedAttributes->{"Callback"}) {
-                            my $callbackClassName = GetCallbackClassName($argType);
-                            $implIncludes{"$callbackClassName.h"} = 1;
-                            if ($parameter->extendedAttributes->{"Optional"}) {
-                                push(@implContent, "    RefPtr<$argType> $name;\n");
-                                push(@implContent, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
-                                push(@implContent, "        if (!exec->argument($argsIndex).isObject()) {\n");
-                                push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                                push(@implContent, "            return JSValue::encode(jsUndefined());\n");
-                                push(@implContent, "        }\n");
-                                push(@implContent, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
-                                push(@implContent, "    }\n");
-                            } else {
-                                push(@implContent, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isObject()) {\n");
-                                push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                                push(@implContent, "    }\n");
-                                push(@implContent, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
-                            }
-                        } else {
-                            # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
-                            # interface type, then if the incoming value does not implement that interface, a TypeError
-                            # is thrown rather than silently passing NULL to the C++ code.
-                            # Per the Web IDL and ECMAScript semantics, incoming values can always be converted to both
-                            # strings and numbers, so do not throw TypeError if the argument is of these types.
-                            if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
-                                $implIncludes{"<runtime/Error.h>"} = 1;
-
-                                my $argValue = "exec->argument($argsIndex)";
-                                if (!IsNativeType($argType)) {
-                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
-                                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                                }
-                            }
-
-                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "exec->argument($argsIndex)") . ");\n");
-
-                            # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
-                            # But this needs to be done in the bindings, because the type is unsigned and the fact that it
-                            # was negative will be lost by the time we're inside the DOM.
-                            if ($parameter->extendedAttributes->{"IsIndex"}) {
-                                push(@implContent, "    if ($name < 0) {\n");
-                                push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
-                                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                                push(@implContent, "    }\n");
-                            }
-
-                            # Check if the type conversion succeeded.
-                            push(@implContent, "    if (exec->hadException())\n");
-                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-
-                            if ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
-                                push(@implContent, "    if (!$name) {\n");
-                                push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                                push(@implContent, "    }\n");
-                            }
-                        }
-
-                        $functionString .= ", " if $paramIndex;
-
-                        if ($argType eq "NodeFilter") {
-                            $functionString .= "$name.get()";
-                        } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
-                            $functionString .= "$name->propertyReference()";
-                        } else {
-                            $functionString .= $name;
-                        }
-                        $argsIndex++;
-                        $paramIndex++;
-                    }
-
-                    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
-                        $functionString .= ", " if $paramIndex;
-                        $functionString .= "ScriptController::processingUserGesture()";
-                        $paramIndex++;
-                        $implIncludes{"ScriptController.h"} = 1;
-                    }
-
-                    push(@implContent, "\n");
+                    my $numParameters = @{$function->parameters};
+                    my ($functionString, $paramIndex) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                     GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $svgPropertyType, $implClassName);
                 }
             }
@@ -2417,6 +2245,200 @@ sub GenerateImplementation
 
     my $conditionalString = GenerateConditionalString($dataNode);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateArgumentsCountCheck
+{
+    my $outputArray = shift;
+    my $function = shift;
+    my $dataNode = shift;
+
+    my $requiresAllArguments;
+    my $requiresAllArgumentsDefault = "";
+    if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
+        $requiresAllArgumentsDefault = "Raise";
+    }
+    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
+    if ($requiresAllArguments) {
+        my $numMandatoryParams = @{$function->parameters};
+        foreach my $param (reverse(@{$function->parameters})) {
+            if ($param->extendedAttributes->{"Optional"}) {
+                $numMandatoryParams--;
+            } else {
+                last;
+            }
+        }
+        if ($numMandatoryParams >= 1)
+        {
+            push(@$outputArray, "    if (exec->argumentCount() < $numMandatoryParams)\n");
+            if ($requiresAllArguments eq "Raise") {
+                push(@$outputArray, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
+            } else {
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+            }
+        }
+    }
+}
+
+sub GenerateParametersCheck
+{
+    my $outputArray = shift;
+    my $function = shift;
+    my $dataNode = shift;
+    my $numParameters = shift;
+    my $implClassName = shift;
+    my $functionImplementationName = shift;
+    my $svgPropertyType = shift;
+    my $svgPropertyOrListPropertyType = shift;
+    my $svgListPropertyType = shift;
+
+    my $paramIndex = 0;
+    my $argsIndex = 0;
+    my $hasOptionalArguments = 0;
+
+    my $functionString = (($svgPropertyOrListPropertyType and !$svgListPropertyType) ? "podImp." : "imp->") . $functionImplementationName . "(";
+
+    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+        push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
+        push(@$outputArray, "    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;\n");
+        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));\n");
+        $implIncludes{"ScriptArguments.h"} = 1;
+        $implIncludes{"ScriptCallStack.h"} = 1;
+        $implIncludes{"ScriptCallStackFactory.h"} = 1;
+    }
+
+    my $callWith = $function->signature->extendedAttributes->{"CallWith"};
+    if ($callWith and !$function->signature->extendedAttributes->{"Constructor"}) {
+        my $callWithArg = "COMPILE_ASSERT(false)";
+        if ($callWith eq "DynamicFrame") {
+            push(@$outputArray, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
+            push(@$outputArray, "    if (!dynamicFrame)\n");
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+            $callWithArg = "dynamicFrame";
+        } elsif ($callWith eq "ScriptState") {
+            $callWithArg = "exec";
+        } elsif ($callWith eq "ScriptExecutionContext") {
+            push(@$outputArray, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
+            push(@$outputArray, "    if (!scriptContext)\n");
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+            $callWithArg = "scriptContext"; 
+        }
+        $functionString .= ", " if $paramIndex;
+        $functionString .= $callWithArg;
+        $paramIndex++;
+    }
+
+    $implIncludes{"ExceptionCode.h"} = 1;
+    $implIncludes{"JSDOMBinding.h"} = 1;
+
+    foreach my $parameter (@{$function->parameters}) {
+        # Optional callbacks should be treated differently, because they always have a default value (0),
+        # and we can reduce the number of overloaded functions that take a different number of parameters.
+        # Optional arguments with [Optional=CallWithDefaultValue] should not generate an early call.
+        my $optional = $parameter->extendedAttributes->{"Optional"};
+        if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
+            # Generate early call if there are enough parameters.
+            if (!$hasOptionalArguments) {
+                push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
+                $hasOptionalArguments = 1;
+            }
+            push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
+            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $svgPropertyType, $implClassName);
+            push(@$outputArray, "    }\n\n");
+        }
+
+        my $name = $parameter->name;
+        my $argType = $codeGenerator->StripModule($parameter->type);
+
+        if ($argType eq "XPathNSResolver") {
+            push(@$outputArray, "    RefPtr<XPathNSResolver> customResolver;\n");
+            push(@$outputArray, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
+            push(@$outputArray, "    if (!resolver) {\n");
+            push(@$outputArray, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($argsIndex));\n");
+            push(@$outputArray, "        if (exec->hadException())\n");
+            push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
+            push(@$outputArray, "        resolver = customResolver.get();\n");
+            push(@$outputArray, "    }\n");
+        } elsif ($parameter->extendedAttributes->{"Callback"}) {
+            my $callbackClassName = GetCallbackClassName($argType);
+            $implIncludes{"$callbackClassName.h"} = 1;
+            if ($parameter->extendedAttributes->{"Optional"}) {
+                push(@$outputArray, "    RefPtr<$argType> $name;\n");
+                push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
+                push(@$outputArray, "        if (!exec->argument($argsIndex).isObject()) {\n");
+                push(@$outputArray, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "        }\n");
+                push(@$outputArray, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                push(@$outputArray, "    }\n");
+            } else {
+                push(@$outputArray, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isObject()) {\n");
+                push(@$outputArray, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "    }\n");
+                push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+            }
+        } else {
+            # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
+            # interface type, then if the incoming value does not implement that interface, a TypeError
+            # is thrown rather than silently passing NULL to the C++ code.
+            # Per the Web IDL and ECMAScript semantics, incoming values can always be converted to both
+            # strings and numbers, so do not throw TypeError if the argument is of these types.
+            if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                $implIncludes{"<runtime/Error.h>"} = 1;
+
+                my $argValue = "exec->argument($argsIndex)";
+                if (!IsNativeType($argType)) {
+                    push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
+                    push(@$outputArray, "        return throwVMTypeError(exec);\n");
+                }
+            }
+
+            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "exec->argument($argsIndex)") . ");\n");
+
+            # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
+            # But this needs to be done in the bindings, because the type is unsigned and the fact that it
+            # was negative will be lost by the time we're inside the DOM.
+            if ($parameter->extendedAttributes->{"IsIndex"}) {
+                push(@$outputArray, "    if ($name < 0) {\n");
+                push(@$outputArray, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "    }\n");
+            }
+
+            # Check if the type conversion succeeded.
+            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+
+            if ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
+                push(@$outputArray, "    if (!$name) {\n");
+                push(@$outputArray, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "    }\n");
+            }
+        }
+
+        $functionString .= ", " if $paramIndex;
+
+        if ($argType eq "NodeFilter") {
+            $functionString .= "$name.get()";
+        } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
+            $functionString .= "$name->propertyReference()";
+        } else {
+            $functionString .= $name;
+        }
+        $argsIndex++;
+        $paramIndex++;
+    }
+
+    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
+        $functionString .= ", " if $paramIndex;
+        $functionString .= "ScriptController::processingUserGesture()";
+        $paramIndex++;
+        $implIncludes{"ScriptController.h"} = 1;
+    }
+
+    return ($functionString, $paramIndex);
 }
 
 sub GenerateCallbackHeader
@@ -3212,9 +3234,6 @@ sub GenerateConstructorDefinition
     my $dataNode = shift;
 
     my $constructorClassName = "${className}Constructor";
-    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
-    my $customConstructor = $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"};
-    my $callWith = $dataNode->extendedAttributes->{"CallWith"};
     my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
 
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
@@ -3251,18 +3270,68 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, this, propertyName, descriptor);\n");
     push(@$outputArray, "}\n\n");
 
-    if ($canConstruct) {
-        if (!$customConstructor) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"}) {
+        if (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
-            my $constructorArg = "";
-            if ($callWith and $callWith eq "ScriptExecutionContext") {
-                $constructorArg = "context";
-                push(@$outputArray, "    ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();\n");
-                push(@$outputArray, "    if (!context)\n");
-                push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"Reference error\"));\n");
+
+            push(@$outputArray, "    ${constructorClassName}* jsConstructor = static_cast<${constructorClassName}*>(exec->callee());\n");
+
+            if ($dataNode->extendedAttributes->{"Constructor"}) {
+                my $function = $dataNode->constructor;
+                my @constructorArgList;
+
+                $implIncludes{"<runtime/Error.h>"} = 1;
+
+                GenerateArgumentsCountCheck($outputArray, $function, $dataNode);
+
+                if (@{$function->raisesExceptions} || $dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                    $implIncludes{"ExceptionCode.h"} = 1;
+                    push(@$outputArray, "    ExceptionCode ec = 0;\n");
+                }
+
+                # For now, we do not support SVG constructors.
+                # We do not also support a constructor [Optional] argument without CallWithDefaultValue.
+                my $numParameters = @{$function->parameters};
+                my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
+
+                if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
+                    push(@constructorArgList, "context");
+                    push(@$outputArray, "    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();\n");
+                    push(@$outputArray, "    if (!context)\n");
+                    push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
+                }
+
+                my $index = 0;
+                foreach my $parameter (@{$function->parameters}) {
+                    last if $index eq $paramIndex;
+                    push(@constructorArgList, $parameter->name);
+                    $index++;
+                }
+
+                if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                    push(@constructorArgList, "ec");
+                }
+                my $constructorArg = join(", ", @constructorArgList);
+                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+                if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                    push(@$outputArray, "    if (ec) {\n");
+                    push(@$outputArray, "        setDOMException(exec, ec);\n");
+                    push(@$outputArray, "        return JSValue::encode(JSValue());\n");
+                    push(@$outputArray, "    }\n");
+                }
+            } else {
+                my $constructorArg = "";
+                if ($dataNode->extendedAttributes->{"CallWith"} and $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
+                    $constructorArg = "context";
+                    push(@$outputArray, "    ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();\n");
+                    push(@$outputArray, "    if (!context)\n");
+                    push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
+                }
+                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
             }
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, static_cast<${constructorClassName}*>(exec->callee())->globalObject(), ${interfaceName}::create(${constructorArg}))));\n");
+
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));\n");
             push(@$outputArray, "}\n\n");
         }
 

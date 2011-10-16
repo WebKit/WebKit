@@ -1,3 +1,88 @@
+2011-10-16  Kentaro Hara  <haraken@chromium.org>
+
+        Support [Constructor] IDL for JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=70101
+
+        Reviewed by Adam Barth.
+
+        The spec for [Constructor] IDL is here: http://www.w3.org/TR/WebIDL/#Constructor
+        This patch introduced [Constructor] IDL for JSC. This patch also added
+        [ConstructorRaisesException] for JSC. If [ConstructorRaisesException] is specified,
+        a placeholder for ExceptionCode is passed to XXX::create(), like XXX::create(..., ec).
+
+        Notes:
+        - We do not yet support constructor overloading.
+        - We do not yet support [Optional] without CallWithDefaultValue for constructor arguments.
+
+        Tests: Source/WebCore/bindings/scripts/test/TestInterface.idl
+               Source/WebCore/bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Generates constructor declaration code to a header file, if a given DOM object has constructor.
+        (GenerateImplementation): Uses GenerateArgumentsCountCheck() and GenerateParametersCheck().
+        (GenerateArgumentsCountCheck): Splits out of GenerateImplementation() for reuse.
+        (GenerateParametersCheck): Splits out of GenerateImplementation() for reuse.
+        (GenerateConstructorDefinition): Generates constructor definition code.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Updated the run-binding-tests results.
+        (WebCore::JSTestInterfaceConstructor::constructJSTestInterface):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        (WebCore::JSTestInterfaceConstructor::create):
+        (WebCore::JSTestInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h: Ditto.
+        (WebCore::JSTestMediaQueryListListenerConstructor::create):
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethod):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrame):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoid):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod2):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionClassMethod):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithOptional):
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        (WebCore::JSTestObjConstructor::create):
+        (WebCore::JSTestObjConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h: Ditto.
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::create):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+
 2011-10-16  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70186
