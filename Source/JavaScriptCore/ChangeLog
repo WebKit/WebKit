@@ -1,3 +1,14 @@
+2011-10-15  Dan Horák <dan@danny.cz>
+
+        The s390 and s390x architectures both use 64-bit double type
+        that conforms to the IEEE-754 standard.
+
+        https://bugs.webkit.org/show_bug.cgi?id=69940
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/dtoa/utils.h:
+
 2011-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         FunctionExecutable should expose the ability to create unattached FunctionCodeBlocks
