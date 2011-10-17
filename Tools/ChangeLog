@@ -1,3 +1,14 @@
+2011-10-17  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        [build] Introduce Qt/SH4 buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=70227
+
+        Reviewed by Adam Roben.
+
+        Add buildslave for Linux/Qt/SH4.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)

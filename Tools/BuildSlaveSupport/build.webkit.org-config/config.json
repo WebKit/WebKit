@@ -67,7 +67,8 @@
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" },
 
-                    { "name": "hfreyther-mipsel-linux1", "platform": "qt"}
+                    { "name": "hfreyther-mipsel-linux1", "platform": "qt"},
+                    { "name": "hfreyther-sh4-linux1", "platform": "qt"}
                   ],
 
     "builders":   [ { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
@@ -203,6 +204,11 @@
                       "slavenames": ["hfreyther-mipsel-linux1"]
                     },
                     {
+                      "name": "Qt Linux SH4 Release", "type": "Build", "builddir": "qt-linux-sh4-release",
+                      "platform": "qt", "configuration": "release", "architectures": ["sh4"],
+                      "slavenames": ["hfreyther-sh4-linux1"]
+                    },
+                    {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-1"]
@@ -262,7 +268,8 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
-                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release", "Qt Linux MIPS Release",
+                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
+                                       "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
                                        "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
                                        "Chromium Android Release", "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release (Build)"]
