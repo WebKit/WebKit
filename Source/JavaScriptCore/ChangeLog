@@ -1,5 +1,13 @@
 2011-10-17  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after r97536, part 2
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Added back
+        JSC::setUpStaticFunctionSlot with its new mangled name. SOrted the rest of the file while I
+        was at it.
+
+2011-10-17  Adam Roben  <aroben@apple.com>
+
         Windows build fix after r97536
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed export of
