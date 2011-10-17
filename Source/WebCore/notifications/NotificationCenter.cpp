@@ -61,9 +61,8 @@ void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 
 void NotificationCenter::disconnectFrame()
 {
-    // m_notificationPresenter should never be 0. But just to be safe, we check it here.
-    // Due to the mysterious bug http://code.google.com/p/chromium/issues/detail?id=49323.
-    ASSERT(m_notificationPresenter);
+    // Can be 0 if iframe was transferred into another page. In this case
+    // this method is invoked more then once.
     if (!m_notificationPresenter)
         return;
     m_notificationPresenter->cancelRequestsForPermission(scriptExecutionContext());

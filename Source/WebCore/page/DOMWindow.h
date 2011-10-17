@@ -380,6 +380,9 @@ namespace WebCore {
 
 #if ENABLE(NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
+        // Renders webkitNotifications object safely inoperable, disconnects
+        // if from embedder-provided NotificationPresenter.
+        void resetNotifications();
 #endif
 
 #if ENABLE(QUOTA)

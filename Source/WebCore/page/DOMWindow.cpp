@@ -542,9 +542,7 @@ void DOMWindow::clear()
     m_applicationCache = 0;
 
 #if ENABLE(NOTIFICATIONS)
-    if (m_notifications)
-        m_notifications->disconnectFrame();
-    m_notifications = 0;
+    resetNotifications();
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -748,6 +746,14 @@ NotificationCenter* DOMWindow::webkitNotifications() const
       
     return m_notifications.get();
 }
+
+void DOMWindow::resetNotifications()
+{
+    if (!m_notifications)
+        return;
+    m_notifications->disconnectFrame();
+    m_notifications = 0;
+}
 #endif
 
 void DOMWindow::pageDestroyed()
@@ -756,9 +762,7 @@ void DOMWindow::pageDestroyed()
 #if ENABLE(NOTIFICATIONS)
     // Clearing Notifications requests involves accessing the client so it must be done
     // before the frame is detached.
-    if (m_notifications)
-        m_notifications->disconnectFrame();
-    m_notifications = 0;
+    resetNotifications();
 #endif
 }
 
