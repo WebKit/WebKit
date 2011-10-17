@@ -1,3 +1,9 @@
+2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch Internals.cpp to make 64-bit GTK+ build happy.
+
+        * testing/Internals.cpp:
+
 2011-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: children() method should be consolidated in AccessibilityObject

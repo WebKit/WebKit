@@ -473,4 +473,5 @@ unsigned Internals::lengthFromRange(Element* scope, const Range* range, Exceptio
     TextIterator::getLocationAndLengthFromRange(scope, range, unusedLocation, length);
     return length;
 }
+
 }

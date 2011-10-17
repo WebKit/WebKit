@@ -1,3 +1,13 @@
+2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moved V8-specific result to platform/chromium and added JSC result in cross-platform directory.
+
+        * fast/files/url-required-arguments-expected.txt: Replaced with
+        LayoutTests/platform/qt/fast/files/url-required-arguments-expected.txt.
+        * platform/chromium/fast/files/url-required-arguments-expected.txt: Copied from
+        LayoutTests/fast/files/url-required-arguments-expected.txt.
+        * platform/qt/fast/files/url-required-arguments-expected.txt: Removed.
+
 2011-10-17  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed gardening.
