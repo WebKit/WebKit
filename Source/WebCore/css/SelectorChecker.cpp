@@ -215,7 +215,7 @@ static inline const AtomicString* linkAttribute(Node* node)
     
 #if ENABLE(SVG)
     if (element->isSVGElement())
-        return &element->fastGetAttribute(XLinkNames::hrefAttr);
+        return &element->getAttribute(XLinkNames::hrefAttr);
 #endif
     
     return 0;

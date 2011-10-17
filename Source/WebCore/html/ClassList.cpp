@@ -39,7 +39,7 @@ ClassList::ClassList(Element* element)
     : m_element(element)
 {
     if (m_element->document()->inQuirksMode())
-        m_classNamesForQuirksMode.set(m_element->fastGetAttribute(classAttr), false);
+        m_classNamesForQuirksMode.set(m_element->getAttribute(classAttr), false);
 }
 
 void ClassList::ref()
@@ -85,7 +85,7 @@ void ClassList::add(const AtomicString& token, ExceptionCode& ec)
 
 void ClassList::addInternal(const AtomicString& token)
 {
-    const AtomicString& oldClassName(m_element->fastGetAttribute(classAttr));
+    const AtomicString& oldClassName(m_element->getAttribute(classAttr));
     if (oldClassName.isEmpty())
         m_element->setAttribute(classAttr, token);
     else if (!containsInternal(token)) {
@@ -107,7 +107,7 @@ void ClassList::removeInternal(const AtomicString& token)
     // of character by character testing.
     if (!containsInternal(token))
         return;
-    const AtomicString& newClassName(removeToken(m_element->fastGetAttribute(classAttr), token));
+    const AtomicString& newClassName(removeToken(m_element->getAttribute(classAttr), token));
     m_element->setAttribute(classAttr, newClassName);
 }
 
@@ -126,7 +126,7 @@ bool ClassList::toggle(const AtomicString& token, ExceptionCode& ec)
 
 String ClassList::toString() const
 {
-    return m_element->fastGetAttribute(classAttr);
+    return m_element->getAttribute(classAttr);
 }
 
 void ClassList::reset(const String& newClassName)

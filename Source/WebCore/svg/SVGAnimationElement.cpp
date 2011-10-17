@@ -253,7 +253,7 @@ AnimationMode SVGAnimationElement::animationMode() const
         return ToAnimation;
     if (!animationPath().isEmpty())
         return PathAnimation;
-    if (fastHasAttribute(SVGNames::valuesAttr))
+    if (hasAttribute(SVGNames::valuesAttr))
         return ValuesAnimation;
     if (!toValue().isEmpty())
         return fromValue().isEmpty() ? ToAnimation : FromToAnimation;

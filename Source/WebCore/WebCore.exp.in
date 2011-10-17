@@ -1510,6 +1510,7 @@ _wkWindowSetScaledFrame
 
 #if !defined(NDEBUG)
 __ZN7WebCore20LogNotYetImplementedE
+__ZNK7WebCore7Element26fastAttributeLookupAllowedERKNS_13QualifiedNameE
 #endif
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

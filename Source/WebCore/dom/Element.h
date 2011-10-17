@@ -123,6 +123,9 @@ public:
     // attribute or one of the SVG animatable attributes.
     bool fastHasAttribute(const QualifiedName&) const;
     const AtomicString& fastGetAttribute(const QualifiedName&) const;
+#ifndef NDEBUG
+    bool fastAttributeLookupAllowed(const QualifiedName&) const;
+#endif
 
     bool hasAttributes() const;
 
@@ -507,11 +510,13 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
+    ASSERT(fastAttributeLookupAllowed(name));
     return m_attributeMap && m_attributeMap->getAttributeItem(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
+    ASSERT(fastAttributeLookupAllowed(name));
     if (m_attributeMap) {
         if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
             return attribute->value();

@@ -79,7 +79,7 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, Sho
         return true;
 
     unsigned matchedAttributes = 0;
-    if (element->fastGetAttribute(classAttr) == styleSpanClassString())
+    if (element->getAttribute(classAttr) == styleSpanClassString())
         matchedAttributes++;
     if (element->hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
         || !element->inlineStyleDecl() || element->inlineStyleDecl()->isEmpty()))

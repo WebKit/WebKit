@@ -101,6 +101,10 @@ public:
 
     virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap();
 
+#ifndef NDEBUG
+    static bool isAnimatableAttribute(const QualifiedName&);
+#endif
+
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 

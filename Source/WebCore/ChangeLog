@@ -1,3 +1,57 @@
+2011-10-17  Andreas Kling  <kling@webkit.org>
+
+        Protect against incorrect Element::fast*Attribute() usage.
+        https://bugs.webkit.org/show_bug.cgi?id=67612
+
+        Reviewed by Darin Adler.
+
+        Add debug-only checks in Element's fastHasAttribute() and fastGetAttribute() to verify
+        that we aren't looking up the "style" attribute or any of the SVG animatable attributes.
+
+        No new tests, erroneous behavior is covered by assertions.
+
+        * WebCore.exp.in: Export Element::fastAttributeLookupAllowed() for debug builds
+        since it's used by the inline fast*Attribute() calls.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Use getAttribute() for class.
+        * css/SelectorChecker.cpp:
+        (WebCore::linkAttribute): Use getAttribute() for xlink:href.
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute): Manually inline fastGetAttribute() in ideal case.
+        (WebCore::Element::fastAttributeLookupAllowed): Checks if an attribute can be used
+        with the fast lookup functions.
+        * dom/Element.h:
+        (WebCore::Element::fastHasAttribute): Add assertion.
+        (WebCore::Element::fastGetAttribute): Ditto.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::hasNoAttributeOrOnlyStyleAttribute): Use getAttribute() for class.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInlineNodeWithStyle): Ditto.
+        * html/ClassList.cpp:
+        (WebCore::ClassList::ClassList): Ditto.
+        (WebCore::ClassList::addInternal): Ditto.
+        (WebCore::ClassList::removeInternal): Ditto.
+        (WebCore::ClassList::toString): Ditto.
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements): Use getAttribute() for xlink:href.
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode): Use getAttribute() for rotate.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::animationMode): Use getAttribute() for values.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isAnimatableAttribute): Added, returns true if the given
+        QualifiedName represents an animatable attribute.
+        * svg/SVGElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue): Use getAttribute() for xlink:href.
+        (WebCore::SVGFontFaceUriElement::loadFont): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::xlinkHref): Ditto.
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement): Ditto.
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type): Use getAttribute() for type.
+
 2011-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

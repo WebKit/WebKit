@@ -864,7 +864,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
         return false;
     if (m_element == m_element->document()->cssTarget())
         return false;
-    if (element->fastGetAttribute(typeAttr) != m_element->fastGetAttribute(typeAttr))
+    if (element->getAttribute(typeAttr) != m_element->getAttribute(typeAttr))
         return false;
     if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
         return false;
@@ -902,7 +902,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
     if (equalIgnoringCase(element->fastGetAttribute(dirAttr), "auto") || equalIgnoringCase(m_element->fastGetAttribute(dirAttr), "auto"))
         return false;
 
-    if (element->hasClass() && m_element->fastGetAttribute(classAttr) != element->fastGetAttribute(classAttr))
+    if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
         return false;
 
     if (element->hasMappedAttributes() && !element->attributeMap()->mappedMapsEquivalent(m_styledElement->attributeMap()))

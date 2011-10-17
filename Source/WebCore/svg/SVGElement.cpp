@@ -435,6 +435,111 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
     return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true);
 }
 
+#ifndef NDEBUG
+bool SVGElement::isAnimatableAttribute(const QualifiedName& name)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, animatableAttributes, ());
+
+    if (animatableAttributes.isEmpty()) {
+        animatableAttributes.add(HTMLNames::classAttr);
+        animatableAttributes.add(XLinkNames::hrefAttr);
+        animatableAttributes.add(SVGNames::amplitudeAttr);
+        animatableAttributes.add(SVGNames::azimuthAttr);
+        animatableAttributes.add(SVGNames::baseFrequencyAttr);
+        animatableAttributes.add(SVGNames::biasAttr);
+        animatableAttributes.add(SVGNames::clipPathUnitsAttr);
+        animatableAttributes.add(SVGNames::cxAttr);
+        animatableAttributes.add(SVGNames::cyAttr);
+        animatableAttributes.add(SVGNames::diffuseConstantAttr);
+        animatableAttributes.add(SVGNames::divisorAttr);
+        animatableAttributes.add(SVGNames::dxAttr);
+        animatableAttributes.add(SVGNames::dyAttr);
+        animatableAttributes.add(SVGNames::edgeModeAttr);
+        animatableAttributes.add(SVGNames::elevationAttr);
+        animatableAttributes.add(SVGNames::exponentAttr);
+        animatableAttributes.add(SVGNames::externalResourcesRequiredAttr);
+        animatableAttributes.add(SVGNames::filterResAttr);
+        animatableAttributes.add(SVGNames::filterUnitsAttr);
+        animatableAttributes.add(SVGNames::fxAttr);
+        animatableAttributes.add(SVGNames::fyAttr);
+        animatableAttributes.add(SVGNames::gradientTransformAttr);
+        animatableAttributes.add(SVGNames::gradientUnitsAttr);
+        animatableAttributes.add(SVGNames::heightAttr);
+        animatableAttributes.add(SVGNames::in2Attr);
+        animatableAttributes.add(SVGNames::inAttr);
+        animatableAttributes.add(SVGNames::interceptAttr);
+        animatableAttributes.add(SVGNames::k1Attr);
+        animatableAttributes.add(SVGNames::k2Attr);
+        animatableAttributes.add(SVGNames::k3Attr);
+        animatableAttributes.add(SVGNames::k4Attr);
+        animatableAttributes.add(SVGNames::kernelMatrixAttr);
+        animatableAttributes.add(SVGNames::kernelUnitLengthAttr);
+        animatableAttributes.add(SVGNames::lengthAdjustAttr);
+        animatableAttributes.add(SVGNames::limitingConeAngleAttr);
+        animatableAttributes.add(SVGNames::markerHeightAttr);
+        animatableAttributes.add(SVGNames::markerUnitsAttr);
+        animatableAttributes.add(SVGNames::markerWidthAttr);
+        animatableAttributes.add(SVGNames::maskContentUnitsAttr);
+        animatableAttributes.add(SVGNames::maskUnitsAttr);
+        animatableAttributes.add(SVGNames::methodAttr);
+        animatableAttributes.add(SVGNames::modeAttr);
+        animatableAttributes.add(SVGNames::numOctavesAttr);
+        animatableAttributes.add(SVGNames::offsetAttr);
+        animatableAttributes.add(SVGNames::operatorAttr);
+        animatableAttributes.add(SVGNames::orderAttr);
+        animatableAttributes.add(SVGNames::orientAttr);
+        animatableAttributes.add(SVGNames::pathLengthAttr);
+        animatableAttributes.add(SVGNames::patternContentUnitsAttr);
+        animatableAttributes.add(SVGNames::patternTransformAttr);
+        animatableAttributes.add(SVGNames::patternUnitsAttr);
+        animatableAttributes.add(SVGNames::pointsAtXAttr);
+        animatableAttributes.add(SVGNames::pointsAtYAttr);
+        animatableAttributes.add(SVGNames::pointsAtZAttr);
+        animatableAttributes.add(SVGNames::preserveAlphaAttr);
+        animatableAttributes.add(SVGNames::preserveAspectRatioAttr);
+        animatableAttributes.add(SVGNames::primitiveUnitsAttr);
+        animatableAttributes.add(SVGNames::radiusAttr);
+        animatableAttributes.add(SVGNames::rAttr);
+        animatableAttributes.add(SVGNames::refXAttr);
+        animatableAttributes.add(SVGNames::refYAttr);
+        animatableAttributes.add(SVGNames::resultAttr);
+        animatableAttributes.add(SVGNames::rotateAttr);
+        animatableAttributes.add(SVGNames::rxAttr);
+        animatableAttributes.add(SVGNames::ryAttr);
+        animatableAttributes.add(SVGNames::scaleAttr);
+        animatableAttributes.add(SVGNames::seedAttr);
+        animatableAttributes.add(SVGNames::slopeAttr);
+        animatableAttributes.add(SVGNames::spacingAttr);
+        animatableAttributes.add(SVGNames::specularConstantAttr);
+        animatableAttributes.add(SVGNames::specularExponentAttr);
+        animatableAttributes.add(SVGNames::spreadMethodAttr);
+        animatableAttributes.add(SVGNames::startOffsetAttr);
+        animatableAttributes.add(SVGNames::stdDeviationAttr);
+        animatableAttributes.add(SVGNames::stitchTilesAttr);
+        animatableAttributes.add(SVGNames::surfaceScaleAttr);
+        animatableAttributes.add(SVGNames::tableValuesAttr);
+        animatableAttributes.add(SVGNames::targetAttr);
+        animatableAttributes.add(SVGNames::targetXAttr);
+        animatableAttributes.add(SVGNames::targetYAttr);
+        animatableAttributes.add(SVGNames::transformAttr);
+        animatableAttributes.add(SVGNames::typeAttr);
+        animatableAttributes.add(SVGNames::valuesAttr);
+        animatableAttributes.add(SVGNames::viewBoxAttr);
+        animatableAttributes.add(SVGNames::widthAttr);
+        animatableAttributes.add(SVGNames::x1Attr);
+        animatableAttributes.add(SVGNames::x2Attr);
+        animatableAttributes.add(SVGNames::xAttr);
+        animatableAttributes.add(SVGNames::xChannelSelectorAttr);
+        animatableAttributes.add(SVGNames::y1Attr);
+        animatableAttributes.add(SVGNames::y2Attr);
+        animatableAttributes.add(SVGNames::yAttr);
+        animatableAttributes.add(SVGNames::yChannelSelectorAttr);
+        animatableAttributes.add(SVGNames::zAttr);
+    }
+    return animatableAttributes.contains(name);
+}
+#endif
+
 }
 
 #endif // ENABLE(SVG)

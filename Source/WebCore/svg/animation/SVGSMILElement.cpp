@@ -540,7 +540,7 @@ SVGSMILElement::FillMode SVGSMILElement::fill() const
     
 String SVGSMILElement::xlinkHref() const
 {    
-    return fastGetAttribute(XLinkNames::hrefAttr);
+    return getAttribute(XLinkNames::hrefAttr);
 }
     
 SMILTime SVGSMILElement::dur() const

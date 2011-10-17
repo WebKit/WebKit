@@ -746,7 +746,7 @@ static bool isInlineNodeWithStyle(const Node* node)
     // We can skip over elements whose class attribute is
     // one of our internal classes.
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
-    AtomicString classAttributeValue = element->getAttribute(classAttr);
+    const AtomicString& classAttributeValue = element->getAttribute(classAttr);
     if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace
         || classAttributeValue == ApplePasteAsQuotation)

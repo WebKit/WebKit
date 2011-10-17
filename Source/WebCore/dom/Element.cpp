@@ -226,7 +226,11 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
         updateAnimatedSVGAttribute(name);
 #endif
 
-    return fastGetAttribute(name);
+    if (m_attributeMap) {
+        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+            return attribute->value();
+    }
+    return nullAtom;
 }
 
 void Element::scrollIntoView(bool alignToTop) 
@@ -2018,5 +2022,20 @@ PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
     
     return animController->animationsForRenderer(renderer());
 }
+
+#ifndef NDEBUG
+bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
+{
+    if (name == HTMLNames::styleAttr)
+        return false;
+
+#if ENABLE(SVG)
+    if (isSVGElement())
+        return !SVGElement::isAnimatableAttribute(name);
+#endif
+
+    return true;
+}
+#endif
 
 } // namespace WebCore
