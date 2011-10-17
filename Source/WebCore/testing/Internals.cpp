@@ -41,18 +41,21 @@
 #include "IntRect.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#endif
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
-#if ENABLE(SMOOTH_SCROLLING)
-#include "ScrollAnimator.h"
-#endif
 #include "Settings.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
+#include "TextIterator.h"
+
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
+#if ENABLE(SMOOTH_SCROLLING)
+#include "ScrollAnimator.h"
+#endif
 
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
@@ -414,6 +417,16 @@ void Internals::setSuggestedValue(Element* element, const String& value, Excepti
     inputElement->setSuggestedValue(value);
 }
 
+void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
+{
+    if (!element || !element->document() || !element->document()->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    FrameView* frameView = element->document()->view();
+    frameView->scrollElementToRect(element, IntRect(x, y, w, h));
+}
+
 void Internals::paintControlTints(Document* document, ExceptionCode& ec)
 {
     if (!document || !document->view()) {
@@ -425,14 +438,39 @@ void Internals::paintControlTints(Document* document, ExceptionCode& ec)
     frameView->paintControlTints();
 }
 
-void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
+PassRefPtr<Range> Internals::rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode& ec)
 {
-    if (!element || !element->document() || !element->document()->view()) {
+    if (!scope) {
         ec = INVALID_ACCESS_ERR;
-        return;
+        return 0;
     }
-    FrameView* frameView = element->document()->view();
-    frameView->scrollElementToRect(element, IntRect(x, y, w, h));
+
+    return TextIterator::rangeFromLocationAndLength(scope, rangeLocation, rangeLength);
 }
 
+unsigned Internals::locationFromRange(Element* scope, const Range* range, ExceptionCode& ec)
+{
+    if (!scope || !range) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    size_t location = 0;
+    size_t unusedLength = 0;
+    TextIterator::getLocationAndLengthFromRange(scope, range, location, unusedLength);
+    return location;
+}
+
+unsigned Internals::lengthFromRange(Element* scope, const Range* range, ExceptionCode& ec)
+{
+    if (!scope || !range) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    size_t unusedLocation = 0;
+    size_t length = 0;
+    TextIterator::getLocationAndLengthFromRange(scope, range, unusedLocation, length);
+    return length;
+}
 }

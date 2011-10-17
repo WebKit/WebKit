@@ -67,6 +67,10 @@ module window {
         void paintControlTints(in Document document) raises (DOMException);
 
         void scrollElementToRect(in Element element, in long x, in long y, in long w, in long h) raises (DOMException);
+
+        Range rangeFromLocationAndLength(in Element scope, in long rangeLocation, in long rangeLength) raises (DOMException);
+        unsigned long locationFromRange(in Element scope, in Range range) raises (DOMException);
+        unsigned long lengthFromRange(in Element scope, in Range range) raises (DOMException);
     };
 }
 
