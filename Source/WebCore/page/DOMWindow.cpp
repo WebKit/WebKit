@@ -748,11 +748,6 @@ NotificationCenter* DOMWindow::webkitNotifications() const
       
     return m_notifications.get();
 }
-
-void DOMWindow::resetNotifications()
-{
-    m_notifications->disconnectFrame();
-}
 #endif
 
 void DOMWindow::pageDestroyed()

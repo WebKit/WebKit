@@ -746,12 +746,8 @@ void Frame::transferChildFrameToNewDocument()
         // when the Geolocation's iframe is reparented.
         // See https://bugs.webkit.org/show_bug.cgi?id=55577
         // and https://bugs.webkit.org/show_bug.cgi?id=52877
-        if (m_domWindow) {
+        if (m_domWindow)
             m_domWindow->resetGeolocation();
-#if ENABLE(NOTIFICATIONS)
-            m_domWindow->resetNotifications();
-#endif
-        }
 
 #if ENABLE(MEDIA_STREAM)
         if (m_mediaStreamFrameController)
