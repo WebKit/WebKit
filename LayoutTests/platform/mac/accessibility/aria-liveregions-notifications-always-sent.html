@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+Test
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA live region notifications are sent even when an assistive technology is not accessing them directly on each update.");
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("liveregion").focus();
+        liveRegion = window.accessibilityController.focusedElement;
+
+        var liveRegionChangeCount = 0;
+        function ariaCallback(notification) {
+           if (notification == "AXLiveRegionChanged") {
+               liveRegionChangeCount++;
+               if (liveRegionChangeCount == 3) {
+                   liveRegion.removeNotificationListener();
+                   window.layoutTestController.notifyDone();
+               }
+           }
+        }
+        var addedNotification = liveRegion.addNotificationListener(ariaCallback);
+        shouldBe("addedNotification", "true");
+
+        // this should trigger our live region callback for a new element.
+        for (var k = 0; k < 3; k++) {
+           var textNode = document.createTextNode("test" + k);
+           document.getElementById("liveregion").appendChild(textNode);
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

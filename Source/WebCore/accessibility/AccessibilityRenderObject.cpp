@@ -3423,20 +3423,18 @@ void AccessibilityRenderObject::childrenChanged()
             sentChildrenChanged = true;
         }
         
-        // Only do work if the children haven't been marked dirty. This has the effect of blocking
-        // future live region change notifications until the AX tree has been accessed again. This
-        // is a good performance win for all parties.
-        if (!axParent->needsToUpdateChildren()) {
-            axParent->setNeedsToUpdateChildren();
-            
-            // If this element supports ARIA live regions, then notify the AT of changes.
-            if (axParent->supportsARIALiveRegion())
-                axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXLiveRegionChanged, true);
+        axParent->setNeedsToUpdateChildren();
+        
+        // These notifications always need to be sent because screenreaders are reliant on them to perform. 
+        // In other words, they need to be sent even when the screen reader has not accessed this live region since the last update.
 
-            // If this element is an ARIA text control, notify the AT of changes.
-            if (axParent->isARIATextControl() && !axParent->isNativeTextControl() && !axParent->node()->isContentEditable())
-                axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXValueChanged, true);
-        }
+        // If this element supports ARIA live regions, then notify the AT of changes.
+        if (axParent->supportsARIALiveRegion())
+            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXLiveRegionChanged, true);
+        
+        // If this element is an ARIA text control, notify the AT of changes.
+        if (axParent->isARIATextControl() && !axParent->isNativeTextControl() && !axParent->node()->isContentEditable())
+            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXValueChanged, true);
     }
 }
     

@@ -1,3 +1,13 @@
+2011-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: webkit won't always send live region notifications
+        https://bugs.webkit.org/show_bug.cgi?id=70030
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent.html: Added.
+
 2011-10-17  Darin Adler  <darin@apple.com>
 
         Cleared a stray executable bit.

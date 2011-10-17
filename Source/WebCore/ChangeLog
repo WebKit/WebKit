@@ -1,3 +1,20 @@
+2011-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: webkit won't always send live region notifications
+        https://bugs.webkit.org/show_bug.cgi?id=70030
+
+        Webkit purposefully does not send live region notifications if some AT client has not accessed the AX tree in between 
+        the last live region update (ostensibly to improve performance).
+        However, this is problematic if a screen reader misses one notification... it has no idea what happened and the only 
+        recourse is to rescan the page for changes. The correct thing to do is to always send notifications.
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/aria-liveregions-notifications-always-sent.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+
 2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: fix handling of source mapping entries with no mapping.
