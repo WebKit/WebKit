@@ -1,3 +1,11 @@
+2011-10-17  Andrei Lavreniyuk  <andy.lavr@gmail.com>
+
+        Fix clang WebKitGTK+ build.
+
+        Reviewed by Martin Robinson.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always disable ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL) and delete associated code
