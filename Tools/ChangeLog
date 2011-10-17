@@ -1,3 +1,18 @@
+2011-10-17  Ada Chan  <adachan@apple.com>
+
+        Add a test to call WKPageLoadAlternateHTMLString() with a non-directory URL.
+        https://bugs.webkit.org/show_bug.cgi?id=70168
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST): Call WKPageLoadAlternateHTMLString() with a file URL and make sure it finishes loading.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Add the new file.
+
 2011-10-17  Darin Adler  <darin@apple.com>
 
         Add some more *.pyc ignores in directories with Python scripts.

@@ -1,3 +1,14 @@
+2011-10-17  Ada Chan  <adachan@apple.com>
+
+        Calling WKPageLoadAlternateHTMLString() where baseURL does not point to a directory causes an invalid message to be returned from WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=70168
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::assumeReadAccessToBaseURL): Add the file path of url's base URL to m_localPathsWithAssumedReadAccess,
+        since url may not point to a directory.
+
 2011-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add methods to get/set a custom text enconding to WebKit2 GTK+ API

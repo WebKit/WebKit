@@ -1,3 +1,14 @@
+2011-10-17  Ada Chan  <adachan@apple.com>
+
+        Export KURL::baseAsString() so it can be called in WebProcessProxy::assumeReadAccessToBaseURL() in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=70168
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. There is no change in functionality.
+
+        * WebCore.exp.in: Export KURL::baseAsString().
+
 2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch Internals.cpp to make 64-bit GTK+ build happy.
