@@ -1,3 +1,16 @@
+2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Editing CSS selector doesn't fire onResourceContentCommitted
+        https://bugs.webkit.org/show_bug.cgi?id=70018
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/styles/commit-selector.html
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+
 2011-10-17  Andreas Kling  <kling@webkit.org>
 
         CSS/XSLStyleSheet: Remove insert() and remove().

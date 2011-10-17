@@ -1,3 +1,13 @@
+2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Editing CSS selector doesn't fire onResourceContentCommitted
+        https://bugs.webkit.org/show_bug.cgi?id=70018
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/commit-selector-expected.txt: Added.
+        * inspector/styles/commit-selector.html: Added.
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

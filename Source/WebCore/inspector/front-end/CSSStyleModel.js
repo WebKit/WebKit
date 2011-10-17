@@ -50,8 +50,18 @@ WebInspector.CSSStyleModel.Events = {
 }
 
 WebInspector.CSSStyleModel.prototype = {
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {?Array.<string>|undefined} forcedPseudoClasses
+     * @param {function(?*)} userCallback
+     */
     getStylesAsync: function(nodeId, forcedPseudoClasses, userCallback)
     {
+        /**
+         * @param {function(?*)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.CSSNodeStyles} payload
+         */
         function callback(userCallback, error, payload)
         {
             if (error) {
@@ -98,8 +108,17 @@ WebInspector.CSSStyleModel.prototype = {
         CSSAgent.getStylesForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
     },
 
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+     */
     getComputedStyleAsync: function(nodeId, userCallback)
     {
+        /**
+         * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.CSSStyle} stylePayload
+         */
         function callback(userCallback, error, stylePayload)
         {
             if (error)
@@ -111,8 +130,17 @@ WebInspector.CSSStyleModel.prototype = {
         CSSAgent.getComputedStyleForNode(nodeId, callback.bind(null, userCallback));
     },
 
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+     */
     getInlineStyleAsync: function(nodeId, userCallback)
     {
+        /**
+         * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.CSSStyle} stylePayload
+         */
         function callback(userCallback, error, stylePayload)
         {
             if (error)
@@ -124,8 +152,21 @@ WebInspector.CSSStyleModel.prototype = {
         CSSAgent.getInlineStyleForNode(nodeId, callback.bind(null, userCallback));
     },
 
+    /**
+     * @param {CSSAgent.CSSRuleId} ruleId
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {string} newSelector
+     * @param {function(WebInspector.CSSRule, boolean)} successCallback
+     * @param {function()} failureCallback
+     */
     setRuleSelector: function(ruleId, nodeId, newSelector, successCallback, failureCallback)
     {
+        /**
+         * @param {DOMAgent.NodeId} nodeId
+         * @param {function(WebInspector.CSSRule, boolean)} successCallback
+         * @param {*} rulePayload
+         * @param {?Array.<DOMAgent.NodeId>} selectedNodeIds
+         */
         function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
         {
             if (!selectedNodeIds)
@@ -136,9 +177,16 @@ WebInspector.CSSStyleModel.prototype = {
             this._fireStyleSheetChanged(rule.id.styleSheetId, true);
         }
 
-        function callback(nodeId, successCallback, failureCallback, error, newSelector, rulePayload)
+        /**
+         * @param {DOMAgent.NodeId} nodeId
+         * @param {function(WebInspector.CSSRule, boolean)} successCallback
+         * @param {function()} failureCallback
+         * @param {?Protocol.Error} error
+         * @param {string} newSelector
+         * @param {*=} rulePayload
+         */
+        function callback(nodeId, successCallback, failureCallback, newSelector, error, rulePayload)
         {
-            // FIXME: looks like rulePayload is always null.
             if (error)
                 failureCallback();
             else {
@@ -153,6 +201,12 @@ WebInspector.CSSStyleModel.prototype = {
         CSSAgent.setRuleSelector(ruleId, newSelector, callback.bind(this, nodeId, successCallback, failureCallback, newSelector));
     },
 
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {string} selector
+     * @param {function(WebInspector.CSSRule, boolean)} successCallback
+     * @param {function()} failureCallback
+     */
     addRule: function(nodeId, selector, successCallback, failureCallback)
     {
         function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
@@ -166,6 +220,13 @@ WebInspector.CSSStyleModel.prototype = {
             this._fireStyleSheetChanged(rule.id.styleSheetId, true);
         }
 
+        /**
+         * @param {function(WebInspector.CSSRule, boolean)} successCallback
+         * @param {function()} failureCallback
+         * @param {string} selector
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.CSSRule} rulePayload
+         */
         function callback(successCallback, failureCallback, selector, error, rulePayload)
         {
             if (error) {
