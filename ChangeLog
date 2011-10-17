@@ -1,3 +1,14 @@
+2011-10-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed; actually enable/disable microdata support in CMake.
+
+        Follow-up to r97471, which did not plug the option to enable/disable
+        microdata into the buildsystem.
+
+        * Source/cmake/OptionsEfl.cmake: Add ENABLE_MICRODATA feature, turned off by default.
+        * Source/cmake/OptionsWinCE.cmake: Ditto.
+        * Source/cmakeconfig.h.cmake: Add ENABLE_MICRODATA #cmakedefine.
+
 2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK build fix patch by Gustavo Noronha Silva.
