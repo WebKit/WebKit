@@ -1,3 +1,19 @@
+2011-10-17  Erik Arvidsson  <arv@chromium.org>
+
+        REGRESSION(r97566) fast/js/stack-overflow-arrity-catch.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=70210
+
+        Reviewed by Darin Adler.
+
+        Change the test to not call debug() inside the test functions since that fails on V8
+        because we are already at the maximum allowed stack depth.
+
+        * fast/js/script-tests/stack-overflow-arrity-catch.js:
+        (test1): Changed to not call debug but set a boolean variable that is later checked.
+        (test2): Ditto.
+        * fast/js/stack-overflow-arrity-catch-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         Removing suppressions for the fullscreen/ tests - it looks

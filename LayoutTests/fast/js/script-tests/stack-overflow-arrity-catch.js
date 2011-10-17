@@ -7,7 +7,7 @@ function funcWith20Args(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8,
     debug("ERROR: Shouldn't arrive in 20 arg function!");
 }
 
-gotRightCatch = false;
+var gotRightCatch = false, gotWrongCatch1 = false, gotWrongCatch2 = false;
 
 function test1()
 {
@@ -19,7 +19,7 @@ function test1()
         try {
             var dummy = new RegExp('a|b|c');
         } catch(err) {
-            debug('Should not get here #1!');
+            gotWrongCatch1 = true;
         }
         
         try {
@@ -35,7 +35,7 @@ function test2()
     try {
         var dummy = new Date();
     } catch(err) {
-        debug('Should not get here #2!');
+        gotWrongCatch2 = true;
     }
     
     try {
@@ -54,5 +54,7 @@ function test2()
 test1();
 
 shouldBeTrue("gotRightCatch");
+shouldBeFalse("gotWrongCatch1");
+shouldBeFalse("gotWrongCatch2");
 
 var successfullyParsed = true;
