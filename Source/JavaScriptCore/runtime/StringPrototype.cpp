@@ -705,8 +705,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  ECMA 15.5.4.12 String.prototype.search (regexp)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
+         *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        reg = RegExp::create(exec->globalData(), a0.toString(exec), NoFlags);
+        reg = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec), NoFlags);
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -754,8 +755,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
          *  ECMA 15.5.4.12 String.prototype.search (regexp)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
+         *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        reg = RegExp::create(exec->globalData(), a0.toString(exec), NoFlags);
+        reg = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec), NoFlags);
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;

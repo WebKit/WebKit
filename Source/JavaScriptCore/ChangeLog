@@ -1,5 +1,18 @@
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
+        Incorrect behavior from String match/search & undefined pattern
+        https://bugs.webkit.org/show_bug.cgi?id=70286
+
+        Reviewed by Sam weinig.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+            - In case of undefined, pattern is "".
+        (JSC::stringProtoFuncSearch):
+            - In case of undefined, pattern is "".
+
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=70207
         After deleting __defineSetter__, it is absent but appears in name list
 

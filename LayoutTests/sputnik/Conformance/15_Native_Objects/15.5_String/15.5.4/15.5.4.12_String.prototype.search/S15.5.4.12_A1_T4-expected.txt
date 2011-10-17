@@ -1,6 +1,6 @@
 S15.5.4.12_A1_T4
 
-FAIL SputnikError: #1: "".search() === 0. Actual: -1
+PASS 
 
 TEST COMPLETE
 

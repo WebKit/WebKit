@@ -1,3 +1,18 @@
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Incorrect behavior from String match/search & undefined pattern
+        https://bugs.webkit.org/show_bug.cgi?id=70286
+
+        Reviewed by Sam weinig.
+
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T6-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T8-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T9-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A1_T4-expected.txt:
+            - Check in passing results.
+
 2011-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

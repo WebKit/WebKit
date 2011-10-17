@@ -1,6 +1,6 @@
 S15.5.4.10_A1_T8
 
-FAIL SputnikError: #4.0: __obj = {toString:function(){}}; __matched = String(__obj).match(void 0); __expected = RegExp(void 0).exec("undefined"); __matched[0]===__expected[0]. Actual: undefined
+PASS 
 
 TEST COMPLETE
 
