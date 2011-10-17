@@ -16,6 +16,16 @@
 
 2011-10-17  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations change.
+
+        Add back in the failing fullscreen tests; also add in some
+        flaky failures.
+
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
         Removing suppressions for the fullscreen/ tests - it looks
         like they're mostly passing now. I will pick up the tests that
         are still failing in a subsequent patch.

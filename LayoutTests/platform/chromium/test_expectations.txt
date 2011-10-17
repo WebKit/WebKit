@@ -675,7 +675,7 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 
 // Flaky
 BUGCR31803 LINUX MAC : editing/inserting/12882.html = PASS IMAGE
-BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT IMAGE+TEXT
+BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT IMAGE IMAGE+TEXT
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
@@ -768,6 +768,10 @@ BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // probably just need rebaselining.
 //BUGCR73923 : fullscreen = TIMEOUT FAIL
+BUGCR73923 : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
+BUGCR73923 : fullscreen/full-screen-render-inline.html = IMAGE
+BUGCR73923 : fullscreen/full-screen-stacking-context.html = IMAGE
+BUGCR73923 : fullscreen/parent-flow-inline-with-block-child.html = IMAGE
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
@@ -3421,8 +3425,8 @@ BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-override-size.html =
 BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
-BUGWK63186 SNOWLEOPARD CPU-CG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE
-BUGWK63186 SNOWLEOPARD CPU : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT
+BUGWK63186 SNOWLEOPARD CPU-CG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE TEXT
+BUGWK63186 SNOWLEOPARD CPU : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK63186 LINUX WIN : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
 BUGWK63186 LEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE
 BUGWK63186 SNOWLEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = PASS IMAGE+TEXT
@@ -3831,3 +3835,16 @@ BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
 BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
+
+// Flaky tests from ~r97647
+BUGDPRANKE WIN LINUX : fast/forms/input-number-events.html = TEXT PASS
+BUGDPRANKE WIN LINUX : fast/forms/input-number-large-padding.html = TEXT PASS
+BUGDPRANKE WIN LINUX : fast/forms/input-spinbutton-capturing.html = TEXT PASS
+BUGDPRANKE : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
+BUGDPRANKE : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
+BUGDPRANKE : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
+BUGDPRANKE : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
+BUGDPRANKE : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
+BUGDPRANKE : svg/custom/js-late-gradient-creation.svg = IMAGE PASS
+BUGDPRANKE : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
+
