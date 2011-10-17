@@ -1,3 +1,14 @@
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70207
+        After deleting __defineSetter__, it is absent but appears in name list
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyNames):
+            - This should check whether static functions have been reified.
+
 2011-10-17  Geoffrey Garen  <ggaren@apple.com>
 
         Mac build fix.

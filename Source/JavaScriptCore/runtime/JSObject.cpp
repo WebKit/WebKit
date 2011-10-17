@@ -527,7 +527,8 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
 void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     structure()->getPropertyNames(exec->globalData(), propertyNames, mode);
-    getClassPropertyNames(exec, classInfo(), propertyNames, mode);
+    if (!staticFunctionsReified())
+        getClassPropertyNames(exec, classInfo(), propertyNames, mode);
 }
 
 bool JSObject::toBoolean(ExecState*) const
