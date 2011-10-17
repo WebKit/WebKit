@@ -71,7 +71,7 @@ void MarkStackArray::shrinkAllocation(size_t size)
     // We cannot release a part of a region with VirtualFree. To get around this,
     // we'll release the entire region and reallocate the size that we want.
     MarkStack::releaseStack(m_data, m_allocated);
-    m_data = static_cast<JSCell*>(MarkStack::allocateStack(size));
+    m_data = static_cast<const JSCell**>(MarkStack::allocateStack(size));
 #else
     MarkStack::releaseStack(reinterpret_cast<char*>(m_data) + size, m_allocated - size);
 #endif
