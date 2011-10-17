@@ -36,6 +36,7 @@
 
 #include "Node.h"
 #include "NodeList.h"
+#include "QualifiedName.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
@@ -69,17 +70,17 @@ private:
 
 class AttributesRecord : public MutationRecord {
 public:
-    AttributesRecord(PassRefPtr<Node> target, const AtomicString& attributeName, const AtomicString& attributeNamespace)
+    AttributesRecord(PassRefPtr<Node> target, const QualifiedName& name)
         : MutationRecord(target)
-        , m_attributeName(attributeName)
-        , m_attributeNamespace(attributeNamespace)
+        , m_attributeName(name.localName())
+        , m_attributeNamespace(name.namespaceURI())
     {
     }
 
 private:
     virtual const AtomicString& type();
     virtual const AtomicString& attributeName() { return m_attributeName; }
-    virtual const AtomicString& attributeNamespace() { return m_attributeName; }
+    virtual const AtomicString& attributeNamespace() { return m_attributeNamespace; }
     virtual String oldValue() { return m_oldValue; }
     virtual void setOldValue(const String& value) { m_oldValue = value; }
 
@@ -128,9 +129,9 @@ PassRefPtr<MutationRecord> MutationRecord::createChildList(PassRefPtr<Node> targ
     return adoptRef(static_cast<MutationRecord*>(new ChildListRecord(target, added, removed, previousSibling, nextSibling)));
 }
 
-PassRefPtr<MutationRecord> MutationRecord::createAttributes(PassRefPtr<Node> target, const AtomicString& attributeName, const AtomicString& attributeNamespace)
+PassRefPtr<MutationRecord> MutationRecord::createAttributes(PassRefPtr<Node> target, const QualifiedName& name)
 {
-    return adoptRef(static_cast<MutationRecord*>(new AttributesRecord(target, attributeName, attributeNamespace)));
+    return adoptRef(static_cast<MutationRecord*>(new AttributesRecord(target, name)));
 }
 
 PassRefPtr<MutationRecord> MutationRecord::createCharacterData(PassRefPtr<Node> target)

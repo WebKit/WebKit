@@ -41,8 +41,8 @@ module core {
         readonly attribute Node nextSibling;
 
         readonly attribute DOMString attributeName;
-        readonly attribute DOMString attributeNamespace;
+        readonly attribute [ConvertNullStringTo=Null] DOMString attributeNamespace;
 
-        readonly attribute DOMString oldValue;
+        readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;
     };
 }

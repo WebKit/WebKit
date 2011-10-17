@@ -32,6 +32,7 @@
 #include "NameNodeList.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
+#include "WebKitMutationObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -86,7 +87,31 @@ public:
 private:
     NodeListsNodeData() : m_labelsNodeListCache(0) {}
 };
-    
+
+#if ENABLE(MUTATION_OBSERVERS)
+struct MutationObserverEntry {
+    MutationObserverEntry(PassRefPtr<WebKitMutationObserver> observer, unsigned char options)
+        : observer(observer)
+        , options(options)
+    {
+    }
+
+    bool operator==(const MutationObserverEntry& other) const
+    {
+        return observer == other.observer;
+    }
+
+    bool matches(unsigned char options) const
+    {
+        return this->options & options;
+    }
+
+    RefPtr<WebKitMutationObserver> observer;
+    unsigned char options;
+};
+
+#endif // ENABLE(MUTATION_OBSERVERS)
+
 class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
@@ -136,6 +161,16 @@ public:
         return m_eventTargetData.get();
     }
 
+#if ENABLE(MUTATION_OBSERVERS)
+    Vector<MutationObserverEntry>* mutationObserverEntries() { return m_mutationObservers.get(); }
+    Vector<MutationObserverEntry>* ensureMutationObserverEntries()
+    {
+        if (!m_mutationObservers)
+            m_mutationObservers = adoptPtr(new Vector<MutationObserverEntry>);
+        return m_mutationObservers.get();
+    }
+#endif
+
     bool isFocused() const { return m_isFocused; }
     void setFocused(bool focused) { m_isFocused = focused; }
 
@@ -152,6 +187,10 @@ private:
     bool m_tabIndexWasSetExplicitly : 1;
     bool m_isFocused : 1;
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    OwnPtr<Vector<MutationObserverEntry> > m_mutationObservers;
+#endif
 };
 
 } // namespace WebCore

@@ -48,6 +48,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
+#include "MutationRecord.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
@@ -59,6 +60,7 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "WebKitMutationObserver.h"
 #include "WebKitAnimationList.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
@@ -610,6 +612,20 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
+#if ENABLE(MUTATION_OBSERVERS)
+static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name)
+{
+    Vector<WebKitMutationObserver*> observers;
+    element->registeredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
+    if (observers.isEmpty())
+        return;
+
+    RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name);
+    for (Vector<WebKitMutationObserver*>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
+        (*iter)->enqueueMutationRecord(mutation);
+}
+#endif
+
 void Element::setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode& ec)
 {
     if (!Document::isValidName(name)) {
@@ -629,6 +645,11 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
     Attribute* old = attributes(false)->getAttributeItem(localName, false);
 
     document()->incDOMTreeVersion();
+
+#if ENABLE(MUTATION_OBSERVERS)
+    // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
+    enqueueAttributesMutationRecord(this, attributeName);
+#endif
 
     if (isIdAttributeName(old ? old->name() : attributeName))
         updateId(old ? old->value() : nullAtom, value);
@@ -662,6 +683,11 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
     // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(name);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
+    enqueueAttributesMutationRecord(this, name);
+#endif
 
     if (isIdAttributeName(name))
         updateId(old ? old->value() : nullAtom, value);

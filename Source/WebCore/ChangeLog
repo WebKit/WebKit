@@ -1,3 +1,55 @@
+2011-10-17  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Implement WebKitMutationObserver.observe for attributes
+        https://bugs.webkit.org/show_bug.cgi?id=68956
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/mutation/observe-attributes.html
+
+        This adds an initial implementation for registering mutation observers on nodes,
+        delivering mutation records at the end of the outer-most script invokation and
+        observing mutations to element attributes.
+
+        Note that the outer-most script invokation only works in V8.
+
+        Note also that support for observing changes to the style attribute when updated
+        via the style property is not implemented here.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::didLeaveScriptContext):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        (WebCore::Element::setAttribute):
+        * dom/MutationRecord.cpp:
+        (WebCore::MutationRecord::createAttributes):
+        * dom/MutationRecord.h:
+        * dom/MutationRecord.idl:
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::mutationObserverData):
+        (WebCore::Node::ensureMutationObserverData):
+        (WebCore::Node::registeredMutationObserversOfType):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::deregisterMutationObserver):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::operator==):
+        (WebCore::MutationObserverData::MutationObserverData):
+        (WebCore::MutationObserverData::~MutationObserverData):
+        (WebCore::NodeRareData::mutationObserverData):
+        (WebCore::NodeRareData::ensureMutationObserverData):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe):
+        (WebCore::WebKitMutationObserver::disconnect):
+        (WebCore::WebKitMutationObserver::wasDeregistered):
+        (WebCore::activeMutationObservers):
+        (WebCore::WebKitMutationObserver::enqueueMutationRecord):
+        (WebCore::WebKitMutationObserver::deliverAllMutations):
+        (WebCore::WebKitMutationObserver::deliver):
+        * dom/WebKitMutationObserver.h:
+
 2011-10-17  Andreas Kling  <kling@webkit.org>
 
         HTMLKeygenElement: Don't cache keytype and challenge attributes.

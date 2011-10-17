@@ -5466,7 +5466,7 @@
 		C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F08FC81431000D00685849 /* JSMutationRecord.h */; };
 		C6F0900A14327B6100685849 /* MutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900114327B6100685849 /* MutationCallback.h */; };
 		C6F0900E14327B6100685849 /* WebKitMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */; };
-		C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900614327B6100685849 /* WebKitMutationObserver.h */; };
+		C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900614327B6100685849 /* WebKitMutationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C6F0901114327B6100685849 /* MutationObserverOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900814327B6100685849 /* MutationObserverOptions.h */; };
 		C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902014327D4F00685849 /* JSMutationCallback.cpp */; };
 		C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902114327D4F00685849 /* JSMutationCallback.h */; };

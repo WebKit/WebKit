@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p id=description></p>
+<div id="console"></div>
+<script>
+
+window.jsTestIsAsync = true;
+var mutations;
+var mutations2;
+var calls;
+
+function testBasic() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing basic aspects of attribute observation.');
+
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { attributes: true, characterData: true });
+        div.setAttribute('foo', 'bar');
+        setTimeout(checkDisconnectAndMutate, 0);
+    }
+
+    function checkDisconnectAndMutate() {
+        debug('...can attribute changes be observed at all');
+
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+
+        mutations = null;
+        observer.disconnect();
+        div.setAttribute('foo', 'baz');
+        setTimeout(checkNotDeliveredAndMutateMultiple, 0);
+    }
+
+    function checkNotDeliveredAndMutateMultiple() {
+        debug('...observer.disconnect() should prevent further delivery of mutations.');
+
+        shouldBe('mutations', 'null');
+        observer.observe(div, { attributes: true });
+        div.setAttribute('foo', 'bat');
+        div.setAttribute('bar', 'foo');
+        setTimeout(finish);
+    }
+
+    function finish() {
+        debug('...re-observing after disconnect works with the same observer.');
+
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"bar"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testWrongType() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing that observing without specifying "attributes" does not result in hearing about attribute changes.');
+
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { childList: true, characterData: true });
+        div.setAttribute('foo', 'bar');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations', 'null');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testMultipleRegistration() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing that re-observing the same node with the same observing has the effect of resetting the options.');
+    
+		calls = 0;
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+			calls++;
+        });
+
+        observer.observe(div, { attributes: true, characterData: true });
+        observer.observe(div, { attributes: true });
+        div.setAttribute('foo', 'bar');
+        setTimeout(checkDisconnectAndMutate, 0);
+    }
+
+    function checkDisconnectAndMutate() {
+        shouldBe('calls', '1');
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        mutations = null;
+        observer.observe(div, { attributes: true, characterData: true });
+        observer.observe(div, { childList: true });
+        div.setAttribute('foo', 'baz');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations', 'null');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testMultipleObservers() {
+    var div;
+    var observer;
+    var observer2;
+
+    function start() {
+        debug('Testing that multiple observers can be registered to a given node and both receive mutations.');
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+        observer2 = new WebKitMutationObserver(function(m) {
+            mutations2 = m;
+        });
+        observer.observe(div, { attributes: true });
+        observer2.observe(div, { attributes: true });
+        div.setAttribute('foo', 'bar');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations2.length', '1');
+        shouldBe('mutations2[0].type', '"attributes"');
+        shouldBe('mutations2[0].attributeName', '"foo"');
+        observer.disconnect();
+        observer2.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testNamespaceURI() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing that "attributeNamespace" value is delivered properly.');
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { attributes: true, childList: true });
+        div.setAttributeNS('http://www.foo.com/bar', 'foo', 'bar');
+        setTimeout(finish, 0);    
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].attributeNamespace', '"http://www.foo.com/bar"');        
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testPropertyAccess() {
+    var img, a;
+    var observer;
+
+    function start() {
+        debug('Testing that modifications to node properties which delegate to attribute storage deliver mutations.');
+        mutations = null;
+        img = document.createElement('img');
+        a = document.createElement('a');
+
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(img, { attributes: true });
+        observer.observe(a, { attributes: true });
+
+        img.src = 'baz.png';
+        a.href = 'foo.html';
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"src"');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"href"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testOrderingWrtDOMSubtreeModified() {
+    var div, div2, subDiv;
+    var observer;
+    var listener;
+
+    function start() {
+        debug('Testing mutation records are enqueued for attributes before DOMSubtreeModified is dispatched.');
+
+        mutations = null;
+        div = document.body.appendChild(document.createElement('div'));
+        div2 = document.body.appendChild(document.createElement('div'));
+
+        subDiv = div.appendChild(document.createElement('div'));
+
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        listener = function(e) {
+            div2.setAttribute('baz', 'bat');
+        }
+
+        div.addEventListener('DOMSubtreeModified', listener);
+        observer.observe(subDiv, { attributes: true });
+        observer.observe(div2, { attributes: true });
+
+        subDiv.setAttribute('foo', 'bar');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"baz"');
+        div.removeEventListener(listener);
+        document.body.removeChild(div);
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+var tests = [testBasic, testWrongType, testMultipleRegistration, testMultipleObservers, testNamespaceURI, testPropertyAccess, testOrderingWrtDOMSubtreeModified];
+var testIndex = 0;
+ 
+function runNextTest() {
+    if (testIndex < tests.length)
+        tests[testIndex++]();
+    else
+        finishJSTest();
+}
+
+description('Test the constructor of WebKitMutationObserver');
+
+if (!window.WebKitMutationObserver)
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+else
+    runNextTest();
+
+var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -42,11 +42,12 @@ namespace WebCore {
 
 class Node;
 class NodeList;
+class QualifiedName;
 
 class MutationRecord : public RefCounted<MutationRecord> {
 public:
     static PassRefPtr<MutationRecord> createChildList(PassRefPtr<Node> target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
-    static PassRefPtr<MutationRecord> createAttributes(PassRefPtr<Node> target, const AtomicString& attributeName, const AtomicString& attributeNamespace);
+    static PassRefPtr<MutationRecord> createAttributes(PassRefPtr<Node> target, const QualifiedName&);
     static PassRefPtr<MutationRecord> createCharacterData(PassRefPtr<Node> target);
 
     virtual ~MutationRecord();

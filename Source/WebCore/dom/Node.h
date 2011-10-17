@@ -31,6 +31,7 @@
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeShared.h"
+#include "WebKitMutationObserver.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 
@@ -58,6 +59,7 @@ class Frame;
 class HTMLInputElement;
 class IntRect;
 class KeyboardEvent;
+class MutationObserverEntry;
 class NSResolver;
 class NamedNodeMap;
 class NameNodeList;
@@ -584,6 +586,22 @@ public:
 #if ENABLE(MICRODATA)
     void itemTypeAttributeChanged();
 #endif
+
+#if ENABLE(MUTATION_OBSERVERS)
+    Vector<MutationObserverEntry>* mutationObserverEntries();
+    Vector<MutationObserverEntry>* ensureMutationObserverEntries();
+
+    void registeredMutationObserversOfType(Vector<WebKitMutationObserver*>&, WebKitMutationObserver::MutationType);
+
+    // Returns true if the observer wasn't already registered on this node.
+    enum MutationRegistrationResult {
+        MutationObserverRegistered,
+        MutationRegistrationOptionsReset
+    };
+    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, unsigned char options);
+
+    void unregisterMutationObserver(PassRefPtr<WebKitMutationObserver>);
+#endif // ENABLE(MUTATION_OBSERVERS)
 
 private:
     enum NodeFlags {

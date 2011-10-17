@@ -100,6 +100,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -545,6 +546,14 @@ void Node::clearRareData()
     ASSERT(hasRareData());
     if (treeScope() && rareData()->nodeLists())
         treeScope()->removeNodeListCache();
+
+#if ENABLE(MUTATION_OBSERVERS)
+    Vector<MutationObserverEntry>* observerEnties = mutationObserverEntries();
+    if (observerEnties) {
+        for (Vector<MutationObserverEntry>::iterator iter = observerEnties->begin(); iter != observerEnties->end(); ++iter)
+            iter->observer->observedNodeDestructed(this);
+    }
+#endif
 
     NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
     NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
@@ -2672,6 +2681,62 @@ EventTargetData* Node::ensureEventTargetData()
 {
     return ensureRareData()->ensureEventTargetData();
 }
+
+#if ENABLE(MUTATION_OBSERVERS)
+Vector<MutationObserverEntry>* Node::mutationObserverEntries()
+{
+    return hasRareData() ? rareData()->mutationObserverEntries() : 0;
+}
+
+Vector<MutationObserverEntry>* Node::ensureMutationObserverEntries()
+{
+    return ensureRareData()->ensureMutationObserverEntries();
+}
+
+void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
+{
+    Vector<MutationObserverEntry>* observerEntries = mutationObserverEntries();
+    if (!observerEntries || observerEntries->isEmpty())
+        return;
+
+    for (Vector<MutationObserverEntry>::iterator iter = observerEntries->begin(); iter != observerEntries->end(); ++iter) {
+        if (iter->matches(type))
+            observers.append(iter->observer.get());
+    }
+}
+
+Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, unsigned char options)
+{
+    Vector<MutationObserverEntry>* observerEntries = ensureMutationObserverEntries();
+    MutationObserverEntry entry(observer, options);
+
+    size_t index = observerEntries->find(entry);
+    if (index == notFound) {
+        observerEntries->append(entry);
+        return MutationObserverRegistered;
+    }
+
+    (*observerEntries)[index].options = entry.options;
+    return MutationRegistrationOptionsReset;
+}
+
+void Node::unregisterMutationObserver(PassRefPtr<WebKitMutationObserver> observer)
+{
+    Vector<MutationObserverEntry>* observerEntries = mutationObserverEntries();
+    ASSERT(observerEntries);
+    if (!observerEntries)
+        return;
+
+    MutationObserverEntry entry(observer, 0);
+    size_t index = observerEntries->find(entry);
+    ASSERT(index != notFound);
+    if (index == notFound)
+        return;
+
+    observerEntries->remove(index);
+}
+#endif // ENABLE(MUTATION_OBSERVERS)
+
 
 void Node::handleLocalEvents(Event* event)
 {

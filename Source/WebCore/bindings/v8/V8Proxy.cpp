@@ -65,6 +65,7 @@
 #include "V8SQLException.h"
 #include "V8XMLHttpRequestException.h"
 #include "V8XPathException.h"
+#include "WebKitMutationObserver.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -620,6 +621,10 @@ void V8Proxy::didLeaveScriptContext()
 #endif // ENABLE(INDEXED_DATABASE)
     if (page->group().hasLocalStorage())
         page->group().localStorage()->unlock();
+
+#if ENABLE(MUTATION_OBSERVERS)
+    WebCore::WebKitMutationObserver::deliverAllMutations();
+#endif
 }
 
 void V8Proxy::resetIsolatedWorlds()

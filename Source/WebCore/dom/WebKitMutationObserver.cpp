@@ -34,8 +34,11 @@
 
 #include "WebKitMutationObserver.h"
 
+#include "MutationObserverOptions.h"
 #include "MutationCallback.h"
-#include "NotImplemented.h"
+#include "MutationRecord.h"
+#include "Node.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -53,14 +56,70 @@ WebKitMutationObserver::~WebKitMutationObserver()
 {
 }
 
-void WebKitMutationObserver::observe(Node*, MutationObserverOptions*)
+void WebKitMutationObserver::observe(Node* node, MutationObserverOptions* options)
 {
-    notImplemented();
+    unsigned char optionFlags = 0;
+
+    // FIXME: Push composition of the optionFlags into the custom binding.
+    if (options->childList())
+        optionFlags |= ChildList;
+    if (options->attributes())
+        optionFlags |= Attributes;
+    if (options->characterData())
+        optionFlags |= CharacterData;
+    // FIXME: More options composition work needs to be done here.
+
+    if (node->registerMutationObserver(this, optionFlags) == Node::MutationObserverRegistered)
+        m_observedNodes.append(node);
 }
 
 void WebKitMutationObserver::disconnect()
 {
-    notImplemented();
+    for (Vector<Node*>::iterator iter = m_observedNodes.begin(); iter !=  m_observedNodes.end(); ++iter)
+        (*iter)->unregisterMutationObserver(this);
+
+    m_observedNodes.clear();
+}
+
+void WebKitMutationObserver::observedNodeDestructed(Node* node)
+{
+    size_t index = m_observedNodes.find(node);
+    ASSERT(index != notFound);
+    if (index == notFound)
+        return;
+
+    m_observedNodes.remove(index);
+}
+
+typedef ListHashSet<RefPtr<WebKitMutationObserver> > MutationObserverSet;
+
+static MutationObserverSet& activeMutationObservers()
+{
+    DEFINE_STATIC_LOCAL(MutationObserverSet, activeObservers, ());
+    return activeObservers;
+}
+
+void WebKitMutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
+{
+    m_records.append(mutation);
+    activeMutationObservers().add(this);
+}
+
+void WebKitMutationObserver::deliver()
+{
+    MutationRecordArray records;
+    records.swap(m_records);
+    m_callback->handleEvent(&records, this);
+}
+
+void WebKitMutationObserver::deliverAllMutations()
+{
+    while (!activeMutationObservers().isEmpty()) {
+        MutationObserverSet::iterator iter = activeMutationObservers().begin();
+        RefPtr<WebKitMutationObserver> observer = *iter;
+        activeMutationObservers().remove(iter);
+        observer->deliver();
+    }
 }
 
 } // namespace WebCore
