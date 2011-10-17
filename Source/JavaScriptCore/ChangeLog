@@ -1,3 +1,10 @@
+2011-10-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Interpreter build fix after r97436, r97506, r97532 and r97537.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always disable ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL) and delete associated code

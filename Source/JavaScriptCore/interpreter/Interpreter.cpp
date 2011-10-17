@@ -3358,7 +3358,7 @@ skip_id_custom_self:
 
         JSObject* baseObj = callFrame->r(base).jsValue().toObject(callFrame);
         Identifier& ident = codeBlock->identifier(property);
-        bool result = baseObj->deleteProperty(callFrame, ident);
+        bool result = baseObj->deletePropertyVirtual(callFrame, ident);
         if (!result && codeBlock->isStrictMode()) {
             exceptionValue = createTypeError(callFrame, "Unable to delete property.");
             goto vm_throw;
@@ -3503,7 +3503,7 @@ skip_id_custom_self:
                 if (jsArray->canSetIndex(i))
                     jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
                 else
-                    jsArray->JSArray::put(callFrame, i, callFrame->r(value).jsValue());
+                    jsArray->JSArray::putVirtual(callFrame, i, callFrame->r(value).jsValue());
             } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
                 JSByteArray* jsByteArray = asByteArray(baseValue);
                 JSValue jsValue = callFrame->r(value).jsValue();
@@ -3545,12 +3545,12 @@ skip_id_custom_self:
         bool result;
         uint32_t i;
         if (subscript.getUInt32(i))
-            result = baseObj->deleteProperty(callFrame, i);
+            result = baseObj->deletePropertyVirtual(callFrame, i);
         else {
             CHECK_FOR_EXCEPTION();
             Identifier property(callFrame, subscript.toString(callFrame));
             CHECK_FOR_EXCEPTION();
-            result = baseObj->deleteProperty(callFrame, property);
+            result = baseObj->deletePropertyVirtual(callFrame, property);
         }
         if (!result && codeBlock->isStrictMode()) {
             exceptionValue = createTypeError(callFrame, "Unable to delete property.");
@@ -4609,7 +4609,7 @@ skip_id_custom_self:
         JSFunction* constructor = asFunction(callFrame->callee());
 #if !ASSERT_DISABLED
         ConstructData constructData;
-        ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
+        ASSERT(constructor->getConstructDataVirtual(constructData) == ConstructTypeJS);
 #endif
 
         Structure* structure;
