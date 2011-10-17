@@ -1,24 +1,24 @@
-layer at (0,0) size 1282x585
-  RenderView at (0,0) size 800x585
-layer at (0,0) size 800x585
-  RenderBlock {HTML} at (0,0) size 800x585
-    RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock {DIV} at (0,0) size 1274x134
-        RenderBlock {DIV} at (16,16) size 26x102 [border: (1px solid #000000)]
+layer at (0,0) size 1282x601
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x601
+  RenderBlock {HTML} at (0,0) size 785x601
+    RenderBody {BODY} at (8,8) size 769x585
+      RenderBlock {DIV} at (0,0) size 1274x585
+        RenderBlock {DIV} at (16,16) size 26x553 [border: (1px solid #000000)]
           RenderBlock (floating) {DIV} at (1,1) size 24x100
             RenderBlock {DIV} at (0,0) size 24x100 [bgcolor=#008000]
-        RenderBlock {DIV} at (58,16) size 26x102 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (58,16) size 26x553 [border: (1px solid #000000)]
           RenderBlock (floating) {DIV} at (1,1) size 24x96
             RenderTable {TABLE} at (0,0) size 24x96 [bgcolor=#FF0000]
               RenderTableSection {TBODY} at (0,0) size 24x96
                 RenderTableRow {TR} at (0,0) size 24x96
                   RenderTableCell {TD} at (0,1) size 24x94 [r=0 c=0 rs=1 cs=1]
                     RenderImage {IMG} at (1,-1) size 22x96 [bgcolor=#008000]
-        RenderBlock {DIV} at (100,16) size 571x102 [border: (1px solid #000000)]
-          RenderBlock {DIV} at (1,1) size 569x100
+        RenderBlock {DIV} at (100,16) size 571x553 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (1,1) size 569x551
             RenderBlock {DIV} at (0,0) size 569x100 [bgcolor=#008000]
-        RenderBlock {DIV} at (687,16) size 571x102 [border: (1px solid #000000)]
-          RenderBlock {DIV} at (1,1) size 569x100
+        RenderBlock {DIV} at (687,16) size 571x553 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (1,1) size 569x551
             RenderTable {TABLE} at (0,0) size 569x96 [bgcolor=#FF0000]
               RenderTableSection {TBODY} at (0,0) size 569x96
                 RenderTableRow {TR} at (0,0) size 569x96

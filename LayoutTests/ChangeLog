@@ -1,5 +1,20 @@
 2011-10-17  Ojan Vafai  <ojan@chromium.org>
 
+        Unreviewed, rolling out r97654.
+        http://trac.webkit.org/changeset/97654
+        https://bugs.webkit.org/show_bug.cgi?id=68497
+
+        Caused a number of Chromium failures.
+
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/mac/fast/table/028-vertical-expected.png:
+        * platform/mac/fast/table/028-vertical-expected.txt:
+        * platform/mac/fast/table/height-percent-test-vertical-expected.png:
+        * platform/mac/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/mac/fast/writing-mode/fallback-orientation-expected.txt:
+
+2011-10-17  Ojan Vafai  <ojan@chromium.org>
+
         Unreviewed, rolling out r97653.
         http://trac.webkit.org/changeset/97653
         https://bugs.webkit.org/show_bug.cgi?id=69957
