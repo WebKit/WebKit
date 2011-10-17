@@ -1,3 +1,31 @@
+2011-10-17  Antti Koivisto  <antti@apple.com>
+
+        Make more :visited pseudo class tests work
+        https://bugs.webkit.org/show_bug.cgi?id=70224
+
+        Reviewed by Andreas Kling.
+        
+        Link <a href=""> is always considered visited so we can use that in tests that try to apply :visited.
+
+        Mac results only, requires rebaselining of other platforms.
+
+        * css3/selectors3/html/css3-modsel-17.html:
+        * css3/selectors3/html/css3-modsel-61.html:
+        * css3/selectors3/xhtml/css3-modsel-17.xml:
+        * css3/selectors3/xhtml/css3-modsel-61.xml:
+        * css3/selectors3/xml/css3-modsel-17.xml:
+        * css3/selectors3/xml/css3-modsel-61.xml:
+        * fast/selectors/017.html:
+        * fast/selectors/061.html:
+        * platform/mac/css3/selectors3/html/css3-modsel-17-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-61-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-17-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-61-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-17-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-61-expected.txt:
+        * platform/mac/fast/selectors/017-expected.txt:
+        * platform/mac/fast/selectors/061-expected.txt:
+
 2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r97598. Remove obsolete Qt 4.8 specific expected results.

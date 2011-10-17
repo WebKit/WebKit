@@ -13,8 +13,7 @@ p.test *:visited { background-color : lime }]]></style>
  </head>
  <body>
 <p class="test">
-<a href="http://www.w3.org/">You should see a green background assigned by the anchor.</a>
-(Note: You must have visited http://www.w3.org/ for this test to be valid.)
+<a href="">You should see a green background assigned by the anchor.</a>
 </p>
 </body>
 </html>
