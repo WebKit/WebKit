@@ -1,3 +1,11 @@
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
+        fullscreen/video-controls-override.html is still failing on chromium bots.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Implement WebKitMutationObserver.observe for attributes

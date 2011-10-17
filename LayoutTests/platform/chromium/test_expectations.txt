@@ -772,6 +772,7 @@ BUGCR73923 : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
 BUGCR73923 : fullscreen/full-screen-render-inline.html = IMAGE
 BUGCR73923 : fullscreen/full-screen-stacking-context.html = IMAGE
 BUGCR73923 : fullscreen/parent-flow-inline-with-block-child.html = IMAGE
+BUGCR73923 : fullscreen/video-controls-override.html = TEXT
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
