@@ -1062,7 +1062,7 @@ sub GenerateFunctions {
         $param->name("value");
         $param->type($attribute->signature->type);
         my %attributes = ();
-        $param->extendedAttributes(attributes);
+        $param->extendedAttributes("attributes");
         my $arrayRef = $function->parameters;
         push(@$arrayRef, $param);
         
