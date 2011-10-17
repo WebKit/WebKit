@@ -1,3 +1,14 @@
+2011-10-17  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r97653.
+        http://trac.webkit.org/changeset/97653
+        https://bugs.webkit.org/show_bug.cgi?id=69957
+
+        Caused a number of Chromium failures.
+
+        * fast/writing-mode/borders-expected.html: Removed.
+        * fast/writing-mode/borders.html: Removed.
+
 2011-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         fullscreen/video-controls-override.html is still failing on chromium bots.

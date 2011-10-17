@@ -5252,27 +5252,14 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
             marginEnd += endMarginLength.value();
         margin = marginStart + marginEnd;
 
-        LayoutUnit childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth;
-        if (child->isBox() && child->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-            RenderBox* childBox = toRenderBox(child);
-            LayoutUnit oldHeight = childBox->logicalHeight();
-            setLogicalHeight(childBox->borderAndPaddingLogicalHeight());
-            childBox->computeLogicalHeight();
-            childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = childBox->logicalHeight();
-            childBox->setLogicalHeight(oldHeight);
-        } else {
-            childMinPreferredLogicalWidth = child->minPreferredLogicalWidth();
-            childMaxPreferredLogicalWidth = child->maxPreferredLogicalWidth();
-        }
-
-        LayoutUnit w = childMinPreferredLogicalWidth + margin;
+        LayoutUnit w = child->minPreferredLogicalWidth() + margin;
         m_minPreferredLogicalWidth = max(w, m_minPreferredLogicalWidth);
         
         // IE ignores tables for calculation of nowrap. Makes some sense.
         if (nowrap && !child->isTable())
             m_maxPreferredLogicalWidth = max(w, m_maxPreferredLogicalWidth);
 
-        w = childMaxPreferredLogicalWidth + margin;
+        w = child->maxPreferredLogicalWidth() + margin;
 
         if (!child->isFloating()) {
             if (child->isBox() && toRenderBox(child)->avoidsFloats()) {
@@ -5284,7 +5271,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
                 LayoutUnit marginLogicalRight = ltr ? marginEnd : marginStart;
                 LayoutUnit maxLeft = marginLogicalLeft > 0 ? max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
                 LayoutUnit maxRight = marginLogicalRight > 0 ? max(floatRightWidth, marginLogicalRight) : floatRightWidth + marginLogicalRight;
-                w = childMaxPreferredLogicalWidth + maxLeft + maxRight;
+                w = child->maxPreferredLogicalWidth() + maxLeft + maxRight;
                 w = max(w, floatLeftWidth + floatRightWidth);
             }
             else
@@ -5313,7 +5300,6 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         // of 100px because of the table.
         // We can achieve this effect by making the maxwidth of blocks that contain tables
         // with percentage widths be infinite (as long as they are not inside a table cell).
-        // FIXME: There is probably a bug here with orthogonal writing modes since we check logicalWidth only using the child's writing mode.
         if (containingBlock && document()->inQuirksMode() && child->style()->logicalWidth().isPercent()
             && !isTableCell() && child->isTable() && m_maxPreferredLogicalWidth < BLOCK_MAX_WIDTH) {
             RenderBlock* cb = containingBlock;
