@@ -88,11 +88,12 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         A dictionary containing a summary of the unexpected results from the
         run, with the following fields:
         'version': a version indicator
-        'fixable': # of fixable tests (NOW - PASS)
-        'skipped': # of skipped tests (NOW & SKIPPED)
-        'num_regressions': # of non-flaky failures
-        'num_flaky': # of flaky failures
-        'num_passes': # of unexpected passes
+        'fixable': The number of fixable tests (NOW - PASS)
+        'skipped': The number of skipped tests (NOW & SKIPPED)
+        'num_regressions': The number of non-flaky failures
+        'num_flaky': The number of flaky failures
+        'num_missing': The number of tests with missing results
+        'num_passes': The number of unexpected passes
         'tests': a dict of tests -> {'expected': '...', 'actual': '...'}
     """
     results = {}
@@ -105,6 +106,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
 
     num_passes = 0
     num_flaky = 0
+    num_missing = 0
     num_regressions = 0
     keywords = {}
     for expecation_string, expectation_enum in TestExpectations.EXPECTATIONS.iteritems():
@@ -139,11 +141,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         elif result_type == test_expectations.CRASH:
             num_regressions += 1
         elif result_type == test_expectations.MISSING:
-            # We count missing results as flaky not to turn buildbot red
-            # This is a huge hack should be fixed by adding new category for MISSING results.
-            # See also: https://bugs.webkit.org/show_bug.cgi?id=64812
             if test_name in result_summary.unexpected_results:
-                num_flaky += 1
+                num_missing += 1
         elif test_name in result_summary.unexpected_results:
             if test_name not in retry_summary.unexpected_results:
                 actual.extend(expectations.get_expectations_string(test_name).split(" "))
@@ -209,6 +208,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['tests'] = tests
     results['num_passes'] = num_passes
     results['num_flaky'] = num_flaky
+    results['num_missing'] = num_missing
     results['num_regressions'] = num_regressions
     results['uses_expectations_file'] = port_obj.uses_test_expectations_file()
     results['interrupted'] = interrupted  # Does results.html have enough information to compute this itself? (by checking total number of results vs. total number of tests?)
@@ -927,9 +927,7 @@ class Manager(object):
             if self._options.show_results:
                 self._show_results_html_file(result_summary)
 
-        # Ignore flaky failures and unexpected passes so we don't turn the
-        # bot red for those.
-        return unexpected_results['num_regressions']
+        return self._port.exit_code_from_summarized_results(unexpected_results)
 
     def start_servers_with_lock(self):
         assert(self._options.http)

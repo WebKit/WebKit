@@ -274,6 +274,10 @@ class ChromiumPort(Port):
             self._helper.stdin.close()
             self._helper.wait()
 
+    def exit_code_from_summarized_results(self, unexpected_results):
+        # Turn bots red for missing results.
+        return unexpected_results['num_regressions'] + unexpected_results['num_missing']
+
     def configuration_specifier_macros(self):
         return self.CONFIGURATION_SPECIFIER_MACROS
 

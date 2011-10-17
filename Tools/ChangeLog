@@ -1,3 +1,21 @@
+2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [nrwt] Add new category for MISSING
+        https://bugs.webkit.org/show_bug.cgi?id=69990
+
+        Reviewed by Dirk Pranke.
+
+        Treat missing results as a new category in summerize_results.
+
+        Because Chromium port wants to turn bots red when there are tests with missing results,
+        extracted the logic to compute the exit code as exit_code_from_summarized_results in
+        base and chromium ports.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-10-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic operations fail because of CSP.

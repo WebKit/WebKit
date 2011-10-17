@@ -441,7 +441,31 @@ class MainTest(unittest.TestCase):
         expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"TEXT"},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
         json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find(expected_token) != -1)
-        self.assertTrue(json_string.find('"num_flaky":1') != -1)
+        self.assertTrue(json_string.find('"num_regression":1') == -1)
+        self.assertTrue(json_string.find('"num_flaky":1') == -1)
+        self.assertTrue(json_string.find('"num_missing":1') != -1)
+
+    def test_missing_and_unexpected_results_with_custom_exit_code(self):
+        # Test that we update expectations in place. If the expectation
+        # is missing, update the expected generic location.
+        fs = unit_test_filesystem()
+
+        class CustomExitCodePort(TestPort):
+            def exit_code_from_summarized_results(self, unexpected_results):
+                return unexpected_results['num_regressions'] + unexpected_results['num_missing']
+
+        test_port = CustomExitCodePort(options=options, user=mocktool.MockUser())
+        res, out, err, _ = logging_run(['--no-show-results',
+            'failures/expected/missing_image.html',
+            'failures/unexpected/missing_text.html',
+            'failures/unexpected/text-image-checksum.html'],
+            tests_included=True, filesystem=fs, record_results=True, port_obj=test_port)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 2)
+        self.assertTrue(json_string.find('"num_regression":1') == -1)
+        self.assertTrue(json_string.find('"num_flaky":1') == -1)
+        self.assertTrue(json_string.find('"num_missing":1') != -1)
 
     def test_crash_with_stderr(self):
         fs = unit_test_filesystem()

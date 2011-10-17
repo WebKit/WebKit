@@ -721,6 +721,13 @@ class Port(object):
         if self._http_lock:
             self._http_lock.cleanup_http_lock()
 
+    def exit_code_from_summarized_results(self, unexpected_results):
+        """Given summarized results, compute the exit code to be returned by new-run-webkit-tests.
+        Bots turn red when this function returns a non-zero value. By default, return the number of regressions
+        to avoid turning bots red by flaky failures, unexpected passes, and missing results"""
+        # Don't turn bots red for flaky failures, unexpected passes, and missing results.
+        return unexpected_results['num_regressions']
+
     #
     # TEST EXPECTATION-RELATED METHODS
     #
