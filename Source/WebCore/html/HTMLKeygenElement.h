@@ -52,9 +52,6 @@ private:
     virtual void reset();
 
     HTMLSelectElement* shadowSelect() const;
-
-    AtomicString m_challenge;
-    AtomicString m_keyType;
 };
 
 } //namespace

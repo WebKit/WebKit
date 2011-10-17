@@ -99,20 +99,16 @@ void HTMLKeygenElement::parseMappedAttribute(Attribute* attr)
     if (attr->name() == disabledAttr)
         shadowSelect()->setAttribute(attr->name(), attr->value());
 
-    if (attr->name() == challengeAttr)
-        m_challenge = attr->value();
-    else if (attr->name() == keytypeAttr)
-        m_keyType = attr->value();
-    else
-        HTMLFormControlElement::parseMappedAttribute(attr);
+    HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
 {
     // Only RSA is supported at this time.
-    if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
+    const AtomicString& keyType = fastGetAttribute(keytypeAttr);
+    if (!keyType.isNull() || !equalIgnoringCase(keyType, "rsa"))
         return false;
-    String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), m_challenge, document()->baseURL());
+    String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), fastGetAttribute(challengeAttr), document()->baseURL());
     if (value.isNull())
         return false;
     encoded_values.appendData(name(), value.utf8());
