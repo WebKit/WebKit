@@ -673,6 +673,8 @@
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
 		29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */; };
+		29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */; };
+		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
 		2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7756,6 +7758,8 @@
 		29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; };
 		29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMockObject.h; sourceTree = "<group>"; };
 		29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMockObject.cpp; sourceTree = "<group>"; };
+		29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccessibilitySpinButton.cpp; path = accessibility/AccessibilitySpinButton.cpp; sourceTree = SOURCE_ROOT; };
+		29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySpinButton.h; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
 		2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGParsingError.h; sourceTree = "<group>"; };
@@ -14570,6 +14574,8 @@
 				29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */,
 				2981CAA9131822EC00D12F2A /* AccessibilitySlider.cpp */,
 				0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */,
+				29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */,
+				29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */,
 				2981CAAA131822EC00D12F2A /* AccessibilityTable.cpp */,
 				29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */,
 				2981CAAB131822EC00D12F2A /* AccessibilityTableCell.cpp */,
@@ -24620,6 +24626,7 @@
 				31060379143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h in Headers */,
 				3106037B143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h in Headers */,
 				29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */,
+				29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */,
 				9B375EDB14478A0100F3CAE5 /* MicroDataItemList.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 				71CCB49D144824AC00C676D6 /* ImageBySizeCache.h in Headers */,
@@ -27471,6 +27478,7 @@
 				310603741432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp in Sources */,
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
+				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
 				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
 				9B375EDA14478A0100F3CAE5 /* MicroDataItemList.cpp in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,

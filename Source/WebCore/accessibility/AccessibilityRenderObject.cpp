@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityListBox.h"
+#include "AccessibilitySpinButton.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -69,12 +70,14 @@
 #include "RenderMenuList.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
 #include "Text.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -1440,19 +1443,8 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
-    const size_t n = quads.size();
-    if (!n)
-        return LayoutRect();
-
-    LayoutRect result;
-    for (size_t i = 0; i < n; ++i) {
-        LayoutRect r = quads[i].enclosingBoundingBox();
-        if (!r.isEmpty()) {
-            if (obj->style()->hasAppearance())
-                obj->theme()->adjustRepaintRect(obj, r);
-            result.unite(r);
-        }
-    }
+    
+    LayoutRect result = boundingBoxForQuads(obj, quads);
 
     // The size of the web area should be the content size, not the clipped size.
     if (isWebArea() && obj->frame()->view())
@@ -3465,13 +3457,54 @@ void AccessibilityRenderObject::clearChildren()
     AccessibilityObject::clearChildren();
     m_childrenDirty = false;
 }
+
+void AccessibilityRenderObject::addImageMapChildren()
+{
+    RenderBoxModelObject* cssBox = renderBoxModelObject();
+    if (!cssBox || !cssBox->isRenderImage())
+        return;
     
+    HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
+    if (!map)
+        return;
+
+    for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
+        
+        // add an <area> element for this child if it has a link
+        if (current->hasTagName(areaTag) && current->isLink()) {
+            AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
+            areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
+            areaObject->setHTMLMapElement(map);
+            areaObject->setParent(this);
+            
+            m_children.append(areaObject);
+        }
+    }
+}
+
 void AccessibilityRenderObject::updateChildrenIfNecessary()
 {
     if (needsToUpdateChildren())
         clearChildren();        
     
     AccessibilityObject::updateChildrenIfNecessary();
+}
+    
+void AccessibilityRenderObject::addTextFieldChildren()
+{
+    Node* node = this->node();
+    if (!node || !node->hasTagName(inputTag))
+        return;
+    
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    HTMLElement* spinButtonElement = input->innerSpinButtonElement();
+    if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
+        return;
+
+    AccessibilitySpinButton* axSpinButton = static_cast<AccessibilitySpinButton*>(axObjectCache()->getOrCreate(SpinButtonRole));
+    axSpinButton->setSpinButtonElement(static_cast<SpinButtonElement*>(spinButtonElement));
+    axSpinButton->setParent(this);
+    m_children.append(axSpinButton);
 }
 
 void AccessibilityRenderObject::addChildren()
@@ -3515,25 +3548,8 @@ void AccessibilityRenderObject::addChildren()
             m_children.append(axObjectCache()->getOrCreate(widget));
     }
     
-    // for a RenderImage, add the <area> elements as individual accessibility objects
-    RenderBoxModelObject* cssBox = renderBoxModelObject();
-    if (cssBox && cssBox->isRenderImage()) {
-        HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
-        if (map) {
-            for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
-
-                // add an <area> element for this child if it has a link
-                if (current->hasTagName(areaTag) && current->isLink()) {
-                    AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
-                    areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
-                    areaObject->setHTMLMapElement(map);
-                    areaObject->setParent(this);
-
-                    m_children.append(areaObject);
-                }
-            }
-        }
-    }
+    addImageMapChildren();
+    addTextFieldChildren();
 }
         
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const

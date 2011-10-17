@@ -635,6 +635,8 @@ webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityScrollView.h \
 	Source/WebCore/accessibility/AccessibilitySlider.cpp \
 	Source/WebCore/accessibility/AccessibilitySlider.h \
+	Source/WebCore/accessibility/AccessibilitySpinButton.cpp \
+	Source/WebCore/accessibility/AccessibilitySpinButton.h \
 	Source/WebCore/accessibility/AccessibilityTableCell.cpp \
 	Source/WebCore/accessibility/AccessibilityTableCell.h \
 	Source/WebCore/accessibility/AccessibilityTableColumn.cpp \

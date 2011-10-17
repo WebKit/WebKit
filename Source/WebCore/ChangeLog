@@ -1,3 +1,77 @@
+2011-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: buttons of number type <input> controls are not fully accessible
+        https://bugs.webkit.org/show_bug.cgi?id=70241
+
+        Expose the spin button object to the AX hierarchy. Since there is no distinct
+        render object that backs this object, a mock object needs to be created for the entire
+        spin button and the actual increment and decrement buttons inside.
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/html5-input-number.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityMockObject.cpp:
+        (WebCore::AccessibilityMockObject::AccessibilityMockObject):
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::isMockObject):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isSpinButton):
+        (WebCore::AccessibilityObject::isSpinButtonPart):
+        (WebCore::AccessibilityObject::isMockObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySpinButton.cpp: Added.
+        (WebCore::AccessibilitySpinButton::create):
+        (WebCore::AccessibilitySpinButton::AccessibilitySpinButton):
+        (WebCore::AccessibilitySpinButton::~AccessibilitySpinButton):
+        (WebCore::AccessibilitySpinButton::incrementButton):
+        (WebCore::AccessibilitySpinButton::decrementButton):
+        (WebCore::AccessibilitySpinButton::elementRect):
+        (WebCore::AccessibilitySpinButton::addChildren):
+        (WebCore::AccessibilitySpinButton::step):
+        (WebCore::AccessibilitySpinButtonPart::AccessibilitySpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::create):
+        (WebCore::AccessibilitySpinButtonPart::elementRect):
+        (WebCore::AccessibilitySpinButtonPart::press):
+        * accessibility/AccessibilitySpinButton.h: Added.
+        (WebCore::AccessibilitySpinButton::setSpinButtonElement):
+        (WebCore::AccessibilitySpinButton::roleValue):
+        (WebCore::AccessibilitySpinButton::accessibilityIsIgnored):
+        (WebCore::AccessibilitySpinButton::isSpinButton):
+        (WebCore::AccessibilitySpinButtonPart::~AccessibilitySpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::isIncrementor):
+        (WebCore::AccessibilitySpinButtonPart::setIsIncrementor):
+        (WebCore::AccessibilitySpinButtonPart::roleValue):
+        (WebCore::AccessibilitySpinButtonPart::isSpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::accessibilityIsIgnored):
+        (WebCore::toAccessibilitySpinButton):
+        (WebCore::toAccessibilitySpinButtonPart):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityActionNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::step):
+        (WebCore::SpinButtonElement::repeatingTimerFired):
+        * html/shadow/TextControlInnerElements.h:
+
 2011-10-17  Dmitry Titov  <dimich@chromium.org>
 
         Re-landing: window.webkitNotifications uses deallocated NotificationPresenter after live Iframe transfer.
