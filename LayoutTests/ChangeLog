@@ -1,3 +1,13 @@
+2011-10-12  Ojan Vafai  <ojan@chromium.org>
+
+        display:inline-block elements don't correctly handle orthogonal writing-modes
+        https://bugs.webkit.org/show_bug.cgi?id=69957
+
+        Reviewed by David Hyatt.
+
+        * fast/writing-mode/borders-expected.html: Added.
+        * fast/writing-mode/borders.html: Added.
+
 2011-10-17  Erik Arvidsson  <arv@chromium.org>
 
         REGRESSION(r97566) fast/js/stack-overflow-arrity-catch.html fails
