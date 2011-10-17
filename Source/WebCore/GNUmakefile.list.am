@@ -2101,6 +2101,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/MemoryCache.cpp \
 	Source/WebCore/loader/cache/CachedCSSStyleSheet.cpp \
 	Source/WebCore/loader/cache/CachedCSSStyleSheet.h \
+	Source/WebCore/loader/cache/CachedCues.cpp \
+	Source/WebCore/loader/cache/CachedCues.h \
 	Source/WebCore/loader/cache/CachedFont.cpp \
 	Source/WebCore/loader/cache/CachedFont.h \
 	Source/WebCore/loader/cache/CachedImage.cpp \

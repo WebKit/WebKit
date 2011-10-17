@@ -2832,6 +2832,8 @@
             'loader/archive/mhtml/MHTMLParser.cpp',
             'loader/cache/CachedCSSStyleSheet.cpp',
             'loader/cache/CachedCSSStyleSheet.h',
+            'loader/cache/CachedCues.cpp',
+            'loader/cache/CachedCues.h',
             'loader/cache/CachedFont.cpp',
             'loader/cache/CachedFont.h',
             'loader/cache/CachedImage.cpp',

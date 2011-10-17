@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -70,6 +70,10 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
             return ResourceLoadPriorityVeryLow;
         case CachedResource::LinkSubresource:
             return ResourceLoadPriorityVeryLow;
+#endif
+#if ENABLE(VIDEO_TRACK)
+        case CachedResource::CueResource:
+            return ResourceLoadPriorityLow;
 #endif
     }
     ASSERT_NOT_REACHED();

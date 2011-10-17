@@ -1,3 +1,43 @@
+2011-10-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Cues should be loaded by the cached resource loader
+        https://bugs.webkit.org/show_bug.cgi?id=70134
+
+        Reviewed by Darin Adler.
+
+        No new tests, changes covered by existing tests.
+
+        * CMakeLists.txt: Add CachedCues.cpp/h.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * loader/cache/CachedCues.cpp: Added.
+        (WebCore::CachedCues::CachedCues):
+        (WebCore::CachedCues::~CachedCues):
+        (WebCore::CachedCues::data): Called when new data has been loaded, pass it to all registered
+            clients.
+        * loader/cache/CachedCues.h: Added.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType): Cues have low loader priority.
+        * loader/cache/CachedResource.h:
+
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::didReceiveData): New client interface.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Create and return a new cue loader.
+        (WebCore::CachedResourceLoader::requestCues):
+        (WebCore::CachedResourceLoader::checkInsecureContent): Cues aren't mentioned in the CPS spec
+            yet, but they only work with a media element so use the mdia policy.
+        (WebCore::CachedResourceLoader::canRequest): Allow cues to be loaded from any origin like media.
+        * loader/cache/CachedResourceLoader.h:
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        * platform/network/chromium/ResourceRequest.h:
+
 2011-10-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10293929> REGRESSION (r97525): iChat transcript has horizontal scroll bar when the conversation includes a wide image

@@ -2056,6 +2056,7 @@ IF (ENABLE_VIDEO_TRACK)
         html/track/WebVTTParser.cpp
         html/track/WebVTTTokenizer.cpp
         loader/CueLoader.cpp
+        loader/cache/CachedCues.cpp
     )
 ENDIF()
 

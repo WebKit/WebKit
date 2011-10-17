@@ -2,7 +2,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
     Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
 
     This library is free software; you can redistribute it and/or
@@ -52,6 +52,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(VIDEO_TRACK)
+#include "CachedCues.h"
+#endif
+
 #define PRELOAD_DEBUG 0
 
 namespace WebCore {
@@ -80,6 +84,10 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedResource(request, CachedResource::LinkPrerender);
     case CachedResource::LinkSubresource:
         return new CachedResource(request, CachedResource::LinkSubresource);
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::CueResource:
+        return new CachedCues(request);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -153,6 +161,13 @@ CachedFont* CachedResourceLoader::requestFont(ResourceRequest& request)
     return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, request, String(), defaultCachedResourceOptions()));
 }
 
+#if ENABLE(VIDEO_TRACK)
+CachedCues* CachedResourceLoader::requestCues(ResourceRequest& request)
+{
+    return static_cast<CachedCues*>(requestResource(CachedResource::CueResource, request, String(), defaultCachedResourceOptions()));
+}
+#endif
+
 CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(ResourceRequest& request, const String& charset, ResourceLoadPriority priority)
 {
     return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, request, charset, defaultCachedResourceOptions(), priority));
@@ -224,6 +239,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
             if (!f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url))
                 return false;
         break;
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::CueResource:
+#endif
     case CachedResource::ImageResource:
     case CachedResource::FontResource: {
         // These resources can corrupt only the frame's pixels.
@@ -268,6 +286,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::CueResource:
 #endif
         // These types of resources can be loaded from any origin.
         // FIXME: Are we sure about CachedResource::FontResource?
@@ -323,6 +344,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::LinkSubresource:
 #endif
         break;
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::CueResource:
+        // Cues aren't called out in the CPS spec yet, but they only work with a media element
+        // so use the media policy.
+        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url))
+            return false;
+        break;
+#endif
     }
 
     return true;
