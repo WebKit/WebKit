@@ -1,3 +1,13 @@
+2011-10-17  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Here's the error:
+
+        5>c:\cygwin\home\buildbot\slave\win-release\build\webkitbuild\release\obj\webcore\derivedsources\jssvgpathsegcurvetoquadraticrel.cpp(128) : fatal error C1128: number of sections exceeded object file format limit : compile with /bigobj
+
+        * win/tools/vsprops/common.vsprops: Specify /bigobj to the compiler.
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)

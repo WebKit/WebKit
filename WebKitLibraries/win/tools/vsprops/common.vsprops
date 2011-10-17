@@ -8,7 +8,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalOptions="/GS"
+		AdditionalOptions="/bigobj /GS"
 		PreprocessorDefinitions="WIN32;_WINDOWS;WINVER=0x502;_WIN32_WINNT=0x502;_WIN32_IE=0x603;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1;_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName)"
 		ExceptionHandling= "0"
 		RuntimeTypeInfo="false"
