@@ -2,6 +2,12 @@
 
         Windows build fix.
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export!
+
+2011-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix.
+
         * heap/HandleStack.cpp: Added a missing #include.
 
 2011-10-17  Geoffrey Garen  <ggaren@apple.com>
