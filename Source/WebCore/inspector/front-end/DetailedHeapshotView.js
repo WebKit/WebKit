@@ -621,7 +621,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
     this.helpButton.addEventListener("click", this._helpClicked.bind(this), false);
 
-    var popoverHelper = new WebInspector.PopoverHelper(this.element, this._getHoverAnchor.bind(this), this._showStringContentPopover.bind(this));
+    var popoverHelper = new WebInspector.ObjectPopoverHelper(this.element, this._getHoverAnchor.bind(this), this._showObjectPopover.bind(this), null, true);
 
     this._loadProfile(this._profileUid, profileCallback.bind(this));
 
@@ -1066,19 +1066,9 @@ WebInspector.DetailedHeapshotView.prototype = {
         this.refreshShowAsPercents();
     },
 
-    _showStringContentPopover: function(anchor, popover)
+    _showObjectPopover: function(element, showCallback)
     {
-        var stringContentElement = document.createElement("span");
-        stringContentElement.className = "monospace";
-        stringContentElement.style.whiteSpace = "pre";
-
-        function displayString(name, className)
-        {
-            stringContentElement.textContent = name;
-            stringContentElement.className += " " + className;
-            popover.show(stringContentElement, anchor);
-        }
-        anchor.node.hoverMessage(displayString);
+        element.node.queryObjectContent(showCallback);
     },
 
     _helpClicked: function(event)

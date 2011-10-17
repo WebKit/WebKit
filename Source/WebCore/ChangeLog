@@ -1,3 +1,55 @@
+2011-10-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Add an ability to look up and explore an object from a heap profile.
+        https://bugs.webkit.org/show_bug.cgi?id=61179
+
+        This is exteremely helpful when dealing with DOM wrappers, as
+        their properties are mostly implemented with getters and thus not
+        stored in heap snapshots.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::getObjectByHeapObjectId):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype.hasHoverMessage.false.queryObjectContent):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.queryObjectContent.else.formatResult):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.queryObjectContent):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._showObjectPopover):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get canBeQueried):
+        (WebInspector.HeapSnapshotNode.prototype.get flags):
+        (WebInspector.HeapSnapshotNode.prototype.get isDOMWindow):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype._flagsOfNode):
+        (WebInspector.HeapSnapshot.prototype._calculateFlags):
+        (WebInspector.HeapSnapshot.prototype.updateStaticData):
+        (WebInspector.HeapSnapshotNodesProvider.prototype._serialize):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.get nodeFlags):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.fromError):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view tr:not(.selected) td.object-column span.highlight):
+
 2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Editing CSS selector doesn't fire onResourceContentCommitted

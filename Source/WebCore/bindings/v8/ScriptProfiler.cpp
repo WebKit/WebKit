@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptProfiler.h"
 
+#include "InjectedScript.h"
 #include "InspectorValues.h"
 #include "RetainedDOMInfo.h"
 #include "V8Binding.h"
@@ -63,6 +64,34 @@ void ScriptProfiler::collectGarbage()
     // a new "delete everything" pass because object references make it difficult
     // to free everything possible in just one pass.
     while (!v8::V8::IdleNotification()) { }
+}
+
+PassRefPtr<InspectorValue> ScriptProfiler::objectByHeapObjectId(unsigned id, InjectedScriptManager* injectedScriptManager)
+{
+    // As ids are unique, it doesn't matter which HeapSnapshot owns HeapGraphNode.
+    // We need to find first HeapSnapshot containing a node with the specified id.
+    const v8::HeapGraphNode* node = 0;
+    for (int i = 0, l = v8::HeapProfiler::GetSnapshotsCount(); i < l; ++i) {
+        const v8::HeapSnapshot* snapshot = v8::HeapProfiler::GetSnapshot(i);
+        node = snapshot->GetNodeById(id);
+        if (node)
+            break;
+    }
+    if (!node)
+        return InspectorValue::null();
+
+    v8::HandleScope scope;
+    v8::Handle<v8::Value> value = node->GetHeapValue();
+    if (!value->IsObject())
+        return InspectorValue::null();
+
+    v8::Handle<v8::Object> object(value.As<v8::Object>());
+    v8::Local<v8::Context> creationContext = object->CreationContext();
+    v8::Context::Scope creationScope(creationContext);
+    ScriptState* scriptState = ScriptState::forContext(creationContext);
+    InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(scriptState);
+    return !injectedScript.hasNoValue() ?
+            RefPtr<InspectorValue>(injectedScript.wrapObject(value, "")).release() : InspectorValue::null();
 }
 
 namespace {

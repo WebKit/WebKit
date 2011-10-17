@@ -148,6 +148,30 @@ function test()
             next();
         },
 
+        function heapSnapshotFlagsTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMockWithDOM());
+            var expectedCanBeQueried = {
+                "": false,
+               "A": true,
+               "B": true,
+               "C": true,
+               "D": true,
+               "E": false,
+               "F": false,
+               "G": false,
+               "H": false,
+               "M": false,
+               "N": true,
+               "DOMWindow": true
+            };
+            for (var nodes = snapshot._allNodes; nodes.hasNext(); nodes.next()) {
+                var node = nodes.item;
+                InspectorTest.assertEquals(expectedCanBeQueried[node.name], node.canBeQueried, "canBeQueried of \"" + node.name + "\"");
+            }
+            next();
+        },
+
         function heapSnapshotNodesProviderTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

@@ -1,3 +1,20 @@
+2011-10-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Add an ability to look up and explore an object from a heap profile.
+        https://bugs.webkit.org/show_bug.cgi?id=61179
+
+        This is exteremely helpful when dealing with DOM wrappers, as
+        their properties are mostly implemented with getters and thus not
+        stored in heap snapshots.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/profiler/heap-snapshot-expected.txt:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockWithDOM):
+        (initialize_HeapSnapshotTest):
+        * inspector/profiler/heap-snapshot.html:
+
 2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Editing CSS selector doesn't fire onResourceContentCommitted
