@@ -19,19 +19,19 @@ layer at (0,0) size 800x600
                       RenderBR {BR} at (0,0) size 0x0
                       RenderInline {FONT} at (0,0) size 237x31
                         RenderInline {B} at (0,0) size 148x15
-                          RenderInline {A} at (0,0) size 148x15 [color=#0000EE]
+                          RenderInline {A} at (0,0) size 148x15 [color=#551A8B]
                             RenderText {#text} at (2,22) size 148x15
                               text run at (2,22) width 34: "Click "
                               text run at (36,22) width 114: "here to email full list"
                         RenderText {#text} at (150,22) size 73x15
                           text run at (150,22) width 73: ", or copy this "
-                        RenderInline {A} at (0,0) size 237x31 [color=#0000EE]
+                        RenderInline {A} at (0,0) size 237x31 [color=#551A8B]
                           RenderText {#text} at (223,22) size 237x31
                             text run at (223,22) width 16: "list"
                             text run at (2,38) width 68: "of addresses"
                         RenderText {#text} at (70,38) size 38x15
                           text run at (70,38) width 38: ".  View "
-                        RenderInline {A} at (0,0) size 82x15 [color=#0000EE]
+                        RenderInline {A} at (0,0) size 82x15 [color=#551A8B]
                           RenderText {#text} at (108,38) size 82x15
                             text run at (108,38) width 82: "Who is in MPG"
                         RenderText {#text} at (190,38) size 3x15

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderInline {A} at (0,0) size 26x19 [color=#0000EE]
+        RenderInline {A} at (0,0) size 26x19 [color=#551A8B]
           RenderText {#text} at (0,0) size 26x19
             text run at (0,0) width 26: "note"
         RenderText {#text} at (26,0) size 4x19
           text run at (26,0) width 4: " "
-        RenderInline {A} at (0,0) size 70x19 [color=#0000EE]
+        RenderInline {A} at (0,0) size 70x19 [color=#551A8B]
           RenderText {#text} at (30,0) size 70x19
             text run at (30,0) width 70: "closepopup"
         RenderText {#text} at (0,0) size 0x0

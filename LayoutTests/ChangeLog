@@ -1,3 +1,84 @@
+2011-10-17  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectations for r97596 and r97602.
+
+        * platform/chromium-cg-mac-leopard/css2.1/t0511-c21-pseud-link-02-e-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/t0511-c21-pseud-link-03-e-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/selectors/017-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/selectors/061-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug46623-1-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug51140-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug8950-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/css2.1/t0511-c21-pseud-link-02-e-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/css2.1/t0511-c21-pseud-link-03-e-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/selectors/017-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/selectors/061-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla/bugs/bug46623-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla/bugs/bug51140-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla/bugs/bug8950-expected.png: Added.
+        * platform/chromium-linux/css2.1/t0511-c21-pseud-link-02-e-expected.png:
+        * platform/chromium-linux/css2.1/t0511-c21-pseud-link-03-e-expected.png:
+        * platform/chromium-linux/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-linux/fast/selectors/017-expected.png:
+        * platform/chromium-linux/fast/selectors/061-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46623-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51140-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug8950-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t0511-c21-pseud-link-02-e-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t0511-c21-pseud-link-03-e-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/selectors/017-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/selectors/061-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug46623-1-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug51140-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug8950-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0511-c21-pseud-link-02-e-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0511-c21-pseud-link-03-e-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/34176-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/34176-expected.png.
+        * platform/chromium-mac-snowleopard/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/selectors/017-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/selectors/061-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug26553-expected.png: Renamed from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug26553-expected.png.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46623-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51140-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug8950-expected.png: Added.
+        * platform/chromium-mac/fast/events/reveal-link-when-focused-expected.png: Removed.
+        * platform/chromium-mac/fast/selectors/017-expected.png: Removed.
+        * platform/chromium-mac/fast/selectors/061-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46623-1-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51140-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug8950-expected.png: Removed.
+        * platform/chromium-win/css2.1/t0511-c21-pseud-link-02-e-expected.png:
+        * platform/chromium-win/css2.1/t0511-c21-pseud-link-02-e-expected.txt:
+        * platform/chromium-win/css2.1/t0511-c21-pseud-link-03-e-expected.png:
+        * platform/chromium-win/css2.1/t0511-c21-pseud-link-03-e-expected.txt:
+        * platform/chromium-win/fast/dom/34176-expected.txt:
+        * platform/chromium-win/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-win/fast/events/reveal-link-when-focused-expected.txt:
+        * platform/chromium-win/fast/selectors/017-expected.png:
+        * platform/chromium-win/fast/selectors/017-expected.txt:
+        * platform/chromium-win/fast/selectors/061-expected.png:
+        * platform/chromium-win/fast/selectors/061-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug26553-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug46623-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug51140-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug51140-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug8950-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug8950-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update Qt specific expected results after r97602.

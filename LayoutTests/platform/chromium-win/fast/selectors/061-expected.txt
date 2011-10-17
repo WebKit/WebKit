@@ -4,8 +4,7 @@ layer at (0,0) size 800x36
   RenderBlock {HTML} at (0,0) size 800x36
     RenderBody {BODY} at (8,8) size 784x20
       RenderBlock {DIV} at (0,0) size 784x20
-        RenderInline {A} at (0,0) size 269x19 [color=#0000EE] [bgcolor=#FF0000]
+        RenderInline {A} at (0,0) size 269x19 [color=#551A8B] [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 269x19
             text run at (0,0) width 269: "This anchor should have a green background"
-        RenderText {#text} at (269,0) size 447x19
-          text run at (269,0) width 447: " (Note: You must have visited http://www.w3.org/ for this test to be valid.)"
+        RenderText {#text} at (0,0) size 0x0

@@ -7,7 +7,7 @@ layer at (0,0) size 785x2036
         RenderText {#text} at (0,0) size 310x19
           text run at (0,0) width 310: "padding to make link be initially scrolled out of sight"
       RenderBlock (anonymous) at (0,2000) size 769x20
-        RenderInline {A} at (0,0) size 339x19 [color=#0000EE]
+        RenderInline {A} at (0,0) size 339x19 [color=#551A8B]
           RenderText {#text} at (0,0) size 339x19
             text run at (0,0) width 339: "this link should be focused and revealed after page loads"
         RenderText {#text} at (0,0) size 0x0
