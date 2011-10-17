@@ -1,3 +1,17 @@
+2011-10-16  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Rebaseline layout test zoom-animator-scale-test2.html for win, mac
+        https://bugs.webkit.org/show_bug.cgi?id=69624
+
+        Reviewed by Kent Tamura.
+
+        Also modifies timeout in zoom-animator-scale-test2.html to try and reduce flake, generate
+        win baselines.
+
+        * platform/chromium-gpu-win/platform/chromium/compositing/zoom-animator-scale-test2-expected.png: Added.
+        * platform/chromium/compositing/zoom-animator-scale-test2.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Expose rangeFromLocationAndLength and locationAndLengthFromRange via internals object
