@@ -1,5 +1,13 @@
 2011-10-17  Dirk Pranke  <dpranke@chromium.org>
 
+        Update chromium gpu baselines for fast/canvas/canvas-composite-transformclip.html .
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
         Remove some expectations that are no longer failing.
 
         Unreviewed, expectations change.
