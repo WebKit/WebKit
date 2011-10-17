@@ -42,7 +42,7 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
         }
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
         
         static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
         {

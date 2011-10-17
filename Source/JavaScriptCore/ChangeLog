@@ -1,5 +1,13 @@
 2011-10-17  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after r97536, part 3
+
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSObject.h:
+        Use JS_EXPORTDATA to export the s_info members.
+
+2011-10-17  Adam Roben  <aroben@apple.com>
+
         Interpreter build fix after r97564
 
         * runtime/Executable.cpp:
