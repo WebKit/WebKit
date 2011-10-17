@@ -1,5 +1,19 @@
 2011-10-16  Kentaro Hara  <haraken@chromium.org>
 
+        Generate XSLTProcessor constructor for JSC by [Constructor] IDL.
+        https://bugs.webkit.org/show_bug.cgi?id=70206
+
+        Reviewed by Adam Barth.
+
+        Tests: fast/xsl/xslt-processor.html
+               fast/xsl/default-html.html
+               fast/dom/global-constructors.html
+
+        * bindings/js/JSXSLTProcessorCustom.cpp: Removed a custom constructor.
+        * xml/XSLTProcessor.idl: Removed 'JSCustomConstructor'.
+
+2011-10-16  Kentaro Hara  <haraken@chromium.org>
+
         Support [Constructor] IDL for JSC.
         https://bugs.webkit.org/show_bug.cgi?id=70101
 
