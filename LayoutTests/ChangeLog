@@ -1,5 +1,13 @@
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=69624
+
+        * platform/chromium/test_expectations.txt:
+        Correct expectation of zoom-animator-scale-test2.html.
+
+2011-10-17  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update test expectation.
         https://bugs.webkit.org/show_bug.cgi?id=70013
 
