@@ -1,5 +1,15 @@
 2011-10-17  Adam Roben  <aroben@apple.com>
 
+        Interpreter build fix after r97564
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        Moved declaration of globalData variable into ENABLE(JIT) blocks, since it is only used
+        there.
+
+2011-10-17  Adam Roben  <aroben@apple.com>
+
         Windows build fix after r97536, part 2
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Added back

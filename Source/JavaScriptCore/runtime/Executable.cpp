@@ -440,10 +440,8 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
 #endif
-    JSObject* exception;
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
+    JSObject* exception;
     OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
     if (!newCodeBlock)
         return exception;
@@ -457,6 +455,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
 #if ENABLE(JIT)
+    JSGlobalData* globalData = scopeChainNode->globalData;
     if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
@@ -501,10 +500,8 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 {
     UNUSED_PARAM(jitType);
     
-    JSObject* exception;
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
+    JSObject* exception;
     OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
     if (!newCodeBlock)
         return exception;
@@ -518,6 +515,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
 #if ENABLE(JIT)
+    JSGlobalData* globalData = scopeChainNode->globalData;
     if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
