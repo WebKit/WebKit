@@ -1,3 +1,15 @@
+2011-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Search matches highlighting in text does not work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=70244
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/utilities-highlight-results.html
+
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: webkit won't always send live region notifications
