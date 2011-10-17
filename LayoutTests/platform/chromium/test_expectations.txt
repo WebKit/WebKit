@@ -3827,6 +3827,24 @@ BUGV8_1768 : fast/js/delete-syntax.html = TEXT
 // REGRESSION(97566?)
 BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
+// Need rebaseline
+BUGWK70219 LINUX WIN : css2.1/t0511-c21-pseud-link-02-e.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : css2.1/t0511-c21-pseud-link-03-e.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : fast/events/reveal-link-when-focused.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : tables/mozilla/bugs/bug46623-1.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : tables/mozilla/bugs/bug51140.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : tables/mozilla/bugs/bug7342.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : tables/mozilla/bugs/bug8950.html = IMAGE+TEXT
+BUGWK70219 LINUX WIN : fast/dom/34176.html = TEXT
+BUGWK70219 LINUX WIN : tables/mozilla/bugs/bug26553.html = TEXT
+BUGWK70219 MAC : css2.1/t0511-c21-pseud-link-02-e.html = IMAGE
+BUGWK70219 MAC : css2.1/t0511-c21-pseud-link-03-e.html = IMAGE
+BUGWK70219 MAC : fast/events/reveal-link-when-focused.html = IMAGE
+BUGWK70219 MAC : tables/mozilla/bugs/bug46623-1.html = IMAGE
+BUGWK70219 MAC : tables/mozilla/bugs/bug51140.html = IMAGE
+BUGWK70219 MAC : tables/mozilla/bugs/bug7342.html = IMAGE
+BUGWK70219 MAC : tables/mozilla/bugs/bug8950.html = IMAGE
+
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
