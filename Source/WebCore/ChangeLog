@@ -1,3 +1,13 @@
+2011-10-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: fix handling of source mapping entries with no mapping.
+        https://bugs.webkit.org/show_bug.cgi?id=69941
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseMappings):
+
 2011-10-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Add an ability to look up and explore an object from a heap profile.

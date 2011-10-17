@@ -61,6 +61,18 @@ function test()
             InspectorTest.assertTrue(!mapping.sourceLocationToCompiledLocation("example.js", 6));
 
             next();
+        },
+
+        function testNoMappingEntry(next)
+        {
+            var mappingPayload = {
+                "mappings":"AAAA,C,CAAE;",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping(mappingPayload);
+            checkMapping(0, 0, "example.js", 0, 0, mapping);
+            checkMapping(0, 2, "example.js", 0, 2, mapping);
+            next();
         }
     ]);
 };

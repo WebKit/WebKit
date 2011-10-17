@@ -154,22 +154,22 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
 
         do {
             columnNumber += this._decodeVLQ(stringCharIterator);
-            if (this._isSeparator(stringCharIterator.peek()))
-                continue;
-            var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
-            if (sourceIndexDelta) {
-                sourceIndex += sourceIndexDelta;
-                sourceURL = this._sources[sourceIndex];
-                reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
-            }
-            sourceLineNumber += this._decodeVLQ(stringCharIterator);
-            sourceColumnNumber += this._decodeVLQ(stringCharIterator);
-            if (!this._isSeparator(stringCharIterator.peek()))
-                nameIndex += this._decodeVLQ(stringCharIterator);
+            if (!this._isSeparator(stringCharIterator.peek())) {
+                var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
+                if (sourceIndexDelta) {
+                    sourceIndex += sourceIndexDelta;
+                    sourceURL = this._sources[sourceIndex];
+                    reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
+                }
+                sourceLineNumber += this._decodeVLQ(stringCharIterator);
+                sourceColumnNumber += this._decodeVLQ(stringCharIterator);
+                if (!this._isSeparator(stringCharIterator.peek()))
+                    nameIndex += this._decodeVLQ(stringCharIterator);
 
-            this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
-            if (!reverseMappings[sourceLineNumber])
-                reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
+                this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
+                if (!reverseMappings[sourceLineNumber])
+                    reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
+            }
 
             if (stringCharIterator.next() === ";") {
                 lineNumber += 1;
