@@ -1,3 +1,12 @@
+2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r97598. Remove obsolete Qt 4.8 specific expected results.
+
+        * platform/qt-4.8/tables/mozilla/bugs/bug7342-expected.png: Removed.
+        * platform/qt-4.8/tables/mozilla/bugs/bug7342-expected.txt: Removed.
+        * platform/qt-4.8/tables/mozilla/bugs/bug8950-expected.png: Removed.
+        * platform/qt-4.8/tables/mozilla/bugs/bug8950-expected.txt: Removed.
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
