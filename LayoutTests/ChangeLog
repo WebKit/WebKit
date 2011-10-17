@@ -1,3 +1,13 @@
+2011-10-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10293929> REGRESSION (r97525): iChat transcript has horizontal scroll bar when the conversation includes a wide image
+        https://bugs.webkit.org/show_bug.cgi?id=70204
+
+        Reviewed by Darin Adler.
+
+        * fast/replaced/table-percent-width-expected.txt: Updated the results to
+        show that this test is failing after reverting r97525.
+
 2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moved V8-specific result to platform/chromium and added JSC result in cross-platform directory.

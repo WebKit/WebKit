@@ -1,3 +1,17 @@
+2011-10-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10293929> REGRESSION (r97525): iChat transcript has horizontal scroll bar when the conversation includes a wide image
+        https://bugs.webkit.org/show_bug.cgi?id=70204
+
+        Reviewed by Darin Adler.
+
+        Reverted r97525, which was supposed to fix <http://webkit.org/b/29447>.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        * rendering/RenderBox.h:
+
 2011-10-17  Ada Chan  <adachan@apple.com>
 
         Export KURL::baseAsString() so it can be called in WebProcessProxy::assumeReadAccessToBaseURL() in WebKit2.
