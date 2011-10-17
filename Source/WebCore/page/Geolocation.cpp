@@ -175,6 +175,15 @@ void Geolocation::Watchers::set(int id, PassRefPtr<GeoNotifier> prpNotifier)
     m_notifierToIdMap.set(notifier.release(), id);
 }
 
+Geolocation::GeoNotifier* Geolocation::Watchers::find(int id)
+{
+    ASSERT(id > 0);
+    IdToNotifierMap::iterator iter = m_idToNotifierMap.find(id);
+    if (iter == m_idToNotifierMap.end())
+        return 0;
+    return iter->second.get();
+}
+
 void Geolocation::Watchers::remove(int id)
 {
     ASSERT(id > 0);
@@ -253,6 +262,9 @@ void Geolocation::reset()
     m_allowGeolocation = Unknown;
     cancelAllRequests();
     stopUpdating();
+#if USE(PREEMPT_GEOLOCATION_PERMISSION)
+    m_pendingForPermissionNotifiers.clear();
+#endif
 }
 
 void Geolocation::disconnectFrame()
@@ -418,6 +430,10 @@ void Geolocation::clearWatch(int watchId)
     if (watchId < firstAvailableWatchId)
         return;
 
+#if USE(PREEMPT_GEOLOCATION_PERMISSION)
+    if (GeoNotifier* notifier = m_watchers.find(watchId))
+        m_pendingForPermissionNotifiers.remove(notifier);
+#endif
     m_watchers.remove(watchId);
     
     if (!hasListeners())

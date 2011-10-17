@@ -1,3 +1,18 @@
+2011-10-17  Satish Sampath  <satish@chromium.org>
+
+        Avoid leaking document when leaving google.com due to geolocation
+        permission request.
+        https://bugs.webkit.org/show_bug.cgi?id=58027
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::Watchers::find): added
+        (WebCore::Geolocation::reset): cleared all pending notifiers.
+        (WebCore::Geolocation::clearWatch): removed from pending notifier set.
+        * page/Geolocation.h:
+        (WebCore::Geolocation::Watchers::find): added
+
 2011-10-17  Andrei Lavreniyuk  <andy.lavr@gmail.com>
 
         Fix clang WebKitGTK+ build.

@@ -113,6 +113,7 @@ private:
     class Watchers {
     public:
         void set(int id, PassRefPtr<GeoNotifier>);
+        GeoNotifier* find(int id);
         void remove(int id);
         void remove(GeoNotifier*);
         bool contains(GeoNotifier*) const;
