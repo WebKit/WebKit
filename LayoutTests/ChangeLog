@@ -1,3 +1,26 @@
+2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r97596.
+
+        * platform/qt/css2.1/t0511-c21-pseud-link-02-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-02-e-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-link-03-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-03-e-expected.txt:
+        * platform/qt/fast/block/float/float-in-float-hit-testing-expected.png:
+        * platform/qt/fast/block/float/float-in-float-hit-testing-expected.txt:
+        * platform/qt/fast/history/visited-link-background-color-expected.png:
+        * platform/qt/fast/history/visited-link-background-color-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug26553-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug26553-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug46623-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug51140-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug51140-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug8950-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug8950-expected.txt:
+
 2011-10-17  Rosen Dash  <rosen.dash@motorola.com>
 
         when CSS pseudo selectors are applied (:before and :after) the *-of-line keyboard navigation does not work
