@@ -1,5 +1,26 @@
 2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, update Qt specific expected results after r97602.
+
+        * platform/qt/css3/selectors3/html/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/html/css3-modsel-17-expected.txt:
+        * platform/qt/css3/selectors3/html/css3-modsel-61-expected.png:
+        * platform/qt/css3/selectors3/html/css3-modsel-61-expected.txt:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-17-expected.txt:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-61-expected.png:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-61-expected.txt:
+        * platform/qt/css3/selectors3/xml/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-17-expected.txt:
+        * platform/qt/css3/selectors3/xml/css3-modsel-61-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-61-expected.txt:
+        * platform/qt/fast/selectors/017-expected.png:
+        * platform/qt/fast/selectors/017-expected.txt:
+        * platform/qt/fast/selectors/061-expected.png:
+        * platform/qt/fast/selectors/061-expected.txt:
+
+2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Unskip a passing test and add platform specific expected result.
 
         * platform/qt/Skipped:
