@@ -1,3 +1,462 @@
+2011-10-16  Kent Tamura  <tkent@chromium.org>
+
+        Update test exepctations.
+
+        - Add baseline files for new tests
+        - Update for Skia focus ring change
+        - Update for Mac spelling underline change
+        - Optimize test results for them
+
+        * css2.1/20110323/abspos-containing-block-initial-007-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/abspos-containing-block-initial-007-expected.txt.
+        * css2.1/20110323/abspos-containing-block-initial-007-ref-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.txt.
+        * editing/deleting/delete-3959464-fix-expected.txt: Renamed from LayoutTests/platform/gtk/editing/deleting/delete-3959464-fix-expected.txt.
+        * editing/deleting/delete-block-contents-003-expected.txt: Renamed from LayoutTests/platform/gtk/editing/deleting/delete-block-contents-003-expected.txt.
+        * editing/deleting/delete-trailing-ws-002-expected.txt: Renamed from LayoutTests/platform/gtk/editing/deleting/delete-trailing-ws-002-expected.txt.
+        * editing/deleting/delete-ws-fixup-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/deleting/delete-ws-fixup-001-expected.txt.
+        * editing/inserting/insert-br-004-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-br-004-expected.txt.
+        * editing/inserting/insert-br-005-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-br-005-expected.txt.
+        * editing/inserting/insert-br-007-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-br-007-expected.txt.
+        * editing/inserting/insert-div-007-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-007-expected.txt.
+        * editing/inserting/insert-div-012-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-012-expected.txt.
+        * editing/inserting/insert-div-013-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-013-expected.txt.
+        * editing/inserting/insert-div-014-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-014-expected.txt.
+        * editing/inserting/insert-div-015-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-015-expected.txt.
+        * editing/inserting/insert-div-016-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-016-expected.txt.
+        * editing/inserting/insert-div-017-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-017-expected.txt.
+        * editing/inserting/insert-div-018-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-018-expected.txt.
+        * editing/inserting/insert-div-019-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-019-expected.txt.
+        * editing/inserting/insert-div-020-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-020-expected.txt.
+        * editing/inserting/insert-div-022-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-022-expected.txt.
+        * editing/inserting/insert-div-025-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-025-expected.txt.
+        * editing/inserting/insert-div-027-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-div-027-expected.txt.
+        * editing/inserting/insert-tab-002-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-tab-002-expected.txt.
+        * editing/inserting/insert-tab-003-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/insert-tab-003-expected.txt.
+        * editing/inserting/return-key-with-selection-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/return-key-with-selection-001-expected.txt.
+        * editing/inserting/return-key-with-selection-002-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/return-key-with-selection-002-expected.txt.
+        * editing/inserting/return-key-with-selection-003-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/return-key-with-selection-003-expected.txt.
+        * editing/inserting/typing-002-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/typing-002-expected.txt.
+        * editing/inserting/typing-around-br-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/inserting/typing-around-br-001-expected.txt.
+        * editing/pasteboard/paste-text-013-expected.txt: Removed.
+        * editing/pasteboard/paste-text-019-expected.txt: Renamed from LayoutTests/platform/gtk/editing/pasteboard/paste-text-019-expected.txt.
+        * editing/selection/extend-by-word-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/extend-by-word-001-expected.txt.
+        * editing/selection/move-backwords-by-word-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/move-backwords-by-word-001-expected.txt.
+        * editing/selection/move-by-character-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/move-by-character-001-expected.txt.
+        * editing/selection/move-by-line-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/move-by-line-001-expected.txt.
+        * editing/selection/move-by-word-001-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/move-by-word-001-expected.txt.
+        * editing/style/block-styles-007-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/block-styles-007-expected.txt.
+        * editing/style/create-block-for-style-002-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-002-expected.txt.
+        * editing/style/create-block-for-style-003-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-003-expected.txt.
+        * editing/style/create-block-for-style-004-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-004-expected.txt.
+        * editing/style/create-block-for-style-006-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-006-expected.txt.
+        * editing/style/create-block-for-style-008-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-008-expected.txt.
+        * editing/style/create-block-for-style-009-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-009-expected.txt.
+        * editing/style/create-block-for-style-011-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-011-expected.txt.
+        * editing/style/create-block-for-style-012-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-012-expected.txt.
+        * editing/style/create-block-for-style-013-expected.txt: Renamed from LayoutTests/platform/gtk/editing/style/create-block-for-style-013-expected.txt.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-3928305-fix-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-3959464-fix-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-and-undo-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-block-contents-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-contiguous-ws-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-tab-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-to-select-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-trailing-ws-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/deleting/delete-ws-fixup-002-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/execCommand/5569741-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/execCommand/insertHorizontalRule-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/inserting/5418891-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-br-004-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-br-005-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-br-007-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-007-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-012-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-013-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-014-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-015-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-016-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-017-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-018-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-019-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-020-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-022-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-025-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-div-027-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-paragraph-02-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-tab-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/paragraph-separator-01-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/paragraph-separator-02-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/paragraph-separator-03-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/return-key-with-selection-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/typing-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/inserting/typing-around-br-001-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/4242293-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/cut-text-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/merge-after-delete-1-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/merge-after-delete-2-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/merge-after-delete-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/13804-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/5234383-1-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/selection/5234383-2-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/selection/extend-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/move-backwords-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/move-by-character-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/move-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/selection/unrendered-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/spelling/inline_spelling_markers-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/spelling/spelling-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/5046875-2-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/block-styles-007-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-004-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-006-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-009-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/editing/style/create-block-for-style-013-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-3928305-fix-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-3959464-fix-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-and-undo-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-block-contents-003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-contiguous-ws-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-tab-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-to-select-table-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-trailing-ws-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/delete-ws-fixup-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/5569741-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/5418891-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-br-004-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-br-005-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-br-007-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-007-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-012-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-013-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-014-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-015-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-016-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-017-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-018-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-019-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-020-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-022-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-025-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-div-027-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-paragraph-02-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-tab-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/paragraph-separator-01-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/paragraph-separator-02-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/paragraph-separator-03-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/return-key-with-selection-003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/typing-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/4242293-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/cut-text-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/merge-after-delete-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/13804-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/5234383-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/5234383-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/extend-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/move-backwords-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/move-by-character-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/move-by-word-001-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/unrendered-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/spelling/inline_spelling_markers-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/spelling/spelling-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/5046875-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/block-styles-007-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-004-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-006-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-008-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-009-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/style/create-block-for-style-013-expected.png: Added.
+        * platform/chromium-cg-mac/editing/deleting/delete-tab-003-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/deleting/delete-ws-fixup-001-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/deleting/delete-ws-fixup-002-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/inserting/insert-tab-003-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/inserting/typing-around-br-001-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/pasteboard/merge-after-delete-1-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/pasteboard/merge-after-delete-2-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/pasteboard/merge-after-delete-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/selection/5234383-1-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/selection/5234383-2-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/selection/select-from-textfield-outwards-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/spelling/inline_spelling_markers-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/style/create-block-for-style-006-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/style/create-block-for-style-011-expected.png: Removed.
+        * platform/chromium-cg-mac/editing/style/create-block-for-style-012-expected.png: Removed.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-ref-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.txt: Removed.
+        * platform/chromium-mac-leopard/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-3928305-fix-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-to-select-table-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-002-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/execCommand/5569741-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/5418891-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/insert-paragraph-02-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/paragraph-separator-01-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/paragraph-separator-02-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/paragraph-separator-03-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/4242293-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-after-delete-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/13804-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-1-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-2-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/spelling/inline_spelling_markers-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/spelling/spelling-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/style/5046875-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-3928305-fix-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/deleting/delete-3928305-fix-expected.png.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-3959464-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-and-undo-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-contents-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-contiguous-ws-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-to-select-table-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-trailing-ws-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/execCommand/5569741-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/5418891-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-007-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-007-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-012-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-012-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-013-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-013-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-014-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-014-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-015-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-015-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-016-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-016-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-017-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-017-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-018-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-018-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-019-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-019-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-020-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-020-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-022-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-022-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-025-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-027-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/insert-div-027-expected.png.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-02-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-01-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-02-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-03-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4242293-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/cut-text-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-013-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/paste-text-013-expected.png.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-014-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/paste-text-014-expected.png.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/13804-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/5234383-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/5234383-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-backwords-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/spelling/inline_spelling_markers-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/spelling/inline_spelling_markers-expected.png.
+        * platform/chromium-mac-snowleopard/editing/spelling/spelling-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/5046875-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/block-styles-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-002-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-002-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-003-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-003-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-004-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-004-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-006-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-006-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-008-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-008-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-009-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-009-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-011-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-011-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-012-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-012-expected.png.
+        * platform/chromium-mac-snowleopard/editing/style/create-block-for-style-013-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/style/create-block-for-style-013-expected.png.
+        * platform/chromium-mac/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-and-undo-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-block-contents-003-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-contiguous-ws-001-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-tab-002-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-tab-003-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-to-select-table-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-trailing-ws-002-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-001-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-002-expected.png: Removed.
+        * platform/chromium-mac/editing/execCommand/5569741-expected.png: Removed.
+        * platform/chromium-mac/editing/execCommand/insert-list-and-stitch-expected.png: Removed.
+        * platform/chromium-mac/editing/execCommand/insertHorizontalRule-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/5418891-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/editing-empty-divs-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-br-004-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-br-005-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-br-007-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-div-025-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-paragraph-02-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-paragraph-03-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-tab-002-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-tab-003-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-text-with-newlines-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/paragraph-separator-01-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/paragraph-separator-02-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/paragraph-separator-03-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/return-key-with-selection-001-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/return-key-with-selection-002-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/return-key-with-selection-003-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/typing-002-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/typing-around-br-001-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/4242293-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/8145-2-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/cut-text-001-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-1-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-2-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/merge-after-delete-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-text-019-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/13804-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/5234383-1-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/5234383-2-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/extend-by-word-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/move-backwords-by-word-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/move-by-character-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/move-by-line-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/move-by-word-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-002-expected.png: Removed.
+        * platform/chromium-mac/editing/spelling/spelling-expected.png: Removed.
+        * platform/chromium-mac/editing/style/5046875-2-expected.png: Removed.
+        * platform/chromium-mac/editing/style/block-styles-007-expected.png: Removed.
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-001-ref-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-007-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/height-width-inline-table-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/height-width-inline-table-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/height-width-table-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/height-width-table-001-expected.txt.
+        * platform/chromium/css2.1/20110323/abspos-containing-block-initial-001-expected.png: Added.
+        * platform/chromium/css2.1/20110323/abspos-containing-block-initial-001-ref-expected.png: Added.
+        * platform/chromium/css2.1/20110323/abspos-containing-block-initial-007-expected.png: Added.
+        * platform/chromium/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.png: Added.
+        * platform/chromium/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/chromium/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/deleting/delete-3959464-fix-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-block-contents-003-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-trailing-ws-002-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-ws-fixup-001-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-br-004-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-br-005-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-br-007-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-007-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-012-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-013-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-014-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-015-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-016-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-017-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-018-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-019-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-020-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-022-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-025-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-027-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-tab-002-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-tab-003-expected.txt: Removed.
+        * platform/mac/editing/inserting/return-key-with-selection-001-expected.txt: Removed.
+        * platform/mac/editing/inserting/return-key-with-selection-002-expected.txt: Removed.
+        * platform/mac/editing/inserting/return-key-with-selection-003-expected.txt: Removed.
+        * platform/mac/editing/inserting/typing-002-expected.txt: Removed.
+        * platform/mac/editing/inserting/typing-around-br-001-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-text-019-expected.txt: Removed.
+        * platform/mac/editing/selection/extend-by-word-001-expected.txt: Removed.
+        * platform/mac/editing/selection/move-backwords-by-word-001-expected.txt: Removed.
+        * platform/mac/editing/selection/move-by-character-001-expected.txt: Removed.
+        * platform/mac/editing/selection/move-by-line-001-expected.txt: Removed.
+        * platform/mac/editing/selection/move-by-word-001-expected.txt: Removed.
+        * platform/mac/editing/style/block-styles-007-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-002-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-003-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-004-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-006-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-008-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-009-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-011-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-012-expected.txt: Removed.
+        * platform/mac/editing/style/create-block-for-style-013-expected.txt: Removed.
+        * platform/qt/css2.1/20110323/abspos-containing-block-initial-007-expected.txt: Removed.
+        * platform/qt/css2.1/20110323/abspos-containing-block-initial-007-ref-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-div-013-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-div-015-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-div-019-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-paragraph-03-expected.txt: Removed.
+        * platform/win/editing/selection/move-by-word-001-expected.txt: Removed.
+        * platform/win/editing/style/create-block-for-style-008-expected.txt: Removed.
+
 2011-10-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening.
