@@ -2395,12 +2395,9 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
     LayoutUnit ruleLogicalLeft = style()->isLeftToRightDirection() ? 0 : contentLogicalWidth();
 
     bool antialias = shouldAntialiasLines(paintInfo.context);
+    LayoutUnit inlineDirectionSize = colInfo->desiredColumnWidth();
 
     for (unsigned i = 0; i < colCount; i++) {
-        LayoutRect colRect = columnRectAt(colInfo, i);
-
-        LayoutUnit inlineDirectionSize = isHorizontalWritingMode() ? colRect.width() : colRect.height();
-        
         // Move to the next position.
         if (style()->isLeftToRightDirection()) {
             ruleLogicalLeft += inlineDirectionSize + colGap / 2;
@@ -4202,9 +4199,8 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
     LayoutUnit currLogicalTopOffset = 0;
     int i;
     bool isHorizontal = isHorizontalWritingMode();
+    LayoutUnit blockDelta =  colInfo->columnHeight();
     for (i = 0; i < colCount; i++) {
-        LayoutRect colRect = columnRectAt(colInfo, i);
-        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
         if (style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset += blockDelta;
         else

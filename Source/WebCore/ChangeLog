@@ -1,3 +1,17 @@
+2011-10-17  Dan Bernstein  <mitz@apple.com>
+
+        Remove unnecessary calls to columnRectAt()
+        https://bugs.webkit.org/show_bug.cgi?id=70283
+
+        Reviewed by Darin Adler.
+
+        These call sites only needed one of the column dimensions, which are independent of the column
+        index, and can be retrieved directly from the ColumnInfo.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::hitTestColumns):
+
 2011-10-17  Andreas Kling  <kling@webkit.org>
 
         Protect against incorrect Element::fast*Attribute() usage.
