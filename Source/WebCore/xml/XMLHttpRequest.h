@@ -27,6 +27,7 @@
 #include "EventTarget.h"
 #include "FormData.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "ThreadableLoaderClient.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
 #include <wtf/OwnPtr.h>

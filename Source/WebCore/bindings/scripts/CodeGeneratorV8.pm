@@ -2153,9 +2153,7 @@ v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& arg
 }
 
 END
-    }
-
-    if ($dataNode->extendedAttributes->{"Constructor"}) {
+    } elsif ($dataNode->extendedAttributes->{"CanBeConstructed"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     }
 

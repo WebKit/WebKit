@@ -31,7 +31,9 @@ module xml {
     interface [
         ActiveDOMObject,
         CanBeConstructed,
-        CustomConstructor,
+        Constructor,
+        CallWith=ScriptExecutionContext,
+        V8CustomConstructor,
         CustomMarkFunction,
         EventTarget,
         NoStaticTables

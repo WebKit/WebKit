@@ -1,5 +1,26 @@
 2011-10-16  Kentaro Hara  <haraken@chromium.org>
 
+        Generate XMLHttpRequest constructor for JSC by [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=70208
+
+        Reviewed by Adam Barth.
+
+        This patch generates an XMLHttpRequest constructor for JSC by [Constructor] IDL,
+        but V8 is still using a custom constructor since the V8 constructor requires a special logic.
+
+        Tests: fast/dom/global-constructors.html
+               fast/dom/XMLHttpRequest-constants.html
+               fast/dom/xmlhttprequest-constructor-in-detached-document.html
+               http/tests/security/cookies/xmlhttprequest.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp: Removed an XMLHttpRequest custom constructor.
+        * bindings/scripts/CodeGeneratorV8.pm: Currently, CodeGeneratorV8.pm generates constructor code whenever [Constructor] is specified, even if [V8CustomConstructor] is specified. This is wrong. This patch fixes the condition where the constructor code is generated.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Updated a run-binding-tests result.
+        * xml/XMLHttpRequest.h: Added a necessary header.
+        * xml/XMLHttpRequest.idl: V8 is still using a custom constructor.
+
+2011-10-16  Kentaro Hara  <haraken@chromium.org>
+
         Generate XSLTProcessor constructor for JSC by [Constructor] IDL.
         https://bugs.webkit.org/show_bug.cgi?id=70206
 
