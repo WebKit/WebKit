@@ -1,3 +1,18 @@
+2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Set a default charset when creating a view.
+        https://bugs.webkit.org/show_bug.cgi?id=69771
+
+        Reviewed by Antonio Gomes.
+
+        Most (or all) ports default to iso-8859-1 when creating a view (or their
+        equivalent of a view), so we should do that too.
+
+        This makes fast/dom/Document/document-charset.html pass.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename virtual put to putVirtual

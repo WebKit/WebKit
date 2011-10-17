@@ -595,6 +595,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->viewport_arguments.userScalable = EINA_TRUE;
 
     priv->page_settings->setLoadsImagesAutomatically(true);
+    priv->page_settings->setDefaultTextEncodingName("iso-8859-1");
     priv->page_settings->setDefaultFixedFontSize(12);
     priv->page_settings->setDefaultFontSize(16);
     priv->page_settings->setSerifFontFamily("serif");
