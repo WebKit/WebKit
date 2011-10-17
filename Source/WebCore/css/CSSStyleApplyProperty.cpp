@@ -224,9 +224,10 @@ public:
     typedef const Color& (RenderStyle::*DefaultFunction)() const;
     typedef Color (*InitialFunction)();
 
-    ApplyPropertyColor(GetterFunction getter, SetterFunction setter, DefaultFunction defaultFunction, InitialFunction initialFunction = 0)
+    ApplyPropertyColor(GetterFunction getter, SetterFunction setter, SetterFunction visitedLinkSetter, DefaultFunction defaultFunction, InitialFunction initialFunction = 0)
         : m_getter(getter)
         , m_setter(setter)
+        , m_visitedLinkSetter(visitedLinkSetter)
         , m_default(defaultFunction)
         , m_initial(initialFunction)
     {
@@ -235,16 +236,17 @@ public:
 private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
+        // Visited link style can never explicitly inherit from parent visited link style so no separate getters are needed.
         const Color& color = (selector->parentStyle()->*m_getter)();
         if (m_default && !color.isValid())
-            (selector->style()->*m_setter)((selector->parentStyle()->*m_default)());
+            applyColorValue(selector, (selector->parentStyle()->*m_default)());
         else
-            (selector->style()->*m_setter)(color);
+            applyColorValue(selector, color);
     }
 
     virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
-        (selector->style()->*m_setter)(m_initial ? m_initial() : Color());
+        applyColorValue(selector, m_initial ? m_initial() : Color());
     }
 
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
@@ -255,12 +257,25 @@ private:
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (inheritColorFromParent && primitiveValue->getIdent() == CSSValueCurrentcolor)
             applyInheritValue(selector);
-        else
-            (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(primitiveValue));
+        else {
+            if (selector->applyPropertyToRegularStyle())
+                (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(primitiveValue, false));
+            if (selector->applyPropertyToVisitedLinkStyle() && m_visitedLinkSetter)
+                (selector->style()->*m_visitedLinkSetter)(selector->getColorFromPrimitiveValue(primitiveValue, true));
+        }
+    }
+    
+    void applyColorValue(CSSStyleSelector* selector, const Color& color) const
+    {
+        if (selector->applyPropertyToRegularStyle())
+            (selector->style()->*m_setter)(color);
+        if (selector->applyPropertyToVisitedLinkStyle() && m_visitedLinkSetter)
+            (selector->style()->*m_visitedLinkSetter)(color);
     }
 
     GetterFunction m_getter;
     SetterFunction m_setter;
+    SetterFunction m_visitedLinkSetter;
     DefaultFunction m_default;
     InitialFunction m_initial;
 };
@@ -893,7 +908,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     for (int i = 0; i < numCSSProperties; ++i)
        m_propertyMap[i] = 0;
 
-    setPropertyHandler(CSSPropertyColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::color, &RenderStyle::setColor, 0, RenderStyle::initialColor));
+    setPropertyHandler(CSSPropertyColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::color, &RenderStyle::setColor,  &RenderStyle::setVisitedLinkColor, 0, RenderStyle::initialColor));
     setPropertyHandler(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
 
     setPropertyHandler(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
@@ -954,11 +969,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
                     &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
     setPropertyHandler(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBackgroundRepeatX), propertyHandler(CSSPropertyBackgroundRepeatY)));
 
-    setPropertyHandler(CSSPropertyBackgroundColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, 0));
-    setPropertyHandler(CSSPropertyBorderBottomColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyBorderLeftColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyBorderRightColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyBorderTopColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBackgroundColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, &RenderStyle::setVisitedLinkBackgroundColor, 0));
+    setPropertyHandler(CSSPropertyBorderBottomColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::setVisitedLinkBorderBottomColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderLeftColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::setVisitedLinkBorderLeftColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderRightColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::setVisitedLinkBorderRightColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyBorderTopColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::setVisitedLinkBorderTopColor, &RenderStyle::color));
 
     setPropertyHandler(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
     setPropertyHandler(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
@@ -1016,17 +1031,17 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyFontWeight, new ApplyPropertyFontWeight());
 
     setPropertyHandler(CSSPropertyOutlineStyle, new ApplyPropertyExpanding<ExpandValue>(new ApplyPropertyDefault<OutlineIsAuto>(&RenderStyle::outlineStyleIsAuto, &RenderStyle::setOutlineStyleIsAuto, &RenderStyle::initialOutlineStyleIsAuto), new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::outlineStyle, &RenderStyle::setOutlineStyle, &RenderStyle::initialBorderStyle)));
-    setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color));
     setPropertyHandler(CSSPropertyOutlineOffset, new ApplyPropertyComputeLength<int>(&RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset, &RenderStyle::initialOutlineOffset));
 
     setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyHandler(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
     setPropertyHandler(CSSPropertyOverflow, new ApplyPropertyExpanding<ExpandValue>(propertyHandler(CSSPropertyOverflowX), propertyHandler(CSSPropertyOverflowY)));
 
-    setPropertyHandler(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::color));
-    setPropertyHandler(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor,  &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextFillColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyWebkitTextStrokeColor, new ApplyPropertyColor<NoInheritFromParent>(&RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor, &RenderStyle::color));
 
     setPropertyHandler(CSSPropertyTop, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset));
     setPropertyHandler(CSSPropertyRight, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset));

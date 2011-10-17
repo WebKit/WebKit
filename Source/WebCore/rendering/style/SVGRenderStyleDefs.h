@@ -103,6 +103,9 @@ namespace WebCore {
         SVGPaint::SVGPaintType paintType;
         Color paintColor;
         String paintUri;
+        SVGPaint::SVGPaintType visitedLinkPaintType;
+        Color visitedLinkPaintColor;
+        String visitedLinkPaintUri;
 
     private:
         StyleFillData();
@@ -130,6 +133,9 @@ namespace WebCore {
         SVGPaint::SVGPaintType paintType;
         Color paintColor;
         String paintUri;
+        SVGPaint::SVGPaintType visitedLinkPaintType;
+        Color visitedLinkPaintColor;
+        String visitedLinkPaintUri;
 
     private:        
         StyleStrokeData();

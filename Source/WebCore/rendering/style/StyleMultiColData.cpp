@@ -46,6 +46,7 @@ StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
     , m_count(o.m_count)
     , m_gap(o.m_gap)
     , m_rule(o.m_rule)
+    , m_visitedLinkColumnRuleColor(o.m_visitedLinkColumnRuleColor)
     , m_autoWidth(o.m_autoWidth)
     , m_autoCount(o.m_autoCount)
     , m_normalGap(o.m_normalGap)
@@ -59,7 +60,7 @@ StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
 bool StyleMultiColData::operator==(const StyleMultiColData& o) const
 {
     return m_width == o.m_width && m_count == o.m_count && m_gap == o.m_gap
-           && m_rule == o.m_rule && m_breakBefore == o.m_breakBefore
+           && m_rule == o.m_rule && m_visitedLinkColumnRuleColor == o.m_visitedLinkColumnRuleColor && m_breakBefore == o.m_breakBefore
            && m_autoWidth == o.m_autoWidth && m_autoCount == o.m_autoCount && m_normalGap == o.m_normalGap
            && m_columnSpan == o.m_columnSpan && m_breakAfter == o.m_breakAfter && m_breakInside == o.m_breakInside;
 }

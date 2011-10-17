@@ -1017,11 +1017,7 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
     for (size_t i = 0; i < cacheSize; ++i) {
         RefPtr<RenderStyle> newPseudoStyle;
         PseudoId pseudoId = pseudoStyleCache->at(i)->styleType();
-        if (pseudoId == VISITED_LINK) {
-            newPseudoStyle =  newStyle->getCachedPseudoStyle(VISITED_LINK); // This pseudo-style was aggressively computed already when we first called styleForElement on the new style.
-            if (!newPseudoStyle || *newPseudoStyle != *pseudoStyleCache->at(i))
-                return true;
-        } else if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
+        if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
             newPseudoStyle = renderer()->uncachedFirstLineStyle(newStyle);
         else
             newPseudoStyle = renderer()->getUncachedPseudoStyle(pseudoId, newStyle, newStyle);

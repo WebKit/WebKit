@@ -1,3 +1,97 @@
+2011-10-17  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=69966
+        Eliminate separate RenderStyle for visited link style
+
+        Reviewed by Dave Hyatt and Nikolas Zimmermann.
+
+        There are only a few properties that can apply to visited links and they can
+        be part of the regular style. Many things will get simpler when the separate 
+        RenderStyle for visited links is eliminated.
+        
+        - Add valid visited link properties as separate fields to RenderStyle. The  
+          visitedLinkColor goes to inherited, everything else goes to rare data structures.
+        - Make RenderStyle::visitedDependentColor() get the visited style from the new fields.
+        - As VISITED_LINK pseudo style doesn't exists anymore, remove all code dealing with it.
+        - Make CSSStyleSelector and ApplyPropertyColor apply the visited link style to the
+          newly added fields instead of a separate RenderStyle.
+        - Same thing with SVGRenderStyle, SVGCSSStyleSelector.
+        - Fixup the SVG visited link style code to use the new fields.
+
+        This is ~15% progression in styleForElement performance over the HTML5 spec load.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyColor::ApplyPropertyColor):
+        (WebCore::ApplyPropertyColor::applyInheritValue):
+        (WebCore::ApplyPropertyColor::applyInitialValue):
+        (WebCore::ApplyPropertyColor::applyValue):
+        (WebCore::ApplyPropertyColor::applyColorValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::applyPropertyToRegularStyle):
+        (WebCore::CSSStyleSelector::applyPropertyToVisitedLinkStyle):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getCachedPseudoStyle):
+        (WebCore::RenderStyle::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setVisitedLinkColor):
+        (WebCore::InheritedFlags::setVisitedLinkBackgroundColor):
+        (WebCore::InheritedFlags::setVisitedLinkBorderLeftColor):
+        (WebCore::InheritedFlags::setVisitedLinkBorderRightColor):
+        (WebCore::InheritedFlags::setVisitedLinkBorderBottomColor):
+        (WebCore::InheritedFlags::setVisitedLinkBorderTopColor):
+        (WebCore::InheritedFlags::setVisitedLinkOutlineColor):
+        (WebCore::InheritedFlags::setVisitedLinkColumnRuleColor):
+        (WebCore::InheritedFlags::setVisitedLinkTextEmphasisColor):
+        (WebCore::InheritedFlags::setVisitedLinkTextFillColor):
+        (WebCore::InheritedFlags::setVisitedLinkTextStrokeColor):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setVisitedLinkFillPaint):
+        (WebCore::SVGRenderStyle::setVisitedLinkStrokePaint):
+        (WebCore::SVGRenderStyle::visitedLinkFillPaintType):
+        (WebCore::SVGRenderStyle::visitedLinkFillPaintColor):
+        (WebCore::SVGRenderStyle::visitedLinkStrokePaintType):
+        (WebCore::SVGRenderStyle::visitedLinkStrokePaintColor):
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleFillData::StyleFillData):
+        (WebCore::StyleFillData::operator==):
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        * rendering/style/StyleInheritedData.h:
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        * rendering/style/StyleMultiColData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+
 2011-10-17  Eric Carlson  <eric.carlson@apple.com>
 
         Cues should be loaded by the cached resource loader

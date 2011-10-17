@@ -232,16 +232,11 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 
 RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
-    ASSERT(styleType() != VISITED_LINK);
-
     if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())
         return 0;
 
-    if (styleType() != NOPSEUDO) {
-        if (pid == VISITED_LINK)
-            return m_cachedPseudoStyles->at(0)->styleType() == VISITED_LINK ? m_cachedPseudoStyles->at(0).get() : 0;
+    if (styleType() != NOPSEUDO) 
         return 0;
-    }
 
     for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
         RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
@@ -1123,46 +1118,46 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     }
 }
 
-Color RenderStyle::colorIncludingFallback(int colorProperty) const
+Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) const
 {
     Color result;
     EBorderStyle borderStyle = BNONE;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
-        return backgroundColor(); // Background color doesn't fall back.
+        return visitedLink ? rareNonInheritedData->m_visitedLinkBackgroundColor : backgroundColor(); // Background color doesn't fall back.
     case CSSPropertyBorderLeftColor:
-        result = borderLeftColor();
+        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderLeftColor : borderLeftColor();
         borderStyle = borderLeftStyle();
         break;
     case CSSPropertyBorderRightColor:
-        result = borderRightColor();
+        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderRightColor : borderRightColor();
         borderStyle = borderRightStyle();
         break;
     case CSSPropertyBorderTopColor:
-        result = borderTopColor();
+        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderTopColor : borderTopColor();
         borderStyle = borderTopStyle();
         break;
     case CSSPropertyBorderBottomColor:
-        result = borderBottomColor();
+        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderBottomColor : borderBottomColor();
         borderStyle = borderBottomStyle();
         break;
     case CSSPropertyColor:
-        result = color();
+        result = visitedLink ? inherited->visitedLinkColor : color();
         break;
     case CSSPropertyOutlineColor:
-        result = outlineColor();
+        result = visitedLink ? rareNonInheritedData->m_visitedLinkOutlineColor : outlineColor();
         break;
     case CSSPropertyWebkitColumnRuleColor:
-        result = columnRuleColor();
+        result = visitedLink ? rareNonInheritedData->m_multiCol->m_visitedLinkColumnRuleColor : columnRuleColor();
         break;
     case CSSPropertyWebkitTextEmphasisColor:
-        result = textEmphasisColor();
+        result = visitedLink ? rareInheritedData->visitedLinkTextEmphasisColor : textEmphasisColor();
         break;
     case CSSPropertyWebkitTextFillColor:
-        result = textFillColor();
+        result = visitedLink ? rareInheritedData->visitedLinkTextFillColor : textFillColor();
         break;
     case CSSPropertyWebkitTextStrokeColor:
-        result = textStrokeColor();
+        result = visitedLink ? rareInheritedData->visitedLinkTextStrokeColor : textStrokeColor();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1170,25 +1165,21 @@ Color RenderStyle::colorIncludingFallback(int colorProperty) const
     }
 
     if (!result.isValid()) {
-        if (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE)
+        if (!visitedLink && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
             result.setRGB(238, 238, 238);
         else
-            result = color();
+            result = visitedLink ? inherited->visitedLinkColor : color();
     }
-
     return result;
 }
 
 Color RenderStyle::visitedDependentColor(int colorProperty) const
 {
-    Color unvisitedColor = colorIncludingFallback(colorProperty);
+    Color unvisitedColor = colorIncludingFallback(colorProperty, false);
     if (insideLink() != InsideVisitedLink)
         return unvisitedColor;
 
-    RenderStyle* visitedStyle = getCachedPseudoStyle(VISITED_LINK);
-    if (!visitedStyle)
-        return unvisitedColor;
-    Color visitedColor = visitedStyle->colorIncludingFallback(colorProperty);
+    Color visitedColor = colorIncludingFallback(colorProperty, true);
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
     // assume that if the background color is transparent that it wasn't set. Note that it's weird that

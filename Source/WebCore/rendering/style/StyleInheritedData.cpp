@@ -33,6 +33,7 @@ StyleInheritedData::StyleInheritedData()
     , line_height(RenderStyle::initialLineHeight())
     , list_style_image(RenderStyle::initialListStyleImage())
     , color(RenderStyle::initialColor())
+    , visitedLinkColor(RenderStyle::initialColor())
 {
 }
 
@@ -48,18 +49,19 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
     , list_style_image(o.list_style_image)
     , font(o.font)
     , color(o.color)
+    , visitedLinkColor(o.visitedLinkColor)
 {
 }
 
 bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
-    return
-        line_height == o.line_height &&
-        StyleImage::imagesEquivalent(list_style_image.get(), o.list_style_image.get()) &&
-        font == o.font &&
-        color == o.color &&
-        horizontal_border_spacing == o.horizontal_border_spacing &&
-        vertical_border_spacing == o.vertical_border_spacing;
+    return line_height == o.line_height
+        && StyleImage::imagesEquivalent(list_style_image.get(), o.list_style_image.get())
+        && font == o.font
+        && color == o.color
+        && visitedLinkColor == o.visitedLinkColor
+        && horizontal_border_spacing == o.horizontal_border_spacing
+        && vertical_border_spacing == o.vertical_border_spacing;
 }
 
 } // namespace WebCore

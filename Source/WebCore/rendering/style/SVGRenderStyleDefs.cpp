@@ -40,6 +40,9 @@ StyleFillData::StyleFillData()
     , paintType(SVGRenderStyle::initialFillPaintType())
     , paintColor(SVGRenderStyle::initialFillPaintColor())
     , paintUri(SVGRenderStyle::initialFillPaintUri())
+    , visitedLinkPaintType(SVGRenderStyle::initialStrokePaintType())
+    , visitedLinkPaintColor(SVGRenderStyle::initialFillPaintColor())
+    , visitedLinkPaintUri(SVGRenderStyle::initialFillPaintUri())
 {
 }
 
@@ -49,6 +52,9 @@ StyleFillData::StyleFillData(const StyleFillData& other)
     , paintType(other.paintType)
     , paintColor(other.paintColor)
     , paintUri(other.paintUri)
+    , visitedLinkPaintType(other.visitedLinkPaintType)
+    , visitedLinkPaintColor(other.visitedLinkPaintColor)
+    , visitedLinkPaintUri(other.visitedLinkPaintUri)
 {
 }
 
@@ -57,7 +63,10 @@ bool StyleFillData::operator==(const StyleFillData& other) const
     return opacity == other.opacity 
         && paintType == other.paintType
         && paintColor == other.paintColor
-        && paintUri == other.paintUri;
+        && paintUri == other.paintUri
+        && visitedLinkPaintType == other.visitedLinkPaintType
+        && visitedLinkPaintColor == other.visitedLinkPaintColor
+        && visitedLinkPaintUri == other.visitedLinkPaintUri;
 }
 
 StyleStrokeData::StyleStrokeData()
@@ -69,6 +78,9 @@ StyleStrokeData::StyleStrokeData()
     , paintType(SVGRenderStyle::initialStrokePaintType())
     , paintColor(SVGRenderStyle::initialStrokePaintColor())
     , paintUri(SVGRenderStyle::initialStrokePaintUri())
+    , visitedLinkPaintType(SVGRenderStyle::initialStrokePaintType())
+    , visitedLinkPaintColor(SVGRenderStyle::initialStrokePaintColor())
+    , visitedLinkPaintUri(SVGRenderStyle::initialStrokePaintUri())
 {
 }
 
@@ -82,6 +94,9 @@ StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     , paintType(other.paintType)
     , paintColor(other.paintColor)
     , paintUri(other.paintUri)
+    , visitedLinkPaintType(other.visitedLinkPaintType)
+    , visitedLinkPaintColor(other.visitedLinkPaintColor)
+    , visitedLinkPaintUri(other.visitedLinkPaintUri)
 {
 }
 
@@ -94,7 +109,10 @@ bool StyleStrokeData::operator==(const StyleStrokeData& other) const
         && dashArray == other.dashArray
         && paintType == other.paintType
         && paintColor == other.paintColor
-        && paintUri == other.paintUri;
+        && paintUri == other.paintUri
+        && visitedLinkPaintType == other.visitedLinkPaintType
+        && visitedLinkPaintColor == other.visitedLinkPaintColor
+        && visitedLinkPaintUri == other.visitedLinkPaintUri;
 }
 
 StyleStopData::StyleStopData()

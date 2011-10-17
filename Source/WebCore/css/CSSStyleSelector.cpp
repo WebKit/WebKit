@@ -345,6 +345,8 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_sameOriginOnly(false)
     , m_fontSelector(CSSFontSelector::create(document))
+    , m_applyPropertyToRegularStyle(true)
+    , m_applyPropertyToVisitedLinkStyle(false)
     , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
 {
     Element* root = document->documentElement();
@@ -1085,22 +1087,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 
     m_style = RenderStyle::create();
 
-    if (m_parentStyle) {
+    if (m_parentStyle)
         m_style->inheritFrom(m_parentStyle);
-        
-        // For links and elements inside links we compute both the regular and visited style.
-        // FIXME: Visited link style doesn't need a separate RenderStyle. The few properties allowed should be part of the regular RenderStyle instead.
-        if (e->isLink()) {
-            m_visitedLinkStyle = RenderStyle::clone(m_style.get());
-            m_visitedLinkParentStyle = m_parentStyle;
-        } else if (m_parentStyle->insideLink()) {
-            m_visitedLinkParentStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
-            if (!m_visitedLinkParentStyle)
-                m_visitedLinkParentStyle = m_parentStyle;
-            m_visitedLinkStyle = RenderStyle::create();
-            m_visitedLinkStyle->inheritFrom(m_visitedLinkParentStyle);
-        }
-    } else {
+    else {
         m_parentStyle = style();
         // Make sure our fonts are initialized if we don't inherit them from our parent style.
         m_style->font().update(0);
@@ -1286,23 +1275,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     if (m_style->hasPseudoStyle(FIRST_LETTER))
         m_style->setUnique();
 
-    if (m_visitedLinkStyle) {
-        // Copy any pseudo bits that the visited style has to the primary style so that pseudo
-        // element styles will continue to work for pseudo elements inside :visited links.
-        for (unsigned pseudo = FIRST_PUBLIC_PSEUDOID; pseudo < FIRST_INTERNAL_PSEUDOID; ++pseudo) {
-            if (m_visitedLinkStyle->hasPseudoStyle(static_cast<PseudoId>(pseudo)))
-                m_style->setHasPseudoStyle(static_cast<PseudoId>(pseudo));
-        }
-        if (m_elementLinkState == InsideUnvisitedLink)
-            m_visitedLinkStyle = 0; // We made the style to avoid timing attacks. Just throw it away now that we did that, since we don't need it.
-        else {
-            // Add the visited style off the main style.
-            m_visitedLinkStyle->setStyleType(VISITED_LINK);
-            m_style->addCachedPseudoStyle(m_visitedLinkStyle.release());
-        }
-        m_visitedLinkParentStyle = 0;
-    }
-
     initElement(0); // Clear out for the next resolve.
 
     // Now return the style.
@@ -1424,18 +1396,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = RenderStyle::create();
     
-    if (m_parentStyle) {
+    if (m_parentStyle)
         m_style->inheritFrom(m_parentStyle);
-        
-        // For links and elements inside links we compute both the regular and visited style.
-        if (m_parentStyle->insideLink()) {
-            m_visitedLinkParentStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
-            if (!m_visitedLinkParentStyle)
-                m_visitedLinkParentStyle = m_parentStyle;
-            m_visitedLinkStyle = RenderStyle::create();
-            m_visitedLinkStyle->inheritFrom(m_visitedLinkParentStyle);
-        }
-    }
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
@@ -1489,13 +1451,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
 
     // Start loading images referenced by this style.
     loadPendingImages();
-
-    // Hang our visited style off m_style.
-    if (m_visitedLinkStyle) {
-        m_visitedLinkStyle->setStyleType(VISITED_LINK);
-        m_style->addCachedPseudoStyle(m_visitedLinkStyle.release());
-        m_visitedLinkParentStyle = 0;
-    }
         
     // Now return the style.
     return m_style.release();
@@ -1746,7 +1701,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
 
 void CSSStyleSelector::updateFont()
 {
-    ASSERT(m_style != m_visitedLinkStyle);
     if (!m_fontDirty)
         return;
 
@@ -2203,8 +2157,6 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
                 continue;
             // we apply line-height later
             if (property == CSSPropertyLineHeight) {
-                if (m_style == m_visitedLinkStyle)
-                    continue;
                 m_lineHeightValue = current.value();
                 continue;
             }
@@ -2222,23 +2174,22 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
     if (startIndex == -1)
         return;
 
-    for (int i = startIndex; i <= endIndex; i++) {
-        CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration;
-        if (m_visitedLinkStyle && m_matchedDecls[i].linkMatchType & SelectorChecker::MatchVisited) {
-            // FIXME: Style should be passed to applyProperty as an argument, not as a member.
-            RefPtr<RenderStyle> savedStyle = m_style.release();
-            RenderStyle* savedParentStyle = m_parentStyle;
-            m_style = m_visitedLinkStyle;
-            m_parentStyle = m_visitedLinkParentStyle;
-            
-            applyDeclaration<applyFirst>(styleDeclaration, isImportant);
-            
-            m_style = savedStyle.release();
-            m_parentStyle = savedParentStyle;
-        }
-        if (m_matchedDecls[i].linkMatchType & SelectorChecker::MatchLink)
+    if (m_element->isLink()) {
+        for (int i = startIndex; i <= endIndex; ++i) {
+            CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration;
+            unsigned linkMatchType = m_matchedDecls[i].linkMatchType;
+            // FIXME: It would be nicer to pass these as arguments but that requires changes in many places.
+            m_applyPropertyToRegularStyle = linkMatchType & SelectorChecker::MatchLink;
+            m_applyPropertyToVisitedLinkStyle = linkMatchType & SelectorChecker::MatchVisited;
+
             applyDeclaration<applyFirst>(styleDeclaration, isImportant);        
+        }
+        m_applyPropertyToRegularStyle = true;
+        m_applyPropertyToVisitedLinkStyle = false;
+        return;
     }
+    for (int i = startIndex; i <= endIndex; ++i)        
+        applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration, isImportant);
 }
 
 void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
@@ -2423,7 +2374,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
 
-    if (m_style == m_visitedLinkStyle && !isValidVisitedLinkProperty(id)) {
+    if (!applyPropertyToRegularStyle() && (!applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
@@ -4942,7 +4893,7 @@ static Color colorForCSSValue(int cssValueId)
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
-Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue) const
+Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue, bool forVisitedLink) const
 {
     Color col;
     int ident = primitiveValue->getIdent();
@@ -4950,7 +4901,7 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
         if (ident == CSSValueWebkitText)
             col = m_element->document()->textColor();
         else if (ident == CSSValueWebkitLink)
-            col = m_element->isLink() && m_style == m_visitedLinkStyle ? m_element->document()->visitedLinkColor() : m_element->document()->linkColor();
+            col = (m_element->isLink() && forVisitedLink) ? m_element->document()->visitedLinkColor() : m_element->document()->linkColor();
         else if (ident == CSSValueWebkitActivelink)
             col = m_element->document()->activeLinkColor();
         else if (ident == CSSValueWebkitFocusRingColor)

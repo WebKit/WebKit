@@ -68,6 +68,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
+    , visitedLinkTextStrokeColor(o.visitedLinkTextStrokeColor)
+    , visitedLinkTextFillColor(o.visitedLinkTextFillColor)
+    , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , textShadow(o.textShadow ? adoptPtr(new ShadowData(*o.textShadow)) : nullptr)
     , highlight(o.highlight)
     , cursorData(o.cursorData)
@@ -123,6 +126,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textStrokeWidth == o.textStrokeWidth
         && textFillColor == o.textFillColor
         && textEmphasisColor == o.textEmphasisColor
+        && visitedLinkTextStrokeColor == o.visitedLinkTextStrokeColor
+        && visitedLinkTextFillColor == o.visitedLinkTextFillColor
+        && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif

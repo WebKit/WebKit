@@ -173,7 +173,7 @@ private:
 public:
     bool useSVGZoomRules();
 
-    Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
+    Color getColorFromPrimitiveValue(CSSPrimitiveValue*, bool forVisitedLink = false) const;
 
     bool hasSelectorForAttribute(const AtomicString&) const;
 
@@ -260,6 +260,9 @@ public:
 
     StyleImage* styleImage(CSSPropertyID, CSSValue*);
     StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
+    
+    bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
+    bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
 
 private:
     static RenderStyle* s_styleNotYetAvailable;
@@ -334,9 +337,7 @@ private:
     SelectorChecker m_checker;
 
     RefPtr<RenderStyle> m_style;
-    RefPtr<RenderStyle> m_visitedLinkStyle;
     RenderStyle* m_parentStyle;
-    RenderStyle* m_visitedLinkParentStyle;
     RenderStyle* m_rootElementStyle;
     Element* m_element;
     StyledElement* m_styledElement;
@@ -351,6 +352,8 @@ private:
     Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
     Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 
+    bool m_applyPropertyToRegularStyle;
+    bool m_applyPropertyToVisitedLinkStyle;
     const CSSStyleApplyProperty& m_applyProperty;
     
     friend class CSSStyleApplyProperty;

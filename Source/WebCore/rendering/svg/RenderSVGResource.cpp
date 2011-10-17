@@ -81,15 +81,12 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     }
 
     if (style->insideLink() == InsideVisitedLink) {
-        RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
-        ASSERT(visitedStyle);
-
-        const SVGRenderStyle* svgVisitedStyle = visitedStyle->svgStyle();
-        SVGPaint::SVGPaintType visitedPaintType = applyToFill ? svgVisitedStyle->fillPaintType() : svgVisitedStyle->strokePaintType();
+        // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
+        SVGPaint::SVGPaintType visitedPaintType = applyToFill ? svgStyle->visitedLinkFillPaintType() : svgStyle->visitedLinkStrokePaintType();
 
         // For SVG_PAINTTYPE_CURRENTCOLOR, 'color' already contains the 'visitedColor'.
         if (visitedPaintType < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaintType != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
-            const Color& visitedColor = applyToFill ? svgVisitedStyle->fillPaintColor() : svgVisitedStyle->strokePaintColor();
+            const Color& visitedColor = applyToFill ? svgStyle->visitedLinkFillPaintColor() : svgStyle->visitedLinkStrokePaintColor();
             if (visitedColor.isValid())
                 color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
         }

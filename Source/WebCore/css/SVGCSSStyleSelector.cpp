@@ -226,16 +226,16 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         {
             if (isInherit) {
                 const SVGRenderStyle* svgParentStyle = m_parentStyle->svgStyle();
-                svgstyle->setFillPaint(svgParentStyle->fillPaintType(), svgParentStyle->fillPaintColor(), svgParentStyle->fillPaintUri());
+                svgstyle->setFillPaint(svgParentStyle->fillPaintType(), svgParentStyle->fillPaintColor(), svgParentStyle->fillPaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
             if (isInitial) {
-                svgstyle->setFillPaint(SVGRenderStyle::initialFillPaintType(), SVGRenderStyle::initialFillPaintColor(), SVGRenderStyle::initialFillPaintUri());
+                svgstyle->setFillPaint(SVGRenderStyle::initialFillPaintType(), SVGRenderStyle::initialFillPaintColor(), SVGRenderStyle::initialFillPaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
             if (value->isSVGPaint()) {
                 SVGPaint* svgPaint = static_cast<SVGPaint*>(value);
-                svgstyle->setFillPaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, m_style->color()), svgPaint->uri());
+                svgstyle->setFillPaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, m_style->color()), svgPaint->uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
             break;
         }
@@ -243,16 +243,16 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         {
             if (isInherit) {
                 const SVGRenderStyle* svgParentStyle = m_parentStyle->svgStyle();
-                svgstyle->setStrokePaint(svgParentStyle->strokePaintType(), svgParentStyle->strokePaintColor(), svgParentStyle->strokePaintUri());
+                svgstyle->setStrokePaint(svgParentStyle->strokePaintType(), svgParentStyle->strokePaintColor(), svgParentStyle->strokePaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
             if (isInitial) {
-                svgstyle->setStrokePaint(SVGRenderStyle::initialStrokePaintType(), SVGRenderStyle::initialStrokePaintColor(), SVGRenderStyle::initialStrokePaintUri());
+                svgstyle->setStrokePaint(SVGRenderStyle::initialStrokePaintType(), SVGRenderStyle::initialStrokePaintColor(), SVGRenderStyle::initialStrokePaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
             if (value->isSVGPaint()) {
                 SVGPaint* svgPaint = static_cast<SVGPaint*>(value);
-                svgstyle->setStrokePaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, m_style->color()), svgPaint->uri());
+                svgstyle->setStrokePaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, m_style->color()), svgPaint->uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
             break;
         }

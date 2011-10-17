@@ -57,6 +57,7 @@ public:
     unsigned short m_count;
     float m_gap;
     BorderValue m_rule;
+    Color m_visitedLinkColumnRuleColor;
 
     bool m_autoWidth : 1;
     bool m_autoCount : 1;

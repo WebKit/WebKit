@@ -129,6 +129,13 @@ public:
     LengthSize m_pageSize;
 
     RefPtr<CSSWrapShape> m_wrapShape;
+    
+    Color m_visitedLinkBackgroundColor;
+    Color m_visitedLinkOutlineColor;
+    Color m_visitedLinkBorderLeftColor;
+    Color m_visitedLinkBorderRightColor;
+    Color m_visitedLinkBorderTopColor;
+    Color m_visitedLinkBorderBottomColor;
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;
