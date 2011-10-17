@@ -59,13 +59,6 @@ AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation
     return 0;
 }
 
-const AccessibilityObject::AccessibilityChildrenVector& AccessibilityScrollView::children()
-{
-    if (!m_haveChildren)
-        addChildren();
-    return m_children;
-}
-
 // If this is WebKit1 then the native scroll view needs to return the
 // AX information (because there are no scroll bar children in the ScrollView object in WK1).
 // In WebKit2, the ScrollView object will return the AX information (because there are no platform widgets).
@@ -80,6 +73,14 @@ Widget* AccessibilityScrollView::widgetForAttachmentView() const
 }
     
 void AccessibilityScrollView::updateChildrenIfNecessary()
+{
+    if (!m_haveChildren)
+        addChildren();
+    
+    updateScrollbars();
+}
+
+void AccessibilityScrollView::updateScrollbars()
 {
     if (m_scrollView->horizontalScrollbar() && !m_horizontalScrollbar)
         m_horizontalScrollbar = addChildScrollbar(m_scrollView->horizontalScrollbar());
@@ -125,7 +126,7 @@ void AccessibilityScrollView::addChildren()
     if (webArea)
         m_children.append(webArea);
     
-    updateChildrenIfNecessary();
+    updateScrollbars();
 }
 
 AccessibilityObject* AccessibilityScrollView::webAreaObject() const

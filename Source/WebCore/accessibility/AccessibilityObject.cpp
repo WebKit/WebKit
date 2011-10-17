@@ -1011,6 +1011,13 @@ FrameView* AccessibilityObject::documentFrameView() const
 
     return object->documentFrameView();
 }
+
+const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children()
+{
+    updateChildrenIfNecessary();
+    
+    return m_children;
+}
     
 void AccessibilityObject::updateChildrenIfNecessary()
 {

@@ -50,13 +50,6 @@ PassRefPtr<AccessibilitySlider> AccessibilitySlider::create(RenderObject* render
     return adoptRef(new AccessibilitySlider(renderer));
 }
 
-const AccessibilityObject::AccessibilityChildrenVector& AccessibilitySlider::children()
-{
-    if (!m_haveChildren)
-        addChildren();
-    return m_children;
-}
-
 AccessibilityOrientation AccessibilitySlider::orientation() const
 {
     // Default to horizontal in the unknown case.

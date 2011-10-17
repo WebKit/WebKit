@@ -1,3 +1,30 @@
+2011-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: children() method should be consolidated in AccessibilityObject
+        https://bugs.webkit.org/show_bug.cgi?id=70243
+
+        Code cleanup, no new tests.
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::children):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateChildrenIfNecessary):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::updateChildrenIfNecessary):
+        (WebCore::AccessibilityScrollView::updateScrollbars):
+        (WebCore::AccessibilityScrollView::addChildren):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilitySlider.cpp:
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilityTableColumn.cpp:
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        * accessibility/AccessibilityTableHeaderContainer.h:
+
 2011-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Search matches highlighting in text does not work correctly.

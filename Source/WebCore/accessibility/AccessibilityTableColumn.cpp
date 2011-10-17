@@ -72,14 +72,7 @@ LayoutSize AccessibilityTableColumn::size() const
 {
     return elementRect().size();
 }
-  
-const AccessibilityObject::AccessibilityChildrenVector& AccessibilityTableColumn::children()
-{
-    if (!m_haveChildren)
-        addChildren();
-    return m_children;
-}
-    
+ 
 AccessibilityObject* AccessibilityTableColumn::headerObject()
 {
     if (!m_parent)

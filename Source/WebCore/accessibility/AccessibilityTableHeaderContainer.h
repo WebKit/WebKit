@@ -45,7 +45,6 @@ public:
     
     virtual AccessibilityRole roleValue() const { return TableHeaderContainerRole; }
     
-    virtual const AccessibilityChildrenVector& children();
     virtual void addChildren();
     
     virtual LayoutSize size() const;

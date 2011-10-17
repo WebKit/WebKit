@@ -54,7 +54,6 @@ private:
     virtual bool isSlider() const { return true; }
     virtual bool isInputSlider() const { return true; }
     
-    virtual const AccessibilityChildrenVector& children();
     virtual void addChildren();
     
     virtual bool canSetValueAttribute() const { return true; }

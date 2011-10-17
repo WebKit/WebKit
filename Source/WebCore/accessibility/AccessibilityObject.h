@@ -552,7 +552,7 @@ public:
 
     virtual void childrenChanged() { }
     virtual void contentChanged() { }
-    virtual const AccessibilityChildrenVector& children() { return m_children; }
+    const AccessibilityChildrenVector& children();
     virtual void addChildren() { }
     virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; }

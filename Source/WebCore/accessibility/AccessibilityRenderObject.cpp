@@ -3473,13 +3473,6 @@ void AccessibilityRenderObject::updateChildrenIfNecessary()
     
     AccessibilityObject::updateChildrenIfNecessary();
 }
-    
-const AccessibilityObject::AccessibilityChildrenVector& AccessibilityRenderObject::children()
-{
-    updateChildrenIfNecessary();
-    
-    return m_children;
-}
 
 void AccessibilityRenderObject::addChildren()
 {

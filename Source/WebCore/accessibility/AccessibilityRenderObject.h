@@ -201,7 +201,6 @@ public:
     virtual FrameView* documentFrameView() const;
     virtual unsigned hierarchicalLevel() const;
 
-    virtual const AccessibilityChildrenVector& children();
     virtual void clearChildren();
     virtual void updateChildrenIfNecessary();
     
