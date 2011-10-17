@@ -1,3 +1,12 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always disable ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL) and delete associated code
+        https://bugs.webkit.org/show_bug.cgi?id=70216
+
+        Reviewed by Eric Seidel.
+
+        * wtf/Platform.h:
+
 2011-10-16  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove PageAllocatorSymbian.h, OSAllocatorSymbian.cpp, gtk/ThreadingGtk.cpp from gyp project files

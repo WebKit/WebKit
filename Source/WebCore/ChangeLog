@@ -1,3 +1,16 @@
+2011-10-16  Adam Barth  <abarth@webkit.org>
+
+        Always disable ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL) and delete associated code
+        https://bugs.webkit.org/show_bug.cgi?id=70216
+
+        Reviewed by Eric Seidel.
+
+        No port enables this feature.  It was added for the previous Android
+        port (and should have been an editing behavior in any case).
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+
 2011-10-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Expose rangeFromLocationAndLength and locationAndLengthFromRange via internals object
