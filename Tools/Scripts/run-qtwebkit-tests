@@ -212,6 +212,9 @@ class Main(Log):
         qml_import_path = self._options.path + "../../../imports"
         qml_import_path += ":" + self._options.path + "../../../../../imports"
         os.putenv("QML_IMPORT_PATH", qml_import_path)
+        path = os.getenv("PATH")
+        path += ":" + self._options.path + "../../../../../bin"
+        os.putenv("PATH", path)
         self.debug("Searching executables...")
         tests_executables = self.find_tests_paths(self._options.path)
         self.debug("Found: %s", len(tests_executables))
