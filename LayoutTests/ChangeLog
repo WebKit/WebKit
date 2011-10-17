@@ -1,5 +1,16 @@
 2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/fast/borders/border-radius-complex-inner-expected.png: Added after r97318.
+        * platform/qt/fast/borders/border-radius-complex-inner-expected.txt: Added after r97318.
+        * platform/qt/fast/css/clip-text-in-scaled-div-expected.png: Added after r97481.
+        * platform/qt/fast/css/clip-text-in-scaled-div-expected.txt: Added after r97481.
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.png: Added after r97370.
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.txt: Added after r97370.
+
+2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening after r97596.
 
         * platform/qt/css2.1/t0511-c21-pseud-link-02-e-expected.png:
