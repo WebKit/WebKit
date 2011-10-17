@@ -167,12 +167,14 @@ static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
 CSSPrimitiveValue::CSSPrimitiveValue()
     : m_type(0)
     , m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(int ident)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
     m_value.ident = ident;
 }
@@ -180,6 +182,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(int ident)
 CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
     : m_type(type)
     , m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
     ASSERT(isfinite(num));
     m_value.num = num;
@@ -188,6 +191,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
 CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
     : m_type(type)
     , m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
     if ((m_value.string = str.impl()))
         m_value.string->ref();
@@ -196,12 +200,14 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : m_type(CSS_RGBCOLOR)
     , m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
     m_value.rgbcolor = color;
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
     : m_hasCachedCSSText(false)
+    , m_isQuirkValue(false)
 {
     switch (length.type()) {
         case Auto:

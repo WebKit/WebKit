@@ -2380,7 +2380,6 @@
             'css/CSSPropertyLonghand.cpp',
             'css/CSSPropertyLonghand.h',
             'css/CSSPropertySourceData.cpp',
-            'css/CSSQuirkPrimitiveValue.h',
             'css/CSSReflectValue.cpp',
             'css/CSSRule.cpp',
             'css/CSSRule.h',

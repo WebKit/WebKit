@@ -3459,7 +3459,6 @@
 		A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */; };
 		A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */; };
 		A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A80E6CEA0A1989CA007FB8C5 /* CSSQuirkPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC00A1989CA007FB8C5 /* CSSQuirkPrimitiveValue.h */; };
 		A80E6CEB0A1989CA007FB8C5 /* CSSImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC10A1989CA007FB8C5 /* CSSImportRule.cpp */; };
 		A80E6CEC0A1989CA007FB8C5 /* FontFamilyValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC20A1989CA007FB8C5 /* FontFamilyValue.cpp */; };
 		A80E6CED0A1989CA007FB8C5 /* FontValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC30A1989CA007FB8C5 /* FontValue.h */; };
@@ -10635,7 +10634,6 @@
 		A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceRule.cpp; sourceTree = "<group>"; };
 		A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShadowValue.h; sourceTree = "<group>"; };
 		A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueList.h; sourceTree = "<group>"; };
-		A80E6CC00A1989CA007FB8C5 /* CSSQuirkPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSQuirkPrimitiveValue.h; sourceTree = "<group>"; };
 		A80E6CC10A1989CA007FB8C5 /* CSSImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImportRule.cpp; sourceTree = "<group>"; };
 		A80E6CC20A1989CA007FB8C5 /* FontFamilyValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamilyValue.cpp; sourceTree = "<group>"; };
 		A80E6CC30A1989CA007FB8C5 /* FontValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontValue.h; sourceTree = "<group>"; };
@@ -20579,7 +20577,6 @@
 				BCEA4789097CAAC80094C9E4 /* CSSPropertyNames.in */,
 				82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */,
 				82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */,
-				A80E6CC00A1989CA007FB8C5 /* CSSQuirkPrimitiveValue.h */,
 				9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */,
 				BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */,
 				BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */,
@@ -21856,7 +21853,6 @@
 				0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */,
 				656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */,
 				82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */,
-				A80E6CEA0A1989CA007FB8C5 /* CSSQuirkPrimitiveValue.h in Headers */,
 				9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */,
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
 				A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */,

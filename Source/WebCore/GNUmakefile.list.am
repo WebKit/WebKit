@@ -993,7 +993,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSPropertyLonghand.h \
 	Source/WebCore/css/CSSPropertySourceData.cpp \
 	Source/WebCore/css/CSSPropertySourceData.h \
-	Source/WebCore/css/CSSQuirkPrimitiveValue.h \
 	Source/WebCore/css/CSSReflectionDirection.h \
 	Source/WebCore/css/CSSReflectValue.cpp \
 	Source/WebCore/css/CSSReflectValue.h \

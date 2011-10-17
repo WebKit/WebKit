@@ -33274,10 +33274,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSQuirkPrimitiveValue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSReflectionDirection.h"
 				>
 			</File>

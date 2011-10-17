@@ -52,6 +52,7 @@ template<typename T, T max, T min> inline T roundForImpreciseConversion(double v
 
 class CSSPrimitiveValue : public CSSValue {
 public:
+    static const int UnitTypesBits = 8;
     enum UnitTypes {
         CSS_UNKNOWN = 0,
         CSS_NUMBER = 1,
@@ -132,6 +133,17 @@ public:
         return adoptRef(new CSSPrimitiveValue(value));
     }
 
+    // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
+    // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
+    // When the quirky value is used, if you're in quirks mode, the margin will collapse away
+    // inside a table cell.
+    static PassRefPtr<CSSPrimitiveValue> createAllowingMarginQuirk(double value, UnitTypes type)
+    {
+        CSSPrimitiveValue* quirkValue = new CSSPrimitiveValue(value, type);
+        quirkValue->m_isQuirkValue = true;
+        return adoptRef(quirkValue);
+    }
+
     virtual ~CSSPrimitiveValue();
 
     void cleanup();
@@ -199,7 +211,7 @@ public:
     virtual bool parseString(const String&, bool = false);
     virtual String cssText() const;
 
-    virtual bool isQuirkValue() { return false; }
+    bool isQuirkValue() { return m_isQuirkValue; }
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
@@ -243,8 +255,9 @@ private:
 
     virtual unsigned short cssValueType() const;
 
-    signed m_type : 31;
+    signed m_type : UnitTypesBits;
     mutable unsigned m_hasCachedCSSText : 1;
+    unsigned m_isQuirkValue : 1;
     union {
         int ident;
         double num;

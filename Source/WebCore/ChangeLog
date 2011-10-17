@@ -1,3 +1,36 @@
+2011-10-16  David Barr  <davidbarr@chromium.org>
+
+        Inline CSSPrimitiveValue::isQuirkValue() as non-virtual function
+        https://bugs.webkit.org/show_bug.cgi?id=64865
+
+        Reviewed by Darin Adler.
+
+        Based on profiling and patch from:
+        Tamas Czene <Czene.Tamas@stud.u-szeged.hu>
+
+        This is expected to produce a small performance progression.
+        Additional memory overhead is avoided by using spare bits.
+        CSSQuirkPrimitiveValue is removed as it becomes just a factory.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValidPrimitive):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::createAllowingMarginQuirk):
+        Moved from CSSQuirkPrimitiveValue::create.
+        (WebCore::CSSPrimitiveValue::isQuirkValue):
+        * css/CSSQuirkPrimitiveValue.h: Removed.
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2011-10-16  Kentaro Hara  <haraken@chromium.org>
 
         Generate XMLHttpRequest constructor for JSC by [Constructor] IDL

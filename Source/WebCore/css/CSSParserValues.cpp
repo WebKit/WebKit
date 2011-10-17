@@ -23,7 +23,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSFunctionValue.h"
-#include "CSSQuirkPrimitiveValue.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 
@@ -83,7 +82,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     else if (unit >= CSSPrimitiveValue::CSS_TURN && unit <= CSSPrimitiveValue::CSS_REMS) // CSS3 Values and Units
         parsedValue = CSSPrimitiveValue::create(fValue, (CSSPrimitiveValue::UnitTypes)unit);
     else if (unit >= CSSParserValue::Q_EMS)
-        parsedValue = CSSQuirkPrimitiveValue::create(fValue, CSSPrimitiveValue::CSS_EMS);
+        parsedValue = CSSPrimitiveValue::createAllowingMarginQuirk(fValue, CSSPrimitiveValue::CSS_EMS);
     return parsedValue;
 }
     
