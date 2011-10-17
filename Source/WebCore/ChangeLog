@@ -1,3 +1,16 @@
+2011-10-17  Jeff Miller  <jeffm@apple.com>
+
+        Widget window coordinate functions should use root view coordinate functions
+        https://bugs.webkit.org/show_bug.cgi?id=70152
+
+        Reviewed by Darin Adler.
+
+        No new tests, no changes to functionality.
+
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromContainingWindow): Use convertFromRootView().
+        (WebCore::Widget::convertToContainingWindow): Use convertToRootView().
+
 2011-10-14  Chris Marrin  <cmarrin@apple.com>
 
         Throttle rate of requestAnimationFrame when page is not visible
