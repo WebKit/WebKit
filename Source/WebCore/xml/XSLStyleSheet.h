@@ -107,23 +107,6 @@ private:
         c->insertedIntoParent();
     }
 
-    void insert(unsigned index, PassRefPtr<StyleBase> child)
-    {
-        StyleBase* c = child.get();
-        if (index >= length())
-            m_children.append(child);
-        else
-            m_children.insert(index, child);
-        c->insertedIntoParent();
-    }
-
-    void remove(unsigned index)
-    {
-        if (index >= length())
-            return;
-        m_children.remove(index);
-    }
-
     XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);
 #if !USE(QXMLQUERY)
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);

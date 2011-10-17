@@ -106,7 +106,6 @@ public:
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
     void append(PassRefPtr<CSSRule>);
-    void insert(unsigned index, PassRefPtr<CSSRule>);
     void remove(unsigned index);
 
     unsigned length() const { return m_children.size(); }

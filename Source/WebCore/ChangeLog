@@ -1,3 +1,24 @@
+2011-10-17  Andreas Kling  <kling@webkit.org>
+
+        CSS/XSLStyleSheet: Remove insert() and remove().
+        https://bugs.webkit.org/show_bug.cgi?id=70226
+
+        Reviewed by Antti Koivisto.
+
+        Remove insert() and remove() from XSLStyleSheet. CSSStyleSheet retains remove()
+        since it's used by InspectorStyleSheet as well as SVGFontFaceElement.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::remove):
+
+            Remove range check. This method is internal to WebKit and the call sites
+            already take care of it.
+
+        (WebCore::CSSStyleSheet::insertRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        * css/CSSStyleSheet.h:
+        * xml/XSLStyleSheet.h:
+
 2011-10-17  Rosen Dash  <rosen.dash@motorola.com>
 
         when CSS pseudo selectors are applied (:before and :after) the *-of-line keyboard navigation does not work

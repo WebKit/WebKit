@@ -101,20 +101,8 @@ void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
     c->insertedIntoParent();
 }
 
-void CSSStyleSheet::insert(unsigned index, PassRefPtr<CSSRule> child)
-{
-    CSSRule* c = child.get();
-    if (index >= length())
-        m_children.append(child);
-    else
-        m_children.insert(index, child);
-    c->insertedIntoParent();
-}
-
 void CSSStyleSheet::remove(unsigned index)
 {
-    if (index >= length())
-        return;
     m_children.remove(index);
 }
 
@@ -156,7 +144,9 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         }
     }
 
-    insert(index, r.release());
+    CSSRule* c = r.get();
+    m_children.insert(index, r.release());
+    c->insertedIntoParent();
     
     styleSheetChanged();
     
@@ -193,7 +183,7 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
 
     ec = 0;
     item(index)->setParent(0);
-    remove(index);
+    m_children.remove(index);
     styleSheetChanged();
 }
 
