@@ -54,8 +54,6 @@ deps = {
   # skia dependencies
   'skia':
     Var('chromium_svn')+'/skia@'+Var('chromium_rev'),
-  'third_party/skia/gpu':
-    From('chromium_deps', 'src/third_party/skia/gpu'),
   'third_party/skia/src':
     From('chromium_deps', 'src/third_party/skia/src'),
   'third_party/skia/include':
