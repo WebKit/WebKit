@@ -3550,13 +3550,6 @@ BUG_REED WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/canvas-lineWidth.html = TEXT
 
-// Failing temporarily, rebase-line after skia rolls to WK
-// These two need skia >= r2464
-BUG_BSALOMON WIN MAC LINUX GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-BUG_BSALOMON WIN MAC LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
-// This needs needs skia >= r2478
-BUG_BSALOMON LINUX GPU : media/video-playing-and-pause.html = IMAGE
-
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
