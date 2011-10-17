@@ -29,6 +29,8 @@ WEBKIT1_SOURCES_SHARED_WITH_WEBKIT2 = \
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessConnectionMessages.h \
@@ -67,6 +69,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
@@ -162,6 +166,7 @@ HEADERS += \
     Shared/WebGraphicsContext.h \
     Shared/WebHitTestResult.h \
     Shared/WebImage.h \
+    Shared/WebLayerTreeInfo.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebOpenPanelParameters.h \
@@ -318,6 +323,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebErrors.h \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
     WebProcess/WebCoreSupport/WebGeolocationClient.h \
+    WebProcess/WebCoreSupport/WebGraphicsLayer.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
@@ -401,6 +407,7 @@ SOURCES += \
     Shared/WebHitTestResult.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebImage.cpp \
+    Shared/WebLayerTreeInfo.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebOpenPanelParameters.cpp \
     Shared/WebPageCreationParameters.cpp \
@@ -488,6 +495,7 @@ SOURCES += \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ClientImpl.cpp \
+    UIProcess/qt/LayerTreeHostProxyQt.cpp \
     UIProcess/qt/TouchViewInterface.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \
@@ -568,6 +576,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebEditorClient.cpp \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp \
+    WebProcess/WebCoreSupport/WebGraphicsLayer.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \

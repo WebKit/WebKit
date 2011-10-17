@@ -34,6 +34,10 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "LayerTreeHostProxy.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -328,7 +332,37 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+#if USE(TEXTURE_MAPPER)
+    if (!m_layerTreeHostProxy)
+        m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
+#endif
 }
+
+#if USE(TILED_BACKING_STORE)
+void DrawingAreaProxyImpl::didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    if (m_layerTreeHostProxy)
+        m_layerTreeHostProxy->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
+}
+
+void DrawingAreaProxyImpl::setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale)
+{
+    if (m_layerTreeHostProxy)
+        m_layerTreeHostProxy->setVisibleContentsRectAndScale(visibleContentsRect, scale);
+}
+
+void DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint& trajectoryVector)
+{
+    if (m_layerTreeHostProxy)
+        m_layerTreeHostProxy->setVisibleContentRectTrajectoryVector(trajectoryVector);
+}
+
+void DrawingAreaProxyImpl::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity)
+{
+    if (m_layerTreeHostProxy)
+        m_layerTreeHostProxy->paintToCurrentGLContext(matrix, opacity);
+}
+#endif
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {

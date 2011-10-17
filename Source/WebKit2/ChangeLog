@@ -1,3 +1,173 @@
+2011-10-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Synchronize tiling with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=69151
+
+        Reviewed by Simon Hausmann.
+
+        Make the tiled "non-composited" content and the composited layers go through the same
+        code path on WebKit2. Instead of having a "drawing area" that handles the non-composited
+        content and a seperate layer tree, we put everything in a layer tree, with the non-
+        composited content being a layer in the tree.
+
+        This allows fixing several issues with websites that have large content areas that are
+        composited or overlap with composited layers.
+
+        Layer-tree synchronization is done by passing WebKit2 messages between a LayerTreeHost
+        on the WebProcess and a LayerTreeHostProxy on the UI process. Every layer in the tree has
+        its own tiled backing store, and uses the LayerTreeHost communication channel to pass
+        content up to the UI process. The UI process will later creates its own GraphicsLayer tree,
+        based on TextureMapper, which can be painted directly with OpenGL.
+
+        Several optimizations are available for the non-composited layer as well, e.g. specifying
+        a trajectory and updating the visible rect together with the content scale.
+
+        This code is currently disabled, a separate patch will enable it and glue it to
+        QTouchWebPage.
+
+        * DerivedSources.pro:
+        * Platform/CoreIPC/MessageID.h:
+        * Scripts/webkit2/messages.py:
+        * Shared/LayerTreeContext.h:
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit::WebLayerInfo::encode):
+        (WebKit::WebLayerInfo::decode):
+        * Shared/WebLayerTreeInfo.h:
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::updateWebView):
+        (WebKit::DrawingAreaProxy::contentsRect):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::viewportVisibleRect):
+        (WebKit::DrawingAreaProxy::isBackingStoreReady):
+        (WebKit::DrawingAreaProxy::paintToCurrentGLContext):
+        (WebKit::DrawingAreaProxy::setVisibleContentsRectAndScale):
+        (WebKit::DrawingAreaProxy::setVisibleContentRectTrajectoryVector):
+        (WebKit::DrawingAreaProxy::createTileForLayer):
+        (WebKit::DrawingAreaProxy::updateTileForLayer):
+        (WebKit::DrawingAreaProxy::removeTileForLayer):
+        (WebKit::DrawingAreaProxy::didReceiveLayerTreeHostProxyMessage):
+        (WebKit::DrawingAreaProxy::page):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::didReceiveLayerTreeHostProxyMessage):
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRectAndScale):
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector):
+        (WebKit::DrawingAreaProxyImpl::paintToCurrentGLContext):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/LayerTreeHostProxy.h: Added.
+        (WebKit::LayerTreeHostProxy::layerByID):
+        (WebKit::LayerTreeHostProxy::rootLayer):
+        (WebKit::LayerTreeHostProxy::notifyAnimationStarted):
+        (WebKit::LayerTreeHostProxy::notifySyncRequired):
+        (WebKit::LayerTreeHostProxy::showDebugBorders):
+        (WebKit::LayerTreeHostProxy::showRepaintCounter):
+        (WebKit::LayerTreeHostProxy::paintContents):
+        * UIProcess/LayerTreeHostProxy.messages.in: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp: Added.
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::~WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::removeFromParent):
+        (WebCore::WebGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::setNeedsDisplay):
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::syncCompositingState):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaintBegin):
+        (WebCore::WebGraphicsLayer::setContentsScale):
+        (WebCore::WebGraphicsLayer::setRootLayer):
+        (WebCore::WebGraphicsLayer::setVisibleContentRectTrajectoryVector):
+        (WebCore::WebGraphicsLayer::setVisibleContentRect):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaint):
+        (WebCore::WebGraphicsLayer::tiledBackingStorePaintEnd):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreUpdatesAllowed):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreContentsRect):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreBackgroundColor):
+        (WebCore::WebGraphicsLayer::createTile):
+        (WebCore::WebGraphicsLayer::updateTile):
+        (WebCore::WebGraphicsLayer::removeTile):
+        (WebCore::WebGraphicsLayer::updateTileBuffersRecursively):
+        (WebCore::WebGraphicsLayer::layerTreeTileClient):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebCore::WebGraphicsLayer::setLayerTreeTileClient):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didReceiveLayerTreeHostMessage):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setVisibleContentRectAndScale):
+        (WebKit::LayerTreeHost::setVisibleContentRectTrajectoryVector):
+        (WebKit::LayerTreeHost::setVisibleContentRectForLayer):
+        (WebKit::LayerTreeHost::renderNextFrame):
+        * WebProcess/WebPage/LayerTreeHost.messages.in: Added.
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::didReceiveLayerTreeHostMessage):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::create):
+        (WebKit::LayerTreeHostQt::~LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::setLayerFlushSchedulingEnabled):
+        (WebKit::LayerTreeHostQt::scheduleLayerFlush):
+        (WebKit::LayerTreeHostQt::cancelPendingLayerFlush):
+        (WebKit::LayerTreeHostQt::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit::LayerTreeHostQt::setRootCompositingLayer):
+        (WebKit::LayerTreeHostQt::invalidate):
+        (WebKit::LayerTreeHostQt::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostQt::scrollNonCompositedContents):
+        (WebKit::LayerTreeHostQt::forceRepaint):
+        (WebKit::LayerTreeHostQt::sizeDidChange):
+        (WebKit::LayerTreeHostQt::didInstallPageOverlay):
+        (WebKit::LayerTreeHostQt::didUninstallPageOverlay):
+        (WebKit::LayerTreeHostQt::setPageOverlayNeedsDisplay):
+        (WebKit::LayerTreeHostQt::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostQt::didSyncCompositingStateForLayer):
+        (WebKit::LayerTreeHostQt::didDeleteLayer):
+        (WebKit::LayerTreeHostQt::performScheduledLayerFlush):
+        (WebKit::LayerTreeHostQt::layerFlushTimerFired):
+        (WebKit::LayerTreeHostQt::createPageOverlayLayer):
+        (WebKit::LayerTreeHostQt::destroyPageOverlayLayer):
+        (WebKit::LayerTreeHostQt::adoptImageBackingStore):
+        (WebKit::LayerTreeHostQt::releaseImageBackingStore):
+        (WebKit::LayerTreeHostQt::notifyAnimationStarted):
+        (WebKit::LayerTreeHostQt::notifySyncRequired):
+        (WebKit::LayerTreeHostQt::paintContents):
+        (WebKit::LayerTreeHostQt::showDebugBorders):
+        (WebKit::LayerTreeHostQt::showRepaintCounter):
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+        (WebKit::LayerTreeHostQt::createTile):
+        (WebKit::LayerTreeHostQt::updateTile):
+        (WebKit::LayerTreeHostQt::removeTile):
+        (WebKit::LayerTreeHostQt::setVisibleContentRectForLayer):
+        (WebKit::LayerTreeHostQt::setVisibleContentRectAndScale):
+        (WebKit::LayerTreeHostQt::setVisibleContentRectTrajectoryVector):
+        (WebKit::LayerTreeHostQt::renderNextFrame):
+        (WebKit::LayerTreeHostQt::layerTreeTileUpdatesAllowed):
++
+
 2011-10-17  Ada Chan  <adachan@apple.com>
 
         Calling WKPageLoadAlternateHTMLString() where baseURL does not point to a directory causes an invalid message to be returned from WebProcess

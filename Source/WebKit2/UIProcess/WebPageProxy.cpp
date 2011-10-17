@@ -79,6 +79,10 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "LayerTreeHostProxyMessages.h"
+#endif
+
 #if PLATFORM(QT)
 #include "ArgumentCodersQt.h"
 #endif
@@ -1404,6 +1408,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, messageID, arguments);
         return;
     }
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    if (messageID.is<CoreIPC::MessageClassLayerTreeHostProxy>()) {
+        m_drawingArea->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
 
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
