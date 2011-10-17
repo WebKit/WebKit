@@ -1706,8 +1706,14 @@ sub buildQMakeProject($@)
     my $dir = File::Spec->canonpath(productDir());
 
     my $originalCwd = getcwd();
-    chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
-    my $defaults = `$qmakebin CONFIG+=compute_defaults 2>&1`;
+    my $configArgs = "CONFIG+=compute_defaults";
+    if (isWK2()) {
+        chdir File::Spec->catfile(sourceDir(), "Source", "WebKit2");
+        $configArgs = "CONFIG+=webkit2 $configArgs";
+    } else {
+        chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
+    }
+    my $defaults = `$qmakebin $configArgs 2>&1`;
     chdir $originalCwd;
 
     # On Symbian qmake needs to run in the same directory where the pro file is located.
