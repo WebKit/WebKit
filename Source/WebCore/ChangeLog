@@ -1,3 +1,23 @@
+2011-10-17  Rosen Dash  <rosen.dash@motorola.com>
+
+        when CSS pseudo selectors are applied (:before and :after) the *-of-line keyboard navigation does not work
+        https://bugs.webkit.org/show_bug.cgi?id=10123
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch addresses folllowing two issues:
+        1. When CSS pseudo elements are before or after is used with content attribute containing single character
+           at the start/end of text and we try to move cursor by right navigation key, the page freezes falling
+           into an infinite loop.
+        2. When these elements try to insert some text between a text line, navigation by right/left arrow key is prohibited.
+
+        Tests: editing/selection/css-pseudo-element-hang.html
+               editing/selection/css-pseudo-element.html
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+
 2011-10-15  Antti Koivisto  <antti@apple.com>
 
         Test :visited pseudo class

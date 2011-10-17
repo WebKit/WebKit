@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<style type="text/css"> /* pertinent to test cases */
+ .quote:before { content: "\""; }
+ .quote:after { content: "\""; }
+ 
+ .bidi:before { content: "aפb"; }
+ .bidi:after { content: "aפb"; }
+</style>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p>To manually test select text below by mouse and use right arrow key to navigate across the quotes. The caret should move to the right of quote.</p>
+
+<div contenteditable="true" id="ltr">
+preceding text
+<span class="quote">content</span>
+following text
+</div>
+
+<div contenteditable="true" id="rtl">
+&#1575;&#1585;&#1583;&#1608; &#1608;&#1681;
+<span class="quote">&#1662;&#1585;&#1608;&#1587;&#1740;&#1587;&#1585;&#1587; &#1662;&#1585;</span>
+&#1578;&#1576;&#1589;&#1585;
+</div>
+
+<div contenteditable="true" id="ltr-bidi">
+preceding text
+<span class="bidi">content</span>
+following text
+</div>
+
+<div contenteditable="true" id="rtl-bidi">
+&#1575;&#1585;&#1583;&#1608; &#1608;&#1681;
+<span class="bidi">&#1662;&#1585;&#1608;&#1587;&#1740;&#1587;&#1585;&#1587; &#1662;&#1585;</span>
+&#1578;&#1576;&#1589;&#1585;
+</div>
+<div id="console"></div>
+<script>
+
+var edit = document.getElementById('ltr');
+edit.focus();
+window.getSelection().setPosition(edit, 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 16);
+
+window.getSelection().setPosition(edit, 2);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 7);
+
+var edit = document.getElementById('rtl');
+edit.focus();
+window.getSelection().setPosition(edit, 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 9);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 8);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 9);
+
+window.getSelection().setPosition(edit, 2);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 11);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 10);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 11);
+
+var edit = document.getElementById('ltr-bidi');
+edit.focus();
+window.getSelection().setPosition(edit, 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 16);
+
+window.getSelection().setPosition(edit, 2);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 7);
+
+var edit = document.getElementById('rtl-bidi');
+edit.focus();
+window.getSelection().setPosition(edit, 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 10);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 9);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 8);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 9);
+
+window.getSelection().setPosition(edit, 2);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 11);
+window.getSelection().modify('move', 'left', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 1);
+window.getSelection().modify('move', 'right', 'character');
+shouldEvaluateTo(window.getSelection().anchorOffset.toString(), 11);
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

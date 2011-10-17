@@ -1,3 +1,15 @@
+2011-10-17  Rosen Dash  <rosen.dash@motorola.com>
+
+        when CSS pseudo selectors are applied (:before and :after) the *-of-line keyboard navigation does not work
+        https://bugs.webkit.org/show_bug.cgi?id=10123
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/css-pseudo-element-expected.txt: Added.
+        * editing/selection/css-pseudo-element-hang-expected.txt: Added.
+        * editing/selection/css-pseudo-element-hang.html: Added.
+        * editing/selection/css-pseudo-element.html: Added.
+
 2011-10-15  Antti Koivisto  <antti@apple.com>
 
         Test :visited pseudo class

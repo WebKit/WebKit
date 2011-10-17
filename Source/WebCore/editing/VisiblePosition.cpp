@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,6 +126,15 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretRightmostOffset())
                 return box->isLeftToRightDirection() ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
+            if (!renderer->node()) {
+                box = box->prevLeafChild();
+                if (!box)
+                    return primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
+                renderer = box->renderer();
+                offset = box->caretRightmostOffset();
+                continue;
+            }
+
             offset = box->isLeftToRightDirection() ? renderer->previousOffset(offset) : renderer->nextOffset(offset);
 
             int caretMinOffset = box->caretMinOffset();
@@ -192,6 +202,9 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 continue;
             }
 
+            while (prevBox && !prevBox->renderer()->node())
+                prevBox = prevBox->prevLeafChild();
+
             if (prevBox) {
                 box = prevBox;
                 renderer = box->renderer();
@@ -234,6 +247,8 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
+
+        ASSERT(p != m_deepPosition);
     }
 }
 
@@ -275,6 +290,15 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         while (true) {
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretLeftmostOffset())
                 return box->isLeftToRightDirection() ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
+
+            if (!renderer->node()) {
+                box = box->nextLeafChild();
+                if (!box)
+                    return primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
+                renderer = box->renderer();
+                offset = box->caretLeftmostOffset();
+                continue;
+            }
 
             offset = box->isLeftToRightDirection() ? renderer->nextOffset(offset) : renderer->previousOffset(offset);
 
@@ -322,6 +346,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                     }
                     break;
                 }
+
                 if (nextBox->bidiLevel() >= level)
                     break;
 
@@ -344,10 +369,14 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 continue;
             }
 
+            while (nextBox && !nextBox->renderer()->node())
+                nextBox = nextBox->nextLeafChild();
+
             if (nextBox) {
                 box = nextBox;
                 renderer = box->renderer();
                 offset = box->caretLeftmostOffset();
+
                 if (box->bidiLevel() > level) {
                     do {
                         nextBox = nextBox->nextLeafChild();
@@ -386,6 +415,8 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
+
+        ASSERT(p != m_deepPosition);
     }
 }
 
