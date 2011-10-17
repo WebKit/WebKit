@@ -1,3 +1,13 @@
+2011-10-17  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Rename WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL to WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI
+        https://bugs.webkit.org/show_bug.cgi?id=70040
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitError.cpp:
+        * UIProcess/API/gtk/WebKitError.h:
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)

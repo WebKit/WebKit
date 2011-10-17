@@ -55,7 +55,7 @@ typedef enum {
  * WebKitPolicyError:
  * @WEBKIT_POLICY_ERROR_FAILED: Generic load failure due to policy error
  * @WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE: Load failure due to unsupported mime type
- * @WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL: Load failure due to URI that can not be shown
+ * @WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI: Load failure due to URI that can not be shown
  * @WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE: Load failure due to frame load interruption by policy change
  * @WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT: Load failure due to port restriction
  *
@@ -64,7 +64,7 @@ typedef enum {
 typedef enum {
     WEBKIT_POLICY_ERROR_FAILED = 199,
     WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE = 100,
-    WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL = 101,
+    WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI = 101,
     WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE = 102,
     WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT = 103
 } WebKitPolicyError;
