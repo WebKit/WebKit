@@ -1,3 +1,25 @@
+2011-10-15  Antti Koivisto  <antti@apple.com>
+
+        Test :visited pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=70219
+
+        Reviewed by Andreas Kling.
+    
+        Update Mac results for tests that already use <a href="">.
+        
+        All other platforms need rebaselining too.
+
+        * platform/mac/css2.1/t0511-c21-pseud-link-02-e-expected.txt:
+        * platform/mac/css2.1/t0511-c21-pseud-link-03-e-expected.txt:
+        * platform/mac/fast/dom/34176-expected.txt:
+        * platform/mac/fast/events/reveal-link-when-focused-expected.txt:
+        * platform/mac/fast/history/visited-link-background-color-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug26553-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51140-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug8950-expected.txt:
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] test expectation update

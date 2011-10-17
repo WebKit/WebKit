@@ -1,3 +1,21 @@
+2011-10-15  Antti Koivisto  <antti@apple.com>
+
+        Test :visited pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=70219
+
+        Reviewed by Andreas Kling.
+        
+        Currently DRT doesn't support :visited. All tests where it should match have wrong checked in results.
+        
+        - Make <a href=""> to match :visited in DRT. It already does on browsers. A number of existing tests 
+          for :visited use it already, the rest can be modified to use it.
+        - Make render tree dumps correctly dump the visited state dependent color.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::determineLinkStateSlowCase):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2011-10-17  Satish Sampath  <satish@chromium.org>
 
         Avoid leaking document when leaving google.com due to geolocation

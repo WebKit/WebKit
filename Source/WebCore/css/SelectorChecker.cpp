@@ -229,6 +229,11 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
     if (!attr || attr->isNull())
         return NotInsideLink;
 
+    // An empty href refers to the document itself which is always visited. It is useful to check this explicitly so
+    // that visited links can be tested in platform independent manner, without explicit support in the test harness.
+    if (attr->isEmpty())
+        return InsideVisitedLink;
+
     LinkHash hash = visitedLinkHash(m_document->baseURL(), *attr);
     if (!hash)
         return InsideUnvisitedLink;

@@ -282,27 +282,30 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (o.isFileUploadControl())
             ts << " " << quoteAndEscapeNonPrintables(toRenderFileUploadControl(&o)->fileTextValue());
 
-        if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
-            ts << " [color=" << o.style()->color().nameForRenderTreeAsText() << "]";
+        if (o.parent()) {
+            Color color = o.style()->visitedDependentColor(CSSPropertyColor);
+            if (o.parent()->style()->visitedDependentColor(CSSPropertyColor) != color)
+                ts << " [color=" << color.nameForRenderTreeAsText() << "]";
 
-        if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()) &&
-            o.style()->backgroundColor().isValid() && o.style()->backgroundColor().rgb())
             // Do not dump invalid or transparent backgrounds, since that is the default.
-            ts << " [bgcolor=" << o.style()->backgroundColor().nameForRenderTreeAsText() << "]";
-        
-        if (o.parent() && (o.parent()->style()->textFillColor() != o.style()->textFillColor()) &&
-            o.style()->textFillColor().isValid() && o.style()->textFillColor() != o.style()->color() &&
-            o.style()->textFillColor().rgb())
-            ts << " [textFillColor=" << o.style()->textFillColor().nameForRenderTreeAsText() << "]";
+            Color backgroundColor = o.style()->visitedDependentColor(CSSPropertyBackgroundColor);
+            if (o.parent()->style()->visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor
+                && backgroundColor.isValid() && backgroundColor.rgb())
+                ts << " [bgcolor=" << backgroundColor.nameForRenderTreeAsText() << "]";
+            
+            Color textFillColor = o.style()->visitedDependentColor(CSSPropertyWebkitTextFillColor);
+            if (o.parent()->style()->visitedDependentColor(CSSPropertyWebkitTextFillColor) != textFillColor
+                && textFillColor.isValid() && textFillColor != color && textFillColor.rgb())
+                ts << " [textFillColor=" << textFillColor.nameForRenderTreeAsText() << "]";
 
-        if (o.parent() && (o.parent()->style()->textStrokeColor() != o.style()->textStrokeColor()) &&
-            o.style()->textStrokeColor().isValid() && o.style()->textStrokeColor() != o.style()->color() &&
-            o.style()->textStrokeColor().rgb())
-            ts << " [textStrokeColor=" << o.style()->textStrokeColor().nameForRenderTreeAsText() << "]";
+            Color textStrokeColor = o.style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
+            if (o.parent()->style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor) != textStrokeColor
+                && textStrokeColor.isValid() && textStrokeColor != color && textStrokeColor.rgb())
+                ts << " [textStrokeColor=" << textStrokeColor.nameForRenderTreeAsText() << "]";
 
-        if (o.parent() && (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth()) &&
-            o.style()->textStrokeWidth() > 0)
-            ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
+            if (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth() && o.style()->textStrokeWidth() > 0)
+                ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
+        }
 
         if (!o.isBoxModelObject())
             return;
