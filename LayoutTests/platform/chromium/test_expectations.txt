@@ -769,10 +769,12 @@ BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 // probably just need rebaselining.
 //BUGCR73923 : fullscreen = TIMEOUT FAIL
 BUGCR73923 : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
-BUGCR73923 : fullscreen/full-screen-render-inline.html = IMAGE
+BUGCR73923 WIN LINUX : fullscreen/full-screen-render-inline.html = IMAGE
 BUGCR73923 : fullscreen/full-screen-stacking-context.html = IMAGE
-BUGCR73923 : fullscreen/parent-flow-inline-with-block-child.html = IMAGE
+BUGCR73923 WIN LINUX : fullscreen/parent-flow-inline-with-block-child.html = IMAGE
 BUGCR73923 : fullscreen/video-controls-override.html = TEXT
+BUGCR73923 MAC : fullscreen/full-screen-iframe-zIndex.html = IMAGE
+BUGCR73923 MAC : fullscreen/full-screen-zIndex-after.html = IMAGE
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED

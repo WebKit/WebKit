@@ -1,3 +1,11 @@
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
+        More tweaking of chromium fullscreen expectations.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed, rolling out r97654.
