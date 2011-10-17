@@ -1,3 +1,12 @@
+2011-10-17  Darin Adler  <darin@apple.com>
+
+        Add some more *.pyc ignores in directories with Python scripts.
+
+        * QueueStatusServer: Added property svn:ignore.
+        * Scripts/webkitpy/common/watchlist: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/controllers: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/views: Added property svn:ignore.
+
 2011-10-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2][meta] Fix failing API tests
