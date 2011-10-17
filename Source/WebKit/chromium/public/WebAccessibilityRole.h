@@ -115,6 +115,8 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleSheet,
     WebAccessibilityRoleSlider,
     WebAccessibilityRoleSliderThumb,
+    WebAccessibilityRoleSpinButton,
+    WebAccessibilityRoleSpinButtonPart,
     WebAccessibilityRoleSplitGroup,
     WebAccessibilityRoleSplitter,
     WebAccessibilityRoleStaticText,
