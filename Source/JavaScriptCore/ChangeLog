@@ -1,3 +1,15 @@
+2011-10-16  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove PageAllocatorSymbian.h, OSAllocatorSymbian.cpp, gtk/ThreadingGtk.cpp from gyp project files
+        https://bugs.webkit.org/show_bug.cgi?id=70205
+
+        Reviewed by James Robinson.
+
+        wtf/PageAllocatorSymbian.h and wtf/OSAllocatorSymbian.cpp were removed in r97557.
+        wtf/gtk/ThreadingGtk.cpp was removed in r97269.
+
+        * JavaScriptCore.gypi:
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)
