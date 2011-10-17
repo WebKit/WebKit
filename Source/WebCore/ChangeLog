@@ -1,3 +1,20 @@
+2011-10-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] fontForSelection and styleForSelectionStart should be moved to EditorMac
+        https://bugs.webkit.org/show_bug.cgi?id=70114
+
+        Reviewed by Hajime Morita.
+
+        Moved fontForSelection and styleForSelectionStart from Editor to EditorMac
+        and made styleForSelectionStart static local.
+
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::styleForSelectionStart):
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::fontAttributesForSelectionStart):
+
 2011-10-16  Kentaro Hara  <haraken@chromium.org>
 
         Generate EventSource constructor for JSC by [Constructor] IDL

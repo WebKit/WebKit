@@ -134,9 +134,6 @@ public:
     bool selectionStartHasStyle(int propertyID, const String& value) const;
     TriState selectionHasStyle(int propertyID, const String& value) const;
     String selectionStartCSSPropertyValue(int propertyID);
-#if PLATFORM(MAC)
-    const SimpleFontData* fontForSelection(bool&) const;
-#endif
     WritingDirection textDirectionForSelection(bool&) const;
     
     TriState selectionUnorderedListState() const;
@@ -350,9 +347,6 @@ public:
 
     void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
-#if PLATFORM(MAC)
-    RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
-#endif
     unsigned countMatchesForText(const String&, FindOptions, unsigned limit, bool markMatches);
     unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches);
     bool markedTextMatchesAreHighlighted() const;
@@ -366,6 +360,7 @@ public:
     void textDidChangeInTextArea(Element*);
 
 #if PLATFORM(MAC)
+    const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
     bool canCopyExcludingStandaloneImages();

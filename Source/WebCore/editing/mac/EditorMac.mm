@@ -30,16 +30,21 @@
 #import "ClipboardMac.h"
 #import "CachedResourceLoader.h"
 #import "DocumentFragment.h"
+#import "EditingText.h"
 #import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
 #import "FrameView.h"
+#import "HTMLNames.h"
 #import "Pasteboard.h"
 #import "RenderBlock.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
+#import "htmlediting.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
@@ -89,10 +94,87 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     m_frame->editor()->client()->setInsertionPasteboard(nil);
 }
 
+static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
+{
+    nodeToRemove = 0;
+
+    if (frame->selection()->isNone())
+        return 0;
+
+    Position position = frame->selection()->selection().visibleStart().deepEquivalent();
+    if (!position.isCandidate() || position.isNull())
+        return 0;
+
+    RefPtr<EditingStyle> typingStyle = frame->selection()->typingStyle();
+    if (!typingStyle || !typingStyle->style())
+        return position.deprecatedNode()->renderer()->style();
+
+    RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
+
+    ExceptionCode ec = 0;
+    String styleText = typingStyle->style()->cssText() + " display: inline";
+    styleElement->setAttribute(styleAttr, styleText.impl(), ec);
+    ASSERT(!ec);
+
+    styleElement->appendChild(frame->document()->createEditingTextNode(""), ec);
+    ASSERT(!ec);
+
+    position.deprecatedNode()->parentNode()->appendChild(styleElement, ec);
+    ASSERT(!ec);
+
+    nodeToRemove = styleElement.get();
+    return styleElement->renderer() ? styleElement->renderer()->style() : 0;
+}
+
+const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
+{
+    hasMultipleFonts = false;
+
+    if (!m_frame->selection()->isRange()) {
+        Node* nodeToRemove;
+        RenderStyle* style = styleForSelectionStart(m_frame, nodeToRemove); // sets nodeToRemove
+
+        const SimpleFontData* result = 0;
+        if (style)
+            result = style->font().primaryFont();
+
+        if (nodeToRemove) {
+            ExceptionCode ec;
+            nodeToRemove->remove(ec);
+            ASSERT(!ec);
+        }
+
+        return result;
+    }
+
+    const SimpleFontData* font = 0;
+    RefPtr<Range> range = m_frame->selection()->toNormalizedRange();
+    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame->selection()->selection()).deprecatedNode()) {
+        Node* pastEnd = range->pastLastNode();
+        // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
+        // unreproducible case where this didn't happen, so check for null also.
+        for (Node* node = startNode; node && node != pastEnd; node = node->traverseNextNode()) {
+            RenderObject* renderer = node->renderer();
+            if (!renderer)
+                continue;
+            // FIXME: Are there any node types that have renderers, but that we should be skipping?
+            const SimpleFontData* primaryFont = renderer->style()->font().primaryFont();
+            if (!font)
+                font = primaryFont;
+            else if (font != primaryFont) {
+                hasMultipleFonts = true;
+                break;
+            }
+        }
+    }
+
+    return font;
+}
+
 NSDictionary* Editor::fontAttributesForSelectionStart() const
 {
     Node* nodeToRemove;
-    RenderStyle* style = styleForSelectionStart(nodeToRemove);
+    RenderStyle* style = styleForSelectionStart(m_frame, nodeToRemove);
     if (!style)
         return nil;
 

@@ -509,53 +509,6 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
         client()->respondToChangedContents();
 }
 
-#if PLATFORM(MAC)
-const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
-{
-    hasMultipleFonts = false;
-
-    if (!m_frame->selection()->isRange()) {
-        Node* nodeToRemove;
-        RenderStyle* style = styleForSelectionStart(nodeToRemove); // sets nodeToRemove
-
-        const SimpleFontData* result = 0;
-        if (style)
-            result = style->font().primaryFont();
-        
-        if (nodeToRemove) {
-            ExceptionCode ec;
-            nodeToRemove->remove(ec);
-            ASSERT(!ec);
-        }
-
-        return result;
-    }
-
-    const SimpleFontData* font = 0;
-    RefPtr<Range> range = m_frame->selection()->toNormalizedRange();
-    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame->selection()->selection()).deprecatedNode()) {
-        Node* pastEnd = range->pastLastNode();
-        // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
-        // unreproducible case where this didn't happen, so check for null also.
-        for (Node* n = startNode; n && n != pastEnd; n = n->traverseNextNode()) {
-            RenderObject* renderer = n->renderer();
-            if (!renderer)
-                continue;
-            // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData* f = renderer->style()->font().primaryFont();
-            if (!font)
-                font = f;
-            else if (font != f) {
-                hasMultipleFonts = true;
-                break;
-            }
-        }
-    }
-
-    return font;
-}
-#endif
-
 WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbeddings) const
 {
     hasNestedOrMultipleEmbeddings = true;
@@ -2795,42 +2748,6 @@ void Editor::applyEditingStyleToElement(Element* element) const
     style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false, ec);
     ASSERT(!ec);
 }
-
-#if PLATFORM(MAC)
-RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
-{
-    nodeToRemove = 0;
-
-    if (m_frame->selection()->isNone())
-        return 0;
-
-    Position position = m_frame->selection()->selection().visibleStart().deepEquivalent();
-    if (!position.isCandidate())
-        return 0;
-    if (!position.deprecatedNode())
-        return 0;
-
-    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
-    if (!typingStyle || !typingStyle->style())
-        return position.deprecatedNode()->renderer()->style();
-
-    RefPtr<Element> styleElement = m_frame->document()->createElement(spanTag, false);
-
-    ExceptionCode ec = 0;
-    String styleText = typingStyle->style()->cssText() + " display: inline";
-    styleElement->setAttribute(styleAttr, styleText.impl(), ec);
-    ASSERT(!ec);
-
-    styleElement->appendChild(m_frame->document()->createEditingTextNode(""), ec);
-    ASSERT(!ec);
-
-    position.deprecatedNode()->parentNode()->appendChild(styleElement, ec);
-    ASSERT(!ec);
-
-    nodeToRemove = styleElement.get();
-    return styleElement->renderer() ? styleElement->renderer()->style() : 0;
-}
-#endif
 
 // Searches from the beginning of the document if nothing is selected.
 bool Editor::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
