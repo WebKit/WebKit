@@ -1842,7 +1842,6 @@
             'bindings/js/JSEventCustom.cpp',
             'bindings/js/JSEventListener.cpp',
             'bindings/js/JSEventListener.h',
-            'bindings/js/JSEventSourceCustom.cpp',
             'bindings/js/JSEventTarget.cpp',
             'bindings/js/JSEventTarget.h',
             'bindings/js/JSExceptionBase.cpp',

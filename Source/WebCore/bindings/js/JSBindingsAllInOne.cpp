@@ -75,7 +75,6 @@
 #include "JSEventConstructors.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
-#include "JSEventSourceCustom.cpp"
 #include "JSEventTarget.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSFloat32ArrayCustom.cpp"

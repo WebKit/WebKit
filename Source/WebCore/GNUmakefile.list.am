@@ -730,7 +730,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSEventConstructors.cpp \
 	Source/WebCore/bindings/js/JSEventListener.cpp \
 	Source/WebCore/bindings/js/JSEventListener.h \
-	Source/WebCore/bindings/js/JSEventSourceCustom.cpp \
 	Source/WebCore/bindings/js/JSEventTarget.cpp \
 	Source/WebCore/bindings/js/JSEventTarget.h \
 	Source/WebCore/bindings/js/JSErrorHandler.cpp \

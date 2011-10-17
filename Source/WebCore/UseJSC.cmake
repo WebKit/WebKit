@@ -54,7 +54,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSEventConstructors.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
-    bindings/js/JSEventSourceCustom.cpp
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSFloat32ArrayCustom.cpp
