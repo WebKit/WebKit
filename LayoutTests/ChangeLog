@@ -1,3 +1,11 @@
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Removing suppressions for the fullscreen/ tests - it looks
+        like they're mostly passing now. I will pick up the tests that
+        are still failing in a subsequent patch.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10293929> REGRESSION (r97525): iChat transcript has horizontal scroll bar when the conversation includes a wide image
