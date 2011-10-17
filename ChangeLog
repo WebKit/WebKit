@@ -1,3 +1,9 @@
+2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK build fix patch by Gustavo Noronha Silva.
+
+        * Source/autotools/symbols.filter:
+
 2011-10-17  Vamshikrishna Yellenki  <vamshi@motorola.com>
 
         [webkit]Debug Build Bot failure
