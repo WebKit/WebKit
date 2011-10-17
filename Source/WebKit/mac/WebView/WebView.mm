@@ -3326,6 +3326,9 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
     // Send a change screen to make sure the initial displayID is set
     [self doWindowDidChangeScreen];
+
+    if (_private && _private->page)
+        _private->page->resumeScriptedAnimations();    
 }
 
 - (void)_windowDidChangeScreen:(NSNotification *)notification
@@ -3339,6 +3342,9 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     // This is needed because the normal NSWindowDidResignKeyNotification is not fired
     // for NSPopover windows since they share key with their parent window.
     [self _updateActiveState];
+    
+    if (_private && _private->page)
+        _private->page->suspendScriptedAnimations();    
 }
 
 - (void)_windowWillClose:(NSNotification *)notification

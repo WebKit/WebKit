@@ -1,3 +1,22 @@
+2011-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        Throttle rate of requestAnimationFrame when page is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=67873
+
+        Reviewed by Anders Carlsson.
+
+        Add logic to suspend and resume scripted animations when page is hidden,
+        minimized or the tab is not visible. The hide/minimize notification comes
+        in from WebKit/WebKit2 to a new set of functions.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::didMoveOnscreen):
+        (WebCore::Page::willMoveOffscreen):
+        (WebCore::Page::suspendScriptedAnimations):
+        (WebCore::Page::resumeScriptedAnimations):
+        * page/Page.h:
+
 2011-10-17  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=69966

@@ -257,6 +257,9 @@ namespace WebCore {
 
         void windowScreenDidChange(PlatformDisplayID);
         
+        void suspendScriptedAnimations();
+        void resumeScriptedAnimations();
+        
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
 

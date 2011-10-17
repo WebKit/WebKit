@@ -668,6 +668,8 @@ void Page::didMoveOnscreen()
         if (frame->view())
             frame->view()->didMoveOnscreen();
     }
+    
+    resumeScriptedAnimations();
 }
 
 void Page::willMoveOffscreen()
@@ -676,6 +678,8 @@ void Page::willMoveOffscreen()
         if (frame->view())
             frame->view()->willMoveOffscreen();
     }
+    
+    suspendScriptedAnimations();
 }
 
 void Page::windowScreenDidChange(PlatformDisplayID displayID)
@@ -685,6 +689,22 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
+    }
+}
+
+void Page::suspendScriptedAnimations()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            frame->document()->suspendScriptedAnimationControllerCallbacks();
+    }
+}
+
+void Page::resumeScriptedAnimations()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            frame->document()->resumeScriptedAnimationControllerCallbacks();
     }
 }
 

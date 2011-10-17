@@ -1,3 +1,17 @@
+2011-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        Throttle rate of requestAnimationFrame when page is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=67873
+
+        Reviewed by Anders Carlsson.
+
+        Plumb through notification when the window is hidden/shown or
+        minimized/unminimized
+
+        * WebView/WebView.mm:
+        (-[WebView _windowWillOrderOnScreen:]):
+        (-[WebView _windowWillOrderOffScreen:]):
+
 2011-10-16  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(DOM_STORAGE)
