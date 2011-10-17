@@ -1,3 +1,18 @@
+2011-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add methods to get/set a custom text enconding to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69524
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_custom_charset):
+        (webkit_web_view_set_custom_charset):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewCustomCharset):
+        (beforeAll):
+
 2011-10-14  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement decidePolicyForResponse in our PolicyClient

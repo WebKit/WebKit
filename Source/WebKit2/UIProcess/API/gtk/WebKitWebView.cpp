@@ -43,6 +43,7 @@ enum {
 
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
+    CString customTextEncoding;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
 };
@@ -309,4 +310,46 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageGoForward(toAPI(page));
+}
+
+/**
+ * webkit_web_view_get_custom_charset:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the current custom character encoding name of @web_view.
+ *
+ * Returns: the current custom character encoding name or %NULL if no
+ *    custom character encoding has been set.
+ */
+const gchar* webkit_web_view_get_custom_charset(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> wkCustomEncoding(AdoptWK, WKPageCopyCustomTextEncodingName(toAPI(page)));
+    if (WKStringIsEmpty(wkCustomEncoding.get()))
+        return 0;
+
+    webView->priv->customTextEncoding = toImpl(wkCustomEncoding.get())->string().utf8();
+    return webView->priv->customTextEncoding.data();
+}
+
+/**
+ * webkit_web_view_set_custom_charset:
+ * @web_view: a #WebKitWebView
+ * @charset: (allow-none): a character encoding name or %NULL
+ *
+ * Sets the current custom character encoding override of @web_view. The custom
+ * character encoding will override any text encoding detected via HTTP headers or
+ * META tags. Calling this method will stop any current load operation and reload the
+ * current page. Setting the custom character encoding to %NULL removes the character
+ * encoding override.
+ */
+void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* charset)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> wkEncodingName = charset ? adoptWK(WKStringCreateWithUTF8CString(charset)) : 0;
+    WKPageSetCustomTextEncodingName(toAPI(page), wkEncodingName.get());
 }

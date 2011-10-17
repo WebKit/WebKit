@@ -26,9 +26,21 @@ static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_view_get_context(test->m_webView) == webkit_web_context_get_default());
 }
 
+static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
+{
+    g_assert(!webkit_web_view_get_custom_charset(test->m_webView));
+    webkit_web_view_set_custom_charset(test->m_webView, "utf8");
+    g_assert_cmpstr(webkit_web_view_get_custom_charset(test->m_webView), ==, "utf8");
+    // Go back to the default charset.
+    webkit_web_view_set_custom_charset(test->m_webView, 0);
+    g_assert(!webkit_web_view_get_custom_charset(test->m_webView));
+}
+
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
+    WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
 }
 
 void afterAll()
