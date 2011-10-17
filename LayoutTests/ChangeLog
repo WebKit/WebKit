@@ -1,3 +1,11 @@
+2011-10-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Unskip a passing test and add platform specific expected result.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/qt/fast/events/reveal-link-when-focused-expected.txt: Added.
+
 2011-10-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Add an ability to look up and explore an object from a heap profile.

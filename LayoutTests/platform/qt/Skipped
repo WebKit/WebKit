@@ -1173,7 +1173,6 @@ fast/events/content-changed-during-drop.html
 fast/events/js-keyboard-event-creation.html
 fast/events/keypress-insert-tab.html
 fast/events/ondragenter.html
-fast/events/reveal-link-when-focused.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
 fast/forms/input-selectedoption.html
