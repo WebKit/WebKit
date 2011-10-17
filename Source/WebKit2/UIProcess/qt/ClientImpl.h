@@ -48,6 +48,7 @@ void qt_wk_mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifie
 
 // Policy client.
 void qt_wk_decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
+void qt_wk_decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
 
 #ifdef __cplusplus
 }

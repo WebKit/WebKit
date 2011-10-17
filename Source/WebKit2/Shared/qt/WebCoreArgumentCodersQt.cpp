@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -58,15 +57,37 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRe
 
 void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
-    notImplemented();
+    encoder->encode(resourceResponse.url().string());
+    encoder->encode(resourceResponse.mimeType());
+    encoder->encode(static_cast<int64_t>(resourceResponse.expectedContentLength()));
+    encoder->encode(resourceResponse.textEncodingName());
 }
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
-    notImplemented();
+    ResourceResponse response;
 
-    // FIXME: Ditto.
-    resourceResponse = ResourceResponse();
+    String url;
+    if (!decoder->decode(url))
+        return false;
+    response.setURL(KURL(WebCore::ParsedURLString, url));
+
+    String mimeType;
+    if (!decoder->decode(mimeType))
+        return false;
+    response.setMimeType(mimeType);
+
+    int64_t contentLength;
+    if (!decoder->decode(contentLength))
+        return false;
+    response.setExpectedContentLength(contentLength);
+
+    String textEncodingName;
+    if (!decoder->decode(textEncodingName))
+        return false;
+    response.setTextEncodingName(textEncodingName);
+
+    resourceResponse = response;
     return true;
 }
 
