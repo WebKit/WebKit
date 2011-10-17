@@ -1,3 +1,57 @@
+2011-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG bytecode parser should understand inline stacks
+        https://bugs.webkit.org/show_bug.cgi?id=70278
+
+        Reviewed by Oliver Hunt.
+        
+        The DFG bytecode parser is now capable of parsing multiple code blocks at
+        once. This remains turned off since not all inlining functionality is
+        implemented.       
+        
+        This required making a few changes elsewhere in the system. The bytecode
+        parser now may do some of the same things that the bytecode generator does,
+        like allocating constants and identifiers. Basic block linking relies on
+        bytecode indices, which are only meaningful within the context of one basic
+        block. This is fine, so long as linking is done eagerly whenever switching
+        from one code block to another.
+
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getThis):
+        (JSC::DFG::ByteCodeParser::setThis):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::executable):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::~InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        (JSC::DFG::ByteCodeParser::setupPredecessors):
+        (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::GetBytecodeBeginForBlock::GetBytecodeBeginForBlock):
+        (JSC::DFG::GetBytecodeBeginForBlock::operator()):
+        (JSC::DFG::Graph::blockIndexForBytecodeOffset):
+        * dfg/DFGNode.h:
+        * runtime/Identifier.h:
+        (JSC::IdentifierMapIndexHashTraits::emptyValue):
+        * runtime/JSValue.h:
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchWithFunctor):
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Incorrect behavior from String match/search & undefined pattern

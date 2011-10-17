@@ -49,6 +49,12 @@ struct CodeOrigin {
     {
     }
     
+    explicit CodeOrigin(uint32_t bytecodeIndex, InlineCallFrame* inlineCallFrame)
+        : bytecodeIndex(bytecodeIndex)
+        , inlineCallFrame(inlineCallFrame)
+    {
+    }
+    
     bool isSet() const { return bytecodeIndex != std::numeric_limits<uint32_t>::max(); }
 };
 

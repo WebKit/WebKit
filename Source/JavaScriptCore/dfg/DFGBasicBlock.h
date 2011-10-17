@@ -53,12 +53,10 @@ struct BasicBlock {
     {
     }
 
-    static inline BlockIndex getBytecodeBegin(OwnPtr<BasicBlock>* block)
-    {
-        return (*block)->bytecodeBegin;
-    }
-
+    // This value is used internally for block linking and OSR entry. It is mostly meaningless
+    // for other purposes due to inlining.
     unsigned bytecodeBegin;
+    
     NodeIndex begin;
     NodeIndex end;
     bool isOSRTarget;

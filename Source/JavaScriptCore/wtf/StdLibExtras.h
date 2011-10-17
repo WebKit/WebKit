@@ -195,6 +195,47 @@ inline ArrayElementType* binarySearch(ArrayElementType* array, size_t size, KeyT
     return &array[0];
 }
 
+// Modified binary search algorithm that uses a functor. Note that this is strictly
+// more powerful than the above, but results in somewhat less template specialization.
+// Hence, depending on inlining heuristics, it might be slower.
+template<typename ArrayElementType, typename KeyType, typename ExtractKey>
+inline ArrayElementType* binarySearchWithFunctor(ArrayElementType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray, const ExtractKey& extractKey = ExtractKey())
+{
+    // The array must contain at least one element (pre-condition, array does contain key).
+    // If the array contains only one element, no need to do the comparison.
+    while (size > 1) {
+        // Pick an element to check, half way through the array, and read the value.
+        int pos = (size - 1) >> 1;
+        KeyType val = extractKey(&array[pos]);
+
+        // If the key matches, success!
+        if (val == key)
+            return &array[pos];
+        // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+        // chopping off the right hand half of the array.
+        else if (key < val)
+            size = pos;
+        // Discard all values in the left hand half of the array, up to and including the item at pos.
+        else {
+            size -= (pos + 1);
+            array += (pos + 1);
+        }
+
+        // In case of BinarySearchMode = KeyMustBePresentInArray 'size' should never reach zero.
+        if (mode == KeyMustBePresentInArray)
+            ASSERT(size);
+    }
+
+    // In case of BinarySearchMode = KeyMustBePresentInArray if we reach this point
+    // we've chopped down to one element, no need to check it matches
+    if (mode == KeyMustBePresentInArray) {
+        ASSERT(size == 1);
+        ASSERT(key == extractKey(&array[0]));
+    }
+
+    return &array[0];
+}
+
 // Modified binarySearch() algorithm designed for array-like classes that support
 // operator[] but not operator+=. One example of a class that qualifies is
 // SegmentedVector.

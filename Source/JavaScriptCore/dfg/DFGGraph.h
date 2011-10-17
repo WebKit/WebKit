@@ -113,19 +113,8 @@ public:
     void dump(NodeIndex, CodeBlock* = 0);
 #endif
 
-    BlockIndex blockIndexForBytecodeOffset(unsigned bytecodeBegin)
-    {
-        OwnPtr<BasicBlock>* begin = m_blocks.begin();
-        OwnPtr<BasicBlock>* block = binarySearch<OwnPtr<BasicBlock>, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
-        ASSERT(block >= m_blocks.begin() && block < m_blocks.end());
-        return static_cast<BlockIndex>(block - begin);
-    }
+    BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
-    BasicBlock& blockForBytecodeOffset(unsigned bytecodeBegin)
-    {
-        return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
-    }
-    
     bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
         return m_predictions.predictGlobalVar(varNumber, prediction);
@@ -251,6 +240,27 @@ private:
 
     PredictionTracker m_predictions;
 };
+
+class GetBytecodeBeginForBlock {
+public:
+    GetBytecodeBeginForBlock(Graph& graph)
+        : m_graph(graph)
+    {
+    }
+    
+    unsigned operator()(BlockIndex* blockIndex) const
+    {
+        return m_graph.m_blocks[*blockIndex]->bytecodeBegin;
+    }
+
+private:
+    Graph& m_graph;
+};
+
+inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin)
+{
+    return *WTF::binarySearchWithFunctor<BlockIndex, unsigned>(blocks.begin(), blocks.size(), bytecodeBegin, WTF::KeyMustBePresentInArray, GetBytecodeBeginForBlock(*this));
+}
 
 } } // namespace JSC::DFG
 

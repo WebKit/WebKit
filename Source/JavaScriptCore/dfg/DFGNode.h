@@ -82,6 +82,7 @@ typedef uint32_t NodeIndex;
 static const NodeIndex NoNode = UINT_MAX;
 
 typedef uint32_t BlockIndex;
+static const BlockIndex NoBlock = UINT_MAX;
 
 struct NodeIndexTraits {
     static NodeIndex defaultValue() { return NoNode; }
