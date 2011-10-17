@@ -48,14 +48,4 @@ void JSMessageChannel::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.addOpaqueRoot(port);
 }
 
-EncodedJSValue JSC_HOST_CALL JSMessageChannelConstructor::constructJSMessageChannel(ExecState* exec)
-{
-    JSMessageChannelConstructor* jsConstructor = static_cast<JSMessageChannelConstructor*>(exec->callee());
-    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
-    if (!context)
-        return throwVMError(exec, createReferenceError(exec, "MessageChannel constructor associated document is unavailable"));
-
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), MessageChannel::create(context))));
-}
-
 } // namespace WebCore

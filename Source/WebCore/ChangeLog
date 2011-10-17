@@ -1,3 +1,21 @@
+2011-10-16  Kentaro Hara  <haraken@chromium.org>
+
+        Generate MessageChannel constructor by [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=70214
+
+        Reviewed by Adam Barth.
+
+        This patch generates an MessageChannel constructor for JSC by [Constructor] IDL,
+        but V8 is still using a custom constructor since the V8 constructor requires special logic.
+
+        Tests: fast/dom/global-constructors.html
+               fast/events/message-port.html
+               fast/events/message-port-no-wrapper.html
+               fast/dom/Window/window-postmessage-args.html
+
+        * bindings/js/JSMessageChannelCustom.cpp: Removed the MessageChannel constructor.
+        * dom/MessageChannel.idl: Generates the MessageChannel constructor for JSC.
+
 2011-10-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] fontForSelection and styleForSelectionStart should be moved to EditorMac
