@@ -1,3 +1,11 @@
+2011-10-17  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r97536
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed export of
+        JSC::setUpStaticFunctionSlot, which no longer exists. Also removed incorrect exports of
+        s_info members, which need to be exported via JS_EXPORTDATA instead.
+
 2011-10-17  Patrick Gansterer  <paroga@webkit.org>
 
         Interpreter build fix after r97436, r97506, r97532 and r97537.
