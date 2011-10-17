@@ -355,12 +355,13 @@ namespace JSC {
     ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
-        ASSERT(cell);
+#if ENABLE(GC_VALIDATION)
+        validate(cell);
+#endif
         m_visitCount++;
         if (Heap::testAndSetMarked(cell))
             return;
-        if (cell->structure() && cell->structure()->typeInfo().type() >= CompoundType)
-            m_values.append(cell);
+        m_stack.append(cell);
     }
 
     inline StructureTransitionTable::Hash::Key StructureTransitionTable::keyForWeakGCMapFinalizer(void*, Structure* structure)

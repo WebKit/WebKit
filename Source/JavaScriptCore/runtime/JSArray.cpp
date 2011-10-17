@@ -913,7 +913,19 @@ void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    thisObject->visitChildrenDirect(visitor);
+
+    JSNonFinalObject::visitChildren(thisObject, visitor);
+    
+    ArrayStorage* storage = thisObject->m_storage;
+
+    unsigned usedVectorLength = std::min(storage->m_length, thisObject->m_vectorLength);
+    visitor.appendValues(storage->m_vector, usedVectorLength);
+
+    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
+        SparseArrayValueMap::iterator end = map->end();
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+            visitor.append(&it->second);
+    }
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)

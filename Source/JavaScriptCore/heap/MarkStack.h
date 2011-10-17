@@ -47,34 +47,25 @@ namespace JSC {
     template<typename T> class WriteBarrierBase;
     template<typename T> class JITWriteBarrier;
     
-    struct MarkSet {
-        MarkSet(JSValue* values, JSValue* end);
-
-        JSValue* m_values;
-        JSValue* m_end;
-    };
-
-    template<typename T> class MarkStackArray {
+    class MarkStackArray {
     public:
         MarkStackArray();
         ~MarkStackArray();
 
         void expand();
-        void append(const T&);
+        void append(const JSCell*);
 
-        T removeLast();
-        T& last();
+        const JSCell* removeLast();
 
         bool isEmpty();
-        size_t size();
 
         void shrinkAllocation(size_t);
 
     private:
+        const JSCell** m_data;
         size_t m_top;
-        size_t m_allocated;
         size_t m_capacity;
-        T* m_data;
+        size_t m_allocated;
     };
 
     class MarkStack {
@@ -85,17 +76,17 @@ namespace JSC {
         static void* allocateStack(size_t);
         static void releaseStack(void*, size_t);
 
-        MarkStack(void* jsArrayVPtr);
+        MarkStack(void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr);
         ~MarkStack();
 
         void append(ConservativeRoots&);
         
-        template<typename T> inline void append(JITWriteBarrier<T>*);
-        template<typename T> inline void append(WriteBarrierBase<T>*);
-        inline void appendValues(WriteBarrierBase<Unknown>*, size_t count);
+        template<typename T> void append(JITWriteBarrier<T>*);
+        template<typename T> void append(WriteBarrierBase<T>*);
+        void appendValues(WriteBarrierBase<Unknown>*, size_t count);
         
         template<typename T>
-        inline void appendUnbarrieredPointer(T**);
+        void appendUnbarrieredPointer(T**);
         
         bool addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
@@ -118,10 +109,7 @@ namespace JSC {
         }
 
     protected:
-#if ENABLE(GC_VALIDATION)
-        static void validateSet(JSValue*, size_t);
-#endif
-        static void validateValue(JSValue);
+        static void validate(JSCell*);
 
         void append(JSValue*);
         void append(JSValue*, size_t count);
@@ -130,9 +118,10 @@ namespace JSC {
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
 
+        MarkStackArray m_stack;
         void* m_jsArrayVPtr;
-        MarkStackArray<MarkSet> m_markSets;
-        MarkStackArray<JSCell*> m_values;
+        void* m_jsFinalObjectVPtr;
+        void* m_jsStringVPtr;
         HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
         WeakReferenceHarvester* m_firstWeakReferenceHarvester;
         
@@ -145,8 +134,10 @@ namespace JSC {
         size_t m_visitCount;
     };
 
-    inline MarkStack::MarkStack(void* jsArrayVPtr)
+    inline MarkStack::MarkStack(void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr)
         : m_jsArrayVPtr(jsArrayVPtr)
+        , m_jsFinalObjectVPtr(jsFinalObjectVPtr)
+        , m_jsStringVPtr(jsStringVPtr)
         , m_firstWeakReferenceHarvester(0)
 #if !ASSERT_DISABLED
         , m_isCheckingForDefaultMarkViolation(false)
@@ -158,8 +149,7 @@ namespace JSC {
 
     inline MarkStack::~MarkStack()
     {
-        ASSERT(m_markSets.isEmpty());
-        ASSERT(m_values.isEmpty());
+        ASSERT(m_stack.isEmpty());
     }
 
     inline bool MarkStack::addOpaqueRoot(void* root)
@@ -177,13 +167,6 @@ namespace JSC {
         return m_opaqueRoots.size();
     }
 
-    inline MarkSet::MarkSet(JSValue* values, JSValue* end)
-            : m_values(values)
-            , m_end(end)
-        {
-            ASSERT(values);
-        }
-
     inline void* MarkStack::allocateStack(size_t size)
     {
         return OSAllocator::reserveAndCommit(size);
@@ -194,117 +177,61 @@ namespace JSC {
         OSAllocator::decommitAndRelease(addr, size);
     }
 
-    template <typename T> inline MarkStackArray<T>::MarkStackArray()
-        : m_top(0)
-        , m_allocated(pageSize())
-        , m_capacity(m_allocated / sizeof(T))
-    {
-        m_data = reinterpret_cast<T*>(MarkStack::allocateStack(m_allocated));
-    }
-
-    template <typename T> inline MarkStackArray<T>::~MarkStackArray()
-    {
-        MarkStack::releaseStack(m_data, m_allocated);
-    }
-
-    template <typename T> inline void MarkStackArray<T>::expand()
-    {
-        size_t oldAllocation = m_allocated;
-        m_allocated *= 2;
-        m_capacity = m_allocated / sizeof(T);
-        void* newData = MarkStack::allocateStack(m_allocated);
-        memcpy(newData, m_data, oldAllocation);
-        MarkStack::releaseStack(m_data, oldAllocation);
-        m_data = reinterpret_cast<T*>(newData);
-    }
-
-    template <typename T> inline void MarkStackArray<T>::append(const T& v)
+    inline void MarkStackArray::append(const JSCell* cell)
     {
         if (m_top == m_capacity)
             expand();
-        m_data[m_top++] = v;
+        m_data[m_top++] = cell;
     }
 
-    template <typename T> inline T MarkStackArray<T>::removeLast()
+    inline const JSCell* MarkStackArray::removeLast()
     {
         ASSERT(m_top);
         return m_data[--m_top];
     }
     
-    template <typename T> inline T& MarkStackArray<T>::last()
+    inline bool MarkStackArray::isEmpty()
     {
-        ASSERT(m_top);
-        return m_data[m_top - 1];
+        return !m_top;
     }
 
-    template <typename T> inline bool MarkStackArray<T>::isEmpty()
+    ALWAYS_INLINE void MarkStack::append(JSValue* slot, size_t count)
     {
-        return m_top == 0;
-    }
-
-    template <typename T> inline size_t MarkStackArray<T>::size()
-    {
-        return m_top;
-    }
-
-    template <typename T> inline void MarkStackArray<T>::shrinkAllocation(size_t size)
-    {
-        ASSERT(size <= m_allocated);
-        ASSERT(isPageAligned(size));
-        if (size == m_allocated)
-            return;
-#if OS(WINDOWS)
-        // We cannot release a part of a region with VirtualFree.  To get around this,
-        // we'll release the entire region and reallocate the size that we want.
-        MarkStack::releaseStack(m_data, m_allocated);
-        m_data = reinterpret_cast<T*>(MarkStack::allocateStack(size));
-#else
-        MarkStack::releaseStack(reinterpret_cast<char*>(m_data) + size, m_allocated - size);
-#endif
-        m_allocated = size;
-        m_capacity = m_allocated / sizeof(T);
-    }
-
-    inline void MarkStack::append(JSValue* slot, size_t count)
-    {
-        if (!count)
-            return;
-        m_visitCount += count;
-#if ENABLE(GC_VALIDATION)
-        validateSet(slot, count);
-#endif
-        m_markSets.append(MarkSet(slot, slot + count));
+        for (size_t i = 0; i < count; ++i) {
+            JSValue& value = slot[i];
+            if (!value)
+                continue;
+            internalAppend(value);
+        }
     }
 
     template<typename T>
     inline void MarkStack::appendUnbarrieredPointer(T** slot)
     {
         ASSERT(slot);
-        JSCell* value = *slot;
-        if (value)
-            internalAppend(value);
+        JSCell* cell = *slot;
+        if (cell)
+            internalAppend(cell);
     }
     
-    ALWAYS_INLINE void MarkStack::append(JSValue* value)
+    ALWAYS_INLINE void MarkStack::append(JSValue* slot)
     {
-        ASSERT(value);
-        internalAppend(*value);
+        ASSERT(slot);
+        internalAppend(*slot);
     }
 
-    ALWAYS_INLINE void MarkStack::append(JSCell** value)
+    ALWAYS_INLINE void MarkStack::append(JSCell** slot)
     {
-        ASSERT(value);
-        internalAppend(*value);
+        ASSERT(slot);
+        internalAppend(*slot);
     }
 
     ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
     {
         ASSERT(value);
-#if ENABLE(GC_VALIDATION)
-        validateValue(value);
-#endif
-        if (value.isCell())
-            internalAppend(value.asCell());
+        if (!value.isCell())
+            return;
+        internalAppend(value.asCell());
     }
 
     class SlotVisitor;

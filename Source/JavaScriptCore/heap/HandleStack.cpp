@@ -27,6 +27,8 @@
 #include "HandleStack.h"
 
 #include "HeapRootVisitor.h"
+#include "JSValueInlineMethods.h"
+#include "Structure.h"
 
 namespace JSC {
 

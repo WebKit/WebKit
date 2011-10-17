@@ -79,7 +79,6 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         virtual UString className() const;
@@ -832,17 +831,6 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
         return;
     }
     asCell()->putVirtual(exec, propertyName, value);
-}
-
-ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
-{
-    JSCell::visitChildren(this, visitor);
-
-    PropertyStorage storage = propertyStorage();
-    size_t storageSize = structure()->propertyStorageSize();
-    visitor.appendValues(storage, storageSize);
-    if (m_inheritorID)
-        visitor.append(&m_inheritorID);
 }
 
 // --- JSValue inlines ----------------------------

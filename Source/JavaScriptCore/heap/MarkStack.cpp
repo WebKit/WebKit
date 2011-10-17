@@ -33,14 +33,56 @@
 #include "JSObject.h"
 #include "ScopeChain.h"
 #include "Structure.h"
+#include "WriteBarrier.h"
 
 namespace JSC {
+
+MarkStackArray::MarkStackArray()
+    : m_top(0)
+    , m_allocated(pageSize())
+{
+    m_data = static_cast<const JSCell**>(MarkStack::allocateStack(m_allocated));
+    m_capacity = m_allocated / sizeof(JSCell*);
+}
+
+MarkStackArray::~MarkStackArray()
+{
+    MarkStack::releaseStack(m_data, m_allocated);
+}
+
+void MarkStackArray::expand()
+{
+    size_t oldAllocation = m_allocated;
+    m_allocated *= 2;
+    m_capacity = m_allocated / sizeof(JSCell*);
+    void* newData = MarkStack::allocateStack(m_allocated);
+    memcpy(newData, m_data, oldAllocation);
+    MarkStack::releaseStack(m_data, oldAllocation);
+    m_data = static_cast<const JSCell**>(newData);
+}
+
+void MarkStackArray::shrinkAllocation(size_t size)
+{
+    ASSERT(size <= m_allocated);
+    ASSERT(isPageAligned(size));
+    if (size == m_allocated)
+        return;
+#if OS(WINDOWS)
+    // We cannot release a part of a region with VirtualFree. To get around this,
+    // we'll release the entire region and reallocate the size that we want.
+    MarkStack::releaseStack(m_data, m_allocated);
+    m_data = static_cast<JSCell*>(MarkStack::allocateStack(size));
+#else
+    MarkStack::releaseStack(reinterpret_cast<char*>(m_data) + size, m_allocated - size);
+#endif
+    m_allocated = size;
+    m_capacity = m_allocated / sizeof(JSCell*);
+}
 
 void MarkStack::reset()
 {
     m_visitCount = 0;
-    m_values.shrinkAllocation(pageSize());
-    m_markSets.shrinkAllocation(pageSize());
+    m_stack.shrinkAllocation(pageSize());
     m_opaqueRoots.clear();
 }
 
@@ -52,89 +94,38 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
         internalAppend(roots[i]);
 }
 
-void SlotVisitor::visitChildren(JSCell* cell)
+ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell, void* jsFinalObjectVPtr, void* jsArrayVPtr, void* jsStringVPtr)
 {
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_visitedTypeCounts.count(cell);
 #endif
 
     ASSERT(Heap::isMarked(cell));
-    if (cell->structure()->typeInfo().type() < CompoundType) {
-        JSCell::visitChildren(cell, *this);
+
+    if (cell->vptr() == jsStringVPtr)
+        return;
+
+    if (cell->vptr() == jsFinalObjectVPtr) {
+        JSObject::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
 
-    if (!cell->structure()->typeInfo().overridesVisitChildren()) {
-        ASSERT(cell->isObject());
-#ifdef NDEBUG
-        asObject(cell)->visitChildrenDirect(*this);
-#else
-        ASSERT(!m_isCheckingForDefaultMarkViolation);
-        m_isCheckingForDefaultMarkViolation = true;
-        cell->methodTable()->visitChildren(cell, *this);
-        ASSERT(m_isCheckingForDefaultMarkViolation);
-        m_isCheckingForDefaultMarkViolation = false;
-#endif
+    if (cell->vptr() == jsArrayVPtr) {
+        JSArray::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
-    if (cell->vptr() == m_jsArrayVPtr) {
-        asArray(cell)->visitChildrenDirect(*this);
-        return;
-    }
-    cell->methodTable()->visitChildren(cell, *this);
+
+    cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), visitor);
 }
 
 void SlotVisitor::drain()
 {
-#if !ASSERT_DISABLED
-    ASSERT(!m_isDraining);
-    m_isDraining = true;
-#endif
-    while (!m_markSets.isEmpty() || !m_values.isEmpty()) {
-        while (!m_markSets.isEmpty() && m_values.size() < 50) {
-            ASSERT(!m_markSets.isEmpty());
-            MarkSet& current = m_markSets.last();
-            ASSERT(current.m_values);
-            JSValue* end = current.m_end;
-            ASSERT(current.m_values);
-            ASSERT(current.m_values != end);
-        findNextUnmarkedNullValue:
-            ASSERT(current.m_values != end);
-            JSValue value = *current.m_values;
-            current.m_values++;
+    void* jsFinalObjectVPtr = m_jsFinalObjectVPtr;
+    void* jsArrayVPtr = m_jsArrayVPtr;
+    void* jsStringVPtr = m_jsStringVPtr;
 
-            JSCell* cell;
-            if (!value || !value.isCell() || Heap::testAndSetMarked(cell = value.asCell())) {
-                if (current.m_values == end) {
-                    m_markSets.removeLast();
-                    continue;
-                }
-                goto findNextUnmarkedNullValue;
-            }
-
-            if (cell->structure()->typeInfo().type() < CompoundType) {
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-                m_visitedTypeCounts.count(cell);
-#endif
-                JSCell::visitChildren(cell, *this);
-                if (current.m_values == end) {
-                    m_markSets.removeLast();
-                    continue;
-                }
-                goto findNextUnmarkedNullValue;
-            }
-
-            if (current.m_values == end)
-                m_markSets.removeLast();
-
-            visitChildren(cell);
-        }
-        while (!m_values.isEmpty())
-            visitChildren(m_values.removeLast());
-    }
-#if !ASSERT_DISABLED
-    m_isDraining = false;
-#endif
+    while (!m_stack.isEmpty())
+        visitChildren(*this, m_stack.removeLast(), jsFinalObjectVPtr, jsArrayVPtr, jsStringVPtr);
 }
 
 void SlotVisitor::harvestWeakReferences()
@@ -149,21 +140,8 @@ void SlotVisitor::harvestWeakReferences()
 }
 
 #if ENABLE(GC_VALIDATION)
-void MarkStack::validateSet(JSValue* values, size_t count)
+void MarkStack::validate(JSCell* cell)
 {
-    for (size_t i = 0; i < count; i++) {
-        if (values[i])
-            validateValue(values[i]);
-    }
-}
-
-void MarkStack::validateValue(JSValue value)
-{
-    if (!value)
-        CRASH();
-    if (!value.isCell())
-        return;
-    JSCell* cell = value.asCell();
     if (!cell)
         CRASH();
 
@@ -176,9 +154,9 @@ void MarkStack::validateValue(JSValue value)
         CRASH();
 }
 #else
-void MarkStack::validateValue(JSValue)
+void MarkStack::validate(JSCell*)
 {
-} 
+}
 #endif
 
 } // namespace JSC

@@ -1,3 +1,68 @@
+2011-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified GC marking logic
+        https://bugs.webkit.org/show_bug.cgi?id=70258
+
+        Reviewed by Filip Pizlo.
+        
+        No perf. change.
+        
+        This is a first step toward GC allocating string backing stores, starting
+        with ropes. It also enables future simplifications and optimizations.
+        
+        - Replaced some complex mark stack logic with a simple linear stack of
+        JSCell pointers.
+        
+        - Replaced logic for short-circuiting marking based on JSType and/or
+        Structure flags with special cases for object, array, and string.
+        
+        - Fiddled with inlining for better codegen.
+
+        * JavaScriptCore.exp:
+        * heap/HandleStack.cpp: Build!
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Provide more vptrs to SlotVisitor, for use in marking.
+
+        * heap/HeapRootVisitor.h: Removed unused functions that no longer build.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStackArray::expand):
+        (JSC::MarkStackArray::shrinkAllocation):
+        (JSC::MarkStack::reset):
+        (JSC::visitChildren):
+        (JSC::SlotVisitor::drain):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::~MarkStack):
+        (JSC::MarkStackArray::append):
+        (JSC::MarkStackArray::removeLast):
+        (JSC::MarkStackArray::isEmpty):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendUnbarrieredPointer):
+        (JSC::MarkStack::internalAppend): Replaced complex mark set logic with
+        simple linear stack.
+
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::SlotVisitor): Updated for above changes.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildren):
+        * runtime/JSArray.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        * runtime/JSObject.h: Don't inline visitChildren; it's too big.
+
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend): Nixed the short-circuit for CompoundType
+        because it prevented strings from owning GC pointers.
+
+        * runtime/WriteBarrier.h:
+        (JSC::MarkStack::appendValues): No need to validate; internalAppend will
+        do that for us.
+
 2011-10-17  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r97536, part 3

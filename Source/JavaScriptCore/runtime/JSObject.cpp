@@ -79,7 +79,13 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
 
-    thisObject->visitChildrenDirect(visitor);
+    JSCell::visitChildren(thisObject, visitor);
+
+    PropertyStorage storage = thisObject->propertyStorage();
+    size_t storageSize = thisObject->structure()->propertyStorageSize();
+    visitor.appendValues(storage, storageSize);
+    if (thisObject->m_inheritorID)
+        visitor.append(&thisObject->m_inheritorID);
 
 #ifndef NDEBUG
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
