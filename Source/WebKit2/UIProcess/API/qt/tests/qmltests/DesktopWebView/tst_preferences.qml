@@ -61,24 +61,5 @@ DesktopWebView {
             spy.wait()
             compare(webView.title, "New Title")
         }
-
-        function test_pluginsDisabled() {
-            webView.preferences.pluginsEnabled = false
-            var testUrl = Qt.resolvedUrl("../common/plugins.html")
-            webView.load(testUrl)
-            spy.wait()
-            compare(webView.title, "Plugins Not Loaded")
-        }
-
-        function test_pluginsEnabled() {
-            webView.preferences.pluginsEnabled = true
-            var testUrl = Qt.resolvedUrl("../common/plugins.html")
-            webView.load(testUrl)
-            spy.wait()
-            spy.clear()
-            webView.load(testUrl)
-            spy.wait()
-            compare(webView.title, "Original Title")
-        }
     }
 }
