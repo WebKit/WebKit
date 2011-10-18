@@ -1,3 +1,16 @@
+2011-10-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Split TestExpectationsEditor into its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=70348
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor.py: Copied from Tools/Scripts/webkitpy/layout_tests/models/test_expectations.py.
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Adjusted for change.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Ditto.
+
 2011-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Chromium] buildbot runs nrwt with --chromium instead of --chromium-cg-mac

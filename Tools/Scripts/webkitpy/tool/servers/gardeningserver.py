@@ -27,7 +27,8 @@ import os
 
 from webkitpy.common.memoized import memoized
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
-from webkitpy.layout_tests.models.test_expectations import BugManager, TestExpectationParser, TestExpectations, TestExpectationsEditor, TestExpectationSerializer
+from webkitpy.layout_tests.controllers.test_expectations_editor import BugManager, TestExpectationsEditor
+from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectations, TestExpectationSerializer
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import builders
