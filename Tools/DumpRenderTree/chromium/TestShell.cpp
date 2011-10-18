@@ -172,6 +172,7 @@ void TestShell::showDevTools()
         }
         m_devTools = createNewWindow(url);
         m_devTools->webView()->settings()->setMemoryInfoEnabled(true);
+        m_devTools->setLogConsoleOutput(false);
         ASSERT(m_devTools);
         createDRTDevToolsClient(m_drtDevToolsAgent.get());
     }

@@ -1,3 +1,18 @@
+2011-10-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        [Chromium] suppress console output from DevTools window
+        https://bugs.webkit.org/show_bug.cgi?id=69632
+
+        Reviewed by Pavel Feldman.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::showDevTools):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didAddMessageToConsole):
+        (WebViewHost::reset):
+        (WebViewHost::setLogConsoleOutput):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97735.

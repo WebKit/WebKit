@@ -276,6 +276,8 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)
 {
     // This matches win DumpRenderTree's UIDelegate.cpp.
+    if (!m_logConsoleOutput)
+        return;
     string newMessage;
     if (!message.text.isEmpty()) {
         newMessage = message.text.utf8();
@@ -1238,6 +1240,7 @@ void WebViewHost::reset()
     m_hasWindow = false;
     m_inModalLoop = false;
     m_smartInsertDeleteEnabled = true;
+    m_logConsoleOutput = true;
 #if OS(WINDOWS)
     m_selectTrailingWhitespaceEnabled = true;
 #else
@@ -1286,6 +1289,11 @@ void WebViewHost::setSmartInsertDeleteEnabled(bool enabled)
     // In upstream WebKit, smart insert/delete is mutually exclusive with select
     // trailing whitespace, however, we allow both because Chromium on Windows
     // allows both.
+}
+
+void WebViewHost::setLogConsoleOutput(bool enabled)
+{
+    m_logConsoleOutput = enabled;
 }
 
 void WebViewHost::setCustomPolicyDelegate(bool isCustom, bool isPermissive)

@@ -75,6 +75,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     void reset();
     void setSelectTrailingWhitespaceEnabled(bool);
     void setSmartInsertDeleteEnabled(bool);
+    void setLogConsoleOutput(bool);
     void waitForPolicyDelegate();
     void setCustomPolicyDelegate(bool, bool);
     WebKit::WebFrame* topLoadingFrame() { return m_topLoadingFrame; }
@@ -314,6 +315,9 @@ private:
 
     // true if we want to enable selection of trailing whitespaces
     bool m_selectTrailingWhitespaceEnabled;
+
+    // true if whatever is sent to the console should be logged to stdout.
+    bool m_logConsoleOutput;
 
     // Set of headers to clear in willSendRequest.
     HashSet<WTF::String> m_clearHeaders;
