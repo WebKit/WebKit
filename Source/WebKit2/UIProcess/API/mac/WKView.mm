@@ -2621,6 +2621,20 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 #endif
 }
 
+- (NSInteger)spellCheckerDocumentTag
+{
+    if (!_data->_hasSpellCheckerDocumentTag) {
+        _data->_spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
+        _data->_hasSpellCheckerDocumentTag = YES;
+    }
+    return _data->_spellCheckerDocumentTag;
+}
+
+- (void)handleCorrectionPanelResult:(NSString*)result
+{
+    _data->_page->handleCorrectionPanelResult(result);
+}
+
 @end
 
 @implementation WKView (Private)
@@ -2651,20 +2665,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     thePoint = [self convertPoint:thePoint fromView:nil];
 
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(thePoint.x, thePoint.y));
-}
-
-- (NSInteger)spellCheckerDocumentTag
-{
-    if (!_data->_hasSpellCheckerDocumentTag) {
-        _data->_spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
-        _data->_hasSpellCheckerDocumentTag = YES;
-    }
-    return _data->_spellCheckerDocumentTag;
-}
-
-- (void)handleCorrectionPanelResult:(NSString*)result
-{
-    _data->_page->handleCorrectionPanelResult(result);
 }
 
 @end

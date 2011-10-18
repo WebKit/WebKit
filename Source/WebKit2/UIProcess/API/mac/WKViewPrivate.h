@@ -34,7 +34,4 @@
 - (BOOL)frameSizeUpdatesDisabled;
 
 - (void)performDictionaryLookupAtCurrentMouseLocation;
-
-- (NSInteger)spellCheckerDocumentTag;
-- (void)handleCorrectionPanelResult:(NSString*)result;
 @end

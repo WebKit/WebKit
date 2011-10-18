@@ -89,4 +89,8 @@ namespace WebKit {
 #endif
 
 - (void)_cacheWindowBottomCornerRect;
+
+- (NSInteger)spellCheckerDocumentTag;
+- (void)handleCorrectionPanelResult:(NSString*)result;
+
 @end

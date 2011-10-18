@@ -3168,17 +3168,17 @@
 		BCBAAC58144E38B90053F82F /* WKView Details */ = {
 			isa = PBXGroup;
 			children = (
-				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 				1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */,
 				1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */,
-				1AAF061212B01131008E49E2 /* PDFViewController.h */,
-				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
 				BC111B4B112F619200337BAB /* PageClientImpl.h */,
 				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
+				1AAF061212B01131008E49E2 /* PDFViewController.h */,
+				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
 				E134F01512EA5D11004EC58D /* WKPrintingView.h */,
 				E134F01912EA5D99004EC58D /* WKPrintingView.mm */,
 				1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */,
 				1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */,
+				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 			);
 			name = "WKView Details";
 			sourceTree = "<group>";

@@ -1,5 +1,32 @@
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
+        Move spellCheckerDocumentTag and handleCorrectionPanelResult from WKViewPrivate to WKViewInternal
+        https://bugs.webkit.org/show_bug.cgi?id=70377
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView spellCheckerDocumentTag]):
+        (-[WKView handleCorrectionPanelResult:]):
+        Move definition of methods to (Internal) area.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Add methods.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        Remove methods.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        Add missing newline.
+
+        * UIProcess/mac/CorrectionPanel.mm:
+        Change #include to WKViewInternal.h
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Sort some files.
+
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
         Move WKView helper files into a sub-group
         https://bugs.webkit.org/show_bug.cgi?id=70375
 

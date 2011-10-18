@@ -29,7 +29,7 @@
 
 #import "WebPageProxy.h"
 #import "WKView.h"
-#import "WKViewPrivate.h"
+#import "WKViewInternal.h"
 
 using namespace WebCore;
 
