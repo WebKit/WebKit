@@ -3,6 +3,22 @@
         AX: buttons of number type <input> controls are not fully accessible
         https://bugs.webkit.org/show_bug.cgi?id=70241
 
+        Phase 2 of the staged commit.
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isSpinButton):
+        (WebCore::AccessibilityObject::isSpinButtonPart):
+        (WebCore::AccessibilityObject::isMockObject):
+
+2011-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: buttons of number type <input> controls are not fully accessible
+        https://bugs.webkit.org/show_bug.cgi?id=70241
+
         Expose the spin button object to the AX hierarchy. Since there is no distinct
         render object that backs this object, a mock object needs to be created for the entire
         spin button and the actual increment and decrement buttons inside.

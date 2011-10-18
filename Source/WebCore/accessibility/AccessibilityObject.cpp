@@ -408,6 +408,28 @@ LayoutPoint AccessibilityObject::clickPoint()
     return LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
 }
 
+LayoutRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
+{
+    ASSERT(obj);
+    if (!obj)
+        return LayoutRect();
+    
+    size_t count = quads.size();
+    if (!count)
+        return LayoutRect();
+    
+    LayoutRect result;
+    for (size_t i = 0; i < count; ++i) {
+        LayoutRect r = quads[i].enclosingBoundingBox();
+        if (!r.isEmpty()) {
+            if (obj->style()->hasAppearance())
+                obj->theme()->adjustRepaintRect(obj, r);
+            result.unite(r);
+        }
+    }
+    return result;
+}
+    
 bool AccessibilityObject::press() const
 {
     Element* actionElem = actionElement();
