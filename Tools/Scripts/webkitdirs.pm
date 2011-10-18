@@ -80,7 +80,6 @@ my $osXVersion;
 my $generateDsym;
 my $isQt;
 my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
-my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
 my $isWinCE;
@@ -169,9 +168,6 @@ sub determineBaseProductDir
 
         $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         undef $baseProductDir unless $baseProductDir =~ /^\//;
-    } elsif (isSymbian()) {
-        # Shadow builds are not supported on Symbian
-        $baseProductDir = $sourceDir;
     } elsif (isChromium()) {
         if (isLinux() || isChromiumAndroid()) {
             $baseProductDir = "$sourceDir/out";
@@ -307,7 +303,6 @@ sub argumentsForConfiguration()
     push(@args, '--release') if $configuration eq "Release";
     push(@args, '--32-bit') if $architecture ne "x86_64";
     push(@args, '--qt') if isQt();
-    push(@args, '--symbian') if isSymbian();
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
     push(@args, '--wincairo') if isWinCairo();
@@ -333,9 +328,7 @@ sub usesPerConfigurationBuildDirectory
     # autotool builds (non build-webkit). In this case and if
     # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
     # allows us to run run-webkit-tests without using build-webkit.
-    #
-    # Symbian builds do not have Release/Debug configurations either.
-    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isSymbian() || isAppleWinWebKit();
+    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isAppleWinWebKit();
 }
 
 sub determineConfigurationProductDir
@@ -725,12 +718,6 @@ sub getQtVersion()
     return $qtVersion;
 }
 
-sub isSymbian()
-{
-    determineIsSymbian();
-    return $isSymbian;
-}
-
 sub qtFeatureDefaults()
 {
     determineQtFeatureDefaults();
@@ -810,16 +797,6 @@ sub determineIsQt()
     }
     
     $isQt = defined($ENV{'QTDIR'});
-}
-
-sub determineIsSymbian()
-{
-    return if defined($isSymbian);
-
-    if (checkForArgumentAndRemoveFromARGV("--symbian")) {
-        $isSymbian = 1;
-        return;
-    }
 }
 
 sub determineIsEfl()
@@ -1716,11 +1693,6 @@ sub buildQMakeProject($@)
     my $defaults = `$qmakebin $configArgs 2>&1`;
     chdir $originalCwd;
 
-    # On Symbian qmake needs to run in the same directory where the pro file is located.
-    if (isSymbian()) {
-        $dir = $sourceDir . "/Source";
-    }
-
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
@@ -1732,8 +1704,8 @@ sub buildQMakeProject($@)
         }
         close (DEFAULTS);
     }
-    # Automatic clean build isn't supported on Symbian yet, see https://bugs.webkit.org/show_bug.cgi?id=67706 for details.
-    if (($defaults ne $defaultsTxt) and !isSymbian()){
+
+    if ($defaults ne $defaultsTxt) {
         print "Make clean build because the Defines are changed.\n";
         chdir $originalCwd;
         File::Path::rmtree($dir);
@@ -1831,13 +1803,6 @@ sub buildQMakeProject($@)
         $buildArgs[-1] = sourceDir() . "/Tools/Tools.pro";
         $makefile = "Makefile.Tools";
 
-        # On Symbian qmake needs to run in the same directory where the pro file is located.
-        if (isSymbian()) {
-            $dir = $sourceDir . "/Tools";
-            chdir $dir or die "Failed to cd into " . $dir . "\n";
-            $makefile = "bld.inf";
-        }
-
         print "Calling '$qmakebin @buildArgs -o $makefile' in " . $dir . "\n\n";
         $result = system "$qmakebin @buildArgs -o $makefile";
         if ($result ne 0) {
@@ -1870,10 +1835,6 @@ sub buildQMakeProject($@)
       print "Calling '$make $makeargs distclean' in " . $dir . "\n\n";
       $result = system "$make $makeargs distclean";
       $result = $result || system "$makeTools distclean";
-    } elsif (isSymbian()) {
-      print "\n\nWebKit is now configured for building, but you have to make\n";
-      print "a choice about the target yourself. To start the build run:\n\n";
-      print "    make release-armv5|debug-winscw|etc.\n\n";
     } else {
       print "Calling '$make $makeargs' in " . $dir . "\n\n";
       $result = system "$make $makeargs";

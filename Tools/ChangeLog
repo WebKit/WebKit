@@ -1,3 +1,16 @@
+2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Remove traces of Symbian support from the build scripts
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (argumentsForConfiguration):
+        (usesPerConfigurationBuildDirectory):
+        (buildQMakeProject):
+
 2011-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r97672.
