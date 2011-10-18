@@ -24,8 +24,8 @@
 #define CachedImage_h
 
 #include "CachedResource.h"
-#include "ImageBySizeCache.h"
 #include "CachedResourceClient.h"
+#include "ImageBySizeCache.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Timer.h"
@@ -34,10 +34,10 @@
 namespace WebCore {
 
 class CachedResourceLoader;
-class Length;
 class FloatSize;
 class MemoryCache;
 class RenderObject;
+struct Length;
 
 class CachedImage : public CachedResource, public ImageObserver {
     friend class MemoryCache;
