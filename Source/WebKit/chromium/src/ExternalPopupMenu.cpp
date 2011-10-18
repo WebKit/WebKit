@@ -120,7 +120,7 @@ void ExternalPopupMenu::didAcceptIndices(const WebVector<int>& indices)
 #if ENABLE(NO_LISTBOX_RENDERING)
     if (!m_popupMenuClient) {
         m_webExternalPopupMenu = 0;
-        return
+        return;
     }
 
     // Calling methods on the PopupMenuClient might lead to this object being

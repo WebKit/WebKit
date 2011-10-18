@@ -1,3 +1,13 @@
+2011-10-17  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Add a missing semi-colon in ExternalPopupMenu.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=70232
+
+        Reviewed by Andreas Kling.
+
+        * src/ExternalPopupMenu.cpp:
+        (WebKit::ExternalPopupMenu::didAcceptIndices):
+
 2011-10-17  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r97690.
