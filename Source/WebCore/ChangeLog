@@ -1,3 +1,29 @@
+2011-10-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r97248): :visited as descendant selector broken
+        https://bugs.webkit.org/show_bug.cgi?id=70122
+
+        Reviewed by Nikolas Zimmerman.
+        
+        Make ":visited foo" and similar selectors work correctly again. They can affect 
+        the visited style of an element inside a visited link.
+
+        Test: fast/selectors/visited-descendant.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations): 
+        
+            Apply visited style to children of visited links too.
+            
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector): 
+        
+            Don't disable visited matching until we run into first ancestor link or use combinator other than child/descendant.
+
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        
+            Look into child/descendant component selectors too to determine the link match type.
+
 2011-10-18  Andreas Kling  <kling@webkit.org>
 
         Move CSSRule specific virtuals from StyleBase down into CSSRule.

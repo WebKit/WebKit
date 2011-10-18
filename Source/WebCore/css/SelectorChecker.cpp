@@ -450,17 +450,17 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
     sel = sel->tagHistory();
     if (!sel)
         return SelectorMatches;
-    
+
     if (relation != CSSSelector::SubSelector) {
         // Bail-out if this selector is irrelevant for the pseudoStyle
         if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
     
-        // Disable :visited matching after we move to selector components that would match anything else than the current element.
-        if (!isSubSelector)
+        // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
+        if (!isSubSelector && (e->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             visitedMatchType = VisitedMatchDisabled;
     }
-    
+
     switch (relation) {
     case CSSSelector::Descendant:
         while (true) {
@@ -1338,7 +1338,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
     unsigned linkMatchType = MatchAll;
     
     // Statically determine if this selector will match a link in visited, unvisited or any state, or never.
-    // :visited never matches other elements than the current.
+    // :visited never matches other elements than the innermost link element.
     for (; selector; selector = selector->tagHistory()) {
         switch (selector->pseudoType()) {
         case CSSSelector::PseudoNot:
@@ -1361,10 +1361,14 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
             // We don't support :link and :visited inside :-webkit-any.
             break;
         }
-        if (selector->relation() != CSSSelector::SubSelector)
+        CSSSelector::Relation relation = selector->relation();
+        if (relation == CSSSelector::SubSelector)
+            continue;
+        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
+            return linkMatchType;
+        if (linkMatchType != MatchAll)
             return linkMatchType;
     }
-    ASSERT_NOT_REACHED();
     return linkMatchType;
 }
 
