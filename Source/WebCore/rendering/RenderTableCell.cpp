@@ -45,13 +45,11 @@ RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
     , m_row(-1)
     , m_column(-1)
-    , m_rowSpan(1)
-    , m_columnSpan(1)
-    , m_cellWidthChanged(false)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
+    , m_cellWidthChanged(false)
+    , m_hasAssociatedTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
 {
-    updateFromElement();
 }
 
 void RenderTableCell::willBeDestroyed()
@@ -64,22 +62,31 @@ void RenderTableCell::willBeDestroyed()
         recalcSection->setNeedsCellRecalc();
 }
 
-void RenderTableCell::updateFromElement()
+int RenderTableCell::colSpan() const
 {
-    Node* n = node();
-    if (n && (n->hasTagName(tdTag) || n->hasTagName(thTag))) {
-        HTMLTableCellElement* tc = static_cast<HTMLTableCellElement*>(n);
-        int oldRSpan = m_rowSpan;
-        int oldCSpan = m_columnSpan;
+    if (UNLIKELY(!m_hasAssociatedTableCellElement))
+        return 1;
 
-        m_columnSpan = tc->colSpan();
-        m_rowSpan = tc->rowSpan();
-        if ((oldRSpan != m_rowSpan || oldCSpan != m_columnSpan) && style() && parent()) {
-            setNeedsLayoutAndPrefWidthsRecalc();
-            if (section())
-                section()->setNeedsCellRecalc();
-        }
-    }
+    return toHTMLTableCellElement(node())->colSpan();
+}
+
+int RenderTableCell::rowSpan() const
+{
+    if (UNLIKELY(!m_hasAssociatedTableCellElement))
+        return 1;
+
+    return toHTMLTableCellElement(node())->rowSpan();
+}
+
+void RenderTableCell::colSpanOrRowSpanChanged()
+{
+    ASSERT(m_hasAssociatedTableCellElement);
+    ASSERT(node());
+    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag));
+
+    setNeedsLayoutAndPrefWidthsRecalc();
+    if (parent() && section())
+        section()->setNeedsCellRecalc();
 }
 
 Length RenderTableCell::styleOrColLogicalWidth() const

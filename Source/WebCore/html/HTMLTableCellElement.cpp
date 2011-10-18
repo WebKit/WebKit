@@ -95,10 +95,10 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
-            toRenderTableCell(renderer())->updateFromElement();
+            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else if (attr->name() == colspanAttr) {
         if (renderer() && renderer()->isTableCell())
-            toRenderTableCell(renderer())->updateFromElement();
+            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else if (attr->name() == nowrapAttr) {
         if (!attr->isNull())
             addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
@@ -186,5 +186,21 @@ HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
 
     return static_cast<HTMLTableCellElement*>(cellAboveRenderer->node());
 }
+
+#ifndef NDEBUG
+
+HTMLTableCellElement* toHTMLTableCellElement(Node* node)
+{
+    ASSERT(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
+    return static_cast<HTMLTableCellElement*>(node);
+}
+
+const HTMLTableCellElement* toHTMLTableCellElement(const Node* node)
+{
+    ASSERT(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
+    return static_cast<const HTMLTableCellElement*>(node);
+}
+
+#endif
 
 } // namespace WebCore

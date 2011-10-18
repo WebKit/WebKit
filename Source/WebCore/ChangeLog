@@ -1,3 +1,50 @@
+2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove colSpan / rowSpan caching from RenderTableCell
+        https://bugs.webkit.org/show_bug.cgi?id=69569
+
+        Reviewed by Darin Adler.
+
+        Memory optimization, no change in behavior expected.
+
+        This change removes m_colSpan & m_rowSpan from RenderTableCell (inspired by
+        kling's memory shaving effort).
+
+        This makes us save 8 bytes per RenderTableCell on my machine (x86-64). No slowdown
+        on PageCycler Alexa-US.
+
+        This change refactored the way we handle updates from the DOM side to simplify
+        the code using the following: colspan / rowspan updates always go through
+        parseMappedAttribute where we already check for the renderer type. Thus removed the
+        generic updateFromElement and replaced it with colSpanOrRowSpanChanged. This removes
+        a virtual dispatch.
+
+        As there is no way to know if an attribute has changed in the parseMappedAttribute code,
+        we now unconditionally call colSpanOrRowSpanChanged. Looking at Chromium's page data,
+        colSpan and rowSpan are never changed outside the HTML markup thus such a change should
+        have a limited impact.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseMappedAttribute): Updated after updateFromElement
+        removal.
+
+        * html/HTMLTableCellElement.h:
+        (WebCore::toHTMLTableCellElement): Added the usual conversion functions.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell): Added a boolean to know if we have
+        the right type of associated DOM node to avoid the cost of checking that every
+        time.
+
+        (WebCore::RenderTableCell::colSpan):
+        (WebCore::RenderTableCell::rowSpan):
+        Forwarded the calls to our object if we have the right type (normal case).
+
+        (WebCore::RenderTableCell::colSpanOrRowSpanChanged): Handles the
+        updateFromElement calls but in a more streamlined way.
+
+        * rendering/RenderTableCell.h:
+
 2011-10-17  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests

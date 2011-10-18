@@ -37,11 +37,11 @@ public:
     int cellIndex() const { return 0; }
     void setCellIndex(int) { }
 
-    int colSpan() const { return m_columnSpan; }
-    void setColSpan(int c) { m_columnSpan = c; }
+    int colSpan() const;
+    int rowSpan() const;
 
-    int rowSpan() const { return m_rowSpan; }
-    void setRowSpan(int r) { m_rowSpan = r; }
+    // Called from HTMLTableCellElement.
+    void colSpanOrRowSpanChanged();
 
     int col() const { return m_column; }
     void setCol(int col) { m_column = col; }
@@ -88,8 +88,6 @@ public:
 
     void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
     static void sortBorderValues(RenderTable::CollapsedBorderValues&);
-
-    virtual void updateFromElement();
 
     virtual void layout();
 
@@ -149,11 +147,12 @@ private:
 
     int m_row;
     int m_column;
-    int m_rowSpan;
-    int m_columnSpan : 31;
-    bool m_cellWidthChanged : 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
+
+    // FIXME: It would be nice to pack these 2 bits into some of the previous fields.
+    bool m_cellWidthChanged : 1;
+    bool m_hasAssociatedTableCellElement : 1;
 };
 
 inline RenderTableCell* toRenderTableCell(RenderObject* object)
