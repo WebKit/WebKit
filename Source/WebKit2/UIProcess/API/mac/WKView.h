@@ -31,7 +31,7 @@
 WK_EXPORT
 @interface WKView : NSView <NSTextInputClient> {
     WKViewData *_data;
-    unsigned _frameSizeUpdatesDisabledCount;
+    unsigned _unused;
 }
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;

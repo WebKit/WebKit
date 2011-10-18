@@ -1,3 +1,21 @@
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
+        Stop leaking internal names in WKView API header
+        https://bugs.webkit.org/show_bug.cgi?id=70380
+
+        Reviewed by Anders Carlsson.
+
+        Move _frameSizeUpdatesDisabledCount to WKViewData. Since we cannot change the size of
+        WKView due to the fragile Objective-C ABI, we must rename the existing variable unused. If
+        drop 32-bit support, we will be able to remove it.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView disableFrameSizeUpdates]):
+        (-[WKView enableFrameSizeUpdates]):
+        (-[WKView frameSizeUpdatesDisabled]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Expose PDF information in hit test result

@@ -170,6 +170,8 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _inSecureInputState;
 
     NSRect _windowBottomCornerIntersectionRect;
+    
+    unsigned _frameSizeUpdatesDisabledCount;
 }
 @end
 
@@ -2641,21 +2643,21 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)disableFrameSizeUpdates
 {
-    _frameSizeUpdatesDisabledCount++;
+    _data->_frameSizeUpdatesDisabledCount++;
 }
 
 - (void)enableFrameSizeUpdates
 {
-    if (!_frameSizeUpdatesDisabledCount)
+    if (!_data->_frameSizeUpdatesDisabledCount)
         return;
     
-    if (!(--_frameSizeUpdatesDisabledCount))
+    if (!(--_data->_frameSizeUpdatesDisabledCount))
         [self _setDrawingAreaSize:[self frame].size];
 }
 
 - (BOOL)frameSizeUpdatesDisabled
 {
-    return _frameSizeUpdatesDisabledCount > 0;
+    return _data->_frameSizeUpdatesDisabledCount > 0;
 }
 
 - (void)performDictionaryLookupAtCurrentMouseLocation
