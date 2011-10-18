@@ -67,8 +67,7 @@ protected:
     void invalidateRect(const IntRect& contentRect);
     // Prepare data needed to update textures that intersect with contentRect.
     void prepareToUpdate(const IntRect& contentRect);
-    // Update invalid textures that intersect with contentRect provided in prepareToUpdate().
-    void updateRect(GraphicsContext3D*, LayerTextureUpdater*);
+
     virtual void protectVisibleTileTextures();
 
 private:
@@ -85,9 +84,11 @@ private:
 
     TextureManager* textureManager() const;
 
-    // State held between update and upload.
+    // Temporary state held between prepareToUpdate() and updateCompositorResources().
+    IntRect m_requestedUpdateRect;
+    // State held between prepareToUpdate() and pushPropertiesTo(). This represents the area
+    // of the layer that is actually re-painted by WebKit.
     IntRect m_paintRect;
-    IntRect m_updateRect;
 
     // Tightly packed set of unused tiles.
     Vector<RefPtr<UpdatableTile> > m_unusedTiles;

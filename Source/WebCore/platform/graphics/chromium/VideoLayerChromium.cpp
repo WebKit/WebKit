@@ -134,6 +134,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, T
     m_planes = frame->planes();
     ASSERT(m_planes <= MaxPlanes);
 
+    m_updateRect = FloatRect(FloatPoint(), bounds());
     resetNeedsDisplay();
 
     m_provider->putCurrentFrame(frame);

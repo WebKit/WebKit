@@ -90,6 +90,7 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         //
         m_context->prepareTexture();
         m_context->markLayerComposited();
+        m_updateRect = FloatRect(FloatPoint(), bounds());
         resetNeedsDisplay();
         m_textureUpdated = false;
     }

@@ -89,7 +89,7 @@ void TiledLayerChromium::cleanupResources()
     m_tiler.clear();
     m_unusedTiles.clear();
     m_paintRect = IntRect();
-    m_updateRect = IntRect();
+    m_requestedUpdateRect = IntRect();
 }
 
 void TiledLayerChromium::updateTileSizeAndTilingOption()
@@ -154,11 +154,11 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, TextureAllocator* allocator)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (m_skipsDraw || m_updateRect.isEmpty() || !m_tiler->numTiles())
+    if (m_skipsDraw || m_requestedUpdateRect.isEmpty() || !m_tiler->numTiles())
         return;
 
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(m_updateRect, left, top, right, bottom);
+    m_tiler->contentRectToTileIndices(m_requestedUpdateRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
@@ -207,6 +207,8 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, T
             tile->clearDirty();
         }
     }
+
+    m_updateRect = FloatRect(m_tiler->contentRectToLayerRect(m_paintRect));
 }
 
 void TiledLayerChromium::setTilingOption(TilingOption tilingOption)
@@ -349,7 +351,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     m_skipsDraw = false;
 
     if (contentRect.isEmpty()) {
-        m_updateRect = IntRect();
+        m_requestedUpdateRect = IntRect();
         return;
     }
 
@@ -359,7 +361,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     m_tiler->growLayerToContain(contentRect);
 
     if (!m_tiler->numTiles()) {
-        m_updateRect = IntRect();
+        m_requestedUpdateRect = IntRect();
         return;
     }
 
@@ -390,7 +392,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     // Due to borders, when the paint rect is extended to tile boundaries, it
     // may end up overlapping more tiles than the original content rect. Record
     // that original rect so we don't upload more tiles than necessary.
-    m_updateRect = contentRect;
+    m_requestedUpdateRect = contentRect;
 
     m_paintRect = m_tiler->layerRectToContentRect(dirtyLayerRect);
     if (dirtyLayerRect.isEmpty())

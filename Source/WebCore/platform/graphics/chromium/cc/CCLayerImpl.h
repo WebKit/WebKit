@@ -169,6 +169,8 @@ public:
     void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
+    const FloatRect& updateRect() const { return m_updateRect; }
+    void setUpdateRect(const FloatRect& updateRect) { m_updateRect = updateRect; }
 
     String layerTreeAsText() const;
 
@@ -256,6 +258,10 @@ private:
 
     // Hierarchical bounding rect containing the layer and its descendants.
     IntRect m_drawableContentRect;
+
+    // Rect indicating what was repainted/updated during update.
+    // Note that plugin layers bypass this and leave it empty.
+    FloatRect m_updateRect;
 };
 
 void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter*);

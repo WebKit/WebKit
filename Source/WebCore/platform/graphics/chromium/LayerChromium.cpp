@@ -296,11 +296,15 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setScrollPosition(m_scrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
     layer->setTransform(m_transform);
+    layer->setUpdateRect(m_updateRect);
 
     if (maskLayer())
         maskLayer()->pushPropertiesTo(layer->maskLayer());
     if (replicaLayer())
         replicaLayer()->pushPropertiesTo(layer->replicaLayer());
+
+    // Reset any state that should be cleared for the next update.
+    m_updateRect = FloatRect();
 }
 
 PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()

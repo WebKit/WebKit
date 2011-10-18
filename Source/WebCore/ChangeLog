@@ -1,3 +1,34 @@
+2011-10-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Tracking update rects in LayerChromium and CCLayerImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=69441
+
+        Reviewed by James Robinson.
+
+        This patch does not do much on its own, but is just part 1 of a
+        string of other patches which will use these rects for
+        visualization and scissoring.  The appropriate testing will be
+        associated with those patches.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::updateRect):
+        (WebCore::CCLayerImpl::setUpdateRect):
+
 2011-10-18  Anna Cavender  <annacc@chromium.org>
 
         Change CodeGeneratorGObject.pm to use g_value_get_uint() instead of g_value_get_ushort()

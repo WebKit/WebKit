@@ -79,6 +79,8 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*, Textur
 #endif
         m_context->flush();
     }
+
+    m_updateRect = FloatRect(FloatPoint(), bounds());
     resetNeedsDisplay();
 }
 
