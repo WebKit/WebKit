@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class CSSRuleList;
-class MediaList;
 
 class CSSMediaRule : public CSSRule {
 public:

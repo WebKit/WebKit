@@ -3468,7 +3468,7 @@
 		A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC50A1989CA007FB8C5 /* CSSStyleRule.cpp */; };
 		A80E6CF00A1989CA007FB8C5 /* CSSInheritedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC60A1989CA007FB8C5 /* CSSInheritedValue.cpp */; };
 		A80E6CF10A1989CA007FB8C5 /* FontValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC70A1989CA007FB8C5 /* FontValue.cpp */; };
-		A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC80A1989CA007FB8C5 /* CSSRuleList.h */; };
+		A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC80A1989CA007FB8C5 /* CSSRuleList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CF30A1989CA007FB8C5 /* FontFamilyValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC90A1989CA007FB8C5 /* FontFamilyValue.h */; };
 		A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */; };
 		A80E6CF50A1989CA007FB8C5 /* CSSPageRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */; };
@@ -3493,7 +3493,7 @@
 		A80E6D090A1989CA007FB8C5 /* CSSRuleList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CDF0A1989CA007FB8C5 /* CSSRuleList.cpp */; };
 		A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */; };
 		A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CE20A1989CA007FB8C5 /* CSSStyleRule.h */; };
-		A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CE30A1989CA007FB8C5 /* CSSRule.h */; };
+		A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CE30A1989CA007FB8C5 /* CSSRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6DFB0A199067007FB8C5 /* CSSMutableStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6DF90A199067007FB8C5 /* CSSMutableStyleDeclaration.cpp */; };
 		A80E6DFC0A199067007FB8C5 /* CSSMutableStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6DFA0A199067007FB8C5 /* CSSMutableStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6E0D0A19911C007FB8C5 /* CSSStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3945,14 +3945,14 @@
 		A8EA7EC00A1945D000A8EF5F /* EntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7EB80A1945D000A8EF5F /* EntityReference.h */; };
 		A8EA7EC10A1945D000A8EF5F /* EntityReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */; };
 		A8EA7EC20A1945D000A8EF5F /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7EBA0A1945D000A8EF5F /* Entity.h */; };
-		A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */; };
+		A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */; };
 		A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80010A19516E00A8EF5F /* MediaList.cpp */; };
 		A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80020A19516E00A8EF5F /* StyleSheetList.h */; };
 		A8EA800B0A19516E00A8EF5F /* StyleSheetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80030A19516E00A8EF5F /* StyleSheetList.cpp */; };
-		A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80040A19516E00A8EF5F /* StyleSheet.h */; };
+		A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80040A19516E00A8EF5F /* StyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8EA800D0A19516E00A8EF5F /* StyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */; };
-		A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80060A19516E00A8EF5F /* MediaList.h */; };
+		A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80060A19516E00A8EF5F /* MediaList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8F46A840CB20A9D003A9670 /* DOMSVGClipPathElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8503612C0ACE007B001F3D9E /* DOMSVGClipPathElement.h */; };
 		A8F46A880CB20A9D003A9670 /* DOMSVGGradientElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C9A2EC0AD7E90300FBFF1E /* DOMSVGGradientElement.h */; };
 		A8F46A890CB20A9D003A9670 /* DOMSVGAnimateColorElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 850361280ACE007B001F3D9E /* DOMSVGAnimateColorElement.h */; };
@@ -21569,10 +21569,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */,
+				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
+				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
 				319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */,
 				319AE068142D78DD006563A1 /* FilterOperation.h in Headers */,
 				319AE06A142D78DD006563A1 /* FilterOperations.h in Headers */,
+				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
 				5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */,
+				A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */,
+				A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -21855,8 +21860,6 @@
 				82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */,
 				9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */,
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
-				A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */,
-				A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */,
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
@@ -21864,7 +21867,6 @@
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				BC772B400C4EA91E0083285F /* CSSStyleSelector.h in Headers */,
-				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
 				DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */,
@@ -23581,7 +23583,6 @@
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
 				E44613AD0CD6331000FADA75 /* MediaError.h in Headers */,
 				4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */,
-				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
 				076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */,
 				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
@@ -24099,7 +24100,6 @@
 				BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */,
 				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
 				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
-				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
