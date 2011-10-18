@@ -34,4 +34,6 @@
 - (BOOL)frameSizeUpdatesDisabled;
 
 - (void)performDictionaryLookupAtCurrentMouseLocation;
++ (void)hideWordDefinitionWindow;
+
 @end

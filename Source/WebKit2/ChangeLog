@@ -1,3 +1,14 @@
+2011-10-18  Damian Kaleta  <dkaleta@apple.com>
+
+        This revised fix doesn't break SL build.
+        https://bugs.webkit.org/show_bug.cgi?id=70345
+
+        Reviewed and landed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (+[WKView hideWordDefinitionWindow]): Hides the definition window.
+        * UIProcess/API/mac/WKViewPrivate.h:
+
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
         Move spellCheckerDocumentTag and handleCorrectionPanelResult from WKViewPrivate to WKViewInternal

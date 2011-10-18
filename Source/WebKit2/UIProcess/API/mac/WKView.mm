@@ -2667,6 +2667,13 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(thePoint.x, thePoint.y));
 }
 
++ (void)hideWordDefinitionWindow
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    WKHideWordDefinitionWindow();
+#endif
+}
+
 @end
 
 @implementation WKResponderChainSink
