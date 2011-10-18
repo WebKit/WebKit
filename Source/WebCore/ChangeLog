@@ -1,3 +1,15 @@
+2011-10-18  Dan Bernstein  <mitz@apple.com>
+
+        Certain column-rule styles render incorrectly in vertical writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=70362
+
+        Reviewed by Darin Adler.
+
+        Test: fast/multicol/vertical-rl/rule-style.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules): Use the correct border sides for vertical writing modes.
+
 2011-10-18  Anna Cavender  <annacc@chromium.org>
 
         Fix broken binding tests by changing G_MAXUSHORT to G_MAXUINT in WebKitDOMTestObj.cpp.

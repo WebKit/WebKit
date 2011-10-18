@@ -1,3 +1,14 @@
+2011-10-18  Dan Bernstein  <mitz@apple.com>
+
+        Certain column-rule styles render incorrectly in vertical writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=70362
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/vertical-rl/rule-style-expected.png: Added.
+        * fast/multicol/vertical-rl/rule-style-expected.txt: Added.
+        * fast/multicol/vertical-rl/rule-style.html: Added.
+
 2011-10-18  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype methods missing exception checks

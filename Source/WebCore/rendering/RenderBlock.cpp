@@ -2416,8 +2416,10 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
             LayoutUnit ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleWidth : ruleLeft + contentWidth();
             LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
             LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleWidth;
-            drawLineForBoxSide(paintInfo.context, ruleLeft, ruleTop, ruleRight, ruleBottom,
-                               style()->isLeftToRightDirection() ? BSLeft : BSRight, ruleColor, ruleStyle, 0, 0, antialias);
+            BoxSide side = isHorizontalWritingMode()
+                ? style()->isLeftToRightDirection() ? BSLeft : BSRight
+                : style()->isLeftToRightDirection() ? BSTop : BSBottom;
+            drawLineForBoxSide(paintInfo.context, ruleLeft, ruleTop, ruleRight, ruleBottom, side, ruleColor, ruleStyle, 0, 0, antialias);
         }
         
         ruleLogicalLeft = currLogicalLeftOffset;
