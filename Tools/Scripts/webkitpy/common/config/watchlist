@@ -1,4 +1,15 @@
 #  -*- mode: Python;-*-
+#
+# When editing this file, please run the following command to make sure you
+# haven't introduced any syntax errors:
+#
+# ./Tools/Scripts/test-webkitpy webkitpy.common.watchlist
+#
+# If you want to test your regular expressions, you can edit various files and
+# then try following command:
+#
+# ./Tools/Scripts/webkit-patch apply-watchlist-local
+#
 {
     "DEFINITIONS": {
         "ChromiumGraphics": {
@@ -6,6 +17,9 @@
         },
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/.*"
+        },
+        "WebIDL": {
+            "filename": r"Source/WebCore/(?!inspector).*\.idl"
         },
         "ThreadingFiles": {
             "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\..*"
@@ -58,14 +72,16 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "WebIDL": [ "abarth@webkit.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
-        "webkitpy|TestFailures|SecurityCritical": [ "abarth@webkit.org" ],
-        "TestFailures": [ "dglazkov@chromium.org" ],
+        "SecurityCritical": [ "abarth@webkit.org" ],
+        "webkitpy": [ "abarth@webkit.org" ],
+        "TestFailures": [ "dglazkov@chromium.org", "abarth@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
