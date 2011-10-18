@@ -27,9 +27,11 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
+#include "MutationRecord.h"
 #include "NodeRenderingContext.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
+#include "WebKitMutationObserver.h"
 
 using namespace std;
 
@@ -190,6 +192,15 @@ void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengt
 
 void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    Vector<WebKitMutationObserver*> observers;
+    registeredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
+    if (!observers.isEmpty()) {
+        RefPtr<MutationRecord> mutation = MutationRecord::createCharacterData(this);
+        for (size_t i = 0; i < observers.size(); ++i)
+            observers[i]->enqueueMutationRecord(mutation);
+    }
+#endif
     if (parentNode())
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
