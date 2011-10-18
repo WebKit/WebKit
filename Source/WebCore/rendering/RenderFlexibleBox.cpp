@@ -168,6 +168,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     IntSize previousSize = size();
 
+    // FIXME: In theory we should only have to call one of these.
+    // computeLogicalWidth for flex-flow:row and computeLogicalHeight for flex-flow:column.
     computeLogicalWidth();
     computeLogicalHeight();
 
@@ -175,10 +177,10 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     layoutInlineDirection(relayoutChildren);
 
-    // FIXME: We should only need to call one of these for a given flex-flow + writing-mode combination.
-    // Is that true above as well?
-    computeLogicalWidth();
-    computeLogicalHeight();
+    if (isColumnFlow())
+        computeLogicalWidth();
+    else
+        computeLogicalHeight();
 
     if (size() != previousSize)
         relayoutChildren = true;
@@ -319,8 +321,7 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight() const
 {
-    // FIXME: Only do the flow check once.
-    return flowAwareBorderBefore() + flowAwarePaddingBefore() + flowAwarePaddingAfter() + flowAwareBorderAfter();
+    return isHorizontalFlow() ? borderAndPaddingHeight() : borderAndPaddingWidth();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingStart() const
@@ -410,8 +411,7 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginAfterForChild(RenderBox* child) con
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginLogicalHeightForChild(RenderBox* child) const
 {
-    // FIXME: Only do the flow check once.
-    return flowAwareMarginBeforeForChild(child) + flowAwareMarginAfterForChild(child);
+    return isHorizontalFlow() ? child->marginTop() + child->marginBottom() : child->marginLeft() + child->marginRight();
 }
 
 LayoutPoint RenderFlexibleBox::flowAwareLogicalLocationForChild(RenderBox* child) const

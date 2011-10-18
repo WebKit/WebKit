@@ -1,3 +1,20 @@
+2011-10-18  Ojan Vafai  <ojan@chromium.org>
+
+        cleanup some FIXMEs in RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=70374
+
+        Reviewed by Darin Adler.
+
+        No new tests. Existing tests cover all changes.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareMarginLogicalHeightForChild):
+        * rendering/RenderFlexibleBox.h:
+        Removed the FIXME to implement computePreferredLogicalWidths. It doesn't
+        seem to be necessary, at least not with the current test cases.
+
 2011-10-18  Joseph Pecoraro  <joepeck@webkit.org>
 
         Web Inspector: Some localizedStrings.js Updates

@@ -53,7 +53,6 @@ private:
     class FlexOrderIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
 
-    // FIXME: Implement computePreferredLogicalWidths since it needs to be flow-aware.
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
     bool isHorizontalFlow() const;
