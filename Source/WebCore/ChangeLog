@@ -1,3 +1,20 @@
+2011-10-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderDeprecatedFlexibleBox::layoutHorizontalBox
+        https://bugs.webkit.org/show_bug.cgi?id=70183
+
+        Reviewed by David Hyatt.
+
+        Test: fast/flexbox/layoutHorizontal-crash.html
+
+        The deferred scroll information update logic was not updated when an object was destroy'ed.
+
+        The fix is very simple. As the deferred logic was only used with deprecated flexbox, it is a
+        pretty uncommon cases so let's optimize the new code for the common case.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+
 2011-10-18  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Clean up MutationObserver code in Node
