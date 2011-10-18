@@ -1,5 +1,14 @@
 2011-10-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Add myself to the newfangled watchlist plumbing.
+        https://bugs.webkit.org/show_bug.cgi?id=70338
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/watchlist: Added sheepishly.
+
+2011-10-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Fix a unit test in TestFailures.
         https://bugs.webkit.org/show_bug.cgi?id=70337
 

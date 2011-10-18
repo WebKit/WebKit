@@ -65,6 +65,7 @@
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "webkitpy|TestFailures|SecurityCritical": [ "abarth@webkit.org" ],
+        "TestFailures": [ "dglazkov@chromium.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
