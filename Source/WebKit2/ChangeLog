@@ -1,3 +1,18 @@
+2011-10-18  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] ASSERT when displaying context menu in input field
+        https://bugs.webkit.org/show_bug.cgi?id=69859
+
+        Reviewed by Simon Hausmann.
+
+        When creating a submenu in the context menu, the submenu of type
+        QWidget is statically cast to QObject before calling setParent on
+        it. QObject::setParent asserts if the object is a QWidget. So, call
+        setParent of QWidget itself.
+
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::createContextMenu):
+
 2011-10-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix linkHoveredDoesntEmitRepeated test in the bot

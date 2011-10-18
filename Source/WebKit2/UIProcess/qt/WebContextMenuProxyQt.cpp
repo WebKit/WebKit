@@ -112,7 +112,7 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
             break;
         case WebCore::SubmenuType:
             if (OwnPtr<QMenu> subMenu = createContextMenu(item.submenu())) {
-                static_cast<QObject*>(subMenu.get())->setParent(menu.get());
+                subMenu->setParent(menu.get());
                 subMenu->setTitle(item.title());
                 QMenu* const subMenuPtr = subMenu.leakPtr();
                 menu->addMenu(subMenuPtr);
