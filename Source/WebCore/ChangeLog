@@ -1,3 +1,16 @@
+2011-10-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97641.
+        http://trac.webkit.org/changeset/97641
+        https://bugs.webkit.org/show_bug.cgi?id=70288
+
+        "This change may have broken mouse/hit-test coordinate tests."
+        (Requested by jeffm7 on #webkit).
+
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromContainingWindow):
+        (WebCore::Widget::convertToContainingWindow):
+
 2011-10-17  Andreas Kling  <kling@webkit.org>
 
         CSSParser: Remove unused variable 'propertyComponents'

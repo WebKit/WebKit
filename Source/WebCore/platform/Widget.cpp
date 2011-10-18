@@ -107,22 +107,38 @@ IntPoint Widget::convertToRootView(const IntPoint& localPoint) const
 
 IntRect Widget::convertFromContainingWindow(const IntRect& windowRect) const
 {
-    return convertFromRootView(convertFromContainingWindowToRoot(this, windowRect));
+    if (const ScrollView* parentScrollView = parent()) {
+        IntRect parentRect = parentScrollView->convertFromContainingWindow(windowRect);
+        return convertFromContainingView(parentRect);
+    }
+    return convertFromContainingWindowToRoot(this, windowRect);
 }
 
 IntRect Widget::convertToContainingWindow(const IntRect& localRect) const
 {
-    return convertFromRootToContainingWindow(this, convertToRootView(localRect));
+    if (const ScrollView* parentScrollView = parent()) {
+        IntRect parentRect = convertToContainingView(localRect);
+        return parentScrollView->convertToContainingWindow(parentRect);
+    }
+    return convertFromRootToContainingWindow(this, localRect);
 }
 
 IntPoint Widget::convertFromContainingWindow(const IntPoint& windowPoint) const
 {
-    return convertFromRootView(convertFromContainingWindowToRoot(this, windowPoint));
+    if (const ScrollView* parentScrollView = parent()) {
+        IntPoint parentPoint = parentScrollView->convertFromContainingWindow(windowPoint);
+        return convertFromContainingView(parentPoint);
+    }
+    return convertFromContainingWindowToRoot(this, windowPoint);
 }
 
 IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
 {
-    return convertFromRootToContainingWindow(this, convertToRootView(localPoint));
+    if (const ScrollView* parentScrollView = parent()) {
+        IntPoint parentPoint = convertToContainingView(localPoint);
+        return parentScrollView->convertToContainingWindow(parentPoint);
+    }
+    return convertFromRootToContainingWindow(this, localPoint);
 }
 
 #if !PLATFORM(MAC)
