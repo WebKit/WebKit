@@ -698,6 +698,10 @@ WebInspector.ScriptsPanel.prototype = {
 
     _removeSourceFrame: function(uiSourceCode)
     {
+        var option = uiSourceCode._option;
+        if (option)
+            this._filesSelectElement.removeChild(option);
+
         var sourceFrame = uiSourceCode._sourceFrame;
         if (!sourceFrame)
             return;
@@ -708,22 +712,22 @@ WebInspector.ScriptsPanel.prototype = {
 
     _uiSourceCodeReplaced: function(event)
     {
-        // FIXME: support multiple entries.
-        var oldUISourceCode = event.data.oldUISourceCodeList[0];
-        var uiSourceCode = event.data.uiSourceCodeList[0];
+        var oldUISourceCodeList = event.data.oldUISourceCodeList;
+        var uiSourceCodeList = event.data.uiSourceCodeList;
 
-        // Re-bind file select option from old source file to new one.
-        var option = oldUISourceCode._option;
-        if (!option)
-            return;
-        delete oldUISourceCode._option;
-        option._uiSourceCode = uiSourceCode;
-        uiSourceCode._option = option;
+        var visible = false;
+        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
+            var uiSourceCode = oldUISourceCodeList[i];
+            if (uiSourceCode._sourceFrame === this.visibleView)
+                visible = true;
+            this._removeSourceFrame(uiSourceCode);
+        }
 
-        // Remove old source frame and create new one if needed.
-        this._removeSourceFrame(oldUISourceCode);
-        if (option === this._filesSelectElement[this._filesSelectElement.selectedIndex])
-            this._showSourceFrame(uiSourceCode);
+        for (var i = 0; i < uiSourceCodeList.length; ++i)
+            this._uiSourceCodeAdded({ data: uiSourceCodeList[i] });
+
+        if (visible)
+            this._showSourceFrame(uiSourceCodeList[0]);
     },
 
     _sourceFrameLoaded: function(event)

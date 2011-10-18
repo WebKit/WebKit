@@ -1,3 +1,13 @@
+2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: support displaying multiple sources per single script in ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=69847
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+
 2011-10-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r97697.

@@ -35,5 +35,7 @@ LayoutTests/inspector/debugger/foo/bar
 
 Running: testSourceReplaced
 Source requested for foo.js
-Source requested for bar.js
+Source requested for source2.js
+Source requested for source1.js
+Source requested for compiled.js
 
