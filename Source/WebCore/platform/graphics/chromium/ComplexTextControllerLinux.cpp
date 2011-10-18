@@ -396,7 +396,7 @@ void ComplexTextController::normalizeSpacesAndMirrorChars(const UChar* source, b
         else if (rtl)
             character = u_charMirror(character);
         U16_APPEND(destination, position, length, character, error);
-        ASSERT(!error);
+        ASSERT_UNUSED(error, !error);
         position = nextPosition;
     }
 }

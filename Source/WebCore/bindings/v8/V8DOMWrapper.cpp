@@ -312,7 +312,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
     v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
-    ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
+    ASSERT_UNUSED(wrapper, wrapper->IsNumber() || wrapper->IsExternal());
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
