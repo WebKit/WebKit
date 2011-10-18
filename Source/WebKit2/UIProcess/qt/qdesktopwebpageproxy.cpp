@@ -100,6 +100,9 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
         return handleMouseDoubleClickEvent(reinterpret_cast<QMouseEvent*>(ev));
     case QEvent::Wheel:
         return handleWheelEvent(reinterpret_cast<QWheelEvent*>(ev));
+    case QEvent::HoverLeave:
+        return handleHoverLeaveEvent(reinterpret_cast<QHoverEvent*>(ev));
+    case QEvent::HoverEnter: // Fall-through, for WebKit the distinction doesn't matter.
     case QEvent::HoverMove:
         return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
     case QEvent::DragEnter:
@@ -161,6 +164,14 @@ bool QDesktopWebPageProxy::handleWheelEvent(QWheelEvent* ev)
 {
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
     return ev->isAccepted();
+}
+
+bool QDesktopWebPageProxy::handleHoverLeaveEvent(QHoverEvent* ev)
+{
+    // To get the correct behavior of mouseout, we need to turn the Leave event of our webview into a mouse move
+    // to a very far region.
+    QHoverEvent fakeEvent(QEvent::HoverMove, QPoint(INT_MIN, INT_MIN), ev->oldPos());
+    return handleHoverMoveEvent(&fakeEvent);
 }
 
 bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)

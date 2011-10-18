@@ -1,3 +1,26 @@
+2011-10-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Send mouse move events when we handle HoverEnter/Leave in QDesktopWebView
+        https://bugs.webkit.org/show_bug.cgi?id=70297
+
+        Reviewed by Simon Hausmann.
+
+        Qt treat the first and last hover movements as special HoverMove and HoverLeave events, but
+        WebKit doesn't make the difference, so we need to create move events for them.
+
+        While HoverEnter is in practice equivalent to HoverMove, the HoverLeave event is a bit
+        different because we want to emulate that the mouse is not only leaving the current node, but
+        completely leaving the whole document. The way to do this is to manufacture a move event with
+        a very far position, and was inspired by WebView::handleMouseEvent() in
+        Source/WebKit/win/WebView.cpp.
+
+        This patch fixes DesktopWebViewLinkHovered QML tests.
+
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::handleEvent):
+        (QDesktopWebPageProxy::handleHoverLeaveEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+
 2011-10-18  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] WebPreferences are impossible to use in QML.

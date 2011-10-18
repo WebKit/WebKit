@@ -56,6 +56,7 @@ private:
     bool handleMouseReleaseEvent(QMouseEvent*);
     bool handleMouseDoubleClickEvent(QMouseEvent*);
     bool handleWheelEvent(QWheelEvent*);
+    bool handleHoverLeaveEvent(QHoverEvent*);
     bool handleHoverMoveEvent(QHoverEvent*);
     bool handleDragEnterEvent(QDragEnterEvent*);
     bool handleDragLeaveEvent(QDragLeaveEvent*);
