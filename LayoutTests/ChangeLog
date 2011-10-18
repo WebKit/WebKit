@@ -1,3 +1,9 @@
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-18  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Implement WebKitMutationObserver.observe for characterData changes

@@ -2580,7 +2580,7 @@ BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
 BUGCR71022 LINUX WIN : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 LINUX WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
-BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
+BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
 BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
 
@@ -2742,7 +2742,7 @@ BUGWK58587 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.h
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE
+BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
@@ -3830,7 +3830,6 @@ BUGWK70298 WIN LINUX : fast/forms/input-number-events.html = TEXT PASS
 BUGWK70298 WIN LINUX : fast/forms/input-number-large-padding.html = TEXT PASS
 BUGWK70298 WIN LINUX : fast/forms/input-spinbutton-capturing.html = TEXT PASS
 BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
-BUGWK70298 : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
@@ -3885,3 +3884,11 @@ BUGWK70300 SNOWLEOPARD : fast/writing-mode/text-orientation-basic.html = FAIL
 BUG_OJAN WIN LINUX : fast/table/028-vertical.html = FAIL
 BUG_OJAN WIN LINUX : fast/table/height-percent-test-vertical.html = FAIL
 BUG_OJAN WIN : fast/writing-mode/fallback-orientation.html = FAIL
+
+// Failing since ~r97700.
+BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
+BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
+
+// Failing since ~r97504.
+BUGWK70382 LEOPARD CPU-CG : fast/dom/blur-contenteditable.html = IMAGE
+BUGWK70383 LEOPARD CPU-CG : editing/pasteboard/4944770-1.html = IMAGE
