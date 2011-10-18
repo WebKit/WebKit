@@ -2839,7 +2839,7 @@ BUGCR77494 LINUX WIN : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test added in r82056. The arrow does not point upwards.
-BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE
+BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE+TEXT
 
 // Regression in r82056.
 BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
@@ -3891,4 +3891,4 @@ BUGWK70300 SNOWLEOPARD : fast/writing-mode/text-orientation-basic.html = FAIL
 // the bot cycles.
 BUG_OJAN WIN LINUX : fast/table/028-vertical.html = FAIL
 BUG_OJAN WIN LINUX : fast/table/height-percent-test-vertical.html = FAIL
-BUG_OJAN WIN LINUX : fast/writing-mode/fallback-orientation.html = FAIL
+BUG_OJAN WIN : fast/writing-mode/fallback-orientation.html = FAIL

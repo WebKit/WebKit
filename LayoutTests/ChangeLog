@@ -1,3 +1,10 @@
+2011-10-17  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/test_expectations.txt:
+        Correct a dupe.
+
 2011-10-17  Jochen Eisinger  <jochen@chromium.org>
 
         Verify that the URL to be opened in the new window is passed by dispatchCreateWindow down to createView.
