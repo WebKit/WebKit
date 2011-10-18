@@ -1198,7 +1198,7 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
     switch (prop_id) {
     case PROP_UNSIGNED_SHORT_ATTR:
     {
-        coreSelf->setUnsignedShortAttr((g_value_get_ushort(value)));
+        coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
         break;
     }
     case PROP_INT_ATTR:
@@ -1580,7 +1580,7 @@ G_MAXINT, /* max */
                                                            "test_obj_unsigned-short-attr", /* short description */
                                                            "read-write  gushort TestObj.unsigned-short-attr", /* longer - could do with some extra doc stuff here */
                                                            0, /* min */
-G_MAXUINT16, /* max */
+G_MAXUSHORT, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,

@@ -1,3 +1,19 @@
+2011-10-18  Anna Cavender  <annacc@chromium.org>
+
+        Change CodeGeneratorGObject.pm to use g_value_get_uint() instead of g_value_get_ushort()
+        for IDL attributes of type unsigned short.
+        https://bugs.webkit.org/show_bug.cgi?id=70267
+
+        Reviewed by Xan Lopez.
+
+        Tests: small change to WebKitDOMTestObj.cpp
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetGValueTypeName): convert unsigned short to uint instead of ushort
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property): expect g_value_get_uint instead of g_value_get_ushort
+        (webkit_dom_test_obj_class_init): expect G_MAXUSHORT instead of G_MAXUINT16
+
 2011-10-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: ScriptsPanel's should use similar logic to decide whether it could show an anchor location and actually showing it.
