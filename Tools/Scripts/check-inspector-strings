@@ -30,10 +30,12 @@
 
 import codecs
 import logging
+import os
+import os.path
 import re
 import sys
 
-from webkitpy.style_references import detect_checkout
+from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.system.logutils import configure_logging
 from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.filereader import TextFileReader
@@ -90,12 +92,15 @@ class LocalizedStringsExtractor:
 if __name__ == "__main__":
     configure_logging()
 
-    checkout = detect_checkout()
-    if checkout is None:
+    cwd = os.path.abspath(os.curdir)
+    scm = detect_scm_system(cwd)
+
+    if scm is None:
         _log.error("WebKit checkout not found: You must run this script "
                    "from within a WebKit checkout.")
         sys.exit(1)
-    checkout_root = checkout.root_path()
+
+    checkout_root = scm.checkout_root
     _log.debug("WebKit checkout found with root: %s" % checkout_root)
     change_directory(checkout_root=checkout_root, paths=None)
 

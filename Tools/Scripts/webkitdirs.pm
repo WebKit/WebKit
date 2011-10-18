@@ -1306,6 +1306,13 @@ sub copyInspectorFrontendFiles
         print "*************************************************************\n";
         die;
     }
+
+    if (isAppleMacWebKit()) {
+        my $sourceLocalizedStrings = sourceDir() . "/Source/WebCore/English.lproj/localizedStrings.js";
+        my $destinationLocalizedStrings = $productDir . "/WebCore.framework/Resources/English.lproj/localizedStrings.js";
+        system "ditto", $sourceLocalizedStrings, $destinationLocalizedStrings;
+    }
+
     return system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=*.re2js", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
 }
 
