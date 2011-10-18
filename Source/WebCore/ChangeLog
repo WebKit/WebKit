@@ -1,3 +1,16 @@
+2011-10-18  Anna Cavender  <annacc@chromium.org>
+
+        Change TextTrack to use the word DISABLED instead of OFF for mode
+        https://bugs.webkit.org/show_bug.cgi?id=70268
+
+        Reviewed by Daniel Bates.
+
+        No new tests. No new functionality.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::setMode): use Disabled instead of Off
+        * html/TextTrack.h: update Mode enum to use Disabled instead of Off
+
 2011-10-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

@@ -85,7 +85,7 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
 {
     // 4.8.10.12.5 On setting the mode, if the new value is not either 0, 1, or 2,
     // the user agent must throw an INVALID_ACCESS_ERR exception.
-    if (mode == TextTrack::Off || mode == TextTrack::Hidden || mode == TextTrack::Showing)
+    if (mode == TextTrack::Disabled || mode == TextTrack::Hidden || mode == TextTrack::Showing)
         m_mode = static_cast<Mode>(mode);
     else
         ec = INVALID_ACCESS_ERR;

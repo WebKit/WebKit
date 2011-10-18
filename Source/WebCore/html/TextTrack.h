@@ -61,7 +61,7 @@ public:
     enum ReadyState { None, Loading, Loaded, Error };
     ReadyState readyState() const;
 
-    enum Mode { Off = 0, Hidden = 1, Showing = 2 };
+    enum Mode { Disabled = 0, Hidden = 1, Showing = 2 };
     Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
 
