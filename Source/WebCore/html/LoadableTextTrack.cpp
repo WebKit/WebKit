@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-LoadableTextTrack::LoadableTextTrack(const String& kind, const String& label, const String& language, bool isDefault)
-    : TextTrack(kind, label, language)
+LoadableTextTrack::LoadableTextTrack(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
+    : TextTrack(trackClient, kind, label, language, TextTrack::LoadableTextTrack)
+    , m_loadingClient(loadingClient)
     , m_isDefault(isDefault)
 {
 }
@@ -41,43 +42,31 @@ LoadableTextTrack::~LoadableTextTrack()
 {
 }
 
-void LoadableTextTrack::load(const String& url, ScriptExecutionContext* context)
+void LoadableTextTrack::load(const KURL& url, ScriptExecutionContext* context)
 {
-    return m_parser.load(url, context, this);
+    if (!m_cueLoader)
+        m_cueLoader = CueLoader::create(this, context);
+    m_cueLoader->load(url);
 }
 
-bool LoadableTextTrack::supportsType(const String& url)
+void LoadableTextTrack::newCuesAvailable(CueLoader* loader)
 {
-    return m_parser.supportsType(url);
+    ASSERT_UNUSED(loader, m_cueLoader == loader);
+
+    // FIXME(62885): Implement.
 }
 
-void LoadableTextTrack::newCuesParsed()
+void LoadableTextTrack::cueLoadingStarted(CueLoader* loader)
 {
-    // FIXME(62883): Fetch new cues from parser and temporarily store to give to CueLoaderClient when fetchNewCuesFromLoader is called.
-}
-
-void LoadableTextTrack::trackLoadStarted()
-{
+    ASSERT_UNUSED(loader, m_cueLoader == loader);
+    
     setReadyState(TextTrack::Loading);
 }
 
-void LoadableTextTrack::trackLoadError()
+void LoadableTextTrack::cueLoadingCompleted(CueLoader* loader, bool)
 {
-    setReadyState(TextTrack::Error);
-}
+    ASSERT_UNUSED(loader, m_cueLoader == loader);
 
-void LoadableTextTrack::trackLoadCompleted()
-{
-    setReadyState(TextTrack::Loaded);
-}
-
-void LoadableTextTrack::newCuesLoaded()
-{
-    // FIXME(62885): Tell the client to fetch the latest cues.
-}
-
-void LoadableTextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
-{
     // FIXME(62885): Implement.
 }
 

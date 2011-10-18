@@ -847,10 +847,46 @@ void HTMLMediaElement::loadTextTracks()
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(trackTag)) {
             HTMLTrackElement* track = static_cast<HTMLTrackElement*>(node);
-            track->load(ActiveDOMObject::scriptExecutionContext());
+            track->load(ActiveDOMObject::scriptExecutionContext(), this);
         }
     }
 }
+
+void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackModeChanged(TextTrack*)
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackCreated(TextTrack*)
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList*) 
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList*) 
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>)
+{
+    // FIXME(62885): Implement.
+}
+
+void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>)
+{
+    // FIXME(62885): Implement.
+}
+
 #endif
 
 bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction actionIfInvalid)

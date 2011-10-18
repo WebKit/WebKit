@@ -36,21 +36,26 @@
 namespace WebCore {
 
 class TextTrack;
+class TextTrackCue;
 class TextTrackCueList;
 
 class TextTrackClient {
 public:
     virtual ~TextTrackClient() { }
-    virtual void textTrackReadyStateChanged(TextTrack*) { }
-    virtual void textTrackModeChanged(TextTrack*) { }
-    virtual void textTrackCreated(TextTrack*) { }
+    virtual void textTrackReadyStateChanged(TextTrack*) = 0;
+    virtual void textTrackModeChanged(TextTrack*) = 0;
+    virtual void textTrackCreated(TextTrack*) = 0;
+    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
+    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) = 0;
+    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
+    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
 };
 
 class TextTrack : public RefCounted<TextTrack> {
 public:
-    static PassRefPtr<TextTrack> create(const String& kind, const String& label, const String& language)
+    static PassRefPtr<TextTrack> create(TextTrackClient* client, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new TextTrack(kind, label, language));
+        return adoptRef(new TextTrack(client, kind, label, language, BaseTextTrack));
     }
     virtual ~TextTrack();
 
@@ -58,7 +63,7 @@ public:
     String label() const;
     String language() const;
 
-    enum ReadyState { None, Loading, Loaded, Error };
+    enum ReadyState { None = 0, Loading = 1, Loaded = 2, Error = 3 };
     ReadyState readyState() const;
 
     enum Mode { Disabled = 0, Hidden = 1, Showing = 2 };
@@ -71,8 +76,14 @@ public:
     void readyStateChanged();
     void modeChanged();
 
+    enum Type { BaseTextTrack, MutableTextTrack, LoadableTextTrack };
+    Type trackType() { return m_type; }
+
+    TextTrackClient* client() { return m_client; }
+    void setClient(TextTrackClient* client) { m_client = client; }
+
 protected:
-    TextTrack(const String& kind, const String& label, const String& language);
+    TextTrack(TextTrackClient*, const String& kind, const String& label, const String& language, Type trackType);
 
     void setReadyState(ReadyState);
 
@@ -84,7 +95,8 @@ private:
     String m_language;
     TextTrack::ReadyState m_readyState;
     TextTrack::Mode m_mode;
-
+    TextTrackClient* m_client;
+    Type m_type; 
 };
 
 } // namespace WebCore

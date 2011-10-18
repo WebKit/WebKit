@@ -2050,7 +2050,6 @@ IF (ENABLE_VIDEO_TRACK)
         html/TextTrack.cpp
         html/TextTrackCue.cpp
         html/TextTrackCueList.cpp
-        html/track/CueParser.cpp
         html/track/WebVTTParser.cpp
         html/track/WebVTTTokenizer.cpp
         loader/CueLoader.cpp

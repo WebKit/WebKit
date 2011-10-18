@@ -42,27 +42,51 @@
 
 namespace WebCore {
 
+const int secondsPerHour = 3600;
+const int secondsPerMinute = 60;
+const double malformedTime = -1;
+const unsigned bomLength = 3;
+const unsigned fileIdentiferLength = 6;
+    
+unsigned WebVTTParser::fileIdentifierMaximumLength()
+{
+    return bomLength + fileIdentiferLength;
+}
+
+inline bool hasLongWebVTTIdentifier(String line)
+{
+    // If line is more than six characters ...
+    if (line.length() < fileIdentiferLength)
+        return false;
+
+    // but the first six characters do not exactly equal "WEBVTT" ...
+    if (line.substring(0, fileIdentiferLength) != "WEBVTT")
+        return false;
+
+    // or the seventh character is neither a space nor a tab character, then abort.
+    if (line[fileIdentiferLength] != ' ' && line[fileIdentiferLength] != '\t')
+        return false;
+
+    return true;
+}
+
 bool WebVTTParser::hasRequiredFileIdentifier(const char* data, unsigned length)
 {
     // A WebVTT file identifier consists of an optional BOM character,
     // the string "WEBVTT" followed by an optional space or tab character,
     // and any number of characters that are not line terminators ...
     unsigned position = 0;
-    if (length >= 3 && data[0] == '\xEF' && data[1] == '\xBB' && data[2] == '\xBF')
-        position += 3;
+    if (length >= bomLength && data[0] == '\xEF' && data[1] == '\xBB' && data[2] == '\xBF')
+        position += bomLength;
     String line = collectNextLine(data, length, &position);
-        
-    if (line.length() < 6)
+
+    if (line.length() < fileIdentiferLength)
         return false;
-    if (line.length() == 6 && line != "WEBVTT")
+    if (line.length() == fileIdentiferLength && line != "WEBVTT")
+        return false;
+    if (!hasLongWebVTTIdentifier(line))
         return false;
 
-    // If line is more than six characters
-    // but the first six characters do not exactly equal "WEBVTT",
-    // or the seventh character is neither a space nor a tab character, then abort.
-    if (line.length() > 6 && (line.substring(0, 6) != "WEBVTT"
-                              || (line[6] != ' ' && line[6] != '\t')))
-        return false;
     return true;
 }
 
@@ -82,15 +106,15 @@ String WebVTTParser::collectWord(const String& input, unsigned* position)
     return string.toString();
 }
 
-WebVTTParser::WebVTTParser(CueParserPrivateClient* client, ScriptExecutionContext* context)
+WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* context)
     : m_scriptExecutionContext(context)
     , m_state(Initial)
     , m_tokenizer(WebVTTTokenizer::create())
+    , m_client(client)
 {
-    m_client = client;
 }
 
-void WebVTTParser::fetchParsedCues(Vector<RefPtr<TextTrackCue> >& outputCues)
+void WebVTTParser::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
 {
     outputCues = m_cuelist;
     m_cuelist.clear();

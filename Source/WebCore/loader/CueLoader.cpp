@@ -29,11 +29,161 @@
 
 #include "CueLoader.h"
 
-namespace WebCore {
+#include "CachedCues.h"
+#include "CachedResourceLoader.h"
+#include "Document.h"
+#include "Logging.h"
+#include "ResourceHandle.h"
+#include "SharedBuffer.h"
+#include "WebVTTParser.h"
 
-void CueLoader::setCueLoaderClient(CueLoaderClient* client)
+namespace WebCore {
+    
+CueLoader::CueLoader(CueLoaderClient* client, ScriptExecutionContext* context)
+    : m_client(client)
+    , m_scriptExecutionContext(context)
+    , m_cueLoadTimer(this, &CueLoader::cueLoadTimerFired)
+    , m_state(Idle)
+    , m_parseOffset(0)
+    , m_newCuesAvailable(false)
 {
-    m_client = client;
+}
+
+CueLoader::~CueLoader()
+{
+    if (m_cachedCueData)
+        m_cachedCueData->removeClient(this);
+}
+
+void CueLoader::cueLoadTimerFired(Timer<CueLoader>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_cueLoadTimer);
+    
+    if (m_newCuesAvailable) {
+        m_newCuesAvailable = false;
+        m_client->newCuesAvailable(this); 
+    }
+    
+    if (m_state >= Finished)
+        m_client->cueLoadingCompleted(this, m_state == Failed);
+}
+
+void CueLoader::processNewCueData(CachedResource* resource)
+{
+    ASSERT(m_cachedCueData == resource);
+    
+    if (m_state == Failed || !resource->data())
+        return;
+    
+    SharedBuffer* buffer = resource->data();
+    if (m_parseOffset == buffer->size())
+        return;
+
+    const char* data;
+    unsigned length;
+    
+    if (!m_cueParser) {
+        if (resource->response().mimeType() == "text/vtt")
+            m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
+        else {
+            // Don't proceed until we have enough data to check for the WebVTT magic identifier.
+            unsigned identifierLength = WebVTTParser::fileIdentifierMaximumLength();
+            if (buffer->size() < identifierLength)
+                return;
+            
+            Vector<char> identifier;
+            unsigned offset = 0;
+            while (offset < identifierLength && (length = buffer->getSomeData(data, offset))) {
+                if (length > identifierLength)
+                    length = identifierLength;
+                identifier.append(data, length);
+                offset += length;
+            }
+            
+            if (!WebVTTParser::hasRequiredFileIdentifier(identifier.data(), identifier.size())) {
+                LOG(Media, "CueLoader::didReceiveData - file \"%s\" does not have WebVTT magic header", 
+                    resource->response().url().string().utf8().data());
+                m_state = Failed;
+                m_cueLoadTimer.startOneShot(0);
+                return;
+            }
+            
+            m_cueParser = WebVTTParser::create(this, m_scriptExecutionContext);
+        }
+    }
+    
+    ASSERT(m_cueParser);
+    
+    while ((length = buffer->getSomeData(data, m_parseOffset))) {
+        m_cueParser->parseBytes(data, length);
+        m_parseOffset += length;
+    }
+    
+}
+
+void CueLoader::didReceiveData(CachedResource* resource)
+{
+    ASSERT(m_cachedCueData == resource);
+    
+    if (!resource->data())
+        return;
+    
+    processNewCueData(resource);
+}
+
+void CueLoader::notifyFinished(CachedResource* resource)
+{
+    ASSERT(m_cachedCueData == resource);
+
+    processNewCueData(resource);
+
+    m_state = resource->errorOccurred() ? Failed : Finished;
+
+    if (!m_cueLoadTimer.isActive())
+        m_cueLoadTimer.startOneShot(0);
+    
+    m_cachedCueData->removeClient(this);
+    m_cachedCueData = 0;
+}
+
+bool CueLoader::load(const KURL& url)
+{
+    if (!m_client->shouldLoadCues(this))
+        return false;
+    
+    if (m_cachedCueData) {
+        m_cachedCueData->removeClient(this);
+        m_cachedCueData = 0;
+    }
+    
+    ASSERT(m_scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    
+    ResourceRequest cueRequest(document->completeURL(url));
+    CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
+    m_cachedCueData = static_cast<CachedCues*>(cachedResourceLoader->requestCues(cueRequest));
+    if (m_cachedCueData)
+        m_cachedCueData->addClient(this);
+    
+    m_client->cueLoadingStarted(this);
+    
+    return true;
+}
+
+void CueLoader::newCuesParsed()
+{
+    if (m_cueLoadTimer.isActive())
+        return;
+
+    m_newCuesAvailable = true;
+    m_cueLoadTimer.startOneShot(0);
+}
+
+void CueLoader::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
+{
+    ASSERT(m_cueParser);
+    if (m_cueParser)
+        m_cueParser->getNewCues(outputCues);
 }
 
 }

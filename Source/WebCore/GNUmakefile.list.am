@@ -1955,9 +1955,6 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
-	Source/WebCore/html/track/CueParser.h \
-	Source/WebCore/html/track/CueParser.cpp \
-	Source/WebCore/html/track/CueParserPrivate.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
 	Source/WebCore/html/track/WebVTTParser.h \
 	Source/WebCore/html/track/WebVTTToken.h \

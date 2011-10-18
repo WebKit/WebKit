@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
 
+#include "Event.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
@@ -129,14 +130,20 @@ bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
     return attribute->name() == srcAttr;
 }
 
-void HTMLTrackElement::load(ScriptExecutionContext* context)
+void HTMLTrackElement::load(ScriptExecutionContext* context, TextTrackClient* trackClient)
 {
-    m_track = LoadableTextTrack::create(kind(), label(), srclang(), isDefault());
+    m_track = LoadableTextTrack::create(trackClient, this, kind(), label(), srclang(), isDefault());
 
     if (hasAttribute(srcAttr))
         m_track->load(getNonEmptyURLAttribute(srcAttr), context);
 }
 
+void HTMLTrackElement::textTrackLoadingCompleted(LoadableTextTrack*, bool loadingFailed)
+{
+    ExceptionCode ec = 0;
+    dispatchEvent(Event::create(loadingFailed ? eventNames().errorEvent : eventNames().loadEvent, false, false), ec);
+}
+    
 }
 
 #endif

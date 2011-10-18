@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-MutableTextTrack::MutableTextTrack(const String& kind, const String& label, const String& language)
-    : TextTrack(kind, label, language)
+MutableTextTrack::MutableTextTrack(TextTrackClient* trackClient, const String& kind, const String& label, const String& language)
+    : TextTrack(trackClient, kind, label, language, TextTrack::MutableTextTrack)
 {
 }
 

@@ -1,3 +1,93 @@
+2011-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Use the new cached cue loader
+        https://bugs.webkit.org/show_bug.cgi?id=70269
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, no functionality changed.
+
+        * CMakeLists.txt: Remove CueParser.cpp/h and CueParserPrivate.h.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTextTracks):
+        (WebCore::HTMLMediaElement::textTrackReadyStateChanged): New, not implemented yet.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackCreated): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackRemoveCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Ditto.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::load): Update for interface change
+        (WebCore::HTMLTrackElement::textTrackLoadingCompleted): New, dispatch 'load' or 'error' event.
+        * html/HTMLTrackElement.h:
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack): Add TextTrackClient and TextTrackLoadingClient
+            parameters.
+        (WebCore::LoadableTextTrack::load): Make url parameter KURL instead of String. Create the 
+            cue loader, trigger the load.
+        (WebCore::LoadableTextTrack::newCuesAvailable): New callback from the loader. Not implemented yet.
+        (WebCore::LoadableTextTrack::cueLoadingStarted): Ditto.
+        (WebCore::LoadableTextTrack::cueLoadingCompleted): Ditto.
+        * html/LoadableTextTrack.h:
+
+        * html/MutableTextTrack.cpp:
+        (WebCore::MutableTextTrack::MutableTextTrack): Add TextTrackClient parameter.
+        * html/MutableTextTrack.h:
+        (WebCore::MutableTextTrack::create):
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Add TextTrackClient parameter.
+        (WebCore::TextTrack::~TextTrack): Tell the client to remove all cues, forget the client.
+        (WebCore::TextTrack::setReadyState): Tell client about ready state change.
+        (WebCore::TextTrack::setMode): Tell client about mode change.
+        * html/TextTrack.h:
+        (WebCore::TextTrackClient::textTrackAddCues): New client interface.
+        (WebCore::TextTrackClient::textTrackRemoveCues): Ditto.
+        (WebCore::TextTrackClient::textTrackAddCue): Ditto.
+        (WebCore::TextTrackClient::textTrackRemoveCue): Ditto.
+        (WebCore::TextTrack::create):
+        (WebCore::TextTrack::trackType): New.
+        (WebCore::TextTrack::client): Ditto.
+        (WebCore::TextTrack::setClient): Ditto.
+
+        * html/track/CueParser.cpp: Removed.
+        * html/track/CueParser.h: Removed.
+        * html/track/CueParserPrivate.h: Removed.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::fileIdentifierMaximumLength): New, return length of WebVTT file
+            magic number.
+        (WebCore::WebVTTParser::hasRequiredFileIdentifier): Update to use constants instead of hard
+            coded lengths.
+        (WebCore::WebVTTParser::WebVTTParser): Initialize "m_client" in the initilization list
+            instead of setting it in the constructor.
+        (WebCore::WebVTTParser::getNewCues): Renamed from fetchParsedCues.
+        * html/track/WebVTTParser.h:
+        (WebCore::WebVTTParser::create): Take a WebVTTParserClient* instead of a CueParserPrivateClient*.
+
+        * loader/CueLoader.cpp:
+        (WebCore::CueLoader::CueLoader):
+        (WebCore::CueLoader::~CueLoader): Remove client.
+        (WebCore::CueLoader::cueLoadTimerFired): Tell client about new clues and/or that the load
+            has finished.
+        (WebCore::CueLoader::processNewCueData): Process newly loaded data.
+        (WebCore::CueLoader::didReceiveData): Ditto.
+        (WebCore::CueLoader::notifyFinished): Do final processing as necessary, prime the timer
+            to call client.
+        (WebCore::CueLoader::load): Create resource loader, initiate loading.
+        (WebCore::CueLoader::newCuesParsed): Prime timer to tell client about newly parsed cues.
+        (WebCore::CueLoader::getNewCues): Get new cues from parser.
+        * loader/CueLoader.h:
+        (WebCore::CueLoader::create):
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)

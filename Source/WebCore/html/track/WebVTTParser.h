@@ -33,10 +33,10 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CueParserPrivate.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "HTMLNames.h"
+#include "TextTrackCue.h"
 #include "WebVTTTokenizer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -45,21 +45,25 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const int secondsPerHour = 3600;
-static const int secondsPerMinute = 60;
-static const double malformedTime = -1;
+class WebVTTParserClient {
+public:
+    virtual ~WebVTTParserClient() { }
+    
+    virtual void newCuesParsed() = 0;
+};
 
-class WebVTTParser : public CueParserPrivateInterface {
+class WebVTTParser {
 public:
     virtual ~WebVTTParser() { }
     
     enum ParseState { Initial, Header, Id, TimingsAndSettings, CueText, BadCue };
 
-    static PassOwnPtr<WebVTTParser> create(CueParserPrivateClient* client, ScriptExecutionContext* context)
+    static PassOwnPtr<WebVTTParser> create(WebVTTParserClient* client, ScriptExecutionContext* context)
     {
         return adoptPtr(new WebVTTParser(client, context));
     }
     
+    static unsigned fileIdentifierMaximumLength();
     static bool hasRequiredFileIdentifier(const char* data, unsigned length);
 
     static inline bool isRecognizedTag(const AtomicString& tagName)
@@ -79,12 +83,14 @@ public:
     static String collectDigits(const String&, unsigned*);
     static String collectWord(const String&, unsigned*);
 
-    virtual void fetchParsedCues(Vector<RefPtr<TextTrackCue> >&);
-    
+    // Input data to the parser to parse.
     virtual void parseBytes(const char* data, unsigned length);
 
+    // Transfers ownership of last parsed cues to caller.
+    virtual void getNewCues(Vector<RefPtr<TextTrackCue> >&);
+
 protected:
-    WebVTTParser(CueParserPrivateClient*, ScriptExecutionContext*);
+    WebVTTParser(WebVTTParserClient*, ScriptExecutionContext*);
     
     ScriptExecutionContext* m_scriptExecutionContext;
     ParseState m_state;
@@ -116,7 +122,7 @@ private:
     RefPtr<DocumentFragment> m_attachmentRoot;
     RefPtr<ContainerNode> m_currentNode;
 
-    CueParserPrivateClient* m_client;
+    WebVTTParserClient* m_client;
 
     Vector<RefPtr<TextTrackCue> > m_cuelist;
 };

@@ -37,6 +37,10 @@
 #include "MediaPlayerProxy.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrack.h"
+#endif
+
 namespace WebCore {
 
 #if ENABLE(WEB_AUDIO)
@@ -58,7 +62,11 @@ class Widget;
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
 // no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
 
-class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, private ActiveDOMObject {
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, private ActiveDOMObject
+#if ENABLE(VIDEO_TRACK)
+    , private TextTrackClient
+#endif
+{
 public:
     MediaPlayer* player() const { return m_player.get(); }
     
@@ -339,6 +347,15 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     void loadTextTracks();
+
+    // TextTrackClient
+    virtual void textTrackReadyStateChanged(TextTrack*);
+    virtual void textTrackModeChanged(TextTrack*);
+    virtual void textTrackCreated(TextTrack*);
+    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
+    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
