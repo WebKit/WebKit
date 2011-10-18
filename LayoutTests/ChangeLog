@@ -1,3 +1,21 @@
+2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        ASSERTION FAILED: !m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout() with generated content
+        https://bugs.webkit.org/show_bug.cgi?id=61411
+
+        Reviewed by Andy Estes.
+
+        The bug was fixed by r95926 or bug 62120. Landing the tests from the bug.
+
+        * fast/dynamic/crash-generated-counter-expected.txt: Added.
+        * fast/dynamic/crash-generated-counter.html: Added.
+        * fast/dynamic/crash-generated-image-expected.txt: Added.
+        * fast/dynamic/crash-generated-image.html: Added.
+        * fast/dynamic/crash-generated-quote-expected.txt: Added.
+        * fast/dynamic/crash-generated-quote.html: Added.
+        * fast/dynamic/crash-generated-text-expected.txt: Added.
+        * fast/dynamic/crash-generated-text.html: Added.
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Exception ordering in String.prototype.replace
