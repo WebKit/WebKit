@@ -360,13 +360,13 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     JSValue replacement = exec->argument(1);
     JSGlobalData* globalData = &exec->globalData();
 
-    UString replacementString;
-    CallData callData;
-    CallType callType = getCallData(replacement, callData);
-    if (callType == CallTypeNone)
-        replacementString = replacement.toString(exec);
-
     if (pattern.inherits(&RegExpObject::s_info)) {
+        UString replacementString;
+        CallData callData;
+        CallType callType = getCallData(replacement, callData);
+        if (callType == CallTypeNone)
+            replacementString = replacement.toString(exec);
+
         const UString& source = sourceVal->value(exec);
         unsigned sourceLen = source.length();
         if (exec->hadException())
@@ -538,7 +538,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
 
     // Not a regular expression, so treat the pattern as a string.
 
+    // 'patternString' (or 'searchValue', as it is referred to in the spec) is converted before the replacement.
     UString patternString = pattern.toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    UString replacementString;
+    CallData callData;
+    CallType callType = getCallData(replacement, callData);
+    if (callType == CallTypeNone)
+        replacementString = replacement.toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     // Special case for single character patterns without back reference replacement
     if (patternString.length() == 1 && callType == CallTypeNone && replacementString.find('$', 0) == notFound)
         return JSValue::encode(sourceVal->replaceCharacter(exec, patternString[0], replacementString));

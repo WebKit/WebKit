@@ -1,6 +1,6 @@
 S15.5.4.11_A1_T12
 
-FAIL SputnikError: #1.1: Exception === "insearchValue". Actual: inreplaceValue
+PASS 
 
 TEST COMPLETE
 

@@ -1,3 +1,15 @@
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Exception ordering in String.prototype.replace
+        https://bugs.webkit.org/show_bug.cgi?id=70290
+
+        If pattern is not a regexp, it should be converted toString before the replacement value has it's toString conversion called.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2011-10-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG bytecode parser should understand inline stacks
