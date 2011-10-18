@@ -1,3 +1,10 @@
+2011-10-17  Ojan Vafai  <ojan@chromium.org>
+
+        [chromium] add test failures after http://trac.webkit.org/changeset/97693.
+        See https://bugs.webkit.org/show_bug.cgi?id=70300 for more details.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Search in resource crashes when there is no resource with given url.
