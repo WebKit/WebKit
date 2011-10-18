@@ -1,3 +1,15 @@
+2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename deregister* to unregister*
+        https://bugs.webkit.org/show_bug.cgi?id=70272
+
+        Reviewed by Darin Adler.
+
+        Renamed deregisterWeakMap to unregisterWeakMap.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::unregisterWeakMap):
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Exception ordering in String.prototype.replace

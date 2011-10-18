@@ -291,7 +291,7 @@ namespace JSC {
             m_rareData->weakMaps.add(map);
         }
 
-        void deregisterWeakMap(OpaqueJSWeakObjectMap* map)
+        void unregisterWeakMap(OpaqueJSWeakObjectMap* map)
         {
             if (m_rareData)
                 m_rareData->weakMaps.remove(map);

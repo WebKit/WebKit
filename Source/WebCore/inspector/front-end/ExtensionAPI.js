@@ -257,7 +257,7 @@ Panels.prototype = {
         var hadHandler = extensionServer.hasHandler("open-resource");
 
         if (!callback)
-            extensionServer.deregisterHandler("open-resource");
+            extensionServer.unregisterHandler("open-resource");
         else {
             function callbackWrapper(message)
             {
@@ -602,7 +602,7 @@ ExtensionServerClient.prototype = {
         this._handlers[command] = handler;
     },
 
-    deregisterHandler: function(command)
+    unregisterHandler: function(command)
     {
         delete this._handlers[command];
     },

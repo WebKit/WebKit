@@ -70,7 +70,7 @@ WebInspector.HandlerRegistry.prototype = {
         this.dispatchEventToListeners(WebInspector.HandlerRegistry.EventTypes.HandlersUpdated);
     },
 
-    deregisterHandler: function(name)
+    unregisterHandler: function(name)
     {
         delete this._handlers[name];
         this.dispatchEventToListeners(WebInspector.HandlerRegistry.EventTypes.HandlersUpdated);

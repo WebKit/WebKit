@@ -264,7 +264,7 @@ WebInspector.ExtensionServer.prototype = {
         if (message.handlerPresent)
             WebInspector.openAnchorLocationRegistry.registerHandler(name, this._handleAnchorClicked.bind(this, port));
         else
-            WebInspector.openAnchorLocationRegistry.deregisterHandler(name);
+            WebInspector.openAnchorLocationRegistry.unregisterHandler(name);
     },
 
     _handleAnchorClicked: function(port, anchor)
