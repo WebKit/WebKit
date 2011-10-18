@@ -80,7 +80,7 @@ class ParallelJobs {
 public:
     typedef void (*WorkerFunction)(Type*);
 
-    ParallelJobs(WorkerFunction func, int requestedJobNumber = 0) :
+    ParallelJobs(WorkerFunction func, int requestedJobNumber) :
         m_parallelEnvironment(reinterpret_cast<ParallelEnvironment::ThreadFunction>(func), sizeof(Type), requestedJobNumber)
     {
         m_parameters.grow(m_parallelEnvironment.numberOfJobs());

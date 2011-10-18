@@ -1,3 +1,27 @@
+2011-10-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        ParallelJobs: maximum number of threads should be determined dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=68540
+
+        Reviewed by Zoltan Herczeg.
+
+        Add logic to determine the number of cores and use this as
+        the maximum number of threads. The implementation currently
+        covers Linux, Darwin, Windows, AIX, Solaris, OpenBSD and NetBSD.
+        The patch was tested on Linux, Mac and Windows which was enough to
+        cover all code path. It should work on the rest accoring to the
+        documentation of those OS's. The hard coded constant is still used
+        on uncovered OS's which should be fixed in the future.
+
+        * wtf/ParallelJobs.h: Removed the default value of the requestedJobNumber
+        argument because clients should always fill it and the 0 default value
+        was incorrect anyway.
+        (WTF::ParallelJobs::ParallelJobs):
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::determineMaxNumberOfParallelThreads):
+        * wtf/ParallelJobsGeneric.h:
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reverted r997709, this caused test failures.
