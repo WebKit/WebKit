@@ -1,3 +1,19 @@
+2011-10-18  Antti Koivisto  <antti@apple.com>
+
+        Move default stylesheet loading to a separate function
+        https://bugs.webkit.org/show_bug.cgi?id=70331
+
+        Reviewed by Andreas Kling.
+        
+        - Move default stylesheet loading out from CSSStyleSelector::styleForElement()
+        - Rename e -> element
+        - Remove pointless reffing of the placeholder style.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::ensureDefaultStyleSheetsForElement):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2011-10-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

@@ -534,6 +534,65 @@ static void loadViewSourceStyle()
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
 
+static void ensureDefaultStyleSheetsForElement(Element* element)
+{
+    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
+        loadFullDefaultStyle();
+        assertNoSiblingRulesInDefaultStyle();
+        collectSpecialRulesInDefaultStyle();
+    }
+    
+#if ENABLE(SVG)
+    static bool loadedSVGUserAgentSheet;
+    if (element->isSVGElement() && !loadedSVGUserAgentSheet) {
+        // SVG rules.
+        loadedSVGUserAgentSheet = true;
+        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(svgSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
+        assertNoSiblingRulesInDefaultStyle();
+        collectSpecialRulesInDefaultStyle();
+    }
+#endif
+    
+#if ENABLE(MATHML)
+    static bool loadedMathMLUserAgentSheet;
+    if (element->isMathMLElement() && !loadedMathMLUserAgentSheet) {
+        // MathML rules.
+        loadedMathMLUserAgentSheet = true;
+        CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
+        // There are some sibling and uncommon attribute rules here.
+        collectSpecialRulesInDefaultStyle();
+    }
+#endif
+    
+#if ENABLE(VIDEO)
+    static bool loadedMediaStyleSheet;
+    if (!loadedMediaStyleSheet && (element->hasTagName(videoTag) || element->hasTagName(audioTag))) {
+        loadedMediaStyleSheet = true;
+        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraMediaControlsStyleSheet();
+        CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
+        defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
+        collectSpecialRulesInDefaultStyle();
+    }
+#endif
+    
+#if ENABLE(FULLSCREEN_API)
+    static bool loadedFullScreenStyleSheet;
+    if (!loadedFullScreenStyleSheet && element->document()->webkitIsFullScreen()) {
+        loadedFullScreenStyleSheet = true;
+        String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
+        CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
+        defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+        defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+        collectSpecialRulesInDefaultStyle();
+    }
+#endif
+}
+
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl, unsigned linkMatchType)
 {
     m_matchedDecls.append(MatchedStyleDeclaration(decl, linkMatchType));
@@ -1059,7 +1118,6 @@ static inline bool isAtShadowBoundary(Element* element)
 {
     if (!element)
         return false;
-
     ContainerNode* parentNode = element->parentNode();
     return parentNode && parentNode->isShadowRoot();
 }
@@ -1067,24 +1125,22 @@ static inline bool isAtShadowBoundary(Element* element)
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
-    if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
+    if (allowSharing && !element->document()->haveStylesheetsLoaded() && !element->renderer()) {
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = RenderStyle::create().leakRef();
-            s_styleNotYetAvailable->ref();
             s_styleNotYetAvailable->setDisplay(NONE);
             s_styleNotYetAvailable->font().update(m_fontSelector);
         }
-        s_styleNotYetAvailable->ref();
-        e->document()->setHasNodesWithPlaceholderStyle();
+        element->document()->setHasNodesWithPlaceholderStyle();
         return s_styleNotYetAvailable;
     }
 
-    initElement(e);
-    initForStyleResolve(e, defaultParent);
+    initElement(element);
+    initForStyleResolve(element, defaultParent);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1102,69 +1158,15 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 
     // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
-    if (isAtShadowBoundary(e))
+    if (isAtShadowBoundary(element))
         m_style->setUserModify(RenderStyle::initialUserModify());
 
-    if (e->isLink()) {
+    if (element->isLink()) {
         m_style->setIsLink(true);
         m_style->setInsideLink(m_elementLinkState);
     }
 
-    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e)) {
-        loadFullDefaultStyle();
-        assertNoSiblingRulesInDefaultStyle();
-        collectSpecialRulesInDefaultStyle();
-    }
-
-#if ENABLE(SVG)
-    static bool loadedSVGUserAgentSheet;
-    if (e->isSVGElement() && !loadedSVGUserAgentSheet) {
-        // SVG rules.
-        loadedSVGUserAgentSheet = true;
-        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(svgSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
-        assertNoSiblingRulesInDefaultStyle();
-        collectSpecialRulesInDefaultStyle();
-    }
-#endif
-
-#if ENABLE(MATHML)
-    static bool loadedMathMLUserAgentSheet;
-    if (e->isMathMLElement() && !loadedMathMLUserAgentSheet) {
-        // MathML rules.
-        loadedMathMLUserAgentSheet = true;
-        CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
-        // There are some sibling and uncommon attribute rules here.
-        collectSpecialRulesInDefaultStyle();
-    }
-#endif
-
-#if ENABLE(VIDEO)
-    static bool loadedMediaStyleSheet;
-    if (!loadedMediaStyleSheet && (e->hasTagName(videoTag) || e->hasTagName(audioTag))) {
-        loadedMediaStyleSheet = true;
-        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(e->document()->page())->extraMediaControlsStyleSheet();
-        CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
-        defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
-        collectSpecialRulesInDefaultStyle();
-    }
-#endif
-
-#if ENABLE(FULLSCREEN_API)
-    static bool loadedFullScreenStyleSheet;
-    if (!loadedFullScreenStyleSheet && e->document()->webkitIsFullScreen()) {
-        loadedFullScreenStyleSheet = true;
-        String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
-        CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
-        defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
-        defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
-        collectSpecialRulesInDefaultStyle();
-    }
-#endif
+    ensureDefaultStyleSheetsForElement(element);
 
     int firstUARule = -1, lastUARule = -1;
     int firstUserRule = -1, lastUserRule = -1;
@@ -1272,7 +1274,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     updateFont();
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(style(), m_parentStyle, e);
+    adjustRenderStyle(style(), m_parentStyle, element);
 
     // Start loading images referenced by this style.
     loadPendingImages();
