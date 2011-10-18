@@ -66,10 +66,6 @@ PASS (function f(arg){'use strict'; f.arguments; })() threw exception TypeError:
 PASS (function f(arg){'use strict'; f.caller; })() threw exception TypeError: Cannot access caller property of a strict mode function.
 PASS (function f(arg){'use strict'; f.arguments=5; })() threw exception TypeError: Cannot access arguments property of a strict mode function.
 PASS (function f(arg){'use strict'; f.caller=5; })() threw exception TypeError: Cannot access caller property of a strict mode function.
-PASS "caller" in function(){"use strict"} is true
-PASS (function(){"use strict";}).hasOwnProperty("caller") is true
-PASS "arguments" in function(){"use strict"} is true
-PASS (function(){"use strict";}).hasOwnProperty("arguments") is true
 PASS 'use strict'; (function (){with(1){};}) threw exception SyntaxError: 'with' statements are not valid in strict mode.
 PASS (function(){'use strict'; (function (){with(1){};})}) threw exception SyntaxError: 'with' statements are not valid in strict mode.
 PASS 'use strict'; (function (){var a; delete a;}) threw exception SyntaxError: Cannot delete unqualified property 'a' in strict mode.

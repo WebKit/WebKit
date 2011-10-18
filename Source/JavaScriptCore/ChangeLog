@@ -1,3 +1,13 @@
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reverted r997709, this caused test failures.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasProperty):
+        (JSC::JSObject::hasOwnProperty):
+
 2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename deregister* to unregister*

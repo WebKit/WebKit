@@ -3607,9 +3607,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_in)
 
     Identifier property(callFrame, propName.toString(callFrame));
     CHECK_FOR_EXCEPTION();
-    bool result = baseObj->hasProperty(callFrame, property);
-    ASSERT(!callFrame->hadException());
-    return JSValue::encode(jsBoolean(result));
+    return JSValue::encode(jsBoolean(baseObj->hasProperty(callFrame, property)));
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_push_new_scope)

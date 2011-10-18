@@ -243,14 +243,14 @@ void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
 {
-    PropertyDescriptor descriptor;
-    return const_cast<JSObject*>(this)->getPropertyDescriptor(exec, propertyName, descriptor);
+    PropertySlot slot;
+    return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
 bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 {
-    PropertyDescriptor descriptor;
-    return const_cast<JSObject*>(this)->getPropertyDescriptor(exec, Identifier::from(exec, propertyName), descriptor);
+    PropertySlot slot;
+    return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
 bool JSObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
@@ -286,8 +286,8 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& p
 
 bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) const
 {
-    PropertyDescriptor descriptor;
-    return const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    PropertySlot slot;
+    return const_cast<JSObject*>(this)->getOwnPropertySlotVirtual(exec, propertyName, slot);
 }
 
 bool JSObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)

@@ -1,3 +1,10 @@
+2011-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reverted r997709, this caused test failures.
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/script-tests/basic-strict-mode.js:
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
