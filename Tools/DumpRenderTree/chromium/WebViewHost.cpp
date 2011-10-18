@@ -239,10 +239,12 @@ static string textAffinityDescription(WebTextAffinity affinity)
 
 // WebViewClient -------------------------------------------------------------
 
-WebView* WebViewHost::createView(WebFrame*, const WebURLRequest&, const WebWindowFeatures&, const WebString&)
+WebView* WebViewHost::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&)
 {
     if (!layoutTestController()->canOpenWindows())
         return 0;
+    if (layoutTestController()->shouldDumpCreateView())
+        fprintf(stdout, "createView(%s)\n", URLDescription(request.url()).c_str());
     return m_shell->createNewWindow(WebURL())->webView();
 }
 

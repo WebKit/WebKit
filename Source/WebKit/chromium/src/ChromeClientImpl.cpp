@@ -256,7 +256,7 @@ void ChromeClientImpl::focusedFrameChanged(Frame*)
 }
 
 Page* ChromeClientImpl::createWindow(
-    Frame* frame, const FrameLoadRequest& r, const WindowFeatures& features, const NavigationAction&)
+    Frame* frame, const FrameLoadRequest& r, const WindowFeatures& features, const NavigationAction& action)
 {
     if (!m_webView->client())
         return 0;
@@ -264,6 +264,8 @@ Page* ChromeClientImpl::createWindow(
     WrappedResourceRequest request;
     if (!r.resourceRequest().isEmpty())
         request.bind(r.resourceRequest());
+    else if (!action.resourceRequest().isEmpty())
+        request.bind(action.resourceRequest());
     WebViewImpl* newView = static_cast<WebViewImpl*>(
         m_webView->client()->createView(WebFrameImpl::fromFrame(frame), request, features, r.frameName()));
     if (!newView)

@@ -1,3 +1,37 @@
+2011-10-17  Jochen Eisinger  <jochen@chromium.org>
+
+        Make NavigationAction wrap a ResourceRequest instead of a KURL.
+        https://bugs.webkit.org/show_bug.cgi?id=68803
+
+        With this, FrameLoaderClient::dispatchCreatePage knows about the
+        request that will be used for the initial navigaion of the to be
+        created page.
+
+        Reviewed by Nate Chapin.
+
+        Test: platform/chromium/fast/loader/create-view-target-blank.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::createWindow):
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::isEmpty):
+        (WebCore::NavigationAction::url):
+        (WebCore::NavigationAction::resourceRequest):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * WebCore.exp: updated
+
 2011-10-17  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor bypass with remote script ending in ? character

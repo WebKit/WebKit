@@ -32,6 +32,7 @@
 #include "Event.h"
 #include "FrameLoaderTypes.h"
 #include "KURL.h"
+#include "ResourceRequest.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,19 +40,22 @@ namespace WebCore {
     class NavigationAction {
     public:
         NavigationAction();
-        NavigationAction(const KURL&, NavigationType);
-        NavigationAction(const KURL&, FrameLoadType, bool isFormSubmission);
-        NavigationAction(const KURL&, NavigationType, PassRefPtr<Event>);
-        NavigationAction(const KURL&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
+        NavigationAction(const ResourceRequest&);
+        NavigationAction(const ResourceRequest&, NavigationType);
+        NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
+        NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
+        NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
 
-        bool isEmpty() const { return m_URL.isEmpty(); }
+        bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
 
-        KURL url() const { return m_URL; }
+        KURL url() const { return m_resourceRequest.url(); }
+        const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+
         NavigationType type() const { return m_type; }
         const Event* event() const { return m_event.get(); }
 
     private:
-        KURL m_URL;
+        ResourceRequest m_resourceRequest;
         NavigationType m_type;
         RefPtr<Event> m_event;
     };

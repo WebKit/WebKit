@@ -1,0 +1,4 @@
+createView(done.html)
+This test opens a new window by middle-clicking on a link with target=_blank. It passes, if the WebViewClient::createView method was invoked with the parameter "done.html".
+
+link

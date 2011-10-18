@@ -1199,7 +1199,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     if (m_pageDismissalEventBeingDispatched != NoDismissal)
         return;
 
-    NavigationAction action(newURL, newLoadType, isFormSubmission, event);
+    NavigationAction action(request, newLoadType, isFormSubmission, event);
 
     if (!targetFrame && !frameName.isEmpty()) {
         policyChecker()->checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy,
@@ -1268,7 +1268,7 @@ void FrameLoader::load(const ResourceRequest& request, const String& frameName, 
         return;
     }
 
-    policyChecker()->checkNewWindowPolicy(NavigationAction(request.url(), NavigationTypeOther), FrameLoader::callContinueLoadAfterNewWindowPolicy, request, 0, frameName, this);
+    policyChecker()->checkNewWindowPolicy(NavigationAction(request, NavigationTypeOther), FrameLoader::callContinueLoadAfterNewWindowPolicy, request, 0, frameName, this);
 }
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, bool lockHistory, FrameLoadType type, PassRefPtr<FormState> formState)
@@ -1346,7 +1346,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (shouldScrollToAnchor(isFormSubmission,  httpMethod, policyChecker()->loadType(), newURL)) {
         RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
-        NavigationAction action(newURL, policyChecker()->loadType(), isFormSubmission);
+        NavigationAction action(loader->request(), policyChecker()->loadType(), isFormSubmission);
 
         oldDocumentLoader->setTriggeringAction(action);
         policyChecker()->stopCheck();
@@ -1359,7 +1359,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         policyChecker()->stopCheck();
         setPolicyDocumentLoader(loader);
         if (loader->triggeringAction().isEmpty())
-            loader->setTriggeringAction(NavigationAction(newURL, policyChecker()->loadType(), isFormSubmission));
+            loader->setTriggeringAction(NavigationAction(loader->request(), policyChecker()->loadType(), isFormSubmission));
 
         if (Element* ownerElement = m_frame->ownerElement()) {
             // We skip dispatching the beforeload event if we've already
@@ -1479,7 +1479,7 @@ void FrameLoader::reload(bool endToEndReload)
 
     // If we're about to re-post, set up action so the application can warn the user.
     if (request.httpMethod() == "POST")
-        loader->setTriggeringAction(NavigationAction(request.url(), NavigationTypeFormResubmitted));
+        loader->setTriggeringAction(NavigationAction(request, NavigationTypeFormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
@@ -2577,7 +2577,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
     workingResourceRequest.setHTTPContentType(contentType);
     addExtraFieldsToRequest(workingResourceRequest, loadType, true);
 
-    NavigationAction action(url, loadType, true, event);
+    NavigationAction action(workingResourceRequest, loadType, true, event);
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
@@ -2871,7 +2871,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->m_client->dispatchShow();
     if (!m_suppressOpenerInNewFrame)
         mainFrame->loader()->setOpener(frame.get());
-    mainFrame->loader()->loadWithNavigationAction(request, NavigationAction(), false, FrameLoadTypeStandard, formState);
+    mainFrame->loader()->loadWithNavigationAction(request, NavigationAction(request), false, FrameLoadTypeStandard, formState);
 }
 
 void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& identifier, ResourceError& error)
@@ -3034,7 +3034,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
         currentURL = documentLoader()->url();
     RefPtr<FormData> formData = item->formData();
 
-    bool addedExtraFields = false;
     ResourceRequest request(itemURL);
 
     if (!item->referrer().isNull())
@@ -3054,7 +3053,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
         // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
         addExtraFieldsToRequest(request, m_loadType, true);
-        addedExtraFields = true;
         
         // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
         // We want to know this before talking to the policy delegate, since it affects whether 
@@ -3065,10 +3063,10 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
         // extremely rare, but in that case the user will get an error on the navigation.
         
         if (ResourceHandle::willLoadFromCache(request, m_frame))
-            action = NavigationAction(itemURL, loadType, false);
+            action = NavigationAction(request, loadType, false);
         else {
             request.setCachePolicy(ReloadIgnoringCacheData);
-            action = NavigationAction(itemURL, NavigationTypeFormResubmitted);
+            action = NavigationAction(request, NavigationTypeFormResubmitted);
         }
     } else {
         switch (loadType) {
@@ -3092,11 +3090,12 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
                 ASSERT_NOT_REACHED();
         }
 
-        action = NavigationAction(itemOriginalURL, loadType, false);
-    }
-    
-    if (!addedExtraFields)
         addExtraFieldsToRequest(request, m_loadType, true);
+
+        ResourceRequest requestForOriginalURL(request);
+        requestForOriginalURL.setURL(itemOriginalURL);
+        action = NavigationAction(requestForOriginalURL, loadType, false);
+    }
 
     loadWithNavigationAction(request, action, false, loadType, 0);
 }
@@ -3281,7 +3280,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     if (!oldPage)
         return 0;
 
-    NavigationAction action;
+    NavigationAction action(requestWithReferrer.resourceRequest());
     Page* page = oldPage->chrome()->createWindow(openerFrame, requestWithReferrer, features, action);
     if (!page)
         return 0;

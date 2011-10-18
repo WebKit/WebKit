@@ -112,6 +112,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
     bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
     bindMethod("dumpPermissionClientCallbacks", &LayoutTestController::dumpPermissionClientCallbacks);
+    bindMethod("dumpCreateView", &LayoutTestController::dumpCreateView);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
@@ -381,6 +382,12 @@ void LayoutTestController::dumpTitleChanges(const CppArgumentList&, CppVariant* 
 void LayoutTestController::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpPermissionClientCallbacks = true;
+    result->setNull();
+}
+
+void LayoutTestController::dumpCreateView(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpCreateView = true;
     result->setNull();
 }
 

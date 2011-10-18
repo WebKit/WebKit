@@ -131,6 +131,11 @@ public:
     // It takes no arguments, and ignores any that may be present.
     void dumpWindowStatusChanges(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to dump all calls to
+    // WebViewClient::createView().
+    // It takes no arguments, and ignores any that may be present.
+    void dumpCreateView(const CppArgumentList&, CppVariant*);
+
     // When called with a boolean argument, this sets a flag that controls
     // whether content-editable elements accept editing focus when an editing
     // attempt is made. It ignores any additional arguments.
@@ -434,6 +439,7 @@ public:
     bool shouldDumpChildFramesAsText() { return m_dumpChildFramesAsText; }
     bool shouldGeneratePixelResults() { return m_generatePixelResults; }
     void setShouldGeneratePixelResults(bool value) { m_generatePixelResults = value; }
+    bool shouldDumpCreateView() { return m_dumpCreateView; }
     bool acceptsEditing() { return m_acceptsEditing; }
     bool canOpenWindows() { return m_canOpenWindows; }
     bool shouldAddFileToPasteboard() { return m_shouldAddFileToPasteboard; }
@@ -593,6 +599,10 @@ private:
 
     // If true, the test_shell will generate pixel results in dumpAsText mode
     bool m_generatePixelResults;
+
+    // If true, output a descriptive line each time WebViewClient::createView
+    // is invoked.
+    bool m_dumpCreateView;
 
     // If true, the element will be treated as editable. This value is returned
     // from various editing callbacks that are called just before edit operations

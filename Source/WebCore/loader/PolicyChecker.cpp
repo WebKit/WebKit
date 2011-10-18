@@ -59,7 +59,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
 {
     NavigationAction action = loader->triggeringAction();
     if (action.isEmpty()) {
-        action = NavigationAction(request.url(), NavigationTypeOther);
+        action = NavigationAction(request, NavigationTypeOther);
         loader->setTriggeringAction(action);
     }
 

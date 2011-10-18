@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpCreateView();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setCloseRemainingWindowsWhenComplete();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest() {
+    var link = document.getElementById("link");
+    var middleMouseButton = 1;
+    eventSender.mouseMoveTo(link.offsetLeft + 2, link.offsetTop + 2);
+    eventSender.mouseDown(middleMouseButton);
+    eventSender.mouseUp(middleMouseButton);
+}
+</script>
+</head>
+<body onload="runTest()">
+<div>
+    <p>
+        This test opens a new window by middle-clicking on a link with
+        target=_blank. It passes, if the WebViewClient::createView method was
+        invoked with the parameter "done.html".
+    </p>
+    <p>
+        <a href="resources/done.html" id="link" target="_blank">link</a>
+    </p>
+</div>
+</body>
+</html>
