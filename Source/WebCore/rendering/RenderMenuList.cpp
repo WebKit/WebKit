@@ -375,8 +375,8 @@ String RenderMenuList::itemText(unsigned listIndex) const
 
     String itemString;
     Element* element = listItems[listIndex];
-    if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element))
-        itemString = optionGroupElement->groupLabelText();
+    if (element->hasTagName(optgroupTag))
+        itemString = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
     else if (OptionElement* optionElement = toOptionElement(element))
         itemString = optionElement->textIndentedToRespectGroupLabel();
 
@@ -420,7 +420,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 
     bool groupEnabled = true;
     if (Element* parentElement = element->parentElement()) {
-        if (isOptionGroupElement(parentElement))
+        if (parentElement->hasTagName(optgroupTag))
             groupEnabled = !static_cast<HTMLOptGroupElement*>(parentElement)->disabled();
     }
     if (!groupEnabled)
@@ -549,7 +549,7 @@ bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 {
     const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
-    return listIndex < listItems.size() && isOptionGroupElement(listItems[listIndex]);
+    return listIndex < listItems.size() && listItems[listIndex]->hasTagName(optgroupTag);
 }
 
 bool RenderMenuList::itemIsSelected(unsigned listIndex) const

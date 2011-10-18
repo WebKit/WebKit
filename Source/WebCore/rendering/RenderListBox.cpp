@@ -43,10 +43,10 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "NodeRenderStyle.h"
-#include "OptionGroupElement.h"
 #include "OptionElement.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -116,8 +116,8 @@ void RenderListBox::updateFromElement()
             Font itemFont = style()->font();
             if (OptionElement* optionElement = toOptionElement(element))
                 text = optionElement->textIndentedToRespectGroupLabel();
-            else if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element)) {
-                text = optionGroupElement->groupLabelText();
+            else if (element->hasTagName(optgroupTag)) {
+                text = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
@@ -384,8 +384,8 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     String itemText;
     if (optionElement)
         itemText = optionElement->textIndentedToRespectGroupLabel();
-    else if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element))
-        itemText = optionGroupElement->groupLabelText();
+    else if (element->hasTagName(optgroupTag))
+        itemText = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
     Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
@@ -407,7 +407,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
-    if (isOptionGroupElement(element)) {
+    if (element->hasTagName(optgroupTag)) {
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());

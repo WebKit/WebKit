@@ -25,19 +25,18 @@
 #define HTMLOptGroupElement_h
 
 #include "HTMLFormControlElement.h"
-#include "OptionGroupElement.h"
 
 namespace WebCore {
     
 class HTMLSelectElement;
 
-class HTMLOptGroupElement : public HTMLFormControlElement, public OptionGroupElement {
+class HTMLOptGroupElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLOptGroupElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
     HTMLSelectElement* ownerSelectElement() const;
     
-    virtual String groupLabelText() const;
+    String groupLabelText() const;
 
 private:
     HTMLOptGroupElement(const QualifiedName&, Document*, HTMLFormElement*);

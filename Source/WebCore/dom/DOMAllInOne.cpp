@@ -98,7 +98,6 @@
 #include "NodeRenderingContext.cpp"
 #include "Notation.cpp"
 #include "OptionElement.cpp"
-#include "OptionGroupElement.cpp"
 #include "OverflowEvent.cpp"
 #include "PageTransitionEvent.cpp"
 #include "PendingScript.cpp"

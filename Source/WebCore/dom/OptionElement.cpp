@@ -24,14 +24,16 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
-#include "OptionGroupElement.h"
 #include "ScriptElement.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 void OptionElement::setSelectedState(OptionElementData& data, Element* element, bool selected)
 {
@@ -109,7 +111,7 @@ String OptionElement::normalizeText(const Document* document, const String& src)
 String OptionElement::collectOptionTextRespectingGroupLabel(const OptionElementData& data, const Element* element)
 {
     Element* parentElement = static_cast<Element*>(element->parentNode());
-    if (parentElement && toOptionGroupElement(parentElement))
+    if (parentElement && parentElement->hasTagName(optgroupTag))
         return "    " + collectOptionLabelOrText(data, element);
 
     return collectOptionLabelOrText(data, element);

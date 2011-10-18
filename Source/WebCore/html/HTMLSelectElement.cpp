@@ -37,11 +37,11 @@
 #include "Frame.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
-#include "OptionGroupElement.h"
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
@@ -679,7 +679,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
-        if (isOptionGroupElement(current)) {
+        if (current->hasTagName(optgroupTag)) {
             m_listItems.append(current);
             if (current->firstChild()) {
                 currentNode = current->firstChild();

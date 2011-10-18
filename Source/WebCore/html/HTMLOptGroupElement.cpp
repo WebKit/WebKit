@@ -141,5 +141,5 @@ void HTMLOptGroupElement::accessKeyAction(bool)
     if (select && !select->focused())
         select->accessKeyAction(false);
 }
-    
+
 } // namespace

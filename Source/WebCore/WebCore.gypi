@@ -5248,8 +5248,6 @@
             'dom/Notation.h',
             'dom/OptionElement.cpp',
             'dom/OptionElement.h',
-            'dom/OptionGroupElement.cpp',
-            'dom/OptionGroupElement.h',
             'dom/OverflowEvent.cpp',
             'dom/OverflowEvent.h',
             'dom/PageTransitionEvent.cpp',
