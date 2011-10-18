@@ -1,3 +1,17 @@
+2011-10-17  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor bypass with remote script ending in ? character
+        https://bugs.webkit.org/show_bug.cgi?id=70255
+
+        Reviewed by Daniel Bates.
+
+        Fix XSSAuditor bypass where unterminated src="" attribute could pick up
+        text from page causing failed XSS detection.  Constrain match to domain
+        portions of src attribute only.
+
+        * http/tests/security/xssAuditor/script-tag-with-source-unterminated-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-unterminated.html: Added.
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

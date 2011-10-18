@@ -1,3 +1,27 @@
+2011-10-17  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor bypass with remote script ending in ? character
+        https://bugs.webkit.org/show_bug.cgi?id=70255
+
+        Reviewed by Daniel Bates.
+
+        Fix XSSAuditor bypass where unterminated src="" attribute could pick up
+        text from page causing failed XSS detection.  Constrain match to domain
+        portions of src attribute only.
+
+        Test: http/tests/security/xssAuditor/script-tag-with-source-unterminated.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterScriptToken):
+        (WebCore::XSSAuditor::filterObjectToken):
+        (WebCore::XSSAuditor::filterParamToken):
+        (WebCore::XSSAuditor::filterEmbedToken):
+        (WebCore::XSSAuditor::filterAppletToken):
+        (WebCore::XSSAuditor::filterIframeToken):
+        (WebCore::XSSAuditor::eraseAttributeIfInjected):
+        (WebCore::XSSAuditor::decodedSnippetForAttribute):
+        * html/parser/XSSAuditor.h:
+
 2011-10-17  Adam Klein  <adamk@chromium.org>
 
         Parse MutationObserverOptions directly into a bitfield

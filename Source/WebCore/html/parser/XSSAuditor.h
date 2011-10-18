@@ -48,6 +48,11 @@ private:
         AfterScriptStartTag,
     };
 
+    enum AttributeKind {
+        NormalAttribute,
+        SrcLikeAttribute
+    };
+
     void init();
 
     bool filterTokenInitial(HTMLToken&);
@@ -64,11 +69,11 @@ private:
     bool filterFormToken(HTMLToken&);
 
     bool eraseDangerousAttributesIfInjected(HTMLToken&);
-    bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&, const String& replacementValue = String());
+    bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&, const String& replacementValue = String(), AttributeKind treatment = NormalAttribute);
 
     String snippetForRange(const HTMLToken&, int start, int end);
     String snippetForJavaScript(const String&);
-    String decodedSnippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&);
+    String decodedSnippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&, AttributeKind treatment = NormalAttribute);
 
     bool isContainedInRequest(const String&);
     bool isSameOriginResource(const String& url);
