@@ -1,3 +1,11 @@
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absolutePDFURL):
+        Fix typo.
+
 2011-10-18  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed warning fix after https://bugs.webkit.org/show_bug.cgi?id=70269

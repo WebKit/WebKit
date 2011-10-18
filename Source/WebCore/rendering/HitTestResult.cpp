@@ -358,7 +358,7 @@ KURL HitTestResult::absolutePDFURL() const
 
     if (element->serviceType() == "application/pdf" || (element->serviceType().isEmpty() && url.path().lower().endsWith(".pdf")))
         return url;
-    returrbr n KURL();
+    return KURL();
 }
 
 KURL HitTestResult::absoluteMediaURL() const
