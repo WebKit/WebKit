@@ -36,6 +36,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKHitTestResultGetTypeID();
 
 WK_EXPORT WKURLRef WKHitTestResultCopyAbsoluteImageURL(WKHitTestResultRef hitTestResult);
+WK_EXPORT WKURLRef WKHitTestResultCopyAbsolutePDFURL(WKHitTestResultRef hitTestResult);
 WK_EXPORT WKURLRef WKHitTestResultCopyAbsoluteLinkURL(WKHitTestResultRef hitTestResult);
 WK_EXPORT WKURLRef WKHitTestResultCopyAbsoluteMediaURL(WKHitTestResultRef hitTestResult);
 

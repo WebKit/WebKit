@@ -498,6 +498,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
 
     WebHitTestResult::Data webHitTestResultData;
     webHitTestResultData.absoluteImageURL = hitTestResult.absoluteImageURL().string();
+    webHitTestResultData.absolutePDFURL = hitTestResult.absolutePDFURL().string();
     webHitTestResultData.absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
     webHitTestResultData.absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
     webHitTestResultData.linkLabel = hitTestResult.textContent();

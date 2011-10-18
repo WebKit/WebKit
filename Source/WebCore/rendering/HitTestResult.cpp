@@ -32,6 +32,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPlugInImageElement.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -340,6 +341,24 @@ KURL HitTestResult::absoluteImageURL() const
         return KURL();
 
     return m_innerNonSharedNode->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+}
+
+KURL HitTestResult::absolutePDFURL() const
+{
+    if (!(m_innerNonSharedNode && m_innerNonSharedNode->document()))
+        return KURL();
+
+    if (!m_innerNonSharedNode->hasTagName(embedTag) && !m_innerNonSharedNode->hasTagName(objectTag))
+        return KURL();
+
+    HTMLPlugInImageElement* element = static_cast<HTMLPlugInImageElement*>(m_innerNonSharedNode.get());
+    KURL url = m_innerNonSharedNode->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(element->url()));
+    if (!url.isValid())
+        return KURL();
+
+    if (element->serviceType() == "application/pdf" || (element->serviceType().isEmpty() && url.path().lower().endsWith(".pdf")))
+        return url;
+    returrbr n KURL();
 }
 
 KURL HitTestResult::absoluteMediaURL() const

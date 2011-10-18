@@ -59,6 +59,11 @@ WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitT
     return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteImageURL());
 }
 
+WKURLRef WKBundleHitTestResultCopyAbsolutePDFURL(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedURLAPI(toImpl(hitTestResultRef)->absolutePDFURL());
+}
+
 WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteLinkURL());

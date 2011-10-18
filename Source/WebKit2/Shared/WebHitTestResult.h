@@ -43,6 +43,7 @@ public:
 
     struct Data {
         String absoluteImageURL;
+        String absolutePDFURL;
         String absoluteLinkURL;
         String absoluteMediaURL;
         String linkLabel;
@@ -55,6 +56,7 @@ public:
     static PassRefPtr<WebHitTestResult> create(const WebHitTestResult::Data&);
 
     String absoluteImageURL() const { return m_data.absoluteImageURL; }
+    String absolutePDFURL() const { return m_data.absolutePDFURL; }
     String absoluteLinkURL() const { return m_data.absoluteLinkURL; }
     String absoluteMediaURL() const { return m_data.absoluteMediaURL; }
 

@@ -37,6 +37,7 @@ PassRefPtr<WebHitTestResult> WebHitTestResult::create(const WebHitTestResult::Da
 void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(absoluteImageURL);
+    encoder->encode(absolutePDFURL);
     encoder->encode(absoluteLinkURL);
     encoder->encode(absoluteMediaURL);
     encoder->encode(linkLabel);
@@ -46,6 +47,7 @@ void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTestResult::Data& hitTestResultData)
 {
     if (!decoder->decode(hitTestResultData.absoluteImageURL)
+        || !decoder->decode(hitTestResultData.absolutePDFURL)
         || !decoder->decode(hitTestResultData.absoluteLinkURL)
         || !decoder->decode(hitTestResultData.absoluteMediaURL)
         || !decoder->decode(hitTestResultData.linkLabel)
