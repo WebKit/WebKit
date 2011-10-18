@@ -231,9 +231,9 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].get(), DontEnum);
+            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].get(), None);
         } else
-            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].get(), DontEnum);
+            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].get(), None);
         return true;
     }
     
@@ -258,11 +258,11 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
 
 void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    for (unsigned i = 0; i < d->numArguments; ++i) {
+        if (!d->deletedArguments || !d->deletedArguments[i])
+            propertyNames.add(Identifier(exec, UString::number(i)));
+    }
     if (mode == IncludeDontEnumProperties) {
-        for (unsigned i = 0; i < d->numArguments; ++i) {
-            if (!d->deletedArguments || !d->deletedArguments[i])
-                propertyNames.add(Identifier(exec, UString::number(i)));
-        }
         propertyNames.add(exec->propertyNames().callee);
         propertyNames.add(exec->propertyNames().length);
     }

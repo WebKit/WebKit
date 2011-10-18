@@ -1,3 +1,19 @@
+2011-10-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Indexed arguments on the Arguments object should be enumerable.
+        https://bugs.webkit.org/show_bug.cgi?id=70302
+
+        Reviewed by Sam Weinig.
+
+        See ECMA-262 5.1 chapter 10.6 step 11b.
+        This is visible through a number of means, including Object.keys, Object.getOwnPropertyDescriptor, and operator in.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertyDescriptor):
+            - The 'enumerable' property should be true for indexed arguments.
+        (JSC::Arguments::getOwnPropertyNames):
+            - Don't guard the adding of indexed properties with 'IncludeDontEnumProperties'.
+
 2011-10-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Fix distcheck.
