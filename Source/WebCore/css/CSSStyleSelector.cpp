@@ -2174,7 +2174,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
     if (startIndex == -1)
         return;
 
-    if (m_element->isLink()) {
+    if (m_element && m_element->isLink()) {
         for (int i = startIndex; i <= endIndex; ++i) {
             CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration;
             unsigned linkMatchType = m_matchedDecls[i].linkMatchType;
