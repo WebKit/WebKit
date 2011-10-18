@@ -1,3 +1,17 @@
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Add missing baselines for fast/selectors/visited-descendant.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-cg-mac-leopard/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-linux/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-win/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/chromium-win/fast/selectors/visited-descendant-expected.txt: Added.
+
 2011-10-18  Adam Klein  <adamk@chromium.org>
 
         Corrected bad cut-and-paste in MutationObserver test description.
