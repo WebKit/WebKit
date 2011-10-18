@@ -38,9 +38,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     CCSettings settings;
     settings.acceleratePainting = acceleratePainting;
     settings.compositeOffscreen = compositeOffscreen;
-
-    // FIXME: compositor thread isn't supported currently.
-    settings.enableCompositorThread = false;
+    settings.enableCompositorThread = enableCompositorThread;
 
     // FIXME: showFPSCounter / showPlatformLayerTree aren't supported currently.
     settings.showFPSCounter = false;
@@ -70,9 +68,10 @@ bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
 
 void WebLayerTreeView::composite()
 {
-#if !USE(THREADED_COMPOSITING)
-    m_private->composite();
-#endif
+    if (m_private->settings().enableCompositorThread)
+        m_private->setNeedsCommitThenRedraw();
+    else
+        m_private->composite();
 }
 
 void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)

@@ -1,3 +1,14 @@
+2011-10-18  Antoine Labour  <piman@chromium.org>
+
+        Enable out-of-thread compositing in WebKit compositor API
+        https://bugs.webkit.org/show_bug.cgi?id=69850
+
+        Reviewed by James Robinson.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::composite):
+
 2011-10-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests
