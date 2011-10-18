@@ -167,10 +167,10 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& property
 
 void RuntimeArray::putVirtual(ExecState* exec, unsigned index, JSValue value)
 {
-    put(this, exec, index, value);
+    putByIndex(this, exec, index, value);
 }
 
-void RuntimeArray::put(JSCell* cell, ExecState* exec, unsigned index, JSValue value)
+void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value)
 {
     RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {

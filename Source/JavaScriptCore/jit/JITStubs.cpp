@@ -2610,7 +2610,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
             if (jsArray->canSetIndex(i))
                 jsArray->setIndex(*globalData, i, value);
             else
-                JSArray::put(jsArray, callFrame, i, value);
+                JSArray::putByIndex(jsArray, callFrame, i, value);
         } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
             ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val_byte_array));

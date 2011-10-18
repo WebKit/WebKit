@@ -1,3 +1,51 @@
+2011-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static put to putByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70281
+
+        Reviewed by Geoffrey Garen.
+
+        Renaming versions of deleteProperty that use an unsigned as the property
+        name to "deletePropertyByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::putVirtual):
+        (JSC::Arguments::putByIndex):
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncMap):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        (JSC::JSArray::putVirtual):
+        (JSC::JSArray::putByIndex):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::putVirtual):
+        (JSC::JSByteArray::putByIndex):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::putVirtual):
+        (JSC::JSCell::putByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::putVirtual):
+        (JSC::JSNotAnObject::putByIndex):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putVirtual):
+        (JSC::JSObject::putByIndex):
+        * runtime/JSObject.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::fillArrayInstance):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::putVirtual):
+        (JSC::RegExpMatchesArray::putByIndex):
+
 2011-10-18  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype methods missing exception checks

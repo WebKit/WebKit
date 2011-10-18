@@ -772,7 +772,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
             cachedCall.setArgument(1, jsNumber(k));
             cachedCall.setArgument(2, thisObj);
 
-            JSArray::put(resultArray, exec, k, cachedCall.call());
+            JSArray::putByIndex(resultArray, exec, k, cachedCall.call());
         }
     }
     for (; k < length && !exec->hadException(); ++k) {

@@ -96,7 +96,7 @@ namespace JSC {
         virtual void putVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
         static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
         virtual void putVirtual(JSC::ExecState*, unsigned propertyName, JSC::JSValue);
-        static void put(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);
+        static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);
 
         virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 

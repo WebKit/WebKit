@@ -115,10 +115,10 @@ void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JS
 
 void JSCell::putVirtual(ExecState* exec, unsigned identifier, JSValue value)
 {
-    put(this, exec, identifier, value);
+    putByIndex(this, exec, identifier, value);
 }
 
-void JSCell::put(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value)
+void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value)
 {
     cell->toObject(exec, exec->lexicalGlobalObject())->putVirtual(exec, identifier, value);
 }

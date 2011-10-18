@@ -91,15 +91,15 @@ namespace JSC {
         
         virtual void putVirtual(ExecState* exec, unsigned propertyName, JSValue v)
         {
-            put(this, exec, propertyName, v);
+            putByIndex(this, exec, propertyName, v);
         }
         
-        static void put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v)
+        static void putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v)
         {
             RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
-            JSArray::put(thisObject, exec, propertyName, v);
+            JSArray::putByIndex(thisObject, exec, propertyName, v);
         }
 
         virtual bool deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)

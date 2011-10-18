@@ -86,10 +86,10 @@ void JSNotAnObject::put(JSCell*, ExecState* exec, const Identifier& , JSValue, P
 
 void JSNotAnObject::putVirtual(ExecState* exec, unsigned i, JSValue value)
 {
-    put(this, exec, i, value);
+    putByIndex(this, exec, i, value);
 }
 
-void JSNotAnObject::put(JSCell*, ExecState* exec, unsigned, JSValue)
+void JSNotAnObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }

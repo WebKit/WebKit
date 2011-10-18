@@ -198,10 +198,10 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
 
 void JSObject::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)
 {
-    put(this, exec, propertyName, value);
+    putByIndex(this, exec, propertyName, value);
 }
 
-void JSObject::put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
     PutPropertySlot slot;
     static_cast<JSObject*>(cell)->putVirtual(exec, Identifier::from(exec, propertyName), value, slot);

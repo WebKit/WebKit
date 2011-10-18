@@ -96,7 +96,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
             return;
         }
 
-        JSArray::put(array, exec, index, value);
+        JSArray::putByIndex(array, exec, index, value);
         return;
     }
 
@@ -357,7 +357,7 @@ void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* 
 {
     // We should only get here if index is outside the existing vector.
     ASSERT(!array->canSetIndex(index));
-    JSArray::put(array, exec, index, JSValue::decode(encodedValue));
+    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue));
 }
 
 EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)

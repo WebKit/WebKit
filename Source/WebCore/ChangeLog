@@ -1,3 +1,24 @@
+2011-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static put to putByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70281
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Renaming versions of deleteProperty that use an unsigned as the property
+        name to "deletePropertyByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::putVirtual):
+        (JSC::RuntimeArray::putByIndex):
+        * bridge/runtime_array.h:
+
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
         Fix the build.

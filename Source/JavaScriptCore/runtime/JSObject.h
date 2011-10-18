@@ -109,7 +109,7 @@ namespace JSC {
         virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual void putVirtual(ExecState*, unsigned propertyName, JSValue);
-        static void put(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         virtual void putWithAttributes(JSGlobalData*, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot);
         virtual void putWithAttributes(JSGlobalData*, const Identifier& propertyName, JSValue value, unsigned attributes);

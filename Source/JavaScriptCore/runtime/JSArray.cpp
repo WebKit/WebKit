@@ -346,7 +346,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
-        put(thisObject, exec, i, value);
+        putByIndex(thisObject, exec, i, value);
         return;
     }
 
@@ -365,10 +365,10 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
 
 void JSArray::putVirtual(ExecState* exec, unsigned i, JSValue value)
 {
-    put(this, exec, i, value);
+    putByIndex(this, exec, i, value);
 }
 
-void JSArray::put(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
+void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
     JSArray* thisObject = static_cast<JSArray*>(cell);
     thisObject->checkConsistency();

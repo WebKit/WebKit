@@ -271,10 +271,10 @@ void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& property
 
 void Arguments::putVirtual(ExecState* exec, unsigned i, JSValue value)
 {
-    put(this, exec, i, value);
+    putByIndex(this, exec, i, value);
 }
 
-void Arguments::put(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
+void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
     if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {

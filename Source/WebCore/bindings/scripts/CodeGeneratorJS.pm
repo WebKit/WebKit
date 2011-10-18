@@ -798,7 +798,7 @@ sub GenerateHeader
         push(@headerContent, "    virtual void putVirtual(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    virtual void putVirtual(JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
-        push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
+        push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     }
 
@@ -1796,9 +1796,9 @@ sub GenerateImplementation
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "void ${className}::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    put(this, exec, propertyName, value);\n");
+                push(@implContent, "    putByIndex(this, exec, propertyName, value);\n");
                 push(@implContent, "}\n\n");
-                push(@implContent, "void ${className}::put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)\n");
+                push(@implContent, "void ${className}::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");

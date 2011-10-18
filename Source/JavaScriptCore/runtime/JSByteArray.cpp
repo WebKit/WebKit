@@ -116,10 +116,10 @@ void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
 
 void JSByteArray::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)
 {
-    put(this, exec, propertyName, value);
+    putByIndex(this, exec, propertyName, value);
 }
 
-void JSByteArray::put(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+void JSByteArray::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
     static_cast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
 }
