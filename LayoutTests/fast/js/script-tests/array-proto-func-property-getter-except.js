@@ -36,11 +36,11 @@ shouldBeTrue("test(Array.prototype.reduceRight)");
 shouldBeTrue("test(Array.prototype.join)");
 shouldBeTrue("test(Array.prototype.pop)");
 shouldBeFalse("test(Array.prototype.push)");
-shouldBeFalse("test(Array.prototype.reverse)");
-shouldBeFalse("test(Array.prototype.shift)");
+shouldBeTrue("test(Array.prototype.reverse)");
+shouldBeTrue("test(Array.prototype.shift)");
 shouldBeTrue("test(Array.prototype.slice)");
 shouldBeTrue("test(Array.prototype.splice)");
-shouldBeFalse("test(Array.prototype.unshift)");
+shouldBeTrue("test(Array.prototype.unshift)");
 shouldBeTrue("test(Array.prototype.indexOf)");
 shouldBeTrue("test(Array.prototype.lastIndexOf)");
 

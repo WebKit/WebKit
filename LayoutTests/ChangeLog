@@ -1,3 +1,28 @@
+2011-10-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Array.prototype methods missing exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=70360
+
+        Reviewed by Geoff Garen.
+
+        Missing exception checks after calls to the static getProperty helper,
+        these may result in the wrong exception being thrown (or an ASSERT being hit,
+        as is currently the case running test-262).
+
+        * fast/js/array-proto-func-property-getter-except-expected.txt:
+        * fast/js/script-tests/array-proto-func-property-getter-except.js:
+            - The test results that change were only testing for an absence of a crash; the new results are correct
+              (the first exception thrown should be the one returned).
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T6-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T8-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T9-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.11_String.prototype.replace/S15.5.4.11_A1_T11-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.11_String.prototype.replace/S15.5.4.11_A1_T12-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A1_T4-expected.txt:
+            - Check in passing results.
+
 2011-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         Add missing baselines for fast/selectors/visited-descendant.
