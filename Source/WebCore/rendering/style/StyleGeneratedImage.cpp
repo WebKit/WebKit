@@ -58,6 +58,14 @@ IntSize StyleGeneratedImage::imageSize(const RenderObject* renderer, float multi
     return m_containerSize;
 }
 
+void StyleGeneratedImage::computeIntrinsicDimensions(const RenderObject* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    IntSize size = imageSize(renderer, 1);
+    intrinsicWidth = Length(size.width(), Fixed);
+    intrinsicHeight = Length(size.height(), Fixed);
+    intrinsicRatio = size;
+}
+
 void StyleGeneratedImage::addClient(RenderObject* renderer)
 {
     m_generator->addClient(renderer, IntSize());

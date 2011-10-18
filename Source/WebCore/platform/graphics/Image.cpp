@@ -31,6 +31,7 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include <math.h>
@@ -166,5 +167,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     startAnimation();
 }
 
+void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    intrinsicRatio = size();
+    intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
+    intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
+}
 
 }

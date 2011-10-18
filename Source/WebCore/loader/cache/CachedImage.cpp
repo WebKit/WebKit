@@ -241,6 +241,12 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     return IntSize(width, height);
 }
 
+void CachedImage::computeIntrinsicDimensions(const RenderObject* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    if (Image* image = lookupImageForRenderer(renderer))
+        image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+}
+
 void CachedImage::notifyObservers(const IntRect* changeRect)
 {
     CachedResourceClientWalker<CachedImageClient> w(m_clients);

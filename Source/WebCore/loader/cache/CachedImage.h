@@ -34,6 +34,8 @@
 namespace WebCore {
 
 class CachedResourceLoader;
+class Length;
+class FloatSize;
 class MemoryCache;
 class RenderObject;
 
@@ -64,6 +66,7 @@ public:
     
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
+    void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual void didAddClient(CachedResourceClient*);
     

@@ -47,6 +47,7 @@ public:
     virtual IntSize imageSize(const RenderObject*, float /*multiplier*/) const { return IntSize(); }
     virtual bool imageHasRelativeWidth() const { return false; }
     virtual bool imageHasRelativeHeight() const { return false; }
+    virtual void computeIntrinsicDimensions(const RenderObject*, Length& /* intrinsicWidth */ , Length& /* intrinsicHeight */, FloatSize& /* intrinsicRatio */) { }
     virtual bool usesImageContainerSize() const { return false; }
     virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&) { }
     virtual void addClient(RenderObject*) { }

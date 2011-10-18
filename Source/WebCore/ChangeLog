@@ -1,3 +1,44 @@
+2011-10-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Prepare SVGImage intrinsic size negotiation: Add intrinsic size & ratio calculation functionality to Image
+        https://bugs.webkit.org/show_bug.cgi?id=70314
+
+        Reviewed by Antti Koivisto.
+
+        Add a "void computeIntrinsicDimension(Length& intrinsicWidth, Lengt& intrinsicHeight, FloatSize& intrinsicRatio)" helper method
+        to Image/GeneratedImage/SVGImage and make it accessible through StyleImage.
+
+        For a regular Image the intrinsicWidth/Height contains just a Length(size().width(), Fixed). In contrary SVGImages pass on the
+        style()->width()/height() values from the render style of the RenderSVGRoot renderer. These information are needed to implement
+        the size negotiation between embedded SVG images and the embedder.
+
+        No new tests, as this new functionality is not yet used.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::computeIntrinsicDimensions):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::computeIntrinsicDimensions):
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::computeIntrinsicDimensions):
+        * platform/graphics/Image.h:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::computeIntrinsicDimensions):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::computeIntrinsicDimensions):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::computeIntrinsicDimensions):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::computeIntrinsicDimensions):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::computeIntrinsicDimensions):
+        * svg/graphics/SVGImage.h:
+
 2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Chromium] Different dimensions are reported for elements onscreen and in the Metrics pane

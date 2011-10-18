@@ -64,6 +64,11 @@ bool StyleCachedImage::imageHasRelativeHeight() const
     return m_image->imageHasRelativeHeight();
 }
 
+void StyleCachedImage::computeIntrinsicDimensions(const RenderObject* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    m_image->computeIntrinsicDimensions(renderer, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+}
+
 bool StyleCachedImage::usesImageContainerSize() const
 {
     return m_image->usesImageContainerSize();

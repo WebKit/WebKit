@@ -213,6 +213,24 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
         imageObserver()->didDraw(this);
 }
 
+void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    if (!m_page)
+        return;
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
+    if (!rootElement)
+        return;
+    RenderBox* renderer = toRenderBox(rootElement->renderer());
+    if (!renderer)
+        return;
+
+    intrinsicWidth = renderer->style()->width();
+    intrinsicHeight = renderer->style()->height();
+    // FIXME: Add intrinsicRatio calculation from webkit.org/b/47156.
+    intrinsicRatio = FloatSize();
+}
+
 NativeImagePtr SVGImage::nativeImageForCurrentFrame()
 {
     // FIXME: In order to support dynamic SVGs we need to have a way to invalidate this

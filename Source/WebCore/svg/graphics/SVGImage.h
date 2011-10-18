@@ -55,6 +55,7 @@ private:
     virtual bool usesContainerSize() const;
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;
+    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual IntSize size() const;
 

@@ -53,6 +53,7 @@ public:
     virtual bool isLoaded() const { return true; }
     virtual bool errorOccurred() const { return false; }
     virtual IntSize imageSize(const RenderObject*, float multiplier) const = 0;
+    virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual bool usesImageContainerSize() const = 0;

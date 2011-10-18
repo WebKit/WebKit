@@ -71,6 +71,7 @@ class FloatPoint;
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
+class Length;
 class SharedBuffer;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -98,11 +99,11 @@ public:
     static Image* nullImage();
     bool isNull() const { return size().isEmpty(); }
 
-    // These are only used for SVGImage right now
     virtual void setContainerSize(const IntSize&) { }
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasRelativeWidth() const { return false; }
     virtual bool hasRelativeHeight() const { return false; }
+    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual IntSize size() const = 0;
     IntRect rect() const { return IntRect(IntPoint(), size()); }

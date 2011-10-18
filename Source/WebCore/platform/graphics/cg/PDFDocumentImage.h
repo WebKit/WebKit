@@ -59,6 +59,7 @@ namespace WebCore {
         virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
         virtual unsigned decodedSize() const { return 0; }
 
+        virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
         virtual IntSize size() const;
 
         PDFDocumentImage();

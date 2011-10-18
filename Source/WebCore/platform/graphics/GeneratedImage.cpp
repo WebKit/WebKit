@@ -29,8 +29,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-
-using namespace std;
+#include "Length.h"
 
 namespace WebCore {
 
@@ -65,6 +64,12 @@ void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcR
 
     // Tile the image buffer into the context.
     imageBuffer->drawPattern(context, adjustedSrcRect, patternTransform, phase, styleColorSpace, compositeOp, destRect);
+}
+
+void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+{
+    Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    intrinsicRatio = FloatSize();
 }
 
 }
