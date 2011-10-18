@@ -1,3 +1,11 @@
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove expectations for tests that are no longer failing.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-18  Dan Bernstein  <mitz@apple.com>
 
         Certain column-rule styles render incorrectly in vertical writing modes

@@ -767,12 +767,6 @@ BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
 BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // probably just need rebaselining.
-//BUGCR73923 : fullscreen = TIMEOUT FAIL
-BUGCR73923 : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
-BUGCR73923 WIN LINUX : fullscreen/full-screen-render-inline.html = IMAGE
-BUGCR73923 : fullscreen/full-screen-stacking-context.html = IMAGE
-BUGCR73923 WIN LINUX : fullscreen/parent-flow-inline-with-block-child.html = IMAGE
-BUGCR73923 : fullscreen/video-controls-override.html = TEXT
 BUGCR73923 MAC : fullscreen/full-screen-iframe-zIndex.html = IMAGE
 BUGCR73923 MAC : fullscreen/full-screen-zIndex-after.html = IMAGE
 
@@ -2916,7 +2910,7 @@ BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
 
 // Regression caused by r83669. Seems to be V8 related.
-BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
+BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = PASS TEXT
 
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
@@ -3829,7 +3823,6 @@ BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
-BUGWK70069 : http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php = MISSING
 BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
 
 // Flaky tests from ~r97647
