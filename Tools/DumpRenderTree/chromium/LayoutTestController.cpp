@@ -601,6 +601,7 @@ void LayoutTestController::reset()
     }
     m_dumpAsText = false;
     m_dumpAsAudio = false;
+    m_dumpCreateView = false;
     m_dumpEditingCallbacks = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpProgressFinishedCallback = false;
