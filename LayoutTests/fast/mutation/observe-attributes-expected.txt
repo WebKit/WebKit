@@ -1,4 +1,4 @@
-Test the constructor of WebKitMutationObserver
+Test WebKitMutationObserver.observe on attributes
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
