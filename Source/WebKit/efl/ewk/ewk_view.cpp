@@ -3294,11 +3294,6 @@ void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coo
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
-    if (!priv->main_frame->contentRenderer()) {
-        ERR("no main frame content renderer.");
-        return;
-    }
-
     _ewk_view_repaint_add(priv, x, y, width, height);
     _ewk_view_smart_changed(sd);
 }

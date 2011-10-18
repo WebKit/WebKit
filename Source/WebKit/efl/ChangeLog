@@ -1,5 +1,22 @@
 2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Do not check for Frame::contentRenderer() in ewk_view_repaint.
+        https://bugs.webkit.org/show_bug.cgi?id=70118
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When we have a scrollbar with an actual width, there might be a call
+        to ChromeClientEfl::invalidateContentsAndWindow() after
+        Document::detach() was called, making the call to contentRenderer()
+        return 0 even though everything is fine.
+
+        Example test case: animations/animation-shorthand.html.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_repaint):
+
+2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Set a default charset when creating a view.
         https://bugs.webkit.org/show_bug.cgi?id=69771
 
