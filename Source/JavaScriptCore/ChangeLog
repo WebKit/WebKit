@@ -1,3 +1,10 @@
+2011-10-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix distcheck.
+
+        * GNUmakefile.list.am: fix a typo and add a missing header to the
+        list.
+
 2011-10-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         ParallelJobs: maximum number of threads should be determined dynamically

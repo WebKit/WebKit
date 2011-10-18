@@ -49,6 +49,8 @@ MOFILES += $(shell echo $(POFILES) | tr ' ' '\n' | sed "s,^$(srcdir)/,,g" | sed 
 # $(POFILES) has been designed to not touch files that don't need to be
 # changed.
 stamp-po: $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot $(MOFILES)
+	test ! -d $(top_builddir)/Source/WebKit/gtk/po || \
+	 mkdir -p $(top_builddir)/Source/WebKit/gtk/po
 	test ! -f $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot || \
 	  test -z "$(MOFILES)" || $(MAKE) $(MOFILES)
 	@test ! -f $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot || { \
@@ -60,6 +62,7 @@ stamp-po: $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot $(MOFILES)
 # This target rebuilds $(DOMAIN).pot; it is an expensive operation.
 # Note that $(DOMAIN).pot is not touched if it doesn't need to be changed.
 $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/Source/WebKit/gtk/po/POTFILES
+	test -d Source/WebKit/gtk/po/ || mkdir -p Source/WebKit/gtk/po/
 	package_gnu=''; \
 	if test -n '$(MSGID_BUGS_ADDRESS)' || test '$(PACKAGE_BUGREPORT)' = '@'PACKAGE_BUGREPORT'@'; then \
 	  msgid_bugs_address='$(MSGID_BUGS_ADDRESS)'; \
