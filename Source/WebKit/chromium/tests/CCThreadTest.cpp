@@ -32,7 +32,6 @@
 #include "WebThread.h"
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCMainThreadTask.h"
-#include "cc/CCScopedMainThreadProxy.h"
 #include "cc/CCThreadTask.h"
 
 #include <gtest/gtest.h>
@@ -72,14 +71,9 @@ TEST(CCThreadTest, pingPongUsingCondition)
 
 class PingPongTestUsingTasks {
 public:
-    PingPongTestUsingTasks()
-        : m_mainThreadProxy(CCScopedMainThreadProxy::create())
-    {
-    }
-
     void ping()
     {
-        m_mainThreadProxy->postTask(createMainThreadTask(this, &PingPongTestUsingTasks::pong));
+        CCMainThread::postTask(createMainThreadTask(this, &PingPongTestUsingTasks::pong));
         hit = true;
     }
 
@@ -90,9 +84,6 @@ public:
     }
 
     bool hit;
-
-private:
-    RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
 };
 
 #if OS(WINDOWS) || OS(MAC_OS_X)

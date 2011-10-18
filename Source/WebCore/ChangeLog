@@ -1,3 +1,22 @@
+2011-10-17  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r97690.
+        http://trac.webkit.org/changeset/97690
+        https://bugs.webkit.org/show_bug.cgi?id=70161
+
+        Hits assertion in CCLayerTreeHostTests
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCMainThread.h:
+        * platform/graphics/chromium/cc/CCMainThreadTask.h:
+        (WebCore::createMainThreadTask):
+        * platform/graphics/chromium/cc/CCScopedMainThreadProxy.h: Removed.
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxySchedulerClient::scheduleBeginFrameAndCommit):
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::stop):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove colSpan / rowSpan caching from RenderTableCell

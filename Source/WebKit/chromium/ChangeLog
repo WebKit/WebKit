@@ -1,5 +1,26 @@
 2011-10-17  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed, rolling out r97690.
+        http://trac.webkit.org/changeset/97690
+        https://bugs.webkit.org/show_bug.cgi?id=70161
+
+        Hits assertion in CCLayerTreeHostTests
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::testTimeout):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTest::endTest):
+        (WTF::CCLayerTreeHostTestThreadOnly::runTest):
+        (WTF::TEST_F):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::commitCompleteOnCCThread):
+        * tests/CCThreadTest.cpp:
+        (WebKit::PingPongTestUsingTasks::ping):
+
+2011-10-17  James Robinson  <jamesr@chromium.org>
+
         [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests
         https://bugs.webkit.org/show_bug.cgi?id=70161
 

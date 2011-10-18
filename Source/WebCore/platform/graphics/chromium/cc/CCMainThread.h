@@ -29,10 +29,7 @@
 
 namespace WebCore {
 
-class CCScopedMainThreadProxy;
-
 // Task wrapper around WTF::callOnMainThreadThread
-// To post a Task to run on the main thread, see CCScopedMainThreadProxy.
 class CCMainThread {
 public:
     class Task {
@@ -47,12 +44,8 @@ public:
     };
 
     static void initialize();
+    static void postTask(PassOwnPtr<Task>); // Executes the task on main thread asynchronously.
 private:
-    friend class CCScopedMainThreadProxy;
-    // Executes the task on main thread asynchronously.
-    // Only visible to CCScopedMainThreadProxy.
-    static void postTask(PassOwnPtr<Task>);
-
     static void performTask(void*);
 };
 
