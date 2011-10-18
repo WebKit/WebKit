@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    // This file should not match search query.
+    var text = "searchTest" + "UniqueString";
+    InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+
+    function step2()
+    {
+        var resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        var url = "http://127.0.0.1:8000/inspector/search/resources/non-existing.js";
+        PageAgent.searchInResource(resource.frameId, url, text, step3);
+    }
+
+    function step3(error, searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests single resource search in inspector page agent with non existing resource url does not cause a crash.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=69767">Bug 69767</a>
+
+<iframe src="resources/search.html" onload="runTest()">
+</body>
+</html>

@@ -503,7 +503,8 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
 
     if (!success) {
         CachedResource* resource = cachedResource(frame, kurl);
-        success = textContentForCachedResource(resource, &content);
+        if (resource)
+            success = textContentForCachedResource(resource, &content);
     }
 
     if (!success)

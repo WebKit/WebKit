@@ -1,3 +1,15 @@
+2011-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Search in resource crashes when there is no resource with given url.
+        https://bugs.webkit.org/show_bug.cgi?id=69767
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/search/search-in-non-existing-resource.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResource):
+
 2011-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions]Change content:-webkit-from-flow to -webkit-flow-from
