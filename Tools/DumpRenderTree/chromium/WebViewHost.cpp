@@ -34,6 +34,7 @@
 #include "LayoutTestController.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
+#include "TestWebPlugin.h"
 #include "TestWebWorker.h"
 #include "WebCString.h"
 #include "WebCompositor.h"
@@ -49,6 +50,7 @@
 #include "WebKit.h"
 #include "WebKitPlatformSupport.h"
 #include "WebNode.h"
+#include "WebPluginParams.h"
 #include "WebPopupMenu.h"
 #include "WebPopupType.h"
 #include "WebRange.h"
@@ -784,6 +786,9 @@ void WebViewHost::runModal()
 
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
 {
+    if (params.mimeType == TestWebPlugin::mimeType())
+        return new TestWebPlugin(frame, params);
+
     return webkit_support::CreateWebPlugin(frame, params);
 }
 

@@ -1,3 +1,47 @@
+2011-10-17  Alok Priyadarshi  <alokp@chromium.org>
+
+        Add layout tests for WebPlugin compositor path
+        https://bugs.webkit.org/show_bug.cgi?id=69027
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestWebPlugin.cpp: Added.
+        (premultiplyAlpha):
+        (TestWebPlugin::TestWebPlugin):
+        (TestWebPlugin::~TestWebPlugin):
+        (TestWebPlugin::mimeType):
+        (TestWebPlugin::initialize):
+        (TestWebPlugin::destroy):
+        (TestWebPlugin::updateGeometry):
+        (TestWebPlugin::parsePrimitive):
+        (TestWebPlugin::parseColor):
+        (TestWebPlugin::parseOpacity):
+        (TestWebPlugin::initScene):
+        (TestWebPlugin::drawScene):
+        (TestWebPlugin::destroyScene):
+        (TestWebPlugin::initProgram):
+        (TestWebPlugin::initPrimitive):
+        (TestWebPlugin::drawPrimitive):
+        (TestWebPlugin::loadShader):
+        (TestWebPlugin::loadProgram):
+        * DumpRenderTree/chromium/TestWebPlugin.h: Added.
+        (TestWebPlugin::scriptableObject):
+        (TestWebPlugin::paint):
+        (TestWebPlugin::updateFocus):
+        (TestWebPlugin::updateVisibility):
+        (TestWebPlugin::acceptsInputEvents):
+        (TestWebPlugin::handleInputEvent):
+        (TestWebPlugin::didReceiveResponse):
+        (TestWebPlugin::didReceiveData):
+        (TestWebPlugin::didFinishLoading):
+        (TestWebPlugin::didFailLoading):
+        (TestWebPlugin::didFinishLoadingFrameRequest):
+        (TestWebPlugin::didFailLoadingFrameRequest):
+        (TestWebPlugin::Scene::Scene):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPlugin):
+
 2011-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         [nrwt] Add new category for MISSING

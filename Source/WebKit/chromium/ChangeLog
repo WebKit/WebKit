@@ -1,3 +1,13 @@
+2011-10-17  Alok Priyadarshi  <alokp@chromium.org>
+
+        Add layout tests for WebPlugin compositor path
+        https://bugs.webkit.org/show_bug.cgi?id=69027
+
+        Reviewed by James Robinson.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::printEnd):
+
 2011-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

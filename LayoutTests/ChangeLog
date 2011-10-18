@@ -1,3 +1,21 @@
+2011-10-17  Alok Priyadarshi  <alokp@chromium.org>
+
+        Add layout tests for WebPlugin compositor path
+        https://bugs.webkit.org/show_bug.cgi?id=69027
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/compositing/plugins: Added.
+        * platform/chromium/compositing/plugins/webplugin-alpha-expected.png: Added.
+        * platform/chromium/compositing/plugins/webplugin-alpha-expected.txt: Added.
+        * platform/chromium/compositing/plugins/webplugin-alpha.html: Added.
+        * platform/chromium/compositing/plugins/webplugin-no-alpha-expected.png: Added.
+        * platform/chromium/compositing/plugins/webplugin-no-alpha-expected.txt: Added.
+        * platform/chromium/compositing/plugins/webplugin-no-alpha.html: Added.
+        * platform/chromium/compositing/plugins/webplugin-reflection-expected.png: Added.
+        * platform/chromium/compositing/plugins/webplugin-reflection-expected.txt: Added.
+        * platform/chromium/compositing/plugins/webplugin-reflection.html: Added.
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Incorrect behavior from String match/search & undefined pattern

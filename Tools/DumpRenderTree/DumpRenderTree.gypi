@@ -36,6 +36,8 @@
             'chromium/TestShellGtk.cpp',
             'chromium/TestShellMac.mm',
             'chromium/TestShellWin.cpp',
+            'chromium/TestWebPlugin.cpp',
+            'chromium/TestWebPlugin.h',
             'chromium/TextInputController.cpp',
             'chromium/TextInputController.h',
             'chromium/WebPermissions.cpp',

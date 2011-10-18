@@ -271,7 +271,7 @@ bool WebPluginContainerImpl::printPage(int pageNumber,
 
 void WebPluginContainerImpl::printEnd()
 {
-    return m_webPlugin->printEnd();
+    m_webPlugin->printEnd();
 }
 
 void WebPluginContainerImpl::copy()
