@@ -102,9 +102,7 @@ public:
 private:
     void append(PassRefPtr<StyleBase> child)
     {
-        StyleBase* c = child.get();
         m_children.append(child);
-        c->insertedIntoParent();
     }
 
     XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);

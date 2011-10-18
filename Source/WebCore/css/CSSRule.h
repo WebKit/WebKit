@@ -49,6 +49,15 @@ public:
 
     virtual CSSRuleType type() const = 0;
 
+    virtual bool isCharsetRule() const { return false; }
+    virtual bool isFontFaceRule() const { return false; }
+    virtual bool isKeyframeRule() const { return false; }
+    virtual bool isKeyframesRule() const { return false; }
+    virtual bool isMediaRule() const { return false; }
+    virtual bool isPageRule() const { return false; }
+    virtual bool isStyleRule() const { return false; }
+    virtual bool isRegionStyleRule() const { return false; }
+
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;
 
@@ -56,6 +65,8 @@ public:
     void setCssText(const String&, ExceptionCode&);
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
+
+    virtual void insertedIntoParent() { }
 
 protected:
     CSSRule(CSSStyleSheet* parent)

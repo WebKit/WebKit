@@ -47,20 +47,11 @@ namespace WebCore {
         // returns the url of the style sheet this object belongs to
         KURL baseURL() const;
 
-        virtual bool isCSSStyleSheet() const { return false; }
-
-        virtual bool isCharsetRule() const { return false; }
-        virtual bool isFontFaceRule() const { return false; }
-        virtual bool isImportRule() const { return false; }
-        virtual bool isKeyframeRule() const { return false; }
-        virtual bool isKeyframesRule() const { return false; }
-        virtual bool isMediaRule() const { return false; }
-        virtual bool isPageRule() const { return false; }
         virtual bool isRule() const { return false; }
-        virtual bool isStyleRule() const { return false; }
-        virtual bool isRegionStyleRule() const { return false; }
+        virtual bool isImportRule() const { return false; }
 
         virtual bool isStyleSheet() const { return false; }
+        virtual bool isCSSStyleSheet() const { return false; }
         virtual bool isXSLStyleSheet() const { return false; }
 
         virtual bool isMutableStyleDeclaration() const { return false; }
@@ -70,8 +61,6 @@ namespace WebCore {
         virtual void checkLoaded();
 
         bool useStrictParsing() const { return !m_parent || m_parent->useStrictParsing(); }
-
-        virtual void insertedIntoParent() { }
 
         StyleSheet* stylesheet();
         Node* node();
