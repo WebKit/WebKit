@@ -34,33 +34,24 @@
 namespace WebCore {
 
 MessageEventInit::MessageEventInit()
+    : data(SerializedScriptValue::create())
 {
 }
 
 MessageEvent::MessageEvent()
-    : m_dataType(DataTypeScriptValue)
+    : m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(SerializedScriptValue::create())
 {
 }
 
 MessageEvent::MessageEvent(const AtomicString& type, const MessageEventInit& initializer)
     : Event(type, initializer)
-    , m_dataType(DataTypeScriptValue)
-    , m_dataAsScriptValue(initializer.data)
+    , m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(initializer.data)
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
     , m_source(initializer.source)
     , m_ports(adoptPtr(new MessagePortArray(initializer.ports)))
-{
-}
-
-MessageEvent::MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray> ports)
-    : Event(eventNames().messageEvent, false, false)
-    , m_dataType(DataTypeScriptValue)
-    , m_dataAsScriptValue(data)
-    , m_origin(origin)
-    , m_lastEventId(lastEventId)
-    , m_source(source)
-    , m_ports(ports)
 {
 }
 
@@ -106,21 +97,6 @@ MessageEvent::~MessageEvent()
 {
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray> ports)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_dataType = DataTypeScriptValue;
-    m_dataAsScriptValue = data;
-    m_origin = origin;
-    m_lastEventId = lastEventId;
-    m_source = source;
-    m_ports = ports;
-}
-
 void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray> ports)
 {
     if (dispatched())
@@ -153,7 +129,6 @@ MessagePort* MessageEvent::messagePort()
     return (*m_ports)[0].get();
 }
 
-// FIXME: remove this when we update the ObjC bindings (bug #28774).
 void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* port)
 {
     OwnPtr<MessagePortArray> ports;
@@ -164,7 +139,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, ports.release());
 }
 
-bool MessageEvent::isMessageEvent() const
+bool MessageEvent::isMessageEvent() const 
 {
     return true;
 }

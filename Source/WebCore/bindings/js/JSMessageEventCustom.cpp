@@ -52,15 +52,6 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     MessageEvent* event = static_cast<MessageEvent*>(impl());
     JSValue result;
     switch (event->dataType()) {
-    case MessageEvent::DataTypeScriptValue: {
-        ScriptValue scriptValue = event->dataAsScriptValue();
-        if (scriptValue.hasNoValue())
-            result = jsNull();
-        else
-            result = scriptValue.jsValue();
-        break;
-    }
-
     case MessageEvent::DataTypeSerializedScriptValue:
         if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue()) {
             MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();

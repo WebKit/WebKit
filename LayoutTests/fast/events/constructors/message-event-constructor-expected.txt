@@ -14,8 +14,7 @@ PASS new MessageEvent('eventType', { bubbles: false }).bubbles is false
 PASS new MessageEvent('eventType', { bubbles: true }).bubbles is true
 PASS new MessageEvent('eventType', { cancelable: false }).cancelable is false
 PASS new MessageEvent('eventType', { cancelable: true }).cancelable is true
-PASS new MessageEvent('eventType', { data: test_object }).data is test_object
-PASS new MessageEvent('eventType', { data: document }).data is document
+FAIL new MessageEvent('eventType', { data: test_object }).data should be [object Object]. Was [object Object].
 PASS new MessageEvent('eventType', { data: undefined }).data is undefined
 PASS new MessageEvent('eventType', { data: null }).data is null
 PASS new MessageEvent('eventType', { data: false }).data is false
@@ -95,7 +94,7 @@ PASS new MessageEvent('eventType', { get ports() { throw 'MessageEvent Error'; }
 PASS new MessageEvent('eventType', { ports: {valueOf: function () { return [channel.port1, channel.port2, channel.port2]; } } }).ports[0] threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).bubbles is true
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).cancelable is true
-PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).data is test_object
+FAIL new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).data should be [object Object]. Was [object Object].
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).origin is "wonderful"
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).lastEventId is "excellent"
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).source is window
