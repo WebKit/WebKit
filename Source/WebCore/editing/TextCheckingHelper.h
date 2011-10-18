@@ -90,10 +90,14 @@ public:
 private:
     EditorClient* m_client;
     RefPtr<Range> m_range;
+
+    bool unifiedTextCheckerEnabled() const;
 };
 
 void checkTextOfParagraph(TextCheckerClient*, const UChar* text, int length,
     TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results);
+
+bool unifiedTextCheckerEnabled(const Frame*);
 
 } // namespace WebCore
 

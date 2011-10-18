@@ -690,21 +690,23 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
 
 static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int charLength, NSRange range)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
-    // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-    TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
+    if (unifiedTextCheckerEnabled(node->document()->frame())) {
+        // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
+        TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
 
-    // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
-    Vector<TextCheckingResult> results;
-    checkTextOfParagraph(checker, chars, charLength, TextCheckingTypeSpelling, results);
-    
-    size_t size = results.size();
-    NSNumber* trueValue = [NSNumber numberWithBool:YES];
-    for (unsigned i = 0; i < size; i++) {
-        const TextCheckingResult& result = results[i];
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
-    }    
-#else
+        // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
+        Vector<TextCheckingResult> results;
+        checkTextOfParagraph(checker, chars, charLength, TextCheckingTypeSpelling, results);
+
+        size_t size = results.size();
+        NSNumber* trueValue = [NSNumber numberWithBool:YES];
+        for (unsigned i = 0; i < size; i++) {
+            const TextCheckingResult& result = results[i];
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+        }
+        return;
+    }
+
     int currentPosition = 0;
     while (charLength > 0) {
         const UChar* charData = chars + currentPosition;
@@ -721,7 +723,6 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         charLength -= (misspellingLocation + misspellingLength);
         currentPosition += (misspellingLocation + misspellingLength);
     }
-#endif    
 }
 
 static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)

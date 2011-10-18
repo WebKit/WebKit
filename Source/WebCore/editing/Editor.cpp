@@ -1628,45 +1628,11 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     String badGrammarPhrase;
     String misspelledWord;
 
-#if USE(UNIFIED_TEXT_CHECKING)
-    grammarSearchRange = spellingSearchRange->cloneRange(ec);
     bool isSpelling = true;
     int foundOffset = 0;
-    String foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
-    if (isSpelling) {
-        misspelledWord = foundItem;
-        misspellingOffset = foundOffset;
-    } else {
-        badGrammarPhrase = foundItem;
-        grammarPhraseOffset = foundOffset;
-    }
-#else
+    String foundItem;
     RefPtr<Range> firstMisspellingRange;
-    misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
-
-#if USE(GRAMMAR_CHECKING)
-    // Search for bad grammar that occurs prior to the next misspelled word (if any)
-    grammarSearchRange = spellingSearchRange->cloneRange(ec);
-    if (!misspelledWord.isEmpty()) {
-        // Stop looking at start of next misspelled word
-        CharacterIterator chars(grammarSearchRange.get());
-        chars.advance(misspellingOffset);
-        grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
-    }
-    
-    if (isGrammarCheckingEnabled())
-        badGrammarPhrase = TextCheckingHelper(client(), grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
-#endif
-#endif
-    
-    // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
-    // block rather than at a selection).
-    if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
-        spellingSearchRange->setStart(topNode, 0, ec);
-        // going until the end of the very first chunk we tested is far enough
-        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
-        
-#if USE(UNIFIED_TEXT_CHECKING)
+    if (unifiedTextCheckerEnabled()) {
         grammarSearchRange = spellingSearchRange->cloneRange(ec);
         foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
         if (isSpelling) {
@@ -1676,7 +1642,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             badGrammarPhrase = foundItem;
             grammarPhraseOffset = foundOffset;
         }
-#else
+    } else {
         misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
 #if USE(GRAMMAR_CHECKING)
@@ -1687,11 +1653,45 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             chars.advance(misspellingOffset);
             grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
         }
-
+    
         if (isGrammarCheckingEnabled())
             badGrammarPhrase = TextCheckingHelper(client(), grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
 #endif
+    }
+    
+    // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
+    // block rather than at a selection).
+    if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
+        spellingSearchRange->setStart(topNode, 0, ec);
+        // going until the end of the very first chunk we tested is far enough
+        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
+        
+        if (unifiedTextCheckerEnabled()) {
+            grammarSearchRange = spellingSearchRange->cloneRange(ec);
+            foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
+            if (isSpelling) {
+                misspelledWord = foundItem;
+                misspellingOffset = foundOffset;
+            } else {
+                badGrammarPhrase = foundItem;
+                grammarPhraseOffset = foundOffset;
+            }
+        } else {
+            misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
+
+#if USE(GRAMMAR_CHECKING)
+            grammarSearchRange = spellingSearchRange->cloneRange(ec);
+            if (!misspelledWord.isEmpty()) {
+                // Stop looking at start of next misspelled word
+                CharacterIterator chars(grammarSearchRange.get());
+                chars.advance(misspellingOffset);
+                grammarSearchRange->setEnd(chars.range()->startContainer(ec), chars.range()->startOffset(ec), ec);
+            }
+
+            if (isGrammarCheckingEnabled())
+                badGrammarPhrase = TextCheckingHelper(client(), grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
 #endif
+        }
     }
     
     if (!badGrammarPhrase.isEmpty()) {
@@ -1791,12 +1791,13 @@ Vector<String> Editor::guessesForMisspelledSelection()
 
 Vector<String> Editor::guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
-    RefPtr<Range> range = frame()->selection()->toNormalizedRange();
-    if (!range)
-        return Vector<String>();
-    return TextCheckingHelper(client(), range).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
-#else
+    if (unifiedTextCheckerEnabled()) {
+        RefPtr<Range> range = frame()->selection()->toNormalizedRange();
+        if (!range)
+            return Vector<String>();
+        return TextCheckingHelper(client(), range).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
+    }
+
     misspelled = isSelectionMisspelled();
     if (misspelled) {
         ungrammatical = false;
@@ -1808,7 +1809,6 @@ Vector<String> Editor::guessesForMisspelledOrUngrammaticalSelection(bool& misspe
     }
     ungrammatical = false;
     return Vector<String>();
-#endif
 }
 
 void Editor::showSpellingGuessPanel()
@@ -1850,40 +1850,37 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
 
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
-    m_spellingCorrector->applyPendingCorrection(selectionAfterTyping);
+    if (unifiedTextCheckerEnabled()) {
+        m_spellingCorrector->applyPendingCorrection(selectionAfterTyping);
 
-    TextCheckingTypeMask textCheckingOptions = 0;
+        TextCheckingTypeMask textCheckingOptions = 0;
 
-    if (isContinuousSpellCheckingEnabled())
-        textCheckingOptions |= TextCheckingTypeSpelling;
+        if (isContinuousSpellCheckingEnabled())
+            textCheckingOptions |= TextCheckingTypeSpelling;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (doReplacement 
-        && (isAutomaticQuoteSubstitutionEnabled()
-            || isAutomaticLinkDetectionEnabled()
-            || isAutomaticDashSubstitutionEnabled()
-            || isAutomaticTextReplacementEnabled()
-            || ((textCheckingOptions & TextCheckingTypeSpelling) && isAutomaticSpellingCorrectionEnabled())))
-        textCheckingOptions |= TextCheckingTypeReplacement;
+        if (doReplacement
+            && (isAutomaticQuoteSubstitutionEnabled()
+                || isAutomaticLinkDetectionEnabled()
+                || isAutomaticDashSubstitutionEnabled()
+                || isAutomaticTextReplacementEnabled()
+                || ((textCheckingOptions & TextCheckingTypeSpelling) && isAutomaticSpellingCorrectionEnabled())))
+            textCheckingOptions |= TextCheckingTypeReplacement;
 #endif
-    if (!textCheckingOptions & (TextCheckingTypeSpelling | TextCheckingTypeReplacement))
+        if (!(textCheckingOptions & (TextCheckingTypeSpelling | TextCheckingTypeReplacement)))
+            return;
+
+        if (isGrammarCheckingEnabled())
+            textCheckingOptions |= TextCheckingTypeGrammar;
+
+        VisibleSelection adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
+        if (textCheckingOptions & TextCheckingTypeGrammar) {
+            VisibleSelection selectedSentence = VisibleSelection(startOfSentence(wordStart), endOfSentence(wordStart));
+            markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), selectedSentence.toNormalizedRange().get());
+        } else
+            markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
         return;
-
-    if (isGrammarCheckingEnabled())
-        textCheckingOptions |= TextCheckingTypeGrammar;
-
-    VisibleSelection adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
-    if (textCheckingOptions & TextCheckingTypeGrammar) {
-        VisibleSelection selectedSentence = VisibleSelection(startOfSentence(wordStart), endOfSentence(wordStart));
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), selectedSentence.toNormalizedRange().get());
-    } else {
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
     }
-
-#else
-    UNUSED_PARAM(selectionAfterTyping);
-    UNUSED_PARAM(doReplacement);
 
     if (!isContinuousSpellCheckingEnabled())
         return;
@@ -1923,7 +1920,6 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     
     // Check grammar of entire sentence
     markBadGrammar(VisibleSelection(startOfSentence(wordStart), endOfSentence(wordStart)));
-#endif
 }
     
 void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, bool checkSpelling, RefPtr<Range>& firstMisspellingRange)
@@ -1991,7 +1987,8 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textCheckingOptions, Range* spellingRange, Range* grammarRange)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
+    ASSERT(unifiedTextCheckerEnabled());
+
     // There shouldn't be pending autocorrection at this moment.
     ASSERT(!m_spellingCorrector->hasPendingCorrection());
 
@@ -2182,17 +2179,12 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
             m_frame->selection()->modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
         }
     }
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(textCheckingOptions);
-    UNUSED_PARAM(spellingRange);
-    UNUSED_PARAM(grammarRange);
-#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 void Editor::changeBackToReplacedString(const String& replacedString)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
+    ASSERT(unifiedTextCheckerEnabled());
+
     if (replacedString.isEmpty())
         return;
 
@@ -2206,28 +2198,25 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::Replacement, String());
     m_spellingCorrector->markReversed(changedRange.get());
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(replacedString);
-#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
-    if (!isContinuousSpellCheckingEnabled())
+    if (unifiedTextCheckerEnabled()) {
+        if (!isContinuousSpellCheckingEnabled())
+            return;
+        TextCheckingTypeMask textCheckingOptions = TextCheckingTypeSpelling | TextCheckingTypeCorrection;
+        if (markGrammar && isGrammarCheckingEnabled())
+            textCheckingOptions |= TextCheckingTypeGrammar;
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());
         return;
-    TextCheckingTypeMask textCheckingOptions = TextCheckingTypeSpelling | TextCheckingTypeCorrection;
-    if (markGrammar && isGrammarCheckingEnabled())
-        textCheckingOptions |= TextCheckingTypeGrammar;
-    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());
-#else
+    }
+
     RefPtr<Range> firstMisspellingRange;
     markMisspellings(spellingSelection, firstMisspellingRange);
     if (markGrammar)
         markBadGrammar(grammarSelection);
-#endif
 }
 
 void Editor::unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
@@ -3078,6 +3067,11 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
 void Editor::deviceScaleFactorChanged()
 {
     m_deleteButtonController->deviceScaleFactorChanged();
+}
+
+bool Editor::unifiedTextCheckerEnabled() const
+{
+    return WebCore::unifiedTextCheckerEnabled(m_frame);
 }
 
 } // namespace WebCore

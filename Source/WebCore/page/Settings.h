@@ -381,6 +381,9 @@ namespace WebCore {
         void setAsynchronousSpellCheckingEnabled(bool flag) { m_asynchronousSpellCheckingEnabled = flag; }
         bool asynchronousSpellCheckingEnabled() const  { return m_asynchronousSpellCheckingEnabled; }
 
+        void setUnifiedTextCheckerEnabled(bool flag) { m_unifiedTextCheckerEnabled = flag; }
+        bool unifiedTextCheckerEnabled() const { return m_unifiedTextCheckerEnabled; }
+
         void setMemoryInfoEnabled(bool flag) { m_memoryInfoEnabled = flag; }
         bool memoryInfoEnabled() const { return m_memoryInfoEnabled; }
 
@@ -568,6 +571,7 @@ namespace WebCore {
         bool m_fullScreenAPIEnabled : 1;
 #endif
         bool m_asynchronousSpellCheckingEnabled: 1;
+        bool m_unifiedTextCheckerEnabled: 1;
         bool m_memoryInfoEnabled: 1;
         bool m_interactiveFormValidation: 1;
         bool m_usePreHTML5ParserQuirks: 1;

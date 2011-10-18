@@ -1437,6 +1437,8 @@ webcore_sources += \
 	Source/WebCore/editing/ReplaceSelectionCommand.h \
 	Source/WebCore/editing/SetNodeAttributeCommand.cpp \
 	Source/WebCore/editing/SetNodeAttributeCommand.h \
+	Source/WebCore/editing/SetSelectionCommand.cpp \
+	Source/WebCore/editing/SetSelectionCommand.h \
 	Source/WebCore/editing/SmartReplace.cpp \
 	Source/WebCore/editing/SmartReplace.h \
 	Source/WebCore/editing/SmartReplaceICU.cpp \
@@ -1444,6 +1446,7 @@ webcore_sources += \
 	Source/WebCore/editing/SpellChecker.h \
 	Source/WebCore/editing/SpellingCorrectionController.cpp \
 	Source/WebCore/editing/SpellingCorrectionController.h \
+	Source/WebCore/editing/SpellingCorrectionCommand.cpp \
 	Source/WebCore/editing/SpellingCorrectionCommand.h \
 	Source/WebCore/editing/SplitElementCommand.cpp \
 	Source/WebCore/editing/SplitElementCommand.h \

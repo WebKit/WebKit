@@ -50,6 +50,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
+#include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "TextIterator.h"
@@ -289,19 +290,20 @@ bool AccessibilityObject::hasMisspelling() const
     const UChar* chars = stringValue().characters();
     int charsLength = stringValue().length();
     bool isMisspelled = false;
-    
-#if USE(UNIFIED_TEXT_CHECKING)
-    Vector<TextCheckingResult> results;
-    checkTextOfParagraph(textChecker, chars, charsLength, TextCheckingTypeSpelling, results);
-    if (!results.isEmpty())
-        isMisspelled = true;
-#else
+
+    if (unifiedTextCheckerEnabled(frame)) {
+        Vector<TextCheckingResult> results;
+        checkTextOfParagraph(textChecker, chars, charsLength, TextCheckingTypeSpelling, results);
+        if (!results.isEmpty())
+            isMisspelled = true;
+        return isMisspelled;
+    }
+
     int misspellingLength = 0;
     int misspellingLocation = -1;
     textChecker->checkSpellingOfString(chars, charsLength, &misspellingLocation, &misspellingLength);
     if (misspellingLength || misspellingLocation != -1)
         isMisspelled = true;
-#endif
     
     return isMisspelled;
 }

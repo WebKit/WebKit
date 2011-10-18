@@ -29,7 +29,9 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Frame.h"
 #include "Range.h"
+#include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -225,7 +227,9 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
 
 String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail)
 {
-#if USE(UNIFIED_TEXT_CHECKING)
+    if (!unifiedTextCheckerEnabled())
+        return "";
+
     String firstFoundItem;
     String misspelledWord;
     String badGrammarPhrase;
@@ -344,14 +348,6 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
         totalLengthProcessed += currentLength;
     }
     return firstFoundItem;
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(checkGrammar);
-    UNUSED_PARAM(outIsSpelling);
-    UNUSED_PARAM(outFirstFoundOffset);
-    UNUSED_PARAM(outGrammarDetail);
-    return "";
-#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int /*badGrammarPhraseLength*/, int startOffset, int endOffset, bool markAll)
@@ -510,7 +506,9 @@ bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
 
 Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const
 {
-#if USE(UNIFIED_TEXT_CHECKING)
+    if (!unifiedTextCheckerEnabled())
+        return Vector<String>();
+
     Vector<String> guesses;
     ExceptionCode ec;
     misspelled = false;
@@ -562,13 +560,6 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
         }
     }
     return guesses;
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(checkGrammar);
-    UNUSED_PARAM(misspelled);
-    UNUSED_PARAM(ungrammatical);
-    return Vector<String>();
-#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 
@@ -590,6 +581,18 @@ void TextCheckingHelper::markAllBadGrammar()
     findFirstBadGrammar(ignoredGrammarDetail, ignoredOffset, true);
 }
 
+bool TextCheckingHelper::unifiedTextCheckerEnabled() const
+{
+    if (!m_range)
+        return false;
+
+    Document* doc = m_range->ownerDocument();
+    if (!doc)
+        return false;
+
+    return WebCore::unifiedTextCheckerEnabled(doc->frame());
+}
+
 void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int length,
                           TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
@@ -605,6 +608,18 @@ void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int leng
     UNUSED_PARAM(checkingTypes);
     UNUSED_PARAM(results);
 #endif
+}
+
+bool unifiedTextCheckerEnabled(const Frame* frame)
+{
+    if (!frame)
+        return false;
+
+    const Settings* settings = frame->settings();
+    if (!settings)
+        return false;
+
+    return settings->unifiedTextCheckerEnabled();
 }
 
 }

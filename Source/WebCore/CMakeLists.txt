@@ -651,9 +651,11 @@ SET(WebCore_SOURCES
     editing/ReplaceNodeWithSpanCommand.cpp
     editing/ReplaceSelectionCommand.cpp
     editing/SetNodeAttributeCommand.cpp
+    editing/SetSelectionCommand.cpp
     editing/SmartReplace.cpp
     editing/SpellChecker.cpp
     editing/SpellingCorrectionController.cpp
+    editing/SpellingCorrectionCommand.cpp
     editing/SplitElementCommand.cpp
     editing/SplitTextNodeCommand.cpp
     editing/SplitTextNodeContainingElementCommand.cpp

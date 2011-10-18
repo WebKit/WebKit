@@ -61,8 +61,10 @@
 #include <ReplaceNodeWithSpanCommand.cpp>
 #include <ReplaceSelectionCommand.cpp>
 #include <SetNodeAttributeCommand.cpp>
+#include <SetSelectionCommand.cpp>
 #include <SmartReplace.cpp>
 #include <SmartReplaceCF.cpp>
+#include <SpellingCorrectionCommand.cpp>
 #include <SpellingCorrectionController.cpp>
 #include <SpellChecker.cpp>
 #include <SplitElementCommand.cpp>

@@ -1,3 +1,57 @@
+2011-10-17  Shinya Kawanaka  <shinyak@google.com>
+
+        Unified spell-checking and legacy spell checking should be easy to switch
+        https://bugs.webkit.org/show_bug.cgi?id=69242
+
+        Reviewed by Hajime Morita.
+
+        WebCore has two different code paths for spell-checking:
+                  1) checkTextOfParagraph() for Snow Leopard or later
+                  2) checkSpellingOfString() for checkGrammarOfString() for other platforms.
+
+        This patch introduces a flag to change code paths dynamically.
+        This patch also includes build fix for QT, GTK, and Windows platforms.
+
+        No new tests because this patch does not change a behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling):
+          Changed static if-USE(UNIFIED_TEXT_CHECKING) statement to dynamic
+          condition branch to achieve easy code path change.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm: ditto.
+        (AXAttributeStringSetSpelling):
+        * editing/EditingAllInOne.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling): ditto.
+        (WebCore::Editor::guessesForMisspelledOrUngrammaticalSelection): ditto.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): ditto.
+        (WebCore::Editor::changeBackToReplacedString): ditto.
+        (WebCore::Editor::markMisspellingsAndBadGrammar): ditto.
+        (WebCore::Editor::unifiedTextCheckerEnabled):
+          Utility method to check using unified text checking or not.
+        * editing/Editor.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+          Same as WebCore::AccessibilityObject::hasMisspelling.
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange): ditto.
+        (WebCore::TextCheckingHelper::unifiedTextCheckerEnabled):
+          Utility method to check using unified text checking or not.
+        (WebCore::unifiedTextCheckerEnabled): ditto.
+        * editing/TextCheckingHelper.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+          Includes a flag to change the code path.
+        * page/Settings.h:
+        (WebCore::Settings::setUnifiedTextCheckerEnabled):
+          Sets a flag to change the code path.
+        (WebCore::Settings::unifiedTextCheckerEnabled):
+          A flag to change the code path.
+
 2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed build fix after 97691.

@@ -417,6 +417,8 @@ private:
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
 
     Node* findEventTargetFromSelection() const;
+
+    bool unifiedTextCheckerEnabled() const;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

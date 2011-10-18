@@ -615,8 +615,10 @@ SOURCES += \
     editing/ReplaceNodeWithSpanCommand.cpp \
     editing/ReplaceSelectionCommand.cpp \
     editing/SetNodeAttributeCommand.cpp \
+    editing/SetSelectionCommand.cpp \
     editing/SmartReplaceICU.cpp \
     editing/SpellChecker.cpp \
+    editing/SpellingCorrectionCommand.cpp \
     editing/SpellingCorrectionController.cpp \
     editing/SplitElementCommand.cpp \
     editing/SplitTextNodeCommand.cpp \
@@ -1646,6 +1648,7 @@ HEADERS += \
     editing/ReplaceSelectionCommand.h \
     editing/SetNodeAttributeCommand.h \
     editing/SmartReplace.h \
+    editing/SpellingCorrectionCommand.h \
     editing/SpellingCorrectionController.h \
     editing/SplitElementCommand.h \
     editing/SplitTextNodeCommand.h \

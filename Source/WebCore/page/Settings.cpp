@@ -196,6 +196,11 @@ Settings::Settings(Page* page)
     , m_fullScreenAPIEnabled(false)
 #endif
     , m_asynchronousSpellCheckingEnabled(false)
+#if USE(UNIFIED_TEXT_CHECKING)
+    , m_unifiedTextCheckerEnabled(true)
+#else
+    , m_unifiedTextCheckerEnabled(false)
+#endif
     , m_memoryInfoEnabled(false)
     , m_interactiveFormValidation(false)
     , m_usePreHTML5ParserQuirks(false)
