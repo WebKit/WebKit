@@ -61,13 +61,15 @@ DesktopWebView {
             for (var i = 0; i < 100; i += 10)
                 mouseMove(webView, 100, 100 + i)
 
-            tryCompare(spy.count, 1)
+            spy.wait()
+            compare(spy.count, 1)
+            compare(webView.lastUrl, Qt.resolvedUrl("../common/test1.html"))
 
             for (var i = 0; i < 100; i += 10)
                 mouseMove(webView, 100, 300 + i)
 
             spy.wait()
-            tryCompare(spy.count, 2)
+            compare(spy.count, 2)
             compare(webView.lastUrl, "")
         }
     }
