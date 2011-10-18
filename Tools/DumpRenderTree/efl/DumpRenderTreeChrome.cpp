@@ -178,10 +178,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);
     ewk_view_page_scale(mainView(), 1.0, 0, 0);
 
-    Ewk_History* history = ewk_view_history_get(mainView());
-    int limit = ewk_history_limit_get(history);
-    ewk_history_limit_set(history, 0);
-    ewk_history_limit_set(history, limit);
+    ewk_history_clear(ewk_view_history_get(mainView()));
 
     ewk_cookies_clear();
     ewk_cookies_policy_set(EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);

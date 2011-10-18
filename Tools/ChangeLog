@@ -1,3 +1,22 @@
+2011-10-18  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Clear list of visited pages before each test.
+        https://bugs.webkit.org/show_bug.cgi?id=70355
+
+        Reviewed by Antonio Gomes.
+
+        r97596 uncovered a bug in the implementation: the list of visited
+        links was not cleared between tests, which caused tests such as
+        fast/repaint/outline-repaint-glitch.html to be flaky (the link color
+        changed depending on whether fast/repaint/border-repaint-glitch.html
+        was visited before or not).
+
+        Call ewk_history_clear to make sure the visited links list does not
+        persist between tests.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2011-10-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Split TestExpectationsEditor into its own file.

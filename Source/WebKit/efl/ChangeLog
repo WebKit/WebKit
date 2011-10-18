@@ -1,3 +1,17 @@
+2011-10-18  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Clear list of visited pages before each test.
+        https://bugs.webkit.org/show_bug.cgi?id=70355
+
+        Reviewed by Antonio Gomes.
+
+        Add ewk_history_clear as a way to clear the list of visited pages in a
+        Ewk_History, in a similar fashion to Qt's QWebHistory::clear().
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_clear):
+        * ewk/ewk_history.h:
+
 2011-10-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Remove const modifier from ctx_menu functions.

@@ -27,6 +27,8 @@
 #include "IconDatabaseBase.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "ewk_private.h"
 
 #include <Eina.h>
@@ -86,6 +88,21 @@ static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVe
     }
 
     return ret;
+}
+
+Eina_Bool ewk_history_clear(Ewk_History* history)
+{
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
+
+    WebCore::Page* page = core->page();
+    if (page && page->groupPtr())
+        page->groupPtr()->removeVisitedLinks();
+
+    const int limit = ewk_history_limit_get(history);
+    ewk_history_limit_set(history, 0);
+    ewk_history_limit_set(history, limit);
+
+    return EINA_TRUE;
 }
 
 Eina_Bool ewk_history_forward(Ewk_History* history)

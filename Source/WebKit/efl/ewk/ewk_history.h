@@ -50,6 +50,15 @@ typedef struct _Ewk_History_Item    Ewk_History_Item;
 
 
 /**
+ * Clear the current history, if there is any.
+ *
+ * @param history which history instance to modify.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ */
+EAPI Eina_Bool         ewk_history_clear(Ewk_History *history);
+
+/**
  * Go forward in history one item, if possible.
  *
  * @param history which history instance to modify.
