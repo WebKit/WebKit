@@ -17,23 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QWKPREFERENCES_H
-#define QWKPREFERENCES_H
+#include "WKPreferences.h"
 
-#include "qwebkitglobal.h"
-
-class QWKPreferencesPrivate;
-
-class QWEBKIT_EXPORT QWKPreferences {
+class QWebPreferencesPrivate {
 public:
-    enum FontFamily {
-        StandardFont,
-        FixedFont,
-        SerifFont,
-        SansSerifFont,
-        CursiveFont,
-        FantasyFont
-    };
 
     enum WebAttribute {
         AutoLoadImages,
@@ -44,36 +31,34 @@ public:
         XSSAuditingEnabled,
         FrameFlatteningEnabled,
         PrivateBrowsingEnabled,
-        DeveloperExtrasEnabled,
         DnsPrefetchEnabled
     };
 
-    enum FontSize {
+    enum FontFamily {
+        StandardFont,
+        FixedFont,
+        SerifFont,
+        SansSerifFont,
+        CursiveFont,
+        FantasyFont
+    };
+
+    enum FontSizeType {
         MinimumFontSize,
         DefaultFontSize,
         DefaultFixedFontSize
     };
 
-    static QWKPreferences* sharedPreferences();
+    static QWebPreferences* createPreferences(WKPageGroupRef);
+
+    void setAttribute(WebAttribute attr, bool enable);
+    bool testAttribute(WebAttribute attr) const;
 
     void setFontFamily(FontFamily which, const QString& family);
     QString fontFamily(FontFamily which) const;
 
-    void setAttribute(WebAttribute attr, bool on);
-    bool testAttribute(WebAttribute attr) const;
+    void setFontSize(FontSizeType type, unsigned size);
+    unsigned fontSize(FontSizeType type) const;
 
-    void setFontSize(FontSize type, int size);
-    int fontSize(FontSize type) const;
-
-private:
-    Q_DISABLE_COPY(QWKPreferences)
-
-    QWKPreferences();
-    ~QWKPreferences();
-
-    QWKPreferencesPrivate *d;
-
-    friend class QWKPreferencesPrivate;
+    WKPreferencesRef ref;
 };
-
-#endif // QWKPREFERENCES_H

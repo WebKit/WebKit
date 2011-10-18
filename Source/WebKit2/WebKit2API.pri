@@ -52,6 +52,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebnavigationcontroller.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
@@ -129,6 +130,8 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.h \

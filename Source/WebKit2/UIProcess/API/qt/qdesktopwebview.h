@@ -29,6 +29,7 @@
 
 class QDesktopWebViewPrivate;
 class QWebNavigationController;
+class QWebPreferences;
 
 QT_BEGIN_NAMESPACE
 class QFocusEvent;
@@ -56,6 +57,7 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
+    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_ENUMS(NavigationPolicy)
     Q_ENUMS(ErrorType)
 public:
@@ -79,6 +81,7 @@ public:
     int loadProgress() const;
 
     QWebNavigationController* navigationController() const;
+    QWebPreferences* preferences() const;
 
 public Q_SLOTS:
      void load(const QUrl&);

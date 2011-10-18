@@ -30,6 +30,7 @@
 class QTouchWebPagePrivate;
 class QTouchWebPageProxy;
 class QWebNavigationController;
+class QWebPreferences;
 
 namespace WebKit {
     class TouchViewInterface;
@@ -41,6 +42,7 @@ class QWEBKIT_EXPORT QTouchWebPage : public QSGItem {
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
+    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_ENUMS(ErrorType)
 public:
     enum ErrorType {
@@ -60,6 +62,7 @@ public:
     int loadProgress() const;
 
     QWebNavigationController* navigationController() const;
+    QWebPreferences* preferences() const;
 
     virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*);
     virtual bool event(QEvent*);

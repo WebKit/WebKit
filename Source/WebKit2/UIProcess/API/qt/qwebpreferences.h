@@ -1,0 +1,135 @@
+/*
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+#ifndef qwebpreferences_h
+#define qwebpreferences_h
+
+#include "qwebkitglobal.h"
+
+#include <QtCore/QObject>
+
+class QWebPreferencesPrivate;
+
+class QWEBKIT_EXPORT QWebPreferences : public QObject {
+    Q_OBJECT
+public:
+    Q_PROPERTY(bool autoLoadImages READ autoLoadImages WRITE setAutoLoadImages NOTIFY autoLoadImagesChanged FINAL)
+    Q_PROPERTY(bool javascriptEnabled READ javascriptEnabled WRITE setJavascriptEnabled NOTIFY javascriptEnabledChanged FINAL)
+    Q_PROPERTY(bool pluginsEnabled READ pluginsEnabled WRITE setPluginsEnabled NOTIFY pluginsEnabledChanged FINAL)
+    Q_PROPERTY(bool offlineWebApplicationCacheEnabled READ offlineWebApplicationCacheEnabled WRITE setOfflineWebApplicationCacheEnabled NOTIFY offlineWebApplicationCacheEnabledChanged FINAL)
+    Q_PROPERTY(bool localStorageEnabled READ localStorageEnabled WRITE setLocalStorageEnabled NOTIFY localStorageEnabledChanged FINAL)
+    Q_PROPERTY(bool xssAuditingEnabled READ xssAuditingEnabled WRITE setXssAuditingEnabled NOTIFY xssAuditingEnabledChanged FINAL)
+    Q_PROPERTY(bool privateBrowsingEnabled READ privateBrowsingEnabled WRITE setPrivateBrowsingEnabled NOTIFY privateBrowsingEnabledChanged FINAL)
+    Q_PROPERTY(bool dnsPrefetchEnabled READ dnsPrefetchEnabled WRITE setDnsPrefetchEnabled NOTIFY dnsPrefetchEnabledChanged FINAL)
+
+    Q_PROPERTY(QString standardFontFamily READ standardFontFamily WRITE setStandardFontFamily NOTIFY standardFontFamilyChanged FINAL)
+    Q_PROPERTY(QString fixedFontFamily READ fixedFontFamily WRITE setFixedFontFamily NOTIFY fixedFontFamilyChanged FINAL)
+    Q_PROPERTY(QString serifFontFamily READ serifFontFamily WRITE setSerifFontFamily NOTIFY serifFontFamilyChanged FINAL)
+    Q_PROPERTY(QString sansSerifFontFamily READ sansSerifFontFamily WRITE setSansSerifFontFamily NOTIFY sansSerifFontFamilyChanged FINAL)
+    Q_PROPERTY(QString cursiveFontFamily READ cursiveFontFamily WRITE setCursiveFontFamily NOTIFY cursiveFontFamilyChanged FINAL)
+    Q_PROPERTY(QString fantasyFontFamily READ fantasyFontFamily WRITE setFantasyFontFamily NOTIFY fantasyFontFamilyChanged FINAL)
+
+    Q_PROPERTY(unsigned minimumFontSize READ minimumFontSize WRITE setMinimumFontSize NOTIFY minimumFontSizeChanged FINAL)
+    Q_PROPERTY(unsigned defaultFontSize READ defaultFontSize WRITE setDefaultFontSize NOTIFY defaultFontSizeChanged FINAL)
+    Q_PROPERTY(unsigned defaultFixedFontSize READ defaultFixedFontSize WRITE setDefaultFixedFontSize NOTIFY defaultFixedFontSizeChanged FINAL)
+
+    bool autoLoadImages() const;
+    void setAutoLoadImages(bool enable);
+
+    bool javascriptEnabled() const;
+    void setJavascriptEnabled(bool enable);
+
+    bool pluginsEnabled() const;
+    void setPluginsEnabled(bool enable);
+
+    bool offlineWebApplicationCacheEnabled() const;
+    void setOfflineWebApplicationCacheEnabled(bool enable);
+
+    bool localStorageEnabled() const;
+    void setLocalStorageEnabled(bool enable);
+
+    bool xssAuditingEnabled() const;
+    void setXssAuditingEnabled(bool enable);
+
+    bool privateBrowsingEnabled() const;
+    void setPrivateBrowsingEnabled(bool enable);
+
+    bool dnsPrefetchEnabled() const;
+    void setDnsPrefetchEnabled(bool enable);
+
+    QString standardFontFamily() const;
+    void setStandardFontFamily(const QString& family);
+
+    QString fixedFontFamily() const;
+    void setFixedFontFamily(const QString& family);
+
+    QString serifFontFamily() const;
+    void setSerifFontFamily(const QString& family);
+
+    QString sansSerifFontFamily() const;
+    void setSansSerifFontFamily(const QString& family);
+
+    QString cursiveFontFamily() const;
+    void setCursiveFontFamily(const QString& family);
+
+    QString fantasyFontFamily() const;
+    void setFantasyFontFamily(const QString& family);
+
+    unsigned minimumFontSize() const;
+    void setMinimumFontSize(unsigned size);
+
+    unsigned defaultFontSize() const;
+    void setDefaultFontSize(unsigned size);
+
+    unsigned defaultFixedFontSize() const;
+    void setDefaultFixedFontSize(unsigned size);
+
+Q_SIGNALS:
+    void autoLoadImagesChanged();
+    void pluginsEnabledChanged();
+    void javascriptEnabledChanged();
+    void offlineWebApplicationCacheEnabledChanged();
+    void localStorageEnabledChanged();
+    void xssAuditingEnabledChanged();
+    void privateBrowsingEnabledChanged();
+    void dnsPrefetchEnabledChanged();
+
+    void standardFontFamilyChanged();
+    void fixedFontFamilyChanged();
+    void serifFontFamilyChanged();
+    void sansSerifFontFamilyChanged();
+    void cursiveFontFamilyChanged();
+    void fantasyFontFamilyChanged();
+
+    void minimumFontSizeChanged();
+    void defaultFontSizeChanged();
+    void defaultFixedFontSizeChanged();
+
+private:
+    Q_DISABLE_COPY(QWebPreferences)
+
+    QWebPreferences();
+    ~QWebPreferences();
+
+    QWebPreferencesPrivate *d;
+
+    friend class QWebPreferencesPrivate;
+};
+
+#endif // qwebpreferences_h

@@ -21,6 +21,7 @@
 #include "qtouchwebpage.h"
 #include "qtouchwebview.h"
 #include "qwebnavigationcontroller.h"
+#include "qwebpreferences.h"
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
@@ -37,6 +38,7 @@ public:
         qmlRegisterType<QDesktopWebView>(uri, 5, 0, "DesktopWebView");
         qmlRegisterType<QTouchWebView>(uri, 5, 0, "TouchWebView");
         qmlRegisterUncreatableType<QWebNavigationController>(uri, 5, 0, "NavigationController", QObject::tr("Cannot create separate instance of NavigationController"));
+        qmlRegisterUncreatableType<QWebPreferences>(uri, 5, 0, "WebPreferences", QObject::tr("Cannot create separate instance of WebPreferences"));
         qmlRegisterUncreatableType<QTouchWebPage>(uri, 5, 0, "TouchWebPage", QObject::tr("Cannot create separate instance of TouchWebPage, use TouchWebView"));
         qmlRegisterUncreatableType<QNetworkReply>(uri, 5, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
     }

@@ -293,6 +293,11 @@ QWebNavigationController* QDesktopWebView::navigationController() const
     return d->navigationController;
 }
 
+QWebPreferences* QDesktopWebView::preferences() const
+{
+    return d->page.preferences();
+}
+
 static void paintCrashedPage(QPainter* painter, const QRectF& rect)
 {
     painter->fillRect(rect, Qt::gray);

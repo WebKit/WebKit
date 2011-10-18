@@ -44,8 +44,8 @@ class QUndoStack;
 QT_END_NAMESPACE
 
 class QWebError;
+class QWebPreferences;
 class QWKHistory;
-class QWKPreferences;
 
 using namespace WebKit;
 
@@ -152,7 +152,7 @@ public:
 
     void setDrawingAreaSize(const QSize&);
 
-    QWKPreferences* preferences() const;
+    QWebPreferences* preferences() const;
 
     QString title() const;
 
@@ -203,7 +203,7 @@ private:
     QWKHistory* m_history;
 
     mutable QAction* m_actions[QtWebPageProxy::WebActionCount];
-    mutable QWKPreferences* m_preferences;
+    mutable QWebPreferences* m_preferences;
 
     OwnPtr<QUndoStack> m_undoStack;
     int m_loadProgress;

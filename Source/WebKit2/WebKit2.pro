@@ -264,8 +264,6 @@ HEADERS += \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/qwkhistory.h \
     UIProcess/qt/qwkhistory_p.h \
-    UIProcess/qt/qwkpreferences.h \
-    UIProcess/qt/qwkpreferences_p.h \
     UIProcess/qt/SGUpdateQueue.h \
     UIProcess/qt/SGTileNode.h \
     UIProcess/qt/ViewInterface.h \
@@ -506,7 +504,6 @@ SOURCES += \
     UIProcess/qt/qweberror.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/qwkhistory.cpp \
-    UIProcess/qt/qwkpreferences.cpp \
     UIProcess/qt/SGUpdateQueue.cpp \
     UIProcess/qt/SGTileNode.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \

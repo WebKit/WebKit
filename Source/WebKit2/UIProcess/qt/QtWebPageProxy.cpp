@@ -22,7 +22,7 @@
 #include "QtWebPageProxy.h"
 
 #include "qweberror.h"
-#include "qwkpreferences_p.h"
+#include "qwebpreferences_p.h"
 
 #include "ClientImpl.h"
 #include "qwkhistory.h"
@@ -493,11 +493,11 @@ void QtWebPageProxy::processDidCrash()
     m_viewInterface->processDidCrash();
 }
 
-QWKPreferences* QtWebPageProxy::preferences() const
+QWebPreferences* QtWebPageProxy::preferences() const
 {
     if (!m_preferences) {
         WKPageGroupRef pageGroupRef = WKPageGetPageGroup(pageRef());
-        m_preferences = QWKPreferencesPrivate::createPreferences(pageGroupRef);
+        m_preferences = QWebPreferencesPrivate::createPreferences(pageGroupRef);
     }
 
     return m_preferences;

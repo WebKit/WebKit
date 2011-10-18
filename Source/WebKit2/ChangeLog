@@ -1,3 +1,82 @@
+2011-10-18  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] WebPreferences are impossible to use in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=70141
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make it possible to use qwkpreferences in QML. Renamed it
+        to follow our new style regarding class names. This class is 
+        now a QObject that is exposed as a property of the view.
+        The tests give an idea of the usage.
+
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebView::preferences):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qmlplugin/plugin.cpp:
+        (WebKit2QmlPlugin::registerTypes):
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::preferences):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qwebpreferences.cpp: Added.
+        (QWebPreferencesPrivate::createPreferences):
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferencesPrivate::setFontFamily):
+        (QWebPreferencesPrivate::fontFamily):
+        (QWebPreferencesPrivate::setFontSize):
+        (QWebPreferencesPrivate::fontSize):
+        (QWebPreferences::QWebPreferences):
+        (QWebPreferences::~QWebPreferences):
+        (QWebPreferences::autoLoadImages):
+        (QWebPreferences::setAutoLoadImages):
+        (QWebPreferences::javascriptEnabled):
+        (QWebPreferences::setJavascriptEnabled):
+        (QWebPreferences::pluginsEnabled):
+        (QWebPreferences::setPluginsEnabled):
+        (QWebPreferences::offlineWebApplicationCacheEnabled):
+        (QWebPreferences::setOfflineWebApplicationCacheEnabled):
+        (QWebPreferences::localStorageEnabled):
+        (QWebPreferences::setLocalStorageEnabled):
+        (QWebPreferences::XSSAuditingEnabled):
+        (QWebPreferences::setXSSAuditingEnabled):
+        (QWebPreferences::privateBrowsingEnabled):
+        (QWebPreferences::setPrivateBrowsingEnabled):
+        (QWebPreferences::dnsPrefetchEnabled):
+        (QWebPreferences::setDnsPrefetchEnabled):
+        (QWebPreferences::standardFontFamily):
+        (QWebPreferences::setStandardFontFamily):
+        (QWebPreferences::fixedFontFamily):
+        (QWebPreferences::setFixedFontFamily):
+        (QWebPreferences::serifFontFamily):
+        (QWebPreferences::setSerifFontFamily):
+        (QWebPreferences::sansSerifFontFamily):
+        (QWebPreferences::setSansSerifFontFamily):
+        (QWebPreferences::cursiveFontFamily):
+        (QWebPreferences::setCursiveFontFamily):
+        (QWebPreferences::fantasyFontFamily):
+        (QWebPreferences::setFantasyFontFamily):
+        (QWebPreferences::minimumFontSize):
+        (QWebPreferences::setMinimumFontSize):
+        (QWebPreferences::defaultFontSize):
+        (QWebPreferences::setDefaultFontSize):
+        (QWebPreferences::defaultFixedFontSize):
+        (QWebPreferences::setDefaultFixedFontSize):
+        * UIProcess/API/qt/qwebpreferences.h: Added.
+        * UIProcess/API/qt/qwebpreferences_p.h: Added.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_preferences.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/javascript.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/localStorage.html: Added.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::preferences):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/qwkpreferences.cpp: Removed.
+        * UIProcess/qt/qwkpreferences.h: Removed.
+        * UIProcess/qt/qwkpreferences_p.h: Removed.
+        * WebKit2.pro:
+        * WebKit2API.pri:
+
 2011-10-18  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL][WK2] Fix compilation error by include WebErrors.h file.

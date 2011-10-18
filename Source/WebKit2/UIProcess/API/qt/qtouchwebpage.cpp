@@ -141,6 +141,11 @@ QWebNavigationController* QTouchWebPage::navigationController() const
     return d->navigationController;
 }
 
+QWebPreferences* QTouchWebPage::preferences() const
+{
+    return d->page->preferences();
+}
+
 QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)
