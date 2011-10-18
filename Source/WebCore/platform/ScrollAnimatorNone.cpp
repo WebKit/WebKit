@@ -40,10 +40,13 @@
 #include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-#include "TraceEvent.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
+
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
 
 using namespace std;
 
@@ -411,6 +414,10 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     if (!m_scrollableArea->scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("ScrollAnimatorNone::scroll", this, 0);
+#endif
+
     // FIXME: get the type passed in. MouseWheel could also be by line, but should still have different
     // animation parameters than the keyboard.
     Parameters parameters;
@@ -542,6 +549,10 @@ void ScrollAnimatorNone::updateVisibleLengths()
 
 void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("ScrollAnimatorNone::animationTimerFired", this, 0);
+#endif
+
     double currentTime = WTF::monotonicallyIncreasingTime();
     double deltaToNextFrame = ceil((currentTime - m_startTime) * kFrameRate) / kFrameRate - (currentTime - m_startTime);
 
@@ -552,6 +563,9 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
         continueAnimation = true;
 
     if (m_zoomData.m_isAnimating) {
+#if PLATFORM(CHROMIUM)
+        TRACE_EVENT("ScrollAnimatorNone::notifyZoomChanged", this, 0);
+#endif
         if (m_zoomData.m_startTime && m_zoomData.animateZoom(currentTime + deltaToNextFrame)) {
             continueAnimation = true;
             notifyZoomChanged(ZoomAnimationContinuing);
@@ -565,6 +579,10 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
         double nextTimerInterval = max(kMinimumTimerInterval, deltaToNextFrame);
         timer->startOneShot(nextTimerInterval);
     }
+
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("ScrollAnimatorNone::notifyPositionChanged", this, 0);
+#endif
     notifyPositionChanged();
 }
 
