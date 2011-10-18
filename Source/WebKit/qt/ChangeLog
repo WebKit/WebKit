@@ -1,3 +1,18 @@
+2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Merge QML plugin for WebKit2 with the original WebKit1 plugin
+
+        We don't need a separate plugin, as we no longer expose the WK2
+        APIs under QtWebKit.experimental, but now use QtWebKit. The version
+        was also changed to 3.0 instead of 5.0, as the original plugin was
+        versioned 1.0, and bumping to 3.0 fits the scheme used by QtWebKit releases.
+
+        Reviewed by Andreas Kling.
+
+        * declarative/declarative.pro:
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+
 2011-10-15  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(TILED_BACKING_STORE) to USE(TILED_BACKING_STORE)

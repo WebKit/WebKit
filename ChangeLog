@@ -1,3 +1,16 @@
+2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Merge QML plugin for WebKit2 with the original WebKit1 plugin
+
+        We don't need a sepearate plugin, as we no longer expose the WK2
+        APIs under QtWebKit.experimental, but now use QtWebKit. The version
+        was also changed to 3.0 instead of 5.0, as the original plugin was
+        versioned 1.0, and bumping to 3.0 fits the scheme used by QtWebKit releases.
+
+        Reviewed by Andreas Kling.
+
+        * Source/WebKit.pro:
+
 2011-10-18  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Support for client-based geolocation

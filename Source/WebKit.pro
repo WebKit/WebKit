@@ -32,8 +32,7 @@ SUBDIRS += WebKit/qt/QtWebKit.pro
 webkit2 {
     SUBDIRS += \
         WebKit2/WebProcess.pro \
-        WebKit2/UIProcess/API/qt/tests \
-        WebKit2/UIProcess/API/qt/qmlplugin
+        WebKit2/UIProcess/API/qt/tests
 }
 
 exists($$PWD/WebKit/qt/declarative) {

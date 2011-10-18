@@ -22,6 +22,16 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 
+#if defined(HAVE_WEBKIT2)
+#include "qdesktopwebview.h"
+#include "qtouchwebpage.h"
+#include "qtouchwebview.h"
+#include "qwebnavigationcontroller.h"
+#include "qwebpreferences.h"
+
+#include <QtNetwork/qnetworkreply.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class WebKitQmlPlugin : public QDeclarativeExtensionPlugin {
@@ -36,6 +46,15 @@ public:
         qmlRegisterType<QDeclarativeWebView>(uri, 1, 1, "WebView");
         qmlRegisterRevision<QDeclarativeWebView, 0>("QtWebKit", 1, 0);
         qmlRegisterRevision<QDeclarativeWebView, 1>("QtWebKit", 1, 1);
+#endif
+
+#if defined(HAVE_WEBKIT2)
+        qmlRegisterType<QDesktopWebView>(uri, 3, 0, "DesktopWebView");
+        qmlRegisterType<QTouchWebView>(uri, 3, 0, "TouchWebView");
+        qmlRegisterUncreatableType<QWebNavigationController>(uri, 3, 0, "NavigationController", QObject::tr("Cannot create separate instance of NavigationController"));
+        qmlRegisterUncreatableType<QWebPreferences>(uri, 3, 0, "WebPreferences", QObject::tr("Cannot create separate instance of WebPreferences"));
+        qmlRegisterUncreatableType<QTouchWebPage>(uri, 3, 0, "TouchWebPage", QObject::tr("Cannot create separate instance of TouchWebPage, use TouchWebView"));
+        qmlRegisterUncreatableType<QNetworkReply>(uri, 3, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
 #endif
     }
 };

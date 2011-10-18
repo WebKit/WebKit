@@ -47,6 +47,8 @@ linux-* {
 SOURCES += qdeclarativewebview.cpp plugin.cpp
 HEADERS += qdeclarativewebview_p.h
 
+webkit2: DEFINES += HAVE_WEBKIT2
+
 DESTDIR = $$OUTPUT_DIR/imports/$$TARGETPATH
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

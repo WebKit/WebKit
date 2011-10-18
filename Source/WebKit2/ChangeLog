@@ -1,3 +1,32 @@
+2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Merge QML plugin for WebKit2 with the original WebKit1 plugin
+
+        We don't need a separate plugin, as we no longer expose the WK2
+        APIs under QtWebKit.experimental, but now use QtWebKit. The version
+        was also changed to 3.0 instead of 5.0, as the original plugin was
+        versioned 1.0, and bumping to 3.0 fits the scheme used by QtWebKit releases.
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/qt/qmlplugin/plugin.cpp: Removed.
+        * UIProcess/API/qt/qmlplugin/qmldir: Removed.
+        * UIProcess/API/qt/qmlplugin/qmlplugin.pro: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_navigationPolicyForUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_preferences.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_properties.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_load.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadNegativeSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadZeroSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml:
+
 2011-10-18  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] ASSERT when displaying context menu in input field
