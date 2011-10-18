@@ -41,7 +41,9 @@
 #include "Node.h"
 #include "Page.h"
 #include "Range.h"
+#include "RenderBoxModelObject.h"
 #include "RenderInline.h"
+#include "RenderObject.h"
 #include "Settings.h"
 #include "StyledElement.h"
 #include "TextRun.h"
@@ -218,7 +220,7 @@ TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
     }
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
 {
 
     DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
@@ -263,10 +265,12 @@ void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& bo
         }
     }
 
-    String widthNumberPart = " " + String::number(boundingBox.width());
+    RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
+
+    String widthNumberPart = " " + String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetWidth(), modelObject) : boundingBox.width());
     nodeTitle += widthNumberPart + pxString;
     nodeTitle += timesString;
-    String heightNumberPart = String::number(boundingBox.height());
+    String heightNumberPart = String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetHeight(), modelObject) : boundingBox.height());
     nodeTitle += heightNumberPart + pxString;
 
     FontDescription desc;
@@ -442,7 +446,7 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
         return;
 
     if (highlightData->showInfo)
-        drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, containingFrame->settings());
+        drawElementTitle(context, node, renderer, boundingBox, titleAnchorBox, overlayRect, containingFrame->settings());
 }
 
 void drawRectHighlight(GraphicsContext& context, Document* document, HighlightData* highlightData)

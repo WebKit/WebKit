@@ -1,3 +1,12 @@
+2011-10-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Chromium] Different dimensions are reported for elements onscreen and in the Metrics pane
+        https://bugs.webkit.org/show_bug.cgi?id=70242
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/DOMNodeHighlighter.cpp:
+
 2011-10-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r97697.
