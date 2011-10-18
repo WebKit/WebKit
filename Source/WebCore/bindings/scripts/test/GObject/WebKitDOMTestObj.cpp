@@ -1580,7 +1580,7 @@ G_MAXINT, /* max */
                                                            "test_obj_unsigned-short-attr", /* short description */
                                                            "read-write  gushort TestObj.unsigned-short-attr", /* longer - could do with some extra doc stuff here */
                                                            0, /* min */
-G_MAXUSHORT, /* max */
+G_MAXUINT, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
