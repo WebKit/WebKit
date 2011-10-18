@@ -624,7 +624,7 @@ public:
     {
         for (int i = 0; i < m_n; ++i)
             delete m_data[i];
-        delete m_data;
+        delete[] m_data;
     }
     int m_n;
     TouchPointAndEvent** m_data;
