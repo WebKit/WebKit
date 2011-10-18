@@ -423,8 +423,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (!keyName)
         keyName = cCharacter.data();
 
-    evas_event_feed_key_down(evas, keyName, keyName, 0, 0, 0, 0);
-    evas_event_feed_key_up(evas, keyName, keyName, 0, 0, 1, 0);
+    evas_event_feed_key_down(evas, keyName, keyName, keyName, 0, 0, 0);
+    evas_event_feed_key_up(evas, keyName, keyName, keyName, 0, 1, 0);
 
     setEvasModifiers(evas, EvasKeyModifierNone);
 

@@ -1,3 +1,23 @@
+2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Make non-recognized keys work in events as well.
+        https://bugs.webkit.org/show_bug.cgi?id=69860
+
+        Reviewed by Antonio Gomes.
+
+        fast/forms/select-type-ahead-non-latin.html is the canonical case we fix
+        here: it has a select box with a few non-latin options, and one of them
+        is selected via the keyboard.
+
+        In this specific case, we need to make EventHandler::keyEvent send a
+        keyPressEvent to SelectElement, so that
+        SelectElement::defaultEventHandler calls typeAheadFind(). This happens
+        only when PlatformKeyEvent::text() is not empty, which was not the case
+        so far.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyDownCallback):
+
 2011-10-17  Alok Priyadarshi  <alokp@chromium.org>
 
         Add layout tests for WebPlugin compositor path
