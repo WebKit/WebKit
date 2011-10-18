@@ -1,3 +1,26 @@
+2011-10-17  Jon Lee  <jonlee@apple.com>
+
+        Filtering of URLs when serializing back forward list saves bad current index value
+        https://bugs.webkit.org/show_bug.cgi?id=70282
+        <rdar://problem/10057763>
+
+        Reviewed by Sam Weinig.
+
+        When reading the serialized b-f list, perform a sanity check on the current index.
+        If it is invalid, we set it to NoCurrentItemIndex to prevent further corruption of
+        the list.
+
+        When serializing the b-f list, currentIndex can be negative in the case where the list
+        has one item only, and that item gets filtered out. In this instance currentIndex should
+        just be -1. A crashing case showed an index that was more negative, a situation that I
+        could not replicate. Since this value will get cleaned up when the b-f list is restored,
+        I just strengthened the assertion to check for a more negative index in case we run into it again.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): Update the assertion
+        in case we go beyond NoCurrentItemIndex (which, as an int, is -1).
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation):
+
 2011-10-14  Chris Marrin  <cmarrin@apple.com>
 
         Throttle rate of requestAnimationFrame when page is not visible
