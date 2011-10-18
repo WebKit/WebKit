@@ -3891,4 +3891,4 @@ BUGWK70300 SNOWLEOPARD : fast/writing-mode/text-orientation-basic.html = FAIL
 // the bot cycles.
 BUG_OJAN WIN LINUX : fast/table/028-vertical.html = FAIL
 BUG_OJAN WIN LINUX : fast/table/height-percent-test-vertical.html = FAIL
-BUG_OJAN WIN : fast/writing-mode/fallback-orientation.html = FAIL
+BUG_OJAN WIN LINUX : fast/writing-mode/fallback-orientation.html = FAIL

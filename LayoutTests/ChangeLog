@@ -1,3 +1,10 @@
+2011-10-17  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/test_expectations.txt:
+        fallback-orientation.html is failing on Linux too.
+
 2011-10-17  Ojan Vafai  <ojan@chromium.org>
 
         Test cleanups after http://trac.webkit.org/changeset/97707.
