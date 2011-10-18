@@ -410,6 +410,7 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityRenderObject.cpp
     accessibility/AccessibilityScrollbar.cpp
     accessibility/AccessibilityScrollView.cpp
+    accessibility/AccessibilitySpinButton.cpp
     accessibility/AccessibilitySlider.cpp
     accessibility/AccessibilityTable.cpp
     accessibility/AccessibilityTableCell.cpp

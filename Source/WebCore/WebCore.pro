@@ -43,6 +43,7 @@ SOURCES += \
     accessibility/AccessibilityScrollbar.cpp \
     accessibility/AccessibilityScrollView.cpp \
     accessibility/AccessibilitySlider.cpp \    
+    accessibility/AccessibilitySpinButton.cpp \    
     accessibility/AccessibilityARIAGrid.cpp \    
     accessibility/AccessibilityARIAGridCell.cpp \    
     accessibility/AccessibilityARIAGridRow.cpp \    
@@ -1263,6 +1264,7 @@ HEADERS += \
     accessibility/AccessibilityScrollbar.h \
     accessibility/AccessibilityScrollView.h \
     accessibility/AccessibilitySlider.h \
+    accessibility/AccessibilitySpinButton.h \
     accessibility/AccessibilityTableCell.h \
     accessibility/AccessibilityTableColumn.h \
     accessibility/AccessibilityTable.h \

@@ -25221,6 +25221,13 @@
 				RelativePath="..\accessibility\AccessibilitySlider.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\accessibility\AccessibilitySpinButton.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\accessibility\AccessibilitySpinButton.h"
+                                >
 			<File
 				RelativePath="..\accessibility\AccessibilityTable.cpp"
 				>

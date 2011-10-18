@@ -3,6 +3,48 @@
         AX: buttons of number type <input> controls are not fully accessible
         https://bugs.webkit.org/show_bug.cgi?id=70241
 
+        Staged commit part 3. Committing the new spin button classes.
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilitySpinButton.cpp: Added.
+        (WebCore::AccessibilitySpinButton::create):
+        (WebCore::AccessibilitySpinButton::AccessibilitySpinButton):
+        (WebCore::AccessibilitySpinButton::~AccessibilitySpinButton):
+        (WebCore::AccessibilitySpinButton::incrementButton):
+        (WebCore::AccessibilitySpinButton::decrementButton):
+        (WebCore::AccessibilitySpinButton::elementRect):
+        (WebCore::AccessibilitySpinButton::addChildren):
+        (WebCore::AccessibilitySpinButton::step):
+        (WebCore::AccessibilitySpinButtonPart::AccessibilitySpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::create):
+        (WebCore::AccessibilitySpinButtonPart::elementRect):
+        (WebCore::AccessibilitySpinButtonPart::press):
+        * accessibility/AccessibilitySpinButton.h: Added.
+        (WebCore::AccessibilitySpinButton::setSpinButtonElement):
+        (WebCore::AccessibilitySpinButton::roleValue):
+        (WebCore::AccessibilitySpinButton::accessibilityIsIgnored):
+        (WebCore::AccessibilitySpinButton::isSpinButton):
+        (WebCore::AccessibilitySpinButtonPart::~AccessibilitySpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::isIncrementor):
+        (WebCore::AccessibilitySpinButtonPart::setIsIncrementor):
+        (WebCore::AccessibilitySpinButtonPart::roleValue):
+        (WebCore::AccessibilitySpinButtonPart::isSpinButtonPart):
+        (WebCore::AccessibilitySpinButtonPart::accessibilityIsIgnored):
+        (WebCore::toAccessibilitySpinButton):
+        (WebCore::toAccessibilitySpinButtonPart):
+
+2011-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: buttons of number type <input> controls are not fully accessible
+        https://bugs.webkit.org/show_bug.cgi?id=70241
+
         Phase 2 of the staged commit.
 
         Reviewed by Darin Adler.
