@@ -175,6 +175,9 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     layoutInlineDirection(relayoutChildren);
 
+    // FIXME: We should only need to call one of these for a given flex-flow + writing-mode combination.
+    // Is that true above as well?
+    computeLogicalWidth();
     computeLogicalHeight();
 
     if (size() != previousSize)
@@ -189,25 +192,29 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
 bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
 {
-    // FIXME: Is the child->isHorizontalWritingMode() check correct if the child is a flexbox?
-    // Should it be using child->isHorizontalFlow in that case?
-    // Or do we only care about the parent's writing mode?
+    // FIXME: If the child is a flexbox, then we need to check isHorizontalFlow.
     return isHorizontalFlow() != child->isHorizontalWritingMode();
+}
+
+bool RenderFlexibleBox::isColumnFlow() const
+{
+    EFlexFlow flow = style()->flexFlow();
+    return flow == FlowColumn || flow == FlowColumnReverse;
 }
 
 bool RenderFlexibleBox::isHorizontalFlow() const
 {
-    // FIXME: Take flex-flow value into account.
-    return isHorizontalWritingMode();
+    if (isHorizontalWritingMode())
+        return !isColumnFlow();
+    return isColumnFlow();
 }
 
 bool RenderFlexibleBox::isLeftToRightFlow() const
 {
-    // FIXME: Take flex-flow value into account.
+    if (isColumnFlow())
+        return style()->writingMode() == TopToBottomWritingMode || style()->writingMode() == LeftToRightWritingMode;
     return style()->isLeftToRightDirection();
 }
-
-// FIXME: Make all these flow aware methods actually be flow aware.
 
 bool RenderFlexibleBox::isFlowAwareLogicalHeightAuto() const
 {
@@ -217,52 +224,97 @@ bool RenderFlexibleBox::isFlowAwareLogicalHeightAuto() const
 
 void RenderFlexibleBox::setFlowAwareLogicalHeight(LayoutUnit size)
 {
-    setLogicalHeight(size);
+    if (isHorizontalFlow())
+        setHeight(size);
+    else
+        setWidth(size);
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareLogicalHeightForChild(RenderBox* child)
 {
-    return logicalHeightForChild(child);
+    return isHorizontalFlow() ? child->height() : child->width();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareLogicalWidthForChild(RenderBox* child)
 {
-    return logicalWidthForChild(child);
+    return isHorizontalFlow() ? child->width() : child->height();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareLogicalHeight() const
 {
-    return logicalHeight();
+    return isHorizontalFlow() ? height() : width();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareLogicalWidth() const
 {
-    return logicalWidth();
+    return isHorizontalFlow() ? width() : height();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareContentLogicalHeight() const
 {
-    return contentLogicalHeight();
+    return isHorizontalFlow() ? contentHeight() : contentWidth();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareContentLogicalWidth() const
 {
-    return contentLogicalWidth();
+    return isHorizontalFlow() ? contentWidth() : contentHeight();
+}
+
+WritingMode RenderFlexibleBox::transformedWritingMode() const
+{
+    WritingMode mode = style()->writingMode();
+    if (!isColumnFlow())
+        return mode;
+
+    switch (mode) {
+    case TopToBottomWritingMode:
+    case BottomToTopWritingMode:
+        return style()->isLeftToRightDirection() ? LeftToRightWritingMode : RightToLeftWritingMode;
+    case LeftToRightWritingMode:
+    case RightToLeftWritingMode:
+        return style()->isLeftToRightDirection() ? TopToBottomWritingMode : BottomToTopWritingMode;
+    }
+    ASSERT_NOT_REACHED();
+    return TopToBottomWritingMode;
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderStart() const
 {
-    return borderStart();
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? borderLeft() : borderRight();
+    return isLeftToRightFlow() ? borderTop() : borderBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 {
-    return borderBefore();
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return borderTop();
+    case BottomToTopWritingMode:
+        return borderBottom();
+    case LeftToRightWritingMode:
+        return borderLeft();
+    case RightToLeftWritingMode:
+        return borderRight();
+    }
+    ASSERT_NOT_REACHED();
+    return borderTop();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 {
-    return borderAfter();
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return borderBottom();
+    case BottomToTopWritingMode:
+        return borderTop();
+    case LeftToRightWritingMode:
+        return borderRight();
+    case RightToLeftWritingMode:
+        return borderLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return borderBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight() const
@@ -273,37 +325,87 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderAndPaddingLogicalHeight() const
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingStart() const
 {
-    return paddingStart();
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? paddingLeft() : paddingRight();
+    return isLeftToRightFlow() ? paddingTop() : paddingBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
 {
-    return paddingBefore();
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return paddingTop();
+    case BottomToTopWritingMode:
+        return paddingBottom();
+    case LeftToRightWritingMode:
+        return paddingLeft();
+    case RightToLeftWritingMode:
+        return paddingRight();
+    }
+    ASSERT_NOT_REACHED();
+    return paddingTop();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
 {
-    return paddingAfter();
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return paddingBottom();
+    case BottomToTopWritingMode:
+        return paddingTop();
+    case LeftToRightWritingMode:
+        return paddingRight();
+    case RightToLeftWritingMode:
+        return paddingLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return paddingBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginStartForChild(RenderBox* child) const
 {
-    return marginStartForChild(child);
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? child->marginLeft() : child->marginRight();
+    return isLeftToRightFlow() ? child->marginTop() : child->marginBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginEndForChild(RenderBox* child) const
 {
-    return marginStartForChild(child);
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? child->marginRight() : child->marginLeft();
+    return isLeftToRightFlow() ? child->marginBottom() : child->marginTop();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(RenderBox* child) const
 {
-    return marginBeforeForChild(child);
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return child->marginTop();
+    case BottomToTopWritingMode:
+        return child->marginBottom();
+    case LeftToRightWritingMode:
+        return child->marginLeft();
+    case RightToLeftWritingMode:
+        return child->marginRight();
+    }
+    ASSERT_NOT_REACHED();
+    return marginTop();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginAfterForChild(RenderBox* child) const
 {
-    return marginAfterForChild(child);
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return child->marginBottom();
+    case BottomToTopWritingMode:
+        return child->marginTop();
+    case LeftToRightWritingMode:
+        return child->marginRight();
+    case RightToLeftWritingMode:
+        return child->marginLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return marginBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginLogicalHeightForChild(RenderBox* child) const
@@ -319,12 +421,32 @@ LayoutPoint RenderFlexibleBox::flowAwareLogicalLocationForChild(RenderBox* child
 
 void RenderFlexibleBox::setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit margin)
 {
-    setMarginStartForChild(child, margin);
+    if (isHorizontalFlow()) {
+        if (isLeftToRightFlow())
+            child->setMarginLeft(margin);
+        else
+            child->setMarginRight(margin);
+    } else {
+        if (isLeftToRightFlow())
+            child->setMarginTop(margin);
+        else
+            child->setMarginBottom(margin);
+    }
 }
 
 void RenderFlexibleBox::setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit margin)
 {
-    setMarginEndForChild(child, margin);
+    if (isHorizontalFlow()) {
+        if (isLeftToRightFlow())
+            child->setMarginRight(margin);
+        else
+            child->setMarginLeft(margin);
+    } else {
+        if (isLeftToRightFlow())
+            child->setMarginBottom(margin);
+        else
+            child->setMarginTop(margin);
+    }
 }
 
 void RenderFlexibleBox::setFlowAwareLogicalLocationForChild(RenderBox* child, const LayoutPoint& location)
@@ -547,11 +669,13 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         startEdge += flowAwareMarginStartForChild(child);
 
         LayoutUnit childLogicalWidth = flowAwareLogicalWidthForChild(child);
-        LayoutUnit logicalLeft = isLeftToRightFlow() ? startEdge : totalLogicalWidth - startEdge - childLogicalWidth;
+        bool shouldFlipInlineDirection = isColumnFlow() ? true : isLeftToRightFlow();
+        LayoutUnit logicalLeft = shouldFlipInlineDirection ? startEdge : totalLogicalWidth - startEdge - childLogicalWidth;
+
         // FIXME: Do repaintDuringLayoutIfMoved.
         // FIXME: Supporting layout deltas.
         setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop + flowAwareMarginBeforeForChild(child)));
-        startEdge += childLogicalWidth + marginEndForChild(child);
+        startEdge += childLogicalWidth + flowAwareMarginEndForChild(child);
 
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)
             startEdge += availableFreeSpace / (childSizes.size() - 1);
@@ -567,7 +691,17 @@ void RenderFlexibleBox::adjustLocationLogicalTopForChild(RenderBox* child, Layou
 
 void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator, LayoutUnit maxAscent)
 {
+    LayoutUnit logicalHeight = flowAwareLogicalHeight();
+
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        // direction:rtl + flex-flow:column means the cross-axis direction is flipped.
+        if (!style()->isLeftToRightDirection() && isColumnFlow()) {
+            LayoutPoint location = flowAwareLogicalLocationForChild(child);
+            location.setY(logicalHeight - flowAwareLogicalHeightForChild(child) - location.y());
+            setFlowAwareLogicalLocationForChild(child, location);
+        }
+
+        // FIXME: Make sure this does the right thing with column flows.
         switch (child->style()->flexAlign()) {
         case AlignStretch: {
             Length height = isHorizontalFlow() ? child->style()->height() : child->style()->width();

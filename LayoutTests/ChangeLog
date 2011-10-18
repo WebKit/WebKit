@@ -1,3 +1,28 @@
+2011-10-13  Ojan Vafai  <ojan@chromium.org>
+
+        implement flex-flow:column
+        https://bugs.webkit.org/show_bug.cgi?id=70082
+
+        Reviewed by David Hyatt.
+
+        * css3/flexbox/flex-flow-border-expected.txt: Added.
+        * css3/flexbox/flex-flow-border.html: Added.
+        Failures are due to not handling orthogonal flows correctly. 
+        * css3/flexbox/flex-flow-expected.txt: Added.
+        * css3/flexbox/flex-flow-margins-expected.txt: Added.
+        * css3/flexbox/flex-flow-margins.html: Added.
+        * css3/flexbox/flex-flow-orientations-expected.txt: Added.
+        * css3/flexbox/flex-flow-orientations.html: Added.
+        * css3/flexbox/flex-flow-overflow-expected.txt: Added.
+        * css3/flexbox/flex-flow-overflow.html: Added.
+        * css3/flexbox/flex-flow-padding-expected.txt: Added.
+        * css3/flexbox/flex-flow-padding.html: Added.
+        Failures are due to not handling orthogonal flows correctly. 
+        * css3/flexbox/flex-flow.html: Added.
+        * css3/flexbox/resources/flexbox.js:
+        Added the ability to check offsets that include clientLeft/clientTop
+        and for checking clientWidth/clientHeight. This is neede dfor the border tests.
+
 2011-10-18  Cary Clark  <caryclark@google.com>
 
         Rebaseline most remaining IMAGE diffs for chromium-mac (Skia)

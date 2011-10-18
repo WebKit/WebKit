@@ -1,3 +1,60 @@
+2011-10-13  Ojan Vafai  <ojan@chromium.org>
+
+        implement flex-flow:column
+        https://bugs.webkit.org/show_bug.cgi?id=70082
+
+        Reviewed by David Hyatt.
+
+        There's still a bug with a FIXME where we don't compute the right
+        size for the container of the flexbox in the presence of
+        orthogonal flows. That's the cause of all the failing cases
+        in the tests.
+
+        Tests: css3/flexbox/flex-flow-border.html
+               css3/flexbox/flex-flow-margins.html
+               css3/flexbox/flex-flow-orientations.html
+               css3/flexbox/flex-flow-overflow.html
+               css3/flexbox/flex-flow-padding.html
+               css3/flexbox/flex-flow.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::hasOrthogonalFlow):
+        (WebCore::RenderFlexibleBox::isColumnFlow):
+        (WebCore::RenderFlexibleBox::isHorizontalFlow):
+        (WebCore::RenderFlexibleBox::isLeftToRightFlow):
+        Use isHorizontalFlow and isLeftToRightFlow so that methods like
+        flowAwareBorderStart look exactly like borderStart with
+        isHorizontalWritingMode and isLeftToRightDirection replaced.
+
+        (WebCore::RenderFlexibleBox::setFlowAwareLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareLogicalHeightForChild):
+        (WebCore::RenderFlexibleBox::flowAwareLogicalWidthForChild):
+        (WebCore::RenderFlexibleBox::flowAwareLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareLogicalWidth):
+        (WebCore::RenderFlexibleBox::flowAwareContentLogicalHeight):
+        (WebCore::RenderFlexibleBox::flowAwareContentLogicalWidth):
+        (WebCore::RenderFlexibleBox::transformedWritingMode):
+        Transform the writing-mode based of the flex-flow and direction
+        values. That methods like flowAwareBorderBefore look exactly like
+        borderBefore, except it switches over a different value.
+
+        (WebCore::RenderFlexibleBox::flowAwareBorderStart):
+        (WebCore::RenderFlexibleBox::flowAwareBorderBefore):
+        (WebCore::RenderFlexibleBox::flowAwareBorderAfter):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingStart):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingBefore):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingAfter):
+        (WebCore::RenderFlexibleBox::flowAwareMarginStartForChild):
+        (WebCore::RenderFlexibleBox::flowAwareMarginEndForChild):
+        (WebCore::RenderFlexibleBox::flowAwareMarginBeforeForChild):
+        (WebCore::RenderFlexibleBox::flowAwareMarginAfterForChild):
+        (WebCore::RenderFlexibleBox::setFlowAwareMarginStartForChild):
+        (WebCore::RenderFlexibleBox::setFlowAwareMarginEndForChild):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        (WebCore::RenderFlexibleBox::alignChildrenBlockDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-10-18  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Tracking update rects in LayerChromium and CCLayerImpl.
