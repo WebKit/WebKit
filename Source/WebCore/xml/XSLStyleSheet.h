@@ -56,9 +56,6 @@ public:
         return adoptRef(new XSLStyleSheet(parentNode, finalURL.string(), finalURL, true));
     }
 
-    unsigned length() const { return m_children.size(); }
-    StyleBase* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
-
     // Taking an arbitrary node is unsafe, because owner node pointer can become stale.
     // XSLTProcessor ensures that the stylesheet doesn't outlive its parent, in part by not exposing it to JavaScript.
     static PassRefPtr<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const KURL& finalURL)
@@ -100,17 +97,12 @@ public:
     bool processed() const { return m_processed; }
 
 private:
-    void append(PassRefPtr<StyleBase> child)
-    {
-        m_children.append(child);
-    }
-
     XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);
 #if !USE(QXMLQUERY)
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);
 #endif
 
-    Vector<RefPtr<StyleBase> > m_children;
+    Vector<RefPtr<XSLImportRule> > m_children;
 
     Document* m_ownerDocument;
     bool m_embedded;

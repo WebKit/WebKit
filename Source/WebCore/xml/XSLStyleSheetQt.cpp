@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "Node.h"
 #include "NotImplemented.h"
+#include "XSLImportRule.h"
 #include "XSLTProcessor.h"
 
 namespace WebCore {
@@ -40,9 +41,9 @@ XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const 
 
 XSLStyleSheet::~XSLStyleSheet()
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        ASSERT(item(i)->parent() == this);
-        item(i)->setParent(0);
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        ASSERT(m_children.at(i)->parent() == this);
+        m_children.at(i)->setParent(0);
     }
 }
 

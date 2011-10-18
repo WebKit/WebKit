@@ -57,6 +57,7 @@ public:
     virtual bool isPageRule() const { return false; }
     virtual bool isStyleRule() const { return false; }
     virtual bool isRegionStyleRule() const { return false; }
+    virtual bool isImportRule() const { return false; }
 
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;

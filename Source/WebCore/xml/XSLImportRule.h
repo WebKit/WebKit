@@ -55,8 +55,6 @@ public:
 private:
     XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
 
-    virtual bool isImportRule() const { return true; }
-
     virtual void setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet);
     
     String m_strHref;

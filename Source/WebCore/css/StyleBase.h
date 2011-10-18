@@ -48,7 +48,6 @@ namespace WebCore {
         KURL baseURL() const;
 
         virtual bool isRule() const { return false; }
-        virtual bool isImportRule() const { return false; }
 
         virtual bool isStyleSheet() const { return false; }
         virtual bool isCSSStyleSheet() const { return false; }
