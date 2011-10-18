@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityListBox.h"
+#include "AccessibilitySpinButton.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -69,12 +70,14 @@
 #include "RenderMenuList.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
 #include "Text.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -1440,19 +1443,8 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
-    const size_t n = quads.size();
-    if (!n)
-        return LayoutRect();
-
-    LayoutRect result;
-    for (size_t i = 0; i < n; ++i) {
-        LayoutRect r = quads[i].enclosingBoundingBox();
-        if (!r.isEmpty()) {
-            if (obj->style()->hasAppearance())
-                obj->theme()->adjustRepaintRect(obj, r);
-            result.unite(r);
-        }
-    }
+    
+    LayoutRect result = boundingBoxForQuads(obj, quads);
 
     // The size of the web area should be the content size, not the clipped size.
     if (isWebArea() && obj->frame()->view())

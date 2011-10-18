@@ -45,6 +45,7 @@
 #include "AccessibilityScrollView.h"
 #include "AccessibilityScrollbar.h"
 #include "AccessibilitySlider.h"
+#include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
@@ -323,6 +324,12 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
         break;
     case MenuListOptionRole:
         obj = AccessibilityMenuListOption::create();
+        break;
+    case SpinButtonRole:
+        obj = AccessibilitySpinButton::create();
+        break;
+    case SpinButtonPartRole:
+        obj = AccessibilitySpinButtonPart::create();
         break;
     default:
         obj = 0;
