@@ -63,7 +63,8 @@ private:
 };
 
 // An offscreen buffer to be rendered by software.
-class BGRA32PremultimpliedBuffer : public RefCounted<BGRA32PremultimpliedBuffer> {
+class BGRA32PremultimpliedBuffer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~BGRA32PremultimpliedBuffer() { }
     virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect, bool opaque) = 0;

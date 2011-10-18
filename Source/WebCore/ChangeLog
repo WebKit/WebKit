@@ -1,3 +1,17 @@
+2011-10-17  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap][QT] The BGRA32PremultimpliedBuffer should not inherit the RefCounted class.
+        https://bugs.webkit.org/show_bug.cgi?id=70098
+
+        The BitmapTexture has a BGRA32PremultimpliedBuffer object using OwnPtr, not RefPtr.
+        It causes following assertion fail, RefCountedBase::m_deletionHasBegun.
+        It is better that the BGRA32PremultimpliedBuffer does not inherit the RefCounted
+        because the BitmapTexture only has and uses a BGRA32PremultimpliedBuffer object.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/opengl/TextureMapperGL.h:
+
 2011-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Search in resource crashes when there is no resource with given url.
