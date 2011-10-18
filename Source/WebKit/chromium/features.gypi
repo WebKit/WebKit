@@ -107,7 +107,6 @@
     # through GYP_DEFINES.
     'variables': {
       'use_accelerated_compositing%': 1,
-      'use_threaded_compositing%': 0,
       'enable_skia_text%': 0,
       'enable_svg%': 1,
       'enable_touch_events%': 1,
@@ -117,7 +116,6 @@
       'enable_mutation_observers%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
-    'use_threaded_compositing%': '<(use_threaded_compositing)',
     'enable_skia_text%': '<(enable_skia_text)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
@@ -141,11 +139,6 @@
       ['use_accelerated_compositing==1 and (OS!="mac" or use_skia==1)', {
         'feature_defines': [
           'ENABLE_ACCELERATED_2D_CANVAS=1',
-        ],
-      }],
-      ['use_accelerated_compositing==1 and use_threaded_compositing==1', {
-        'feature_defines': [
-          'WTF_USE_THREADED_COMPOSITING=1',
         ],
       }],
       ['touchui==1', {

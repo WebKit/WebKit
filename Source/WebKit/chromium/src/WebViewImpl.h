@@ -228,9 +228,7 @@ public:
     virtual void applyScrollDelta(const WebCore::IntSize&);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
     virtual void didRecreateGraphicsContext(bool success);
-#if !USE(THREADED_COMPOSITING)
     virtual void scheduleComposite();
-#endif
 
     // WebViewImpl
 
@@ -457,9 +455,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);
-#if !USE(THREADED_COMPOSITING)
     void doComposite();
-#endif
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
     void updateLayerTreeViewport();

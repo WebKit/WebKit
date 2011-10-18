@@ -1,3 +1,16 @@
+2011-10-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove USE(THREADED_COMPOSITING) from the tree, this is controlled by a runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=70356
+
+        Reviewed by Kenneth Russell.
+
+        * features.gypi:
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::scheduleComposite):
+        * src/WebLayerTreeViewImpl.h:
+        * src/WebViewImpl.h:
+
 2011-10-18  Antoine Labour  <piman@chromium.org>
 
         Enable out-of-thread compositing in WebKit compositor API

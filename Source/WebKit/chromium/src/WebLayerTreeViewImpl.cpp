@@ -101,12 +101,10 @@ void WebLayerTreeViewImpl::didRecreateGraphicsContext(bool success)
         m_client->didRebindGraphicsContext(success);
 }
 
-#if !USE(THREADED_COMPOSITING)
 void WebLayerTreeViewImpl::scheduleComposite()
 {
     if (m_client)
         m_client->scheduleComposite();
 }
-#endif
 
 } // namespace WebKit
