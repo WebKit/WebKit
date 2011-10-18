@@ -76,16 +76,6 @@ results.kImageType = 'image'
 results.kTextType = 'text'
 // FIXME: There are more types of tests.
 
-function isFailure(result)
-{
-    return kFailingResults.indexOf(result) != -1;
-}
-
-function isSuccess(result)
-{
-    return result === PASS;
-}
-
 function possibleSuffixListFor(failureTypeList)
 {
     var suffixList = [];
@@ -201,59 +191,60 @@ var g_resultsCache = new base.AsynchronousCache(function (key, callback) {
     net.jsonp(key, callback);
 });
 
-function anyIsFailure(resultsList)
-{
-    return $.grep(resultsList, isFailure).length > 0;
-}
-
-function anyIsSuccess(resultsList)
-{
-    return $.grep(resultsList, isSuccess).length > 0;
-}
-
-function addImpliedExpectations(resultsList)
-{
-    if (resultsList.indexOf('FAIL') == -1)
-        return resultsList;
-    return resultsList.concat(kFailingResults);
-}
-
-results.unexpectedResults = function(resultNode)
-{
-    var actualResults = results.failureTypeList(resultNode.actual);
-    var expectedResults = addImpliedExpectations(results.failureTypeList(resultNode.expected))
-
-    return $.grep(actualResults, function(result) {
-        return expectedResults.indexOf(result) == -1;
-    });
-};
-
-function isExpectedOrUnexpectedFailure(resultNode)
-{
-    if (!resultNode)
-        return false;
-    var actualResults = results.failureTypeList(resultNode.actual);
-    if (anyIsSuccess(actualResults))
-        return false;
-    return anyIsFailure(actualResults);
-}
+results.ResultAnalyzer = base.extends(Object, {
+    init: function(resultNode)
+    {
+        this._actual = resultNode ? results.failureTypeList(resultNode.actual) : [];
+        this._expected = resultNode ? this._addImpliedExpectations(results.failureTypeList(resultNode.expected)) : [];
+    },
+    _addImpliedExpectations: function(resultsList)
+    {
+        if (resultsList.indexOf('FAIL') == -1)
+            return resultsList;
+        return resultsList.concat(kFailingResults);
+    },
+    _hasPass: function(results)
+    {
+        return results.indexOf(PASS) != -1;
+    },
+    unexpectedResults: function()
+    {
+        return this._actual.filter(function(result) {
+            return this._expected.indexOf(result) == -1;
+        }, this);
+    },
+    succeeded: function()
+    {
+        return this._hasPass(this._actual);
+    },
+    expectedToSucceed: function()
+    {
+        return this._hasPass(this._expected);
+    },
+    flaky: function()
+    {
+        return this._actual.length > 1;
+    },
+    hasUnexpectedFailures: function()
+    {
+        var difference = {};
+        this._actual.forEach(function(actual) {
+            difference[actual] = actual !== PASS;
+        });
+        this._expected.forEach(function(expected) {
+            if (expected !== PASS)
+                delete difference[expected];
+        });
+        return Object.keys(difference).some(function(key) {
+            return difference[key];
+        });
+    }
+})
 
 function isUnexpectedFailure(resultNode)
 {
-    if (!resultNode)
-        return false;
-    if (anyIsSuccess(results.failureTypeList(resultNode.actual)))
-        return false;
-    return anyIsFailure(results.unexpectedResults(resultNode));
-}
-
-function isUnexpectedSuccesses(resultNode)
-{
-    if (!resultNode)
-        return false;
-    if (anyIsFailure(results.failureTypeList(resultNode.actual)))
-        return false;
-    return anyIsSuccess(results.unexpectedResults(resultNode));
+    var analyzer = new results.ResultAnalyzer(resultNode);
+    return analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky();
 }
 
 function isResultNode(node)
@@ -263,7 +254,9 @@ function isResultNode(node)
 
 results.expectedOrUnexpectedFailures = function(resultsTree)
 {
-    return base.filterTree(resultsTree.tests, isResultNode, isExpectedOrUnexpectedFailure);
+    return base.filterTree(resultsTree.tests, isResultNode, function(resultNode) {
+        return !(new results.ResultAnalyzer(resultNode).succeeded());
+    });
 };
 
 results.unexpectedFailures = function(resultsTree)
@@ -273,7 +266,10 @@ results.unexpectedFailures = function(resultsTree)
 
 results.unexpectedSuccesses = function(resultsTree)
 {
-    return base.filterTree(resultsTree.tests, isResultNode, isUnexpectedSuccesses);
+    return base.filterTree(resultsTree.tests, isResultNode, function(resultNode) {
+        var analyzer = new results.ResultAnalyzer(resultNode);
+        return !analyzer.expectedToSucceed() && analyzer.succeeded() && !analyzer.flaky();
+    });
 };
 
 function resultsByTest(resultsByBuilder, filter)
@@ -318,7 +314,8 @@ results.collectUnexpectedResults = function(dictionaryOfResultNodes)
 {
     var collectedResults = [];
     $.each(dictionaryOfResultNodes, function(key, resultNode) {
-        collectedResults = collectedResults.concat(results.unexpectedResults(resultNode));
+        var analyzer = new results.ResultAnalyzer(resultNode);
+        collectedResults = collectedResults.concat(analyzer.unexpectedResults());
     });
     return base.uniquifyArray(collectedResults);
 };

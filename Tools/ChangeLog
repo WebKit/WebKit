@@ -1,3 +1,18 @@
+2011-10-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic should not report flaking in expected failures as failures.
+        https://bugs.webkit.org/show_bug.cgi?id=70279
+
+        Reviewed by Adam Barth.
+
+        On the bots, flakes that are already expected to fail aren't reported as failures (they keep the bot green).
+        For example, if TEXT failure is expected, a TEXT TIMEOUT result will not cause the redness. We should do the
+        same for garden-o-matic.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js: Spuriously changed to use Array iterators rather than jQuery APIs,
+            rewrote the logic for determining expected or unexpected failures as a central analysis tool.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js: Added unit tests.
+
 2011-10-18  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Support for client-based geolocation

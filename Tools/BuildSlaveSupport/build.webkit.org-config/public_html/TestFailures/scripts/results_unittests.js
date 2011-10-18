@@ -40,6 +40,10 @@ unittest.kExampleResultsJSON = {
                 "expected": "PASS",
                 "actual": "PASS TEXT"
             },
+            "unexpected-failing-flaky-scrollbar.html": {
+                "expected": "TEXT",
+                "actual": "TIMEOUT TEXT"
+            },
             "unexpected-pass.html": {
                 "expected": "FAIL",
                 "actual": "PASS"
@@ -69,6 +73,59 @@ unittest.kExampleResultsJSON = {
     "has_wdiff": true,
     "revision": "90430"
 };
+
+test("ResultAnalyzer", 35, function() {
+    var analyzer;
+
+    analyzer = new results.ResultAnalyzer({expected: 'PASS', actual: 'TEXT'});
+    ok(analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['TEXT']);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'PASS TIMEOUT', actual: 'TEXT'});
+    ok(analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['TEXT']);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'TEXT', actual: 'TEXT TIMEOUT'});
+    ok(!analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['TIMEOUT']);
+    ok(!analyzer.succeeded());
+    ok(analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'PASS', actual: 'TEXT TIMEOUT'});
+    ok(analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['TEXT', 'TIMEOUT']);
+    ok(!analyzer.succeeded());
+    ok(analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'PASS TIMEOUT', actual: 'PASS TIMEOUT'});
+    ok(analyzer.expectedToSucceed());
+    ok(!analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), []);
+    ok(analyzer.succeeded());
+    ok(analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'PASS TIMEOUT', actual: 'TIMEOUT PASS'});
+    ok(analyzer.expectedToSucceed());
+    ok(!analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), []);
+    ok(analyzer.succeeded());
+    ok(analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'TIMEOUT'});
+    ok(!analyzer.expectedToSucceed());
+    ok(!analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), []);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+});
 
 test("unexpectedFailures", 1, function() {
     var unexpectedFailures = results.unexpectedFailures(unittest.kExampleResultsJSON);
