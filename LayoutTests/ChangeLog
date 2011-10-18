@@ -1,3 +1,14 @@
+2011-10-17  Dirk Pranke  <dpranke@chromium.org>
+
+        platform/chromium/compositing/plugins/webplugin* failing on cg snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=70294
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-gpu-cg-mac/platform/chromium/compositing/plugins/webplugin-alpha-expected.png: Added.
+        * platform/chromium-gpu-cg-mac/platform/chromium/compositing/plugins/webplugin-alpha-expected.txt: Added.
+        * platform/chromium-gpu-cg-mac/platform/chromium/compositing/plugins/webplugin-reflection-expected.txt: Added.
+
 2011-10-17  Kentaro Hara  <haraken@chromium.org>
 
         MessageEvent.data can be stored as ScriptValue.
