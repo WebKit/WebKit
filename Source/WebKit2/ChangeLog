@@ -1,3 +1,14 @@
+2011-10-18  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL][WK2] Fix compilation error by include WebErrors.h file.
+        https://bugs.webkit.org/show_bug.cgi?id=70309
+
+        Unreviewed build fix
+
+        Added a header file to fix compilation error.
+
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+
 2011-10-18  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
 
         [Qt][WK2] Implement geolocation provider for qt port

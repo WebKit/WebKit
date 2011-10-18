@@ -27,6 +27,7 @@
 #include "WebErrors.h"
 
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
