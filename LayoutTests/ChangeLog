@@ -1,3 +1,42 @@
+2011-10-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r97602 and r97596.
+
+        * platform/gtk/css2.1/t0511-c21-pseud-link-02-e-expected.txt:
+        * platform/gtk/css2.1/t0511-c21-pseud-link-03-e-expected.txt:
+        * platform/gtk/css3/selectors3/html/css3-modsel-17-expected.txt:
+        * platform/gtk/css3/selectors3/html/css3-modsel-61-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-17-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-61-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-17-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-61-expected.txt:
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/gtk/fast/block/float/float-in-float-hit-testing-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/056-expected.txt:
+        * platform/gtk/fast/dom/34176-expected.txt:
+        * platform/gtk/fast/events/reveal-link-when-focused-expected.txt:
+        * platform/gtk/fast/history/visited-link-background-color-expected.txt:
+        * platform/gtk/fast/overflow/overflow_hidden-expected.txt:
+        * platform/gtk/fast/selectors/017-expected.txt:
+        * platform/gtk/fast/selectors/061-expected.txt:
+        * platform/gtk/fast/table/028-vertical-expected.txt:
+        * platform/gtk/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/gtk/fast/writing-mode/fallback-orientation-expected.txt:
+        * platform/gtk/svg/hixie/cascade/002-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug26553-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug46623-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug51140-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug8950-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+
 2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: support displaying multiple sources per single script in ScriptsPanel.

@@ -49,29 +49,29 @@ layer at (0,0) size 800x600
                                                   RenderTableSection {TBODY} at (1,1) size 271x77
                                                     RenderTableRow {TR} at (0,2) size 271x23
                                                       RenderTableCell {TD} at (2,2) size 144x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 51x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 51x19
                                                             text run at (2,2) width 51: "Holiday"
                                                       RenderTableCell {TD} at (148,2) size 121x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 29x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 29x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 29x19
                                                             text run at (2,2) width 29: "Cars"
                                                     RenderTableRow {TR} at (0,27) size 271x23
                                                       RenderTableCell {TD} at (2,27) size 144x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 40x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 40x19
                                                             text run at (2,2) width 40: "Sports"
                                                       RenderTableCell {TD} at (148,27) size 121x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 53x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 53x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 53x19
                                                             text run at (2,2) width 53: "Animals"
                                                     RenderTableRow {TR} at (0,52) size 271x23
                                                       RenderTableCell {TD} at (2,52) size 144x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 69x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 69x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 69x19
                                                             text run at (2,2) width 69: "Computers"
                                                       RenderTableCell {TD} at (148,52) size 121x23 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                                                        RenderInline {A} at (0,0) size 57x19 [color=#0000EE]
+                                                        RenderInline {A} at (0,0) size 57x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 57x19
                                                             text run at (2,2) width 57: "Cartoons"
       RenderBlock (anonymous) at (0,238) size 784x19
@@ -115,6 +115,6 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (1,1) size 198x27
                           RenderTableRow {TR} at (0,2) size 198x23
                             RenderTableCell {TD} at (2,2) size 194x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 51x19 [color=#551A8B]
                                 RenderText {#text} at (2,2) size 51x19
                                   text run at (2,2) width 51: "Holiday"
