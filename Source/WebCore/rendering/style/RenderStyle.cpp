@@ -98,6 +98,8 @@ ALWAYS_INLINE RenderStyle::RenderStyle()
 #endif
 {
     setBitDefaults(); // Would it be faster to copy this from the default style?
+    COMPILE_ASSERT((sizeof(InheritedFlags) <= 8), InheritedFlags_does_not_grow);
+    COMPILE_ASSERT((sizeof(NonInheritedFlags) <= 8), NonInheritedFlags_does_not_grow);
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(bool)

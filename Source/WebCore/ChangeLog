@@ -1,3 +1,24 @@
+2011-10-17  Luke Macpherson   <macpherson@chromium.org>
+
+        Add compile-time asserts for RenderStyle::(Non)InheritedFlags size.
+        https://bugs.webkit.org/show_bug.cgi?id=69803
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Adds COMPILE_ASSERTs for the size of RenderStyle::InheritedFlags and
+        RenderStyle::NonInheritedFlags to ensure that they are not accidentally
+        grown in future changes.
+        Change types of unsigned bitfields to unsigned char to ensure that the
+        above assertions remain true when building on windows.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle):
+        Adds assertions to ensure struct sizes do not change.
+        * rendering/style/RenderStyle.h:
+        Changes unsigned to unsigned char as outlined above.
+
 2011-10-17  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed, rolling out r97662.

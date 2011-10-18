@@ -191,30 +191,30 @@ protected:
 
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
-        unsigned _empty_cells : 1; // EEmptyCell
-        unsigned _caption_side : 2; // ECaptionSide
-        unsigned _list_style_type : 7; // EListStyleType
-        unsigned _list_style_position : 1; // EListStylePosition
-        unsigned _visibility : 2; // EVisibility
-        unsigned _text_align : 4; // ETextAlign
-        unsigned _text_transform : 2; // ETextTransform
-        unsigned _text_decorations : ETextDecorationBits;
-        unsigned _cursor_style : 6; // ECursor
-        unsigned _direction : 1; // TextDirection
-        unsigned _border_collapse : 1; // EBorderCollapse
-        unsigned _white_space : 3; // EWhiteSpace
-        unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
+        unsigned char _empty_cells : 1; // EEmptyCell
+        unsigned char _caption_side : 2; // ECaptionSide
+        unsigned char _list_style_type : 7; // EListStyleType
+        unsigned char _list_style_position : 1; // EListStylePosition
+        unsigned char _visibility : 2; // EVisibility
+        unsigned char _text_align : 4; // ETextAlign
+        unsigned char _text_transform : 2; // ETextTransform
+        unsigned char _text_decorations : ETextDecorationBits;
+        unsigned char _cursor_style : 6; // ECursor
+        unsigned char _direction : 1; // TextDirection
+        unsigned char _border_collapse : 1; // EBorderCollapse
+        unsigned char _white_space : 3; // EWhiteSpace
+        unsigned char _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
         // 34 bits
         
         // non CSS2 inherited
-        unsigned m_rtlOrdering : 1; // Order
+        unsigned char m_rtlOrdering : 1; // Order
         bool _force_backgrounds_to_white : 1;
-        unsigned _pointerEvents : 4; // EPointerEvents
-        unsigned _insideLink : 2; // EInsideLink
+        unsigned char _pointerEvents : 4; // EPointerEvents
+        unsigned char _insideLink : 2; // EInsideLink
         // 43 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
-        unsigned m_writingMode : 2; // WritingMode
+        unsigned char m_writingMode : 2; // WritingMode
         // 45 bits
     } inherited_flags;
 
@@ -245,26 +245,26 @@ protected:
 
         bool operator!=(const NonInheritedFlags& other) const { return !(*this == other); }
 
-        unsigned _effectiveDisplay : 5; // EDisplay
-        unsigned _originalDisplay : 5; // EDisplay
-        unsigned _overflowX : 3; // EOverflow
-        unsigned _overflowY : 3; // EOverflow
-        unsigned _vertical_align : 4; // EVerticalAlign
-        unsigned _clear : 2; // EClear
-        unsigned _position : 2; // EPosition
-        unsigned _floating : 2; // EFloat
-        unsigned _table_layout : 1; // ETableLayout
+        unsigned char _effectiveDisplay : 5; // EDisplay
+        unsigned char _originalDisplay : 5; // EDisplay
+        unsigned char _overflowX : 3; // EOverflow
+        unsigned char _overflowY : 3; // EOverflow
+        unsigned char _vertical_align : 4; // EVerticalAlign
+        unsigned char _clear : 2; // EClear
+        unsigned char _position : 2; // EPosition
+        unsigned char _floating : 2; // EFloat
+        unsigned char _table_layout : 1; // ETableLayout
 
-        unsigned _page_break_before : 2; // EPageBreak
-        unsigned _page_break_after : 2; // EPageBreak
-        unsigned _page_break_inside : 2; // EPageBreak
+        unsigned char _page_break_before : 2; // EPageBreak
+        unsigned char _page_break_after : 2; // EPageBreak
+        unsigned char _page_break_inside : 2; // EPageBreak
 
-        unsigned _styleType : 6; // PseudoId
+        unsigned char _styleType : 6; // PseudoId
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
-        unsigned _pseudoBits : 7;
-        unsigned _unicodeBidi : 3; // EUnicodeBidi
+        unsigned char _pseudoBits : 7;
+        unsigned char _unicodeBidi : 3; // EUnicodeBidi
         bool _isLink : 1;
         // 53 bits
     } noninherited_flags;
