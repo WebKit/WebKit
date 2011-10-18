@@ -3457,13 +3457,54 @@ void AccessibilityRenderObject::clearChildren()
     AccessibilityObject::clearChildren();
     m_childrenDirty = false;
 }
+
+void AccessibilityRenderObject::addImageMapChildren()
+{
+    RenderBoxModelObject* cssBox = renderBoxModelObject();
+    if (!cssBox || !cssBox->isRenderImage())
+        return;
     
+    HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
+    if (!map)
+        return;
+
+    for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
+        
+        // add an <area> element for this child if it has a link
+        if (current->hasTagName(areaTag) && current->isLink()) {
+            AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
+            areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
+            areaObject->setHTMLMapElement(map);
+            areaObject->setParent(this);
+            
+            m_children.append(areaObject);
+        }
+    }
+}
+
 void AccessibilityRenderObject::updateChildrenIfNecessary()
 {
     if (needsToUpdateChildren())
         clearChildren();        
     
     AccessibilityObject::updateChildrenIfNecessary();
+}
+    
+void AccessibilityRenderObject::addTextFieldChildren()
+{
+    Node* node = this->node();
+    if (!node || !node->hasTagName(inputTag))
+        return;
+    
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    HTMLElement* spinButtonElement = input->innerSpinButtonElement();
+    if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
+        return;
+
+    AccessibilitySpinButton* axSpinButton = static_cast<AccessibilitySpinButton*>(axObjectCache()->getOrCreate(SpinButtonRole));
+    axSpinButton->setSpinButtonElement(static_cast<SpinButtonElement*>(spinButtonElement));
+    axSpinButton->setParent(this);
+    m_children.append(axSpinButton);
 }
 
 void AccessibilityRenderObject::addChildren()
@@ -3507,25 +3548,8 @@ void AccessibilityRenderObject::addChildren()
             m_children.append(axObjectCache()->getOrCreate(widget));
     }
     
-    // for a RenderImage, add the <area> elements as individual accessibility objects
-    RenderBoxModelObject* cssBox = renderBoxModelObject();
-    if (cssBox && cssBox->isRenderImage()) {
-        HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
-        if (map) {
-            for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
-
-                // add an <area> element for this child if it has a link
-                if (current->hasTagName(areaTag) && current->isLink()) {
-                    AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
-                    areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
-                    areaObject->setHTMLMapElement(map);
-                    areaObject->setParent(this);
-
-                    m_children.append(areaObject);
-                }
-            }
-        }
-    }
+    addImageMapChildren();
+    addTextFieldChildren();
 }
         
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const
