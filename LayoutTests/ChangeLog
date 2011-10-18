@@ -1,3 +1,29 @@
+2011-10-17  Kenji Imasaki  <imasaki@chromium.org>
+
+        [Chromium] rebaseline fullscreen layout tests using rebaseline tools.
+        https://bugs.webkit.org/show_bug.cgi?id=70165
+
+        Reviewed by David Levin.
+
+        * platform/chromium-cg-mac-snowleopard/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/chromium-cg-mac/fullscreen/full-screen-iframe-zIndex-expected.png: Removed.
+        * platform/chromium-cg-mac/fullscreen/full-screen-zIndex-after-expected.png: Removed.
+        * platform/chromium-linux/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/chromium-linux/fullscreen/full-screen-render-inline-expected.png: Added.
+        * platform/chromium-linux/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/chromium-linux/fullscreen/parent-flow-inline-with-block-child-expected.png: Added.
+        * platform/chromium-mac-leopard/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-mac-leopard/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/chromium-mac-leopard/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-win/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/chromium-win/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/chromium/fullscreen/video-controls-override-expected.txt: Added.
+
 2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         ASSERTION FAILED: !m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout() with generated content
