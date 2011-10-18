@@ -11,7 +11,7 @@ PASS f('bbbbb') is 'bbbbb'
 PASS foo() is '|'
 PASS foo('bar') is '|bar|'
 PASS foo('bar', 'x') is '|bar|x|'
-PASS foo2(7) is 0
+PASS foo2(7) is 1
 PASS foo3(0, 99) is 2
 PASS foo3(1, 99).length is 2
 PASS nest0(2,3) is 36

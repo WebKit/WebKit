@@ -60,12 +60,12 @@ shouldBe("foo('bar', 'x')", "'|bar|x|'");
 
 function foo2(a) {
   var i = 0;
-  for(a in arguments) // should NOT be enumerable
+  for(a in arguments) // should be enumerable
     i++;
   return i;
 }
 
-shouldBe("foo2(7)", "0");
+shouldBe("foo2(7)", "1");
 
 // I have my doubts about the standard conformance of this
 function foo3(i, j) {

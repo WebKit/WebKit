@@ -134,6 +134,10 @@ PASS shadowedArgumentsLength([]) is 0
 PASS shadowedArgumentsLength() threw exception TypeError: 'undefined' is not an object (evaluating 'arguments.length').
 PASS shadowedArgumentsCallee([]) is undefined.
 PASS shadowedArgumentsIndex([true]) is true
+PASS descriptor.value is "one"
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,24 @@
+2011-10-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Indexed arguments on the Arguments object should be enumerable.
+        https://bugs.webkit.org/show_bug.cgi?id=70302
+
+        Reviewed by Sam Weinig.
+
+        See ECMA-262 5.1 chapter 10.6 step 11b.
+        This is visible through a number of means, including Object.keys, Object.getOwnPropertyDescriptor, and operator in.
+
+        * fast/js/kde/function-expected.txt:
+        * fast/js/kde/script-tests/function.js:
+        (foo2):
+            - This tests using 'in'.
+        * fast/js/arguments-expected.txt:
+        * fast/js/script-tests/arguments.js:
+        (descriptor):
+            - This tests using 'Object.getOwnPropertyDescriptor'.
+        * ietestcenter/Javascript/15.2.3.14-3-4-expected.txt:
+            - This tests using 'Object.keys'.
+
 2011-10-18  Nate Chapin  <japhet@chromium.org>
 
         Test update for https://bugs.webkit.org/show_bug.cgi?id=61225.
