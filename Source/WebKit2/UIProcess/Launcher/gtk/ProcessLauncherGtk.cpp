@@ -39,6 +39,12 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/gobject/GOwnPtr.h>
 
+#ifdef SOCK_SEQPACKET
+#define SOCKET_TYPE SOCK_SEQPACKET
+#else
+#define SOCKET_TYPE SOCK_STREAM
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -70,7 +76,7 @@ void ProcessLauncher::launchProcess()
     GPid pid = 0;
 
     int sockets[2];
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0) {
+    if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) < 0) {
         g_printerr("Creation of socket failed: %s.\n", g_strerror(errno));
         ASSERT_NOT_REACHED();
         return;

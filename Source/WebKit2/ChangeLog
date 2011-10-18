@@ -1,3 +1,21 @@
+2011-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Use SOCK_SEQPACKET when available
+        https://bugs.webkit.org/show_bug.cgi?id=61287
+
+        Reviewed by Darin Adler.
+
+        Sockets of type SEQPACKET are actually DGRAM sockets but that
+        notifies the other end when the connection is closed. When
+        SEQPACKET sockets are not available GTK+ port uses STREAM sockets
+        while Qt port uses DGRAM sockets.
+
+        * PluginProcess/PluginProcess.cpp: Use SOCK_SEQPACKET if possible.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Ditto.
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Ditto.
+
 2011-10-17  Jon Lee  <jonlee@apple.com>
 
         Filtering of URLs when serializing back forward list saves bad current index value

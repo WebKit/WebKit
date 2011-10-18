@@ -55,6 +55,12 @@
 #include <signal.h>
 #endif
 
+#ifdef SOCK_SEQPACKET
+#define SOCKET_TYPE SOCK_SEQPACKET
+#else
+#define SOCKET_TYPE SOCK_DGRAM
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -97,7 +103,7 @@ void ProcessLauncher::launchProcess()
     }
 
     int sockets[2];
-    if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sockets) == -1) {
+    if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
         qDebug() << "Creation of socket failed with errno:" << errno;
         ASSERT_NOT_REACHED();
         return;

@@ -44,12 +44,16 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#ifdef SOCK_SEQPACKET
+#define SOCKET_TYPE SOCK_SEQPACKET
+#else
 #if PLATFORM(GTK)
 #define SOCKET_TYPE SOCK_STREAM
 #else
 #define SOCKET_TYPE SOCK_DGRAM
 #endif
-#endif
+#endif // SOCK_SEQPACKET
+#endif // USE(UNIX_DOMAIN_SOCKETS)
 
 namespace WebKit {
 
