@@ -1,3 +1,23 @@
+2011-10-18  Enrica Casucci  <enrica@apple.com>
+
+        Crash in WebProcess at com.apple.AppKit: -[NSFilePromiseDragSource draggedImage:endedAt:operation:] + 101
+        https://bugs.webkit.org/show_bug.cgi?id=70340
+        <rdar://problem/9548174>
+                
+        We have seen a number of crash reports for this issue that seem to occurr when
+        the user drags an image from a web page onto the desktop.
+        We have not been able to reproduce this crash, therefore this is a speculative fix,
+        but the theory is that the dragging source has been already released when draggedImage
+        is called.
+        This patch attempts a fix for the problem by retaining the dragging source when
+        NSFilePromiseDragSource is created.
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (-[WKPasteboardFilePromiseOwner initWithSource:]):
+        (-[WKPasteboardFilePromiseOwner dealloc]):
+
 2011-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Crash after storing credentials in Keychain
