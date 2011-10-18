@@ -1,3 +1,10 @@
+2011-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed build fix after 97691.
+
+        * html/HTMLTableCellElement.h:
+        (WebCore::toHTMLTableCellElement): Avoid declaring the same function twice.
+
 2011-10-12  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed, rolling out r97661.

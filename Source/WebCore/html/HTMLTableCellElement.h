@@ -67,6 +67,7 @@ private:
 
 HTMLTableCellElement* toHTMLTableCellElement(Node* node);
 const HTMLTableCellElement* toHTMLTableCellElement(const Node* node);
+
 // This will catch anyone doing an unnecessary cast.
 void toHTMLTableCellElement(const HTMLTableCellElement*);
 
@@ -83,10 +84,6 @@ inline const HTMLTableCellElement* toHTMLTableCellElement(const Node* node)
 {
     return static_cast<const HTMLTableCellElement*>(node);
 }
-
-// This will catch anyone doing an unnecessary cast.
-void toHTMLTableCellElement(const HTMLTableCellElement*);
-
 #endif
 
 } // namespace
