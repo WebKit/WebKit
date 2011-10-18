@@ -588,12 +588,8 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverEntry>* mutationObserverEntries();
-    Vector<MutationObserverEntry>* ensureMutationObserverEntries();
-
     void registeredMutationObserversOfType(Vector<WebKitMutationObserver*>&, WebKitMutationObserver::MutationType);
 
-    // Returns true if the observer wasn't already registered on this node.
     enum MutationRegistrationResult {
         MutationObserverRegistered,
         MutationRegistrationOptionsReset
@@ -725,6 +721,10 @@ private:
     using TreeShared<ContainerNode>::parent;
 
     void trackForDebugging();
+
+#if ENABLE(MUTATION_OBSERVERS)
+    Vector<MutationObserverEntry>* mutationObserverEntries();
+#endif
 
     mutable uint32_t m_nodeFlags;
     Document* m_document;

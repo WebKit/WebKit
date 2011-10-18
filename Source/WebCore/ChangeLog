@@ -1,3 +1,19 @@
+2011-10-18  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Clean up MutationObserver code in Node
+        https://bugs.webkit.org/show_bug.cgi?id=70349
+
+        Reviewed by Ryosuke Niwa.
+
+        Three small cleanups.
+
+        No new tests, no behavior change.
+
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData): Use indices instead of iterator in for loop; fix typo.
+        (WebCore::Node::registerMutationObserver): Inline single call to Node::ensureMutationObserverEntries.
+        * dom/Node.h: Make mutationObserverEntries private.
+
 2011-10-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests

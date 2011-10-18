@@ -548,10 +548,10 @@ void Node::clearRareData()
         treeScope()->removeNodeListCache();
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverEntry>* observerEnties = mutationObserverEntries();
-    if (observerEnties) {
-        for (Vector<MutationObserverEntry>::iterator iter = observerEnties->begin(); iter != observerEnties->end(); ++iter)
-            iter->observer->observedNodeDestructed(this);
+    Vector<MutationObserverEntry>* observerEntries = mutationObserverEntries();
+    if (observerEntries) {
+        for (size_t i = 0; i < observerEntries->size(); ++i)
+            observerEntries->at(i).observer->observedNodeDestructed(this);
     }
 #endif
 
@@ -2688,11 +2688,6 @@ Vector<MutationObserverEntry>* Node::mutationObserverEntries()
     return hasRareData() ? rareData()->mutationObserverEntries() : 0;
 }
 
-Vector<MutationObserverEntry>* Node::ensureMutationObserverEntries()
-{
-    return ensureRareData()->ensureMutationObserverEntries();
-}
-
 void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
 {
     Vector<MutationObserverEntry>* observerEntries = mutationObserverEntries();
@@ -2707,7 +2702,7 @@ void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& ob
 
 Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options)
 {
-    Vector<MutationObserverEntry>* observerEntries = ensureMutationObserverEntries();
+    Vector<MutationObserverEntry>* observerEntries = ensureRareData()->ensureMutationObserverEntries();
     MutationObserverEntry entry(observer, options);
 
     size_t index = observerEntries->find(entry);
