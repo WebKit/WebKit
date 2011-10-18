@@ -1,3 +1,43 @@
+2011-10-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Support for client-based geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=64970
+
+        Reviewed by Martin Robinson.
+
+        Add DumpRenderTree support functions for client-based geolocation tests
+        and implement GeolocationClientGtk. The implementation is based on Zecke's
+        implementation of GeolocationService class in WebCore, which is now redundant
+        and subsequently removed.
+
+        * GNUmakefile.am: Add GeolocationClientGtk.* files to compilation.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp: Add support functions to operate
+        with GeolocationClientMock.
+        (DumpRenderTreeSupportGtk::resetGeolocationClientMock):
+        (DumpRenderTreeSupportGtk::setMockGeolocationPermission):
+        (DumpRenderTreeSupportGtk::setMockGeolocationPosition):
+        (DumpRenderTreeSupportGtk::setMockGeolocationError):
+        (DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * WebCoreSupport/GeolocationClientGtk.cpp: Added.
+        (WebKit::getPositionCallback):
+        (WebKit::positionChangedCallback):
+        (WebKit::GeolocationClient::GeolocationClient):
+        (WebKit::GeolocationClient::geolocationDestroyed):
+        (WebKit::GeolocationClient::startUpdating):
+        (WebKit::GeolocationClient::stopUpdating):
+        (WebKit::GeolocationClient::setEnableHighAccuracy):
+        (WebKit::GeolocationClient::lastPosition):
+        (WebKit::GeolocationClient::requestPermission):
+        (WebKit::GeolocationClient::cancelPermissionRequest):
+        (WebKit::GeolocationClient::positionChanged):
+        (WebKit::GeolocationClient::updatePosition):
+        (WebKit::GeolocationClient::errorOccured):
+        * WebCoreSupport/GeolocationClientGtk.h: Added.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Use GeolocationClientMock as geolocation client
+        when running in DumpRenderTree.
+
 2011-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make the interface of locationAndLengthFromRange and rangeFromLocationAndLength consistent

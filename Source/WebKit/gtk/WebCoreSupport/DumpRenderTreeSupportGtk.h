@@ -120,6 +120,12 @@ public:
     static unsigned int workerThreadCount();
     static bool webkitWebFrameSelectionHasSpellingMarker(WebKitWebFrame*, gint from, gint length);
 
+    static void resetGeolocationClientMock(WebKitWebView*);
+    static void setMockGeolocationPermission(WebKitWebView*, bool allowed);
+    static void setMockGeolocationPosition(WebKitWebView*, double latitude, double longitude, double accuracy);
+    static void setMockGeolocationError(WebKitWebView*, int errorCode, const gchar* errorMessage);
+    static int numberOfPendingGeolocationPermissionRequests(WebKitWebView*);
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;

@@ -155,7 +155,7 @@ my @features = (
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
     { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
-      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => isAppleWebKit(), value => \$clientBasedGeolocationSupport },
+      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$clientBasedGeolocationSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },

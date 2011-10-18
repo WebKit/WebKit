@@ -200,6 +200,8 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp \
 	Source/WebKit/gtk/WebCoreSupport/FullscreenVideoController.h \
+	Source/WebKit/gtk/WebCoreSupport/GeolocationClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/GeolocationClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/GtkAdjustmentWatcher.cpp \
 	Source/WebKit/gtk/WebCoreSupport/GtkAdjustmentWatcher.h \
 	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \

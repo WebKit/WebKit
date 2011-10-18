@@ -474,26 +474,44 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    // FIXME: Implement for Geolocation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=28264.
+    WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
+    if (!view)
+        view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    DumpRenderTreeSupportGtk::setMockGeolocationPosition(view, latitude, longitude, accuracy);
 }
 
 void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
 {
-    // FIXME: Implement for Geolocation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=28264.
+    WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
+    if (!view)
+        view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    GOwnPtr<gchar> cMessage(JSStringCopyUTF8CString(message));
+    DumpRenderTreeSupportGtk::setMockGeolocationError(view, code, cMessage.get());
 }
 
 void LayoutTestController::setGeolocationPermission(bool allow)
 {
-    // FIXME: Implement for Geolocation layout tests.
     setGeolocationPermissionCommon(allow);
+    WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
+    if (!view)
+        view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    DumpRenderTreeSupportGtk::setMockGeolocationPermission(view, allow);
 }
 
 int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 {
-    // FIXME: Implement for Geolocation layout tests.
-    return -1;
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    return DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(view);
 }
 
 void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)

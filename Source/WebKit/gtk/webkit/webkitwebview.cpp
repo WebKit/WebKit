@@ -46,6 +46,7 @@
 #include "DragClientGtk.h"
 #include "DragController.h"
 #include "DragData.h"
+#include "DumpRenderTreeSupportGtk.h"
 #include "Editor.h"
 #include "EditorClientGtk.h"
 #include "EventHandler.h"
@@ -55,6 +56,8 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
+#include "GeolocationClientGtk.h"
+#include "GeolocationClientMock.h"
 #include "GOwnPtrGtk.h"
 #include "GraphicsContext.h"
 #include "GtkUtilities.h"
@@ -3314,7 +3317,15 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.deviceOrientationClient = static_cast<WebCore::DeviceOrientationClient*>(new DeviceOrientationClientGtk);
 #endif
 
+    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+        pageClients.geolocationClient = new GeolocationClientMock;
+    else
+        pageClients.geolocationClient = new WebKit::GeolocationClient(webView);
+
     priv->corePage = new Page(pageClients);
+
+    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+        static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(priv->corePage->geolocationController());
 
     // Pages within a same session need to be linked together otherwise some functionalities such
     // as visited link coloration (across pages) and changing popup window location will not work.
