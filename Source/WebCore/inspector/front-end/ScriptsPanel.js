@@ -632,7 +632,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     canShowAnchorLocation: function(anchor)
     {
-        return this._debuggerEnabled && WebInspector.debuggerModel.scriptsForURL(anchor.href).length;
+        return this._debuggerEnabled && anchor.uiSourceCode;
     },
 
     showAnchorLocation: function(anchor)
@@ -643,7 +643,8 @@ WebInspector.ScriptsPanel.prototype = {
     _showSourceLine: function(uiSourceCode, lineNumber)
     {
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
-        sourceFrame.highlightLine(lineNumber);
+        if (lineNumber)
+            sourceFrame.highlightLine(lineNumber);
     },
 
     _showSourceFrameAndAddToHistory: function(uiSourceCode)

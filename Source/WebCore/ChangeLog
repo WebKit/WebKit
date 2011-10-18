@@ -1,3 +1,14 @@
+2011-10-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: ScriptsPanel's should use similar logic to decide whether it could show an anchor location and actually showing it.
+        https://bugs.webkit.org/show_bug.cgi?id=70322
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.canShowAnchorLocation):
+        (WebInspector.ScriptsPanel.prototype._showSourceLine):
+
 2011-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         Use the new cached cue loader
