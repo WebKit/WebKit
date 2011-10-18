@@ -2781,8 +2781,6 @@
 		BC0C376610F807660076D7CB /* C */ = {
 			isa = PBXGroup;
 			children = (
-				B62E7311143047B00069EC35 /* WKHitTestResult.h */,
-				B62E730F143047A60069EC35 /* WKHitTestResult.cpp */,
 				5123CF18133D25E60056F800 /* cg */,
 				6EE849C41368D9040038D481 /* mac */,
 				BCB63477116BF10600603215 /* WebKit2.h */,
@@ -2821,6 +2819,8 @@
 				BC06F44C12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h */,
 				BC0E619712D6CD120012A72A /* WKGeolocationPosition.cpp */,
 				BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */,
+				B62E730F143047A60069EC35 /* WKHitTestResult.cpp */,
+				B62E7311143047B00069EC35 /* WKHitTestResult.h */,
 				5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */,
 				5110AE0B133C16CB0072717A /* WKIconDatabase.h */,
 				1C8E293812761E5B00BC7BD0 /* WKInspector.cpp */,
@@ -2909,19 +2909,9 @@
 		BC111B47112F616900337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */,
-				1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */,
-				1AAF061212B01131008E49E2 /* PDFViewController.h */,
-				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
-				BC111B4B112F619200337BAB /* PageClientImpl.h */,
-				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
-				E134F01512EA5D11004EC58D /* WKPrintingView.h */,
-				E134F01912EA5D99004EC58D /* WKPrintingView.mm */,
-				1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */,
-				1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */,
+				BCBAAC58144E38B90053F82F /* WKView Details */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
-				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 				BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */,
 			);
 			path = mac;
@@ -3173,6 +3163,24 @@
 				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObject.mm */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		BCBAAC58144E38B90053F82F /* WKView Details */ = {
+			isa = PBXGroup;
+			children = (
+				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
+				1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */,
+				1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */,
+				1AAF061212B01131008E49E2 /* PDFViewController.h */,
+				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
+				BC111B4B112F619200337BAB /* PageClientImpl.h */,
+				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
+				E134F01512EA5D11004EC58D /* WKPrintingView.h */,
+				E134F01912EA5D99004EC58D /* WKPrintingView.mm */,
+				1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */,
+				1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */,
+			);
+			name = "WKView Details";
 			sourceTree = "<group>";
 		};
 		BCC56F751159955E001CCAF9 /* mac */ = {
