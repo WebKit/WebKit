@@ -155,7 +155,11 @@ void HTMLOptionElement::parseMappedAttribute(Attribute* attr)
 
 String HTMLOptionElement::value() const
 {
-    return OptionElement::collectOptionValue(m_data, this);
+    if (!m_data.value().isNull())
+        return m_data.value();
+
+    return collectOptionInnerText(this).stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+
 }
 
 void HTMLOptionElement::setValue(const String& value)

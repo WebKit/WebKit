@@ -117,16 +117,6 @@ String OptionElement::collectOptionTextRespectingGroupLabel(const OptionElementD
     return collectOptionLabelOrText(data, element);
 }
 
-String OptionElement::collectOptionValue(const OptionElementData& data, const Element* element)
-{
-    String value = data.value();
-    if (!value.isNull())
-        return value;
-
-    // Use the text if the value wasn't set.
-    return collectOptionInnerText(element).stripWhiteSpace();
-}
-
 // OptionElementData
 OptionElementData::OptionElementData()
     : m_selected(false)

@@ -1,3 +1,15 @@
+2011-10-18  Sachin Puranik  <jcqt43@motorola.com>
+
+        Option.value should trim extra internal html spaces
+        https://bugs.webkit.org/show_bug.cgi?id=69455
+
+        Reviewed by Kent Tamura.
+
+        Currently option.value does not trim the internal white space as suggested by spec. This patch implements the same.
+
+        * fast/forms/option-value-trim-html-spaces-expected.txt: Test case to test the text triming on the value attribute.
+        * fast/forms/option-value-trim-html-spaces.html: Test case to test the text triming on the value attribute.
+
 2011-10-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions]Parse @-webkit-region rule
