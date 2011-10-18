@@ -57,15 +57,15 @@ namespace WebCore {
  * throw SYNTAX_ERR exception.
  */
 
-MediaList::MediaList(CSSStyleSheet* parentStyleSheet, bool fallbackToDescriptor)
-    : m_fallback(fallbackToDescriptor)
-    , m_parentStyleSheet(parentStyleSheet)
+MediaList::MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescriptor)
+    : StyleBase(parentSheet)
+    , m_fallback(fallbackToDescriptor)
 {
 }
 
-MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool fallbackToDescriptor)
-    : m_fallback(fallbackToDescriptor)
-    , m_parentStyleSheet(parentStyleSheet)
+MediaList::MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescriptor)
+    : StyleBase(parentSheet)
+    , m_fallback(fallbackToDescriptor)
 {
     ExceptionCode ec = 0;
     setMediaText(media, ec);
@@ -82,8 +82,8 @@ MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool 
 }
 
 MediaList::MediaList(CSSImportRule* parentRule, const String& media)
-    : m_fallback(false)
-    , m_parentStyleSheet(parentRule->parentStyleSheet())
+    : StyleBase(parentRule)
+    , m_fallback(false)
 {
     ExceptionCode ec = 0;
     setMediaText(media, ec);
@@ -248,10 +248,10 @@ void MediaList::appendMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
 
 void MediaList::notifyChanged()
 {
-    if (!m_parentStyleSheet)
-        return;
-
-    m_parentStyleSheet->styleSheetChanged();
+    for (StyleBase* p = parent(); p; p = p->parent()) {
+        if (p->isCSSStyleSheet())
+            return static_cast<CSSStyleSheet*>(p)->styleSheetChanged();
+    }
 }
 
 }

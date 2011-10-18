@@ -20,7 +20,6 @@
 #include "config.h"
 #include "StyleSheet.h"
 
-#include "CSSStyleSheet.h"
 #include "MediaList.h"
 #include "Node.h"
 
@@ -56,7 +55,7 @@ StyleSheet::StyleSheet(StyleBase* owner, const String& originalURL, const KURL& 
 StyleSheet::~StyleSheet()
 {
     if (m_media)
-        m_media->setParentStyleSheet(0);
+        m_media->setParent(0);
 }
 
 StyleSheet* StyleSheet::parentStyleSheet() const
@@ -66,14 +65,11 @@ StyleSheet* StyleSheet::parentStyleSheet() const
 
 void StyleSheet::setMedia(PassRefPtr<MediaList> media)
 {
-    ASSERT(isCSSStyleSheet());
-    ASSERT(!media->parentStyleSheet() || media->parentStyleSheet() == this);
-
     if (m_media)
-        m_media->setParentStyleSheet(0);
+        m_media->setParent(0);
 
     m_media = media;
-    m_media->setParentStyleSheet(static_cast<CSSStyleSheet*>(this));
+    m_media->setParent(this);
 }
 
 KURL StyleSheet::completeURL(const String& url) const
