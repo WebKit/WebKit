@@ -34,7 +34,6 @@
 
 #include "WebKitMutationObserver.h"
 
-#include "MutationObserverOptions.h"
 #include "MutationCallback.h"
 #include "MutationRecord.h"
 #include "Node.h"
@@ -56,20 +55,11 @@ WebKitMutationObserver::~WebKitMutationObserver()
 {
 }
 
-void WebKitMutationObserver::observe(Node* node, MutationObserverOptions* options)
+void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options)
 {
-    unsigned char optionFlags = 0;
+    // FIXME: More options composition work needs to be done here, e.g., validation.
 
-    // FIXME: Push composition of the optionFlags into the custom binding.
-    if (options->childList())
-        optionFlags |= ChildList;
-    if (options->attributes())
-        optionFlags |= Attributes;
-    if (options->characterData())
-        optionFlags |= CharacterData;
-    // FIXME: More options composition work needs to be done here.
-
-    if (node->registerMutationObserver(this, optionFlags) == Node::MutationObserverRegistered)
+    if (node->registerMutationObserver(this, options) == Node::MutationObserverRegistered)
         m_observedNodes.append(node);
 }
 

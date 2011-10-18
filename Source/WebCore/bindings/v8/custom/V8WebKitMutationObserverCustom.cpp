@@ -35,7 +35,6 @@
 #include "V8WebKitMutationObserver.h"
 
 #include "ExceptionCode.h"
-#include "MutationObserverOptions.h"
 #include "OptionsObject.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -86,23 +85,22 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
         return throwError(TYPE_MISMATCH_ERR);
 
     OptionsObject optionsObject(args[1]);
-    RefPtr<MutationObserverOptions> options = MutationObserverOptions::create();
-
+    unsigned options = 0;
     bool option;
-    if (optionsObject.getKeyValue("childList", option))
-        options->setChildList(option);
-    if (optionsObject.getKeyValue("attributes", option))
-        options->setAttributes(option);
-    if (optionsObject.getKeyValue("characterData", option))
-        options->setCharacterData(option);
-    if (optionsObject.getKeyValue("subtree", option))
-        options->setSubtree(option);
-    if (optionsObject.getKeyValue("attributeOldValue", option))
-        options->setAttributeOldValue(option);
-    if (optionsObject.getKeyValue("characterDataOldValue", option))
-        options->setCharacterDataOldValue(option);
+    if (optionsObject.getKeyValue("childList", option) && option)
+        options |= WebKitMutationObserver::ChildList;
+    if (optionsObject.getKeyValue("attributes", option) && option)
+        options |= WebKitMutationObserver::Attributes;
+    if (optionsObject.getKeyValue("characterData", option) && option)
+        options |= WebKitMutationObserver::CharacterData;
+    if (optionsObject.getKeyValue("subtree", option) && option)
+        options |= WebKitMutationObserver::Subtree;
+    if (optionsObject.getKeyValue("attributeOldValue", option) && option)
+        options |= WebKitMutationObserver::AttributeOldValue;
+    if (optionsObject.getKeyValue("characterDataOldValue", option) && option)
+        options |= WebKitMutationObserver::CharacterDataOldValue;
 
-    imp->observe(target, options.get());
+    imp->observe(target, options);
     return v8::Handle<v8::Value>();
 }
 

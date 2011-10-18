@@ -1237,7 +1237,6 @@ webcore_sources += \
 	Source/WebCore/dom/MutationCallback.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
-	Source/WebCore/dom/MutationObserverOptions.h \
 	Source/WebCore/dom/MutationRecord.cpp \
 	Source/WebCore/dom/MutationRecord.h \
 	Source/WebCore/dom/NamedNodeMap.cpp \

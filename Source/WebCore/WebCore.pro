@@ -1555,7 +1555,6 @@ HEADERS += \
     dom/MouseRelatedEvent.h \
     dom/MutationCallback.h \
     dom/MutationEvent.h \
-    dom/MutationObserverOptions.h \
     dom/MutationRecord.h \
     dom/NamedNodeMap.h \
     dom/NameNodeList.h \

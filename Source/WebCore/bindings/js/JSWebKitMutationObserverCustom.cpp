@@ -38,7 +38,6 @@
 #include "JSDictionary.h"
 #include "JSMutationCallback.h"
 #include "JSNode.h"
-#include "MutationObserverOptions.h"
 #include "Node.h"
 #include "WebKitMutationObserver.h"
 #include <runtime/Error.h>
@@ -78,17 +77,23 @@ JSValue JSWebKitMutationObserver::observe(ExecState* exec)
     }
 
     JSDictionary dictionary(exec, optionsObject);
+    MutationObserverOptions options = 0;
+    bool option;
+    if (dictionary.tryGetProperty("childList", option) && option)
+        options |= WebKitMutationObserver::ChildList;
+    if (dictionary.tryGetProperty("attributes", option) && option)
+        options |= WebKitMutationObserver::Attributes;
+    if (dictionary.tryGetProperty("subtree", option) && option)
+        options |= WebKitMutationObserver::Subtree;
+    if (dictionary.tryGetProperty("attributeOldValue", option) && option)
+        options |= WebKitMutationObserver::AttributeOldValue;
+    if (dictionary.tryGetProperty("characterDataOldValue", option) && option)
+        options |= WebKitMutationObserver::CharacterDataOldValue;
 
-    RefPtr<MutationObserverOptions> options = MutationObserverOptions::create();
-    if (!dictionary.tryGetProperty("childList", *options, &MutationObserverOptions::setChildList)
-        || !dictionary.tryGetProperty("attributes", *options, &MutationObserverOptions::setAttributes)
-        || !dictionary.tryGetProperty("characterData", *options, &MutationObserverOptions::setCharacterData)
-        || !dictionary.tryGetProperty("subtree", *options, &MutationObserverOptions::setSubtree)
-        || !dictionary.tryGetProperty("attributeOldValue", *options, &MutationObserverOptions::setAttributeOldValue)
-        || !dictionary.tryGetProperty("characterDataOldValue", *options, &MutationObserverOptions::setCharacterDataOldValue))
+    if (exec->hadException())
         return jsUndefined();
 
-    impl()->observe(target, options.get());
+    impl()->observe(target, options);
     return jsUndefined();
 }
 

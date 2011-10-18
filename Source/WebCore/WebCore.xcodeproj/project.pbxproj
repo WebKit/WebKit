@@ -5469,7 +5469,6 @@
 		C6F0900A14327B6100685849 /* MutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900114327B6100685849 /* MutationCallback.h */; };
 		C6F0900E14327B6100685849 /* WebKitMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */; };
 		C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900614327B6100685849 /* WebKitMutationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C6F0901114327B6100685849 /* MutationObserverOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900814327B6100685849 /* MutationObserverOptions.h */; };
 		C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902014327D4F00685849 /* JSMutationCallback.cpp */; };
 		C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902114327D4F00685849 /* JSMutationCallback.h */; };
 		C6F0902C14327D4F00685849 /* JSWebKitMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902414327D4F00685849 /* JSWebKitMutationObserver.cpp */; };
@@ -12771,7 +12770,6 @@
 		C6F0900514327B6100685849 /* WebKitMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMutationObserver.cpp; sourceTree = "<group>"; };
 		C6F0900614327B6100685849 /* WebKitMutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitMutationObserver.h; sourceTree = "<group>"; };
 		C6F0900714327B6100685849 /* WebKitMutationObserver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitMutationObserver.idl; sourceTree = "<group>"; };
-		C6F0900814327B6100685849 /* MutationObserverOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverOptions.h; sourceTree = "<group>"; };
 		C6F0902014327D4F00685849 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
 		C6F0902114327D4F00685849 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		C6F0902414327D4F00685849 /* JSWebKitMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitMutationObserver.cpp; sourceTree = "<group>"; };
@@ -21128,7 +21126,6 @@
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
-				C6F0900814327B6100685849 /* MutationObserverOptions.h */,
 				C6F08FB91430FE8F00685849 /* MutationRecord.cpp */,
 				C6F08FBA1430FE8F00685849 /* MutationRecord.h */,
 				C6F08FBB1430FE8F00685849 /* MutationRecord.idl */,
@@ -23634,7 +23631,6 @@
 				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
 				C6F0900A14327B6100685849 /* MutationCallback.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
-				C6F0901114327B6100685849 /* MutationObserverOptions.h in Headers */,
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,

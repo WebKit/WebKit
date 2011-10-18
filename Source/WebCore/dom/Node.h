@@ -598,7 +598,7 @@ public:
         MutationObserverRegistered,
         MutationRegistrationOptionsReset
     };
-    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, unsigned char options);
+    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, MutationObserverOptions);
 
     void unregisterMutationObserver(PassRefPtr<WebKitMutationObserver>);
 #endif // ENABLE(MUTATION_OBSERVERS)

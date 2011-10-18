@@ -1,3 +1,36 @@
+2011-10-17  Adam Klein  <adamk@chromium.org>
+
+        Parse MutationObserverOptions directly into a bitfield
+        https://bugs.webkit.org/show_bug.cgi?id=70287
+
+        Reviewed by Ryosuke Niwa.
+
+        Replaces the MutationObserverOptions class with a typedef,
+        used to pass a bitfield composed of enums defined in
+        WebKitMutationObserver.h.
+
+        No new tests because no behavior should change.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDictionary.h: Removed now-unused method.
+        * bindings/js/JSWebKitMutationObserverCustom.cpp:
+        (WebCore::JSWebKitMutationObserver::observe):
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::observeCallback):
+        * dom/MutationObserverOptions.h: Removed.
+        * dom/Node.cpp:
+        (WebCore::Node::registerMutationObserver):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::MutationObserverEntry::MutationObserverEntry):
+        (WebCore::MutationObserverEntry::matches):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe):
+        * dom/WebKitMutationObserver.h:
+
 2011-10-17  Luke Macpherson   <macpherson@chromium.org>
 
         Add compile-time asserts for RenderStyle::(Non)InheritedFlags size.

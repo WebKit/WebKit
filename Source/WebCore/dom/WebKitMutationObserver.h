@@ -41,9 +41,10 @@
 namespace WebCore {
 
 class MutationCallback;
-class MutationObserverOptions;
 class MutationRecord;
 class Node;
+
+typedef unsigned char MutationObserverOptions;
 
 class WebKitMutationObserver : public RefCounted<WebKitMutationObserver> {
 public:
@@ -65,7 +66,7 @@ public:
 
     ~WebKitMutationObserver();
 
-    void observe(Node*, MutationObserverOptions*);
+    void observe(Node*, MutationObserverOptions);
     void disconnect();
     void observedNodeDestructed(Node*);
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);

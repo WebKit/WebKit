@@ -90,7 +90,7 @@ private:
 
 #if ENABLE(MUTATION_OBSERVERS)
 struct MutationObserverEntry {
-    MutationObserverEntry(PassRefPtr<WebKitMutationObserver> observer, unsigned char options)
+    MutationObserverEntry(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options)
         : observer(observer)
         , options(options)
     {
@@ -101,13 +101,13 @@ struct MutationObserverEntry {
         return observer == other.observer;
     }
 
-    bool matches(unsigned char options) const
+    bool matches(MutationObserverOptions options) const
     {
         return this->options & options;
     }
 
     RefPtr<WebKitMutationObserver> observer;
-    unsigned char options;
+    MutationObserverOptions options;
 };
 
 #endif // ENABLE(MUTATION_OBSERVERS)

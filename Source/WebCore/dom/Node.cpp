@@ -2705,7 +2705,7 @@ void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& ob
     }
 }
 
-Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, unsigned char options)
+Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options)
 {
     Vector<MutationObserverEntry>* observerEntries = ensureMutationObserverEntries();
     MutationObserverEntry entry(observer, options);
