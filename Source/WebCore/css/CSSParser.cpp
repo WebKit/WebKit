@@ -7464,7 +7464,6 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         String propertyString = String(m_data + start, end - start).stripWhiteSpace();
         if (propertyString.endsWith(";", true))
             propertyString = propertyString.left(propertyString.length() - 1);
-        Vector<String> propertyComponents;
         size_t colonIndex = propertyString.find(":");
         ASSERT(colonIndex != notFound);
 
