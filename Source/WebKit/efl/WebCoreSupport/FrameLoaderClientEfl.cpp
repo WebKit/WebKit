@@ -129,7 +129,7 @@ String FrameLoaderClientEfl::userAgent(const KURL&)
 
 void FrameLoaderClientEfl::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
-    Frame* f = ewk_frame_core_get(m_frame);
+    Frame* f = EWKPrivate::coreFrame(m_frame);
     ASSERT(f);
     (f->loader()->policyChecker()->*function)(action);
 }
@@ -292,7 +292,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
 
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
-    Frame* f = ewk_frame_core_get(m_frame);
+    Frame* f = EWKPrivate::coreFrame(m_frame);
     f->loader()->resetMultipleFormSubmissionProtection();
     callPolicyFunction(function, PolicyUse);
 }
@@ -319,7 +319,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
         policy = PolicyIgnore;
     else {
         if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted) {
-            Frame* f = ewk_frame_core_get(m_frame);
+            Frame* f = EWKPrivate::coreFrame(m_frame);
             f->loader()->resetMultipleFormSubmissionProtection();
         }
         policy = PolicyUse;
@@ -349,7 +349,7 @@ void FrameLoaderClientEfl::didTransferChildFrameToNewDocument(Page*)
 {
     ASSERT(m_frame);
 
-    Frame* currentFrame = ewk_frame_core_get(m_frame);
+    Frame* currentFrame = EWKPrivate::coreFrame(m_frame);
     Evas_Object* currentView = ewk_frame_view_get(m_frame);
     Frame* parentFrame = currentFrame->tree()->parent();
 
@@ -428,7 +428,7 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     if (world != mainThreadNormalWorld())
         return;
 
-    Frame* coreFrame = ewk_frame_core_get(m_frame);
+    Frame* coreFrame = EWKPrivate::coreFrame(m_frame);
     ASSERT(coreFrame);
 
     Settings* settings = coreFrame->settings();
@@ -888,7 +888,7 @@ Frame* FrameLoaderClientEfl::dispatchCreatePage(const NavigationAction&)
     else
         mainFrame = ewk_view_frame_main_get(newView);
 
-    return ewk_frame_core_get(mainFrame);
+    return EWKPrivate::coreFrame(mainFrame);
 }
 
 void FrameLoaderClientEfl::dispatchUnableToImplementPolicy(const ResourceError&)
@@ -956,7 +956,7 @@ void FrameLoaderClientEfl::dispatchDidBecomeFrameset(bool)
 
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientEfl::createNetworkingContext()
 {
-    return FrameNetworkingContextEfl::create(ewk_frame_core_get(m_frame));
+    return FrameNetworkingContextEfl::create(EWKPrivate::coreFrame(m_frame));
 }
 
 }

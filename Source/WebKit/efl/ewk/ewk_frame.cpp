@@ -135,19 +135,9 @@ static inline void _ewk_frame_debug(Evas_Object* ewkFrame)
 }
 #endif
 
-static WebCore::FrameLoaderClientEfl* _ewk_frame_loader_efl_get(WebCore::Frame* frame)
+static WebCore::FrameLoaderClientEfl* _ewk_frame_loader_efl_get(const WebCore::Frame* frame)
 {
     return static_cast<WebCore::FrameLoaderClientEfl*>(frame->loader()->client());
-}
-
-static inline Evas_Object* kit(WebCore::Frame* frame)
-{
-    if (!frame)
-        return 0;
-    WebCore::FrameLoaderClientEfl* fl = _ewk_frame_loader_efl_get(frame);
-    if (!fl)
-        return 0;
-    return fl->webFrame();
 }
 
 static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* it, Evas_Object** data)
@@ -159,7 +149,7 @@ static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* it, 
     EINA_SAFETY_ON_NULL_RETURN_VAL(tree, EINA_FALSE);
 
     if (it->currentIndex < tree->childCount()) {
-        *data = kit(tree->child(it->currentIndex++));
+        *data = EWKPrivate::kitFrame(tree->child(it->currentIndex++));
         return EINA_TRUE;
     }
 
@@ -315,7 +305,7 @@ Evas_Object* ewk_frame_child_find(Evas_Object* ewkFrame, const char* name)
     EINA_SAFETY_ON_NULL_RETURN_VAL(name, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
     WTF::String s = WTF::String::fromUTF8(name);
-    return kit(sd->frame->tree()->find(WTF::AtomicString(s)));
+    return EWKPrivate::kitFrame(sd->frame->tree()->find(WTF::AtomicString(s)));
 }
 
 Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
@@ -695,12 +685,12 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     hit_test->alternate_text = eina_stringshare_add(result.altDisplayString().utf8().data());
     if (result.innerNonSharedNode() && result.innerNonSharedNode()->document()
         && result.innerNonSharedNode()->document()->frame())
-        hit_test->frame = kit(result.innerNonSharedNode()->document()->frame());
+        hit_test->frame = EWKPrivate::kitFrame(result.innerNonSharedNode()->document()->frame());
 
     hit_test->link.text = eina_stringshare_add(result.textContent().utf8().data());
     hit_test->link.url = eina_stringshare_add(result.absoluteLinkURL().string().utf8().data());
     hit_test->link.title = eina_stringshare_add(result.titleDisplayString().utf8().data());
-    hit_test->link.target_frame = kit(result.targetFrame());
+    hit_test->link.target_frame = EWKPrivate::kitFrame(result.targetFrame());
 
     hit_test->image_uri = eina_stringshare_add(result.absoluteImageURL().string().utf8().data());
     hit_test->media_uri = eina_stringshare_add(result.absoluteMediaURL().string().utf8().data());
@@ -1183,20 +1173,6 @@ void ewk_frame_core_gone(Evas_Object* ewkFrame)
 
 /**
  * @internal
- * Retrieve WebCore::Frame associated with this object.
- *
- * Avoid using this call from outside, add specific ewk_frame_*
- * actions instead.
- */
-WebCore::Frame* ewk_frame_core_get(const Evas_Object* ewkFrame)
-{
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
-    return sd->frame;
-}
-
-
-/**
- * @internal
  * Reports a resource will be requested. User may override behavior of webkit by
  * changing values in @param request.
  *
@@ -1662,6 +1638,18 @@ WebCore::Frame *coreFrame(const Evas_Object *ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
     return sd->frame;
+}
+
+Evas_Object* kitFrame(const WebCore::Frame* coreFrame)
+{
+    if (!coreFrame)
+        return 0;
+
+    WebCore::FrameLoaderClientEfl* frameLoaderClient = _ewk_frame_loader_efl_get(coreFrame);
+    if (!frameLoaderClient)
+        return 0;
+
+    return frameLoaderClient->webFrame();
 }
 
 } // namespace EWKPrivate

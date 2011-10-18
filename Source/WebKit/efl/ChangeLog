@@ -1,5 +1,40 @@
 2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Expose the kit() frame function to the rest of ewk.
+        https://bugs.webkit.org/show_bug.cgi?id=70253
+
+        Reviewed by Antonio Gomes.
+
+        Now that we have the EWKPrivate namespace, it makes sense to make the
+        kit() function accessible there instead of having it as a static local
+        function in ewk_frame.
+
+        While on it, get rid of ewk_frame_core_get, which is obsolete after
+        EWKPrivate::coreFrame.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::respondToChangedSelection):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::callPolicyFunction):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientEfl::didTransferChildFrameToNewDocument):
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        (WebCore::FrameLoaderClientEfl::dispatchCreatePage):
+        (WebCore::FrameLoaderClientEfl::createNetworkingContext):
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_loader_efl_get):
+        (_ewk_frame_children_iterator_next):
+        (ewk_frame_child_find):
+        (ewk_frame_hit_test_new):
+        (EWKPrivate::kitFrame):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+
+2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Do not check for Frame::contentRenderer() in ewk_view_repaint.
         https://bugs.webkit.org/show_bug.cgi?id=70118
 

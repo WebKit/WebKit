@@ -2094,7 +2094,7 @@ const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
     Evas_Object* main_frame = ewk_view_frame_main_get(ewkView);
-    WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
+    WebCore::Frame* core_frame = EWKPrivate::coreFrame(main_frame);
 
     String overrideEncoding = core_frame->loader()->documentLoader()->overrideEncoding();
 
@@ -2110,7 +2110,7 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     Evas_Object* main_frame = ewk_view_frame_main_get(ewkView);
-    WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
+    WebCore::Frame* core_frame = EWKPrivate::coreFrame(main_frame);
     DBG("%s", encoding);
     if (eina_stringshare_replace(&priv->settings.encoding_custom, encoding))
         core_frame->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));

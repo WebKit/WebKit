@@ -143,7 +143,7 @@ void EditorClientEfl::respondToChangedSelection()
     if (!frame)
         return;
 
-    WebCore::Frame* coreFrame = ewk_frame_core_get(frame);
+    WebCore::Frame* coreFrame = EWKPrivate::coreFrame(frame);
 
     if (!coreFrame)
         return;

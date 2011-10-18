@@ -83,6 +83,8 @@ WebCore::Frame *coreFrame(const Evas_Object *ewkFrame);
 WebCore::Page *corePage(const Evas_Object *ewkView);
 WebCore::HistoryItem *coreHistoryItem(const Ewk_History_Item *ewkHistoryItem);
 
+Evas_Object* kitFrame(const WebCore::Frame* coreFrame);
+
 } // namespace EWKPrivate
 
 void ewk_view_ready(Evas_Object* o);
@@ -187,7 +189,6 @@ Eina_Bool ewk_frame_init(Evas_Object* o, Evas_Object* view, WebCore::Frame* fram
 Eina_Bool ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer);
 void ewk_frame_view_set(Evas_Object* o, Evas_Object* newParent);
 
-WebCore::Frame* ewk_frame_core_get(const Evas_Object* o);
 void ewk_frame_core_gone(Evas_Object* o);
 
 void ewk_frame_load_started(Evas_Object* o);
