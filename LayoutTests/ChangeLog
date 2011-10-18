@@ -1,3 +1,12 @@
+2011-10-17  Ojan Vafai  <ojan@chromium.org>
+
+        Test cleanups after http://trac.webkit.org/changeset/97707.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/qt/fast/table/028-vertical-expected.txt:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.txt:
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Poisoning of strict caller/arguments inappropriately poisoning "in"
