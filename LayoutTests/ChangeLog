@@ -1,3 +1,9 @@
+2011-10-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed Qt rebaseline after r97738.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2011-10-18  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Support for client-based geolocation
