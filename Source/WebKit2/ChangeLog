@@ -1,3 +1,18 @@
+2011-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Crash after storing credentials in Keychain
+        https://bugs.webkit.org/show_bug.cgi?id=70376
+        <rdar://problem/9647503>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/mac/SecKeychainItemResponseData.cpp:
+        (WebKit::SecKeychainItemResponseData::encode):
+        (WebKit::SecKeychainItemResponseData::decode):
+        Actually send keychain item over, too. In shimSecKeychainItemCreateFromContent(), we are
+        going to use it to override SecKeychainItemCreateFromContent(), and we cannot return noErr
+        from this function without returning a non-null keychain item.
+
 2011-10-18  Damian Kaleta  <dkaleta@apple.com>
 
         This revised fix doesn't break SL build.
