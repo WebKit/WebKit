@@ -1347,6 +1347,13 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const Layo
         if (widget && widget->isFrameView())
             return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(toPoint(point - widget->frameRect().location()));
     }
+    
+    // Check if there are any mock elements that need to be handled.
+    size_t count = m_children.size();
+    for (size_t k = 0; k < count; k++) {
+        if (m_children[k]->isMockObject() && m_children[k]->elementRect().contains(point))
+            return m_children[k]->elementAccessibilityHitTest(point);
+    }
 
     return const_cast<AccessibilityObject*>(this); 
 }

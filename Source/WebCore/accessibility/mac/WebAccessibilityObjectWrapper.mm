@@ -37,6 +37,7 @@
 #import "AccessibilityListBox.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
+#import "AccessibilitySpinButton.h"
 #import "AccessibilityTable.h"
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableColumn.h"
@@ -893,7 +894,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     static NSArray* sliderActions = [[NSArray alloc] initWithObjects: NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil];
 
     NSArray *actions;
-    if (m_object->actionElement()) 
+    if (m_object->actionElement() || m_object->isButton()) 
         actions = actionElementActions;
     else if (m_object->isMenuRelated())
         actions = menuElementActions;
@@ -985,6 +986,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     static NSArray* outlineRowAttrs = nil;
     static NSArray* buttonAttrs = nil;
     static NSArray* scrollViewAttrs = nil;
+    static NSArray* incrementorAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -1129,6 +1131,13 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         controlAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (incrementorAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
+        [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
+        incrementorAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
     if (buttonAttrs == nil) {
@@ -1293,6 +1302,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         objectAttributes = tabListAttrs;
     else if (m_object->isScrollView())
         objectAttributes = scrollViewAttrs;
+    else if (m_object->isSpinButton())
+        objectAttributes = incrementorAttrs;
     
     else if (m_object->isMenu())
         objectAttributes = menuAttrs;
@@ -1516,7 +1527,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ParagraphRole, NSAccessibilityGroupRole },
         { LabelRole, NSAccessibilityGroupRole },
         { DivRole, NSAccessibilityGroupRole },
-        { FormRole, NSAccessibilityGroupRole }
+        { FormRole, NSAccessibilityGroupRole },
+        { SpinButtonRole, NSAccessibilityIncrementorRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1553,6 +1565,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute]) {
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
         }
+    }
+    
+    if (m_object->isSpinButtonPart()) {
+        if (toAccessibilitySpinButtonPart(m_object)->isIncrementor())
+            return NSAccessibilityIncrementArrowSubrole;
+
+        return NSAccessibilityDecrementArrowSubrole;
     }
     
     if (m_object->isTreeItem())
@@ -1882,6 +1901,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return (NSURL*)url;
     }
 
+    if (m_object->isSpinButton()) {
+        if ([attributeName isEqualToString:NSAccessibilityIncrementButtonAttribute])
+            return toAccessibilitySpinButton(m_object)->incrementButton()->wrapper();
+        if ([attributeName isEqualToString:NSAccessibilityDecrementButtonAttribute])
+            return toAccessibilitySpinButton(m_object)->decrementButton()->wrapper();
+    }
+    
     if ([attributeName isEqualToString: @"AXVisited"])
         return [NSNumber numberWithBool: m_object->isVisited()];
     
