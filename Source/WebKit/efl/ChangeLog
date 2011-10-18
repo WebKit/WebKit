@@ -1,3 +1,26 @@
+2011-10-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Remove const modifier from ctx_menu functions.
+        https://bugs.webkit.org/show_bug.cgi?id=70090
+
+        Reviewed by Andreas Kling.
+
+        Functions ewk_context_menu_show and ewk_context_menu_custom_get
+        have got const modifer to ensure that Ewk_Context_Menu won't be
+        changed. The methods emit events through
+        evas_object_smart_callback_call with Ewk_Context_Menu as parameter
+        which is converted to void *. In this case an application which
+        receives those events may change Ewk_Context_Menu.
+
+        Additionaly the name of ewk_context_menu_custom_get has been changed
+        to ewk_context_menu_customize because an application is able to
+        modify the items of context menu.
+
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_customize):
+        (ewk_context_menu_show):
+        * ewk/ewk_private.h:
+
 2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Expose the kit() frame function to the rest of ewk.

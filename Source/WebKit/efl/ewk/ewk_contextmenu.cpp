@@ -301,7 +301,7 @@ void ewk_context_menu_item_append(Ewk_Context_Menu* menu, WebCore::ContextMenuIt
  *
  * @see ewk_context_menu_item_list_get
  */
-Ewk_Context_Menu* ewk_context_menu_custom_get(const Ewk_Context_Menu* menu)
+Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* menu)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
 
@@ -316,7 +316,7 @@ Ewk_Context_Menu* ewk_context_menu_custom_get(const Ewk_Context_Menu* menu)
  *
  * @param o the context menu object
  */
-void ewk_context_menu_show(const Ewk_Context_Menu* menu)
+void ewk_context_menu_show(Ewk_Context_Menu* menu)
 {
     EINA_SAFETY_ON_NULL_RETURN(menu);
 

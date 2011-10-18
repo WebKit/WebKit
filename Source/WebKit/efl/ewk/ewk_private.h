@@ -171,8 +171,8 @@ void ewk_history_free(Ewk_History* history);
 Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuController* controller);
 Eina_Bool ewk_context_menu_free(Ewk_Context_Menu* o);
 void ewk_context_menu_item_append(Ewk_Context_Menu* o, WebCore::ContextMenuItem& core);
-Ewk_Context_Menu* ewk_context_menu_custom_get(const Ewk_Context_Menu* o);
-void ewk_context_menu_show(const Ewk_Context_Menu* o);
+Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* o);
+void ewk_context_menu_show(Ewk_Context_Menu* o);
 #endif
 
 const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, size_t* count);
