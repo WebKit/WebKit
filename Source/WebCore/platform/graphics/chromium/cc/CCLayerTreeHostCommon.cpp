@@ -91,24 +91,84 @@ template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
 static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     typedef Vector<RefPtr<LayerType> > LayerList;
-    // Compute the new matrix transformation that will be applied to this layer and
-    // all its children. It's important to remember that the layer's position
-    // is the position of the layer's anchor point. Also, the coordinate system used
-    // assumes that the origin is at the lower left even though the coordinates the browser
-    // gives us for the layers are for the upper left corner. The Y flip happens via
-    // the orthographic projection applied at render time.
-    // The transformation chain for the layer is (using the Matrix x Vector order):
-    // M = M[p] * Tr[l] * M[l] * Tr[c]
-    // Where M[p] is the parent matrix passed down to the function
-    //       Tr[l] is the translation matrix locating the layer's anchor point
-    //       Tr[c] is the translation offset between the anchor point and the center of the layer
-    //       M[l] is the layer's matrix (applied at the anchor point)
-    // This transform creates a coordinate system whose origin is the center of the layer.
-    // Note that the final matrix used by the shader for the layer is P * M * S . This final product
-    // is computed in drawTexturedQuad().
-    // Where: P is the projection matrix
-    //        M is the layer's matrix computed above
+    // This function computes the new matrix transformations recursively for this
+    // layer and all its descendants. It also computes the appropriate render surfaces.
+    // Some important points to remember:
+    //
+    // 0. Here, transforms are notated in Matrix x Vector order, and in words we describe what
+    //    the transform does from left to right.
+    //
+    // 1. In our terminology, the "layer origin" refers to the top-left corner of a layer, and the
+    //    positive Y-axis points downwards. This interpretation is valid because the orthographic
+    //    projection applied at draw time flips the Y axis appropriately.
+    //
+    // 2. The anchor point, when given as a FloatPoint object, is specified in "unit layer space",
+    //    where the bounds of the layer map to [0, 1]. However, as a TransformationMatrix object,
+    //    the transform to the anchor point is specified in "pixel layer space", where the bounds
+    //    of the layer map to [bounds.width(), bounds.height()].
+    //
+    // 3. The value of layer->position() is actually the position of the anchor point with respect to the position
+    //    of the layer's origin. That is:
+    //        layer->position() = positionOfLayerOrigin + anchorPoint (in pixel units)
+    //
+    //    Or, equivalently,
+    //        positionOfLayerOrigin.x =  layer->position.x - (layer->anchorPoint.x * bounds.width)
+    //        positionOfLayerOrigin.y =  layer->position.y - (layer->anchorPoint.y * bounds.height)
+    //
+    // 4. Definition of various transforms used:
+    //        M[parent] is the parent matrix, with respect to the nearest render surface, passed down recursively.
+    //        M[root] is the full hierarchy, with respect to the root, passed down recursively.
+    //        Tr[origin] is the translation matrix from the parent's origin to this layer's origin.
+    //        Tr[origin2anchor] is the translation from the layer's origin to its anchor point
+    //        Tr[origin2center] is the translation from the layer's origin to its center
+    //        M[layer] is the layer's matrix (applied at the anchor point)
+    //        M[sublayer] is the layer's sublayer transform (applied at the layer's center)
+    //        Tr[anchor2center] is the translation offset from the anchor point and the center of the layer
+    //
+    //    Some shortcuts and substitutions are used in the code to reduce matrix multiplications:
+    //        Translating by the value of layer->position(), Tr[layer->position()] = Tr[origin] * Tr[origin2anchor]
+    //        Tr[anchor2center] = Tr[origin2anchor].inverse() * Tr[origin2center]
+    //
+    //    Some composite transforms can help in understanding the sequence of transforms:
+    //        compositeLayerTransform = Tr[origin2anchor] * M[layer] * Tr[origin2anchor].inverse()
+    //        compositeSublayerTransform = Tr[origin2center] * M[sublayer] * Tr[origin2center].inverse()
+    //
+    //    In words, the layer transform is applied about the anchor point, and the sublayer transform is
+    //    applied about the center of the layer.
+    //
+    // 5. When a layer (or render surface) is drawn, it is drawn into a "target render surface". Therefore the draw
+    //    transform does not necessarily transform from screen space to local layer space. Instead, the draw transform
+    //    is the transform between the "target render surface space" and local layer space. Note that render surfaces,
+    //    except for the root, also draw themselves into a different target render surface, and so their draw
+    //    transform and origin transforms are also described with respect to the target.
+    //
+    // Using these definitions, then:
+    //
+    // The draw transform for the layer is:
+    //        M[draw] = M[parent] * Tr[origin] * compositeLayerTransform * Tr[origin2center]
+    //                = M[parent] * Tr[layer->position()] * M[layer] * Tr[anchor2center]
+    //
+    //        Interpreting the math left-to-right, this transforms from the layer's render surface to the center of the layer.
+    //
+    // The screen space transform is:
+    //        M[screenspace] = M[root] * Tr[origin] * compositeLayerTransform
+    //                       = M[root] * Tr[layer->position()] * M[layer] * Tr[origin2anchor].inverse()
+    //
+    //        Interpreting the math left-to-right, this transforms from the root layer space to the local layer's origin.
+    //
+    // The transform hierarchy that is passed on to children (i.e. the child's parentMatrix) is:
+    //        M[parent]_for_child = M[parent] * Tr[origin] * compositeLayerTransform * compositeSublayerTransform
+    //                            = M[parent] * Tr[layer->position()] * M[layer] * Tr[anchor2center] * M[sublayer] * Tr[origin2center].inverse()
+    //                            = M[draw] * M[sublayer] * Tr[origin2center].inverse()
+    //
+    //        and a similar matrix for the full hierarchy with respect to the root.
+    //
+    // Finally, note that the final matrix used by the shader for the layer is P * M[draw] * S . This final product
+    // is computed in drawTexturedQuad(), where:
+    //        P is the projection matrix
     //        S is the scale adjustment (to scale up to the layer size)
+    //
+
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
     FloatPoint position = layer->position() - layer->scrollDelta();
@@ -118,11 +178,11 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     float centerOffsetY = (0.5 - anchorPoint.y()) * bounds.height();
 
     TransformationMatrix layerLocalTransform;
-    // LT = Tr[l]
+    // LT = Tr[origin] * Tr[origin2anchor]
     layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
-    // LT = Tr[l] * M[l]
+    // LT = Tr[origin] * Tr[origin2anchor] * M[layer]
     layerLocalTransform.multiply(layer->transform());
-    // LT = Tr[l] * M[l] * Tr[c]
+    // LT = Tr[origin] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
     TransformationMatrix combinedTransform = parentMatrix;
@@ -197,7 +257,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         renderSurfaceLayerList.append(layer);
     } else {
-        // DT = M[p] * LT
         layer->setDrawTransform(combinedTransform);
         transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
@@ -227,8 +286,7 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     }
 
     // Note that at this point, layer->drawTransform() is not necessarily the same as local variable drawTransform.
-    // layerScreenSpaceTransform represents the transform between layer space (in pixels) and screen space.
-    // So we do not include projection P or scaling transform S (see comments above that describe P*M*S).
+    // layerScreenSpaceTransform represents the transform between root layer's "screen space" and local layer space.
     TransformationMatrix layerScreenSpaceTransform = nextHierarchyMatrix;
     layerScreenSpaceTransform.multiply(layer->drawTransform());
     layerScreenSpaceTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
@@ -267,9 +325,7 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     // Apply the sublayer transform at the center of the layer.
     sublayerMatrix.multiply(layer->sublayerTransform());
 
-    // The origin of the children is the top left corner of the layer, not the
-    // center. The matrix passed down to the children is therefore:
-    // M[s] = M * Tr[-center]
+    // The coordinate system given to children is located at the layer's origin, not the center.
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
     LayerList& descendants = (layer->renderSurface() ? layer->renderSurface()->layerList() : layerList);
