@@ -100,6 +100,8 @@ public:
     UpDownState upDownState() const { return m_upDownState; }
     virtual void releaseCapture();
 
+    void step(int amount);
+    
 private:
     SpinButtonElement(Document*);
 

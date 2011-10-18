@@ -1,3 +1,21 @@
+2011-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: buttons of number type <input> controls are not fully accessible
+        https://bugs.webkit.org/show_bug.cgi?id=70241
+
+        Expose the spin button object to the AX hierarchy. Since there is no distinct
+        render object that backs this object, a mock object needs to be created for the entire
+        spin button and the actual increment and decrement buttons inside.
+
+        This will be a staged commit since the first time around Windows layout tests started crashing for an undeterminable reason.
+
+        Reviewed by Darin Adler.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::step):
+        (WebCore::SpinButtonElement::repeatingTimerFired):
+        * html/shadow/TextControlInnerElements.h:
+
 2011-10-18  Andreas Kling  <kling@webkit.org>
 
         MediaList: Remove inheritance from StyleBase.
