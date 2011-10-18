@@ -25,6 +25,8 @@
 #include "Image.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -501,6 +503,19 @@ const char* TextureMapperGL::type() const
     return "OpenGL";
 }
 
+// This function is similar with GraphicsContext3D::texImage2DResourceSafe.
+static void texImage2DResourceSafe(size_t width, size_t height)
+{
+    const int pixelSize = 4; // RGBA
+    OwnArrayPtr<unsigned char> zero;
+    if (width && height) {
+        unsigned int size = width * height * pixelSize;
+        zero = adoptArrayPtr(new unsigned char[size]);
+        memset(zero.get(), 0, size);
+    }
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, zero.get()))
+}
+
 void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
 {
     BitmapTexture::reset(newSize, opaque);
@@ -519,7 +534,7 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR))
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE))
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE))
-        GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0))
+        texImage2DResourceSafe(m_textureSize.width(), m_textureSize.height());
     }
     m_actualSize = newSize;
     m_relativeSize = FloatSize(float(newSize.width()) / m_textureSize.width(), float(newSize.height()) / m_textureSize.height());

@@ -1,3 +1,19 @@
+2011-10-17  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap][QT] TexMapGL renders a strange one-pixel border of BitmapTexture.
+        https://bugs.webkit.org/show_bug.cgi?id=70293
+
+        TextureMapperGL renders the strange border in
+        http://www.webkit.org/blog-files/leaves/index.html
+        Bug occurs because BitmapTexture is larger than the content due to rounding to
+        NPOT, and its pixel data is never initialized.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::texImage2DResourceSafe):
+        (WebCore::BitmapTextureGL::reset):
+
 2011-10-17  Jochen Eisinger  <jochen@chromium.org>
 
         Make NavigationAction wrap a ResourceRequest instead of a KURL.
