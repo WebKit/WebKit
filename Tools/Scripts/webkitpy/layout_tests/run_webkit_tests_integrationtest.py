@@ -454,18 +454,14 @@ class MainTest(unittest.TestCase):
             def exit_code_from_summarized_results(self, unexpected_results):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
+        options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
         test_port = CustomExitCodePort(options=options, user=mocktool.MockUser())
         res, out, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/text-image-checksum.html'],
             tests_included=True, filesystem=fs, record_results=True, port_obj=test_port)
-        file_list = fs.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEquals(res, 2)
-        self.assertTrue(json_string.find('"num_regression":1') == -1)
-        self.assertTrue(json_string.find('"num_flaky":1') == -1)
-        self.assertTrue(json_string.find('"num_missing":1') != -1)
 
     def test_crash_with_stderr(self):
         fs = unit_test_filesystem()

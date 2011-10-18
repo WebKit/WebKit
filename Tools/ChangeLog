@@ -1,3 +1,9 @@
+2011-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r97672.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         A follow-up of r97716.
