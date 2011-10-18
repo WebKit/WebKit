@@ -1,5 +1,15 @@
 2011-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Add a new chromium baseline for fast/multicol/vertical-rl/rule-style.html.
+
+        Unreviewed, baseline update.
+
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/vertical-rl/rule-style-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/rule-style-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/rule-style-expected.txt: Added.
+
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations update.
 
         * platform/chromium/test_expectations.txt:
