@@ -408,24 +408,6 @@ LayoutPoint AccessibilityObject::clickPoint()
     return LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
 }
 
-LayoutRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
-{
-    size_t count = quads.size();
-    if (!count)
-        return LayoutRect();
-    
-    LayoutRect result;
-    for (size_t i = 0; i < count; ++i) {
-        LayoutRect r = quads[i].enclosingBoundingBox();
-        if (!r.isEmpty()) {
-            if (obj->style()->hasAppearance())
-                obj->theme()->adjustRepaintRect(obj, r);
-            result.unite(r);
-        }
-    }
-    return result;
-}
-    
 bool AccessibilityObject::press() const
 {
     Element* actionElem = actionElement();
@@ -1342,13 +1324,6 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const Layo
         // Normalize the point for the widget's bounds.
         if (widget && widget->isFrameView())
             return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(toPoint(point - widget->frameRect().location()));
-    }
-    
-    // Check if there are any mock elements that need to be handled.
-    size_t count = m_children.size();
-    for (size_t k = 0; k < count; k++) {
-        if (m_children[k]->isMockObject() && m_children[k]->elementRect().contains(point))
-            return m_children[k]->elementAccessibilityHitTest(point);
     }
 
     return const_cast<AccessibilityObject*>(this); 

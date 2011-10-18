@@ -1,3 +1,15 @@
+2011-10-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97669.
+        http://trac.webkit.org/changeset/97669
+        https://bugs.webkit.org/show_bug.cgi?id=70305
+
+        Broke accessibility tests on Windows (Requested by rniwa on
+        #webkit).
+
+        * platform/mac/accessibility/html5-input-number-expected.txt: Removed.
+        * platform/mac/accessibility/html5-input-number.html: Removed.
+
 2011-10-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reverted r997709, this caused test failures.

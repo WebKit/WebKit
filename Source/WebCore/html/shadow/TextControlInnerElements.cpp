@@ -344,7 +344,7 @@ void SpinButtonElement::stopRepeatingTimer()
     m_repeatingTimer.stop();
 }
 
-void SpinButtonElement::step(int amount)
+void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     if (input->disabled() || input->isReadOnlyFormControl())
@@ -356,12 +356,7 @@ void SpinButtonElement::step(int amount)
     if (m_upDownState != m_pressStartingState)
         return;
 #endif
-    input->stepUpFromRenderer(amount);
-}
-    
-void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)
-{
-    step(m_upDownState == Up ? 1 : -1);
+    input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
 }
 
 void SpinButtonElement::setHovered(bool flag)

@@ -1,3 +1,41 @@
+2011-10-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97669.
+        http://trac.webkit.org/changeset/97669
+        https://bugs.webkit.org/show_bug.cgi?id=70305
+
+        Broke accessibility tests on Windows (Requested by rniwa on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityMockObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::clearChildren):
+        (WebCore::AccessibilityRenderObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySpinButton.cpp: Removed.
+        * accessibility/AccessibilitySpinButton.h: Removed.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityActionNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::repeatingTimerFired):
+        * html/shadow/TextControlInnerElements.h:
+
 2011-10-17  Kent Tamura  <tkent@chromium.org>
 
         Remove OptionGroupElement

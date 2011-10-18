@@ -1692,8 +1692,6 @@
             'accessibility/AccessibilityScrollbar.h',
             'accessibility/AccessibilitySlider.cpp',
             'accessibility/AccessibilitySlider.h',
-            'accessibility/AccessibilitySpinButton.cpp',
-            'accessibility/AccessibilitySpinButton.h',
             'accessibility/AccessibilityTable.cpp',
             'accessibility/AccessibilityTable.h',
             'accessibility/AccessibilityTableCell.cpp',

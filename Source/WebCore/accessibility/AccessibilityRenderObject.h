@@ -299,9 +299,6 @@ private:
     bool renderObjectIsObservable(RenderObject*) const;
     RenderObject* renderParentObject() const;
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
-
-    void addTextFieldChildren();
-    void addImageMapChildren();
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
     

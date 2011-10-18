@@ -30,7 +30,6 @@
 #ifndef AccessibilityObject_h
 #define AccessibilityObject_h
 
-#include "FloatQuad.h"
 #include "LayoutTypes.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
@@ -179,8 +178,6 @@ enum AccessibilityRole {
     SheetRole,
     SliderRole,
     SliderThumbRole,
-    SpinButtonRole,
-    SpinButtonPartRole,
     SplitGroupRole,
     SplitterRole,
     StaticTextRole,
@@ -372,9 +369,6 @@ public:
     virtual bool isMenuList() const { return false; }
     virtual bool isMenuListPopup() const { return false; }
     virtual bool isMenuListOption() const { return false; }
-    virtual bool isSpinButton() const { return false; }
-    virtual bool isSpinButtonPart() const { return false; }
-    virtual bool isMockObject() const { return false; }
     bool isTextControl() const { return roleValue() == TextAreaRole || roleValue() == TextFieldRole; }
     bool isARIATextControl() const;
     bool isTabList() const { return roleValue() == TabListRole; }
@@ -514,8 +508,7 @@ public:
     virtual LayoutRect elementRect() const = 0;
     virtual LayoutSize size() const { return elementRect().size(); }
     virtual LayoutPoint clickPoint();
-    static LayoutRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
-    
+
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
     unsigned selectionStart() const { return selectedTextRange().start; }
     unsigned selectionEnd() const { return selectedTextRange().length; }

@@ -39,15 +39,12 @@ public:
     
     virtual AccessibilityObject* parentObject() const { return m_parent; }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; };
-
-protected:
-    AccessibilityObject* m_parent;
-
-private:
-    virtual bool isMockObject() const { return true; }
-
+    
     // Must be called when the parent object clears its children.
     virtual void detachFromParent() { m_parent = 0; }
+    
+protected:
+    AccessibilityObject* m_parent;
 }; 
     
 } // namespace WebCore 
