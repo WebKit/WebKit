@@ -58,7 +58,7 @@ test('properties are set', 9, function() {
 test('domElement() posts to enter_bug.cgi', 3, function() {
     var formElement = createTestForm().domElement();
     equal(formElement.tagName, 'FORM');
-    equal(formElement.method, 'POST');
+    equal(formElement.method, 'post');
     equal(formElement.action, 'https://bugs.webkit.org/enter_bug.cgi');
 });
 
