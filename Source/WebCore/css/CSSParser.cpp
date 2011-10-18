@@ -1641,6 +1641,8 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
     case CSSPropertyWebkitFlowInto:
         return parseFlowThread(propId, important);
+    case CSSPropertyWebkitFlowFrom:
+        return parseRegionThread(propId, important);
     case CSSPropertyWebkitRegionOverflow:
         if (id == CSSValueAuto || id == CSSValueBreak)
             validPrimitive = true;
@@ -2717,10 +2719,6 @@ bool CSSParser::parseContent(int propId, bool important)
                     return false;
             } else if (isGeneratedImageValue(val)) {
                 if (!parseGeneratedImage(parsedValue))
-                    return false;
-            } else if (equalIgnoringCase(val->function->name, "-webkit-from-flow(")) {
-                parsedValue = parseFromFlowContent(args);
-                if (!parsedValue)
                     return false;
             } else
                 return false;
@@ -6548,20 +6546,34 @@ bool CSSParser::parseFlowThread(int propId, bool important)
     return true;
 }
 
-// The region name is now specified as an argument to the content property:
-// content: from-flow(flow_thread_name)
-PassRefPtr<CSSValue> CSSParser::parseFromFlowContent(CSSParserValueList* args)
+// -webkit-flow-from: none | <ident>
+bool CSSParser::parseRegionThread(int propId, bool important)
 {
-    // It should be only one name for the region thread.
-    if (args->size() != 1)
-        return 0;
+    ASSERT(propId == CSSPropertyWebkitFlowFrom);
 
-    CSSParserValue* argFlowThreadName = args->current();
+    if (m_valueList->size() != 1)
+        return false;
 
-    if (argFlowThreadName->unit != CSSPrimitiveValue::CSS_STRING)
-        return 0;
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
 
-    return CSSPrimitiveValue::create(argFlowThreadName->string, CSSPrimitiveValue::CSS_FROM_FLOW);
+    if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+
+    if (value->id == CSSValueNone)
+        addProperty(propId, primitiveValueCache()->createIdentifierValue(value->id), important);
+    else {
+        String inputProperty = String(value->string);
+        if (!inputProperty.isEmpty()) {
+            if (!validFlowName(inputProperty))
+                return false;
+            addProperty(propId, primitiveValueCache()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING), important);
+        } else
+            addProperty(propId, primitiveValueCache()->createIdentifierValue(CSSValueNone), important);
+    }
+
+    return true;
 }
 
 bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)

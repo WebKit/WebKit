@@ -394,6 +394,8 @@ rect: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
 rect: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flow-into) : auto
 rect: style.getPropertyCSSValue(-webkit-flow-into) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-flow-from) : none
+rect: style.getPropertyCSSValue(-webkit-flow-from) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-region-overflow) : auto
 rect: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-region-break-after) : auto
@@ -872,6 +874,8 @@ g: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
 g: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flow-into) : auto
 g: style.getPropertyCSSValue(-webkit-flow-into) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-flow-from) : none
+g: style.getPropertyCSSValue(-webkit-flow-from) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-region-overflow) : auto
 g: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-region-break-after) : auto

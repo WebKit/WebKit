@@ -5,8 +5,8 @@
     Test for hit-testing of floats inside CSS Regions.
 </p>
 <div style="position:relative; margin: 100px; width: 300px; height: 200px; outline: solid black;">
-    <div style="position:absolute;left:0;top:0;content: -webkit-from-flow('flow'); width:150px;height:200px;"></div>
-    <div style="position:absolute;left:150px;top:0;content: -webkit-from-flow('flow'); width:150px;height:200px"></div>
+    <div style="position:absolute;left:0;top:0; -webkit-flow-from: flow; width:150px;height:200px;"></div>
+    <div style="position:absolute;left:150px;top:0; -webkit-flow-from: flow; width:150px;height:200px"></div>
     <div style="-webkit-flow-into: flow">
         <div style="height: 250px; background-color: purple;"></div>
         <div style="float: right; background-color: lightyellow; margin: 5px;">

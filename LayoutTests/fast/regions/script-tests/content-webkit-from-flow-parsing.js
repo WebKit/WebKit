@@ -1,50 +1,39 @@
-description('Tests being able to set content to -webkit-from-flow');
-
+description('Tests parsing of -webkit-flow-from property');
+ 
 function testCSSText(declaration) {
-    var div = document.createElement("div");
-    div.setAttribute("style", declaration);
-    return div.style.content;
+ var div = document.createElement("div");
+ div.setAttribute("style", declaration);
+ return div.style.webkitFlowFrom;
 }
 
 function testComputedStyle(declaration) {
-    var div = document.createElement("div");
-    document.body.appendChild(div);
-    div.style.setProperty("content", declaration);
+ var div = document.createElement("div");
+ document.body.appendChild(div);
+ div.style.setProperty("-webkit-flow-from", declaration);
 
-    var contentComputedValue = getComputedStyle(div).getPropertyValue("content");
-    document.body.removeChild(div);
-    return contentComputedValue;
+ var contentComputedValue = getComputedStyle(div).getPropertyValue("-webkit-flow-from");
+ document.body.removeChild(div);
+ return contentComputedValue;
 }
 
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(\'first-flow\')")', "-webkit-from-flow(first-flow)");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(\'first flow\')")', "-webkit-from-flow('first flow')");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(\'auto\')")', "-webkit-from-flow(auto)");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(auto)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(initial)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(inherit)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow()")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(\'\')")', "-webkit-from-flow('')");
-shouldBeEqualToString('testCSSText("content: ;")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(1)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(1.2)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(-1)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(12px)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(first flow)")', "");
-shouldBeEqualToString('testCSSText("content: -webkit-from-flow(first-flow)")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: first-flow")', "first-flow");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: none")', "none");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: ")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: \'first-flow\'")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: 1")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: 1.2")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: -1")', "");
+shouldBeEqualToString('testCSSText("-webkit-flow-from: 12px")', "");
+shouldBeEqualToString('testCSSText("-webkit-from-flow: first flow")', "");
 
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(\'first-flow\')")', "first-flow");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(\'first flow\')")', "'first flow'");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(\'auto\')")', "auto");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(auto)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(initial)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(inherit)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow()")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(1)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(1.2)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(-1)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(12px)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(\'\')")', "''");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(first flow)")', "");
-shouldBeEqualToString('testComputedStyle("-webkit-from-flow(first-flow)")', "");
+shouldBeEqualToString('testComputedStyle("first-flow")', "first-flow");
+shouldBeEqualToString('testComputedStyle("\'first flow\'")', "none");
+shouldBeEqualToString('testComputedStyle("none")', "none");
+shouldBeEqualToString('testComputedStyle("initial")', "none");
+shouldBeEqualToString('testComputedStyle("inherit")', "none");
+shouldBeEqualToString('testComputedStyle("1")', "none");
+shouldBeEqualToString('testComputedStyle("1.2")', "none");
+shouldBeEqualToString('testComputedStyle("-1")', "none");
+shouldBeEqualToString('testComputedStyle("12px")', "none");
 
 successfullyParsed = true;

@@ -9,7 +9,7 @@ function createRegionElement(elementType, displayType)
     document.body.appendChild(element);
 
     // Transform the element into a region.
-    element.style.setProperty("content", "-webkit-from-flow('no-flow')");
+    element.style.setProperty("-webkit-flow-from", "no-flow");
 
     // The region element was created if the length of inner text is 0.
     var regionCreated = element.innerText.length == 0;

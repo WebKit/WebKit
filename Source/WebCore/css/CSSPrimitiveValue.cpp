@@ -77,7 +77,6 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_COUNTER:
     case CSSPrimitiveValue:: CSS_COUNTER_NAME:
     case CSSPrimitiveValue:: CSS_DASHBOARD_REGION:
-    case CSSPrimitiveValue:: CSS_FROM_FLOW:
     case CSSPrimitiveValue:: CSS_IDENT:
     case CSSPrimitiveValue:: CSS_PAIR:
     case CSSPrimitiveValue:: CSS_PARSER_HEXCOLOR:
@@ -293,7 +292,6 @@ void CSSPrimitiveValue::cleanup()
         case CSS_STRING:
         case CSS_URI:
         case CSS_ATTR:
-        case CSS_FROM_FLOW:
         case CSS_PARSER_HEXCOLOR:
             if (m_value.string)
                 m_value.string->deref();
@@ -583,7 +581,6 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-        case CSS_FROM_FLOW:
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -601,7 +598,6 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-        case CSS_FROM_FLOW:
              return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -775,9 +771,6 @@ String CSSPrimitiveValue::cssText() const
             break;
         case CSS_STRING:
             text = quoteCSSStringIfNeeded(m_value.string);
-            break;
-        case CSS_FROM_FLOW:
-            text = "-webkit-from-flow(" + quoteCSSStringIfNeeded(m_value.string) + ")";
             break;
         case CSS_URI:
             text = "url(" + quoteCSSURLIfNeeded(m_value.string) + ")";

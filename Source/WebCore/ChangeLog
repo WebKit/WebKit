@@ -1,3 +1,30 @@
+2011-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Change content:-webkit-from-flow to -webkit-flow-from
+        https://bugs.webkit.org/show_bug.cgi?id=70104
+
+        Reviewed by David Hyatt.
+
+        1. -webkit-flow-from is now a property instead of being an addition to content property.
+        2. -webkit-flow-from takes an identifier instead of string.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseRegionThread):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-10-17  Kentaro Hara  <haraken@chromium.org>
 
         MessageEvent.data can be stored as ScriptValue.

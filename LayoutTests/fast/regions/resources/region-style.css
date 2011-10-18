@@ -21,7 +21,7 @@
 }
 
 .regionArticle {
-    content: -webkit-from-flow("article");
+    -webkit-flow-from: article;
 }
 
 .borderBox {

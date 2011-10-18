@@ -349,6 +349,7 @@ z-index
 -webkit-user-modify
 -webkit-user-select
 -webkit-flow-into
+-webkit-flow-from
 -webkit-region-overflow
 -webkit-wrap-shape
 -webkit-region-break-after

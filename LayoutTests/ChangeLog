@@ -1,3 +1,97 @@
+2011-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Change content:-webkit-from-flow to -webkit-flow-from
+        https://bugs.webkit.org/show_bug.cgi?id=70104
+
+        Reviewed by David Hyatt.
+
+        1. -webkit-flow-from is now a property instead of being an addition to content property.
+        2. -webkit-flow-from takes an identifier instead of string.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/content-flowed-into-regions-no-scroll.html:
+        * fast/regions/content-webkit-from-flow-parsing-expected.txt:
+        * fast/regions/float-pushed-width-change.html:
+        * fast/regions/floats-basic-in-variable-width-regions.html:
+        * fast/regions/flow-anonymous-children.html:
+        * fast/regions/flow-content-basic-vertical-rl.html:
+        * fast/regions/flow-content-basic-vertical.html:
+        * fast/regions/flow-content-basic.html:
+        * fast/regions/flows-dependency-dynamic-remove.html:
+        * fast/regions/flows-dependency-same-flow.html:
+        * fast/regions/hit-test-float.html:
+        * fast/regions/multiple-directionality-changes-in-variable-width-regions.html:
+        * fast/regions/no-split-line-box.html:
+        * fast/regions/outline-sides-in-region.html:
+        * fast/regions/overflow-in-uniform-regions-dynamic.html:
+        * fast/regions/overflow-in-uniform-regions.html:
+        * fast/regions/overflow-in-variable-width-regions.html:
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-rtl-in-variable-width-regions.html:
+        * fast/regions/overflow-size-change-in-variable-width-regions.html:
+        * fast/regions/overflow-size-change-with-stacking-context-rtl.html:
+        * fast/regions/overflow-size-change-with-stacking-context.html:
+        * fast/regions/percentage-margins-mixed-ltr-dominant-regions.html:
+        * fast/regions/percentage-margins-mixed-rtl-dominant-regions.html:
+        * fast/regions/percentage-margins-rtl-variable-width-regions.html:
+        * fast/regions/percentage-margins-variable-width-regions.html:
+        * fast/regions/position-writing-modes-in-variable-width-regions.html:
+        * fast/regions/positioned-objects-block-static-in-regions.html:
+        * fast/regions/positioned-objects-block-static-in-rtl-regions.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions-rtl.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions.html:
+        * fast/regions/positioned-objects-in-regions.html:
+        * fast/regions/positioned-objects-in-rtl-regions.html:
+        * fast/regions/positioned-objects-inline-static-in-regions.html:
+        * fast/regions/positioned-objects-inline-static-in-rtl-regions.html:
+        * fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html:
+        * fast/regions/positioned-objects-inline-static-spanning-regions.html:
+        * fast/regions/positioned-objects-perpendicular-flows-in-regions.html:
+        * fast/regions/positioned-objects-spanning-regions.html:
+        * fast/regions/region-element-dynamic-attach-flow.html:
+        * fast/regions/region-element-dynamic-detach-flow.html:
+        * fast/regions/region-overflow-auto-overflow-hidden.html:
+        * fast/regions/region-overflow-auto-overflow-visible.html:
+        * fast/regions/region-overflow-break.html:
+        * fast/regions/render-region-renderer.html:
+        * fast/regions/resources/region-style.css:
+        (.regionArticle):
+        * fast/regions/script-tests/content-webkit-from-flow-parsing.js:
+        (testCSSText):
+        (testComputedStyle):
+        * fast/regions/script-tests/region-element-display-restriction.js:
+        (createRegionElement):
+        * fast/regions/text-region-breaks.html:
+        * fast/regions/text-region-split-after-resize.html:
+        * fast/regions/text-region-split-horizontal-bt.html:
+        * fast/regions/text-region-split-small-pagination.html:
+        * fast/regions/text-region-split-vertical-rl.html:
+        * fast/regions/text-region-split-vertical.html:
+        * fast/regions/text-region-split.html:
+        * fast/regions/top-overflow-out-of-second-region.html:
+        * fast/regions/webkit-flow-double-pagination-float-push.html:
+        * fast/regions/webkit-flow-float-pushed-to-last-region.html:
+        * fast/regions/webkit-flow-float-unable-to-push.html:
+        * fast/regions/webkit-flow-floats-inside-regions-bounds.html:
+        * fast/regions/webkit-flow-inlines-dynamic.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds.html:
+        * fast/regions/webkit-flow-renderer-layer.html:
+        * fast/regions/webkit-flow-renderer-nested.html:
+        * fast/regions/webkit-flow-renderer.html:
+        * fast/repaint/japanese-rl-selection-repaint-in-regions.html:
+        * fast/repaint/line-flow-with-floats-in-regions.html:
+        * fast/repaint/overflow-flipped-writing-mode-block-in-regions.html:
+        * fast/repaint/region-painting-via-layout.html:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         Assign a bug for flaky layout tests

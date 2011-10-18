@@ -200,7 +200,7 @@ public:
     bool parseFontFeatureSettings(bool important);
 
     bool parseFlowThread(int propId, bool important);
-    PassRefPtr<CSSValue> parseFromFlowContent(CSSParserValueList*);
+    bool parseRegionThread(int propId, bool important);
 
     int yyparse();
 

@@ -98,13 +98,12 @@ public:
 
         // This is used internally for counter names (as opposed to counter values)
         CSS_COUNTER_NAME = 109,
-        CSS_FROM_FLOW = 110,
 
         // This is used by the CSS Exclusions draft
-        CSS_SHAPE = 111,
+        CSS_SHAPE = 110,
         
         // Used by border images.
-        CSS_QUAD = 112
+        CSS_QUAD = 111
     };
     
     // This enum follows the CSSParser::Units enum augmented with UNIT_FREQUENCY for frequencies.
