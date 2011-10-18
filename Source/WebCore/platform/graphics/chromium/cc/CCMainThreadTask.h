@@ -243,11 +243,6 @@ private:
 template<typename T>
 PassOwnPtr<CCMainThread::Task> createMainThreadTask(
     T* const callee,
-    void (T::*method)());
-
-template<typename T>
-PassOwnPtr<CCMainThread::Task> createMainThreadTask(
-    T* const callee,
     void (T::*method)())
 {
     return MainThreadTask0<T>::create(

@@ -84,8 +84,6 @@ bool CCLayerTreeHost::initialize()
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
-    setNeedsCommitThenRedraw();
-
     m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
 }

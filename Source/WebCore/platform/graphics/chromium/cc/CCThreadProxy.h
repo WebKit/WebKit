@@ -36,6 +36,7 @@ namespace WebCore {
 class CCInputHandler;
 class CCLayerTreeHost;
 class CCScheduler;
+class CCScopedMainThreadProxy;
 class CCThread;
 class CCThreadProxySchedulerClient;
 class CCThreadProxyScrollControllerAdapter;
@@ -72,6 +73,7 @@ private:
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet>);
 
     // Called on CCThread
+    void postBeginFrameAndCommitOnCCThread();
     PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnCCThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
     void commitOnCCThread(CCCompletionEvent*);
@@ -104,6 +106,8 @@ private:
 
     OwnPtr<CCScheduler> m_schedulerOnCCThread;
     OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnCCThread;
+
+    RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
 
     static CCThread* s_ccThread;
 };

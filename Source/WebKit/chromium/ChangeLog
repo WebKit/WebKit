@@ -1,3 +1,28 @@
+2011-10-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests
+        https://bugs.webkit.org/show_bug.cgi?id=70161
+
+        Reviewed by David Levin.
+
+        Enables the CCLayerTreeHostTest* tests by default. Most tests are run twice in a single thread and multiple
+        thread configuration. Some tests run only in the multiple thread configuration if they depend on the compositor
+        thread scheduling draws by itself.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (::CCLayerTreeHostTest::timeout):
+        (::CCLayerTreeHostTest::clearTimeout):
+        (::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (::CCLayerTreeHostTest::onEndTest):
+        (::CCLayerTreeHostTest::TimeoutTask::TimeoutTask):
+        (::CCLayerTreeHostTest::TimeoutTask::clearTest):
+        (::CCLayerTreeHostTest::TimeoutTask::~TimeoutTask):
+        (::CCLayerTreeHostTest::TimeoutTask::Run):
+        (::CCLayerTreeHostTest::runTest):
+        (::CCLayerTreeHostTest::doBeginTest):
+        (::CCLayerTreeHostTestThreadOnly::runTest):
+        (::CCLayerTreeHostTestSetNeedsRedraw::commitCompleteOnCCThread):
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)
