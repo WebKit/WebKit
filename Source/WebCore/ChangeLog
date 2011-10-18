@@ -1,3 +1,33 @@
+2011-10-17  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix shutdown race when posting main thread task to CCThreadProxy and enable tests
+        https://bugs.webkit.org/show_bug.cgi?id=70161
+
+        Reviewed by David Levin.
+
+        Adds a weak pointer mechanism to cancel main thread tasks posted to CCThreadProxy instances from the compositor
+        thread. Previously there was a race condition where main thread tasks could run even after the CCThreadProxy was
+        destroyed.
+
+        This race does not exist in the other direction because when tearing down a CCThreadProxy we first post a quit
+        task to the compositor thread and then suspend execution of the main thread until all compositor tasks for the
+        CCThreadProxy have been drained.
+
+        Covered by the now-enabled CCLayerTreeHostTest* unit tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCScopedMainThreadProxy.h: Added.
+        (WebCore::CCScopedMainThreadProxy::create):
+        (WebCore::CCScopedMainThreadProxy::postTask):
+        (WebCore::CCScopedMainThreadProxy::shutdown):
+        (WebCore::CCScopedMainThreadProxy::CCScopedMainThreadProxy):
+        (WebCore::CCScopedMainThreadProxy::runTaskIfNotShutdown):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::~CCThreadProxy):
+        (WebCore::CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97641.

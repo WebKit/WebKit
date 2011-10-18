@@ -32,6 +32,7 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCScheduler.h"
+#include "cc/CCScopedMainThreadProxy.h"
 #include "cc/CCScrollController.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
@@ -61,7 +62,7 @@ public:
 
     virtual void scheduleBeginFrameAndCommit()
     {
-        CCMainThread::postTask(m_proxy->createBeginFrameAndCommitTaskOnCCThread());
+        m_proxy->postBeginFrameAndCommitOnCCThread();
     }
 
     virtual void scheduleDrawAndPresent()
@@ -114,6 +115,7 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_started(false)
     , m_lastExecutedBeginFrameAndCommitSequenceNumber(-1)
     , m_numBeginFrameAndCommitsIssuedOnCCThread(0)
+    , m_mainThreadProxy(CCScopedMainThreadProxy::create())
 {
     TRACE_EVENT("CCThreadProxy::CCThreadProxy", this, 0);
     ASSERT(isMainThread());
@@ -299,6 +301,8 @@ void CCThreadProxy::stop()
     s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnCCThread, AllowCrossThreadAccess(&completion)));
     completion.wait();
 
+    m_mainThreadProxy->shutdown(); // Stop running tasks posted to us.
+
     ASSERT(!m_layerTreeHostImpl); // verify that the impl deleted.
     m_layerTreeHost = 0;
     m_started = false;
@@ -315,6 +319,11 @@ void CCThreadProxy::finishAllRenderingOnCCThread(CCCompletionEvent* completion)
     }
     m_layerTreeHostImpl->finishAllRendering();
     completion->signal();
+}
+
+void CCThreadProxy::postBeginFrameAndCommitOnCCThread()
+{
+    m_mainThreadProxy->postTask(createBeginFrameAndCommitTaskOnCCThread());
 }
 
 void CCThreadProxy::obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent* completion, CCMainThread::Task** taskPtr)
