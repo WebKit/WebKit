@@ -90,6 +90,8 @@ CachedResourceRequest::CachedResourceRequest(CachedResourceLoader* cachedResourc
 
 CachedResourceRequest::~CachedResourceRequest()
 {
+    if (m_loader)
+        m_loader->clearClient();
 }
 
 PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, const ResourceLoaderOptions& options)
@@ -142,13 +144,13 @@ PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     return request.release();
 }
 
-void CachedResourceRequest::willSendRequest(SubresourceLoader* loader, ResourceRequest& req, const ResourceResponse&)
+void CachedResourceRequest::willSendRequest(SubresourceLoader* loader, ResourceRequest& req, const ResourceResponse& response)
 {
     if (!m_cachedResourceLoader->canRequest(m_resource->type(), req.url())) {
         loader->cancel();
         return;
     }
-    m_resource->setRequestedFromNetworkingLayer();
+    m_resource->willSendRequest(req, response);
 }
 
 void CachedResourceRequest::cancel()
@@ -158,7 +160,18 @@ void CachedResourceRequest::cancel()
     m_loader->cancel();
 }
 
-void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)
+unsigned long CachedResourceRequest::identifier() const
+{
+    return m_loader->identifier();
+}
+
+void CachedResourceRequest::setDefersLoading(bool defers)
+{
+    if (m_loader)
+        m_loader->setDefersLoading(defers);
+}
+
+void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double finishTime)
 {
     if (m_finishing)
         return;
@@ -178,6 +191,7 @@ void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)
     // error, so we can't send the successful data() and finish() callbacks.
     if (!m_resource->errorOccurred()) {
         m_cachedResourceLoader->loadFinishing();
+        m_resource->setLoadFinishTime(finishTime);
         m_resource->data(loader->resourceData(), true);
         if (!m_resource->errorOccurred())
             m_resource->finish();
@@ -239,7 +253,13 @@ void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const 
         memoryCache()->revalidationFailed(m_resource);
     }
 
+    // setResponse() might cancel the request, so we need to keep ourselves alive. Unfortunately,
+    // we can't protect a CachedResourceRequest, but we can protect m_resource, which has the
+    // power to kill the CachedResourceRequest (and will switch isLoading() to false if it does so).
+    CachedResourceHandle<CachedResource> protect(m_resource);
     m_resource->setResponse(response);
+    if (!protect->isLoading())
+        return;
 
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
@@ -271,18 +291,20 @@ void CachedResourceRequest::didReceiveData(SubresourceLoader* loader, const char
     if (m_resource->errorOccurred())
         return;
 
-    if (m_resource->response().httpStatusCode() >= 400) {
-        if (!m_resource->shouldIgnoreHTTPStatusCodeErrors())
-            m_resource->error(CachedResource::LoadError);
+    if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors()) {
+        m_resource->error(CachedResource::LoadError);
         return;
     }
 
-    // Set the data.
-    if (m_multipart) {
-        // The loader delivers the data in a multipart section all at once, send eof.
-        // The resource data will change as the next part is loaded, so we need to make a copy.
+    // There are two cases where we might need to create our own SharedBuffer instead of copying the one in ResourceLoader.
+    // (1) Multipart content: The loader delivers the data in a multipart section all at once, then sends eof.
+    //     The resource data will change as the next part is loaded, so we need to make a copy.
+    // (2) Our client requested that the data not be buffered at the ResourceLoader level via ResourceLoaderOptions. In this case,
+    //     ResourceLoader::resourceData() will be null. However, unlike the multipart case, we don't want to tell the CachedResource
+    //     that all data has been received yet.
+    if (m_multipart || !loader->resourceData()) {
         RefPtr<SharedBuffer> copiedData = SharedBuffer::create(data, size);
-        m_resource->data(copiedData.release(), true);
+        m_resource->data(copiedData.release(), m_multipart);
     } else
         m_resource->data(loader->resourceData(), false);
 }
@@ -292,7 +314,12 @@ void CachedResourceRequest::didReceiveCachedMetadata(SubresourceLoader*, const c
     ASSERT(!m_resource->isCacheValidator());
     m_resource->setSerializedCachedMetadata(data, size);
 }
-    
+
+void CachedResourceRequest::didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    m_resource->didSendData(bytesSent, totalBytesToBeSent);
+}
+
 void CachedResourceRequest::end()
 {
     m_cachedResourceLoader->loadDone();

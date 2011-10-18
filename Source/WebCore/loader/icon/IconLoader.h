@@ -26,7 +26,7 @@
 #ifndef IconLoader_h
 #define IconLoader_h
 
-#include "CachedResourceClient.h"
+#include "CachedRawResource.h"
 #include "CachedResourceHandle.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -37,11 +37,11 @@ namespace WebCore {
 class CachedRawResource;
 class Frame;
 
-class IconLoader : private CachedResourceClient {
+class IconLoader : private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<IconLoader> create(Frame*);
-    ~IconLoader();
+    virtual ~IconLoader();
 
     void startLoading();
     void stopLoading();

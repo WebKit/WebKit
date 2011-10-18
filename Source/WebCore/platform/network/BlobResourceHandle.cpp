@@ -538,6 +538,7 @@ void BlobResourceHandle::notifyResponse()
         return;
 
     if (m_errorCode) {
+        RefPtr<BlobResourceHandle> protect(this);
         notifyResponseOnError();
         notifyFinish();
     } else

@@ -38,7 +38,8 @@ public:
         BaseResourceType,
         ImageType,
         FontType,
-        StyleSheetType
+        StyleSheetType,
+        RawResourceType
     };
 
     virtual ~CachedResourceClient() { }

@@ -29,20 +29,17 @@
  */
 
 #include "config.h"
-#include "DocumentThreadableLoader.h"
+#include "CachedResourceRequest.h"
 
-#include "CachedRawResource.h"
-#include "ThreadableLoaderClient.h"
+#include "CachedResource.h"
+#include "SubresourceLoader.h"
 
 namespace WebCore {
 
-void DocumentThreadableLoader::dataDownloaded(CachedResource* resource, int dataLength)
+void CachedResourceRequest::didDownloadData(SubresourceLoader* loader, int length)
 {
-    ASSERT(m_client);
-    ASSERT_UNUSED(resource, resource == m_resource);
-    ASSERT(!m_actualRequest);
-
-    m_client->didDownloadData(dataLength);
+    ASSERT_UNUSED(loader, loader == m_loader);
+    m_resource->didDownloadData(length);
 }
 
-} // namespace WebCore
+}

@@ -49,6 +49,12 @@ namespace WebCore {
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }
         void cancel();
 
+        // FIXME: Like CachedResource::identifier(), this is a lame hack for preflight InspectorInstrumentation in DocumentThreadableLoader.
+        unsigned long identifier() const;
+
+        // FIXME: See CachedRawResource::setDefersLoading() for the relevant rant.
+        void setDefersLoading(bool);
+
     private:
         CachedResourceRequest(CachedResourceLoader*, CachedResource*);
         virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&);
@@ -58,6 +64,11 @@ namespace WebCore {
         virtual void didFinishLoading(SubresourceLoader*, double);
         virtual void didFail(SubresourceLoader*, const ResourceError&);
         void end();
+
+        virtual void didSendData(SubresourceLoader*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/);
+#if PLATFORM(CHROMIUM)
+        virtual void didDownloadData(SubresourceLoader*, int);
+#endif
 
         RefPtr<SubresourceLoader> m_loader;
         CachedResourceLoader* m_cachedResourceLoader;
