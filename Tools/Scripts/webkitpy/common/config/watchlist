@@ -45,6 +45,9 @@
         "FrameLoader": {
             "more": r"FrameLoader\.(cpp|h)",
         },
+        "Loader": {
+            "filename": r"Source/WebCore/loader/.*",
+        },
         "StyleChecker": {
             "filename": r"Tools/Scripts/webkitpy/style/.*",
         },
@@ -58,7 +61,10 @@
         "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
-        "webkitpy|TestFailures|SecurityCritical|V8Bindings|BindingsScripts|FrameLoader": [ "abarth@webkit.org" ],
+        "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org" ],
+        "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
+        "Loader": [ "japhet@chromium.org" ],
+        "webkitpy|TestFailures|SecurityCritical": [ "abarth@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "

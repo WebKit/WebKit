@@ -1,3 +1,13 @@
+2011-10-17  Nate Chapin  <japhet@chromium.org>
+
+        Add myself to watchlists, and add a watch
+        for Source/WebCore/loader/.
+        https://bugs.webkit.org/show_bug.cgi?id=70263
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-10-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Make non-recognized keys work in events as well.
