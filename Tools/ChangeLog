@@ -1,5 +1,24 @@
 2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove dead code in build-webkit
+
+        build-webkit will iterate over a list of subdirectories to build,
+        but this feature is only used by the Apple ports. For QtWebKit we
+        always pass an empty directory to buildQMakeProject, which makes
+        the logic for dealing with sub-projects in buildQMakeProject just
+        added noise.
+
+        If we do want this feature at some point, we should redo it in
+        the context of the upcoming build system changes for Qt.
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (buildQt):
+
+2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Remove traces of Symbian support from the build scripts
 
         Reviewed by Simon Hausmann.
