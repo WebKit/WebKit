@@ -43,7 +43,8 @@ public:
         PAGE_RULE,
         // 7 used to be VARIABLES_RULE
         WEBKIT_KEYFRAMES_RULE = 8,
-        WEBKIT_KEYFRAME_RULE
+        WEBKIT_KEYFRAME_RULE,
+        WEBKIT_REGION_STYLE_RULE
     };
 
     virtual CSSRuleType type() const = 0;

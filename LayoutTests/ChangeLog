@@ -1,3 +1,18 @@
+2011-10-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Parse @-webkit-region rule
+        https://bugs.webkit.org/show_bug.cgi?id=70021
+
+        Reviewed by David Hyatt.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/regions/parsing-region-style-rule-expected.txt: Added.
+        * fast/regions/parsing-region-style-rule.html: Added.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/win/fast/dom/Window/window-properties-expected.txt:
+
 2011-10-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r97602 and r97596.

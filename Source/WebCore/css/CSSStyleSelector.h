@@ -45,6 +45,7 @@ class CSSProperty;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSImageValue;
+class CSSRegionStyleRule;
 class CSSRuleList;
 class CSSSelector;
 class CSSStyleApplyProperty;
@@ -188,6 +189,7 @@ public:
 
     void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
     void addPageStyle(PassRefPtr<CSSPageRule>);
+    void addRegionStyleRule(PassRefPtr<CSSRegionStyleRule>);
 
     bool usesSiblingRules() const { return m_features.siblingRules; }
     bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
@@ -255,6 +257,8 @@ private:
     typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
+    typedef Vector<RefPtr<CSSRegionStyleRule> > RegionStyleRules;
+    RegionStyleRules m_regionStyleRules;
 public:
     static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 

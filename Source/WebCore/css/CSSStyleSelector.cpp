@@ -44,6 +44,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSReflectValue.h"
+#include "CSSRegionStyleRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
@@ -438,6 +439,11 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
 
     if (document->renderer() && document->renderer()->style())
         document->renderer()->style()->font().update(fontSelector());
+}
+
+void CSSStyleSelector::addRegionStyleRule(PassRefPtr<CSSRegionStyleRule> regionStyleRule)
+{
+    m_regionStyleRules.append(regionStyleRule);
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -1983,6 +1989,8 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
         } else if (rule->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
+        else if (rule->isRegionStyleRule() && styleSelector)
+            styleSelector->addRegionStyleRule(static_cast<CSSRegionStyleRule*>(rule));
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();

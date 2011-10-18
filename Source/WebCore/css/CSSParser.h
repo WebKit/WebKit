@@ -228,6 +228,7 @@ public:
     CSSRule* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
     CSSRule* createFontFaceRule();
     CSSRule* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
+    CSSRule* createRegionStylingRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules);
     CSSRule* createMarginAtRule(CSSSelector::MarginBoxType marginBox);
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
@@ -248,6 +249,9 @@ public:
 
     Vector<OwnPtr<CSSParserSelector> >* reusableSelectorVector() { return &m_reusableSelectorVector; }
 
+    void setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectors);
+    Vector<OwnPtr<CSSParserSelector> >* reusableRegionSelectorVector() { return &m_reusableRegionSelectorVector; }
+
     void updateLastSelectorLineAndPosition();
 
     void clearProperties();
@@ -262,6 +266,7 @@ public:
     CSSParserValueList* m_valueList;
     CSSProperty** m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
+
     RefPtr<CSSPrimitiveValueCache> m_primitiveValueCache;
     unsigned m_numParsedProperties;
     unsigned m_maxParsedProperties;
@@ -356,6 +361,7 @@ private:
     OwnPtr<Vector<OwnPtr<MediaQueryExp> > > m_floatingMediaQueryExpList;
 
     Vector<OwnPtr<CSSParserSelector> > m_reusableSelectorVector;
+    Vector<OwnPtr<CSSParserSelector> > m_reusableRegionSelectorVector;
 
     // defines units allowed for a certain property, used in parseUnit
     enum Units {

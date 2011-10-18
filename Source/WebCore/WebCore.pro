@@ -419,6 +419,7 @@ SOURCES += \
     css/CSSPropertyLonghand.cpp \
     css/CSSPropertySourceData.cpp \
     css/CSSReflectValue.cpp \
+    css/CSSRegionStyleRule.cpp \
     css/CSSRule.cpp \
     css/CSSRuleList.cpp \
     css/CSSSelector.cpp \
@@ -1454,6 +1455,7 @@ HEADERS += \
     css/CSSProperty.h \
     css/CSSPropertyLonghand.h \
     css/CSSReflectValue.h \
+    css/CSSRegionStyleRule.h \
     css/CSSRule.h \
     css/CSSRuleList.h \
     css/CSSSegmentedFontFace.h \

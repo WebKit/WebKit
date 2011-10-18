@@ -2380,6 +2380,8 @@
             'css/CSSPropertyLonghand.h',
             'css/CSSPropertySourceData.cpp',
             'css/CSSReflectValue.cpp',
+            'css/CSSRegionStyleRule.cpp',
+            'css/CSSRegionStyleRule.h',
             'css/CSSRule.cpp',
             'css/CSSRule.h',
             'css/CSSRuleList.cpp',

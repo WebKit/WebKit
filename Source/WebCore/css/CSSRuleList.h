@@ -26,6 +26,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ public:
     ~CSSRuleList();
 
     unsigned length() const;
-    CSSRule* item(unsigned index);
+    CSSRule* item(unsigned index) const;
 
     // FIXME: Not part of the CSSOM. Only used by @media and @-webkit-keyframes rules.
     unsigned insertRule(CSSRule*, unsigned index);
@@ -54,6 +55,8 @@ public:
     void append(CSSRule*);
 
     CSSStyleSheet* styleSheet() { return m_styleSheet.get(); }
+
+    String rulesText() const;
 
 private:
     CSSRuleList();

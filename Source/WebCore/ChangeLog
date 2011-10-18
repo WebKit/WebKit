@@ -1,3 +1,52 @@
+2011-10-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Parse @-webkit-region rule
+        https://bugs.webkit.org/show_bug.cgi?id=70021
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/parsing-region-style-rule.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::toV8):
+        * css/CSSGrammar.y:
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::cssText):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::setReusableRegionSelectorVector):
+        (WebCore::CSSParser::createRegionStylingRule):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::reusableRegionSelectorVector):
+        * css/CSSRegionStyleRule.cpp: Added.
+        (WebCore::CSSRegionStyleRule::CSSRegionStyleRule):
+        (WebCore::CSSRegionStyleRule::~CSSRegionStyleRule):
+        (WebCore::CSSRegionStyleRule::cssText):
+        * css/CSSRegionStyleRule.h: Added.
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::item):
+        (WebCore::CSSRuleList::rulesText):
+        * css/CSSRuleList.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::selectorsText):
+        * css/CSSSelectorList.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addRegionStyleRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/CSSStyleSelector.h:
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isRegionStyleRule):
+        * css/tokenizer.flex:
+
 2011-10-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: support displaying multiple sources per single script in ScriptsPanel.

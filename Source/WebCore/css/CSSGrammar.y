@@ -141,6 +141,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
+%token WEBKIT_REGION_STYLE_RULE_SYM
 %token <marginBox> TOPLEFTCORNER_SYM
 %token <marginBox> TOPLEFT_SYM
 %token <marginBox> TOPCENTER_SYM
@@ -219,6 +220,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <ruleList> block_rule_list 
 %type <rule> block_rule
 %type <rule> block_valid_rule
+%type <rule> region
 
 %type <string> maybe_ns_prefix
 
@@ -253,6 +255,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <selector> selector
 %type <selectorList> selector_list
 %type <selectorList> simple_selector_list
+%type <selectorList> region_selector
 %type <selector> selector_with_trailing_whitespace
 %type <selector> class
 %type <selector> attrib
@@ -410,6 +413,7 @@ valid_rule:
   | keyframes
   | namespace
   | import
+  | region
   ;
 
 rule:
@@ -774,6 +778,24 @@ font_face:
     }
     | FONT_FACE_SYM error ';' {
       $$ = 0;
+    }
+;
+
+region_selector:
+    selector_list {
+        if ($1) {
+            static_cast<CSSParser*>(parser)->setReusableRegionSelectorVector($1);
+            $$ = static_cast<CSSParser*>(parser)->reusableRegionSelectorVector();
+        }
+        else
+            $$ = 0;
+    }
+;
+
+region:
+    WEBKIT_REGION_STYLE_RULE_SYM WHITESPACE region_selector '{' maybe_space block_rule_list save_block {
+        if ($3)
+            $$ = static_cast<CSSParser*>(parser)->createRegionStylingRule($3, $6);
     }
 ;
 

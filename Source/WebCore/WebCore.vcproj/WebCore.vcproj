@@ -33286,6 +33286,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSRegionStyleRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSRegionStyleRule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSRule.cpp"
 				>
 			</File>

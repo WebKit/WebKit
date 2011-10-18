@@ -48,6 +48,8 @@ public:
     bool selectorsNeedNamespaceResolution();
     bool hasUnknownPseudoElements() const;
 
+    String selectorsText() const;
+
 private:
     void deleteSelectors();
 

@@ -53,7 +53,7 @@ unsigned CSSRuleList::length() const
     return m_styleSheet ? m_styleSheet->length() : m_lstCSSRules.size();
 }
 
-CSSRule* CSSRuleList::item(unsigned index)
+CSSRule* CSSRuleList::item(unsigned index) const
 {
     if (m_styleSheet)
         return m_styleSheet->item(index);
@@ -93,6 +93,19 @@ unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
 
     m_lstCSSRules.insert(index, rule);
     return index;
+}
+
+String CSSRuleList::rulesText() const
+{
+    String result;
+
+    for (unsigned index = 0; index < length(); ++index) {
+        result += "  ";
+        result += item(index)->cssText();
+        result += "\n";
+    }
+
+    return result;
 }
 
 } // namespace WebCore

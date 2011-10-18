@@ -995,6 +995,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSReflectionDirection.h \
 	Source/WebCore/css/CSSReflectValue.cpp \
 	Source/WebCore/css/CSSReflectValue.h \
+	Source/WebCore/css/CSSRegionStyleRule.cpp \
+	Source/WebCore/css/CSSRegionStyleRule.h \
 	Source/WebCore/css/CSSRule.cpp \
 	Source/WebCore/css/CSSRule.h \
 	Source/WebCore/css/CSSRuleList.cpp \

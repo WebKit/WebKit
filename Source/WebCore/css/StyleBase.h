@@ -58,6 +58,7 @@ namespace WebCore {
         virtual bool isPageRule() const { return false; }
         virtual bool isRule() const { return false; }
         virtual bool isStyleRule() const { return false; }
+        virtual bool isRegionStyleRule() const { return false; }
 
         virtual bool isStyleSheet() const { return false; }
         virtual bool isXSLStyleSheet() const { return false; }

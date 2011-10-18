@@ -454,6 +454,7 @@ SET(WebCore_SOURCES
     css/CSSPropertyLonghand.cpp
     css/CSSPropertySourceData.cpp
     css/CSSReflectValue.cpp
+    css/CSSRegionStyleRule.cpp
     css/CSSRule.cpp
     css/CSSRuleList.cpp
     css/CSSSegmentedFontFace.cpp

@@ -105,6 +105,18 @@ void CSSSelectorList::deleteSelectors()
     }
 }
 
+String CSSSelectorList::selectorsText() const
+{
+    String result;
+
+    for (CSSSelector* s = first(); s; s = next(s)) {
+        if (s != first())
+            result += ", ";
+        result += s->selectorText();
+    }
+
+    return result;
+}
 
 template <typename Functor>
 static bool forEachTagSelector(Functor& functor, CSSSelector* selector)

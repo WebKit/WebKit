@@ -68,6 +68,8 @@ v8::Handle<v8::Value> toV8(CSSRule* impl)
         return toV8(static_cast<WebKitCSSKeyframeRule*>(impl));
     case CSSRule::WEBKIT_KEYFRAMES_RULE:
         return toV8(static_cast<WebKitCSSKeyframesRule*>(impl));
+    case CSSRule::WEBKIT_REGION_STYLE_RULE:
+        return V8CSSRule::wrap(impl);
     }
     return V8CSSRule::wrap(impl);
 }

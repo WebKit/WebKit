@@ -48,6 +48,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
+#include "CSSRegionStyleRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
@@ -7339,6 +7340,27 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
     }
     clearProperties();
     return pageRule;
+}
+
+void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectors)
+{
+    if (selectors)
+        m_reusableRegionSelectorVector.swap(*selectors);
+}
+
+CSSRule* CSSParser::createRegionStylingRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules)
+{
+    if (!regionSelector || !rules)
+        return 0;
+
+    m_allowImportRules = m_allowNamespaceDeclarations = false;
+
+    RefPtr<CSSRegionStyleRule> regionRule = CSSRegionStyleRule::create(m_styleSheet, regionSelector, rules);
+
+    CSSRegionStyleRule* result = regionRule.get();
+    m_parsedRules.append(regionRule.release());
+
+    return result;
 }
 
 CSSRule* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* marginBox */)
