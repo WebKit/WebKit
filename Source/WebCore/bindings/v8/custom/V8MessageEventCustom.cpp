@@ -51,6 +51,15 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
 
     v8::Handle<v8::Value> result;
     switch (event->dataType()) {
+    case MessageEvent::DataTypeScriptValue: {
+        ScriptValue scriptValue = event->dataAsScriptValue();
+        if (scriptValue.hasNoValue())
+            result = v8::Null();
+        else
+            result = scriptValue.v8Value();
+        break;
+    }
+
     case MessageEvent::DataTypeSerializedScriptValue:
         if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
             result = serializedValue->deserialize(event->ports());
@@ -88,7 +97,7 @@ v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> 
     MessagePortArray* ports = event->ports();
     if (!ports)
         return v8::Array::New(0);
-    
+
     MessagePortArray portsCopy(*ports);
 
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
@@ -105,7 +114,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     String typeArg = v8ValueToWebCoreString(args[0]);
     bool canBubbleArg = args[1]->BooleanValue();
     bool cancelableArg = args[2]->BooleanValue();
-    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(args[3]);
+    ScriptValue dataArg = ScriptValue(args[3]);
     String originArg = v8ValueToWebCoreString(args[4]);
     String lastEventIdArg = v8ValueToWebCoreString(args[5]);
 
@@ -123,7 +132,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
         if (!getMessagePortArray(args[7], *portArray))
             return v8::Undefined();
     }
-    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg.release(), originArg, lastEventIdArg, sourceArg, portArray.release());
+    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, portArray.release());
     v8::PropertyAttribute dataAttr = static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly);
     SerializedScriptValue::deserializeAndSetProperty(args.Holder(), "data", dataAttr, event->dataAsSerializedScriptValue());
     return v8::Undefined();

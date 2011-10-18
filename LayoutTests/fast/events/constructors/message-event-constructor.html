@@ -29,10 +29,8 @@ shouldBe("new MessageEvent('eventType', { cancelable: false }).cancelable", "fal
 shouldBe("new MessageEvent('eventType', { cancelable: true }).cancelable", "true");
 
 // data is passed.
-// FIXME(haraken): This fails because MessageEvent.data cannot handle ScriptValue.
 shouldBe("new MessageEvent('eventType', { data: test_object }).data", "test_object");
-// FIXME(haraken): When we pass a DOM object, it crashes in DRT (it returns TypeError in non-DRT build).
-// shouldBe("new MessageEvent('eventType', { data: document }).data", "document");
+shouldBe("new MessageEvent('eventType', { data: document }).data", "document");
 shouldBe("new MessageEvent('eventType', { data: undefined }).data", "undefined");
 shouldBe("new MessageEvent('eventType', { data: null }).data", "null");
 shouldBe("new MessageEvent('eventType', { data: false }).data", "false");
@@ -120,7 +118,6 @@ shouldThrow("new MessageEvent('eventType', { ports: {valueOf: function () { retu
 // All initializers are passed.
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).bubbles", "true");
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).cancelable", "true");
-// FIXME(haraken): This fails because MessageEvent.data cannot handle ScriptValue.
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).data", "test_object");
 shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).origin", "wonderful");
 shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).lastEventId", "excellent");

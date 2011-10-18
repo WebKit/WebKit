@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "MessagePort.h"
+#include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class DOMWindow;
 struct MessageEventInit : public EventInit {
     MessageEventInit();
 
-    RefPtr<SerializedScriptValue> data;
+    ScriptValue data;
     String origin;
     String lastEventId;
     RefPtr<DOMWindow> source;
@@ -55,7 +56,11 @@ public:
     {
         return adoptRef(new MessageEvent);
     }
-    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data = 0, const String& origin = "", const String& lastEventId = "", PassRefPtr<DOMWindow> source = 0)
+    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, const ScriptValue& data = ScriptValue(), const String& origin = "", const String& lastEventId = "", PassRefPtr<DOMWindow> source = 0)
+    {
+        return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
+    }
+    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = "", const String& lastEventId = "", PassRefPtr<DOMWindow> source = 0)
     {
         return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
     }
@@ -77,6 +82,7 @@ public:
     }
     virtual ~MessageEvent();
 
+    void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray>);
     void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray>);
 
     const String& origin() const { return m_origin; }
@@ -86,7 +92,6 @@ public:
 
     // FIXME: Remove this when we have custom ObjC binding support.
     SerializedScriptValue* data() const;
-
     // FIXME: remove this when we update the ObjC bindings (bug #28774).
     MessagePort* messagePort();
     // FIXME: remove this when we update the ObjC bindings (bug #28774).
@@ -95,20 +100,23 @@ public:
     virtual bool isMessageEvent() const;
 
     enum DataType {
+        DataTypeScriptValue,
         DataTypeSerializedScriptValue,
         DataTypeString,
         DataTypeBlob,
         DataTypeArrayBuffer
     };
     DataType dataType() const { return m_dataType; }
-    SerializedScriptValue* dataAsSerializedScriptValue() const { return m_dataAsSerializedScriptValue.get(); }
-    String dataAsString() const { return m_dataAsString; }
-    Blob* dataAsBlob() const { return m_dataAsBlob.get(); }
-    ArrayBuffer* dataAsArrayBuffer() const { return m_dataAsArrayBuffer.get(); }
+    ScriptValue dataAsScriptValue() const { ASSERT(m_dataType == DataTypeScriptValue); return m_dataAsScriptValue; }
+    SerializedScriptValue* dataAsSerializedScriptValue() const { ASSERT(m_dataType == DataTypeSerializedScriptValue); return m_dataAsSerializedScriptValue.get(); }
+    String dataAsString() const { ASSERT(m_dataType == DataTypeString); return m_dataAsString; }
+    Blob* dataAsBlob() const { ASSERT(m_dataType == DataTypeBlob); return m_dataAsBlob.get(); }
+    ArrayBuffer* dataAsArrayBuffer() const { ASSERT(m_dataType == DataTypeArrayBuffer); return m_dataAsArrayBuffer.get(); }
 
 private:
     MessageEvent();
     MessageEvent(const AtomicString&, const MessageEventInit&);
+    MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
     MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
 
     explicit MessageEvent(const String& data);
@@ -116,6 +124,7 @@ private:
     explicit MessageEvent(PassRefPtr<ArrayBuffer> data);
 
     DataType m_dataType;
+    ScriptValue m_dataAsScriptValue;
     RefPtr<SerializedScriptValue> m_dataAsSerializedScriptValue;
     String m_dataAsString;
     RefPtr<Blob> m_dataAsBlob;
