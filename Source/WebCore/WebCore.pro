@@ -1842,8 +1842,6 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
-    html/track/CueParser.h \
-    html/track/CueParserPrivate.h \
     html/track/WebVTTParser.h \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \

@@ -1,3 +1,9 @@
+2011-10-18  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed warning fix after https://bugs.webkit.org/show_bug.cgi?id=70269
+
+        * WebCore.pro:
+
 2011-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Expose PDF information in hit test result
