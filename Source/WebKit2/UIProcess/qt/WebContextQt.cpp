@@ -29,7 +29,12 @@
 
 #include "ApplicationCacheStorage.h"
 #include "FileSystem.h"
+#include "WKSharedAPICast.h"
+#if ENABLE(GEOLOCATION)
+#include "WebGeolocationProviderQt.h"
+#endif
 #include "WebProcessCreationParameters.h"
+
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDir>
@@ -64,6 +69,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
     parameters.cookieStorageDirectory = defaultDataLocation();
+#if ENABLE(GEOLOCATION)
+    static WebGeolocationProviderQt* location = WebGeolocationProviderQt::create(toAPI(geolocationManagerProxy()));
+    WKGeolocationManagerSetProvider(toAPI(geolocationManagerProxy()), WebGeolocationProviderQt::provider(location));
+#endif
 }
 
 void WebContext::platformInvalidateContext()

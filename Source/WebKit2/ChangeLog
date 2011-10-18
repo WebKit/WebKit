@@ -1,3 +1,33 @@
+2011-10-18  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
+
+        [Qt][WK2] Implement geolocation provider for qt port
+        https://bugs.webkit.org/show_bug.cgi?id=59199
+
+        Reviewed by Simon Hausmann.
+
+        Based on patch by Kenneth Christiansen <kenneth.r.christiansen@nokia.com>
+
+        Implements default location provider for WK2 QtWebKit (WebGeolocationProviderQt),
+        allowing QtWebKit clients to implement or override their own provider using WK2 APIs.
+
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/qt/WebGeolocationProviderQt.cpp: Added.
+        (toLocationProvider):
+        (locationStartUpdating):
+        (locationStopUpdating):
+        (WebGeolocationProviderQt::create):
+        (WebGeolocationProviderQt::provider):
+        (WebGeolocationProviderQt::WebGeolocationProviderQt):
+        (WebGeolocationProviderQt::~WebGeolocationProviderQt):
+        (WebGeolocationProviderQt::updateTimeout):
+        (WebGeolocationProviderQt::positionUpdated):
+        (WebGeolocationProviderQt::startUpdating):
+        (WebGeolocationProviderQt::stopUpdating):
+        * UIProcess/qt/WebGeolocationProviderQt.h: Added.
+        * WebKit2.pro:
+
 2011-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [UNIX] Use SOCK_SEQPACKET when available

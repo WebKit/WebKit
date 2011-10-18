@@ -272,6 +272,7 @@ HEADERS += \
     UIProcess/qt/ViewportInteractionEngine.h \
     UIProcess/qt/WebUndoCommandQt.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
+    UIProcess/qt/WebGeolocationProviderQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQtDesktop.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
@@ -513,6 +514,7 @@ SOURCES += \
     UIProcess/qt/ViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
+    UIProcess/qt/WebGeolocationProviderQt.cpp \
     UIProcess/qt/WebFullScreenManagerProxyQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
