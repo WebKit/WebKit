@@ -67,10 +67,8 @@ namespace WebCore {
         DOMExceptionType,
         RangeExceptionType,
         EventExceptionType,
-        XMLHttpRequestExceptionType
-#if ENABLE(XPATH)
-        , XPathExceptionType
-#endif
+        XMLHttpRequestExceptionType,
+        XPathExceptionType
 #if ENABLE(SVG)
         , SVGExceptionType
 #endif

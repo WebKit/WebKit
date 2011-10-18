@@ -28,8 +28,6 @@
 #include "config.h"
 #include "XPathParser.h"
 
-#if ENABLE(XPATH)
-
 #include "ExceptionCode.h"
 #include "XPathEvaluator.h"
 #include "XPathException.h"
@@ -634,5 +632,3 @@ void Parser::deleteNodeTest(Step::NodeTest* t)
 
 }
 }
-
-#endif // ENABLE(XPATH)

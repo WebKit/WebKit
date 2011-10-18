@@ -28,8 +28,6 @@
 #include "config.h"
 #include "XPathStep.h"
 
-#if ENABLE(XPATH)
-
 #include "Attr.h"
 #include "Document.h"
 #include "Element.h"
@@ -394,5 +392,3 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
 
 }
 }
-
-#endif // ENABLE(XPATH)

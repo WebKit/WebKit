@@ -156,6 +156,10 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include "XPathEvaluator.h"
+#include "XPathExpression.h"
+#include "XPathNSResolver.h"
+#include "XPathResult.h"
 #include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
@@ -166,13 +170,6 @@
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
-#endif
-
-#if ENABLE(XPATH)
-#include "XPathEvaluator.h"
-#include "XPathExpression.h"
-#include "XPathNSResolver.h"
-#include "XPathResult.h"
 #endif
 
 #if ENABLE(XSLT)
@@ -4313,8 +4310,6 @@ Vector<String> Document::formElementsState() const
     return stateVector;
 }
 
-#if ENABLE(XPATH)
-
 PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
                                                        XPathNSResolver* resolver,
                                                        ExceptionCode& ec)
@@ -4342,8 +4337,6 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
         m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
-
-#endif // ENABLE(XPATH)
 
 void Document::setStateForNewFormElements(const Vector<String>& stateVector)
 {

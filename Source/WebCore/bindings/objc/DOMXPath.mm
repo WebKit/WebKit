@@ -25,9 +25,6 @@
  */
 
 #import "config.h"
-
-#if ENABLE(XPATH)
-
 #import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOMXPath.h"
 
@@ -82,5 +79,3 @@ DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
     addDOMWrapper(wrapper, impl);
     return [wrapper autorelease];    
 }
-
-#endif // ENABLE(XPATH)

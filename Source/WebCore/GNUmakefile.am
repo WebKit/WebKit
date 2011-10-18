@@ -376,13 +376,6 @@ else
 webcore_cppflags += -DENABLE_MEDIA_STREAM=0
 endif # END ENABLE_MEDIA_STREAM
 
-# ----
-# XPath Support
-# ----
-if ENABLE_XPATH
-FEATURE_DEFINES += ENABLE_XPATH=1
-webcore_cppflags += -DENABLE_XPATH=1
-
 # XPath grammar
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
 $(GENSOURCES_WEBCORE)/XPathGrammar.h: $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
@@ -395,7 +388,6 @@ $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	cat $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
 	echo '#endif' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
 	rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
-endif # END ENABLE_XPATH
 
 # ----
 # XSLT Support

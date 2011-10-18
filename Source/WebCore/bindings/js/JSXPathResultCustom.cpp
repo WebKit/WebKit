@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(XPATH)
-
 #include "JSXPathResult.h"
 
 #include "JSDOMBinding.h"
@@ -56,5 +53,3 @@ void JSXPathResult::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)

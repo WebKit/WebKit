@@ -606,14 +606,6 @@ AC_ARG_ENABLE(media_stream,
               [],[enable_media_stream="no"])
 AC_MSG_RESULT([$enable_media_stream])
 
-# check whether to enable XPath support
-AC_MSG_CHECKING([whether to enable XPath support])
-AC_ARG_ENABLE(xpath,
-              AC_HELP_STRING([--enable-xpath],
-                             [enable support for XPath [default=yes]]),
-              [],[enable_xpath="yes"])
-AC_MSG_RESULT([$enable_xpath])
-
 # check whether to enable XSLT support
 AC_MSG_CHECKING([whether to enable XSLT support])
 AC_ARG_ENABLE(xslt,
@@ -1157,7 +1149,6 @@ AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_COLOR],[test "$enable_input_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
-AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
@@ -1287,7 +1278,6 @@ Features:
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
- XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
  Spellcheck support                                       : $enable_spellcheck
  Animation API                                            : $enable_animation_api

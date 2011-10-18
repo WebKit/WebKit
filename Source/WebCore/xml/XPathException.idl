@@ -29,7 +29,6 @@
 module xpath {
 
     interface [
-        Conditional=XPATH,
         DontCheckEnums
     ] XPathException {
 

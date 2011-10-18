@@ -26,9 +26,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(XPATH)
-
 #include "XPathPredicate.h"
 
 #include "Node.h"
@@ -278,5 +275,3 @@ bool Predicate::evaluate() const
 
 }
 }
-
-#endif // ENABLE(XPATH)

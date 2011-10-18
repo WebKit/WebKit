@@ -28,8 +28,6 @@
 #include "config.h"
 #include "XPathFunctions.h"
 
-#if ENABLE(XPATH)
-
 #include "Element.h"
 #include "NamedNodeMap.h"
 #include "ProcessingInstruction.h"
@@ -735,5 +733,3 @@ Function* createFunction(const String& name, const Vector<Expression*>& args)
 
 }
 }
-
-#endif // ENABLE(XPATH)

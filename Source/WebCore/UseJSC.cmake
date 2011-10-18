@@ -32,6 +32,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSConsoleCustom.cpp
     bindings/js/JSCoordinatesCustom.cpp
     bindings/js/JSCustomVoidCallback.cpp
+    bindings/js/JSCustomXPathNSResolver.cpp
     bindings/js/JSDictionary.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
@@ -127,6 +128,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSWebKitPointCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
+    bindings/js/JSXPathResultCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/JavaScriptCallFrame.cpp
     bindings/js/PageScriptDebugServer.cpp
@@ -207,14 +209,6 @@ IF (ENABLE_SHARED_WORKERS)
         bindings/js/JSSharedWorkerCustom.cpp
     )
 ENDIF ()
-
-IF (ENABLE_XPATH)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSCustomXPathNSResolver.cpp
-        bindings/js/JSXPathResultCustom.cpp
-    )
-ENDIF ()
-
 
 IF (ENABLE_NOTIFICATIONS)
     LIST(APPEND WebCore_SOURCES

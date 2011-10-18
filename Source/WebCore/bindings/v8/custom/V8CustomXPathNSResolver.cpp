@@ -30,8 +30,6 @@
 #include "config.h"
 #include "V8CustomXPathNSResolver.h"
 
-#if ENABLE(XPATH)
-
 #include "PlatformString.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -90,5 +88,3 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)

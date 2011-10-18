@@ -1,3 +1,12 @@
+2011-10-18  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(XPATH)
+        https://bugs.webkit.org/show_bug.cgi?id=70217
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-10-14  Chris Marrin  <cmarrin@apple.com>
 
         Throttle rate of requestAnimationFrame when page is not visible

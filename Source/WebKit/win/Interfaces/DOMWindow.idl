@@ -84,8 +84,6 @@ interface IDOMWindow : IDOMObject
 
     //attribute XMLSerializerConstructor XMLSerializer;
 
-    //#ifdef XPATH_SUPPORT
     //attribute XPathEvaluatorConstructor XPathEvaluator;
     //attribute XPathResultConstructor XPathResult;
-    //#endif
 }

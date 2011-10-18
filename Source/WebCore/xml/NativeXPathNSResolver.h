@@ -26,8 +26,6 @@
 #ifndef NativeXPathNSResolver_h
 #define NativeXPathNSResolver_h
 
-#if ENABLE(XPATH)
-
 #include "XPathNSResolver.h"
 #include "Node.h"
 #include <wtf/RefPtr.h>
@@ -47,7 +45,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)
 
 #endif // NativeXPathNSResolver_h

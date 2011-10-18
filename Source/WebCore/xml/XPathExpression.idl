@@ -20,10 +20,7 @@
 
 module xpath {
 
-
-    interface [
-        Conditional=XPATH
-    ] XPathExpression {
+    interface XPathExpression {
         [OldStyleObjC] XPathResult evaluate(in [Optional=CallWithDefaultValue] Node contextNode, 
                                             in [Optional=CallWithDefaultValue] unsigned short type, 
                                             in [Optional=CallWithDefaultValue] XPathResult inResult)

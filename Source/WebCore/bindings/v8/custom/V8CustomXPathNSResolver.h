@@ -32,8 +32,6 @@
 #ifndef V8CustomXPathNSResolver_h
 #define V8CustomXPathNSResolver_h
 
-#if ENABLE(XPATH)
-
 #include "XPathNSResolver.h"
 #include <v8.h>
 #include <wtf/Forward.h>
@@ -60,7 +58,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif  // ENABLE(XPATH)
 
 #endif  // V8CustomXPathNSResolver_h

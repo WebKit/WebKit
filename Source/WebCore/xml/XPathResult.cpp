@@ -27,8 +27,6 @@
 #include "config.h"
 #include "XPathResult.h"
 
-#if ENABLE(XPATH)
-
 #include "Document.h"
 #include "Node.h"
 #include "ExceptionCode.h"
@@ -217,5 +215,3 @@ Node* XPathResult::snapshotItem(unsigned long index, ExceptionCode& ec)
 }
 
 }
-
-#endif // ENABLE(XPATH)

@@ -27,8 +27,6 @@
 #ifndef XPathValue_h
 #define XPathValue_h
 
-#if ENABLE(XPATH)
-
 #include "PlatformString.h"
 #include "XPathNodeSet.h"
 
@@ -100,7 +98,5 @@ namespace WebCore {
         }
     }
 }
-
-#endif // ENABLE(XPATH)
 
 #endif // XPath_Value_H

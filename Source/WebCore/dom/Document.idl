@@ -111,7 +111,7 @@ module core {
 
         [OldStyleObjC] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
                                                             in [Optional=CallWithDefaultValue] DOMString pseudoElement);
-#if defined(ENABLE_XPATH) && ENABLE_XPATH
+
         // DOM Level 3 XPath (XPathEvaluator interface)
         [OldStyleObjC] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
                                                         in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
@@ -123,7 +123,6 @@ module core {
                                                       in [Optional=CallWithDefaultValue] unsigned short type,
                                                       in [Optional=CallWithDefaultValue] XPathResult inResult)
             raises(DOMException);
-#endif // ENABLE_XPATH
 
         // Common extensions
 

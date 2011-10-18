@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DOMCustomXPathNSResolver.h"
 
-#if ENABLE(XPATH)
-
 #include "BlockExceptions.h"
 #include "PlatformString.h"
 
@@ -54,5 +52,3 @@ String DOMCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)

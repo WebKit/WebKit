@@ -129,6 +129,10 @@ class TextResourceDecoder;
 class DocumentParser;
 class TreeWalker;
 class XMLHttpRequest;
+class XPathEvaluator;
+class XPathExpression;
+class XPathNSResolver;
+class XPathResult;
 
 #if ENABLE(SVG)
 class SVGDocumentExtensions;
@@ -136,13 +140,6 @@ class SVGDocumentExtensions;
 
 #if ENABLE(XSLT)
 class TransformSource;
-#endif
-
-#if ENABLE(XPATH)
-class XPathEvaluator;
-class XPathExpression;
-class XPathNSResolver;
-class XPathResult;
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -900,7 +897,6 @@ public:
 
     void setDocType(PassRefPtr<DocumentType>);
 
-#if ENABLE(XPATH)
     // XPathEvaluator methods
     PassRefPtr<XPathExpression> createExpression(const String& expression,
                                                  XPathNSResolver* resolver,
@@ -912,8 +908,7 @@ public:
                                      unsigned short type,
                                      XPathResult* result,
                                      ExceptionCode& ec);
-#endif // ENABLE(XPATH)
-    
+
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 
     bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
@@ -1336,14 +1331,12 @@ private:
     FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;
     FixedArray<NamedCollectionMap, NumNamedDocumentCachedTypes> m_nameCollectionInfo;
 
-#if ENABLE(XPATH)
     RefPtr<XPathEvaluator> m_xpathEvaluator;
-#endif
-    
+
 #if ENABLE(SVG)
     OwnPtr<SVGDocumentExtensions> m_svgExtensions;
 #endif
-    
+
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;

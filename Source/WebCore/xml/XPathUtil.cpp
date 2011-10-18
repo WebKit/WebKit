@@ -27,8 +27,6 @@
 #include "config.h"
 #include "XPathUtil.h"
 
-#if ENABLE(XPATH)
-
 #include "ContainerNode.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -98,5 +96,3 @@ bool isValidContextNode(Node* node)
 
 }
 }
-
-#endif // ENABLE(XPATH)

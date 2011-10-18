@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(XPATH)
 #include "XPathNodeSet.h"
 
 #include "Attr.h"
@@ -202,5 +200,3 @@ Node* NodeSet::anyNode() const
 
 }
 }
-
-#endif // ENABLE(XPATH)

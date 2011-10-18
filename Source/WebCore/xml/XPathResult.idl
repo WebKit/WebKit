@@ -20,7 +20,6 @@
 module xpath {
 
     interface [
-        Conditional=XPATH,
         CustomMarkFunction
     ] XPathResult {
         const unsigned short ANY_TYPE                       = 0;

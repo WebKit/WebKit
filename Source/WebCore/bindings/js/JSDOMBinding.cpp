@@ -45,9 +45,7 @@
 #include "JSSVGException.h"
 #endif
 #include "JSXMLHttpRequestException.h"
-#if ENABLE(XPATH)
 #include "JSXPathException.h"
-#endif
 #include "OperationNotAllowedException.h"
 #include "RangeException.h"
 #include "SQLException.h"
@@ -233,11 +231,9 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
             errorObject = toJS(exec, globalObject, SVGException::create(description).get());
             break;
 #endif
-#if ENABLE(XPATH)
         case XPathExceptionType:
             errorObject = toJS(exec, globalObject, XPathException::create(description));
             break;
-#endif
 #if ENABLE(SQL_DATABASE)
         case SQLExceptionType:
             errorObject = toJS(exec, globalObject, SQLException::create(description));

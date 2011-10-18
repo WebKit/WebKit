@@ -26,8 +26,6 @@
 #ifndef DOMCustomXPathNSResolver_h
 #define DOMCustomXPathNSResolver_h
 
-#if ENABLE(XPATH)
-
 #include "XPathNSResolver.h"
 
 #include "DOMXPathNSResolver.h"
@@ -50,7 +48,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)
 
 #endif // DOMCustomXPathNSResolver_h

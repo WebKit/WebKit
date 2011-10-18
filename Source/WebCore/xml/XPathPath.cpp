@@ -28,8 +28,6 @@
 #include "config.h"
 #include "XPathPath.h"
 
-#if ENABLE(XPATH)
-
 #include "Document.h"
 #include "XPathPredicate.h"
 #include "XPathStep.h"
@@ -205,5 +203,3 @@ Value Path::evaluate() const
 
 }
 }
-
-#endif // ENABLE(XPATH)

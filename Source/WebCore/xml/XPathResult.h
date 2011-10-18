@@ -27,8 +27,6 @@
 #ifndef XPathResult_h
 #define XPathResult_h
 
-#if ENABLE(XPATH)
-
 #include "XPathValue.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -86,7 +84,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathResult_h

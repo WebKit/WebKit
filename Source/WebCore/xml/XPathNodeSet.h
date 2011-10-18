@@ -26,8 +26,6 @@
 #ifndef XPathNodeSet_h
 #define XPathNodeSet_h
 
-#if ENABLE(XPATH)
-
 #include <wtf/Vector.h>
 #include <wtf/Forward.h>
 
@@ -81,5 +79,4 @@ namespace WebCore {
     }
 }
 
-#endif // ENABLE(XPATH)
 #endif // XPathNodeSet_h

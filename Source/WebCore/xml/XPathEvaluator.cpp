@@ -27,8 +27,6 @@
 #include "config.h"
 #include "XPathEvaluator.h"
 
-#if ENABLE(XPATH)
-
 #include "ExceptionCode.h"
 #include "NativeXPathNSResolver.h"
 #include "Node.h"
@@ -39,7 +37,7 @@
 namespace WebCore {
 
 using namespace XPath;
-    
+
 PassRefPtr<XPathExpression> XPathEvaluator::createExpression(const String& expression,
                                                              XPathNSResolver* resolver,
                                                              ExceptionCode& ec)
@@ -73,5 +71,3 @@ PassRefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression,
 }
 
 }
-
-#endif // ENABLE(XPATH)

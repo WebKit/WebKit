@@ -27,8 +27,6 @@
 #ifndef XPathExpressionNode_h
 #define XPathExpressionNode_h
 
-#if ENABLE(XPATH)
-
 #include "Node.h"
 #include "XPathValue.h"
 #include <wtf/HashMap.h>
@@ -100,7 +98,4 @@ namespace WebCore {
 
 }
 
-#endif // ENABLE(XPATH)
-
 #endif // EXPRESSION_H
-

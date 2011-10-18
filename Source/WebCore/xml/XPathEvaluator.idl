@@ -20,7 +20,6 @@
 module xpath {
     interface [
         CanBeConstructed,
-        Conditional=XPATH
     ] XPathEvaluator {
         XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
                                          in [Optional=CallWithDefaultValue] XPathNSResolver resolver)

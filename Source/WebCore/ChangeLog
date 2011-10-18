@@ -1,3 +1,92 @@
+2011-10-18  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(XPATH)
+        https://bugs.webkit.org/show_bug.cgi?id=70217
+
+        Reviewed by Eric Seidel.
+
+        As discussed on webkit-dev, we're reducing the complexity of WebKit by
+        removing unneeded configuration options.  ENABLE(XPATH) is enabled on
+        every port, so we are removing the ability to disable the feature.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.pro:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/js/JSXPathResultCustom.cpp:
+        * bindings/objc/DOMCustomXPathNSResolver.h:
+        * bindings/objc/DOMCustomXPathNSResolver.mm:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper):
+        * bindings/objc/DOMXPath.mm:
+        (kit):
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getXPathNSResolver):
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        * bindings/v8/custom/V8CustomXPathNSResolver.h:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::evaluateCallback):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        * features.pri:
+        * inspector/InspectorDOMAgent.cpp:
+        * page/DOMWindow.idl:
+        * xml/NativeXPathNSResolver.cpp:
+        * xml/NativeXPathNSResolver.h:
+        * xml/XPathEvaluator.cpp:
+        * xml/XPathEvaluator.h:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathException.h:
+        * xml/XPathException.idl:
+        * xml/XPathExpression.cpp:
+        * xml/XPathExpression.h:
+        * xml/XPathExpression.idl:
+        * xml/XPathExpressionNode.cpp:
+        * xml/XPathExpressionNode.h:
+        * xml/XPathFunctions.cpp:
+        * xml/XPathFunctions.h:
+        * xml/XPathGrammar.y:
+        * xml/XPathNSResolver.cpp:
+        * xml/XPathNSResolver.h:
+        * xml/XPathNSResolver.idl:
+        * xml/XPathNodeSet.cpp:
+        * xml/XPathNodeSet.h:
+        * xml/XPathParser.cpp:
+        * xml/XPathParser.h:
+        * xml/XPathPath.cpp:
+        * xml/XPathPath.h:
+        * xml/XPathPredicate.cpp:
+        * xml/XPathPredicate.h:
+        * xml/XPathResult.cpp:
+        * xml/XPathResult.h:
+        * xml/XPathResult.idl:
+        * xml/XPathStep.cpp:
+        * xml/XPathStep.h:
+        * xml/XPathUtil.cpp:
+        * xml/XPathUtil.h:
+        * xml/XPathValue.cpp:
+        * xml/XPathValue.h:
+        * xml/XPathVariableReference.cpp:
+        * xml/XPathVariableReference.h:
+
 2011-10-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

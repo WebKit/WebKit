@@ -629,11 +629,9 @@ module window {
         attribute WebKitAnimationListConstructor WebKitAnimationList;
 #endif
 
-#if defined(ENABLE_XPATH) && ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
         attribute XPathExceptionConstructor XPathException;
-#endif
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
         // Expose all implemented SVG 1.1 interfaces, excluding the SVG MI interfaces:

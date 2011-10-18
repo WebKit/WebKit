@@ -27,8 +27,6 @@
 #ifndef XPathParser_h
 #define XPathParser_h
 
-#if ENABLE(XPATH)
-
 #include "XPathStep.h"
 #include "XPathPredicate.h"
 
@@ -127,7 +125,5 @@ namespace WebCore {
 
     }
 }
-
-#endif // ENABLE(XPATH)
 
 #endif

@@ -27,8 +27,6 @@
 #ifndef XPathEvaluator_h
 #define XPathEvaluator_h
 
-#if ENABLE(XPATH)
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
@@ -56,7 +54,5 @@ namespace WebCore {
     };
 
 }
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathEvaluator_h

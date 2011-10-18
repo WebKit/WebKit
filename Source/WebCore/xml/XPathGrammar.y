@@ -29,8 +29,6 @@
 
 #include "config.h"
 
-#if ENABLE(XPATH)
-
 #include "XPathFunctions.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
@@ -554,5 +552,3 @@ UnaryExpr:
     ;
 
 %%
-
-#endif

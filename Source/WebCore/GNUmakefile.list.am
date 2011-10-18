@@ -578,6 +578,16 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSXMLHttpRequestUpload.h \
 	DerivedSources/WebCore/JSXMLSerializer.cpp \
 	DerivedSources/WebCore/JSXMLSerializer.h \
+	DerivedSources/WebCore/JSXPathEvaluator.cpp \
+	DerivedSources/WebCore/JSXPathEvaluator.h \
+	DerivedSources/WebCore/JSXPathException.cpp \
+	DerivedSources/WebCore/JSXPathException.h \
+	DerivedSources/WebCore/JSXPathExpression.cpp \
+	DerivedSources/WebCore/JSXPathExpression.h \
+	DerivedSources/WebCore/JSXPathNSResolver.cpp \
+	DerivedSources/WebCore/JSXPathNSResolver.h \
+	DerivedSources/WebCore/JSXPathResult.cpp \
+	DerivedSources/WebCore/JSXPathResult.h \
 	DerivedSources/WebCore/JSXSLTProcessor.cpp \
 	DerivedSources/WebCore/JSXSLTProcessor.h \
 	DerivedSources/WebCore/MathMLElementFactory.cpp \
@@ -596,7 +606,9 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XMLNSNames.cpp \
 	DerivedSources/WebCore/XMLNSNames.h \
 	DerivedSources/WebCore/XMLViewerCSS.h \
-	DerivedSources/WebCore/XMLViewerJS.h 
+	DerivedSources/WebCore/XMLViewerJS.h \
+	DerivedSources/WebCore/XPathGrammar.cpp \
+	DerivedSources/WebCore/XPathGrammar.h
 
 webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
@@ -4275,25 +4287,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMetadataCallback.cpp \
 	DerivedSources/WebCore/JSMetadataCallback.h
 endif # END ENABLE_FILE_SYSTEM
-
-# ----
-# XPath Support
-# ----
-if ENABLE_XPATH
-webcore_built_sources += \
-	DerivedSources/WebCore/JSXPathEvaluator.cpp \
-	DerivedSources/WebCore/JSXPathEvaluator.h \
-	DerivedSources/WebCore/JSXPathException.cpp \
-	DerivedSources/WebCore/JSXPathException.h \
-	DerivedSources/WebCore/JSXPathExpression.cpp \
-	DerivedSources/WebCore/JSXPathExpression.h \
-	DerivedSources/WebCore/JSXPathNSResolver.cpp \
-	DerivedSources/WebCore/JSXPathNSResolver.h \
-	DerivedSources/WebCore/JSXPathResult.cpp \
-	DerivedSources/WebCore/JSXPathResult.h \
-	DerivedSources/WebCore/XPathGrammar.cpp \
-	DerivedSources/WebCore/XPathGrammar.h
-endif # END ENABLE_XPATH
 
 # ----
 # SVG Support

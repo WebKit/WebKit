@@ -27,8 +27,6 @@
 #ifndef XPathStep_h
 #define XPathStep_h
 
-#if ENABLE(XPATH)
-
 #include "Node.h"
 #include "XPathExpressionNode.h"
 #include "XPathNodeSet.h"
@@ -103,7 +101,5 @@ namespace WebCore {
     }
 
 }
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathStep_h

@@ -31,8 +31,6 @@
 
 #include "ExceptionBase.h"
 
-#if ENABLE(XPATH)
-
 namespace WebCore {
 
     class XPathException : public ExceptionBase {
@@ -58,7 +56,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathException_h

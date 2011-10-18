@@ -47,6 +47,8 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTreeWalkerInternal.h"
+#import "DOMXPathExpressionInternal.h"
+#import "DOMXPathResultInternal.h"
 #import "JSCSSRule.h"
 #import "JSCSSRuleList.h"
 #import "JSCSSStyleDeclaration.h"
@@ -73,11 +75,6 @@
 #import "JSXPathResult.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
-
-#if ENABLE(XPATH)
-#import "DOMXPathExpressionInternal.h"
-#import "DOMXPathResultInternal.h"
-#endif
 
 // FIXME: Couldn't get an include of "DOMDOMImplementationInternal.h" to work here.
 DOMImplementation *kit(WebCore::DOMImplementationFront*);
@@ -117,10 +114,8 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
     WRAP(TreeWalker)
-#if ENABLE(XPATH)
     WRAP(XPathExpression)
     WRAP(XPathResult)
-#endif
 
     // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
     // binding, but not a subclass in the ObjC binding.

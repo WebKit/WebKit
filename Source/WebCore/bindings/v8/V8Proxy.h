@@ -293,10 +293,7 @@ namespace WebCore {
         static const char* eventExceptionName(int exceptionCode);
         static const char* xmlHttpRequestExceptionName(int exceptionCode);
         static const char* domExceptionName(int exceptionCode);
-
-#if ENABLE(XPATH)
         static const char* xpathExceptionName(int exceptionCode);
-#endif
 
 #if ENABLE(SVG)
         static const char* svgExceptionName(int exceptionCode);

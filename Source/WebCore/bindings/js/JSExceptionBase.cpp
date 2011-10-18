@@ -37,9 +37,7 @@
 #if ENABLE(SVG)
 #include "JSSVGException.h"
 #endif
-#if ENABLE(XPATH)
 #include "JSXPathException.h"
-#endif
 
 namespace WebCore {
 
@@ -57,10 +55,8 @@ ExceptionBase* toExceptionBase(JSC::JSValue value)
     if (SVGException* svgException = toSVGException(value))
         return reinterpret_cast<ExceptionBase*>(svgException);
 #endif
-#if ENABLE(XPATH)
     if (XPathException* pathException = toXPathException(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
-#endif
 #if ENABLE(SQL_DATABASE)
     if (SQLException* pathException = toSQLException(value))
         return reinterpret_cast<ExceptionBase*>(pathException);

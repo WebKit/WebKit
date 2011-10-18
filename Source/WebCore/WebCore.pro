@@ -1238,11 +1238,26 @@ SOURCES += \
     storage/StorageTracker.cpp \
     testing/Internals.cpp \
     xml/DOMParser.cpp \
+    xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
     xml/XMLErrors.cpp \
     xml/XMLSerializer.cpp \
+    xml/XPathEvaluator.cpp \
+    xml/XPathExpression.cpp \
+    xml/XPathExpressionNode.cpp \
+    xml/XPathFunctions.cpp \
+    xml/XPathNodeSet.cpp \
+    xml/XPathNSResolver.cpp \
+    xml/XPathParser.cpp \
+    xml/XPathPath.cpp \
+    xml/XPathPredicate.cpp \
+    xml/XPathResult.cpp \
+    xml/XPathStep.cpp \
+    xml/XPathUtil.cpp \
+    xml/XPathValue.cpp \
+    xml/XPathVariableReference.cpp \
     xml/parser/NewXMLDocumentParser.cpp \
     xml/parser/XMLCharacterReferenceParser.cpp \
     xml/parser/XMLDocumentParser.cpp \
@@ -3131,25 +3146,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivateQt.cpp
     }
-}
-
-contains(DEFINES, ENABLE_XPATH=1) {
-    SOURCES += \
-        xml/NativeXPathNSResolver.cpp \
-        xml/XPathEvaluator.cpp \
-        xml/XPathExpression.cpp \
-        xml/XPathExpressionNode.cpp \
-        xml/XPathFunctions.cpp \
-        xml/XPathNodeSet.cpp \
-        xml/XPathNSResolver.cpp \
-        xml/XPathParser.cpp \
-        xml/XPathPath.cpp \
-        xml/XPathPredicate.cpp \
-        xml/XPathResult.cpp \
-        xml/XPathStep.cpp \
-        xml/XPathUtil.cpp \
-        xml/XPathValue.cpp \
-        xml/XPathVariableReference.cpp
 }
 
 contains(DEFINES, ENABLE_FULLSCREEN_API=1) {

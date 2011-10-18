@@ -389,6 +389,11 @@ SET(WebCore_IDL_FILES
     xml/XMLHttpRequestProgressEvent.idl
     xml/XMLHttpRequestUpload.idl
     xml/XMLSerializer.idl
+    xml/XPathEvaluator.idl
+    xml/XPathException.idl
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
     xml/XSLTProcessor.idl
 )
 
@@ -1580,16 +1585,6 @@ IF (ENABLE_BLOB OR ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_IDL_FILES
         fileapi/FileException.idl
         fileapi/OperationNotAllowedException.idl
-    )
-ENDIF ()
-
-IF (ENABLE_XPATH)
-    LIST(APPEND WebCore_IDL_FILES
-        xml/XPathEvaluator.idl
-        xml/XPathException.idl
-        xml/XPathExpression.idl
-        xml/XPathNSResolver.idl
-        xml/XPathResult.idl
     )
 ENDIF ()
 

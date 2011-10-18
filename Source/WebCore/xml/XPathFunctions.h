@@ -27,8 +27,6 @@
 #ifndef XPathFunctions_h
 #define XPathFunctions_h
 
-#if ENABLE(XPATH)
-
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
@@ -54,7 +52,5 @@ namespace WebCore {
     } // namespace XPath
 
 } // namespace WebCore
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathFunctions_h

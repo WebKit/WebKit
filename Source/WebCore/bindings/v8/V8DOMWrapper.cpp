@@ -459,7 +459,6 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> va
 #endif
 }
 
-#if ENABLE(XPATH)
 // XPath-related utilities
 RefPtr<XPathNSResolver> V8DOMWrapper::getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy)
 {
@@ -470,6 +469,5 @@ RefPtr<XPathNSResolver> V8DOMWrapper::getXPathNSResolver(v8::Handle<v8::Value> v
         resolver = V8CustomXPathNSResolver::create(value->ToObject());
     return resolver;
 }
-#endif
 
 }  // namespace WebCore

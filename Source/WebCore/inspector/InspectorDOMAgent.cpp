@@ -78,10 +78,7 @@
 #include "ScriptEventListener.h"
 #include "StyleSheetList.h"
 #include "Text.h"
-
-#if ENABLE(XPATH)
 #include "XPathResult.h"
-#endif
 
 #include "markup.h"
 
@@ -232,7 +229,6 @@ public:
 
     virtual void match(ListHashSet<Node*>& resultCollector)
     {
-#if ENABLE(XPATH)
         if (m_query.isEmpty())
             return;
 
@@ -251,9 +247,6 @@ public:
                 node = static_cast<Attr*>(node)->ownerElement();
             resultCollector.add(node);
         }
-#else
-        UNUSED_PARAM(resultCollector);
-#endif
     }
 };
 

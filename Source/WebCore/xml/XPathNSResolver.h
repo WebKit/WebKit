@@ -27,8 +27,6 @@
 #ifndef XPathNSResolver_h
 #define XPathNSResolver_h
 
-#if ENABLE(XPATH)
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -44,7 +42,5 @@ namespace WebCore {
     };
 
 }
-
-#endif // ENABLE(XPATH)
 
 #endif // XPathNSResolver_h

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "XPathValue.h"
 
-#if ENABLE(XPATH)
-
 #include "Node.h"
 #include "XPathExpressionNode.h"
 #include "XPathUtil.h"
@@ -141,5 +139,3 @@ String Value::toString() const
 
 }
 }
-
-#endif // ENABLE(XPATH)

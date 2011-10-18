@@ -44,18 +44,14 @@ namespace JSC {
 
 namespace WebCore {
     class NodeFilter;
-#if ENABLE(XPATH)
     class XPathNSResolver;
-#endif
 }
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 @end
 
-#if ENABLE(XPATH)
 @interface DOMNativeXPathNSResolver : DOMObject <DOMXPathNSResolver>
 @end
-#endif // ENABLE(XPATH)
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 
@@ -83,10 +79,8 @@ inline void addDOMWrapper(NSObject* wrapper, Source impl)
 DOMNodeFilter *kit(WebCore::NodeFilter*);
 WebCore::NodeFilter* core(DOMNodeFilter *);
 
-#if ENABLE(XPATH)
 DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *);
-#endif // ENABLE(XPATH)
 
 inline NSTimeInterval kit(double msSinceEpoch)
 {
