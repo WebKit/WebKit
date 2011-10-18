@@ -2653,11 +2653,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(thePoint.x, thePoint.y));
 }
 
-- (void)hideWordDefinitionWindow
-{
-    WKHideWordDefinitionWindow();
-}
-
 - (NSInteger)spellCheckerDocumentTag
 {
     if (!_data->_hasSpellCheckerDocumentTag) {

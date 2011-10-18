@@ -1,3 +1,14 @@
+2011-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97788.
+        http://trac.webkit.org/changeset/97788
+        https://bugs.webkit.org/show_bug.cgi?id=70366
+
+        broke compile (Requested by inferno-sec on #webkit).
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewPrivate.h:
+
 2011-10-18  Damian Kaleta  <dkaleta@apple.com>
 
         Add WebKit API to hide the definition window
