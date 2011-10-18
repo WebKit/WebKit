@@ -1,3 +1,16 @@
+2011-10-12  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r97661.
+        http://trac.webkit.org/changeset/97661
+
+        Confirmed this patch was not the cause of the test failures.
+
+        display:inline-block elements don't correctly handle orthogonal writing-modes 
+        https://bugs.webkit.org/show_bug.cgi?id=69957 
+        
+        * fast/writing-mode/borders-expected.html: Added. 
+        * fast/writing-mode/borders.html: Added. 
+
 2011-10-17  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] rebaseline fullscreen layout tests using rebaseline tools.

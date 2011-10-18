@@ -1,3 +1,23 @@
+2011-10-12  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r97661.
+        http://trac.webkit.org/changeset/97661
+
+        Confirmed this patch was not the cause of the test failures.
+
+        display:inline-block elements don't correctly handle orthogonal writing-modes 
+        https://bugs.webkit.org/show_bug.cgi?id=69957 
+        
+        Reading min/maxPreferredLogicalWidth from a child uses the child's writing-mode. 
+        Instead, we need to grab the result based on the parent's writing-mode. 
+        In the case of orthogonal writing-modes, we need the child's logical height. 
+    
+        Tests: fast/writing-mode/borders-expected.html 
+               fast/writing-mode/borders.html 
+        
+        * rendering/RenderBlock.cpp: 
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths): 
+
 2011-10-17  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r97690.
