@@ -1,3 +1,32 @@
+2011-10-18  Adrienne Walker  <enne@google.com>
+
+        [chromium] Preserve offscreen tiles instead of immediately recycling them
+        https://bugs.webkit.org/show_bug.cgi?id=70352
+
+        Reviewed by James Robinson.
+
+        Tested by existing layout tests.
+
+        Prior to having a TextureManager class, tiled layers recycled their
+        textures internally to avoid reallocation. Unfortunately, it recycled
+        these tiles as soon as they went offscreen, even if they were still
+        valid. Instead, keep tiles around forever, letting the TextureManager
+        decide (via LRU) when to reclaim the underlying textures. This will
+        improve scrolling performance due to not needing to repaint tiles.
+
+        This change does lead to more texture reallocation for any textures
+        that get reclaimed, but the command buffer implementation already
+        pools and reuses texture ids, so it should not introduce additional
+        flush syncs. If there's any performance penalty, it'll be at the
+        driver level, but I'd prefer to measure that there's a problem before
+        prematurely optimizing and adding complexity to the TextureManager.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+
 2011-10-18  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Implement WebKitMutationObserver.observe for characterData changes

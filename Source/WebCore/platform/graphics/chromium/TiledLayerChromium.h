@@ -80,7 +80,6 @@ private:
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
-    void invalidateTiles(const IntRect& contentRect);
 
     TextureManager* textureManager() const;
 
@@ -89,9 +88,6 @@ private:
     // State held between prepareToUpdate() and pushPropertiesTo(). This represents the area
     // of the layer that is actually re-painted by WebKit.
     IntRect m_paintRect;
-
-    // Tightly packed set of unused tiles.
-    Vector<RefPtr<UpdatableTile> > m_unusedTiles;
 
     TilingOption m_tilingOption;
     GC3Denum m_textureFormat;

@@ -87,7 +87,6 @@ void TiledLayerChromium::cleanupResources()
     LayerChromium::cleanupResources();
 
     m_tiler.clear();
-    m_unusedTiles.clear();
     m_paintRect = IntRect();
     m_requestedUpdateRect = IntRect();
 }
@@ -262,37 +261,11 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
-    RefPtr<UpdatableTile> tile;
-    if (m_unusedTiles.size() > 0) {
-        tile = m_unusedTiles.last().release();
-        m_unusedTiles.removeLast();
-        ASSERT(tile->refCount() == 1);
-    } else {
-        TextureManager* manager = textureManager();
-        tile = adoptRef(new UpdatableTile(ManagedTexture::create(manager)));
-    }
+    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(ManagedTexture::create(textureManager())));
     m_tiler->addTile(tile, i, j);
     tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile.get());
 
     return tile.get();
-}
-
-void TiledLayerChromium::invalidateTiles(const IntRect& contentRect)
-{
-    if (!m_tiler->numTiles())
-        return;
-
-    Vector<CCLayerTilingData::TileMapKey> removeKeys;
-    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
-        CCLayerTilingData::Tile* tile = iter->second.get();
-        IntRect tileRect = m_tiler->tileContentRect(tile);
-        if (tileRect.intersects(contentRect))
-            continue;
-        removeKeys.append(iter->first);
-    }
-
-    for (size_t i = 0; i < removeKeys.size(); ++i)
-        m_unusedTiles.append(static_pointer_cast<UpdatableTile>(m_tiler->takeTile(removeKeys[i].first, removeKeys[i].second)));
 }
 
 void TiledLayerChromium::invalidateRect(const IntRect& contentRect)
@@ -355,9 +328,6 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
         return;
     }
 
-    // Invalidate old tiles that were previously used but aren't in use this
-    // frame so that they can get reused for new tiles.
-    invalidateTiles(contentRect);
     m_tiler->growLayerToContain(contentRect);
 
     if (!m_tiler->numTiles()) {
