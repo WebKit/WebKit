@@ -1,5 +1,16 @@
 2011-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Mark storage/domstorage/events/documentURI as a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=70386
+
+        Unreviewed, expectations change.
+
+        on chromium snowleopard.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         Add a new chromium baseline for fast/multicol/vertical-rl/rule-style.html.
 
         Unreviewed, baseline update.
