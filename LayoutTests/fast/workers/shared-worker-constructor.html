@@ -45,6 +45,20 @@ try {
 }
 
 try {
+    new SharedWorker("resources/shared-worker-common.js", null);
+    log("PASS: invoking SharedWorker constructor with null name did not result in an exception");
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor with null name resulted in an exception (" + ex + ")");
+}
+
+try {
+    new SharedWorker("resources/shared-worker-common.js", undefined);
+    log("PASS: invoking SharedWorker constructor with undefined name did not result in an exception");
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor with undefined name resulted in an exception (" + ex + ")");
+}
+
+try {
     var worker = new SharedWorker("resources/shared-worker-common.js", "name");
     log ("PASS: SharedWorker constructor succeeded: " + worker);
 } catch (ex) {

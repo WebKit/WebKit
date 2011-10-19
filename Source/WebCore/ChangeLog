@@ -1,3 +1,28 @@
+2011-10-18  Kentaro Hara  <haraken@chromium.org>
+
+        Generate a SharedWorker constructor of V8 using [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=67879
+
+        Reviewed by Hajime Morita.
+
+        Spec: http://dev.w3.org/html5/workers/#shared-workers-and-the-sharedworker-interface
+        This patch changed SharedWorker::create(..., context, ec) to
+        SharedWorker::create(context, ..., ec), since a parameter specified by [CallWith]
+        should come at the beginning (c.f. bug 69799).
+
+        Test: ui_tests:WorkerTest.FLAKY_SharedWorkerFastConstructor
+              ui_tests:WorkerTest.FLAKY_SharedWorkerFastName
+
+        * WebCore.gypi: Removed bindings/v8/custom/V8SharedWorkerCustom.cpp
+        * WebCore.pro: Ditto.
+        * bindings/js/JSSharedWorkerCustom.cpp: Moved ScriptExecutionContext parameter to the beginning.
+        (WebCore::JSSharedWorkerConstructor::constructJSSharedWorker):
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp: Removed.
+        * workers/SharedWorker.cpp: Moved ScriptExecutionContext parameter to the beginning.
+        (WebCore::SharedWorker::create): Ditto.
+        * workers/SharedWorker.h: Ditto.
+        * workers/SharedWorker.idl: Added [Constructor] IDL.
+
 2011-10-18  Johnny Ding  <jnd@chromium.org>
 
         Implement NSProcessInfo::systemUptime on Mac Leopard.

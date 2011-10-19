@@ -203,7 +203,6 @@ v8 {
         bindings/v8/custom/V8SQLTransactionCustom.cpp \
         bindings/v8/custom/V8WebSocketCustom.cpp \
         \
-        bindings/v8/custom/V8SharedWorkerCustom.cpp \
         bindings/v8/custom/V8StorageCustom.cpp \
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \

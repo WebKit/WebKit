@@ -1,3 +1,26 @@
+2011-10-18  Kentaro Hara  <haraken@chromium.org>
+
+        Generate a SharedWorker constructor of V8 using [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=67879
+
+        Reviewed by Hajime Morita.
+
+        Added test cases for an undefined name and a null name on SharedWorker constructor.
+
+        * fast/workers/resources/shared-worker-name.js:
+        (test7.try.worker.port.onmessage):
+        (test7): A test case for a null name.
+        (test8.worker.port.onmessage):
+        (test8): Ditto.
+        (test9.try.worker.port.onmessage):
+        (test9): A test case for an undefined name.
+        (test10.worker.port.onmessage):
+        (test10): Ditto.
+        * fast/workers/shared-worker-constructor-expected.txt:
+        * fast/workers/shared-worker-constructor.html:
+        * fast/workers/shared-worker-name-expected.txt:
+        * platform/chromium-win/fast/workers/shared-worker-constructor-expected.txt: Updated SyntaxError with TypeError. The reason why ui_tests has been so far working without updating this error type is that shared-worker-constructor.html is marked FLAKY in chromium.
+
 2011-10-18  Johnny Ding  <jnd@chromium.org>
 
         Enable touch tests on Mac Leopard. 

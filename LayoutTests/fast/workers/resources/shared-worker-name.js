@@ -19,8 +19,6 @@ function nextTest()
         done();
 }
 
-
-
 function test1()
 {
     // Make sure we can create a shared worker with no name.
@@ -91,6 +89,62 @@ function test6()
         shouldBeEqual("creating empty name worker with alternate URL", event.data, "self.foo: undefined");
         nextTest();
     };
+}
+
+function test7()
+{
+    // Make sure we can create a shared worker with name 'null'.
+    try {
+        var worker = new SharedWorker('resources/shared-worker-common.js', 'null');
+        testPassed("created SharedWorker with name 'null'");
+        worker.port.postMessage("eval self.foo = 5678");
+        worker.port.onmessage = function(event) {
+            shouldBeEqual("setting self.foo", event.data, "self.foo = 5678: 5678");
+            nextTest();
+        };
+    } catch (e) {
+        testFailed("SharedWorker with name 'null' threw an exception: " + e);
+        done();
+    }
+}
+
+function test8()
+{
+    // Creating a worker with a null name should match an existing worker with name 'null'
+    var worker = new SharedWorker('resources/shared-worker-common.js', null);
+    worker.port.postMessage("eval self.foo");
+    worker.port.onmessage = function(event) {
+        shouldBeEqual("creating worker with a null name", event.data, "self.foo: 5678");
+        nextTest();
+    }
+}
+
+function test9()
+{
+    // Make sure we can create a shared worker with name 'undefined'.
+    try {
+        var worker = new SharedWorker('resources/shared-worker-common.js', 'undefined');
+        testPassed("created SharedWorker with name 'undefined'");
+        worker.port.postMessage("eval self.foo = 1111");
+        worker.port.onmessage = function(event) {
+            shouldBeEqual("setting self.foo", event.data, "self.foo = 1111: 1111");
+            nextTest();
+        };
+    } catch (e) {
+        testFailed("SharedWorker with name 'undefined' threw an exception: " + e);
+        done();
+    }
+}
+
+function test10()
+{
+    // Creating a worker with an undefined name should match an existing worker with name 'undefined'
+    var worker = new SharedWorker('resources/shared-worker-common.js', undefined);
+    worker.port.postMessage("eval self.foo");
+    worker.port.onmessage = function(event) {
+        shouldBeEqual("creating worker with an undefined name", event.data, "self.foo: 1111");
+        nextTest();
+    }
 }
 
 function shouldBeEqual(description, a, b)

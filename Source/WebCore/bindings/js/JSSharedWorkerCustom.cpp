@@ -73,7 +73,7 @@ EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(
     // FIXME: We need to use both the dynamic scope and the lexical scope (dynamic scope for resolving the worker URL)
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     ExceptionCode ec = 0;
-    RefPtr<SharedWorker> worker = SharedWorker::create(ustringToString(scriptURL), ustringToString(name), window->document(), ec);
+    RefPtr<SharedWorker> worker = SharedWorker::create(window->document(), ustringToString(scriptURL), ustringToString(name), ec);
     if (ec) {
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());

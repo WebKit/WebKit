@@ -10,6 +10,12 @@ PASS creating worker with empty name
 PASS creating worker with different name but same URL
 PASS creating no-name worker with alternate URL
 PASS creating empty name worker with alternate URL
+PASS created SharedWorker with name 'null'
+PASS setting self.foo
+PASS creating worker with a null name
+PASS created SharedWorker with name 'undefined'
+PASS setting self.foo
+PASS creating worker with an undefined name
 
 TEST COMPLETE
 
