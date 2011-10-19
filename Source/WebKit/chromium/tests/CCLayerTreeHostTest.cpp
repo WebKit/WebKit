@@ -362,7 +362,7 @@ void CCLayerTreeHostTest::endTest()
 
 class CCLayerTreeHostTestThreadOnly : public CCLayerTreeHostTest {
 public:
-    void runTest()
+    void runTestThreaded()
     {
         CCLayerTreeHostTest::runTest(true);
     }
@@ -513,7 +513,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsCommit1, runMultiThread)
 {
-    runTest();
+    runTestThreaded();
 }
 
 // A setNeedsCommit should lead to 1 commit. Issuing a second commit after that
@@ -557,7 +557,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsCommit2, runMultiThread)
 {
-    runTest();
+    runTestThreaded();
 }
 
 // 1 setNeedsRedraw after the first commit has completed should lead to 1
@@ -604,7 +604,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
 {
-    runTest();
+    runTestThreaded();
 }
 
 class CCLayerTreeHostTestScrollSimple : public CCLayerTreeHostTestThreadOnly {
@@ -675,7 +675,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestScrollSimple, runMultiThread)
 {
-    runTest();
+    runTestThreaded();
 }
 
 class CCLayerTreeHostTestScrollMultipleRedraw : public CCLayerTreeHostTestThreadOnly {
@@ -749,7 +749,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
 {
-    runTest();
+    runTestThreaded();
 }
 
 } // namespace

@@ -1,3 +1,13 @@
+2011-10-18  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Attempt to fix Linux Clang compilation error.
+
+        Unreviewed.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestThreadOnly::runTestThreaded):
+        (WTF::TEST_F):
+
 2011-10-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove USE(THREADED_COMPOSITING) from the tree, this is controlled by a runtime setting
