@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,311) size 204x40 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 204x40
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 204.00: "$Revision: 1.2 $"
-    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (5,16) size 292x40 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 292x40
         chunk 1 text run 1 at (5.00,45.00) startOffset 0 endOffset 22 width 292.00: "org.w3c.dom.svg.static"

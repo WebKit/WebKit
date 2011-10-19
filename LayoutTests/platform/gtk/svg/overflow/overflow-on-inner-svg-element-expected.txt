@@ -3,72 +3,72 @@ layer at (0,0) size 800x600
 layer at (0,0) size 500x500
   RenderSVGRoot {svg} at (0,0) size 500x500
     RenderSVGViewportContainer {svg} at (50,50) size 100x100
-      RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-      RenderSVGRect {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+      RenderSVGPath {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGPath {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
     RenderSVGViewportContainer {svg} at (150,50) size 50x50
-      RenderSVGRect {rect} at (150,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-      RenderSVGRect {rect} at (175,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+      RenderSVGPath {rect} at (150,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+      RenderSVGPath {rect} at (175,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
     RenderSVGViewportContainer {svg} at (50,150) size 50x50
-      RenderSVGRect {rect} at (50,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-      RenderSVGRect {rect} at (75,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+      RenderSVGPath {rect} at (50,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+      RenderSVGPath {rect} at (75,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
     RenderSVGViewportContainer {svg} at (150,150) size 100x100
-      RenderSVGRect {rect} at (150,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-      RenderSVGRect {rect} at (150,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+      RenderSVGPath {rect} at (150,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGPath {rect} at (150,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
     RenderSVGContainer {g} at (250,250) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,200.00)}]
       RenderSVGViewportContainer {svg} at (250,250) size 100x100
-        RenderSVGRect {rect} at (250,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-        RenderSVGRect {rect} at (250,250) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+        RenderSVGPath {rect} at (250,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+        RenderSVGPath {rect} at (250,250) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderSVGViewportContainer {svg} at (350,250) size 50x50
-        RenderSVGRect {rect} at (350,250) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-        RenderSVGRect {rect} at (375,250) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+        RenderSVGPath {rect} at (350,250) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+        RenderSVGPath {rect} at (375,250) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
       RenderSVGViewportContainer {svg} at (250,350) size 50x50
-        RenderSVGRect {rect} at (250,350) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-        RenderSVGRect {rect} at (275,350) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+        RenderSVGPath {rect} at (250,350) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+        RenderSVGPath {rect} at (275,350) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
       RenderSVGViewportContainer {svg} at (350,350) size 100x100
-        RenderSVGRect {rect} at (350,350) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-        RenderSVGRect {rect} at (350,350) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+        RenderSVGPath {rect} at (350,350) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+        RenderSVGPath {rect} at (350,350) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (50,50) size 200x200
         RenderSVGViewportContainer {svg} at (50,50) size 100x100
-          RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-          RenderSVGRect {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+          RenderSVGPath {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+          RenderSVGPath {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
         RenderSVGViewportContainer {svg} at (150,50) size 50x50
-          RenderSVGRect {rect} at (150,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-          RenderSVGRect {rect} at (175,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+          RenderSVGPath {rect} at (150,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+          RenderSVGPath {rect} at (175,50) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
         RenderSVGViewportContainer {svg} at (50,150) size 50x50
-          RenderSVGRect {rect} at (50,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-          RenderSVGRect {rect} at (75,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+          RenderSVGPath {rect} at (50,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+          RenderSVGPath {rect} at (75,150) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
         RenderSVGViewportContainer {svg} at (150,150) size 100x100
-          RenderSVGRect {rect} at (150,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-          RenderSVGRect {rect} at (150,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+          RenderSVGPath {rect} at (150,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+          RenderSVGPath {rect} at (150,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
     RenderSVGContainer {g} at (0,50) size 400x400 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(450.00,0.00)}]
       RenderSVGContainer {use} at (200,50) size 200x200
         RenderSVGContainer {g} at (200,50) size 200x200
           RenderSVGContainer {g} at (200,50) size 200x200
             RenderSVGViewportContainer {svg} at (300,50) size 100x100
-              RenderSVGRect {rect} at (300,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-              RenderSVGRect {rect} at (350,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (300,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+              RenderSVGPath {rect} at (350,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (350,150) size 50x50
-              RenderSVGRect {rect} at (350,150) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-              RenderSVGRect {rect} at (350,175) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+              RenderSVGPath {rect} at (350,150) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (350,175) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (250,50) size 50x50
-              RenderSVGRect {rect} at (250,50) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-              RenderSVGRect {rect} at (250,75) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+              RenderSVGPath {rect} at (250,50) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (250,75) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (200,150) size 100x100
-              RenderSVGRect {rect} at (200,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-              RenderSVGRect {rect} at (250,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (200,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+              RenderSVGPath {rect} at (250,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderSVGContainer {use} at (0,250) size 200x200
         RenderSVGContainer {g} at (0,250) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,200.00)}]
           RenderSVGContainer {g} at (0,250) size 200x200
             RenderSVGViewportContainer {svg} at (100,250) size 100x100
-              RenderSVGRect {rect} at (100,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-              RenderSVGRect {rect} at (150,250) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (100,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+              RenderSVGPath {rect} at (150,250) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (150,350) size 50x50
-              RenderSVGRect {rect} at (150,350) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-              RenderSVGRect {rect} at (150,375) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+              RenderSVGPath {rect} at (150,350) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (150,375) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (50,250) size 50x50
-              RenderSVGRect {rect} at (50,250) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
-              RenderSVGRect {rect} at (50,275) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
+              RenderSVGPath {rect} at (50,250) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (50,275) size 50x25 [fill={[type=SOLID] [color=#008000]}] [data="M25.00,0.00 L50.00,0.00 L50.00,50.00 L25.00,50.00 Z"]
             RenderSVGViewportContainer {svg} at (0,350) size 100x100
-              RenderSVGRect {rect} at (0,350) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-              RenderSVGRect {rect} at (50,350) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
+              RenderSVGPath {rect} at (0,350) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+              RenderSVGPath {rect} at (50,350) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
