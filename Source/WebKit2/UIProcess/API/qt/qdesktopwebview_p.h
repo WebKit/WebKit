@@ -21,16 +21,16 @@
 #ifndef qdesktopwebview_p_h
 #define qdesktopwebview_p_h
 
-#include "qdesktopwebpageproxy.h"
+#include "QtDesktopWebPageProxy.h"
+#include "QtViewInterface.h"
 #include "qwebnavigationcontroller.h"
-#include "ViewInterface.h"
 
 #include <QtCore/QObject>
 
 class QDesktopWebView;
 class QFileDialog;
 
-class QDesktopWebViewPrivate : public QObject, public WebKit::ViewInterface, public WebKit::PolicyInterface
+class QDesktopWebViewPrivate : public QObject, public WebKit::QtViewInterface, public WebKit::QtPolicyInterface
 {
     Q_OBJECT
 public:
@@ -42,7 +42,7 @@ public:
     void disableMouseEvents();
 
     QDesktopWebView* q;
-    QDesktopWebPageProxy page;
+    QtDesktopWebPageProxy page;
 
     bool isCrashed;
     QWebNavigationController* navigationController;
@@ -52,7 +52,7 @@ private Q_SLOTS:
     void onOpenPanelFinished(int result);
 
 private:
-    /* Implementation of ViewInterface */
+    // Implementation of QtViewInterface.
     virtual void setViewNeedsDisplay(const QRect&);
 
     virtual QSize drawingAreaSize();
@@ -89,12 +89,12 @@ private:
 
     virtual QJSEngine* engine();
 
-    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType);
+    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType);
 
     virtual void didMouseMoveOverElement(const QUrl&, const QString&);
 
-    // PolicyInterface.
-    virtual PolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
+    // QtPolicyInterface.
+    virtual QtPolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
     QSharedPointer<QMenu> activeMenu;
 

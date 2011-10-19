@@ -60,8 +60,8 @@ typedef WKView PlatformWebView;
 class WebView;
 typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
-class TouchViewInterface;
-typedef TouchViewInterface PlatformWebView;
+class QtTouchViewInterface;
+typedef QtTouchViewInterface PlatformWebView;
 #endif
 
 class TiledDrawingAreaProxy : public DrawingAreaProxy {

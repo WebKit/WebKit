@@ -18,37 +18,24 @@
  *
  */
 
-#ifndef SGTileNode_h
-#define SGTileNode_h
+#ifndef QtPolicyInterface_h
+#define QtPolicyInterface_h
 
-#include <QSGGeometryNode>
-#include <QSGOpaqueTextureMaterial>
-#include <QSGTextureMaterial>
-
-QT_BEGIN_NAMESPACE
-class QSGEngine;
-class QSGTexture;
-QT_END_NAMESPACE
+#include <QtCore/QUrl>
 
 namespace WebKit {
 
-class SGTileNode : public QSGGeometryNode {
+class QtPolicyInterface {
 public:
-    SGTileNode(QSGEngine*);
-    void setBackBuffer(const QImage&, const QRectF& sourceRect, const QRectF& targetRect);
-    void swapBuffersIfNeeded();
+    enum PolicyAction {
+        Use,
+        Download,
+        Ignore
+    };
 
-private:
-    QSGEngine* m_engine;
-    QSGGeometry m_geometry;
-    QScopedPointer<QSGTexture> m_frontBufferTexture;
-    QScopedPointer<QSGTexture> m_backBufferTexture;
-    bool m_textureMaterialsCreated;
-
-    QRectF m_backBufferTargetRect;
-    QRectF m_backBufferSourceRect;
+    virtual PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers) = 0;
 };
 
 }
 
-#endif /* SGTileNode_h */
+#endif // QtPolicyInterface_h

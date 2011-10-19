@@ -20,14 +20,13 @@
 
 #include "config.h"
 #include "qtouchwebview.h"
-#include "qtouchwebview_p.h"
 
-#include "TouchViewInterface.h"
-#include "qtouchwebpage_p.h"
+#include "QtTouchViewInterface.h"
 #include "QtWebPageProxy.h"
+#include "qtouchwebpage_p.h"
+#include "qtouchwebview_p.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
-#include <qgraphicssceneevent.h>
 
 QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     : q(q)
@@ -72,7 +71,7 @@ void QTouchWebViewPrivate::updateViewportConstraints()
 
     WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
 
-    ViewportInteractionEngine::Constraints newConstraints;
+    QtViewportInteractionEngine::Constraints newConstraints;
     newConstraints.initialScale = attr.initialScale;
     newConstraints.minimumScale = attr.minimumScale;
     newConstraints.maximumScale = attr.maximumScale;

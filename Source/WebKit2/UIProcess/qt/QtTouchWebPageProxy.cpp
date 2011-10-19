@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "qtouchwebpageproxy.h"
+#include "QtTouchWebPageProxy.h"
 
 #include <IntRect.h>
 #include <NativeWebTouchEvent.h>
@@ -27,7 +27,7 @@
 
 using namespace WebCore;
 
-QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, ViewportInteractionEngine* viewportInteractionEngine)
+QtTouchWebPageProxy::QtTouchWebPageProxy(QtTouchViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine)
     : QtWebPageProxy(viewInterface, 0)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
@@ -35,24 +35,24 @@ QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, Viewpo
     init();
 }
 
-PassOwnPtr<DrawingAreaProxy> QTouchWebPageProxy::createDrawingAreaProxy()
+PassOwnPtr<DrawingAreaProxy> QtTouchWebPageProxy::createDrawingAreaProxy()
 {
     return TiledDrawingAreaProxy::create(touchViewInterface(), m_webPageProxy.get());
 }
 
-void QTouchWebPageProxy::processDidCrash()
+void QtTouchWebPageProxy::processDidCrash()
 {
     QtWebPageProxy::processDidCrash();
     m_panGestureRecognizer.reset();
     m_pinchGestureRecognizer.reset();
 }
 
-void QTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
+void QtTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
+void QtTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
     if (wasEventHandled) {
         m_panGestureRecognizer.reset();
@@ -64,7 +64,7 @@ void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bo
 }
 #endif
 
-bool QTouchWebPageProxy::handleEvent(QEvent* ev)
+bool QtTouchWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
     case QEvent::TouchBegin:
@@ -76,7 +76,7 @@ bool QTouchWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
-void QTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
+void QtTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
 {
     QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
     drawingArea()->setVisibleContentRectAndScale(alignedVisibleContentRect, scale);
@@ -85,17 +85,17 @@ void QTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleCont
     m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
-void QTouchWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
+void QtTouchWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
 {
     drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
-void QTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
+void QtTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
 {
     m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);
 }
 
-void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
+void QtTouchWebPageProxy::touchEvent(QTouchEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS)
     m_webPageProxy->handleTouchEvent(NativeWebTouchEvent(event));
@@ -106,12 +106,12 @@ void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
 #endif
 }
 
-void QTouchWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
+void QtTouchWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
 {
     m_webPageProxy->findZoomableAreaForPoint(point);
 }
 
-void QTouchWebPageProxy::renderNextFrame()
+void QtTouchWebPageProxy::renderNextFrame()
 {
     drawingArea()->renderNextFrame();
 }

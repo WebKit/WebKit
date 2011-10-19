@@ -18,12 +18,12 @@
  *
  */
 
-#ifndef ViewInterface_h
-#define ViewInterface_h
+#ifndef QtViewInterface_h
+#define QtViewInterface_h
 
+#include <QMenu>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSize>
-#include <QMenu>
 #include <WebKit2/WKBase.h>
 
 class QWebError;
@@ -46,8 +46,7 @@ class ViewportArguments;
 
 namespace WebKit {
 
-class ViewInterface
-{
+class QtViewInterface {
 public:
     enum FileChooserType {
         SingleFileSelection,
@@ -63,7 +62,7 @@ public:
     virtual bool hasFocus() = 0;
     virtual bool isVisible() = 0;
 
-    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction) = 0;
+    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*) = 0;
     virtual void didReceiveViewportArguments(const WebCore::ViewportArguments&) = 0;
 
     virtual void didFindZoomableArea(const QPoint&, const QRect&) = 0;
@@ -98,4 +97,4 @@ public:
 
 }
 
-#endif /* ViewInterface_h */
+#endif // QtViewInterface_h

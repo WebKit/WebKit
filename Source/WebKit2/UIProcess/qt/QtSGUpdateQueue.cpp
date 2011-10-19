@@ -19,10 +19,10 @@
  */
 
 #include "config.h"
-#include "SGUpdateQueue.h"
+#include "QtSGUpdateQueue.h"
 
 #include "PassOwnPtr.h"
-#include "SGTileNode.h"
+#include "QtSGTileNode.h"
 #include <QSGItem>
 
 namespace WebKit {
@@ -65,7 +65,7 @@ struct NodeUpdateSwapTileBuffers : public NodeUpdate {
     { }
 };
 
-SGUpdateQueue::SGUpdateQueue(QSGItem* item)
+QtSGUpdateQueue::QtSGUpdateQueue(QSGItem* item)
     : item(item)
     , lastScale(0)
     , lastScaleNode(0)
@@ -74,7 +74,7 @@ SGUpdateQueue::SGUpdateQueue(QSGItem* item)
 {
 }
 
-int SGUpdateQueue::createTileNode(float scale)
+int QtSGUpdateQueue::createTileNode(float scale)
 {
     int nodeID = nextNodeID++;
     nodeUpdateQueue.append(adoptPtr(new NodeUpdateCreateTile(nodeID, scale)));
@@ -82,33 +82,33 @@ int SGUpdateQueue::createTileNode(float scale)
     return nodeID;
 }
 
-void SGUpdateQueue::removeTileNode(int nodeID)
+void QtSGUpdateQueue::removeTileNode(int nodeID)
 {
     nodeUpdateQueue.append(adoptPtr(new NodeUpdateRemoveTile(nodeID)));
     item->update();
 }
 
-void SGUpdateQueue::setNodeBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
+void QtSGUpdateQueue::setNodeBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
 {
     nodeUpdateQueue.append(adoptPtr(new NodeUpdateSetBackBuffer(nodeID, backBuffer, sourceRect, targetRect)));
     item->update();
 }
 
-void SGUpdateQueue::swapTileBuffers()
+void QtSGUpdateQueue::swapTileBuffers()
 {
     nodeUpdateQueue.append(adoptPtr(new NodeUpdateSwapTileBuffers()));
     m_isSwapPending = true;
     item->update();
 }
 
-void SGUpdateQueue::applyUpdates(QSGNode* itemNode)
+void QtSGUpdateQueue::applyUpdates(QSGNode* itemNode)
 {
     while (!nodeUpdateQueue.isEmpty()) {
         OwnPtr<NodeUpdate> nodeUpdate(nodeUpdateQueue.takeFirst());
         switch (nodeUpdate->type) {
         case NodeUpdate::CreateTile: {
             NodeUpdateCreateTile* createTileUpdate = static_cast<NodeUpdateCreateTile*>(nodeUpdate.get());
-            SGTileNode* tileNode = new SGTileNode(item->sceneGraphEngine());
+            QtSGTileNode* tileNode = new QtSGTileNode(item->sceneGraphEngine());
             getScaleNode(createTileUpdate->scale, itemNode)->prependChildNode(tileNode);
             nodes.set(createTileUpdate->nodeID, tileNode);
             break;
@@ -131,13 +131,13 @@ void SGUpdateQueue::applyUpdates(QSGNode* itemNode)
         }
         case NodeUpdate::SetBackBuffer: {
             NodeUpdateSetBackBuffer* setBackBufferUpdate = static_cast<NodeUpdateSetBackBuffer*>(nodeUpdate.get());
-            SGTileNode* tileNode = nodes.get(setBackBufferUpdate->nodeID);
+            QtSGTileNode* tileNode = nodes.get(setBackBufferUpdate->nodeID);
             tileNode->setBackBuffer(setBackBufferUpdate->backBuffer, setBackBufferUpdate->sourceRect, setBackBufferUpdate->targetRect);
             break;
         }
         case NodeUpdate::SwapTileBuffers: {
-            HashMap<int, SGTileNode*>::iterator end = nodes.end();
-            for (HashMap<int, SGTileNode*>::iterator it = nodes.begin(); it != end; ++it)
+            HashMap<int, QtSGTileNode*>::iterator end = nodes.end();
+            for (HashMap<int, QtSGTileNode*>::iterator it = nodes.begin(); it != end; ++it)
                 it->second->swapBuffersIfNeeded();
             m_isSwapPending = false;
             break;
@@ -148,7 +148,7 @@ void SGUpdateQueue::applyUpdates(QSGNode* itemNode)
     }
 }
 
-QSGNode* SGUpdateQueue::getScaleNode(float scale, QSGNode* itemNode)
+QSGNode* QtSGUpdateQueue::getScaleNode(float scale, QSGNode* itemNode)
 {
     if (scale == lastScale)
         return lastScaleNode;

@@ -26,12 +26,12 @@
 
 #include "QtPanGestureRecognizer.h"
 
-#include "ViewportInteractionEngine.h"
+#include "QtViewportInteractionEngine.h"
 #include <QTouchEvent>
 
 namespace WebKit {
 
-QtPanGestureRecognizer::QtPanGestureRecognizer(ViewportInteractionEngine* interactionEngine)
+QtPanGestureRecognizer::QtPanGestureRecognizer(QtViewportInteractionEngine* interactionEngine)
     : QtGestureRecognizer(interactionEngine)
 {
     reset();

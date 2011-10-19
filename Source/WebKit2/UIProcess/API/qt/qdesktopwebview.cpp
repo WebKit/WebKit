@@ -446,7 +446,7 @@ QJSEngine* QDesktopWebViewPrivate::engine()
     return 0;
 }
 
-void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType type)
+void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
     openPanelResultListener = listenerRef;
@@ -502,18 +502,18 @@ void QDesktopWebViewPrivate::didMouseMoveOverElement(const QUrl& linkURL, const 
     emit q->linkHovered(lastHoveredURL, lastHoveredTitle);
 }
 
-static PolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)
+static QtPolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)
 {
     switch (policy) {
     case QDesktopWebView::UsePolicy:
-        return PolicyInterface::Use;
+        return QtPolicyInterface::Use;
     case QDesktopWebView::DownloadPolicy:
-        return PolicyInterface::Download;
+        return QtPolicyInterface::Download;
     case QDesktopWebView::IgnorePolicy:
-        return PolicyInterface::Ignore;
+        return QtPolicyInterface::Ignore;
     }
     ASSERT_NOT_REACHED();
-    return PolicyInterface::Ignore;
+    return QtPolicyInterface::Ignore;
 }
 
 static bool hasMetaMethod(QObject* object, const char* methodName)
@@ -530,16 +530,17 @@ static bool hasMetaMethod(QObject* object, const char* methodName)
     It will be called to decide the policy for a navigation: whether the WebView should ignore the navigation,
     continue it or start a download. The return value must be one of the policies in the NavigationPolicy enumeration.
 */
-PolicyInterface::PolicyAction QDesktopWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+QtPolicyInterface::PolicyAction QDesktopWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
     // We need to check this first because invokeMethod() warns if the method doesn't exist for the object.
     if (!hasMetaMethod(q, "navigationPolicyForUrl(QVariant,QVariant,QVariant)"))
-        return PolicyInterface::Use;
+        return QtPolicyInterface::Use;
 
     QVariant ret;
     if (QMetaObject::invokeMethod(q, "navigationPolicyForUrl", Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, url), Q_ARG(QVariant, button), Q_ARG(QVariant, QVariant(modifiers))))
         return toPolicyAction(static_cast<QDesktopWebView::NavigationPolicy>(ret.toInt()));
-    return PolicyInterface::Use;
+    return QtPolicyInterface::Use;
 }
 
 #include "moc_qdesktopwebview.cpp"
+#include "moc_qdesktopwebview_p.cpp"

@@ -21,10 +21,10 @@
 #ifndef qtouchwebview_p_h
 #define qtouchwebview_p_h
 
+#include "QtTouchViewInterface.h"
+#include "QtTouchWebPageProxy.h"
+#include "QtViewportInteractionEngine.h"
 #include <QScopedPointer>
-#include "qtouchwebpageproxy.h"
-#include "TouchViewInterface.h"
-#include "ViewportInteractionEngine.h"
 
 class QTouchWebPage;
 class QTouchWebView;
@@ -43,9 +43,9 @@ public:
 
     QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;
-    WebKit::TouchViewInterface viewInterface;
-    ViewportInteractionEngine interactionEngine;
-    QTouchWebPageProxy page;
+    WebKit::QtTouchViewInterface viewInterface;
+    QtViewportInteractionEngine interactionEngine;
+    QtTouchWebPageProxy page;
 
     WebCore::ViewportArguments viewportArguments;
 };

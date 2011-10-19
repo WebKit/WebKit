@@ -18,18 +18,18 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WebUndoCommandQt_h
-#define WebUndoCommandQt_h
+#ifndef QtWebUndoCommand_h
+#define QtWebUndoCommand_h
 
 #include "WebEditCommandProxy.h"
 #include <QUndoCommand>
 #include <qglobal.h>
 #include <wtf/RefPtr.h>
 
-class WebUndoCommandQt : public QUndoCommand {
+class QtWebUndoCommand : public QUndoCommand {
 public:
-    WebUndoCommandQt(PassRefPtr<WebKit::WebEditCommandProxy>, QUndoCommand* parent = 0);
-    ~WebUndoCommandQt();
+    QtWebUndoCommand(PassRefPtr<WebKit::WebEditCommandProxy>, QUndoCommand* parent = 0);
+    ~QtWebUndoCommand();
 
     void redo();
     void undo();
@@ -42,4 +42,4 @@ private:
     bool m_inUndoRedo;
 };
 
-#endif // WebUndoCommandQt_h
+#endif // QtWebUndoCommand_h

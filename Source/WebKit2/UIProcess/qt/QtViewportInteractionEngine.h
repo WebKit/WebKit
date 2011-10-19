@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef ViewportInteractionEngine_h
-#define ViewportInteractionEngine_h
+#ifndef QtViewportInteractionEngine_h
+#define QtViewportInteractionEngine_h
 
 #include "OwnPtr.h"
 #include "qwebkitglobal.h"
@@ -34,12 +34,12 @@ namespace WebKit {
 
 class ViewportUpdateGuard;
 
-class ViewportInteractionEngine : public QObject {
+class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
-    ViewportInteractionEngine(const QSGItem*, QSGItem*);
-    ~ViewportInteractionEngine();
+    QtViewportInteractionEngine(const QSGItem*, QSGItem*);
+    ~QtViewportInteractionEngine();
 
     struct Constraints {
         Constraints()
@@ -105,7 +105,7 @@ private:
     qreal m_pinchStartScale;
 };
 
-inline bool operator==(const ViewportInteractionEngine::Constraints& a, const ViewportInteractionEngine::Constraints& b)
+inline bool operator==(const QtViewportInteractionEngine::Constraints& a, const QtViewportInteractionEngine::Constraints& b)
 {
     return a.initialScale == b.initialScale
             && a.minimumScale == b.minimumScale
@@ -115,4 +115,4 @@ inline bool operator==(const ViewportInteractionEngine::Constraints& a, const Vi
 
 }
 
-#endif /* ViewportInteractionEngine_h */
+#endif // QtViewportInteractionEngine_h

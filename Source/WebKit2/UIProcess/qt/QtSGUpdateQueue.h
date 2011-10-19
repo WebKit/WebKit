@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef SGUpdateQueue_h
-#define SGUpdateQueue_h
+#ifndef QtSGUpdateQueue_h
+#define QtSGUpdateQueue_h
 
 #include "Deque.h"
 #include "HashMap.h"
@@ -35,12 +35,12 @@ namespace WebKit {
 
 class NodeUpdate;
 class PageNode;
-class SGTileNode;
+class QtSGTileNode;
 
 // Takes care of taking update requests then fulfilling them asynchronously on the scene graph thread.
-class SGUpdateQueue {
+class QtSGUpdateQueue {
 public:
-    SGUpdateQueue(QSGItem*);
+    QtSGUpdateQueue(QSGItem*);
 
     int createTileNode(float scale);
     void removeTileNode(int nodeID);
@@ -56,7 +56,7 @@ private:
 
     QSGItem* item;
     Deque<OwnPtr<NodeUpdate> > nodeUpdateQueue;
-    HashMap<int, SGTileNode*> nodes;
+    HashMap<int, QtSGTileNode*> nodes;
     float lastScale;
     QSGNode* lastScaleNode;
     int nextNodeID;
@@ -79,4 +79,4 @@ struct NodeUpdate {
 
 }
 
-#endif /* SGUpdateQueue_h */
+#endif // QtSGUpdateQueue_h

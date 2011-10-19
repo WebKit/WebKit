@@ -26,9 +26,9 @@
 #include "config.h"
 #include "TiledDrawingAreaProxy.h"
 
-#include "SGUpdateQueue.h"
+#include "QtSGUpdateQueue.h"
+#include "QtTouchViewInterface.h"
 #include "ShareableBitmap.h"
-#include "TouchViewInterface.h"
 #include "UpdateInfo.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
@@ -41,7 +41,7 @@ namespace WebKit {
 
 void TiledDrawingAreaProxy::updateWebView(const Vector<IntRect>& paintedArea)
 {
-    // SG updates are triggered through SGUpdateQueue.
+    // SG updates are triggered through QtSGUpdateQueue.
 }
 
 WebPageProxy* TiledDrawingAreaProxy::page()

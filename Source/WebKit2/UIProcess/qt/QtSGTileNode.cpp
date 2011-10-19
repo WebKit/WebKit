@@ -19,14 +19,15 @@
  */
 
 #include "config.h"
-#include "SGTileNode.h"
+#include "QtSGTileNode.h"
+
 #include <QSGEngine>
 #include <QSGFlatColorMaterial>
 #include <QSGTexture>
 
 namespace WebKit {
 
-SGTileNode::SGTileNode(QSGEngine* engine)
+QtSGTileNode::QtSGTileNode(QSGEngine* engine)
     : m_engine(engine)
     , m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4)
     , m_textureMaterialsCreated(false)
@@ -37,7 +38,7 @@ SGTileNode::SGTileNode(QSGEngine* engine)
     setOpaqueMaterial(new QSGFlatColorMaterial);
 }
 
-void SGTileNode::setBackBuffer(const QImage& backBuffer, const QRectF& sourceRect, const QRectF& targetRect)
+void QtSGTileNode::setBackBuffer(const QImage& backBuffer, const QRectF& sourceRect, const QRectF& targetRect)
 {
     m_backBufferTexture.reset(m_engine->createTextureFromImage(backBuffer));
     m_backBufferTargetRect = targetRect;
@@ -47,7 +48,7 @@ void SGTileNode::setBackBuffer(const QImage& backBuffer, const QRectF& sourceRec
     m_backBufferTexture->bind();
 }
 
-void SGTileNode::swapBuffersIfNeeded()
+void QtSGTileNode::swapBuffersIfNeeded()
 {
     if (!m_backBufferTexture)
         return;

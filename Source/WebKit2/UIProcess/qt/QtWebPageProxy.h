@@ -21,15 +21,13 @@
 #ifndef QtWebPageProxy_h
 #define QtWebPageProxy_h
 
-#include "config.h"
-
 #include "LayerTreeContext.h"
 #include "PageClient.h"
-#include "PolicyInterface.h"
+#include "QtPolicyInterface.h"
+#include "QtViewInterface.h"
 #include "qwebkittypes.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
-#include "ViewInterface.h"
 #include "WebContext.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
@@ -70,7 +68,7 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(WebKit::ViewInterface*, WebKit::PolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(WebKit::QtViewInterface*, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual bool handleEvent(QEvent*);
@@ -186,8 +184,8 @@ protected:
 
     virtual void paintContent(QPainter* painter, const QRect& area) = 0;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
-    WebKit::ViewInterface* const m_viewInterface;
-    WebKit::PolicyInterface* const m_policyInterface;
+    WebKit::QtViewInterface* const m_viewInterface;
+    WebKit::QtPolicyInterface* const m_policyInterface;
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);

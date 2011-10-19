@@ -21,7 +21,7 @@
 #ifndef qtouchwebpage_p_h
 #define qtouchwebpage_p_h
 
-#include "SGUpdateQueue.h"
+#include "QtSGUpdateQueue.h"
 #include "qtouchwebpage.h"
 #include "qwebnavigationcontroller.h"
 #include <QMenu>
@@ -30,18 +30,18 @@ class QRectF;
 class QSGNode;
 class QString;
 class QTouchWebPage;
-class QTouchWebPageProxy;
+class QtTouchWebPageProxy;
 
 class QTouchWebPagePrivate {
 public:
     QTouchWebPagePrivate(QTouchWebPage* view);
 
-    void setPage(QTouchWebPageProxy*);
+    void setPage(QtTouchWebPageProxy*);
 
     QTouchWebPage* const q;
-    QTouchWebPageProxy* page;
+    QtTouchWebPageProxy* page;
     QWebNavigationController* navigationController;
-    WebKit::SGUpdateQueue sgUpdateQueue;
+    WebKit::QtSGUpdateQueue sgUpdateQueue;
 };
 
 #endif /* qtouchwebpage_p_h */

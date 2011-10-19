@@ -18,14 +18,15 @@
  *
  */
 
-#include "qdesktopwebpageproxy.h"
+#include "config.h"
+#include "QtDesktopWebPageProxy.h"
 
-#include "qdesktopwebview.h"
-#include "qdesktopwebview_p.h"
 #include "DrawingAreaProxyImpl.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "WebPopupMenuProxyQtDesktop.h"
+#include "qdesktopwebview.h"
+#include "qdesktopwebview_p.h"
 #include <QApplication>
 #include <QEvent>
 #include <QGraphicsSceneDragDropEvent>
@@ -50,44 +51,44 @@ static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
     return result;
 }
 
-QDesktopWebPageProxy::QDesktopWebPageProxy(QDesktopWebViewPrivate* desktopWebView, WKContextRef context, WKPageGroupRef pageGroup)
+QtDesktopWebPageProxy::QtDesktopWebPageProxy(QDesktopWebViewPrivate* desktopWebView, WKContextRef context, WKPageGroupRef pageGroup)
     : QtWebPageProxy(desktopWebView, desktopWebView, context, pageGroup)
 {
     init();
 }
 
-PassOwnPtr<DrawingAreaProxy> QDesktopWebPageProxy::createDrawingAreaProxy()
+PassOwnPtr<DrawingAreaProxy> QtDesktopWebPageProxy::createDrawingAreaProxy()
 {
     return DrawingAreaProxyImpl::create(m_webPageProxy.get());
 }
 
-void QDesktopWebPageProxy::paintContent(QPainter* painter, const QRect& area)
+void QtDesktopWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
     // FIXME: Do something with the unpainted region?
     WebCore::Region unpaintedRegion;
     static_cast<DrawingAreaProxyImpl*>(m_webPageProxy->drawingArea())->paint(painter, area, unpaintedRegion);
 }
 
-void QDesktopWebPageProxy::setViewportArguments(const WebCore::ViewportArguments&)
+void QtDesktopWebPageProxy::setViewportArguments(const WebCore::ViewportArguments&)
 {
     // We ignore the viewport definition on the Desktop.
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void QDesktopWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+void QtDesktopWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
 {
     // We do not handle touch on Desktop for now, the events are not supposed to be forwarded to the WebProcess.
     ASSERT_NOT_REACHED();
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> QDesktopWebPageProxy::createPopupMenuProxy(WebPageProxy*)
+PassRefPtr<WebPopupMenuProxy> QtDesktopWebPageProxy::createPopupMenuProxy(WebPageProxy*)
 {
     QSGItem* webViewItem = static_cast<QDesktopWebViewPrivate*>(m_viewInterface)->q;
     return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), webViewItem);
 }
 
-bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
+bool QtDesktopWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
     case QEvent::MouseMove:
@@ -117,7 +118,7 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
-bool QDesktopWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
+bool QtDesktopWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
 {
     // For some reason mouse press results in mouse hover (which is
     // converted to mouse move for WebKit). We ignore these hover
@@ -134,7 +135,7 @@ bool QDesktopWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
+bool QtDesktopWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
 {
     if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < QApplication::startDragDistance()) {
         m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/3));
@@ -145,13 +146,13 @@ bool QDesktopWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMouseReleaseEvent(QMouseEvent* ev)
+bool QtDesktopWebPageProxy::handleMouseReleaseEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/0));
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
+bool QtDesktopWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/2));
 
@@ -160,13 +161,13 @@ bool QDesktopWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleWheelEvent(QWheelEvent* ev)
+bool QtDesktopWebPageProxy::handleWheelEvent(QWheelEvent* ev)
 {
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleHoverLeaveEvent(QHoverEvent* ev)
+bool QtDesktopWebPageProxy::handleHoverLeaveEvent(QHoverEvent* ev)
 {
     // To get the correct behavior of mouseout, we need to turn the Leave event of our webview into a mouse move
     // to a very far region.
@@ -174,7 +175,7 @@ bool QDesktopWebPageProxy::handleHoverLeaveEvent(QHoverEvent* ev)
     return handleHoverMoveEvent(&fakeEvent);
 }
 
-bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
+bool QtDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
 {
     QMouseEvent me(QEvent::MouseMove, ev->pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
     me.setAccepted(ev->isAccepted());
@@ -182,7 +183,7 @@ bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
     return handleMouseMoveEvent(&me);
 }
 
-bool QDesktopWebPageProxy::handleDragEnterEvent(QDragEnterEvent* ev)
+bool QtDesktopWebPageProxy::handleDragEnterEvent(QDragEnterEvent* ev)
 {
     m_webPageProxy->resetDragOperation();
     // FIXME: Should not use QCursor::pos()
@@ -192,7 +193,7 @@ bool QDesktopWebPageProxy::handleDragEnterEvent(QDragEnterEvent* ev)
     return true;
 }
 
-bool QDesktopWebPageProxy::handleDragLeaveEvent(QDragLeaveEvent* ev)
+bool QtDesktopWebPageProxy::handleDragLeaveEvent(QDragLeaveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -205,7 +206,7 @@ bool QDesktopWebPageProxy::handleDragLeaveEvent(QDragLeaveEvent* ev)
     return accepted;
 }
 
-bool QDesktopWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
+bool QtDesktopWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -220,7 +221,7 @@ bool QDesktopWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
     return accepted;
 }
 
-bool QDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
+bool QtDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -235,7 +236,7 @@ bool QDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
     return accepted;
 }
 
-void QDesktopWebPageProxy::timerEvent(QTimerEvent* ev)
+void QtDesktopWebPageProxy::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();
     if (timerId == m_tripleClickTimer.timerId())

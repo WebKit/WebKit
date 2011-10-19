@@ -31,15 +31,15 @@
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
-#include "PolicyInterface.h"
-#include "ViewInterface.h"
+#include "QtPolicyInterface.h"
+#include "QtViewInterface.h"
+#include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactoryQt.h"
 #include "WebPopupMenuProxyQt.h"
-#include "WebUndoCommandQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QAction>
@@ -102,7 +102,7 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, PolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_viewInterface(viewInterface)
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
@@ -294,10 +294,10 @@ void QtWebPageProxy::toolTipChanged(const String&, const String& newTooltip)
 void QtWebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
     if (undoOrRedo == WebPageProxy::Undo) {
-        const WebUndoCommandQt* webUndoCommand = static_cast<const WebUndoCommandQt*>(m_undoStack->command(m_undoStack->index()));
+        const QtWebUndoCommand* webUndoCommand = static_cast<const QtWebUndoCommand*>(m_undoStack->command(m_undoStack->index()));
         if (webUndoCommand && webUndoCommand->inUndoRedo())
             return;
-        m_undoStack->push(new WebUndoCommandQt(command));
+        m_undoStack->push(new QtWebUndoCommand(command));
     }
 }
 

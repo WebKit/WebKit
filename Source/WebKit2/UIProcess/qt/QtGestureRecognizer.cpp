@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-QtGestureRecognizer::QtGestureRecognizer(ViewportInteractionEngine* viewportInteractionEngine)
+QtGestureRecognizer::QtGestureRecognizer(QtViewportInteractionEngine* viewportInteractionEngine)
     : m_viewportInteractionEngine(viewportInteractionEngine)
     , m_state(NoGesture)
 {

@@ -252,23 +252,23 @@ HEADERS += \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/ClientImpl.h \
-    UIProcess/qt/TouchViewInterface.h \
-    UIProcess/qt/PolicyInterface.h \
+    UIProcess/qt/QtTouchViewInterface.h \
+    UIProcess/qt/QtPolicyInterface.h \
     UIProcess/qt/QtGestureRecognizer.h \
     UIProcess/qt/QtPanGestureRecognizer.h \
     UIProcess/qt/QtPinchGestureRecognizer.h \
-    UIProcess/qt/qdesktopwebpageproxy.h \
-    UIProcess/qt/qtouchwebpageproxy.h \
+    UIProcess/qt/QtDesktopWebPageProxy.h \
+    UIProcess/qt/QtTouchWebPageProxy.h \
     UIProcess/qt/qweberror.h \
     UIProcess/qt/qweberror_p.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/qwkhistory.h \
     UIProcess/qt/qwkhistory_p.h \
-    UIProcess/qt/SGUpdateQueue.h \
-    UIProcess/qt/SGTileNode.h \
-    UIProcess/qt/ViewInterface.h \
-    UIProcess/qt/ViewportInteractionEngine.h \
-    UIProcess/qt/WebUndoCommandQt.h \
+    UIProcess/qt/QtSGUpdateQueue.h \
+    UIProcess/qt/QtSGTileNode.h \
+    UIProcess/qt/QtViewInterface.h \
+    UIProcess/qt/QtViewportInteractionEngine.h \
+    UIProcess/qt/QtWebUndoCommand.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebGeolocationProviderQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
@@ -438,7 +438,7 @@ SOURCES += \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
-    UIProcess/qt/WebUndoCommandQt.cpp \
+    UIProcess/qt/QtWebUndoCommand.cpp \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
@@ -495,20 +495,20 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ClientImpl.cpp \
     UIProcess/qt/LayerTreeHostProxyQt.cpp \
-    UIProcess/qt/TouchViewInterface.cpp \
+    UIProcess/qt/QtTouchViewInterface.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \
     UIProcess/qt/QtPinchGestureRecognizer.cpp \
-    UIProcess/qt/qdesktopwebpageproxy.cpp \
-    UIProcess/qt/qtouchwebpageproxy.cpp \
+    UIProcess/qt/QtDesktopWebPageProxy.cpp \
+    UIProcess/qt/QtTouchWebPageProxy.cpp \
     UIProcess/qt/qweberror.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/qwkhistory.cpp \
-    UIProcess/qt/SGUpdateQueue.cpp \
-    UIProcess/qt/SGTileNode.cpp \
+    UIProcess/qt/QtSGUpdateQueue.cpp \
+    UIProcess/qt/QtSGTileNode.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
-    UIProcess/qt/ViewportInteractionEngine.cpp \
+    UIProcess/qt/QtViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebGeolocationProviderQt.cpp \

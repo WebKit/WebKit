@@ -18,26 +18,25 @@
  *
  */
 
-#ifndef qdesktopwebpageproxy_h
-#define qdesktopwebpageproxy_h
+#ifndef QtDesktopWebPageProxy_h
+#define QtDesktopWebPageProxy_h
 
-#include "QtWebPageProxy.h"
 #include "DrawingAreaProxy.h"
+#include "QtWebPageProxy.h"
 #include <wtf/PassOwnPtr.h>
 
 class QDesktopWebViewPrivate;
 
 using namespace WebKit;
 
-class QDesktopWebPageProxy : public QtWebPageProxy
-{
+class QtDesktopWebPageProxy : public QtWebPageProxy {
 public:
-    QDesktopWebPageProxy(QDesktopWebViewPrivate*, WKContextRef, WKPageGroupRef = 0);
+    QtDesktopWebPageProxy(QDesktopWebViewPrivate*, WKContextRef, WKPageGroupRef = 0);
 
     virtual bool handleEvent(QEvent*);
 
 protected:
-    void paintContent(QPainter* painter, const QRect& area);
+    void paintContent(QPainter*, const QRect& area);
 
 private:
     /* PageClient overrides. */
@@ -67,4 +66,4 @@ private:
     QBasicTimer m_tripleClickTimer;
 };
 
-#endif /* qdesktopwebpageproxy_h */
+#endif // QtDesktopWebPageProxy_h

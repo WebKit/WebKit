@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "ViewportInteractionEngine.h"
+#include "QtViewportInteractionEngine.h"
 
 #include "PassOwnPtr.h"
 #include <QPointF>
@@ -50,7 +50,7 @@ static inline QRectF contentRectInViewportCoordinate(const QSGItem* content, con
 // The public methods should create the guard if they might update content.
 class ViewportUpdateGuard {
 public:
-    ViewportUpdateGuard(ViewportInteractionEngine* viewportInteractionEngine)
+    ViewportUpdateGuard(QtViewportInteractionEngine* viewportInteractionEngine)
         : viewportInteractionEngine(viewportInteractionEngine)
         , wasUpdatingContent(viewportInteractionEngine->m_isUpdatingContent)
         , previousPosition(viewportInteractionEngine->m_content->pos())
@@ -73,14 +73,14 @@ public:
     }
 
 private:
-    ViewportInteractionEngine* const viewportInteractionEngine;
+    QtViewportInteractionEngine* const viewportInteractionEngine;
     const bool wasUpdatingContent;
     const QPointF previousPosition;
     const QSizeF previousSize;
     const qreal previousScale;
 };
 
-ViewportInteractionEngine::ViewportInteractionEngine(const QSGItem* viewport, QSGItem* content)
+QtViewportInteractionEngine::QtViewportInteractionEngine(const QSGItem* viewport, QSGItem* content)
     : m_viewport(viewport)
     , m_content(content)
     , m_isUpdatingContent(false)
@@ -94,18 +94,18 @@ ViewportInteractionEngine::ViewportInteractionEngine(const QSGItem* viewport, QS
     connect(m_content, SIGNAL(scaleChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
 }
 
-ViewportInteractionEngine::~ViewportInteractionEngine()
+QtViewportInteractionEngine::~QtViewportInteractionEngine()
 {
 }
 
-void ViewportInteractionEngine::reset()
+void QtViewportInteractionEngine::reset()
 {
     ViewportUpdateGuard guard(this);
     m_userInteractionFlags = UserHasNotInteractedWithContent;
     setConstraints(Constraints());
 }
 
-void ViewportInteractionEngine::setConstraints(const Constraints& constraints)
+void QtViewportInteractionEngine::setConstraints(const Constraints& constraints)
 {
     if (m_constraints == constraints)
         return;
@@ -124,14 +124,14 @@ void ViewportInteractionEngine::setConstraints(const Constraints& constraints)
     updateContentIfNeeded();
 }
 
-void ViewportInteractionEngine::panGestureStarted()
+void QtViewportInteractionEngine::panGestureStarted()
 {
     // FIXME: suspend the Web engine (stop animated GIF, etc).
     // FIXME: initialize physics for panning (stop animation, etc).
     m_userInteractionFlags |= UserHasMovedContent;
 }
 
-void ViewportInteractionEngine::panGestureRequestUpdate(qreal deltaX, qreal deltaY)
+void QtViewportInteractionEngine::panGestureRequestUpdate(qreal deltaX, qreal deltaY)
 {
     ViewportUpdateGuard guard(this);
 
@@ -143,21 +143,21 @@ void ViewportInteractionEngine::panGestureRequestUpdate(qreal deltaX, qreal delt
     emit viewportTrajectoryVectorChanged(QPointF(-deltaX, -deltaY));
 }
 
-void ViewportInteractionEngine::panGestureCancelled()
+void QtViewportInteractionEngine::panGestureCancelled()
 {
     ViewportUpdateGuard guard(this);
     // FIXME: reset physics.
     panGestureEnded();
 }
 
-void ViewportInteractionEngine::panGestureEnded()
+void QtViewportInteractionEngine::panGestureEnded()
 {
     ViewportUpdateGuard guard(this);
     animateContentIntoBoundariesIfNeeded();
     // FIXME: emit viewportTrajectoryVectorChanged(QPointF()) when the pan throw animation ends and the page stops moving.
 }
 
-void ViewportInteractionEngine::pinchGestureStarted()
+void QtViewportInteractionEngine::pinchGestureStarted()
 {
     if (!m_constraints.isUserScalable)
         return;
@@ -172,7 +172,7 @@ void ViewportInteractionEngine::pinchGestureStarted()
     emit viewportTrajectoryVectorChanged(QPointF());
 }
 
-void ViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor)
+void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor)
 {
     if (!m_constraints.isUserScalable)
         return;
@@ -188,7 +188,7 @@ void ViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCe
     m_content->setPos(m_content->pos() - (newPinchCenterOnParent - oldPinchCenterOnParent));
 }
 
-void ViewportInteractionEngine::pinchGestureEnded()
+void QtViewportInteractionEngine::pinchGestureEnded()
 {
     if (!m_constraints.isUserScalable)
         return;
@@ -201,7 +201,7 @@ void ViewportInteractionEngine::pinchGestureEnded()
     m_pinchViewportUpdateDeferrer.clear();
 }
 
-void ViewportInteractionEngine::contentViewportChanged()
+void QtViewportInteractionEngine::contentViewportChanged()
 {
     if (m_isUpdatingContent)
         return;
@@ -213,13 +213,13 @@ void ViewportInteractionEngine::contentViewportChanged()
     emit viewportUpdateRequested();
 }
 
-void ViewportInteractionEngine::updateContentIfNeeded()
+void QtViewportInteractionEngine::updateContentIfNeeded()
 {
     updateContentScaleIfNeeded();
     updateContentPositionIfNeeded();
 }
 
-void ViewportInteractionEngine::updateContentScaleIfNeeded()
+void QtViewportInteractionEngine::updateContentScaleIfNeeded()
 {
     const qreal currentContentScale = m_content->scale();
     qreal contentScale = m_content->scale();
@@ -234,7 +234,7 @@ void ViewportInteractionEngine::updateContentScaleIfNeeded()
     }
 }
 
-void ViewportInteractionEngine::updateContentPositionIfNeeded()
+void QtViewportInteractionEngine::updateContentPositionIfNeeded()
 {
     if (!(m_userInteractionFlags & UserHasMovedContent)) {
         m_content->setX((m_viewport->width() - contentRectInViewportCoordinate(m_content, m_viewport).width()) / 2);
@@ -245,13 +245,13 @@ void ViewportInteractionEngine::updateContentPositionIfNeeded()
     // FIXME: if the item cannot be fully in viewport, and is not covering the viewport, push it back in view
 }
 
-void ViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
+void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
 {
     animateContentScaleIntoBoundariesIfNeeded();
     animateContentPositionIntoBoundariesIfNeeded();
 }
 
-void ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
+void QtViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
 {
     const QRectF contentGeometry = m_viewport->mapRectFromItem(m_content, m_content->boundingRect());
     QPointF newPos = contentGeometry.topLeft();
@@ -281,7 +281,7 @@ void ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
         m_content->setPos(newPos);
 }
 
-void ViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded()
+void QtViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded()
 {
     const qreal currentScale = m_content->scale();
     const qreal boundedScale = qBound(m_constraints.minimumScale, currentScale, m_constraints.maximumScale);
@@ -292,7 +292,7 @@ void ViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded()
     }
 }
 
-void ViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinate, qreal scale)
+void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinate, qreal scale)
 {
     QPointF oldPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinate);
     m_content->setScale(scale);
@@ -300,6 +300,6 @@ void ViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoord
     m_content->setPos(m_content->pos() - (newPinchCenterOnParent - oldPinchCenterOnParent));
 }
 
-#include "moc_ViewportInteractionEngine.cpp"
+#include "moc_QtViewportInteractionEngine.cpp"
 
 }

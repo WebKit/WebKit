@@ -35,7 +35,7 @@ class QMenu;
 class QtWebPageProxy;
 
 namespace WebKit {
-class ViewInterface;
+class QtViewInterface;
 class WebContextMenuItemData;
 class WebPageProxy;
 }
@@ -45,13 +45,13 @@ namespace WebKit {
 class WebContextMenuProxyQt : public QObject, public WebContextMenuProxy {
     Q_OBJECT
 public:
-    static PassRefPtr<WebContextMenuProxyQt> create(WebPageProxy*, ViewInterface*);
+    static PassRefPtr<WebContextMenuProxyQt> create(WebPageProxy*, QtViewInterface*);
 
 private Q_SLOTS:
     void actionTriggered(bool);
 
 private:
-    WebContextMenuProxyQt(WebPageProxy*, ViewInterface*);
+    WebContextMenuProxyQt(WebPageProxy*, QtViewInterface*);
 
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     virtual void hideContextMenu();
@@ -59,7 +59,7 @@ private:
     PassOwnPtr<QMenu> createContextMenu(const Vector<WebContextMenuItemData>& items) const;
 
     WebPageProxy* const m_webPageProxy;
-    ViewInterface* const m_viewInterface;
+    QtViewInterface* const m_viewInterface;
 };
 
 } // namespace WebKit

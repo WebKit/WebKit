@@ -29,7 +29,7 @@ class QTouchWebPage;
 class QTouchWebViewPrivate;
 
 namespace WebKit {
-class TouchViewInterface;
+class QtTouchViewInterface;
 }
 
 class QWEBKIT_EXPORT QTouchWebView : public QSGItem
@@ -50,7 +50,7 @@ private:
     Q_PRIVATE_SLOT(d, void _q_viewportUpdated());
     Q_PRIVATE_SLOT(d, void _q_viewportTrajectoryVectorChanged(const QPointF&));
 
-    friend class WebKit::TouchViewInterface;
+    friend class WebKit::QtTouchViewInterface;
     QTouchWebViewPrivate *d;
 };
 

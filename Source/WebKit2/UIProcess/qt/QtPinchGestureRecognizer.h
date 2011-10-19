@@ -50,7 +50,7 @@ public:
         QPointF initialPosition;
     };
 
-    QtPinchGestureRecognizer(ViewportInteractionEngine*);
+    QtPinchGestureRecognizer(QtViewportInteractionEngine*);
     bool recognize(const QTouchEvent*);
     void reset();
 

@@ -39,13 +39,13 @@ Q_DECLARE_METATYPE(WebKit::WebContextMenuItemData);
 
 namespace WebKit {
 
-WebContextMenuProxyQt::WebContextMenuProxyQt(WebPageProxy* pageProxy, ViewInterface* viewInterface)
+WebContextMenuProxyQt::WebContextMenuProxyQt(WebPageProxy* pageProxy, QtViewInterface* viewInterface)
     : m_webPageProxy(pageProxy)
     , m_viewInterface(viewInterface)
 {
 }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(WebPageProxy* pageProxy, ViewInterface* viewInterface)
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(WebPageProxy* pageProxy, QtViewInterface* viewInterface)
 {
     return adoptRef(new WebContextMenuProxyQt(pageProxy, viewInterface));
 }

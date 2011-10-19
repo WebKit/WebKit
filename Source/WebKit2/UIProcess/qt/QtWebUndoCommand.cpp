@@ -19,11 +19,11 @@
 */
 
 #include "config.h"
-#include "WebUndoCommandQt.h"
+#include "QtWebUndoCommand.h"
 
 using namespace WebKit;
 
-WebUndoCommandQt::WebUndoCommandQt(PassRefPtr<WebEditCommandProxy> command, QUndoCommand* parent)
+QtWebUndoCommand::QtWebUndoCommand(PassRefPtr<WebEditCommandProxy> command, QUndoCommand* parent)
     : QUndoCommand(parent)
     , m_command(command)
     , m_first(true)
@@ -31,11 +31,11 @@ WebUndoCommandQt::WebUndoCommandQt(PassRefPtr<WebEditCommandProxy> command, QUnd
 {
 }
 
-WebUndoCommandQt::~WebUndoCommandQt()
+QtWebUndoCommand::~QtWebUndoCommand()
 {
 }
 
-void WebUndoCommandQt::redo()
+void QtWebUndoCommand::redo()
 {
     m_inUndoRedo = true;
 
@@ -51,7 +51,7 @@ void WebUndoCommandQt::redo()
     m_inUndoRedo = false;
 }
 
-void WebUndoCommandQt::undo()
+void QtWebUndoCommand::undo()
 {
     m_inUndoRedo = true;
 

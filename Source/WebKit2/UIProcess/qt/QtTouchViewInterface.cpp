@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "TouchViewInterface.h"
+#include "QtTouchViewInterface.h"
 
 #include "qtouchwebpage.h"
 #include "qtouchwebpage_p.h"
@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-TouchViewInterface::TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView)
+QtTouchViewInterface::QtTouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView)
     : m_viewportView(viewportView)
     , m_pageView(pageView)
 {
@@ -40,146 +40,146 @@ TouchViewInterface::TouchViewInterface(QTouchWebView* viewportView, QTouchWebPag
     Q_ASSERT(m_pageView);
 }
 
-void TouchViewInterface::didFindZoomableArea(const QPoint&, const QRect&)
+void QtTouchViewInterface::didFindZoomableArea(const QPoint&, const QRect&)
 {
 }
 
-SGUpdateQueue* TouchViewInterface::sceneGraphUpdateQueue() const
+QtSGUpdateQueue* QtTouchViewInterface::sceneGraphUpdateQueue() const
 {
     return &m_pageView->d->sgUpdateQueue;
 }
 
-void TouchViewInterface::setViewNeedsDisplay(const QRect&)
+void QtTouchViewInterface::setViewNeedsDisplay(const QRect&)
 {
 }
 
-QSize TouchViewInterface::drawingAreaSize()
+QSize QtTouchViewInterface::drawingAreaSize()
 {
     return QSize(m_pageView->width(), m_pageView->height());
 }
 
-void TouchViewInterface::contentSizeChanged(const QSize& newSize)
+void QtTouchViewInterface::contentSizeChanged(const QSize& newSize)
 {
     m_pageView->setWidth(newSize.width());
     m_pageView->setHeight(newSize.height());
     m_viewportView->d->updateViewportConstraints();
 }
 
-bool TouchViewInterface::isActive()
+bool QtTouchViewInterface::isActive()
 {
     // FIXME: The scene graph does not have the concept of being active or not when this was written.
     return true;
 }
 
-bool TouchViewInterface::hasFocus()
+bool QtTouchViewInterface::hasFocus()
 {
     return m_pageView->hasFocus();
 }
 
-bool TouchViewInterface::isVisible()
+bool QtTouchViewInterface::isVisible()
 {
     return m_viewportView->isVisible() && m_pageView->isVisible();
 }
 
-void TouchViewInterface::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
+void QtTouchViewInterface::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
 {
     // QTouchWebView does not support drag and drop.
     Q_ASSERT(false);
 }
 
-void TouchViewInterface::didReceiveViewportArguments(const WebCore::ViewportArguments& args)
+void QtTouchViewInterface::didReceiveViewportArguments(const WebCore::ViewportArguments& args)
 {
     m_viewportView->d->setViewportArguments(args);
 }
 
-void TouchViewInterface::didChangeUrl(const QUrl& url)
+void QtTouchViewInterface::didChangeUrl(const QUrl& url)
 {
     emit m_pageView->urlChanged(url);
 }
 
-void TouchViewInterface::didChangeTitle(const QString& newTitle)
+void QtTouchViewInterface::didChangeTitle(const QString& newTitle)
 {
     emit m_pageView->titleChanged(newTitle);
 }
 
-void TouchViewInterface::didChangeToolTip(const QString&)
+void QtTouchViewInterface::didChangeToolTip(const QString&)
 {
     // There is not yet any UI defined for the tooltips for mobile so we ignore the change.
 }
 
-void TouchViewInterface::didChangeStatusText(const QString&)
+void QtTouchViewInterface::didChangeStatusText(const QString&)
 {
     // There is not yet any UI defined for status text so we ignore the call.
 }
 
-void TouchViewInterface::didChangeCursor(const QCursor&)
+void QtTouchViewInterface::didChangeCursor(const QCursor&)
 {
     // The cursor is not visible on mobile, just ignore this message.
 }
 
-void TouchViewInterface::loadDidBegin()
+void QtTouchViewInterface::loadDidBegin()
 {
     emit m_pageView->loadStarted();
 }
 
-void TouchViewInterface::loadDidCommit()
+void QtTouchViewInterface::loadDidCommit()
 {
     m_viewportView->d->loadDidCommit();
 }
 
-void TouchViewInterface::loadDidSucceed()
+void QtTouchViewInterface::loadDidSucceed()
 {
     emit m_pageView->loadSucceeded();
 }
 
-void TouchViewInterface::loadDidFail(const QWebError& error)
+void QtTouchViewInterface::loadDidFail(const QWebError& error)
 {
     emit m_pageView->loadFailed(static_cast<QTouchWebPage::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
-void TouchViewInterface::didChangeLoadProgress(int percentageLoaded)
+void QtTouchViewInterface::didChangeLoadProgress(int percentageLoaded)
 {
     emit m_pageView->loadProgressChanged(percentageLoaded);
 }
 
-void TouchViewInterface::showContextMenu(QSharedPointer<QMenu>)
+void QtTouchViewInterface::showContextMenu(QSharedPointer<QMenu>)
 {
     // FIXME
 }
 
-void TouchViewInterface::hideContextMenu()
+void QtTouchViewInterface::hideContextMenu()
 {
     // FIXME
 }
 
-void TouchViewInterface::runJavaScriptAlert(const QString&)
+void QtTouchViewInterface::runJavaScriptAlert(const QString&)
 {
     // FIXME.
 }
 
-bool TouchViewInterface::runJavaScriptConfirm(const QString&)
+bool QtTouchViewInterface::runJavaScriptConfirm(const QString&)
 {
     // FIXME.
     return true;
 }
 
-QString TouchViewInterface::runJavaScriptPrompt(const QString&, const QString& defaultValue, bool&)
+QString QtTouchViewInterface::runJavaScriptPrompt(const QString&, const QString& defaultValue, bool&)
 {
     // FIXME.
     return defaultValue;
 }
 
-void TouchViewInterface::processDidCrash()
+void QtTouchViewInterface::processDidCrash()
 {
     // FIXME
 }
 
-void TouchViewInterface::didRelaunchProcess()
+void QtTouchViewInterface::didRelaunchProcess()
 {
     // FIXME
 }
 
-QJSEngine* TouchViewInterface::engine()
+QJSEngine* QtTouchViewInterface::engine()
 {
     QSGView* view = qobject_cast<QSGView*>(m_pageView->canvas());
     if (view)

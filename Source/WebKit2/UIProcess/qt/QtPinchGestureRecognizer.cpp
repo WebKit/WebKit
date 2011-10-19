@@ -26,7 +26,7 @@
 #include "config.h"
 #include "QtPinchGestureRecognizer.h"
 
-#include "ViewportInteractionEngine.h"
+#include "QtViewportInteractionEngine.h"
 #include <QtCore/QLineF>
 
 namespace WebKit {
@@ -49,7 +49,7 @@ static inline QPointF computeTouchCenter(const QTouchEvent::TouchPoint& point1, 
     return (point1.pos() + point2.pos()) / 2.0f;
 }
 
-QtPinchGestureRecognizer::QtPinchGestureRecognizer(ViewportInteractionEngine* interactionEngine)
+QtPinchGestureRecognizer::QtPinchGestureRecognizer(QtViewportInteractionEngine* interactionEngine)
     : QtGestureRecognizer(interactionEngine)
 {
     reset();

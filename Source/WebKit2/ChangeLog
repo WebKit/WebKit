@@ -1,3 +1,199 @@
+2011-10-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Rename files and classes to follow conventions
+        https://bugs.webkit.org/show_bug.cgi?id=70391
+
+        Reviewed by Noam Rosenthal.
+
+        Rename the files and classes following the agreed conventions on
+        QtWebKit mailing list -- which are based on existing usage we have.
+
+        - Public API follow Qt conventions: qsomething.cpp qsomething.h with class named QSomething
+
+        - Private classes for public API classes follow Qt conventions:
+          qsomething_p.h qsomething_p.cpp (if needed), with class named QSomethingPrivate
+
+        - Subclasses and Qt-specific implementations of WebKit/WebCore classes use Qt suffix:
+          FrameLoaderClientQt.cpp
+
+        - Other classes created for using in our port use Qt prefix: QtFileDownloader, QtViewInterface
+
+        This is documented in https://trac.webkit.org/wiki/QtWebKitHacking
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::chooseFiles):
+        (toPolicyAction):
+        (QDesktopWebViewPrivate::navigationPolicyForURL):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::updatePaintNode):
+        (QTouchWebPagePrivate::setPage):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (toQtViewInterface):
+        (toQtPolicyInterface):
+        (qt_wk_runJavaScriptAlert):
+        (qt_wk_runJavaScriptConfirm):
+        (qt_wk_runJavaScriptPrompt):
+        (qt_wk_setStatusText):
+        (qt_wk_runOpenPanel):
+        (qt_wk_mouseDidMoveOverElement):
+        (qt_wk_decidePolicyForNavigationAction):
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp: Renamed from Source/WebKit2/UIProcess/qt/qdesktopwebpageproxy.cpp.
+        (dragOperationToDropAction):
+        (QtDesktopWebPageProxy::QtDesktopWebPageProxy):
+        (QtDesktopWebPageProxy::createDrawingAreaProxy):
+        (QtDesktopWebPageProxy::paintContent):
+        (QtDesktopWebPageProxy::setViewportArguments):
+        (QtDesktopWebPageProxy::doneWithTouchEvent):
+        (QtDesktopWebPageProxy::createPopupMenuProxy):
+        (QtDesktopWebPageProxy::handleEvent):
+        (QtDesktopWebPageProxy::handleMouseMoveEvent):
+        (QtDesktopWebPageProxy::handleMousePressEvent):
+        (QtDesktopWebPageProxy::handleMouseReleaseEvent):
+        (QtDesktopWebPageProxy::handleMouseDoubleClickEvent):
+        (QtDesktopWebPageProxy::handleWheelEvent):
+        (QtDesktopWebPageProxy::handleHoverLeaveEvent):
+        (QtDesktopWebPageProxy::handleHoverMoveEvent):
+        (QtDesktopWebPageProxy::handleDragEnterEvent):
+        (QtDesktopWebPageProxy::handleDragLeaveEvent):
+        (QtDesktopWebPageProxy::handleDragMoveEvent):
+        (QtDesktopWebPageProxy::handleDropEvent):
+        (QtDesktopWebPageProxy::timerEvent):
+        * UIProcess/qt/QtDesktopWebPageProxy.h: Renamed from Source/WebKit2/UIProcess/qt/qdesktopwebpageproxy.h.
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        (WebKit::QtGestureRecognizer::QtGestureRecognizer):
+        * UIProcess/qt/QtGestureRecognizer.h:
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::QtPanGestureRecognizer):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::QtPinchGestureRecognizer):
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        * UIProcess/qt/QtPolicyInterface.h: Renamed from Source/WebKit2/UIProcess/qt/PolicyInterface.h.
+        * UIProcess/qt/QtSGTileNode.cpp: Renamed from Source/WebKit2/UIProcess/qt/SGTileNode.cpp.
+        (WebKit::QtSGTileNode::QtSGTileNode):
+        (WebKit::QtSGTileNode::setBackBuffer):
+        (WebKit::QtSGTileNode::swapBuffersIfNeeded):
+        * UIProcess/qt/QtSGTileNode.h: Renamed from Source/WebKit2/UIProcess/qt/SGTileNode.h.
+        * UIProcess/qt/QtSGUpdateQueue.cpp: Renamed from Source/WebKit2/UIProcess/qt/SGUpdateQueue.cpp.
+        (WebKit::NodeUpdateCreateTile::NodeUpdateCreateTile):
+        (WebKit::NodeUpdateRemoveTile::NodeUpdateRemoveTile):
+        (WebKit::NodeUpdateSetBackBuffer::NodeUpdateSetBackBuffer):
+        (WebKit::NodeUpdateSwapTileBuffers::NodeUpdateSwapTileBuffers):
+        (WebKit::QtSGUpdateQueue::QtSGUpdateQueue):
+        (WebKit::QtSGUpdateQueue::createTileNode):
+        (WebKit::QtSGUpdateQueue::removeTileNode):
+        (WebKit::QtSGUpdateQueue::setNodeBackBuffer):
+        (WebKit::QtSGUpdateQueue::swapTileBuffers):
+        (WebKit::QtSGUpdateQueue::applyUpdates):
+        (WebKit::QtSGUpdateQueue::getScaleNode):
+        * UIProcess/qt/QtSGUpdateQueue.h: Renamed from Source/WebKit2/UIProcess/qt/SGUpdateQueue.h.
+        (WebKit::QtSGUpdateQueue::isSwapPending):
+        (WebKit::NodeUpdate::NodeUpdate):
+        (WebKit::NodeUpdate::~NodeUpdate):
+        * UIProcess/qt/QtTouchViewInterface.cpp: Renamed from Source/WebKit2/UIProcess/qt/TouchViewInterface.cpp.
+        (WebKit::QtTouchViewInterface::QtTouchViewInterface):
+        (WebKit::QtTouchViewInterface::didFindZoomableArea):
+        (WebKit::QtTouchViewInterface::sceneGraphUpdateQueue):
+        (WebKit::QtTouchViewInterface::setViewNeedsDisplay):
+        (WebKit::QtTouchViewInterface::drawingAreaSize):
+        (WebKit::QtTouchViewInterface::contentSizeChanged):
+        (WebKit::QtTouchViewInterface::isActive):
+        (WebKit::QtTouchViewInterface::hasFocus):
+        (WebKit::QtTouchViewInterface::isVisible):
+        (WebKit::QtTouchViewInterface::startDrag):
+        (WebKit::QtTouchViewInterface::didReceiveViewportArguments):
+        (WebKit::QtTouchViewInterface::didChangeUrl):
+        (WebKit::QtTouchViewInterface::didChangeTitle):
+        (WebKit::QtTouchViewInterface::didChangeToolTip):
+        (WebKit::QtTouchViewInterface::didChangeStatusText):
+        (WebKit::QtTouchViewInterface::didChangeCursor):
+        (WebKit::QtTouchViewInterface::loadDidBegin):
+        (WebKit::QtTouchViewInterface::loadDidCommit):
+        (WebKit::QtTouchViewInterface::loadDidSucceed):
+        (WebKit::QtTouchViewInterface::loadDidFail):
+        (WebKit::QtTouchViewInterface::didChangeLoadProgress):
+        (WebKit::QtTouchViewInterface::showContextMenu):
+        (WebKit::QtTouchViewInterface::hideContextMenu):
+        (WebKit::QtTouchViewInterface::runJavaScriptAlert):
+        (WebKit::QtTouchViewInterface::runJavaScriptConfirm):
+        (WebKit::QtTouchViewInterface::runJavaScriptPrompt):
+        (WebKit::QtTouchViewInterface::processDidCrash):
+        (WebKit::QtTouchViewInterface::didRelaunchProcess):
+        (WebKit::QtTouchViewInterface::engine):
+        * UIProcess/qt/QtTouchViewInterface.h: Renamed from Source/WebKit2/UIProcess/qt/TouchViewInterface.h.
+        (WebKit::QtTouchViewInterface::chooseFiles):
+        (WebKit::QtTouchViewInterface::didMouseMoveOverElement):
+        * UIProcess/qt/QtTouchWebPageProxy.cpp: Renamed from Source/WebKit2/UIProcess/qt/qtouchwebpageproxy.cpp.
+        (QtTouchWebPageProxy::QtTouchWebPageProxy):
+        (QtTouchWebPageProxy::createDrawingAreaProxy):
+        (QtTouchWebPageProxy::processDidCrash):
+        (QtTouchWebPageProxy::paintContent):
+        (QtTouchWebPageProxy::doneWithTouchEvent):
+        (QtTouchWebPageProxy::handleEvent):
+        (QtTouchWebPageProxy::setVisibleContentRectAndScale):
+        (QtTouchWebPageProxy::setVisibleContentRectTrajectoryVector):
+        (QtTouchWebPageProxy::setResizesToContentsUsingLayoutSize):
+        (QtTouchWebPageProxy::touchEvent):
+        (QtTouchWebPageProxy::findZoomableAreaForPoint):
+        (QtTouchWebPageProxy::renderNextFrame):
+        * UIProcess/qt/QtTouchWebPageProxy.h: Renamed from Source/WebKit2/UIProcess/qt/qtouchwebpageproxy.h.
+        (QtTouchWebPageProxy::touchViewInterface):
+        (QtTouchWebPageProxy::drawingArea):
+        * UIProcess/qt/QtViewInterface.h: Renamed from Source/WebKit2/UIProcess/qt/ViewInterface.h.
+        * UIProcess/qt/QtViewportInteractionEngine.cpp: Renamed from Source/WebKit2/UIProcess/qt/ViewportInteractionEngine.cpp.
+        (WebKit::visibleRectInContentCoordinate):
+        (WebKit::contentRectInViewportCoordinate):
+        (WebKit::ViewportUpdateGuard::ViewportUpdateGuard):
+        (WebKit::ViewportUpdateGuard::~ViewportUpdateGuard):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::~QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::setConstraints):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::contentViewportChanged):
+        (WebKit::QtViewportInteractionEngine::updateContentIfNeeded):
+        (WebKit::QtViewportInteractionEngine::updateContentScaleIfNeeded):
+        (WebKit::QtViewportInteractionEngine::updateContentPositionIfNeeded):
+        (WebKit::QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h: Renamed from Source/WebKit2/UIProcess/qt/ViewportInteractionEngine.h.
+        (WebKit::QtViewportInteractionEngine::Constraints::Constraints):
+        (WebKit::operator==):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::registerEditCommand):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/QtWebUndoCommand.cpp: Renamed from Source/WebKit2/UIProcess/qt/WebUndoCommandQt.cpp.
+        (QtWebUndoCommand::QtWebUndoCommand):
+        (QtWebUndoCommand::~QtWebUndoCommand):
+        (QtWebUndoCommand::redo):
+        (QtWebUndoCommand::undo):
+        * UIProcess/qt/QtWebUndoCommand.h: Renamed from Source/WebKit2/UIProcess/qt/WebUndoCommandQt.h.
+        (QtWebUndoCommand::inUndoRedo):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::updateWebView):
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::WebContextMenuProxyQt):
+        (WebKit::WebContextMenuProxyQt::create):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+        * WebKit2.pro:
+
 2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL][WK2] Added missing dummy interpretKeyEvent function

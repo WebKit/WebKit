@@ -28,12 +28,12 @@
 #include <QSharedPointer>
 
 class QTouchWebPagePrivate;
-class QTouchWebPageProxy;
+class QtTouchWebPageProxy;
 class QWebNavigationController;
 class QWebPreferences;
 
 namespace WebKit {
-    class TouchViewInterface;
+class QtTouchViewInterface;
 }
 
 class QWEBKIT_EXPORT QTouchWebPage : public QSGItem {
@@ -91,7 +91,7 @@ protected:
 private:
     QTouchWebPagePrivate* d;
     friend class QTouchWebViewPrivate;
-    friend class WebKit::TouchViewInterface;
+    friend class WebKit::QtTouchViewInterface;
 };
 
 #endif /* qtouchwebpage_h */

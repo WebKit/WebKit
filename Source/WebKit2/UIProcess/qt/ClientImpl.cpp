@@ -26,9 +26,9 @@
 #include "WKURLQt.h"
 #include "qweberror.h"
 #include "qweberror_p.h"
-#include <PolicyInterface.h>
+#include <QtPolicyInterface.h>
+#include <QtViewInterface.h>
 #include <QtWebPageProxy.h>
-#include <ViewInterface.h>
 #include <WKArray.h>
 #include <WKFrame.h>
 #include <WKFramePolicyListener.h>
@@ -47,16 +47,16 @@ static QtWebPageProxy* toQtWebPageProxy(const void* clientInfo)
     return 0;
 }
 
-static inline ViewInterface* toViewInterface(const void* clientInfo)
+static inline QtViewInterface* toQtViewInterface(const void* clientInfo)
 {
     ASSERT(clientInfo);
-    return reinterpret_cast<ViewInterface*>(const_cast<void*>(clientInfo));
+    return reinterpret_cast<QtViewInterface*>(const_cast<void*>(clientInfo));
 }
 
-static inline PolicyInterface* toPolicyInterface(const void* clientInfo)
+static inline QtPolicyInterface* toQtPolicyInterface(const void* clientInfo)
 {
     ASSERT(clientInfo);
-    return reinterpret_cast<PolicyInterface*>(const_cast<void*>(clientInfo));
+    return reinterpret_cast<QtPolicyInterface*>(const_cast<void*>(clientInfo));
 }
 
 static void dispatchLoadSucceeded(WKFrameRef frame, const void* clientInfo)
@@ -153,13 +153,13 @@ void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     QString qAlertText = WKStringCopyQString(alertText);
-    toViewInterface(clientInfo)->runJavaScriptAlert(qAlertText);
+    toQtViewInterface(clientInfo)->runJavaScriptAlert(qAlertText);
 }
 
 bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
     QString qMessage = WKStringCopyQString(message);
-    return toViewInterface(clientInfo)->runJavaScriptConfirm(qMessage);
+    return toQtViewInterface(clientInfo)->runJavaScriptConfirm(qMessage);
 }
 
 static inline WKStringRef createNullWKString()
@@ -173,7 +173,7 @@ WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRe
     QString qMessage = WKStringCopyQString(message);
     QString qDefaultValue = WKStringCopyQString(defaultValue);
     bool ok = false;
-    QString result = toViewInterface(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
+    QString result = toQtViewInterface(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
     if (!ok)
         return createNullWKString();
     return WKStringCreateWithQString(result);
@@ -182,7 +182,7 @@ WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRe
 void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
-    toViewInterface(clientInfo)->didChangeStatusText(qText);
+    toQtViewInterface(clientInfo)->didChangeStatusText(qText);
 }
 
 void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
@@ -194,15 +194,15 @@ void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef paramete
         for (unsigned i = 0; wkSelectedFileNames.size(); ++i)
             selectedFileNames += wkSelectedFileNames.at(i);
 
-    ViewInterface::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? ViewInterface::MultipleFilesSelection : ViewInterface::SingleFileSelection;
-    toViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
+    QtViewInterface::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? QtViewInterface::MultipleFilesSelection : QtViewInterface::SingleFileSelection;
+    toQtViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
 }
 
 void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
 {
     const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
     const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
-    toViewInterface(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
+    toQtViewInterface(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)
@@ -234,20 +234,20 @@ static Qt::KeyboardModifiers toQtKeyboardModifiers(WKEventModifiers modifiers)
 
 void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
-    PolicyInterface* policyInterface = toPolicyInterface(clientInfo);
+    QtPolicyInterface* policyInterface = toQtPolicyInterface(clientInfo);
     WKURLRef requestURL = WKURLRequestCopyURL(request);
     QUrl qUrl = WKURLCopyQUrl(requestURL);
     WKRelease(requestURL);
 
-    PolicyInterface::PolicyAction action = policyInterface->navigationPolicyForURL(qUrl, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers));
+    QtPolicyInterface::PolicyAction action = policyInterface->navigationPolicyForURL(qUrl, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers));
     switch (action) {
-    case PolicyInterface::Use:
+    case QtPolicyInterface::Use:
         WKFramePolicyListenerUse(listener);
         break;
-    case PolicyInterface::Download:
+    case QtPolicyInterface::Download:
         WKFramePolicyListenerDownload(listener);
         break;
-    case PolicyInterface::Ignore:
+    case QtPolicyInterface::Ignore:
         WKFramePolicyListenerIgnore(listener);
         break;
     }

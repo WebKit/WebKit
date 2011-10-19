@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef TouchViewInterface_h
-#define TouchViewInterface_h
+#ifndef QtTouchViewInterface_h
+#define QtTouchViewInterface_h
 
-#include "ViewInterface.h"
+#include "QtViewInterface.h"
 
 class QPointF;
 class QTouchWebPage;
@@ -33,17 +33,16 @@ class ViewportArguments;
 
 namespace WebKit {
 
-class SGUpdateQueue;
+class QtSGUpdateQueue;
 
-class TouchViewInterface : public ViewInterface
-{
+class QtTouchViewInterface : public QtViewInterface {
 public:
-    TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView);
+    QtTouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView);
 
-    SGUpdateQueue* sceneGraphUpdateQueue() const;
+    QtSGUpdateQueue* sceneGraphUpdateQueue() const;
 
 private:
-    /* Implementation of ViewInterface */
+    // Implementation of QtViewInterface.
     virtual void setViewNeedsDisplay(const QRect&);
 
     virtual QSize drawingAreaSize();
@@ -53,7 +52,7 @@ private:
     virtual bool hasFocus();
     virtual bool isVisible();
 
-    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction);
+    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*);
     virtual void didReceiveViewportArguments(const WebCore::ViewportArguments&);
 
     virtual void didFindZoomableArea(const QPoint&, const QRect&);
@@ -92,4 +91,4 @@ private:
 
 }
 
-#endif /* TouchViewInterface_h */
+#endif // QtTouchViewInterface

@@ -18,28 +18,27 @@
  *
  */
 
-#ifndef qtouchwebpageproxy_h
-#define qtouchwebpageproxy_h
+#ifndef QtTouchWebPageProxy_h
+#define QtTouchWebPageProxy_h
 
 
 #include "DrawingAreaProxy.h"
 #include "QtPanGestureRecognizer.h"
 #include "QtPinchGestureRecognizer.h"
+#include "QtTouchViewInterface.h"
 #include "QtWebPageProxy.h"
 #include "TiledDrawingAreaProxy.h"
-#include "TouchViewInterface.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
-class ViewportInteractionEngine;
+class QtViewportInteractionEngine;
 }
 
 using namespace WebKit;
 
-class QTouchWebPageProxy : public QtWebPageProxy
-{
+class QtTouchWebPageProxy : public QtWebPageProxy {
 public:
-    QTouchWebPageProxy(TouchViewInterface*, ViewportInteractionEngine*);
+    QtTouchWebPageProxy(QtTouchViewInterface*, QtViewportInteractionEngine*);
 
     virtual bool handleEvent(QEvent*);
 
@@ -50,7 +49,7 @@ public:
     void renderNextFrame();
 
 protected:
-    virtual void paintContent(QPainter* painter, const QRect& area);
+    virtual void paintContent(QPainter*, const QRect& area);
 
 private:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -59,7 +58,7 @@ private:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
-    TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
+    QtTouchViewInterface* touchViewInterface() const { return static_cast<QtTouchViewInterface*>(m_viewInterface); }
     TiledDrawingAreaProxy* drawingArea() const { return static_cast<WebKit::TiledDrawingAreaProxy*>(m_webPageProxy->drawingArea()); }
 
     void touchEvent(QTouchEvent*);
@@ -68,4 +67,4 @@ private:
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
 };
 
-#endif /* qtouchwebpageproxy_h */
+#endif // QtTouchWebPageProxy_h

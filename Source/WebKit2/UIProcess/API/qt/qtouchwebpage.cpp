@@ -20,9 +20,9 @@
 
 #include "config.h"
 #include "qtouchwebpage.h"
-#include "qtouchwebpage_p.h"
 
-#include "qtouchwebpageproxy.h"
+#include "QtTouchWebPageProxy.h"
+#include "qtouchwebpage_p.h"
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -73,7 +73,7 @@ QSGNode* QTouchWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!oldNode)
         oldNode = new QSGNode;
 
-    // A swap is on the queue, and SGUpdateQueue::applyUpdates will empty the queue, so we know that
+    // A swap is on the queue, and QtSGUpdateQueue::applyUpdates will empty the queue, so we know that
     // the old frame's buffers won't be used anymore (for buffers used all the way from the web process
     // to the graphic card). Notify the web process that it can render the next frame.
     if (d->sgUpdateQueue.isSwapPending())
@@ -154,7 +154,7 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
 {
 }
 
-void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
+void QTouchWebPagePrivate::setPage(QtTouchWebPageProxy* page)
 {
     ASSERT(!this->page);
     ASSERT(page);
