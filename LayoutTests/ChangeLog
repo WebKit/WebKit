@@ -1,3 +1,31 @@
+2011-10-19  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: rebaseline remaining diffs for Chromium-Skia on
+        SnowLeopard.
+
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/chromium-gpu-mac/compositing/plugins/composited-plugin-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-mac/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/plugins: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/plugins/webplugin-alpha-expected.png: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/plugins/webplugin-alpha-expected.txt: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/plugins/webplugin-reflection-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-and-undo-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-leading-expansion-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-leading-expansion-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+
 2011-10-19  Renata Hodovan  <reni@webkit.org>
 
         Unreviewed, rebaseline SVG related tests after r97863.
