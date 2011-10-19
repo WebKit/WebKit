@@ -189,6 +189,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "90px", sort: "descending", sortable: true }
     };
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
+    this._filterProfileIndex = -1;
 }
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
@@ -208,19 +209,64 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        this.populateChildren();
+        if (this._filterProfileIndex === -1)
+            this.populateChildren();
     },
 
     populateChildren: function()
     {
-        function aggregatesReceived(aggregates)
+        function aggregatesReceived(key, aggregates)
         {
             for (var constructor in aggregates)
-                this.appendChild(new WebInspector.HeapSnapshotConstructorNode(this, constructor, aggregates[constructor]));
+                this.appendChild(new WebInspector.HeapSnapshotConstructorNode(this, constructor, aggregates[constructor], key));
             this.sortingChanged();
         }
-        this.snapshot.aggregates(false, aggregatesReceived.bind(this));
-    }
+
+        if (this._filterProfileIndex === -1) {
+            this.snapshot.aggregates(false, "allObjects", null, aggregatesReceived.bind(this, "allObjects"));
+            return;
+        }
+
+        this.dispose();
+        this.removeChildren();
+        this.resetSortingCache();
+
+        var key = this._minNodeId + ".." + this._maxNodeId;
+        var filter = "function(node) { var id = node.id; return id > " + this._minNodeId + " && id <= " + this._maxNodeId + "; }";
+        this.snapshot.aggregates(false, key, filter, aggregatesReceived.bind(this, key));
+    },
+
+    _filterSelectIndexChanged: function(loader, profileIndex)
+    {
+        this._filterProfileIndex = profileIndex;
+
+        delete this._maxNodeId;
+        delete this._minNodeId;
+
+        if (this._filterProfileIndex === -1) {
+            this.populateChildren();
+            return;
+        }
+
+        function firstSnapshotLoaded(snapshot)
+        {
+            this._maxNodeId = snapshot.maxNodeId;
+            if (profileIndex > 0)
+                loader(profileIndex - 1, secondSnapshotLoaded.bind(this));
+            else {
+                this._minNodeId = 0;
+                this.populateChildren();
+            }
+        }
+
+        function secondSnapshotLoaded(snapshot)
+        {
+            this._minNodeId = snapshot.maxNodeId;
+            this.populateChildren();
+        }
+
+        loader(profileIndex, firstSnapshotLoaded.bind(this));
+    },
 };
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
@@ -260,6 +306,11 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
+    },
+
+    _baseProfileIndexChanged: function(loader, profileIndex)
+    {
+        loader(profileIndex, this.setBaseDataSource.bind(this));
     },
 
     setBaseDataSource: function(baseSnapshot)
@@ -302,9 +353,9 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
                     node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
                 }
             }
-            this.snapshot.aggregates(true, aggregatesReceived.bind(this));
+            this.snapshot.aggregates(true, "allObjects", null, aggregatesReceived.bind(this));
         }
-        this.baseSnapshot.aggregates(true, baseAggregatesReceived.bind(this));
+        this.baseSnapshot.aggregates(true, "allObjects", null, baseAggregatesReceived.bind(this));
     }
 };
 
@@ -519,6 +570,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
 
     this.parent = parent;
     this.parent.addEventListener("profile added", this._updateBaseOptions, this);
+    this.parent.addEventListener("profile added", this._updateFilterOptions, this);
 
     this.showCountAsPercent = false;
     this.showShallowSizeAsPercent = false;
@@ -616,6 +668,11 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.baseSelectElement.addEventListener("change", this._changeBase.bind(this), false);
     this._updateBaseOptions();
 
+    this.filterSelectElement = document.createElement("select");
+    this.filterSelectElement.className = "status-bar-item";
+    this.filterSelectElement.addEventListener("change", this._changeFilter.bind(this), false);
+    this._updateFilterOptions();
+
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item status-bar-item");
     this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
@@ -629,11 +686,13 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     {
         var list = this._profiles();
         var profileIndex;
-        for (var i = 0; i < list.length; ++i)
+        for (var i = 0; i < list.length; ++i) {
             if (list[i].uid === this._profileUid) {
                 profileIndex = i;
                 break;
             }
+        }
+
         if (profileIndex > 0)
             this.baseSelectElement.selectedIndex = profileIndex - 1;
         else
@@ -658,7 +717,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get statusBarItems()
     {
-        return [this.viewSelectElement, this.baseSelectElement, this.percentButton.element, this.helpButton.element];
+        return [this.viewSelectElement, this.baseSelectElement, this.filterSelectElement, this.percentButton.element, this.helpButton.element];
     },
 
     get profile()
@@ -865,14 +924,22 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
 
         this._baseProfileUid = this._profiles()[this.baseSelectElement.selectedIndex].uid;
-        this._loadProfile(this._baseProfileUid, baseProfileLoaded.bind(this));
+        this.dataGrid._baseProfileIndexChanged(this._loadProfileByIndex.bind(this), this.baseSelectElement.selectedIndex);
 
-        function baseProfileLoaded()
-        {
-            delete this._baseProfileWrapper;
-            this.baseProfile._lastShown = Date.now();
-            this.diffDataGrid.setBaseDataSource(this.baseProfileWrapper);
-        }
+        if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
+            return;
+
+        // The current search needs to be performed again. First negate out previous match
+        // count by calling the search finished callback with a negative number of matches.
+        // Then perform the search again with the same query and callback.
+        this._searchFinishedCallback(this, -this._searchResults.length);
+        this.performSearch(this.currentQuery, this._searchFinishedCallback);
+    },
+
+    _changeFilter: function()
+    {
+        var profileIndex = this.filterSelectElement.selectedIndex - 1;
+        this.dataGrid._filterSelectIndexChanged(this._loadProfileByIndex.bind(this), profileIndex);
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
@@ -891,6 +958,12 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     _loadProfile: function(profileUid, callback)
     {
+        WebInspector.panels.profiles.loadHeapSnapshot(profileUid, callback);
+    },
+
+    _loadProfileByIndex: function(profileIndex, callback)
+    {
+        var profileUid = this._profiles()[profileIndex].uid;
         WebInspector.panels.profiles.loadHeapSnapshot(profileUid, callback);
     },
 
@@ -1003,17 +1076,23 @@ WebInspector.DetailedHeapshotView.prototype = {
         this.currentView.show();
         this.refreshVisibleData();
         this.dataGrid.updateWidths();
+
         if (this.currentView === this.diffView) {
             this.baseSelectElement.removeStyleClass("hidden");
             if (!this.dataGrid.snapshotView) {
-                this.dataGrid.setDataSource(this, this.profileWrapper);
                 this._changeBase();
+                this.dataGrid.setDataSource(this, this.profileWrapper);
             }
         } else {
             this.baseSelectElement.addStyleClass("hidden");
             if (!this.dataGrid.snapshotView)
                 this.dataGrid.setDataSource(this, this.profileWrapper);
         }
+
+        if (this.currentView === this.constructorsView)
+            this.filterSelectElement.removeStyleClass("hidden");
+        else
+            this.filterSelectElement.addStyleClass("hidden");
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
@@ -1181,6 +1260,33 @@ WebInspector.DetailedHeapshotView.prototype = {
                 title = WebInspector.UIString("Snapshot %d", title.substring(UserInitiatedProfileName.length + 1));
             baseOption.label = title;
             this.baseSelectElement.appendChild(baseOption);
+        }
+    },
+
+    _updateFilterOptions: function()
+    {
+        var list = this._profiles();
+        // We're assuming that snapshots can only be added.
+        if (this.filterSelectElement.length - 1 === list.length)
+            return;
+
+        if (!this.filterSelectElement.length) {
+            var filterOption = document.createElement("option");
+            filterOption.label = WebInspector.UIString("All objects");
+            this.filterSelectElement.appendChild(filterOption);
+        }
+
+        for (var i = this.filterSelectElement.length - 1, n = list.length; i < n; ++i) {
+            var filterOption = document.createElement("option");
+            var title = list[i].title;
+            if (!title.indexOf(UserInitiatedProfileName)) {
+                if (!i)
+                    title = WebInspector.UIString("Objects allocated before Snapshot %d", title.substring(UserInitiatedProfileName.length + 1));
+                else
+                    title = WebInspector.UIString("Objects allocated between Snapshots %d and %d", title.substring(UserInitiatedProfileName.length + 1) - 1, title.substring(UserInitiatedProfileName.length + 1));
+            }
+            filterOption.label = title;
+            this.filterSelectElement.appendChild(filterOption);
         }
     },
 

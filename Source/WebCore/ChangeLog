@@ -1,3 +1,54 @@
+2011-10-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: [Chromium] Add an ability to show the objects that were allocated between snapshot N-2 and snapshot N-1 and still alive in snapshot N.
+        https://bugs.webkit.org/show_bug.cgi?id=61178
+
+        This ability will help us to see only the leaked objects.
+        Scenario:
+        1) do an action on inspected page which leaks javascript data;
+        2) make snapshot;
+        3) repeat first two steps three or more times;
+        4) select the last snapshot and select the filter 'Objects allocated between Snapshot 1 and Snapshot2' instead of 'All objects'.
+        The view shows the object that were allocated between snapshot N-2 and snapshot N-1 and still alive in snapshot N
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotConstructorNode):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotConstructorsDataGrid):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype.setDataSource):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype.populateChildren):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._filterSelectIndexChanged.firstSnapshotLoaded):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._filterSelectIndexChanged.secondSnapshotLoaded):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._filterSelectIndexChanged):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype._baseProfileIndexChanged):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren):
+        (WebInspector.DetailedHeapshotView.profileCallback):
+        (WebInspector.DetailedHeapshotView):
+        (WebInspector.DetailedHeapshotView.prototype.get statusBarItems):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase):
+        (WebInspector.DetailedHeapshotView.prototype._changeFilter):
+        (WebInspector.DetailedHeapshotView.prototype._loadProfileByIndex):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        (WebInspector.DetailedHeapshotView.prototype._updateFilterOptions):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype.get maxNodeId):
+        (WebInspector.HeapSnapshot.prototype.aggregates):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._sortAggregateIndexes):
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForClass):
+        (WebInspector.HeapSnapshot.prototype.updateStaticData):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotWorker):
+        (WebInspector.HeapSnapshotProxy.prototype.aggregates):
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProviderForClass):
+        (WebInspector.HeapSnapshotProxy.prototype.get maxNodeId):
+        (WebInspector.HeapSnapshotProxy.prototype.startLoading):
+
 2011-10-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Strip trailing whitespace in the WebCore/css C++ code.

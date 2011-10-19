@@ -712,7 +712,7 @@ WebInspector.HeapSnapshot.prototype = {
         delete this._nodeIndex;
         if (this._aggregates) {
             delete this._aggregates;
-            this._aggregatesIndexesSorted = false;
+            delete this._aggregatesSortedFlags;
         }
         delete this._baseNodeIds;
         delete this._dominatedNodes;
@@ -752,6 +752,19 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex);
     },
 
+    get maxNodeId()
+    {
+        if (typeof this._maxNodeId === "number")
+            return this._maxNodeId;
+        this._maxNodeId = 0;
+        for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
+            var id = iter.node.id;
+            if ((id % 2) && id > this._maxNodeId)
+                this._maxNodeId = id;
+        }
+        return this._maxNodeId;
+    },
+
     get rootNodeIndex()
     {
         return this._rootNodeIndex;
@@ -789,13 +802,35 @@ WebInspector.HeapSnapshot.prototype = {
         return this._flags[node.nodeIndex];
     },
 
-    aggregates: function(sortedIndexes)
+    aggregates: function(sortedIndexes, key, filterString)
     {
-        if (!this._aggregates)
-            this._buildAggregates();
-        if (sortedIndexes && !this._aggregatesIndexesSorted)
-            this._sortAggregateIndexes();
-        return this._aggregates;
+        if (!this._aggregates) {
+            this._aggregates = {};
+            this._aggregatesSortedFlags = {};
+        }
+
+        var aggregates = this._aggregates[key];
+        if (aggregates) {
+            if (sortedIndexes && !this._aggregatesSortedFlags[key]) {
+                this._sortAggregateIndexes(aggregates);
+                this._aggregatesSortedFlags[key] = sortedIndexes;
+            }
+            return aggregates;
+        }
+
+        var filter;
+        if (filterString)
+            filter = this._parseFilter(filterString);
+
+        aggregates = this._buildAggregates(filter);
+
+        if (sortedIndexes)
+            this._sortAggregateIndexes(aggregates);
+
+        this._aggregatesSortedFlags[key] = sortedIndexes;
+        this._aggregates[key] = aggregates;
+
+        return aggregates;
     },
 
     _buildReverseIndex: function(indexArrayName, backRefsArrayName, indexCallback, dataCallback)
@@ -853,18 +888,20 @@ WebInspector.HeapSnapshot.prototype = {
              }).bind(this));
     },
 
-    _buildAggregates: function()
+    _buildAggregates: function(filter)
     {
-        this._aggregates = {};
+        var aggregates = {};
         for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
             var node = iter.node;
+            if (filter && !filter(node))
+                continue;
             if (node.type !== "native" && node.selfSize === 0)
                 continue;
             var nameMatters = node.type === "object" || node.type === "native";
             var className = node.className;
-            if (!this._aggregates.hasOwnProperty(className))
-                this._aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
-            var clss = this._aggregates[className];
+            if (!aggregates.hasOwnProperty(className))
+                aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
+            var clss = aggregates[className];
             ++clss.count;
             clss.self += node.selfSize;
             if (node.retainedSize > clss.maxRet)
@@ -872,23 +909,22 @@ WebInspector.HeapSnapshot.prototype = {
             clss.idxs.push(node.nodeIndex);
         }
         // Shave off provisionally allocated space.
-        for (var className in this._aggregates)
-            this._aggregates[className].idxs = this._aggregates[className].idxs.slice(0);
+        for (var className in aggregates)
+            aggregates[className].idxs = aggregates[className].idxs.slice(0);
+        return aggregates;
     },
 
-    _sortAggregateIndexes: function()
+    _sortAggregateIndexes: function(aggregates)
     {
         var nodeA = new WebInspector.HeapSnapshotNode(this);
         var nodeB = new WebInspector.HeapSnapshotNode(this);
-        for (var clss in this._aggregates)
-            this._aggregates[clss].idxs.sort(
+        for (var clss in aggregates)
+            aggregates[clss].idxs.sort(
                 function(idxA, idxB) {
                     nodeA.nodeIndex = idxA;
                     nodeB.nodeIndex = idxB;
                     return nodeA.id < nodeB.id ? -1 : 1;
                 });
-
-        this._aggregatesIndexesSorted = true;
     },
 
     _buildNodeIndex: function()
@@ -1048,9 +1084,9 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter));
     },
 
-    createNodesProviderForClass: function(className)
+    createNodesProviderForClass: function(className, aggregatesKey)
     {
-        return new WebInspector.HeapSnapshotNodesProvider(this, null, this.aggregates(false)[className].idxs);
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, this.aggregates(aggregatesKey)[className].idxs);
     },
 
     createNodesProviderForDominator: function(nodeIndex, filter)
@@ -1066,7 +1102,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     updateStaticData: function()
     {
-        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid, nodeFlags: this._nodeFlags};
+        return {nodeCount: this.nodeCount, rootNodeIndex: this._rootNodeIndex, totalSize: this.totalSize, uid: this.uid, nodeFlags: this._nodeFlags, maxNodeId: this.maxNodeId};
     }
 };
 
