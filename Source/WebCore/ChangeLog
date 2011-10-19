@@ -1,3 +1,15 @@
+2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Added missing dummy platformDescription function
+        https://bugs.webkit.org/show_bug.cgi?id=70310
+
+        Reviewed by Ryosuke Niwa.
+
+        Added dummy platformDescription function needed to compile WK2.
+
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::platformDescription):
+
 2011-10-18  Kentaro Hara  <haraken@chromium.org>
 
         Generate a SharedWorker constructor of V8 using [Constructor] IDL

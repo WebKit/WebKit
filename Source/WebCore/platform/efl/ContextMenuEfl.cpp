@@ -23,6 +23,7 @@
 #include "ContextMenu.h"
 
 #include "NotImplemented.h"
+#include "PlatformMenuDescription.h"
 
 namespace WebCore {
 
@@ -51,6 +52,12 @@ void* ContextMenu::nativeMenu() const
 ContextMenu::ContextMenu()
 {
     notImplemented();
+}
+
+PlatformMenuDescription ContextMenu::platformDescription() const
+{
+    notImplemented();
+    return 0;
 }
 #endif
 
