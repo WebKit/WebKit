@@ -99,8 +99,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
             }
         } else if (this.source === WebInspector.ConsoleMessage.MessageSource.Network) {
             if (this._request) {
+                this._stackTrace = this._request.stackTrace;
                 if (this.level === WebInspector.ConsoleMessage.MessageLevel.Error) {
-                    this._stackTrace = this._request.stackTrace;
                     messageText = document.createElement("span");
                     messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
                     var anchor = WebInspector.linkifyURLAsNode(this._request.url);
@@ -152,7 +152,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         this._formattedMessage.appendChild(messageText);
 
-        var dumpStackTrace = !!this._stackTrace && (this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
+        var dumpStackTrace = !!this._stackTrace && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
         if (dumpStackTrace) {
             var ol = document.createElement("ol");
             ol.className = "outline-disclosure";
