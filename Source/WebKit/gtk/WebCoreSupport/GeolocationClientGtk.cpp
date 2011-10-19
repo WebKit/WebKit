@@ -21,6 +21,8 @@
 #include "config.h"
 #include "GeolocationClientGtk.h"
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+
 #include "Chrome.h"
 #include "Geolocation.h"
 #include "GeolocationController.h"
@@ -174,3 +176,5 @@ void GeolocationClient::errorOccured(const char* message)
 }
 
 }
+
+#endif // ENABLE(CLIENT_BASED_GEOLOCATION)

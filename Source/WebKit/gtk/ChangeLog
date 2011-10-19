@@ -1,3 +1,19 @@
+2011-10-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk][Geolocation] Build guards missing in geolocation clients
+        https://bugs.webkit.org/show_bug.cgi?id=70420
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Adds build guards that were forgotten when client-based
+        geolocation was introduced in r97746. This should make builds
+        without geolocation support succeed again.
+
+        * WebCoreSupport/GeolocationClientGtk.cpp:
+        * WebCoreSupport/GeolocationClientGtk.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2011-10-18  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Support for client-based geolocation

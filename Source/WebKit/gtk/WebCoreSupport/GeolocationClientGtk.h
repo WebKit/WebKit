@@ -21,6 +21,8 @@
 #ifndef GeolocationClientGtk_h
 #define GeolocationClientGtk_h
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+
 #include "GRefPtr.h"
 #include "GeolocationClient.h"
 #include "GeolocationPosition.h"
@@ -74,5 +76,7 @@ private:
     bool m_isUpdating;
 };
 } // namespace WebKit
+
+#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #endif // GeolocationClientGtk_h

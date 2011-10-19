@@ -3317,15 +3317,19 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.deviceOrientationClient = static_cast<WebCore::DeviceOrientationClient*>(new DeviceOrientationClientGtk);
 #endif
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
         pageClients.geolocationClient = new GeolocationClientMock;
     else
         pageClients.geolocationClient = new WebKit::GeolocationClient(webView);
+#endif
 
     priv->corePage = new Page(pageClients);
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
         static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(priv->corePage->geolocationController());
+#endif
 
     // Pages within a same session need to be linked together otherwise some functionalities such
     // as visited link coloration (across pages) and changing popup window location will not work.
