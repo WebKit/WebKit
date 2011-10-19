@@ -1,3 +1,21 @@
+2011-10-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r97850.
+        http://trac.webkit.org/changeset/97850
+        https://bugs.webkit.org/show_bug.cgi?id=70334
+
+        tests are crashing on xp debug
+
+        * http/tests/inspector/extensions-headers.html:
+        * http/tests/inspector/resources/extension-main.js:
+        ():
+        * inspector/extensions/extensions-audits.html:
+        * inspector/extensions/extensions-console.html:
+        * inspector/extensions/extensions-resources.html:
+        * platform/chromium/inspector/extensions/extensions-api-expected.txt: Removed.
+        * platform/chromium/inspector/extensions/extensions-eval-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-19  Erik Arvidsson  <arv@chromium.org>
 
         [Chromium] Update the test expectations for r97881.

@@ -5,6 +5,7 @@
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 
 <script type="text/javascript">
+
 function extension_testGetConsoleMessages(nextTest)
 {
     function callback(messages)
@@ -12,6 +13,7 @@ function extension_testGetConsoleMessages(nextTest)
         dumpObject(messages, { url: "url" });
     }
     webInspector.console.getMessages(callbackAndNextTest(callback, nextTest));
+
 }
 
 function extension_testAddConsoleMessages(nextTest)
@@ -20,9 +22,7 @@ function extension_testAddConsoleMessages(nextTest)
     webInspector.console.addMessage(webInspector.console.Severity.Log, "log message from extension", "test-url.html", 42);
     webInspector.console.addMessage(webInspector.console.Severity.Warning, "warning message from extension");
     webInspector.console.addMessage(webInspector.console.Severity.Error, "error message from extension", null, 42);
-    webInspector.inspectedWindow.eval("", function() {
-        evaluateOnFrontend("InspectorTest.dumpConsoleMessagesWithClasses(); reply();", nextTest);
-    });
+    evaluateOnFrontend("InspectorTest.dumpConsoleMessagesWithClasses(); reply();", nextTest)
 }
 
 function extension_testOnConsoleMessageAdded(nextTest)

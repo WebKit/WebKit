@@ -6,13 +6,13 @@
 
 function extension_testAddHeaders(nextTest)
 {
-    webInspector.network.addRequestHeaders({
+    webInspector.resources.addRequestHeaders({
         "x-webinspector-extension": "test",
         "user-agent": "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)"
     });
     function cleanUpHeaders()
     {
-        webInspector.network.addRequestHeaders({
+        webInspector.resources.addRequestHeaders({
             "x-webinspector-extension": null,
             "user-agent": null
         });
