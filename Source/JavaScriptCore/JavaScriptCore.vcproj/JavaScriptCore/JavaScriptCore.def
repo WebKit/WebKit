@@ -382,3 +382,5 @@ EXPORTS
     WTFReportAssertionFailureWithMessage
     WTFReportBacktrace
     WTFReportError
+    __imp_?create@JSString@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@@Z
+    __imp_?createHasOtherOwner@JSString@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@@Z
