@@ -755,14 +755,15 @@ BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 // Test might be WONTFIX because we don't export a step button in the first place.
 BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
-// We haven't implemented the WebKit fullscreen extension.
-// UNIMPLEMENTED
-BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
-BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
+// We are not going to support this.
+WONTFIX SKIP : media/media-fullscreen-inline.html = TIMEOUT
+WONTFIX SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
-// probably just need rebaselining.
-BUGCR73923 MAC : fullscreen/full-screen-iframe-zIndex.html = IMAGE
-BUGCR73923 MAC : fullscreen/full-screen-zIndex-after.html = IMAGE
+BUGCR100798 MAC CPU-CG : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
+BUGCR100798 SNOWLEOPARD CPU-CG : fullscreen/full-screen-iframe-zIndex.html = IMAGE
+BUGCR100798 SNOWLEOPARD CPU-CG : fullscreen/full-screen-zIndex-after.html = IMAGE
+BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-iframe-allowed.html = TEXT
+BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-remove-ancestor-during-transition.html = TIMEOUT PASS
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
