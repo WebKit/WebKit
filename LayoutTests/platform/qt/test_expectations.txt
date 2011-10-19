@@ -9,7 +9,6 @@ BUGWK64002 : fast/workers/worker-close-more.html = TEXT PASS
 BUGWK64002 : fast/workers/storage/interrupt-database.html = TEXT PASS
 BUGWK64002 : fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/workers/worker-lifecycle.html = TEXT PASS
-BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
 
 BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 

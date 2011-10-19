@@ -609,6 +609,9 @@ fast/events/tabindex-focus-blur-all.html
 # https://bugs.webkit.org/show_bug.cgi?id=63518
 http/tests/misc/link-rel-icon-beforeload.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=64002
+fast/selectors/unqualified-hover-strict.html
+
 # =========================================================================== #
 # failing media tests
 # =========================================================================== #

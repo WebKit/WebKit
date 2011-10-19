@@ -1,3 +1,18 @@
+2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix failing tests after migrating to refactored Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=69104
+
+        Move tests from qt-wk2/Skipped to qt-5.0, because these
+        fails are related to Qt 5, not to Qt-WK2.
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
 2011-10-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] 2 inspector/extensions tests times out on Mac after r97850
