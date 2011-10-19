@@ -1,5 +1,12 @@
 2011-10-19  Daniel Cheng  <dcheng@chromium.org>
 
+        Add missing expectations updates for r97878.
+
+        * platform/mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt:
+        * platform/mac/editing/selection/drag-to-contenteditable-iframe-expected.txt:
+
+2011-10-19  Daniel Cheng  <dcheng@chromium.org>
+
         Don't always select images during an image drag.
         https://bugs.webkit.org/show_bug.cgi?id=62998
 

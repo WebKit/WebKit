@@ -1,4 +1,3 @@
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document givenAction:WebViewInsertActionDropped
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 0 of BODY > HTML > #document to 1 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -27,5 +26,3 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 288x18
             text run at (0,0) width 288: "Abe should be outside the frame and inside it."
-selection start: position 0 of child 3 {IMG} of body
-selection end:   position 1 of child 3 {IMG} of body

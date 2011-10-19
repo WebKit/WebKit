@@ -22,5 +22,3 @@ layer at (0,0) size 800x600
                   RenderImage {IMG} at (21,1) size 76x103
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {UL} at (0,226) size 784x0
-selection start: position 0 of child 3 {IMG} of body
-selection end:   position 1 of child 3 {IMG} of body
