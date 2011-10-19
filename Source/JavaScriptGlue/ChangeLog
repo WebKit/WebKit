@@ -1,3 +1,12 @@
+2011-10-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed StringImplBase, fusing it into StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=70443
+
+        Reviewed by Gavin Barraclough.
+
+        * ForwardingHeaders/wtf/text/StringImplBase.h: Removed.
+
 2011-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename getOwnPropertySlot to getOwnPropertySlotVirtual

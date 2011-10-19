@@ -239,7 +239,6 @@
             'wtf/text/StringConcatenate.h',
             'wtf/text/StringHash.h',
             'wtf/text/StringImpl.h',
-            'wtf/text/StringImplBase.h',
             'wtf/text/StringOperators.h',
             'wtf/text/TextPosition.h',
             'wtf/text/WTFString.h',

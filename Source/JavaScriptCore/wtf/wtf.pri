@@ -109,7 +109,6 @@ HEADERS += \
     wtf/text/StringBuilder.h \
     wtf/text/StringConcatenate.h \
     wtf/text/StringHash.h \
-    wtf/text/StringImplBase.h \
     wtf/text/StringImpl.h \
     wtf/text/StringOperators.h \
     wtf/text/TextPosition.h \

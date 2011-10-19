@@ -492,10 +492,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\wtf\text\StringImplBase.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\wtf\text\StringOperators.h"
 				>
 			</File>

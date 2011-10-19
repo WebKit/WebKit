@@ -626,7 +626,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/StringBuilder.h \
 	Source/JavaScriptCore/wtf/text/StringConcatenate.h \
 	Source/JavaScriptCore/wtf/text/StringHash.h \
-	Source/JavaScriptCore/wtf/text/StringImplBase.h \
 	Source/JavaScriptCore/wtf/text/StringImpl.cpp \
 	Source/JavaScriptCore/wtf/text/StringImpl.h \
 	Source/JavaScriptCore/wtf/text/StringOperators.h \

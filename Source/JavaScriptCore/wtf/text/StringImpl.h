@@ -31,7 +31,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
-#include <wtf/text/StringImplBase.h>
 #include <wtf/unicode/Unicode.h>
 
 #if USE(CF)
@@ -63,7 +62,8 @@ typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
-class StringImpl : public StringImplBase {
+class StringImpl {
+    WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
     friend struct JSC::IdentifierCStringTranslator;
     friend struct JSC::IdentifierUCharBufferTranslator;
     friend struct WTF::CStringTranslator;
@@ -71,12 +71,22 @@ class StringImpl : public StringImplBase {
     friend struct WTF::HashAndUTF8CharactersTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
+
 private:
+    enum BufferOwnership {
+        BufferInternal,
+        BufferOwned,
+        BufferSubstring,
+        BufferShared,
+    };
+
     // Used to construct static strings, which have an special refCount that can never hit zero.
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+    enum StaticStringConstructType { ConstructStaticString };
     StringImpl(const UChar* characters, unsigned length, StaticStringConstructType)
-        : StringImplBase(length, ConstructStaticString)
+        : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
+        , m_length(length)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -89,7 +99,8 @@ private:
 
     // Create a normal string with internal storage (BufferInternal)
     StringImpl(unsigned length)
-        : StringImplBase(length, BufferInternal)
+        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferInternal)
+        , m_length(length)
         , m_data(reinterpret_cast<const UChar*>(this + 1))
         , m_buffer(0)
         , m_hash(0)
@@ -100,7 +111,8 @@ private:
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
     StringImpl(const UChar* characters, unsigned length)
-        : StringImplBase(length, BufferOwned)
+        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferOwned)
+        , m_length(length)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -111,7 +123,8 @@ private:
 
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring)
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
-        : StringImplBase(length, BufferSubstring)
+        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferSubstring)
+        , m_length(length)
         , m_data(characters)
         , m_substringBuffer(base.leakRef())
         , m_hash(0)
@@ -123,7 +136,8 @@ private:
 
     // Used to construct new strings sharing an existing SharedUChar (BufferShared)
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-        : StringImplBase(length, BufferShared)
+        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferShared)
+        , m_length(length)
         , m_data(characters)
         , m_sharedBuffer(sharedBuffer.leakRef())
         , m_hash(0)
@@ -203,6 +217,8 @@ public:
     }
     static PassRefPtr<StringImpl> adopt(StringBuffer&);
 
+    void ref() { m_refCountAndFlags += s_refCountIncrement; }
+    unsigned length() const { return m_length; }
     SharedUChar* sharedBuffer();
     const UChar* characters() const { return m_data; }
 
@@ -340,6 +356,20 @@ private:
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
 
+    // The bottom 7 bits hold flags, the top 25 bits hold the ref count.
+    // When dereferencing StringImpls we check for the ref count AND the
+    // static bit both being zero - static strings are never deleted.
+    static const unsigned s_refCountMask = 0xFFFFFF80;
+    static const unsigned s_refCountIncrement = 0x80;
+    static const unsigned s_refCountFlagStatic = 0x40;
+    static const unsigned s_refCountFlagHasTerminatingNullCharacter = 0x20;
+    static const unsigned s_refCountFlagIsAtomic = 0x10;
+    static const unsigned s_refCountFlagShouldReportedCost = 0x8;
+    static const unsigned s_refCountFlagIsIdentifier = 0x4;
+    static const unsigned s_refCountMaskBufferOwnership = 0x3;
+
+    unsigned m_refCountAndFlags;
+    unsigned m_length;
     const UChar* m_data;
     union {
         void* m_buffer;

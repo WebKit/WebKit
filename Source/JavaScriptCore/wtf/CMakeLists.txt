@@ -133,7 +133,6 @@ SET(WTF_HEADERS
     text/StringBuffer.h
     text/StringHash.h
     text/StringImpl.h
-    text/StringImplBase.h
     text/WTFString.h
 
     threads/BinarySemaphore.h
