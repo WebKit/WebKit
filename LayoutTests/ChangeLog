@@ -1,3 +1,11 @@
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Update chromium leopard cg baseline.
+
+        Unreviewed, baseline update.
+
+        * platform/chromium-cg-mac-leopard/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+
 2011-10-18  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure when going back in page with navigated subframes
