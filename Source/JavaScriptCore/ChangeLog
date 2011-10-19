@@ -1,5 +1,9 @@
 2011-10-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled out last Windows build fix because it was wrong.
+
+2011-10-18  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix part of the Windows build.
         
         Export!
