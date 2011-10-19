@@ -18,7 +18,6 @@ BUG_QT_SLOW SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
 BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
 BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
 BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUG_QT_SLOW SLOW DEBUG: inspector/cookie-resource-match.html = PASS
 
 BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
