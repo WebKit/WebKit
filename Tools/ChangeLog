@@ -1,3 +1,17 @@
+2011-10-18  David Levin  <levin@chromium.org>
+
+        watchlist: Should try to run if it can and not throw on mistakes.
+        https://bugs.webkit.org/show_bug.cgi?id=70358
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/system/outputcapture.py: Add the ability to capture log output.
+        * Scripts/webkitpy/common/watchlist/watchlistloader_unittest.py: Adapt to the logging of errors.
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py: Change to log problems and fix problems when found.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py: Adapt to the logging of errors.
+        * Scripts/webkitpy/common/watchlist/watchlistrule.py: Expose a way to remove instructions.
+        * Scripts/webkitpy/common/watchlist/watchlistrule_unittest.py: Test the new function.
+
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
         Move uses of C-SPI out of WKView.h and into WKViewPrivate.h

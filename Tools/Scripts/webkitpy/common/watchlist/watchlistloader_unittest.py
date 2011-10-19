@@ -31,6 +31,7 @@
 from webkitpy.common import webkitunittest
 from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system import filesystem
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.watchlist.watchlistloader import WatchListLoader
 
 
@@ -41,4 +42,4 @@ class WatchListLoaderTest(webkitunittest.TestCase):
 
     def test_watch_list_load(self):
         # Test parsing of the checked-in watch list.
-        WatchListLoader(filesystem.FileSystem()).load()
+        OutputCapture().assert_outputs(self, WatchListLoader(filesystem.FileSystem()).load, expected_logs="")

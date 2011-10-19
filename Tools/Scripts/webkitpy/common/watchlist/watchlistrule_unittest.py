@@ -32,10 +32,16 @@ from webkitpy.common.watchlist.watchlistrule import WatchListRule
 
 
 class WatchListRuleTest(unittest.TestCase):
-    def test_action_list(self):
+    def test_instruction_list(self):
         instructions = ['a', 'b']
         rule = WatchListRule('definition1', instructions[:])
         self.assertEqual(instructions, rule.instructions())
+
+    def test_remove_instruction(self):
+        instructions = ['a', 'b']
+        rule = WatchListRule('definition1', instructions[:])
+        rule.remove_instruction('b')
+        self.assertEqual(['a'], rule.instructions())
 
     def test_simple_definition(self):
         definition_name = 'definition1'
