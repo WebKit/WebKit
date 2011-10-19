@@ -412,7 +412,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
     double result = getDoubleValue() * factor;
     if (!applyZoomMultiplier || multiplier == 1.0)
         return result;
-     
+
     // Any original result that was >= 1 should not be allowed to fall below 1.  This keeps border lines from
     // vanishing.
     double zoomedResult = result * multiplier;
@@ -423,7 +423,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
 
 void CSSPrimitiveValue::setFloatValue(unsigned short, double, ExceptionCode& ec)
 {
-    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects. 
+    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects.
     // No other engine supports mutating style through this API. Computed style is always read-only anyway.
     // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
     ec = NO_MODIFICATION_ALLOWED_ERR;
@@ -568,7 +568,7 @@ bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, doub
 
 void CSSPrimitiveValue::setStringValue(unsigned short, const String&, ExceptionCode& ec)
 {
-    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects. 
+    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects.
     // No other engine supports mutating style through this API. Computed style is always read-only anyway.
     // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
     ec = NO_MODIFICATION_ALLOWED_ERR;

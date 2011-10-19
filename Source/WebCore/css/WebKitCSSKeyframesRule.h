@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef WebKitCSSKeyframesRule_h
@@ -53,12 +53,12 @@ public:
 
     String name() const;
     void setName(const String&);
-    
+
     // This version of setName does not call styleSheetChanged to avoid
     // unnecessary work. It assumes callers will either make that call
     // themselves, or know that it will get called later.
     void setNameInternal(const String& name)
-    {   
+    {
         m_name = AtomicString(name);
     }
 
@@ -84,7 +84,7 @@ private:
     virtual CSSRuleType type() const { return WEBKIT_KEYFRAMES_RULE; }
 
     int findRuleIndex(const String& key) const;
-    
+
     RefPtr<CSSRuleList> m_lstCSSRules;
     AtomicString m_name;
 };

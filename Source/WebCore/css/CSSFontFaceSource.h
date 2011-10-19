@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CSSFontFaceSource_h
@@ -58,9 +58,9 @@ public:
     void setFontFace(CSSFontFace* face) { m_face = face; }
 
     virtual void fontLoaded(CachedFont*);
-    
+
     SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
-    
+
     void pruneTable();
 
 #if ENABLE(SVG_FONTS)

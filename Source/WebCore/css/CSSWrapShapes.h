@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -45,15 +45,15 @@ public:
         CSS_WRAP_SHAPE_CIRCLE = 2,
         CSS_WRAP_SHAPE_ELLIPSE = 3,
         CSS_WRAP_SHAPE_POLYGON = 4,
-        CSS_WRAP_SHAPE_PATH = 5        
+        CSS_WRAP_SHAPE_PATH = 5
     };
-    
+
     virtual Type type() = 0;
     virtual String cssText() const = 0;
 
 public:
     virtual ~CSSWrapShape() { }
-    
+
 protected:
     CSSWrapShape() { }
 };
@@ -68,7 +68,7 @@ public:
     CSSPrimitiveValue* height() const { return m_height.get(); }
     CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
     CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
-    
+
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
     void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
     void setWidth(PassRefPtr<CSSPrimitiveValue> width) { m_width = width; }
@@ -78,10 +78,10 @@ public:
 
     virtual Type type() { return CSS_WRAP_SHAPE_RECT; }
     virtual String cssText() const;
-    
+
 private:
     CSSWrapShapeRect() { }
-    
+
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_left;
     RefPtr<CSSPrimitiveValue> m_width;
@@ -97,17 +97,17 @@ public:
     CSSPrimitiveValue* left() const { return m_left.get(); }
     CSSPrimitiveValue* top() const { return m_top.get(); }
     CSSPrimitiveValue* radius() const { return m_radius.get(); }
-    
+
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
     void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
     void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
 
     virtual Type type() { return CSS_WRAP_SHAPE_CIRCLE; }
     virtual String cssText() const;
-    
+
 private:
     CSSWrapShapeCircle() { }
-    
+
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_left;
     RefPtr<CSSPrimitiveValue> m_radius;
@@ -121,7 +121,7 @@ public:
     CSSPrimitiveValue* top() const { return m_top.get(); }
     CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
     CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
-    
+
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
     void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
@@ -129,10 +129,10 @@ public:
 
     virtual Type type() { return CSS_WRAP_SHAPE_ELLIPSE; }
     virtual String cssText() const;
-    
+
 private:
     CSSWrapShapeEllipse() { }
-    
+
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_left;
     RefPtr<CSSPrimitiveValue> m_radiusX;
@@ -142,30 +142,30 @@ private:
 class CSSWrapShapePolygon : public CSSWrapShape {
 public:
     static PassRefPtr<CSSWrapShapePolygon> create() { return adoptRef(new CSSWrapShapePolygon); }
-    
+
     void appendPoint(PassRefPtr<CSSPrimitiveValue> x, PassRefPtr<CSSPrimitiveValue> y)
-    { 
+    {
         m_values.append(x);
         m_values.append(y);
     }
-    
+
     PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) { return m_values.at(i * 2); }
     PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) { return m_values.at(i * 2 + 1); }
-    
+
     void setWindRule(WindRule w) { m_windRule = w; }
     WindRule windRule() const { return m_windRule; }
-    
+
     virtual Type type() { return CSS_WRAP_SHAPE_POLYGON; }
     virtual String cssText() const;
-    
+
 private:
     CSSWrapShapePolygon()
         : m_windRule(RULE_NONZERO)
     {
     }
-    
+
     Vector<RefPtr<CSSPrimitiveValue> > m_values;
-    WindRule m_windRule;    
+    WindRule m_windRule;
 };
 
 } // namespace WebCore

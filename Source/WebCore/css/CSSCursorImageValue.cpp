@@ -17,7 +17,7 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- */ 
+ */
 
 #include "config.h"
 #include "CSSCursorImageValue.h"
@@ -116,7 +116,7 @@ StyleCachedImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 {
     String url = getStringValue();
 
-#if ENABLE(SVG) 
+#if ENABLE(SVG)
     if (isSVGCursorIdentifier(url) && loader && loader->document()) {
         // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, loader->document()))

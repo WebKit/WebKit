@@ -264,7 +264,7 @@ private:
                 (selector->style()->*m_visitedLinkSetter)(selector->getColorFromPrimitiveValue(primitiveValue, true));
         }
     }
-    
+
     void applyColorValue(CSSStyleSelector* selector, const Color& color) const
     {
         if (selector->applyPropertyToRegularStyle())

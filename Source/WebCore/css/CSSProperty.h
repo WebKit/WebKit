@@ -58,7 +58,7 @@ public:
     bool isImplicit() const { return m_implicit; }
 
     CSSValue* value() const { return m_value.get(); }
-    
+
     String cssText() const;
 
     static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);

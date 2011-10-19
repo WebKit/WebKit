@@ -72,7 +72,7 @@ MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool 
     // FIXME: parsing can fail. The problem with failing constructor is that
     // we would need additional flag saying MediaList is not valid
     // Parse can fail only when fallbackToDescriptor == false, i.e when HTML4 media descriptor
-    // forward-compatible syntax is not in use. 
+    // forward-compatible syntax is not in use.
     // DOMImplementationCSS seems to mandate that media descriptors are used
     // for both html and svg, even though svg:style doesn't use media descriptors
     // Currently the only places where parsing can fail are
@@ -150,7 +150,7 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
             }
         }
     }
-    
+
     if (!ec)
         notifyChanged();
 }
@@ -191,11 +191,11 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
                     ec = SYNTAX_ERR;
                     return;
                 }
-            }          
+            }
         } else if (!m_fallback) {
             ec = SYNTAX_ERR;
             return;
-        }            
+        }
     }
     // ",,,," falls straight through, but is not valid unless fallback
     if (!m_fallback && list.begin() == list.end()) {
@@ -205,7 +205,7 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
             return;
         }
     }
-    
+
     ec = 0;
     deleteAllValues(m_queries);
     m_queries = tempMediaList->m_queries;
@@ -236,7 +236,7 @@ void MediaList::appendMedium(const String& newMedium, ExceptionCode& ec)
             ec = 0;
         }
     }
-    
+
     if (!ec)
         notifyChanged();
 }

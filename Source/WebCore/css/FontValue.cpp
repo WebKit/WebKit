@@ -28,7 +28,7 @@ namespace WebCore {
 
 String FontValue::cssText() const
 {
-    // font variant weight size / line-height family 
+    // font variant weight size / line-height family
 
     String result("");
 

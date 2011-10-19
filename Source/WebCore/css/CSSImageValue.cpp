@@ -78,7 +78,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
             m_image = StyleCachedImage::create(cachedImage);
         }
     }
-    
+
     return (m_image && m_image->isCachedImage()) ? static_cast<StyleCachedImage*>(m_image.get()) : 0;
 }
 

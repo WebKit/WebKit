@@ -44,7 +44,7 @@ String CSSBorderImageValue::cssText() const
 {
     // Image first.
     String text;
-    
+
     if (m_image)
         text += m_image->cssText();
 

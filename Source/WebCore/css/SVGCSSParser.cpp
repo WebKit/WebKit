@@ -145,7 +145,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         break;
 
     case CSSPropertyColorInterpolation:   // auto | sRGB | linearRGB | inherit
-    case CSSPropertyColorInterpolationFilters:  
+    case CSSPropertyColorInterpolationFilters:
         if (id == CSSValueAuto || id == CSSValueSrgb || id == CSSValueLinearrgb)
             valid_primitive = true;
         break;
@@ -227,7 +227,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             m_valueList->next();
 
         break;
-        
+
     case CSSPropertyVectorEffect: // none | non-scaling-stroke | inherit
         if (id == CSSValueNone || id == CSSValueNonScalingStroke)
             valid_primitive = true;

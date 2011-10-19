@@ -40,7 +40,7 @@ public:
     }
 
     virtual String cssText() const;
-        
+
 private:
     CSSInitialValue(bool implicit)
         : m_implicit(implicit)

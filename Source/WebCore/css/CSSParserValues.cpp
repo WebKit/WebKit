@@ -27,7 +27,7 @@
 #include "CSSSelectorList.h"
 
 namespace WebCore {
-        
+
 using namespace WTF;
 
 CSSParserValueList::~CSSParserValueList()
@@ -50,7 +50,7 @@ void CSSParserValueList::insertValueAt(unsigned i, const CSSParserValue& v)
 }
 
 void CSSParserValueList::deleteValueAt(unsigned i)
-{ 
+{
     m_values.remove(i);
 }
 
@@ -85,7 +85,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
         parsedValue = CSSPrimitiveValue::createAllowingMarginQuirk(fValue, CSSPrimitiveValue::CSS_EMS);
     return parsedValue;
 }
-    
+
 CSSParserSelector::CSSParserSelector()
     : m_selector(adoptPtr(fastNew<CSSSelector>()))
 {

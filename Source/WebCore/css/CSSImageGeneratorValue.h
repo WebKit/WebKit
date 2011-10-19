@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CSSImageGeneratorValue_h
@@ -44,13 +44,13 @@ public:
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) = 0;
 
     StyleGeneratedImage* generatedImage();
-    
+
     virtual bool isFixedSize() const { return false; }
     virtual IntSize fixedSize(const RenderObject*) { return IntSize(); }
-    
+
 protected:
     CSSImageGeneratorValue();
-    
+
     Image* getImage(RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
     const RenderObjectSizeCountMap& clients() const { return m_imageCache.clients(); }

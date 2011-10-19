@@ -23,7 +23,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -69,7 +69,7 @@ String MediaQuery::serialize() const
     return result.toString();
 }
 
-static bool expressionCompare(const OwnPtr<MediaQueryExp>& a, const OwnPtr<MediaQueryExp>& b) 
+static bool expressionCompare(const OwnPtr<MediaQueryExp>& a, const OwnPtr<MediaQueryExp>& b)
 {
     return codePointCompare(a->serialize(), b->serialize()) < 0;
 }
@@ -95,7 +95,7 @@ MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<
         // if not all of the expressions is valid the media query must be ignored.
         if (!m_ignored)
             m_ignored = !m_expressions->at(i)->isValid();
- 
+
         if (m_expressions->at(i)->serialize() == key)
             m_expressions->remove(i);
         else

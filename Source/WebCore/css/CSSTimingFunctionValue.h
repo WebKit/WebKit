@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CSSTimingFunctionValue_h
@@ -53,7 +53,7 @@ public:
     {
         return adoptRef(new CSSLinearTimingFunctionValue);
     }
-    
+
 private:
     CSSLinearTimingFunctionValue()
     {
@@ -63,7 +63,7 @@ private:
 
     virtual bool isLinearTimingFunctionValue() const { return true; }
 };
-    
+
 class CSSCubicBezierTimingFunctionValue : public CSSTimingFunctionValue {
 public:
     static PassRefPtr<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
@@ -104,7 +104,7 @@ public:
 
     int numberOfSteps() const { return m_steps; }
     bool stepAtStart() const { return m_stepAtStart; }
-    
+
 private:
     CSSStepsTimingFunctionValue(int steps, bool stepAtStart)
         : m_steps(steps)
@@ -119,7 +119,7 @@ private:
     int m_steps;
     bool m_stepAtStart;
 };
-    
+
 } // namespace
 
 #endif

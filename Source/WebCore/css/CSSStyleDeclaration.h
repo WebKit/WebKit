@@ -52,7 +52,7 @@ public:
     String getPropertyPriority(const String& propertyName);
     String getPropertyShorthand(const String& propertyName);
     bool isPropertyImplicit(const String& propertyName);
-    
+
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const = 0;
     virtual String getPropertyValue(int propertyID) const = 0;
     virtual bool getPropertyPriority(int propertyID) const = 0;
@@ -67,7 +67,7 @@ public:
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const = 0;
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable() = 0;
- 
+
     void diff(CSSMutableStyleDeclaration*) const;
 
     PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;

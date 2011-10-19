@@ -98,7 +98,7 @@ public:
     PassRefPtr<CSSValue> parseFillPositionX(CSSParserValueList*);
     PassRefPtr<CSSValue> parseFillPositionY(CSSParserValueList*);
     void parseFillPosition(CSSParserValueList*, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-    
+
     void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
 
@@ -305,7 +305,7 @@ public:
 
 private:
     void setStyleSheet(CSSStyleSheet*);
-    
+
     void recheckAtKeyword(const UChar* str, int len);
 
     void setupParser(const char* prefix, const String&, const char* suffix);
@@ -385,7 +385,7 @@ private:
     static bool validUnit(CSSParserValue*, Units, bool strict);
 
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
-    
+
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
 

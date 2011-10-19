@@ -1,3 +1,103 @@
+2011-10-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Strip trailing whitespace in the WebCore/css C++ code.
+        https://bugs.webkit.org/show_bug.cgi?id=70410
+
+        Reviewed by Dirk Schulze.
+
+        Only affected file names retained below for brevity.
+        Multiline boolean expression were fixed where necessary to avoid patch style violations.
+
+        * css/CSSBorderImageSliceValue.cpp:
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSBorderImageValue.cpp:
+        * css/CSSCanvasValue.cpp:
+        * css/CSSCanvasValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSCursorImageValue.cpp:
+        * css/CSSFontFace.cpp:
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFontSelector.cpp:
+        * css/CSSFontSelector.h:
+        * css/CSSFunctionValue.cpp:
+        * css/CSSFunctionValue.h:
+        * css/CSSGradientValue.cpp:
+        * css/CSSGradientValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSImageValue.cpp:
+        * css/CSSImageValue.h:
+        * css/CSSImportRule.cpp:
+        * css/CSSInitialValue.cpp:
+        * css/CSSInitialValue.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        * css/CSSParserValues.h:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueCache.cpp:
+        * css/CSSPrimitiveValueCache.h:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+        * css/CSSPropertyLonghand.cpp:
+        * css/CSSReflectValue.cpp:
+        * css/CSSReflectValue.h:
+        * css/CSSReflectionDirection.h:
+        * css/CSSSegmentedFontFace.cpp:
+        * css/CSSSegmentedFontFace.h:
+        * css/CSSSelector.cpp:
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.cpp:
+        * css/CSSSelectorList.h:
+        * css/CSSStyleApplyProperty.cpp:
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * css/CSSStyleSheet.cpp:
+        * css/CSSTimingFunctionValue.cpp:
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSUnicodeRangeValue.cpp:
+        * css/CSSUnicodeRangeValue.h:
+        * css/CSSValueList.cpp:
+        * css/CSSWrapShapes.cpp:
+        * css/CSSWrapShapes.h:
+        * css/FontValue.cpp:
+        * css/MediaList.cpp:
+        * css/MediaQuery.cpp:
+        * css/MediaQuery.h:
+        * css/MediaQueryEvaluator.h:
+        * css/MediaQueryExp.cpp:
+        * css/MediaQueryExp.h:
+        * css/Pair.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        * css/SVGCSSParser.cpp:
+        * css/SVGCSSStyleSelector.cpp:
+        * css/SelectorChecker.cpp:
+        * css/SelectorChecker.h:
+        * css/StyleBase.cpp:
+        * css/StyleMedia.cpp:
+        * css/StyleMedia.h:
+        * css/StyleSheetList.cpp:
+        * css/StyleSheetList.h:
+        * css/WebKitCSSFilterValue.cpp:
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSKeyframeRule.cpp:
+        * css/WebKitCSSKeyframeRule.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        * css/WebKitCSSKeyframesRule.h:
+        * css/WebKitCSSMatrix.cpp:
+        * css/WebKitCSSMatrix.h:
+        * css/WebKitCSSTransformValue.cpp:
+        * css/WebKitCSSTransformValue.h:
+
 2011-10-19  Dirk Schulze  <krit@webkit.org>
 
         Make FilterEffect::apply() independent of image data management

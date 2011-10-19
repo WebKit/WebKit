@@ -53,7 +53,7 @@ private:
     Pair() : m_first(0), m_second(0) { }
     Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
         : m_first(first), m_second(second) { }
-    
+
     RefPtr<CSSPrimitiveValue> m_first;
     RefPtr<CSSPrimitiveValue> m_second;
 };

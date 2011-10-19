@@ -107,7 +107,7 @@ CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
         static_cast<CSSMutableValue*>(value)->setNode(0);
     }
 }
- 
+
 CSSMutableStyleDeclaration& CSSMutableStyleDeclaration::operator=(const CSSMutableStyleDeclaration& other)
 {
     ASSERT(!m_iteratorCount);
@@ -140,14 +140,14 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
         }
         case CSSPropertyBackground: {
             const int properties[9] = { CSSPropertyBackgroundColor,
-                                        CSSPropertyBackgroundImage, 
-                                        CSSPropertyBackgroundRepeatX, 
-                                        CSSPropertyBackgroundRepeatY, 
-                                        CSSPropertyBackgroundAttachment, 
-                                        CSSPropertyBackgroundPositionX, 
-                                        CSSPropertyBackgroundPositionY, 
+                                        CSSPropertyBackgroundImage,
+                                        CSSPropertyBackgroundRepeatX,
+                                        CSSPropertyBackgroundRepeatY,
+                                        CSSPropertyBackgroundAttachment,
+                                        CSSPropertyBackgroundPositionX,
+                                        CSSPropertyBackgroundPositionY,
                                         CSSPropertyBackgroundClip,
-                                        CSSPropertyBackgroundOrigin }; 
+                                        CSSPropertyBackgroundOrigin };
             return getLayeredShorthandValue(properties);
         }
         case CSSPropertyBorder: {
@@ -243,7 +243,7 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties);
         }
         case CSSPropertyWebkitMask: {
-            const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat, 
+            const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat,
                                        CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition, CSSPropertyWebkitMaskClip,
                                        CSSPropertyWebkitMaskOrigin };
             return getLayeredShorthandValue(properties);
@@ -327,7 +327,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
     // Begin by collecting the properties into an array.
     Vector< RefPtr<CSSValue> > values(size);
     size_t numLayers = 0;
-    
+
     for (size_t i = 0; i < size; ++i) {
         values[i] = getPropertyCSSValue(properties[i]);
         if (values[i]) {
@@ -338,7 +338,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                 numLayers = max<size_t>(1U, numLayers);
         }
     }
-    
+
     // Now stitch the properties together.  Implicit initial values are flagged as such and
     // can safely be omitted.
     for (size_t i = 0; i < numLayers; i++) {
@@ -353,7 +353,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                     value = static_cast<CSSValueList*>(values[j].get())->item(i);
                 else {
                     value = values[j];
-                    
+
                     // Color only belongs in the last layer.
                     if (properties[j] == CSSPropertyBackgroundColor) {
                         if (i != numLayers - 1)
@@ -365,7 +365,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
 
             // We need to report background-repeat as it was written in the CSS. If the property is implicit,
             // then it was written with only one value. Here we figure out which value that was so we can
-            // report back correctly. 
+            // report back correctly.
             if (properties[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(properties[j])) {
 
                 // BUG 49055: make sure the value was not reset in the layer check just above.
@@ -376,7 +376,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                         yValue = static_cast<CSSValueList*>(nextValue.get())->itemWithoutBoundsCheck(i);
                     else
                         yValue = nextValue;
-                        
+
                     int xId = static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
                     int yId = static_cast<CSSPrimitiveValue*>(yValue.get())->getIdent();
                     if (xId != yId) {
@@ -393,7 +393,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                     }
                 }
             }
-            
+
             if (value && !value->isImplicitInitialValue()) {
                 if (!layerRes.isNull())
                     layerRes += " ";
@@ -410,7 +410,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                     layerRes += value->cssText();
             }
         }
-        
+
         if (!layerRes.isNull()) {
             if (!res.isNull())
                 res += ", ";
@@ -463,7 +463,7 @@ PassRefPtr<CSSValue> CSSMutableStyleDeclaration::getPropertyCSSValue(int propert
     return property ? property->value() : 0;
 }
 
-bool CSSMutableStyleDeclaration::removeShorthandProperty(int propertyID, bool notifyChanged) 
+bool CSSMutableStyleDeclaration::removeShorthandProperty(int propertyID, bool notifyChanged)
 {
     CSSPropertyLonghand longhand = longhandForProperty(propertyID);
     if (longhand.length()) {
@@ -481,11 +481,11 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
         // FIXME: Return an equivalent shorthand when possible.
         return String();
     }
-   
+
     CSSProperty* foundProperty = findPropertyWithId(propertyID);
     if (!foundProperty)
         return String();
-    
+
     String value = returnText ? foundProperty->value()->cssText() : String();
 
     // A more efficient removal strategy would involve marking entries as empty
@@ -580,7 +580,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
 
     return success;
 }
-    
+
 void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property, CSSProperty* slot)
 {
     ASSERT(!m_iteratorCount);
@@ -687,12 +687,12 @@ String CSSMutableStyleDeclaration::item(unsigned i) const
 String CSSMutableStyleDeclaration::cssText() const
 {
     String result = "";
-    
+
     const CSSProperty* positionXProp = 0;
     const CSSProperty* positionYProp = 0;
     const CSSProperty* repeatXProp = 0;
     const CSSProperty* repeatYProp = 0;
-    
+
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& prop = m_properties[n];
@@ -707,21 +707,21 @@ String CSSMutableStyleDeclaration::cssText() const
         else
             result += prop.cssText();
     }
-    
+
     // FIXME: This is a not-so-nice way to turn x/y positions into single background-position in output.
-    // It is required because background-position-x/y are non-standard properties and WebKit generated output 
+    // It is required because background-position-x/y are non-standard properties and WebKit generated output
     // would not work in Firefox (<rdar://problem/5143183>)
     // It would be a better solution if background-position was CSS_PAIR.
     if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
         String positionValue;
         const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
-        if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList()) 
+        if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList())
             positionValue = getLayeredShorthandValue(properties);
         else
             positionValue = positionXProp->value()->cssText() + " " + positionYProp->value()->cssText();
         result += "background-position: " + positionValue + (positionXProp->isImportant() ? " !important" : "") + "; ";
     } else {
-        if (positionXProp) 
+        if (positionXProp)
             result += positionXProp->cssText();
         if (positionYProp)
             result += positionYProp->cssText();
@@ -731,13 +731,13 @@ String CSSMutableStyleDeclaration::cssText() const
     if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
         String repeatValue;
         const int repeatProperties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
-        if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList()) 
+        if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList())
             repeatValue = getLayeredShorthandValue(repeatProperties);
         else
             repeatValue = repeatXProp->value()->cssText() + " " + repeatYProp->value()->cssText();
         result += "background-repeat: " + repeatValue + (repeatXProp->isImportant() ? " !important" : "") + "; ";
     } else {
-        if (repeatXProp) 
+        if (repeatXProp)
             result += repeatXProp->cssText();
         if (repeatYProp)
             result += repeatYProp->cssText();
@@ -825,18 +825,18 @@ void CSSMutableStyleDeclaration::removeBlockProperties()
 void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned length, bool notifyChanged)
 {
     ASSERT(!m_iteratorCount);
-    
+
     if (m_properties.isEmpty())
         return;
-    
+
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
     HashSet<int> toRemove;
     for (unsigned i = 0; i < length; ++i)
         toRemove.add(set[i]);
-    
+
     Vector<CSSProperty, 4> newProperties;
     newProperties.reserveInitialCapacity(m_properties.size());
-    
+
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& property = m_properties[n];
@@ -850,7 +850,7 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned 
 
     bool changed = newProperties.size() != m_properties.size();
     m_properties = newProperties;
-    
+
     if (changed && notifyChanged)
         setNeedsStyleRecalc();
 }
@@ -866,7 +866,7 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::copy() const
 }
 
 const CSSProperty* CSSMutableStyleDeclaration::findPropertyWithId(int propertyID) const
-{    
+{
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
         if (propertyID == m_properties[n].m_id)
             return &m_properties[n];

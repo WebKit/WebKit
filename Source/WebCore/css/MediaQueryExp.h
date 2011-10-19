@@ -23,7 +23,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef MediaQueryExp_h
@@ -57,16 +57,16 @@ public:
 
     bool isValid() const { return m_isValid; }
 
-    bool isViewportDependent() const { return m_mediaFeature == MediaFeatureNames::widthMediaFeature || 
-                                              m_mediaFeature == MediaFeatureNames::heightMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::min_widthMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::min_heightMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::max_widthMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::max_heightMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::orientationMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature ||
-                                              m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;  }
+    bool isViewportDependent() const { return m_mediaFeature == MediaFeatureNames::widthMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::heightMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::min_widthMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::min_heightMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::max_widthMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::max_heightMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::orientationMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::aspect_ratioMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::min_aspect_ratioMediaFeature
+                                            || m_mediaFeature == MediaFeatureNames::max_aspect_ratioMediaFeature;  }
 
     String serialize() const;
 

@@ -72,7 +72,7 @@ KURL StyleBase::baseURL() const
         return sheet->finalURL();
     if (sheet->parent())
         return sheet->parent()->baseURL();
-    if (!sheet->ownerNode()) 
+    if (!sheet->ownerNode())
         return KURL();
     return sheet->ownerNode()->document()->baseURL();
 }

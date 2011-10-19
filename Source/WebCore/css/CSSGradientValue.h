@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CSSGradientValue_h
@@ -52,16 +52,16 @@ public:
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
     void setSecondX(PassRefPtr<CSSPrimitiveValue> val) { m_secondX = val; }
     void setSecondY(PassRefPtr<CSSPrimitiveValue> val) { m_secondY = val; }
-    
+
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
 
     Vector<CSSGradientColorStop>& stops() { return m_stops; }
 
     void sortStopsIfNeeded();
-    
+
     virtual bool isLinearGradient() const { return false; }
     virtual bool isRadialGradient() const { return false; }
-    
+
     bool isRepeating() const { return m_repeating; }
 
     bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
@@ -73,7 +73,7 @@ protected:
         , m_repeating(repeat == Repeating)
     {
     }
-    
+
     void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
 
     // Create the gradient for a given size.
@@ -81,16 +81,16 @@ protected:
 
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
-    
+
     bool isCacheable() const;
 
     // Points. Some of these may be null for linear gradients.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
-    
+
     RefPtr<CSSPrimitiveValue> m_secondX;
     RefPtr<CSSPrimitiveValue> m_secondY;
-    
+
     // Stops
     Vector<CSSGradientColorStop> m_stops;
     bool m_stopsSorted;
@@ -152,10 +152,10 @@ private:
 
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
-    
+
     // Resolve points/radii to front end values.
     float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, float* widthOrHeight = 0);
-    
+
     // These may be null for non-deprecated gradients.
     RefPtr<CSSPrimitiveValue> m_firstRadius;
     RefPtr<CSSPrimitiveValue> m_secondRadius;

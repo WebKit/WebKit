@@ -67,10 +67,10 @@ public:
     EInsideLink determineLinkState(Element*) const;
     void allVisitedStateChanged();
     void visitedStateChanged(LinkHash visitedHash);
-    
+
     Document* document() const { return m_document; }
     bool strictParsing() const { return m_strictParsing; }
-    
+
     bool isCollectingRulesOnly() const { return m_isCollectingRulesOnly; }
     void setCollectingRulesOnly(bool b) { m_isCollectingRulesOnly = b; }
 
@@ -79,14 +79,14 @@ public:
 
     bool hasUnknownPseudoElements() const { return m_hasUnknownPseudoElements; }
     void clearHasUnknownPseudoElements() { m_hasUnknownPseudoElements = false; }
-    
+
     static bool tagMatches(const Element*, const CSSSelector*);
     static bool attributeNameMatches(const Attribute*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     bool matchesFocusPseudoClass(const Element*) const;
     static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
     static bool checkExactAttribute(const Element*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
-    
+
     enum LinkMatchMask { MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector*);
 
@@ -94,7 +94,7 @@ private:
     bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle*, RenderStyle* elementParentStyle) const;
     bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
     static bool isFrameFocused(const Element*);
-    
+
     bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;
     bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType) const;
 
@@ -130,7 +130,7 @@ inline EInsideLink SelectorChecker::determineLinkState(Element* element) const
         return NotInsideLink;
     return determineLinkStateSlowCase(element);
 }
-    
+
 template <unsigned maximumIdentifierCount>
 inline bool SelectorChecker::fastRejectSelector(const unsigned* identifierHashes) const
 {
@@ -141,7 +141,7 @@ inline bool SelectorChecker::fastRejectSelector(const unsigned* identifierHashes
     }
     return false;
 }
-    
+
 inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* selector)
 {
     if (selector->m_match != CSSSelector::PseudoClass)
@@ -159,7 +159,7 @@ inline bool SelectorChecker::matchesFocusPseudoClass(const Element* element) con
         return true;
     return element->focused() && isFrameFocused(element);
 }
-    
+
 inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelector* selector)
 {
     if (!selector->hasTag())
@@ -170,14 +170,14 @@ inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelecto
     const AtomicString& namespaceURI = selector->tag().namespaceURI();
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
-    
+
 inline bool SelectorChecker::attributeNameMatches(const Attribute* attribute, const QualifiedName& selectorAttributeName)
 {
     if (selectorAttributeName.localName() != attribute->localName())
         return false;
     return selectorAttributeName.prefix() == starAtom || selectorAttributeName.namespaceURI() == attribute->namespaceURI();
 }
-    
+
 inline bool SelectorChecker::checkExactAttribute(const Element* element, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)
 {
     NamedNodeMap* attributeMap = element->attributeMap();
@@ -191,7 +191,7 @@ inline bool SelectorChecker::checkExactAttribute(const Element* element, const Q
     }
     return false;
 }
-    
+
 inline bool SelectorChecker::fastCheckRightmostAttributeSelector(const Element* element, const CSSSelector* selector)
 {
     if (selector->m_match == CSSSelector::Exact || selector->m_match == CSSSelector::Set)

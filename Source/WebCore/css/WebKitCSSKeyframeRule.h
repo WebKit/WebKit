@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef WebKitCSSKeyframeRule_h
@@ -51,7 +51,7 @@ public:
 
     String keyText() const              { return m_key; }
     void setKeyText(const String& s)    { m_key = s; }
-    
+
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
@@ -60,19 +60,19 @@ public:
 
     // Not part of the CSSOM
     virtual bool parseString(const String&, bool = false);
-    
+
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
     CSSMutableStyleDeclaration*         declaration()       { return m_style.get(); }
     const CSSMutableStyleDeclaration*   declaration() const { return m_style.get(); }
-    
+
 private:
     virtual bool isKeyframeRule() const { return true; }
     // Inherited from CSSRule
     virtual CSSRuleType type() const { return WEBKIT_KEYFRAME_RULE; }
 
     static void parseKeyString(const String& s, Vector<float>& keys);
-    
+
     WebKitCSSKeyframeRule(CSSStyleSheet* parent);
 
     RefPtr<CSSMutableStyleDeclaration> m_style;

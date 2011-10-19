@@ -46,7 +46,7 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
         || parentNode->hasTagName(HTMLNames::styleTag)
 #if ENABLE(SVG)
         || parentNode->hasTagName(SVGNames::styleTag)
-#endif    
+#endif
         || parentNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
 }
 #endif
@@ -147,9 +147,9 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
     CSSRule* c = r.get();
     m_children.insert(index, r.release());
     c->insertedIntoParent();
-    
+
     styleSheetChanged();
-    
+
     return index;
 }
 
@@ -193,7 +193,7 @@ void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const
         return;
 
     m_namespaces = adoptPtr(new CSSNamespace(prefix, uri, m_namespaces.release()));
-    
+
     if (prefix.isEmpty())
         // Set the default namespace on the parser so that selectors that omit namespace info will
         // be able to pick it up easily.
@@ -281,7 +281,7 @@ void CSSStyleSheet::styleSheetChanged()
     while (StyleBase* parent = root->parent())
         root = parent;
     Document* documentToUpdate = root->isCSSStyleSheet() ? static_cast<CSSStyleSheet*>(root)->document() : 0;
-    
+
     /* FIXME: We don't need to do everything updateStyleSelector does,
      * basically we just need to recreate the document's selector with the
      * already existing style sheets.

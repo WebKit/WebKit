@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -41,7 +41,7 @@ String CSSWrapShapeRect::cssText() const
 {
     DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
-    
+
     StringBuilder result;
     result.reserveCapacity(32);
     result.append(rectParen);
@@ -56,7 +56,7 @@ String CSSWrapShapeRect::cssText() const
     result.append(comma);
 
     result.append(m_height->cssText());
-    
+
     if (m_radiusX.get()) {
         result.append(comma);
         result.append(m_radiusX->cssText());
@@ -66,9 +66,9 @@ String CSSWrapShapeRect::cssText() const
             result.append(m_radiusY->cssText());
         }
     }
-    
+
     result.append(')');
-            
+
     return result.toString();
 }
 
@@ -76,7 +76,7 @@ String CSSWrapShapeCircle::cssText() const
 {
     DEFINE_STATIC_LOCAL(const String, circleParen, ("circle("));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
-    
+
     StringBuilder result;
     result.reserveCapacity(32);
     result.append(circleParen);
@@ -89,7 +89,7 @@ String CSSWrapShapeCircle::cssText() const
 
     result.append(m_radius->cssText());
     result.append(')');
-            
+
     return result.toString();
 }
 
@@ -97,7 +97,7 @@ String CSSWrapShapeEllipse::cssText() const
 {
     DEFINE_STATIC_LOCAL(const String, ellipseParen, ("ellipse("));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
-    
+
     StringBuilder result;
     result.reserveCapacity(32);
     result.append(ellipseParen);
@@ -113,7 +113,7 @@ String CSSWrapShapeEllipse::cssText() const
 
     result.append(m_radiusY->cssText());
     result.append(')');
-            
+
     return result.toString();
 }
 
@@ -122,7 +122,7 @@ String CSSWrapShapePolygon::cssText() const
     DEFINE_STATIC_LOCAL(const String, polygonParenEvenOdd, ("polygon(evenodd, "));
     DEFINE_STATIC_LOCAL(const String, polygonParenNonZero, ("polygon(nonzero, "));
     DEFINE_STATIC_LOCAL(const String, comma, (", "));
-    
+
     StringBuilder result;
     result.reserveCapacity(32);
     if (m_windRule == RULE_EVENODD)
@@ -139,9 +139,9 @@ String CSSWrapShapePolygon::cssText() const
         result.append(comma);
         result.append(m_values.at(i + 1)->cssText());
     }
-    
+
     result.append(')');
-            
+
     return result.toString();
 }
 

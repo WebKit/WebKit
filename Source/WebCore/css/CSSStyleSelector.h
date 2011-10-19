@@ -93,13 +93,13 @@ public:
                      CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
                      bool strictParsing, bool matchAuthorAndUserStyles);
     ~CSSStyleSelector();
-    
+
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
     void pushParent(Element* parent) { m_checker.pushParent(parent); }
     void popParent(Element* parent) { m_checker.popParent(parent); }
 
     PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
-    
+
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
     PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
@@ -163,7 +163,7 @@ public:
     void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
 
     void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
-    
+
     static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
 private:
@@ -229,7 +229,7 @@ private:
     void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
-    
+
     bool checkSelector(const RuleData&);
 
     template <bool firstPass>
@@ -243,7 +243,7 @@ private:
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     bool isFirstPage(int pageIndex) const;
     String pageName(int pageIndex) const;
-    
+
     OwnPtr<RuleSet> m_authorStyle;
     OwnPtr<RuleSet> m_userStyle;
 
@@ -264,7 +264,7 @@ public:
 
     StyleImage* styleImage(CSSPropertyID, CSSValue*);
     StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
-    
+
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
 
@@ -330,7 +330,7 @@ private:
     Vector<const RuleData*, 32> m_matchedRules;
 
     RefPtr<CSSRuleList> m_ruleList;
-    
+
     HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
 
     OwnPtr<MediaQueryEvaluator> m_medium;
@@ -351,7 +351,7 @@ private:
     bool m_fontDirty;
     bool m_matchAuthorAndUserStyles;
     bool m_sameOriginOnly;
-    
+
     RefPtr<CSSFontSelector> m_fontSelector;
     Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
     Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
@@ -359,7 +359,7 @@ private:
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
     const CSSStyleApplyProperty& m_applyProperty;
-    
+
     friend class CSSStyleApplyProperty;
 };
 

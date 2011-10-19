@@ -65,7 +65,7 @@ HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
     // ### Bad implementation because returns a single element (are IDs always unique?)
     // and doesn't look for name attribute.
     // But unicity of stylesheet ids is good practice anyway ;)
-    
+
     Element* element = m_doc->getElementById(name);
     if (element && element->hasTagName(styleTag))
         return static_cast<HTMLStyleElement*>(element);

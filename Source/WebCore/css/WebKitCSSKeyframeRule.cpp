@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -70,11 +70,11 @@ void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
     keys.clear();
     Vector<String> strings;
     s.split(',', strings);
-    
+
     for (size_t i = 0; i < strings.size(); ++i) {
         float key = -1;
         String cur = strings[i].stripWhiteSpace();
-    
+
         // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
         if (cur == "from")
             key = 0;
@@ -85,7 +85,7 @@ void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
             if (k >= 0 && k <= 100)
                 key = k/100;
         }
-        
+
         if (key < 0) {
             keys.clear();
             return;

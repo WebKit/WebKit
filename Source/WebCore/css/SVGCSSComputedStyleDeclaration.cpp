@@ -73,19 +73,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
     Node* node = m_node.get();
     if (!node)
         return 0;
-    
+
     // Make sure our layout is up to date before we allow a query on these attributes.
     if (updateLayout)
         node->document()->updateLayout();
-        
+
     RenderStyle* style = node->computedStyle();
     if (!style)
         return 0;
-    
+
     const SVGRenderStyle* svgStyle = style->svgStyle();
     if (!svgStyle)
         return 0;
-    
+
     switch (static_cast<CSSPropertyID>(propertyID)) {
         case CSSPropertyClipRule:
             return CSSPrimitiveValue::create(svgStyle->clipRule());

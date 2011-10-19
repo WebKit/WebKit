@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-CSSSelectorList::~CSSSelectorList() 
+CSSSelectorList::~CSSSelectorList()
 {
     deleteSelectors();
 }
-    
+
 void CSSSelectorList::adopt(CSSSelectorList& list)
 {
     deleteSelectors();
@@ -48,7 +48,7 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
     deleteSelectors();
     const size_t vectorSize = selectorVector.size();
     size_t flattenedSize = 0;
-    for (size_t i = 0; i < vectorSize; ++i) {        
+    for (size_t i = 0; i < vectorSize; ++i) {
         for (CSSParserSelector* selector = selectorVector[i].get(); selector; selector = selector->tagHistory())
             ++flattenedSize;
     }

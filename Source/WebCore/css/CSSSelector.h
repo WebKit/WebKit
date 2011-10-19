@@ -215,12 +215,12 @@ namespace WebCore {
         static bool isUnknownPseudoType(const AtomicString&);
         static PseudoId pseudoId(PseudoType);
 
-        // Selectors are kept in an array by CSSSelectorList. The next component of the selector is 
+        // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
         // the next item in the array.
         CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         bool hasTag() const { return m_tag != anyQName(); }
-        
+
         const QualifiedName& tag() const { return m_tag; }
         // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
         // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
@@ -234,7 +234,7 @@ namespace WebCore {
         void setAttribute(const QualifiedName&);
         void setArgument(const AtomicString&);
         void setSelectorList(PassOwnPtr<CSSSelectorList>);
-        
+
         bool parseNth();
         bool matchNth(int count);
 
@@ -258,9 +258,9 @@ namespace WebCore {
         unsigned m_relation           : 3; // enum Relation
         mutable unsigned m_match      : 4; // enum Match
         mutable unsigned m_pseudoType : 8; // PseudoType
-        
+
     private:
-        bool m_parsedNth              : 1; // Used for :nth-* 
+        bool m_parsedNth              : 1; // Used for :nth-*
         bool m_isLastInSelectorList   : 1;
         bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;
@@ -287,25 +287,25 @@ namespace WebCore {
             OwnPtr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
         };
         void createRareData();
-        
+
         union DataUnion {
             DataUnion() : m_value(0) { }
             AtomicStringImpl* m_value;
             RareData* m_rareData;
         } m_data;
-        
+
         QualifiedName m_tag;
     };
 
 inline const QualifiedName& CSSSelector::attribute() const
-{ 
+{
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
     return m_data.m_rareData->m_attribute;
 }
-    
-inline bool CSSSelector::matchesPseudoElement() const 
-{ 
+
+inline bool CSSSelector::matchesPseudoElement() const
+{
     if (m_pseudoType == PseudoUnknown)
         extractPseudoType();
     return m_match == PseudoElement;
@@ -361,7 +361,7 @@ inline void CSSSelector::setValue(const AtomicString& value)
     m_data.m_value->ref();
 }
 
-inline void move(PassOwnPtr<CSSSelector> from, CSSSelector* to) 
+inline void move(PassOwnPtr<CSSSelector> from, CSSSelector* to)
 {
     memcpy(to, from.get(), sizeof(CSSSelector));
     // We want to free the memory (which was allocated with fastNew), but we

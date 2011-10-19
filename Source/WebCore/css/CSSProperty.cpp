@@ -48,7 +48,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
             // Left = Start, Right = End, Before = Top, After = Bottom
             return properties[logicalSide];
         }
-        
+
         if (writingMode == BottomToTopWritingMode) {
             // Start = Left, End = Right, Before = Bottom, After = Top.
             switch (logicalSide) {
@@ -62,7 +62,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
                 return properties[TopSide];
             }
         }
-        
+
         if (writingMode == LeftToRightWritingMode) {
             // Start = Top, End = Bottom, Before = Left, After = Right.
             switch (logicalSide) {
@@ -76,7 +76,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
                 return properties[RightSide];
             }
         }
-        
+
         // Start = Top, End = Bottom, Before = Right, After = Left
         switch (logicalSide) {
         case StartSide:
@@ -103,7 +103,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
             return properties[BottomSide];
         }
     }
-    
+
     if (writingMode == BottomToTopWritingMode) {
         // Start = Right, End = Left, Before = Bottom, After = Top
         switch (logicalSide) {
@@ -117,7 +117,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
             return properties[TopSide];
         }
     }
-    
+
     if (writingMode == LeftToRightWritingMode) {
         // Start = Bottom, End = Top, Before = Left, After = Right
         switch (logicalSide) {
@@ -131,7 +131,7 @@ static int resolveToPhysicalProperty(TextDirection direction, WritingMode writin
             return properties[RightSide];
         }
     }
-    
+
     // Start = Bottom, End = Top, Before = Right, After = Left
     switch (logicalSide) {
     case StartSide:
@@ -153,7 +153,7 @@ static int resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logi
         return properties[logicalSide];
     return logicalSide == LogicalWidth ? properties[1] : properties[0];
 }
-        
+
 int CSSProperty::resolveDirectionAwareProperty(int propertyID, TextDirection direction, WritingMode writingMode)
 {
     switch (static_cast<CSSPropertyID>(propertyID)) {

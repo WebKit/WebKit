@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -58,7 +58,7 @@ String WebKitCSSKeyframesRule::name() const
 void WebKitCSSKeyframesRule::setName(const String& name)
 {
     m_name = name;
-    
+
     // Since the name is used in the keyframe map list in CSSStyleSelector, we need
     // to recompute the style sheet to get the updated name.
     if (stylesheet())
@@ -91,7 +91,7 @@ void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
 
     m_lstCSSRules->append(rule);
     rule->setParent(this);
-    
+
     if (CSSMutableStyleDeclaration* style = rule->style())
         style->setParent(this);
 }

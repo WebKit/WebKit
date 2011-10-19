@@ -62,9 +62,9 @@
 #endif
 
 namespace WebCore {
-    
+
 using namespace HTMLNames;
-    
+
 static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr);
 
 SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
@@ -175,8 +175,8 @@ void SelectorChecker::collectIdentifierHashes(const CSSSelector* selector, unsig
     unsigned* hash = identifierHashes;
     unsigned* end = identifierHashes + maximumIdentifierCount;
     CSSSelector::Relation relation = selector->relation();
-    
-    // Skip the topmost selector. It is handled quickly by the rule hashes.    
+
+    // Skip the topmost selector. It is handled quickly by the rule hashes.
     bool skipOverSubselectors = true;
     for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
         // Only collect identifiers that match ancestors.
@@ -207,24 +207,24 @@ static inline const AtomicString* linkAttribute(Node* node)
 {
     if (!node->isLink())
         return 0;
-    
+
     ASSERT(node->isElementNode());
     Element* element = static_cast<Element*>(node);
     if (element->isHTMLElement())
         return &element->fastGetAttribute(hrefAttr);
-    
+
 #if ENABLE(SVG)
     if (element->isSVGElement())
         return &element->getAttribute(XLinkNames::hrefAttr);
 #endif
-    
+
     return 0;
 }
 
 EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
 {
     ASSERT(element->isLink());
-    
+
     const AtomicString* attr = linkAttribute(element);
     if (!attr || attr->isNull())
         return NotInsideLink;
@@ -241,13 +241,13 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
     Frame* frame = m_document->frame();
     if (!frame)
         return InsideUnvisitedLink;
-    
+
     Page* page = frame->page();
     if (!page)
         return InsideUnvisitedLink;
-    
+
     m_linksCheckedForVisitedState.add(hash);
-    
+
 #if USE(PLATFORM_STRATEGIES)
     return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, m_document->baseURL(), *attr) ? InsideVisitedLink : InsideUnvisitedLink;
 #else
@@ -289,7 +289,7 @@ inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*
         }
         if (topChildOrSubselector) {
             // Child or subselector check failed.
-            // If the match element is null, topChildOrSubselector was also the very topmost selector and had to match 
+            // If the match element is null, topChildOrSubselector was also the very topmost selector and had to match
             // the original element we were checking.
             if (!topChildOrSubselectorMatchElement)
                 return false;
@@ -304,12 +304,12 @@ inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*
     return false;
 }
 
-inline bool checkClassValue(const Element* element, AtomicStringImpl* value, const QualifiedName&) 
+inline bool checkClassValue(const Element* element, AtomicStringImpl* value, const QualifiedName&)
 {
     return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(value);
 }
 
-inline bool checkIDValue(const Element* element, AtomicStringImpl* value, const QualifiedName&) 
+inline bool checkIDValue(const Element* element, AtomicStringImpl* value, const QualifiedName&)
 {
     return element->hasID() && element->idForStyleResolution().impl() == value;
 }
@@ -323,7 +323,7 @@ inline bool checkTagValue(const Element*, AtomicStringImpl*, const QualifiedName
 {
     return true;
 }
-    
+
 }
 
 inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element, VisitedMatchType visitedMatchType) const
@@ -358,12 +358,12 @@ bool SelectorChecker::fastCheckSelector(const CSSSelector* selector, const Eleme
     const Element* topChildOrSubselectorMatchElement = 0;
     if (selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::SubSelector)
         topChildOrSubselector = selector;
-    
+
     if (selector->relation() != CSSSelector::SubSelector)
         element = element->parentElement();
-    
+
     selector = selector->tagHistory();
-    
+
     // We know this compound selector has descendant, child and subselector combinators only and all components are simple.
     while (selector) {
         switch (selector->m_match) {
@@ -442,10 +442,10 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
     // first selector has to match
     if (!checkOneSelector(sel, e, dynamicPseudo, isSubSelector, visitedMatchType, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
-    
+
     // The rest of the selectors has to match
     CSSSelector::Relation relation = sel->relation();
-    
+
     // Prepare next sel
     sel = sel->tagHistory();
     if (!sel)
@@ -455,7 +455,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
         // Bail-out if this selector is irrelevant for the pseudoStyle
         if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
-    
+
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
         if (!isSubSelector && (e->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             visitedMatchType = VisitedMatchDisabled;
@@ -473,7 +473,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
                 return match;
         }
         break;
-    case CSSSelector::Child: 
+    case CSSSelector::Child:
         {
             ContainerNode* n = e->parentNode();
             if (!n || !n->isElementNode())
@@ -531,7 +531,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     }
-    
+
     return SelectorFailsCompletely;
 }
 
@@ -545,7 +545,7 @@ static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
     // This is the list of attributes in HTML 4.01 with values marked as "[CI]" or case-insensitive
     // Mozilla treats all other values as case-sensitive, thus so do we.
     HashSet<AtomicStringImpl*>* attrSet = new HashSet<AtomicStringImpl*>;
-    
+
     addLocalNameToSet(attrSet, accept_charsetAttr);
     addLocalNameToSet(attrSet, acceptAttr);
     addLocalNameToSet(attrSet, alignAttr);
@@ -591,7 +591,7 @@ static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
     addLocalNameToSet(attrSet, valignAttr);
     addLocalNameToSet(attrSet, valuetypeAttr);
     addLocalNameToSet(attrSet, vlinkAttr);
-    
+
     return attrSet;
 }
 
@@ -607,7 +607,7 @@ static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match m
     const AtomicString& value = attributeItem->value();
     if (value.isNull())
         return false;
-    
+
     switch (match) {
     case CSSSelector::Exact:
         if (caseSensitive ? selectorValue != value : !equalIgnoringCase(selectorValue, value))
@@ -618,7 +618,7 @@ static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match m
             // Ignore empty selectors or selectors containing spaces
             if (selectorValue.contains(' ') || selectorValue.isEmpty())
                 return false;
-            
+
             unsigned startSearchAt = 0;
             while (true) {
                 size_t foundPos = value.find(selectorValue, startSearchAt, caseSensitive);
@@ -629,7 +629,7 @@ static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match m
                     if (endStr == value.length() || value[endStr] == ' ')
                         break; // We found a match.
                 }
-                
+
                 // No match. Keep looking.
                 startSearchAt = foundPos + 1;
             }
@@ -661,7 +661,7 @@ static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match m
     default:
         break;
     }
-    
+
     return true;
 }
 
@@ -669,14 +669,14 @@ static bool anyAttributeMatches(NamedNodeMap* attributes, CSSSelector::Match mat
 {
     for (size_t i = 0; i < attributes->length(); ++i) {
         Attribute* attributeItem = attributes->attributeItem(i);
-        
+
         if (!SelectorChecker::attributeNameMatches(attributeItem, selectorAttr))
             continue;
-        
+
         if (attributeValueMatches(attributeItem, match, selectorValue, caseSensitive))
             return true;
     }
-    
+
     return false;
 }
 
@@ -685,26 +685,26 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
     ASSERT(e);
     if (!SelectorChecker::tagMatches(e, sel))
         return false;
-    
+
     if (sel->m_match == CSSSelector::Class)
         return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->value());
-    
+
     if (sel->m_match == CSSSelector::Id)
         return e->hasID() && e->idForStyleResolution() == sel->value();
-    
+
     if (sel->isAttributeSelector()) {
         const QualifiedName& attr = sel->attribute();
-        
+
         NamedNodeMap* attributes = e->attributes(true);
         if (!attributes)
             return false;
-        
+
         bool caseSensitive = !m_documentIsHTML || !htmlAttributeHasCaseInsensitiveValue(attr);
-        
+
         if (!anyAttributeMatches(attributes, static_cast<CSSSelector::Match>(sel->m_match), attr, sel->value(), caseSensitive))
             return false;
     }
-    
+
     if (sel->m_match == CSSSelector::PseudoClass) {
         // Handle :not up front.
         if (sel->pseudoType() == CSSSelector::PseudoNot) {
@@ -728,7 +728,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
                 return !m_document->page()->focusController()->isActive();
         }
-        
+
         // Normal element pseudo class checking.
         switch (sel->pseudoType()) {
             // Pseudo classes:
@@ -848,7 +848,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             if (Element* parentElement = e->parentElement()) {
                 bool firstChild = false;
                 bool lastChild = false;
-                
+
                 Node* n = e->previousSibling();
                 while (n && !n->isElementNode())
                     n = n->previousSibling();
@@ -930,7 +930,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                     }
                     n = n->previousSibling();
                 }
-                
+
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
@@ -939,7 +939,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                 }
-                
+
                 if (sel->matchNth(count))
                     return true;
             }
@@ -956,13 +956,13 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                         count++;
                     n = n->previousSibling();
                 }
-                
+
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                 }
-                
+
                 if (sel->matchNth(count))
                     return true;
             }
@@ -1059,7 +1059,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             break;
         case CSSSelector::PseudoActive:
             // If we're in quirks mode, then :active should never match anchors with no
-            // href and *:active should not match anything. 
+            // href and *:active should not match anything.
             if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                 if (elementStyle)
                     elementStyle->setAffectedByActiveRules(true);
@@ -1086,7 +1086,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             if (!e || !e->isFormControlElement())
                 return false;
             return e->isTextFormControl() && e->isReadOnlyFormControl();
-        case CSSSelector::PseudoReadWrite: 
+        case CSSSelector::PseudoReadWrite:
             if (!e || !e->isFormControlElement())
                 return false;
             return e->isTextFormControl() && !e->isReadOnlyFormControl();
@@ -1153,9 +1153,9 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             }
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoFullScreen:
-            // While a Document is in the fullscreen state, and the document's current fullscreen 
-            // element is an element in the document, the 'full-screen' pseudoclass applies to 
-            // that element. Also, an <iframe>, <object> or <embed> element whose child browsing 
+            // While a Document is in the fullscreen state, and the document's current fullscreen
+            // element is an element in the document, the 'full-screen' pseudoclass applies to
+            // that element. Also, an <iframe>, <object> or <embed> element whose child browsing
             // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
             if (e->isFrameElementBase() && static_cast<HTMLFrameElementBase*>(e)->containsFullScreenElement())
                 return true;
@@ -1169,7 +1169,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
         case CSSSelector::PseudoFullScreenAncestor:
             return e->containsFullScreenElement();
         case CSSSelector::PseudoFullScreenDocument:
-            // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies 
+            // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
             // to all elements of that Document.
             if (!e->document()->webkitIsFullScreen())
                 return false;
@@ -1196,12 +1196,12 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
     if (sel->m_match == CSSSelector::PseudoElement) {
         if (!elementStyle && !m_isCollectingRulesOnly)
             return false;
-        
+
         if (sel->isUnknownPseudoElement()) {
             m_hasUnknownPseudoElements = true;
             return e->shadowPseudoId() == sel->value();
         }
-        
+
         PseudoId pseudoId = CSSSelector::pseudoId(sel->pseudoType());
         if (pseudoId == FIRST_LETTER) {
             if (Document* document = e->document())
@@ -1218,15 +1218,15 @@ bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, PseudoId&) con
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
     ScrollbarPart part = RenderScrollbar::partForStyleResolve();
-    
+
     // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
     // pseudo class and just apply to everything.
     if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
         return !m_document->page()->focusController()->isActive();
-    
+
     if (!scrollbar)
         return false;
-    
+
     ASSERT(sel->m_match == CSSSelector::PseudoClass);
     switch (sel->pseudoType()) {
     case CSSSelector::PseudoEnabled:
@@ -1263,7 +1263,7 @@ bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, PseudoId&) con
         return part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart;
     case CSSSelector::PseudoEnd:
         return part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart;
-    case CSSSelector::PseudoDoubleButton: 
+    case CSSSelector::PseudoDoubleButton:
         {
             ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
             if (part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart)
@@ -1271,7 +1271,7 @@ bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, PseudoId&) con
             if (part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart)
                 return buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth;
             return false;
-        } 
+        }
     case CSSSelector::PseudoSingleButton:
         {
             ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
@@ -1336,7 +1336,7 @@ bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, c
 unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
 {
     unsigned linkMatchType = MatchAll;
-    
+
     // Statically determine if this selector will match a link in visited, unvisited or any state, or never.
     // :visited never matches other elements than the innermost link element.
     for (; selector; selector = selector->tagHistory()) {

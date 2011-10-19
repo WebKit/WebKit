@@ -65,7 +65,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createColorValue(unsigned 
     // Just because it is common.
     if (rgbValue == Color::black)
         return m_colorBlack;
-    
+
     // Just wipe out the cache and start rebuilding if it gets too big.
     const int maximumColorCacheSize = 512;
     if (m_colorValueCache.size() > maximumColorCacheSize)
@@ -88,7 +88,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createValue(double value, 
     int intValue = static_cast<int>(value);
     if (value != intValue)
         return CSSPrimitiveValue::create(value, type);
-    
+
     IntegerValueCache* cache;
     switch (type) {
     case CSSPrimitiveValue::CSS_PX:

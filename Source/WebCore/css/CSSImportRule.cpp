@@ -128,7 +128,7 @@ void CSSImportRule::insertedIntoParent()
     // in our parent chain with the same URL, then just bail.
     StyleBase* root = this;
     for (StyleBase* curr = parent(); curr; curr = curr->parent()) {
-        // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL. 
+        // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL.
         if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->finalURL().string())
             return;
         root = curr;

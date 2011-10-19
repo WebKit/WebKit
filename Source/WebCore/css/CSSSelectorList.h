@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CSSSelectorList_h
@@ -29,9 +29,9 @@
 #include "CSSSelector.h"
 
 namespace WebCore {
-    
+
 class CSSParserSelector;
-    
+
 class CSSSelectorList {
     WTF_MAKE_NONCOPYABLE(CSSSelectorList); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -40,7 +40,7 @@ public:
 
     void adopt(CSSSelectorList& list);
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
-    
+
     CSSSelector* first() const { return m_selectorArray ? m_selectorArray : 0; }
     static CSSSelector* next(CSSSelector*);
     bool hasOneSelector() const { return m_selectorArray && !next(m_selectorArray); }

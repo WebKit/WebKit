@@ -8,13 +8,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -2708,7 +2708,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmoothingMode smoothi
         m_value.ident = CSSValueSubpixelAntialiased;
         return;
     }
-    
+
     ASSERT_NOT_REACHED();
     m_value.ident = CSSValueAuto;
 }
@@ -2725,7 +2725,7 @@ template<> inline CSSPrimitiveValue::operator FontSmoothingMode() const
     case CSSValueSubpixelAntialiased:
         return SubpixelAntialiased;
     }
-    
+
     ASSERT_NOT_REACHED();
     return AutoSmoothing;
 }
@@ -2985,7 +2985,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
         break;
     }
 }
-    
+
 template<> inline CSSPrimitiveValue::operator Order() const
 {
     switch (m_value.ident) {
@@ -3610,7 +3610,7 @@ template<> inline CSSPrimitiveValue::operator EVectorEffect() const
         return VE_NONE;
     }
 }
-    
+
 #endif
 
 }

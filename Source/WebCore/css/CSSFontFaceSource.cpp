@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -215,8 +215,8 @@ SVGFontFaceElement* CSSFontFaceSource::svgFontFaceElement() const
     return m_svgFontFaceElement.get();
 }
 
-void CSSFontFaceSource::setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element) 
-{ 
+void CSSFontFaceSource::setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element)
+{
     m_svgFontFaceElement = element;
 }
 

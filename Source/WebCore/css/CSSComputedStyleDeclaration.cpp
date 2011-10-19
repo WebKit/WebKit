@@ -350,8 +350,8 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
         top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
         top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
-    
-    if (image.imageSlices().right() == image.imageSlices().top() && image.imageSlices().bottom() == image.imageSlices().top() 
+
+    if (image.imageSlices().right() == image.imageSlices().top() && image.imageSlices().bottom() == image.imageSlices().top()
         && image.imageSlices().left() == image.imageSlices().top()) {
         right = top;
         bottom = top;
@@ -361,7 +361,7 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
             right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
         else
             right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
-            
+
         if (image.imageSlices().bottom() == image.imageSlices().top() && image.imageSlices().right() == image.imageSlices().left()) {
             bottom = top;
             left = right;
@@ -370,7 +370,7 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
                 bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
             else
                 bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
-            
+
             if (image.imageSlices().left() == image.imageSlices().right())
                 left = right;
             else {
@@ -413,7 +413,7 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
             right = primitiveValueCache->createValue(box.right().value(), CSSPrimitiveValue::CSS_NUMBER);
         else
             right = primitiveValueCache->createValue(box.right());
-        
+
         if (box.bottom() == box.top() && box.right() == box.left()) {
             bottom = top;
             left = right;
@@ -422,7 +422,7 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
                 bottom = primitiveValueCache->createValue(box.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
             else
                 bottom = primitiveValueCache->createValue(box.bottom());
-    
+
             if (box.left() == box.right())
                 left = right;
             else {
@@ -447,7 +447,7 @@ static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& i
 {
     RefPtr<CSSPrimitiveValue> horizontalRepeat;
     RefPtr<CSSPrimitiveValue> verticalRepeat;
-    
+
     horizontalRepeat = primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.horizontalRule()));
     if (image.horizontalRule() == image.verticalRule())
         verticalRepeat = horizontalRepeat;
@@ -460,15 +460,15 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
 {
     if (!image.hasImage())
         return primitiveValueCache->createIdentifierValue(CSSValueNone);
-    
+
     // Image first.
     RefPtr<CSSValue> imageValue;
     if (image.image())
         imageValue = image.image()->cssValue();
-    
+
     // Create the image slice.
     RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image, primitiveValueCache);
-    
+
     // Create the border area slices.
     RefPtr<CSSValue> borderSlices = valueForNinePieceImageQuad(image.borderSlices(), primitiveValueCache);
 
@@ -508,7 +508,7 @@ static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection
         offset = primitiveValueCache->createValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
         offset = zoomAdjustedPixelValue(reflection->offset().value(), style, primitiveValueCache);
-    
+
     return CSSReflectValue::create(reflection->direction(), offset.release(), valueForNinePieceImage(reflection->mask(), primitiveValueCache));
 }
 
@@ -582,7 +582,7 @@ static LayoutRect sizingBox(RenderObject* renderer)
 {
     if (!renderer->isBox())
         return LayoutRect();
-    
+
     RenderBox* box = toRenderBox(renderer);
     return box->style()->boxSizing() == CONTENT_BOX ? box->contentBoxRect() : box->borderBoxRect();
 }
@@ -596,7 +596,7 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
 {
     if (!renderer || style->transform().operations().isEmpty())
         return primitiveValueCache->createIdentifierValue(CSSValueNone);
-    
+
     IntRect box = sizingBox(renderer);
 
     TransformationMatrix transform;
@@ -650,11 +650,11 @@ static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderS
 {
     if (!renderer || style->filter().operations().isEmpty())
         return primitiveValueCache->createIdentifierValue(CSSValueNone);
-    
+
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
 
     RefPtr<WebKitCSSFilterValue> filterValue;
-    
+
     Vector<RefPtr<FilterOperation> >::const_iterator end = style->filter().operations().end();
     for (Vector<RefPtr<FilterOperation> >::const_iterator it = style->filter().operations().begin(); it != end; ++it) {
         FilterOperation* filterOperation = (*it).get();
@@ -730,7 +730,7 @@ static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderS
         }
         list->append(filterValue);
     }
-    
+
     return list.release();
 }
 #endif
@@ -851,7 +851,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringK
     RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
-    
+
     CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
 
     if (int keywordSize = style->fontDescription().keywordSize())
@@ -1016,7 +1016,7 @@ static void logUnimplementedPropertyID(int propertyID)
         return;
 
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(static_cast<CSSPropertyID>(propertyID)));
-} 
+}
 
 static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
 {
@@ -1110,7 +1110,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
     if (!style)
         return 0;
-    
+
     CSSPrimitiveValueCache* primitiveValueCache = node->document()->cssPrimitiveValueCache().get();
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
@@ -1204,7 +1204,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 EFillBox box = isClip ? layers->clip() : layers->origin();
                 return primitiveValueCache->createValue(box);
             }
-            
+
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 EFillBox box = isClip ? currLayer->clip() : currLayer->origin();
@@ -1266,7 +1266,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             list->append(zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), primitiveValueCache));
             list->append(zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), primitiveValueCache));
             return list.release();
-        }  
+        }
         case CSSPropertyWebkitBorderHorizontalSpacing:
             return zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), primitiveValueCache);
         case CSSPropertyWebkitBorderVerticalSpacing:
@@ -1887,7 +1887,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             else {
                 list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginX(), style.get(), primitiveValueCache));
                 list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginY(), style.get(), primitiveValueCache));
-                
+
             }
             return list.release();
         }
@@ -1896,7 +1896,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(style.get(), style->tapHighlightColor());
-#endif            
+#endif
         case CSSPropertyWebkitUserDrag:
             return primitiveValueCache->createValue(style->userDrag());
         case CSSPropertyWebkitUserSelect:

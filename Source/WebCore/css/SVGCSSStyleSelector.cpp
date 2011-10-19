@@ -111,7 +111,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
 
     SVGRenderStyle* svgstyle = m_style->accessSVGStyle();
     unsigned short valueType = value->cssValueType();
-    
+
     bool isInherit = m_parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT;
     bool isInitial = valueType == CSSPrimitiveValue::CSS_INITIAL || (!m_parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT);
 
@@ -127,7 +127,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(alignmentBaseline, AlignmentBaseline)
             if (!primitiveValue)
                 break;
-            
+
             svgstyle->setAlignmentBaseline(*primitiveValue);
             break;
         }
@@ -299,8 +299,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(fillOpacity, FillOpacity)
             if (!primitiveValue)
                 return;
-        
-            float f = 0.0f;    
+
+            float f = 0.0f;
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 f = primitiveValue->getFloatValue() / 100.0f;
@@ -317,8 +317,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(strokeOpacity, StrokeOpacity)
             if (!primitiveValue)
                 return;
-        
-            float f = 0.0f;    
+
+            float f = 0.0f;
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 f = primitiveValue->getFloatValue() / 100.0f;
@@ -335,8 +335,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(stopOpacity, StopOpacity)
             if (!primitiveValue)
                 return;
-        
-            float f = 0.0f;    
+
+            float f = 0.0f;
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 f = primitiveValue->getFloatValue() / 100.0f;
@@ -447,7 +447,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 s = primitiveValue->getStringValue();
             else
                 return;
-            
+
             svgstyle->setMaskerResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
@@ -582,7 +582,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             // -webkit-svg-shadow does should not have a spread or style
             ASSERT(!item->spread);
             ASSERT(!item->style);
-                
+
             OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
             svgstyle->setShadow(shadowData.release());
             return;

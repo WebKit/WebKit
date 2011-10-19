@@ -55,7 +55,7 @@ public:
     {
         return m_doc;
     }
-    
+
 private:
     StyleSheetList(Document*);
 
