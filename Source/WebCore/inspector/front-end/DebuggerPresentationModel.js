@@ -156,7 +156,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             for (var i = 0; i < uiSourceCodeList.length; ++i)
                 result.push(uiSourceCodeList[i]);
         }
-        return result;            
+        return result;
     },
 
     /**
@@ -489,6 +489,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._presentationCallFrames = [];
         this.selectedCallFrame = null;
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed);
+    },
+
+    get paused()
+    {
+        return !!WebInspector.debuggerModel.debuggerPausedDetails;
     },
 
     set selectedCallFrame(callFrame)

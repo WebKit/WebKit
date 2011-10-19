@@ -1,3 +1,35 @@
+2011-10-13  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: move JS specific popover handling to JavaScriptSourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=70033
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCodes):
+        (WebInspector.DebuggerPresentationModel.prototype.get paused):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.shouldShowPopover):
+        (WebInspector.JavaScriptSourceFrame.prototype.onShowPopover.showObjectPopover):
+        (WebInspector.JavaScriptSourceFrame.prototype.onShowPopover):
+        (WebInspector.JavaScriptSourceFrame.prototype.onHidePopover):
+        (WebInspector.JavaScriptSourceFrame.prototype._highlightExpression):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.willHide):
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype._getPopoverAnchor):
+        (WebInspector.SourceFrame.prototype.get readOnly):
+        (WebInspector.SourceFrame.prototype._setReadOnly):
+        (WebInspector.SourceFrame.prototype.contentChanged):
+        (WebInspector.SourceFrame.prototype.shouldShowPopover):
+        (WebInspector.SourceFrame.prototype.onShowPopover):
+        (WebInspector.SourceFrame.prototype.onHidePopover):
+
 2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL][WK2] Added missing files to build WebKit2 EFL

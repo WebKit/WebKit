@@ -186,7 +186,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         WebInspector.debuggerModel.enableDebugger();
 
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
-    
+
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope());
 }
 
@@ -688,7 +688,7 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(uiSourceCode)
     {
         var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this, uiSourceCode);
-        var sourceFrame = new WebInspector.JavaScriptSourceFrame(delegate, uiSourceCode);
+        var sourceFrame = new WebInspector.JavaScriptSourceFrame(delegate, this._presentationModel, uiSourceCode);
 
         this.addChildView(sourceFrame);
         sourceFrame._uiSourceCode = uiSourceCode;
@@ -1221,18 +1221,12 @@ WebInspector.SourceFrameDelegateForScriptsPanel = function(scriptsPanel, uiSourc
     this._scriptsPanel = scriptsPanel;
     this._model = this._scriptsPanel._presentationModel;
     this._uiSourceCode = uiSourceCode;
-    this._popoverObjectGroup = "popover";
 }
 
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     requestContent: function(callback)
     {
         this._uiSourceCode.requestContent(callback);
-    },
-
-    debuggingSupported: function()
-    {
-        return true;
     },
 
     setBreakpoint: function(lineNumber, condition, enabled)
@@ -1276,21 +1270,6 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     setScriptSourceIsBeingEdited: function(inEditMode)
     {
         this._scriptsPanel._setScriptSourceIsBeingEdited(this._uiSourceCode, inEditMode);
-    },
-
-    debuggerPaused: function()
-    {
-        return WebInspector.panels.scripts.paused;
-    },
-
-    evaluateInSelectedCallFrame: function(string, callback)
-    {
-        this._scriptsPanel.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, false, callback);
-    },
-
-    releaseEvaluationResult: function()
-    {
-        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
     },
 
     suggestedFileName: function()
