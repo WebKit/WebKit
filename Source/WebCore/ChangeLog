@@ -1,3 +1,9 @@
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
+        Try to jostle the windows build back to life.
+
+        * rendering/HitTestResult.h:
+
 2011-10-18  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure when going back in page with navigated subframes

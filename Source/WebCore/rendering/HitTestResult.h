@@ -17,6 +17,7 @@
  * Boston, MA 02110-1301, USA.
  *
 */
+
 #ifndef HitTestResult_h
 #define HitTestResult_h
 
