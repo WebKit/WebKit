@@ -61,6 +61,14 @@ editing/pasteboard/paste-TIFF.html
 # Skip mac API specific tests
 fast/loader/stop-provisional-loads.html
 
+# Test failed after r95899
+# https://bugs.webkit.org/show_bug.cgi?id=68796
+# This canvas test is skipped because it is out of date with respect to 
+# the current spec, and the fix for https://bugs.webkit.org/show_bug.cgi?id=65709 
+# which complies with the current spec, makes this test fail by no longer throwing 
+# exceptions that were previously expected
+canvas/philip/tests/2d.drawImage.outsidesource.html
+
 # =========================================================================== #
 #       Disabled features.                                                    #
 # =========================================================================== #
@@ -2410,10 +2418,6 @@ editing/pasteboard/paste-noscript.html
 # Fails on non-Chromium bots
 # https://bugs.webkit.org/show_bug.cgi?id=68278
 http/tests/history/back-with-fragment-change.php
-
-# Test failed after r95899
-# https://bugs.webkit.org/show_bug.cgi?id=68796
-canvas/philip/tests/2d.drawImage.outsidesource.html
 
 # editing/selection/select-bidi-run.html fails on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=68854
