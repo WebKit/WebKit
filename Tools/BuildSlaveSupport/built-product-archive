@@ -48,7 +48,7 @@ def main():
 
 
 def archiveBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win','qt')
+    assert platform in ('mac', 'win', 'qt', 'gtk')
 
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
 
@@ -82,14 +82,19 @@ def archiveBuiltProduct(configuration, platform):
 
         shutil.rmtree(thinDirectory)
 
-    elif platform == 'qt':
+    elif platform == 'qt' or platform == 'gtk':
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         if os.path.isdir(thinDirectory):
             shutil.rmtree(thinDirectory)
         os.mkdir(thinDirectory)
 
-        for dirname in ["bin", "lib", "JavaScriptCore"]:
+        if platform == 'qt':
+            neededDirectories = ["bin", "lib", "JavaScriptCore"]
+        elif platform == 'gtk':
+            neededDirectories = ["Programs", ".libs"]
+
+        for dirname in neededDirectories:
             fromDir = os.path.join(configurationBuildDirectory, dirname, "*")
             toDir = os.path.join(thinDirectory, dirname)
             os.makedirs(toDir)
@@ -105,7 +110,7 @@ def archiveBuiltProduct(configuration, platform):
             return 1
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win','qt')
+    assert platform in ('mac', 'win', 'qt', 'gtk')
 
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
@@ -134,7 +139,7 @@ def extractBuiltProduct(configuration, platform):
         if subprocess.call(["unzip", "-o", archiveFile], cwd=configurationBuildDirectory):
             return 1
 
-    elif platform == 'qt':
+    elif platform == 'qt' or platform == 'gtk':
         if os.path.isdir(configurationBuildDirectory):
             shutil.rmtree(configurationBuildDirectory)
 

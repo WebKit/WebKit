@@ -1,3 +1,12 @@
+2011-10-19  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [GTK] Enable to use built-product-archive on GTK platform
+        https://bugs.webkit.org/show_bug.cgi?id=70319
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/built-product-archive:
+
 2011-10-18  David Levin  <levin@chromium.org>
 
         watchlist: Should try to run if it can and not throw on mistakes.
