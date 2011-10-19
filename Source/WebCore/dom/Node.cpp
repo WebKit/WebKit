@@ -775,6 +775,12 @@ bool Node::isContentEditable()
     return rendererIsEditable(Editable);
 }
 
+bool Node::isContentRichlyEditable()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    return rendererIsEditable(RichlyEditable);
+}
+
 bool Node::rendererIsEditable(EditableLevel editableLevel) const
 {
     if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowTreeRootNode())

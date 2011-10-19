@@ -1,3 +1,18 @@
+2011-10-19  Daniel Cheng  <dcheng@chromium.org>
+
+        Don't always select images during an image drag.
+        https://bugs.webkit.org/show_bug.cgi?id=62998
+
+        Reviewed by Tony Chang.
+
+        * fast/events/drag-selects-image-expected.txt: Added.
+        * fast/events/drag-selects-image.html: Added.
+        * platform/chromium-win/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt:
+        * platform/chromium-win/editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt:
+        * platform/mac/editing/selection/drag-to-contenteditable-iframe-expected.txt:
+
 2011-10-19  Chang Shu  <cshu@webkit.org>
 
         [Qt] Disable fullscreen api on Qt by default

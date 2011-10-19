@@ -614,14 +614,16 @@ static Image* getImage(Element* element)
         cachedImage->imageForRenderer(element->renderer()) : 0;
 }
 
-static void prepareClipboardForImageDrag(Frame* src, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)
+static void prepareClipboardForImageDrag(Frame* source, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)
 {
-    RefPtr<Range> range = src->document()->createRange();
-    ExceptionCode ec = 0;
-    range->selectNode(node, ec);
-    ASSERT(!ec);
-    src->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
-    clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, src);
+    if (node->isContentRichlyEditable()) {
+        RefPtr<Range> range = source->document()->createRange();
+        ExceptionCode ec = 0;
+        range->selectNode(node, ec);
+        ASSERT(!ec);
+        source->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
+    }
+    clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, source);
 }
 
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)

@@ -342,6 +342,7 @@ public:
     virtual Node* focusDelegate();
 
     bool isContentEditable();
+    bool isContentRichlyEditable();
 
     bool rendererIsEditable() const { return rendererIsEditable(Editable); }
     bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
