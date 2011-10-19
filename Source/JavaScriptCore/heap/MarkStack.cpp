@@ -102,8 +102,10 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
 
     ASSERT(Heap::isMarked(cell));
 
-    if (cell->vptr() == jsStringVPtr)
+    if (cell->vptr() == jsStringVPtr) {
+        JSString::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
+    }
 
     if (cell->vptr() == jsFinalObjectVPtr) {
         JSObject::visitChildren(const_cast<JSCell*>(cell), visitor);

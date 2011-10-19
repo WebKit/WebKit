@@ -36,6 +36,27 @@ static const unsigned substringFromRopeCutoff = 4;
 
 const ClassInfo JSString::s_info = { "string", 0, 0, 0, CREATE_METHOD_TABLE(JSString) };
 
+void JSString::RopeBuilder::expand()
+{
+    ASSERT(m_jsString->m_fiberCount == JSString::s_maxInternalRopeLength);
+    JSString* jsString = m_jsString;
+    m_jsString = jsStringBuilder(&m_globalData);
+    append(jsString);
+}
+
+JSString::~JSString()
+{
+    ASSERT(vptr() == JSGlobalData::jsStringVPtr);
+}
+
+void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSString* thisObject = static_cast<JSString*>(cell);
+    Base::visitChildren(thisObject, visitor);
+    for (size_t i = 0; i < thisObject->m_fiberCount; ++i)
+        visitor.append(&thisObject->m_fibers[i]);
+}
+
 void JSString::resolveRope(ExecState* exec) const
 {
     ASSERT(isRope());
@@ -48,35 +69,21 @@ void JSString::resolveRope(ExecState* exec) const
         return;
     }
 
-    RopeImpl::Fiber currentFiber = m_fibers[0];
-
-    if ((m_fiberCount > 2) || (RopeImpl::isRope(currentFiber)) 
-        || ((m_fiberCount == 2) && (RopeImpl::isRope(m_fibers[1])))) {
-        resolveRopeSlowCase(exec, buffer);
-        return;
+    for (size_t i = 0; i < m_fiberCount; ++i) {
+        if (m_fibers[i]->isRope())
+            return resolveRopeSlowCase(exec, buffer);
     }
 
     UChar* position = buffer;
-    StringImpl* string = static_cast<StringImpl*>(currentFiber);
-    unsigned length = string->length();
-    StringImpl::copyChars(position, string->characters(), length);
-
-    if (m_fiberCount > 1) {
-        position += length;
-        currentFiber = m_fibers[1];
-        string = static_cast<StringImpl*>(currentFiber);
-        length = string->length();
+    for (size_t i = 0; i < m_fiberCount; ++i) {
+        StringImpl* string = m_fibers[i]->m_value.impl();
+        unsigned length = string->length();
         StringImpl::copyChars(position, string->characters(), length);
         position += length;
     }
-
     ASSERT((buffer + m_length) == position);
-    for (unsigned i = 0; i < m_fiberCount; ++i) {
-        RopeImpl::deref(m_fibers[i]);
-        m_fibers[i] = 0;
-    }
-    m_fiberCount = 0;
 
+    m_fiberCount = 0;
     ASSERT(!isRope());
 }
 
@@ -96,42 +103,32 @@ void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
 
     UChar* position = buffer + m_length;
 
-    // Start with the current RopeImpl.
-    Vector<RopeImpl::Fiber, 32> workQueue;
-    RopeImpl::Fiber currentFiber;
+    Vector<JSString*, 32> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
+    JSString* currentFiber;
     for (unsigned i = 0; i < (m_fiberCount - 1); ++i)
-        workQueue.append(m_fibers[i]);
-    currentFiber = m_fibers[m_fiberCount - 1];
+        workQueue.append(m_fibers[i].get());
+    currentFiber = m_fibers[m_fiberCount - 1].get();
     while (true) {
-        if (RopeImpl::isRope(currentFiber)) {
-            RopeImpl* rope = static_cast<RopeImpl*>(currentFiber);
+        if (currentFiber->isRope()) {
             // Copy the contents of the current rope into the workQueue, with the last item in 'currentFiber'
             // (we will be working backwards over the rope).
-            unsigned fiberCountMinusOne = rope->fiberCount() - 1;
+            unsigned fiberCountMinusOne = currentFiber->fiberCount() - 1;
             for (unsigned i = 0; i < fiberCountMinusOne; ++i)
-                workQueue.append(rope->fibers()[i]);
-            currentFiber = rope->fibers()[fiberCountMinusOne];
+                workQueue.append(currentFiber->m_fibers[i].get());
+            currentFiber = currentFiber->m_fibers[fiberCountMinusOne].get();
         } else {
-            StringImpl* string = static_cast<StringImpl*>(currentFiber);
+            StringImpl* string = static_cast<StringImpl*>(currentFiber->m_value.impl());
             unsigned length = string->length();
             position -= length;
             StringImpl::copyChars(position, string->characters(), length);
 
-            // Was this the last item in the work queue?
             if (workQueue.isEmpty()) {
-                // Create a string from the UChar buffer, clear the rope RefPtr.
-                ASSERT(buffer == position);
-                for (unsigned i = 0; i < m_fiberCount; ++i) {
-                    RopeImpl::deref(m_fibers[i]);
-                    m_fibers[i] = 0;
-                }
                 m_fiberCount = 0;
-                
+                ASSERT(buffer == position);
                 ASSERT(!isRope());
                 return;
             }
 
-            // No! - set the next item up to process.
             currentFiber = workQueue.last();
             workQueue.removeLast();
         }
@@ -140,10 +137,6 @@ void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
 
 void JSString::outOfMemory(ExecState* exec) const
 {
-    for (unsigned i = 0; i < m_fiberCount; ++i) {
-        RopeImpl::deref(m_fibers[i]);
-        m_fibers[i] = 0;
-    }
     m_fiberCount = 0;
     ASSERT(!isRope());
     ASSERT(m_value == UString());
@@ -151,110 +144,12 @@ void JSString::outOfMemory(ExecState* exec) const
         throwOutOfMemoryError(exec);
 }
 
-// This function construsts a substring out of a rope without flattening by reusing the existing fibers.
-// This can reduce memory usage substantially. Since traversing ropes is slow the function will revert 
-// back to flattening if the rope turns out to be long.
-JSString* JSString::substringFromRope(ExecState* exec, unsigned substringStart, unsigned substringLength)
-{
-    ASSERT(isRope());
-    ASSERT(substringLength);
-    
-    JSGlobalData* globalData = &exec->globalData();
-
-    UString substringFibers[3];
-    
-    unsigned fiberCount = 0;
-    unsigned substringFiberCount = 0;
-    unsigned substringEnd = substringStart + substringLength;
-    unsigned fiberEnd = 0;
-
-    RopeIterator end;
-    for (RopeIterator it(m_fibers.data(), m_fiberCount); it != end; ++it) {
-        ++fiberCount;
-        StringImpl* fiberString = *it;
-        unsigned fiberStart = fiberEnd;
-        fiberEnd = fiberStart + fiberString->length();
-        if (fiberEnd <= substringStart)
-            continue;
-        unsigned copyStart = std::max(substringStart, fiberStart);
-        unsigned copyEnd = std::min(substringEnd, fiberEnd);
-        if (copyStart == fiberStart && copyEnd == fiberEnd)
-            substringFibers[substringFiberCount++] = UString(fiberString);
-        else
-            substringFibers[substringFiberCount++] = UString(StringImpl::create(fiberString, copyStart - fiberStart, copyEnd - copyStart));
-        if (fiberEnd >= substringEnd)
-            break;
-        if (fiberCount > substringFromRopeCutoff || substringFiberCount >= 3) {
-            // This turned out to be a really inefficient rope. Just flatten it.
-            resolveRope(exec);
-            return jsSubstring(&exec->globalData(), m_value, substringStart, substringLength);
-        }
-    }
-    ASSERT(substringFiberCount && substringFiberCount <= 3);
-
-    if (substringLength == 1) {
-        ASSERT(substringFiberCount == 1);
-        UChar c = substringFibers[0][0];
-        if (c <= maxSingleCharacterString)
-            return globalData->smallStrings.singleCharacterString(globalData, c);
-    }
-    if (substringFiberCount == 1)
-        return JSString::create(*globalData, substringFibers[0]);
-    if (substringFiberCount == 2)
-        return JSString::create(*globalData, substringFibers[0], substringFibers[1]);
-    return JSString::create(*globalData, substringFibers[0], substringFibers[1], substringFibers[2]);
-}
-
 JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)
 {
-    if (!isRope()) {
-        size_t matchPosition = m_value.find(character);
-        if (matchPosition == notFound)
-            return JSValue(this);
-        return jsString(exec, m_value.substringSharingImpl(0, matchPosition), replacement, m_value.substringSharingImpl(matchPosition + 1));
-    }
-
-    RopeIterator end;
-    
-    // Count total fibers and find matching string.
-    size_t fiberCount = 0;
-    StringImpl* matchString = 0;
-    size_t matchPosition = notFound;
-    for (RopeIterator it(m_fibers.data(), m_fiberCount); it != end; ++it) {
-        ++fiberCount;
-        if (matchString)
-            continue;
-
-        StringImpl* string = *it;
-        matchPosition = string->find(character);
-        if (matchPosition == notFound)
-            continue;
-        matchString = string;
-    }
-
-    if (!matchString)
-        return this;
-
-    RopeBuilder builder(replacement.length() ? fiberCount + 2 : fiberCount + 1);
-    if (UNLIKELY(builder.isOutOfMemory()))
-        return throwOutOfMemoryError(exec);
-
-    for (RopeIterator it(m_fibers.data(), m_fiberCount); it != end; ++it) {
-        StringImpl* string = *it;
-        if (string != matchString) {
-            builder.append(UString(string));
-            continue;
-        }
-
-        builder.append(UString(string).substringSharingImpl(0, matchPosition));
-        if (replacement.length())
-            builder.append(replacement);
-        builder.append(UString(string).substringSharingImpl(matchPosition + 1));
-        matchString = 0;
-    }
-
-    JSGlobalData* globalData = &exec->globalData();
-    return JSValue(JSString::create(*globalData, builder.release()));
+    size_t matchPosition = value(exec).find(character);
+    if (matchPosition == notFound)
+        return JSValue(this);
+    return jsString(exec, m_value.substringSharingImpl(0, matchPosition), replacement, value(exec).substringSharingImpl(matchPosition + 1));
 }
 
 JSString* JSString::getIndexSlowCase(ExecState* exec, unsigned i)

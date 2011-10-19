@@ -191,7 +191,7 @@ namespace JSC {
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
         UString toString(ExecState*) const;
-        UString toPrimitiveString(ExecState*) const;
+        JSString* toPrimitiveString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
 

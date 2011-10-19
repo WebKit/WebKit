@@ -37,9 +37,8 @@ namespace JSC {
             object->finishCreation(exec->globalData(), string);
             return object;
         }
-        static StringObject* create(ExecState* exec, Structure* structure, const UString& str)
+        static StringObject* create(ExecState* exec, Structure* structure, JSString* string)
         {
-            JSString* string = jsString(exec, str);
             StringObject* object = new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), structure);
             object->finishCreation(exec->globalData(), string);
             return object;

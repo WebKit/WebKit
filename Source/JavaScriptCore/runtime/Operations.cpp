@@ -50,10 +50,10 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     if (p1.isString()) {
         return p2.isString()
             ? jsString(callFrame, asString(p1), asString(p2))
-            : jsString(callFrame, asString(p1), p2.toString(callFrame));
+            : jsString(callFrame, asString(p1), jsString(callFrame, p2.toString(callFrame)));
     }
     if (p2.isString())
-        return jsString(callFrame, p1.toString(callFrame), asString(p2));
+        return jsString(callFrame, jsString(callFrame, p1.toString(callFrame)), asString(p2));
 
     return jsNumber(p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }

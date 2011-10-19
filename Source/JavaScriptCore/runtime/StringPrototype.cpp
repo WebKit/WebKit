@@ -637,7 +637,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState* exec)
         JSValue v = exec->argument(0);
         return JSValue::encode(v.isString()
             ? jsString(exec, asString(thisValue), asString(v))
-            : jsString(exec, asString(thisValue), v.toString(exec)));
+            : jsString(exec, asString(thisValue), jsString(&exec->globalData(), v.toString(exec))));
     }
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);

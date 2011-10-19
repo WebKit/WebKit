@@ -1,3 +1,76 @@
+2011-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Switched ropes from malloc memory to GC memory
+        https://bugs.webkit.org/show_bug.cgi?id=70364
+
+        Reviewed by Gavin Barraclough.
+
+        ~1% SunSpider speedup. Neutral elsewhere. Removes one cause for strings
+        having C++ destructors.
+
+        * heap/MarkStack.cpp:
+        (JSC::visitChildren): Call the JSString visitChildren function now,
+        since it's no longer a no-op.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::~JSString): Moved this destructor out of line because
+        it's called virtually, so there's no value to inlining.
+
+        (JSC::JSString::RopeBuilder::expand): Switched RopeBuilder to be a thin
+        initializing wrapper around JSString. JSString now represents ropes
+        directly, rather than relying on an underlying malloc object.
+
+        (JSC::JSString::visitChildren): Visit our rope fibers, since they're GC
+        objects now.
+
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::resolveRopeSlowCase):
+        (JSC::JSString::outOfMemory): Updated for operating on JSStrings instead
+        of malloc objects.
+
+        (JSC::JSString::replaceCharacter): Removed optimizations for substringing
+        ropes and replacing subsections of ropes. We want to reimplement versions
+        of these optimizations in the future, but this patch already has good
+        performance without them.
+
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::finishCreation):
+        (JSC::RopeBuilder::createNull):
+        (JSC::RopeBuilder::create):
+        (JSC::RopeBuilder::createHasOtherOwner):
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsNontrivialString):
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString): Lots of mechanical changes here. The two important
+        things are: (1) The fibers in JSString::m_fibers are JSStrings now, not
+        malloc objects; (2) I simplified the JSString constructor interface to
+        only accept PassRefPtr<StringImpl>, instead of variations on that like
+        UString, reducing refcount churn.
+
+        * runtime/JSValue.h:
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toPrimitiveString): Updated this function to return a
+        JSString instead of a UString, since that's what clients want now.
+
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString): Updated for interface changes above.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        * runtime/StringObject.h:
+        (JSC::StringObject::create): Don't create a new JSString if we already
+        have a JSString.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncConcat): Updated for interface changes above.
+
 2011-10-18  Gavin Barraclough  <barraclough@apple.com>
 
         Errrk, fix partial commit of r97825!
