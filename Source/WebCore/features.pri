@@ -175,7 +175,7 @@ maemo5|maemo6 {
     }
 }
 
-!contains(DEFINES, ENABLE_FULLSCREEN_API=.): DEFINES += ENABLE_FULLSCREEN_API=1
+!contains(DEFINES, ENABLE_FULLSCREEN_API=.): DEFINES += ENABLE_FULLSCREEN_API=0
 
 ## Forward enabled feature macros to JavaScript enabled features macros
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1

@@ -246,29 +246,7 @@ fast/hidpi
 
 # [Qt] QtWebKit needs fullscreen api support
 # <https://bugs.webkit.org/show_bug.cgi?id=70132>
-fullscreen/full-screen-cancel.html
-fullscreen/full-screen-css.html
-fullscreen/full-screen-frameset.html
-fullscreen/full-screen-iframe-allowed.html
-fullscreen/full-screen-iframe-legacy.html
-fullscreen/full-screen-iframe-zIndex.html
-fullscreen/full-screen-keyboard-disabled.html
-fullscreen/full-screen-keyboard-enabled.html
-fullscreen/full-screen-placeholder.html
-fullscreen/full-screen-remove-ancestor-after.html
-fullscreen/full-screen-remove-ancestor.html
-fullscreen/full-screen-remove-children.html
-fullscreen/full-screen-remove.html
-fullscreen/full-screen-remove-sibling.html
-fullscreen/full-screen-render-inline.html
-fullscreen/full-screen-request.html
-fullscreen/full-screen-stacking-context.html
-fullscreen/full-screen-twice.html
-fullscreen/full-screen-zIndex-after.html
-fullscreen/full-screen-zIndex.html
-fullscreen/parent-flow-inline-with-block-child.html
-fullscreen/video-controls-override.html
-fullscreen/video-specified-size.html
+fullscreen
 plugins/fullscreen-plugins-dont-reload.html
 
 # =========================================================================== #
