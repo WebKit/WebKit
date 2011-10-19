@@ -118,6 +118,7 @@ public:
         PreloadReferencedWhileComplete
     };
     PreloadResult preloadResult() const { return static_cast<PreloadResult>(m_preloadResult); }
+    void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
 
     virtual void didAddClient(CachedResourceClient*);
     virtual void allClientsRemoved() { }
@@ -172,8 +173,7 @@ public:
 
     SharedBuffer* data() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) { m_requestedFromNetworkingLayer = true; }
-    virtual void setResponse(const ResourceResponse&);
+    void setResponse(const ResourceResponse&);
     const ResourceResponse& response() const { return m_response; }
 
     // Sets the serialized metadata retrieved from the platform's cache.
@@ -231,14 +231,6 @@ public:
     void switchClientsToRevalidatedResource();
     void clearResourceToRevalidate();
     void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
-    
-    virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
-#if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(int) { }
-#endif
-
-    void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
-    double loadFinishTime() const { return m_loadFinishTime; }
 
 protected:
     void checkNotify();
@@ -274,7 +266,6 @@ private:
     RefPtr<CachedMetadata> m_cachedMetadata;
 
     double m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
-    double m_loadFinishTime;
 
     unsigned m_encodedSize;
     unsigned m_decodedSize;

@@ -1,3 +1,53 @@
+2011-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97765.
+        http://trac.webkit.org/changeset/97765
+        https://bugs.webkit.org/show_bug.cgi?id=70388
+
+        "broke webkit_unit_tests, http/tests/xmlhttprequest
+        /xmlhttprequest-test-send-flag.html on linux debug" (Requested
+        by dpranke on #webkit).
+
+        * WebCore.gypi:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::~DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::cancel):
+        (WebCore::DocumentThreadableLoader::setDefersLoading):
+        (WebCore::DocumentThreadableLoader::willSendRequest):
+        (WebCore::DocumentThreadableLoader::didSendData):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didReceiveCachedMetadata):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        (WebCore::CachedRawResource::data):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setRequestedFromNetworkingLayer):
+        * loader/cache/CachedResourceClient.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::~CachedResourceRequest):
+        (WebCore::CachedResourceRequest::willSendRequest):
+        (WebCore::CachedResourceRequest::didFinishLoading):
+        (WebCore::CachedResourceRequest::didReceiveResponse):
+        (WebCore::CachedResourceRequest::didReceiveData):
+        * loader/cache/CachedResourceRequest.h:
+        * loader/chromium/CachedRawResourceChromium.cpp: Removed.
+        * loader/chromium/CachedResourceRequestChromium.cpp: Removed.
+        * loader/chromium/DocumentThreadableLoaderChromium.cpp:
+        (WebCore::DocumentThreadableLoader::didDownloadData):
+        * loader/icon/IconLoader.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponse):
+
 2011-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static put to putByIndex

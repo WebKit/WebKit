@@ -2853,8 +2853,6 @@
             'loader/cache/CachedXSLStyleSheet.h',
             'loader/cache/MemoryCache.cpp',
             'loader/cf/ResourceLoaderCFNet.cpp',
-            'loader/chromium/CachedRawResourceChromium.cpp',
-            'loader/chromium/CachedResourceRequestChromium.cpp',
             'loader/chromium/DocumentThreadableLoaderChromium.cpp',
             'loader/chromium/ResourceLoaderChromium.cpp',
             'loader/chromium/SubresourceLoaderChromium.cpp',

@@ -31,15 +31,15 @@
 #include "config.h"
 #include "DocumentThreadableLoader.h"
 
-#include "CachedRawResource.h"
+#include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
 
 namespace WebCore {
 
-void DocumentThreadableLoader::dataDownloaded(CachedResource* resource, int dataLength)
+void DocumentThreadableLoader::didDownloadData(SubresourceLoader* loader, int dataLength)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(loader, loader == m_loader);
     ASSERT(!m_actualRequest);
 
     m_client->didDownloadData(dataLength);
