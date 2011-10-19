@@ -1,3 +1,39 @@
+2011-10-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline.
+
+        * platform/gtk/fast/block/margin-collapse/010-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/011-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/012-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/015-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/016-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/020-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/056-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/059-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/010-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/011-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/012-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/015-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/016-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/020-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_position-table-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt:
+
 2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix failing tests after migrating to refactored Qt5

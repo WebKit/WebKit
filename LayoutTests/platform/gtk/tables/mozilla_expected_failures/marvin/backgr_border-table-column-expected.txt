@@ -39,7 +39,7 @@ layer at (0,0) size 784x1481
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
         RenderBlock {DD} at (40,15) size 728x15
-          RenderInline {A} at (0,0) size 408x15 [color=#FFFF00]
+          RenderInline {A} at (0,0) size 408x15 [color=#999900]
             RenderText {#text} at (0,0) size 408x15
               text run at (0,0) width 408: "Background with Borders: Background on 'table-cell'"
           RenderText {#text} at (0,0) size 0x0
@@ -47,7 +47,7 @@ layer at (0,0) size 784x1481
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "previous"
         RenderBlock {DD} at (40,45) size 728x15
-          RenderInline {A} at (0,0) size 400x15 [color=#999900]
+          RenderInline {A} at (0,0) size 400x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 400x15
               text run at (0,0) width 400: "Background with Borders: Background on 'table-row'"
           RenderText {#text} at (0,0) size 0x0
