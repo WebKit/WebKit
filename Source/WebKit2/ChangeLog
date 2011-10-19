@@ -1,3 +1,15 @@
+2011-10-19  Anders Carlsson  <andersca@apple.com>
+
+        White flash when painting a previously crashed WKView
+        https://bugs.webkit.org/show_bug.cgi?id=70453
+        <rdar://problem/10306906>
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        Call waitForBackingStoreUpdateOnNextPaint so we'll wait for the next paint instead of painting white.
+
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70396

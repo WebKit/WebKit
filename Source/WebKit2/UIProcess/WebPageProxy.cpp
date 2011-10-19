@@ -290,6 +290,7 @@ void WebPageProxy::reattachToWebProcess()
     initializeWebPage();
 
     m_pageClient->didRelaunchProcess();
+    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
 void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
