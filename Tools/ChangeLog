@@ -1,3 +1,18 @@
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
+        Move uses of C-SPI out of WKView.h and into WKViewPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=70387
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorOnBack.mm:
+        * TestWebKitAPI/mac/JavaScriptTestMac.mm:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        Update to include WKViewPrivate.h where necessary.
+
 2011-10-18  Joseph Pecoraro  <joepeck@webkit.org>
 
         Web Inspector: Some localizedStrings.js Updates

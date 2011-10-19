@@ -28,6 +28,7 @@
 #import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
+#import <WebKit2/WKViewPrivate.h>
 
 @interface BrowserWindowController ()
 - (void)didStartProgress;

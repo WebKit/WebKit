@@ -27,6 +27,7 @@
 #include "JavaScriptTest.h"
 
 #include <WebKit/WebView.h>
+#include <WebKit2/WKViewPrivate.h>
 
 namespace TestWebKitAPI {
 

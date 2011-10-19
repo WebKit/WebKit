@@ -27,6 +27,7 @@
 #include "PlatformWebView.h"
 
 #import <WebKit2/WKImageCG.h>
+#import <WebKit2/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface WebKitTestRunnerWindow : NSWindow {

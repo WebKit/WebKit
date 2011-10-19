@@ -23,7 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit2/WKView.h>
+
 @interface WKView (Private)
+
+/* C SPI support. */
+
+@property(readonly) WKPageRef pageRef;
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
+
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
+- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
+
+- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset;
 
 // Stops updating the size of the page as the WKView frame size updates.
 // This should always be followed by enableFrameSizeUpdates. Calls can be nested.

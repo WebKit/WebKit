@@ -30,7 +30,7 @@
 
 #import "WKAPICast.h"
 #import "WKInspectorMac.h"
-#import "WKView.h"
+#import "WKViewPrivate.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebKitSystemInterface.h>

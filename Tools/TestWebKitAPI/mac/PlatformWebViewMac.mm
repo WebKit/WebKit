@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PlatformWebView.h"
 
+#import <WebKit2/WKViewPrivate.h>
 #import <Carbon/Carbon.h>
 
 namespace TestWebKitAPI {

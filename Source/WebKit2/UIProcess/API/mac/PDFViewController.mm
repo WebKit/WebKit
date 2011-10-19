@@ -28,7 +28,7 @@
 
 #import "DataReference.h"
 #import "WKAPICast.h"
-#import "WKView.h"
+#import "WKViewPrivate.h"
 #import "WebData.h"
 #import "WebEventFactory.h"
 #import "WebPageGroup.h"

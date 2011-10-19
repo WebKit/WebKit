@@ -1,5 +1,33 @@
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
+        Move uses of C SPI out of WKView.h and into WKViewPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=70387
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        Move declarations here.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateRemoteAccessibilityRegistration:]):
+        (-[WKView initWithFrame:]):
+        (-[WKView initWithFrame:contextRef:]):
+        (-[WKView _registerDraggedTypes]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView pageRef]):
+        (-[WKView canChangeFrameLayout:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        (-[WKView setFrame:andScrollBy:]):
+        Move definitions to private category.
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        Update to include WKViewPrivate.h where necessary.
+
+2011-10-18  Sam Weinig  <sam@webkit.org>
+
         Stop leaking internal names in WKView API header
         https://bugs.webkit.org/show_bug.cgi?id=70380
 

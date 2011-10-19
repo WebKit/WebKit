@@ -189,76 +189,6 @@ struct WKViewInterpretKeyEventsParameters {
 
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame
-{
-    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
-{   
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
-}
-
-- (void)_registerDraggedTypes
-{
-    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
-    [types addObjectsFromArray:PasteboardTypes::forURL()];
-    [self registerForDraggedTypes:[types allObjects]];
-    [types release];
-}
-
-- (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
-{
-    // When the tree is connected/disconnected, the remote accessibility registration
-    // needs to be updated with the pid of the remote process. If the process is going
-    // away, that information is not present in WebProcess
-    pid_t pid = 0;
-    if (registerProcess && _data->_page->process())
-        pid = _data->_page->process()->processIdentifier();
-    else if (!registerProcess) {
-        pid = WKAXRemoteProcessIdentifier(_data->_remoteAccessibilityChild.get());
-        _data->_remoteAccessibilityChild = nil;
-    }
-    if (pid)
-        WKAXRegisterRemoteProcess(registerProcess, pid); 
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
-{
-    self = [super initWithFrame:frame];
-    if (!self)
-        return nil;
-
-    [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
-
-    InitWebCoreSystemInterface();
-    RunLoop::initializeMainRunLoop();
-
-    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
-                                                                options:(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
-                                                                  owner:self
-                                                               userInfo:nil];
-    [self addTrackingArea:trackingArea];
-    [trackingArea release];
-
-    _data = [[WKViewData alloc] init];
-
-    _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
-    _data->_page->initializeWebPage();
-#if ENABLE(FULLSCREEN_API)
-    _data->_page->fullScreenManager()->setWebView(self);
-#endif
-    _data->_mouseDownEvent = nil;
-    _data->_ignoringMouseDraggedEvents = NO;
-
-    [self _registerDraggedTypes];
-
-    WebContext::statistics().wkViewCount++;
-
-    return self;
-}
-
 - (void)dealloc
 {
     _data->_page->close();
@@ -271,11 +201,6 @@ struct WKViewInterpretKeyEventsParameters {
     WebContext::statistics().wkViewCount--;
 
     [super dealloc];
-}
-
-- (WKPageRef)pageRef
-{
-    return toAPI(_data->_page.get());
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
@@ -355,14 +280,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (BOOL)isFlipped
 {
     return YES;
-}
-
-- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
-{
-    ASSERT(NSEqualSizes(_data->_resizeScrollOffset, NSZeroSize));
-
-    _data->_resizeScrollOffset = offset;
-    [self setFrame:rect];
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -1999,6 +1916,22 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
+- (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
+{
+    // When the tree is connected/disconnected, the remote accessibility registration
+    // needs to be updated with the pid of the remote process. If the process is going
+    // away, that information is not present in WebProcess
+    pid_t pid = 0;
+    if (registerProcess && _data->_page->process())
+        pid = _data->_page->process()->processIdentifier();
+    else if (!registerProcess) {
+        pid = WKAXRemoteProcessIdentifier(_data->_remoteAccessibilityChild.get());
+        _data->_remoteAccessibilityChild = nil;
+    }
+    if (pid)
+        WKAXRegisterRemoteProcess(registerProcess, pid); 
+}
+
 - (id)accessibilityFocusedUIElement
 {
     if (_data->_pdfViewController)
@@ -2058,33 +1991,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (NSInteger)conversationIdentifier
 {
     return (NSInteger)self;
-}
-
-
-- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
-{
-    // PDF documents are already paginated, so we can't change them to add headers and footers.
-    return !toImpl(frameRef)->isMainFrame() || !_data->_pdfViewController;
-}
-
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
-{
-    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
-
-    // Only the top frame can currently contain a PDF view.
-    if (_data->_pdfViewController) {
-        if (!toImpl(frameRef)->isMainFrame())
-            return 0;
-        return _data->_pdfViewController->makePrintOperation(printInfo);
-    } else {
-        RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
-        // NSPrintOperation takes ownership of the view.
-        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];
-        [printOperation setCanSpawnSeparateThread:YES];
-        [printOperation setJobTitle:toImpl(frameRef)->title()];
-        printingView->_printOperation = printOperation;
-        return printOperation;
-    }
 }
 
 - (float)_intrinsicDeviceScaleFactor
@@ -2640,6 +2546,99 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 @end
 
 @implementation WKView (Private)
+
+- (id)initWithFrame:(NSRect)frame
+{
+    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
+{   
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
+}
+
+- (void)_registerDraggedTypes
+{
+    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
+    [types addObjectsFromArray:PasteboardTypes::forURL()];
+    [self registerForDraggedTypes:[types allObjects]];
+    [types release];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
+
+    [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
+
+    InitWebCoreSystemInterface();
+    RunLoop::initializeMainRunLoop();
+
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
+                                                                options:(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
+                                                                  owner:self
+                                                               userInfo:nil];
+    [self addTrackingArea:trackingArea];
+    [trackingArea release];
+
+    _data = [[WKViewData alloc] init];
+
+    _data->_pageClient = PageClientImpl::create(self);
+    _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
+    _data->_page->initializeWebPage();
+#if ENABLE(FULLSCREEN_API)
+    _data->_page->fullScreenManager()->setWebView(self);
+#endif
+    _data->_mouseDownEvent = nil;
+    _data->_ignoringMouseDraggedEvents = NO;
+
+    [self _registerDraggedTypes];
+
+    WebContext::statistics().wkViewCount++;
+
+    return self;
+}
+
+- (WKPageRef)pageRef
+{
+    return toAPI(_data->_page.get());
+}
+
+- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
+{
+    // PDF documents are already paginated, so we can't change them to add headers and footers.
+    return !toImpl(frameRef)->isMainFrame() || !_data->_pdfViewController;
+}
+
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
+{
+    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
+
+    // Only the top frame can currently contain a PDF view.
+    if (_data->_pdfViewController) {
+        if (!toImpl(frameRef)->isMainFrame())
+            return 0;
+        return _data->_pdfViewController->makePrintOperation(printInfo);
+    } else {
+        RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
+        // NSPrintOperation takes ownership of the view.
+        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];
+        [printOperation setCanSpawnSeparateThread:YES];
+        [printOperation setJobTitle:toImpl(frameRef)->title()];
+        printingView->_printOperation = printOperation;
+        return printOperation;
+    }
+}
+
+- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
+{
+    ASSERT(NSEqualSizes(_data->_resizeScrollOffset, NSZeroSize));
+
+    _data->_resizeScrollOffset = offset;
+    [self setFrame:rect];
+}
 
 - (void)disableFrameSizeUpdates
 {

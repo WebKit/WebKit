@@ -29,6 +29,7 @@
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "SyntheticBackingScaleFactorWindow.h"
+#include <WebKit2/WKViewPrivate.h>
 #include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {

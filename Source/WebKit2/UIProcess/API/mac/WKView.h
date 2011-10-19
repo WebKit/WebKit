@@ -34,16 +34,6 @@ WK_EXPORT
     unsigned _unused;
 }
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
-
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
-- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
-
-- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset;
-
-@property(readonly) WKPageRef pageRef;
-
 @property BOOL drawsBackground;
 @property BOOL drawsTransparentBackground;
 

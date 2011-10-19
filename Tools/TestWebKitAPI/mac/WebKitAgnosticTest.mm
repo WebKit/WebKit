@@ -27,6 +27,7 @@
 #include "WebKitAgnosticTest.h"
 
 #include <WebKit2/WKURLCF.h>
+#include <WebKit2/WKViewPrivate.h>
 #include <wtf/RetainPtr.h>
 
 @interface FrameLoadDelegate : NSObject {
