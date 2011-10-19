@@ -3,4 +3,4 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 200x200
     RenderSVGContainer {g} at (0,0) size 200x200
-      RenderSVGPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]

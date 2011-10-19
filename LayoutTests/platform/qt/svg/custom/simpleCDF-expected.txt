@@ -8,7 +8,7 @@ layer at (0,0) size 800x314
           text run at (0,0) width 143: "This is a test of CDF:"
       RenderBlock (anonymous) at (0,38) size 784x206
         RenderSVGRoot {svg} at (8,54) size 200x200
-          RenderSVGPath {rect} at (8,54) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          RenderSVGRect {rect} at (8,54) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,260) size 784x22
         RenderText {#text} at (0,0) size 281x22

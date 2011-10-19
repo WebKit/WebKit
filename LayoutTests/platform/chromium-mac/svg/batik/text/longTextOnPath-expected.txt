@@ -11,7 +11,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {use} at (25,149) size 400x301
         RenderSVGContainer {g} at (25,149) size 400x301
           RenderSVGPath {path} at (25,149) size 400x301 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 25 150 L 425 150 M 25 170 L 425 170 M 25 190 L 425 190 M 25 210 L 425 210 M 25 230 L 425 230 M 25 250 L 425 250 M 25 270 L 425 270 M 25 290 L 425 290 M 25 310 L 425 310 M 25 330 L 425 330 M 25 350 L 425 350 M 25 370 L 425 370 M 25 390 L 425 390 M 25 410 L 425 410 M 25 430 L 425 430 M 25 450"]
-      RenderSVGPath {rect} at (20,100) size 205x375 [fill={[type=SOLID] [color=#C8C8FF]}] [x=20.00] [y=100.00] [width=205.00] [height=375.00]
+      RenderSVGRect {rect} at (20,100) size 205x375 [fill={[type=SOLID] [color=#C8C8FF]}] [x=20.00] [y=100.00] [width=205.00] [height=375.00]
       RenderSVGText {text} at (21,132) size 406x263 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 406x263
           RenderSVGInlineText {#text} at (0,0) size 406x263

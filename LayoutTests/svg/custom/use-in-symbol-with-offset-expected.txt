@@ -8,7 +8,7 @@ layer at (0,0) size 100x100
         RenderSVGViewportContainer {svg} at (0,0) size 100x100
           RenderSVGContainer {g} at (0,0) size 50x100
             RenderSVGViewportContainer {svg} at (0,0) size 50x100
-              RenderSVGPath {rect} at (0,0) size 50x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=2.00]
+              RenderSVGRect {rect} at (0,0) size 50x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=2.00]
           RenderSVGContainer {g} at (50,0) size 50x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
             RenderSVGViewportContainer {svg} at (50,0) size 50x100
-              RenderSVGPath {rect} at (50,0) size 50x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=2.00]
+              RenderSVGRect {rect} at (50,0) size 50x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=2.00]

@@ -8,9 +8,9 @@ layer at (0,0) size 450x450
         RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
       RenderSVGResourceLinearGradient {linearGradient} [id="linkedGradient2"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
       RenderSVGResourceLinearGradient {linearGradient} [id="linkedGradient1"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
-    RenderSVGPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
-    RenderSVGPath {rect} at (10,110) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient1"]}] [x=10.00] [y=110.00] [width=430.00] [height=80.00]
-    RenderSVGPath {rect} at (10,210) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient2"]}] [x=10.00] [y=210.00] [width=430.00] [height=80.00]
+    RenderSVGRect {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
+    RenderSVGRect {rect} at (10,110) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient1"]}] [x=10.00] [y=110.00] [width=430.00] [height=80.00]
+    RenderSVGRect {rect} at (10,210) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient2"]}] [x=10.00] [y=210.00] [width=430.00] [height=80.00]
     RenderSVGText {text} at (44,305) size 352x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 352x19
         chunk 1 (middle anchor) text run 1 at (44.00,320.00) startOffset 0 endOffset 61 width 352.00: "All gradients should look the same, especially after clicking"

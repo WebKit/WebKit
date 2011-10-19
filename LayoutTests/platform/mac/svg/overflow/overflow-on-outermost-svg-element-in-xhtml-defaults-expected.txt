@@ -5,6 +5,6 @@ layer at (0,0) size 785x604
     RenderInline {body} at (0,0) size 800x18
       RenderText {#text} at (0,0) size 0x0
       RenderSVGRoot {svg} at (0,0) size 800x600
-        RenderSVGPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=4000.00] [height=4000.00]
+        RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=4000.00] [height=4000.00]
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

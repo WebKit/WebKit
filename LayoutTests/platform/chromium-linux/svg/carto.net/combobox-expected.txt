@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-1000.00,-1000.00 L2000.00,-1000.00 L2000.00,2000.00 L-1000.00,2000.00 Z"]
+    RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-1000.00,-1000.00 L2000.00,-1000.00 L2000.00,2000.00 L-1000.00,2000.00 Z"]
     RenderSVGContainer {g} at (39,36) size 464x468
       RenderSVGText {text} at (500,47) size 110x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 110x16
@@ -54,55 +54,55 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (240.00,642.00) startOffset 0 endOffset 50 width 241.00: "Click on this text to randomly resize the combobox"
     RenderSVGContainer {g} at (282,168) size 406x309 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(500.00,20.00)}]
       RenderSVGContainer {g} at (282,168) size 168x172
-        RenderSVGPath {rect} at (283,170) size 155x162 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,200.00 L184.00,200.00 L184.00,360.00 L50.00,360.00 Z"]
+        RenderSVGRect {rect} at (283,170) size 155x162 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,200.00 L184.00,200.00 L184.00,360.00 L50.00,360.00 Z"]
         RenderSVGContainer {g} at (284,170) size 153x162
-          RenderSVGPath {rect} at (340,170) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,200.00 L182.50,200.00 L182.50,216.00 L51.50,216.00 Z"]
+          RenderSVGRect {rect} at (340,170) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,200.00 L182.50,200.00 L182.50,216.00 L51.50,216.00 Z"]
           RenderSVGText {text} at (53,201) size 33x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 33x15
               chunk 1 text run 1 at (53.00,212.50) startOffset 0 endOffset 6 width 33.00: "Boswil"
-          RenderSVGPath {rect} at (334,181) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,216.00 L182.50,216.00 L182.50,232.00 L51.50,232.00 Z"]
+          RenderSVGRect {rect} at (334,181) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,216.00 L182.50,216.00 L182.50,232.00 L51.50,232.00 Z"]
           RenderSVGText {text} at (53,217) size 45x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 45x15
               chunk 1 text run 1 at (53.00,228.50) startOffset 0 endOffset 9 width 45.00: "Bottenwil"
-          RenderSVGPath {rect} at (328,192) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,232.00 L182.50,232.00 L182.50,248.00 L51.50,248.00 Z"]
+          RenderSVGRect {rect} at (328,192) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,232.00 L182.50,232.00 L182.50,248.00 L51.50,248.00 Z"]
           RenderSVGText {text} at (53,233) size 83x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 83x15
               chunk 1 text run 1 at (53.00,244.50) startOffset 0 endOffset 15 width 83.00: "Bremgarten (AG)"
-          RenderSVGPath {rect} at (321,203) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,248.00 L182.50,248.00 L182.50,264.00 L51.50,264.00 Z"]
+          RenderSVGRect {rect} at (321,203) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,248.00 L182.50,248.00 L182.50,264.00 L51.50,264.00 Z"]
           RenderSVGText {text} at (53,249) size 37x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 37x15
               chunk 1 text run 1 at (53.00,260.50) startOffset 0 endOffset 8 width 37.00: "Brittnau"
-          RenderSVGPath {rect} at (315,214) size 97x63 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,264.00 L182.50,264.00 L182.50,280.00 L51.50,280.00 Z"]
+          RenderSVGRect {rect} at (315,214) size 97x63 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,264.00 L182.50,264.00 L182.50,280.00 L51.50,280.00 Z"]
           RenderSVGText {text} at (53,265) size 29x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 29x15
               chunk 1 text run 1 at (53.00,276.50) startOffset 0 endOffset 5 width 29.00: "Brugg"
-          RenderSVGPath {rect} at (309,224) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,280.00 L182.50,280.00 L182.50,296.00 L51.50,296.00 Z"]
+          RenderSVGRect {rect} at (309,224) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,280.00 L182.50,280.00 L182.50,296.00 L51.50,296.00 Z"]
           RenderSVGText {text} at (53,281) size 41x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 41x15
               chunk 1 text run 1 at (53.00,292.50) startOffset 0 endOffset 7 width 41.00: "Brunegg"
-          RenderSVGPath {rect} at (303,235) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,296.00 L182.50,296.00 L182.50,312.00 L51.50,312.00 Z"]
+          RenderSVGRect {rect} at (303,235) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,296.00 L182.50,296.00 L182.50,312.00 L51.50,312.00 Z"]
           RenderSVGText {text} at (53,297) size 58x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 58x15
               chunk 1 text run 1 at (53.00,308.50) startOffset 0 endOffset 10 width 58.00: "Buchs (AG)"
-          RenderSVGPath {rect} at (296,246) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,312.00 L182.50,312.00 L182.50,328.00 L51.50,328.00 Z"]
+          RenderSVGRect {rect} at (296,246) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,312.00 L182.50,312.00 L182.50,328.00 L51.50,328.00 Z"]
           RenderSVGText {text} at (53,313) size 50x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 50x15
               chunk 1 text run 1 at (53.00,324.50) startOffset 0 endOffset 9 width 50.00: "Burg (AG)"
-          RenderSVGPath {rect} at (290,257) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,328.00 L182.50,328.00 L182.50,344.00 L51.50,344.00 Z"]
+          RenderSVGRect {rect} at (290,257) size 97x64 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,328.00 L182.50,328.00 L182.50,344.00 L51.50,344.00 Z"]
           RenderSVGText {text} at (53,329) size 33x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 33x15
               chunk 1 text run 1 at (53.00,340.50) startOffset 0 endOffset 7 width 33.00: "Buttwil"
-          RenderSVGPath {rect} at (284,267) size 97x65 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,344.00 L182.50,344.00 L182.50,360.00 L51.50,360.00 Z"]
+          RenderSVGRect {rect} at (284,267) size 97x65 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,344.00 L182.50,344.00 L182.50,360.00 L51.50,360.00 Z"]
           RenderSVGText {text} at (53,345) size 38x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 38x15
               chunk 1 text run 1 at (53.00,356.50) startOffset 0 endOffset 7 width 38.00: "B\x{F6}bikon"
-        RenderSVGPath {rect} at (282,168) size 157x165 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,200.00 L184.00,200.00 L184.00,360.00 L50.00,360.00 Z"]
-        RenderSVGPath {rect} at (378,232) size 65x97 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M184.00,216.00 L200.00,216.00 L200.00,344.00 L184.00,344.00 Z"]
-        RenderSVGPath {rect} at (428,221) size 22x21 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,200.00 L200.00,200.00 L200.00,216.00 L184.00,216.00 Z"]
+        RenderSVGRect {rect} at (282,168) size 157x165 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,200.00 L184.00,200.00 L184.00,360.00 L50.00,360.00 Z"]
+        RenderSVGRect {rect} at (378,232) size 65x97 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M184.00,216.00 L200.00,216.00 L200.00,344.00 L184.00,344.00 Z"]
+        RenderSVGRect {rect} at (428,221) size 22x21 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,200.00 L200.00,200.00 L200.00,216.00 L184.00,216.00 Z"]
         RenderSVGPath {path} at (434,226) size 10x10 [fill={[type=SOLID] [color=#696969]}] [data="M188.00,212.00 L196.00,212.00 L192.00,204.00 Z"]
-        RenderSVGPath {rect} at (372,318) size 21x22 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,344.00 L200.00,344.00 L200.00,360.00 L184.00,360.00 Z"]
+        RenderSVGRect {rect} at (372,318) size 21x22 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,344.00 L200.00,344.00 L200.00,360.00 L184.00,360.00 Z"]
         RenderSVGPath {path} at (378,324) size 10x10 [fill={[type=SOLID] [color=#696969]}] [data="M188.00,348.00 L196.00,348.00 L192.00,356.00 Z"]
-        RenderSVGPath {rect} at (420,241) size 18x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,229.51 L200.00,229.51 L200.00,237.51 L184.00,237.51 Z"]
+        RenderSVGRect {rect} at (420,241) size 18x16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,229.51 L200.00,229.51 L200.00,237.51 L184.00,237.51 Z"]
       RenderSVGText {text} at (220,201) size 333x34 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 197x14
           chunk 1 text run 1 at (220.00,212.00) startOffset 0 endOffset 39 width 197.00: "Communities of Kt. Aargau (Switzerland)"
@@ -110,94 +110,94 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,20) size 333x14
             chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 67 width 333.00: "Note that one can also transform the group containing the combo box"
     RenderSVGContainer {g} at (38,428) size 135x103
-      RenderSVGPath {rect} at (39,429) size 121x101 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,550.00 L204.00,550.00 L204.00,678.00 L50.00,678.00 Z"]
+      RenderSVGRect {rect} at (39,429) size 121x101 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,550.00 L204.00,550.00 L204.00,678.00 L50.00,678.00 Z"]
       RenderSVGContainer {g} at (39,429) size 120x101
-        RenderSVGPath {rect} at (39,429) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,550.00 L202.50,550.00 L202.50,566.00 L51.50,566.00 Z"]
+        RenderSVGRect {rect} at (39,429) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,550.00 L202.50,550.00 L202.50,566.00 L51.50,566.00 Z"]
         RenderSVGText {text} at (53,551) size 47x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 47x15
             chunk 1 text run 1 at (53.00,562.50) startOffset 0 endOffset 8 width 47.00: "Amaranth"
-        RenderSVGPath {rect} at (39,442) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,566.00 L202.50,566.00 L202.50,582.00 L51.50,582.00 Z"]
+        RenderSVGRect {rect} at (39,442) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,566.00 L202.50,566.00 L202.50,582.00 L51.50,582.00 Z"]
         RenderSVGText {text} at (53,567) size 55x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 55x15
             chunk 1 text run 1 at (53.00,578.50) startOffset 0 endOffset 10 width 55.00: "Anthericum"
-        RenderSVGPath {rect} at (39,454) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,582.00 L202.50,582.00 L202.50,598.00 L51.50,598.00 Z"]
+        RenderSVGRect {rect} at (39,454) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,582.00 L202.50,582.00 L202.50,598.00 L51.50,598.00 Z"]
         RenderSVGText {text} at (53,583) size 26x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x15
             chunk 1 text run 1 at (53.00,594.50) startOffset 0 endOffset 4 width 26.00: "Arum"
-        RenderSVGPath {rect} at (39,467) size 120x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,598.00 L202.50,598.00 L202.50,614.00 L51.50,614.00 Z"]
+        RenderSVGRect {rect} at (39,467) size 120x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,598.00 L202.50,598.00 L202.50,614.00 L51.50,614.00 Z"]
         RenderSVGText {text} at (53,599) size 20x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 20x15
             chunk 1 text run 1 at (53.00,610.50) startOffset 0 endOffset 3 width 20.00: "Ash"
-        RenderSVGPath {rect} at (39,479) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,614.00 L202.50,614.00 L202.50,630.00 L51.50,630.00 Z"]
+        RenderSVGRect {rect} at (39,479) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,614.00 L202.50,614.00 L202.50,630.00 L51.50,630.00 Z"]
         RenderSVGText {text} at (53,615) size 32x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x15
             chunk 1 text run 1 at (53.00,626.50) startOffset 0 endOffset 5 width 32.00: "Aspen"
-        RenderSVGPath {rect} at (39,492) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,630.00 L202.50,630.00 L202.50,646.00 L51.50,646.00 Z"]
+        RenderSVGRect {rect} at (39,492) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,630.00 L202.50,630.00 L202.50,646.00 L51.50,646.00 Z"]
         RenderSVGText {text} at (53,631) size 27x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 27x15
             chunk 1 text run 1 at (53.00,642.50) startOffset 0 endOffset 5 width 27.00: "Aster"
-        RenderSVGPath {rect} at (39,504) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,646.00 L202.50,646.00 L202.50,662.00 L51.50,662.00 Z"]
+        RenderSVGRect {rect} at (39,504) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,646.00 L202.50,646.00 L202.50,662.00 L51.50,662.00 Z"]
         RenderSVGText {text} at (53,647) size 23x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 23x15
             chunk 1 text run 1 at (53.00,658.50) startOffset 0 endOffset 4 width 23.00: "Balm"
-        RenderSVGPath {rect} at (39,517) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,662.00 L202.50,662.00 L202.50,678.00 L51.50,678.00 Z"]
+        RenderSVGRect {rect} at (39,517) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,662.00 L202.50,662.00 L202.50,678.00 L51.50,678.00 Z"]
         RenderSVGText {text} at (53,663) size 39x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 39x15
             chunk 1 text run 1 at (53.00,674.50) startOffset 0 endOffset 7 width 39.00: "Barbery"
-      RenderSVGPath {rect} at (38,428) size 123x103 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,550.00 L204.00,550.00 L204.00,678.00 L50.00,678.00 Z"]
-      RenderSVGPath {rect} at (158,441) size 15x77 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,566.00 L220.00,566.00 L220.00,662.00 L204.00,662.00 Z"]
-      RenderSVGPath {rect} at (158,428) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,550.00 L220.00,550.00 L220.00,566.00 L204.00,566.00 Z"]
+      RenderSVGRect {rect} at (38,428) size 123x103 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,550.00 L204.00,550.00 L204.00,678.00 L50.00,678.00 Z"]
+      RenderSVGRect {rect} at (158,441) size 15x77 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,566.00 L220.00,566.00 L220.00,662.00 L204.00,662.00 Z"]
+      RenderSVGRect {rect} at (158,428) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,550.00 L220.00,550.00 L220.00,566.00 L204.00,566.00 Z"]
       RenderSVGPath {path} at (162,432) size 7x8 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,562.00 L216.00,562.00 L212.00,554.00 Z"]
-      RenderSVGPath {rect} at (158,516) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,662.00 L220.00,662.00 L220.00,678.00 L204.00,678.00 Z"]
+      RenderSVGRect {rect} at (158,516) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,662.00 L220.00,662.00 L220.00,678.00 L204.00,678.00 Z"]
       RenderSVGPath {path} at (162,520) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,666.00 L216.00,666.00 L212.00,674.00 Z"]
-      RenderSVGPath {rect} at (158,449) size 15x34 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,576.11 L220.00,576.11 L220.00,616.53 L204.00,616.53 Z"]
+      RenderSVGRect {rect} at (158,449) size 15x34 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,576.11 L220.00,576.11 L220.00,616.53 L204.00,616.53 Z"]
     RenderSVGContainer {g} at (38,233) size 135x65
-      RenderSVGPath {rect} at (39,234) size 121x63 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,300.00 L204.00,300.00 L204.00,380.00 L50.00,380.00 Z"]
+      RenderSVGRect {rect} at (39,234) size 121x63 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,300.00 L204.00,300.00 L204.00,380.00 L50.00,380.00 Z"]
       RenderSVGContainer {g} at (39,234) size 120x63
-        RenderSVGPath {rect} at (39,234) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,300.00 L202.50,300.00 L202.50,316.00 L51.50,316.00 Z"]
+        RenderSVGRect {rect} at (39,234) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,300.00 L202.50,300.00 L202.50,316.00 L51.50,316.00 Z"]
         RenderSVGText {text} at (53,301) size 53x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 53x15
             chunk 1 text run 1 at (53.00,312.50) startOffset 0 endOffset 9 width 53.00: "Sexy Rexy"
-        RenderSVGPath {rect} at (39,246) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,316.00 L202.50,316.00 L202.50,332.00 L51.50,332.00 Z"]
+        RenderSVGRect {rect} at (39,246) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,316.00 L202.50,316.00 L202.50,332.00 L51.50,332.00 Z"]
         RenderSVGText {text} at (53,317) size 125x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 125x15
             chunk 1 text run 1 at (53.00,328.50) startOffset 0 endOffset 26 width 125.00: "Souvenir de Pierre Notting"
-        RenderSVGPath {rect} at (39,259) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,332.00 L202.50,332.00 L202.50,348.00 L51.50,348.00 Z"]
+        RenderSVGRect {rect} at (39,259) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,332.00 L202.50,332.00 L202.50,348.00 L51.50,348.00 Z"]
         RenderSVGText {text} at (53,333) size 41x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x15
             chunk 1 text run 1 at (53.00,344.50) startOffset 0 endOffset 8 width 41.00: "Sunflare"
-        RenderSVGPath {rect} at (39,271) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,348.00 L202.50,348.00 L202.50,364.00 L51.50,364.00 Z"]
+        RenderSVGRect {rect} at (39,271) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,348.00 L202.50,348.00 L202.50,364.00 L51.50,364.00 Z"]
         RenderSVGText {text} at (53,349) size 58x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 58x15
             chunk 1 text run 1 at (53.00,360.50) startOffset 0 endOffset 10 width 58.00: "Whisky Mac"
-        RenderSVGPath {rect} at (39,284) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,364.00 L202.50,364.00 L202.50,380.00 L51.50,380.00 Z"]
+        RenderSVGRect {rect} at (39,284) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,364.00 L202.50,364.00 L202.50,380.00 L51.50,380.00 Z"]
         RenderSVGText {text} at (53,365) size 93x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 93x15
             chunk 1 text run 1 at (53.00,376.50) startOffset 0 endOffset 18 width 93.00: "Whisper Floribunda"
-      RenderSVGPath {rect} at (38,233) size 123x65 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,300.00 L204.00,300.00 L204.00,380.00 L50.00,380.00 Z"]
-      RenderSVGPath {rect} at (158,246) size 15x40 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,316.00 L220.00,316.00 L220.00,364.00 L204.00,364.00 Z"]
-      RenderSVGPath {rect} at (158,233) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,300.00 L220.00,300.00 L220.00,316.00 L204.00,316.00 Z"]
+      RenderSVGRect {rect} at (38,233) size 123x65 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,300.00 L204.00,300.00 L204.00,380.00 L50.00,380.00 Z"]
+      RenderSVGRect {rect} at (158,246) size 15x40 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,316.00 L220.00,316.00 L220.00,364.00 L204.00,364.00 Z"]
+      RenderSVGRect {rect} at (158,233) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,300.00 L220.00,300.00 L220.00,316.00 L204.00,316.00 Z"]
       RenderSVGPath {path} at (162,237) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,312.00 L216.00,312.00 L212.00,304.00 Z"]
-      RenderSVGPath {rect} at (158,283) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,364.00 L220.00,364.00 L220.00,380.00 L204.00,380.00 Z"]
+      RenderSVGRect {rect} at (158,283) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,364.00 L220.00,364.00 L220.00,380.00 L204.00,380.00 Z"]
       RenderSVGPath {path} at (162,287) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,368.00 L216.00,368.00 L212.00,376.00 Z"]
-      RenderSVGPath {rect} at (158,266) size 15x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,342.18 L220.00,342.18 L220.00,364.00 L204.00,364.00 Z"]
+      RenderSVGRect {rect} at (158,266) size 15x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,342.18 L220.00,342.18 L220.00,364.00 L204.00,364.00 Z"]
     RenderSVGContainer {g} at (38,38) size 123x52
-      RenderSVGPath {rect} at (39,39) size 121x51 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,50.00 L204.00,50.00 L204.00,114.00 L50.00,114.00 Z"]
+      RenderSVGRect {rect} at (39,39) size 121x51 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,50.00 L204.00,50.00 L204.00,114.00 L50.00,114.00 Z"]
       RenderSVGContainer {g} at (39,39) size 120x51
-        RenderSVGPath {rect} at (39,39) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,50.00 L202.50,50.00 L202.50,66.00 L51.50,66.00 Z"]
+        RenderSVGRect {rect} at (39,39) size 120x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,50.00 L202.50,50.00 L202.50,66.00 L51.50,66.00 Z"]
         RenderSVGText {text} at (53,51) size 42x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 42x15
             chunk 1 text run 1 at (53.00,62.50) startOffset 0 endOffset 7 width 42.00: "Orangen"
-        RenderSVGPath {rect} at (39,51) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,66.00 L202.50,66.00 L202.50,82.00 L51.50,82.00 Z"]
+        RenderSVGRect {rect} at (39,51) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,66.00 L202.50,66.00 L202.50,82.00 L51.50,82.00 Z"]
         RenderSVGText {text} at (53,67) size 26x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x15
             chunk 1 text run 1 at (53.00,78.50) startOffset 0 endOffset 5 width 26.00: "\x{C4}pfel"
-        RenderSVGPath {rect} at (39,64) size 120x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,82.00 L202.50,82.00 L202.50,98.00 L51.50,98.00 Z"]
+        RenderSVGRect {rect} at (39,64) size 120x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,82.00 L202.50,82.00 L202.50,98.00 L51.50,98.00 Z"]
         RenderSVGText {text} at (53,83) size 43x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 43x15
             chunk 1 text run 1 at (53.00,94.50) startOffset 0 endOffset 7 width 43.00: "Bananen"
-        RenderSVGPath {rect} at (39,76) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,98.00 L202.50,98.00 L202.50,114.00 L51.50,114.00 Z"]
+        RenderSVGRect {rect} at (39,76) size 120x14 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,98.00 L202.50,98.00 L202.50,114.00 L51.50,114.00 Z"]
         RenderSVGText {text} at (53,99) size 31x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 31x15
             chunk 1 text run 1 at (53.00,110.50) startOffset 0 endOffset 6 width 31.00: "Birnen"
-      RenderSVGPath {rect} at (38,38) size 123x52 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,50.00 L204.00,50.00 L204.00,114.00 L50.00,114.00 Z"]
+      RenderSVGRect {rect} at (38,38) size 123x52 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,50.00 L204.00,50.00 L204.00,114.00 L50.00,114.00 Z"]

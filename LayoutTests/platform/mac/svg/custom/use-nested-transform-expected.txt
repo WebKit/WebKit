@@ -5,13 +5,13 @@ layer at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (0,36) size 272x362 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
       RenderSVGContainer {g} at (0,0) size 30x31
-        RenderSVGPath {rect} at (0,0) size 30x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}] [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGRect {rect} at (0,0) size 30x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}] [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
         RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}]
           RenderSVGContainer {g} at (0,0) size 0x0
             RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
     RenderSVGContainer {use} at (0,0) size 448x498 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
       RenderSVGContainer {g} at (0,0) size 448x498
         RenderSVGContainer {g} at (0,0) size 448x498
-          RenderSVGPath {rect} at (0,0) size 448x498 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}] [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+          RenderSVGRect {rect} at (0,0) size 448x498 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}] [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
           RenderSVGContainer {g} at (0,36) size 272x362 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-418.00,-467.00)}]
             RenderSVGPath {path} at (0,36) size 272x362 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]

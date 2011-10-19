@@ -7,15 +7,15 @@ layer at (0,0) size 480x360
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGResourceLinearGradient {linearGradient} [id="Grad1b"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
-      RenderSVGPath {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="Grad1a"]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="Grad1a"]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,102) size 207x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 207x35
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 16 width 207.00: "Linear gradient."
-      RenderSVGPath {rect} at (20,150) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="Grad1b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,150) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="Grad1b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,232) size 370x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 370x35
           chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 27 width 370.00: "Referencing gradient below."
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

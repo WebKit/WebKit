@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (30,15) size 405x269
       RenderSVGContainer {g} at (30,15) size 405x269
-        RenderSVGPath {rect} at (125,16) size 8x18 [fill={[type=SOLID] [color=#ADD8E6]}] [x=125.00] [y=16.42] [width=8.00] [height=16.76]
-        RenderSVGPath {rect} at (91,20) size 15x15 [fill={[type=SOLID] [color=#ADD8E6]}] [x=91.75] [y=20.40] [width=13.97] [height=13.97]
+        RenderSVGRect {rect} at (125,16) size 8x18 [fill={[type=SOLID] [color=#ADD8E6]}] [x=125.00] [y=16.42] [width=8.00] [height=16.76]
+        RenderSVGRect {rect} at (91,20) size 15x15 [fill={[type=SOLID] [color=#ADD8E6]}] [x=91.75] [y=20.40] [width=13.97] [height=13.97]
         RenderSVGPath {line} at (62,29) size 356x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=62.00] [y1=30.00] [x2=418.00] [y2=30.00]
         RenderSVGPath {line} at (132,15) size 2x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=133.00] [y1=30.00] [x2=133.00] [y2=15.00]
         RenderSVGPath {line} at (124,15) size 2x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=30.00] [x2=125.00] [y2=15.00]
@@ -58,6 +58,6 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 selection start: position 11 of child 2 {#text} of child 7 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
 selection end:   position 14 of child 2 {#text} of child 7 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document

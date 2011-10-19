@@ -12,9 +12,9 @@ layer at (0,0) size 400x400
       RenderSVGResourceFilter {filter} [id="offset3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feColorMatrix type="MATRIX" values="0.00 0.00 0.00 0.00 0.50 0.00 0.30 0.00 0.00 0.40 0.00 0.00 1.00 0.00 -0.50 0.00 0.00 0.00 0.20 0.50"]
           [SourceGraphic]
-    RenderSVGPath {rect} at (5,5) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (5,5) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
       [filter="offset1"] RenderSVGResourceFilter {filter} at (5,5) size 60x60
-    RenderSVGPath {rect} at (65,5) size 60x60 [fill={[type=SOLID] [color=#FFFFFF]}] [x=70.00] [y=10.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (65,5) size 60x60 [fill={[type=SOLID] [color=#FFFFFF]}] [x=70.00] [y=10.00] [width=50.00] [height=50.00]
       [filter="offset2"] RenderSVGResourceFilter {filter} at (65,5) size 60x60
-    RenderSVGPath {rect} at (125,5) size 60x60 [fill={[type=SOLID] [color=#FFFFFF]}] [x=130.00] [y=10.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (125,5) size 60x60 [fill={[type=SOLID] [color=#FFFFFF]}] [x=130.00] [y=10.00] [width=50.00] [height=50.00]
       [filter="offset3"] RenderSVGResourceFilter {filter} at (125,5) size 60x60

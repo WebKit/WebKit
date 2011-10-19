@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
     RenderSVGContainer {g} at (5,5) size 570x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-      RenderSVGPath {rect} at (5,5) size 110x110 [stroke={[type=SOLID] [color=#008000] [opacity=0.50] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.50]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (5,5) size 110x110 [stroke={[type=SOLID] [color=#008000] [opacity=0.50] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.50]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGContainer {g} at (120,5) size 110x110 [opacity=0.50]
-        RenderSVGPath {rect} at (120,5) size 110x110 [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=115.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGPath {rect} at (235,5) size 110x110 [opacity=0.50] [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=230.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGPath {rect} at (350,5) size 110x110 [stroke={[type=LINEAR-GRADIENT] [id="stroke_fill"] [opacity=0.50] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [id="gradient_fill"] [opacity=0.50]}] [x=345.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGPath {rect} at (465,5) size 110x110 [opacity=0.50] [stroke={[type=LINEAR-GRADIENT] [id="stroke_fill"] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [id="gradient_fill"]}] [x=460.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (120,5) size 110x110 [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=115.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (235,5) size 110x110 [opacity=0.50] [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=230.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (350,5) size 110x110 [stroke={[type=LINEAR-GRADIENT] [id="stroke_fill"] [opacity=0.50] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [id="gradient_fill"] [opacity=0.50]}] [x=345.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (465,5) size 110x110 [opacity=0.50] [stroke={[type=LINEAR-GRADIENT] [id="stroke_fill"] [stroke width=10.00]}] [fill={[type=LINEAR-GRADIENT] [id="gradient_fill"]}] [x=460.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (5,120) size 570x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,120.00)}]
       RenderSVGImage {image} at (5,120) size 110x110
       RenderSVGImage {image} at (120,120) size 110x110

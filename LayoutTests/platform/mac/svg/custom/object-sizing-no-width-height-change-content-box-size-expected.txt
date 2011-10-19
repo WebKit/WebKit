@@ -9,6 +9,6 @@ layer at (0,0) size 800x418
             RenderView at (0,0) size 400x400
           layer at (0,0) size 400x400
             RenderSVGRoot {svg} at (0,0) size 400x400
-              RenderSVGPath {rect} at (0,0) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+              RenderSVGRect {rect} at (0,0) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
               RenderSVGPath {circle} at (160,160) size 80x80 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
         RenderText {#text} at (0,0) size 0x0

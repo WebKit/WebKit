@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGInlineText {#text} at (0,0) size 0x0
-    RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

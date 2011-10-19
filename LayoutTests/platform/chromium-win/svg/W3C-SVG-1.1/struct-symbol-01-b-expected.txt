@@ -11,11 +11,11 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (240,150) size 240x150
           RenderSVGContainer {g} at (240,150) size 240x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
             RenderSVGViewportContainer {svg} at (240,150) size 240x150
-              RenderSVGPath {rect} at (240,150) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L500.00,0.00 L500.00,500.00 L0.00,500.00"]
-              RenderSVGPath {rect} at (360,150) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00 L1000.00,0.00 L1000.00,500.00 L500.00,500.00"]
-              RenderSVGPath {rect} at (240,225) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00 L500.00,500.00 L500.00,1000.00 L0.00,1000.00"]
-              RenderSVGPath {rect} at (360,225) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00 L1000.00,500.00 L1000.00,1000.00 L500.00,1000.00"]
+              RenderSVGRect {rect} at (240,150) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L500.00,0.00 L500.00,500.00 L0.00,500.00"]
+              RenderSVGRect {rect} at (360,150) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00 L1000.00,0.00 L1000.00,500.00 L500.00,500.00"]
+              RenderSVGRect {rect} at (240,225) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00 L500.00,500.00 L500.00,1000.00 L0.00,1000.00"]
+              RenderSVGRect {rect} at (360,225) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00 L1000.00,500.00 L1000.00,1000.00 L500.00,1000.00"]
     RenderSVGText {text} at (10,340) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderSVGRect {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]

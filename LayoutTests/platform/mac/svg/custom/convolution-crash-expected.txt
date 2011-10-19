@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           [SourceGraphic]
     RenderSVGImage {image} at (0,0) size 3x4
       [filter="foo"] RenderSVGResourceFilter {filter} at (-0.20,-0.30) size 2.40x3.60
-    RenderSVGPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]

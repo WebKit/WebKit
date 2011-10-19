@@ -8,7 +8,7 @@ layer at (0,0) size 800x26
           RenderView at (0,0) size 59x13
         layer at (0,0) size 59x13
           RenderSVGRoot {svg} at (0,0) size 49x13
-            RenderSVGPath {rect} at (0,0) size 49x12 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=59.00] [height=13.00]
+            RenderSVGRect {rect} at (0,0) size 49x12 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=59.00] [height=13.00]
             RenderSVGPath {circle} at (20,1) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [cx=29.50] [cy=6.50] [r=4.27]
             RenderSVGText {text} at (5,1) size 31x19 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 31x19

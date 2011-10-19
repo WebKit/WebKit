@@ -8,31 +8,31 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 161x24
           chunk 1 (end anchor) text run 1 at (49.00,55.00) startOffset 0 endOffset 19 width 161.00: "animVal != baseVal:"
       RenderSVGContainer {g} at (240,40) size 200x252 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(500.00,0.00)}]
-        RenderSVGPath {rect} at (420,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=60.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (420,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=60.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,61) size 162x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 162x18
             chunk 1 text run 1 at (70.00,75.00) startOffset 0 endOffset 21 width 162.00: "SVGAnimatedNumberList"
-        RenderSVGPath {rect} at (390,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=90.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (390,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=90.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,91) size 133x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 133x18
             chunk 1 text run 1 at (70.00,105.00) startOffset 0 endOffset 17 width 133.00: "SVGAnimatedLength"
-        RenderSVGPath {rect} at (360,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=120.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (360,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=120.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,121) size 155x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 155x18
             chunk 1 text run 1 at (70.00,135.00) startOffset 0 endOffset 21 width 155.00: "SVGAnimatedLengthList"
-        RenderSVGPath {rect} at (330,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=150.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (330,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=150.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,151) size 125x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 125x18
             chunk 1 text run 1 at (70.00,165.00) startOffset 0 endOffset 16 width 125.00: "SVGAnimatedAngle"
-        RenderSVGPath {rect} at (300,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=180.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (300,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=180.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,181) size 118x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 118x18
             chunk 1 text run 1 at (70.00,195.00) startOffset 0 endOffset 15 width 118.00: "SVGAnimatedRect"
-        RenderSVGPath {rect} at (270,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=210.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (270,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=210.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,211) size 177x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 177x18
             chunk 1 text run 1 at (70.00,225.00) startOffset 0 endOffset 24 width 177.00: "SVGAnimatedTransformList"
-        RenderSVGPath {rect} at (240,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=240.00] [width=20.00] [height=20.00]
+        RenderSVGRect {rect} at (240,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=240.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,241) size 222x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 222x18
             chunk 1 text run 1 at (70.00,255.00) startOffset 0 endOffset 30 width 222.00: "SVGAnimatedPreserveAspectRatio"
@@ -49,4 +49,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,309) size 231x41 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x41
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

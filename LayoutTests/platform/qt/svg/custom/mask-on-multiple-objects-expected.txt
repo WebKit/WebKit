@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
         RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.50] [cy=0.50] [r=0.50]
-    RenderSVGPath {rect} at (20,20) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (20,20) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
       [masker="mask"] RenderSVGResourceMasker {mask} at (20,20) size 100x100
-    RenderSVGPath {rect} at (140,50) size 100x40 [fill={[type=SOLID] [color=#008000]}] [x=140.00] [y=50.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (140,50) size 100x40 [fill={[type=SOLID] [color=#008000]}] [x=140.00] [y=50.00] [width=100.00] [height=40.00]
       [masker="mask"] RenderSVGResourceMasker {mask} at (140,50) size 100x40

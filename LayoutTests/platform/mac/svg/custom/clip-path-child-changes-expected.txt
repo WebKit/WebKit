@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderSVGPath {path} at (0,0) size 100x100 [transform={m=((0.50,0.00)(0.00,0.50)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 200 0 L 200 200 L 0 200 Z"]
     RenderSVGContainer {g} at (0,0) size 100x100
       [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
-      RenderSVGPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

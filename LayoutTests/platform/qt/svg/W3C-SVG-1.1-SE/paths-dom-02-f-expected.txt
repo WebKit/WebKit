@@ -10,9 +10,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,309) size 231x41 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x41
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.5 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 480x26
-      RenderSVGPath {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGRect {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
       RenderSVGText {text} at (207,-2) size 66x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x27
           chunk 1 (middle anchor) text run 1 at (207.00,18.00) startOffset 0 endOffset 5 width 66.00: "DRAFT"

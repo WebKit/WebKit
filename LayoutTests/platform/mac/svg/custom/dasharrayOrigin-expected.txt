@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (27,25) size 148x148
-    RenderSVGPath {rect} at (42,42) size 116x116 [stroke={[type=SOLID] [color=#D3D3D3] [stroke width=15.00]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
-    RenderSVGPath {rect} at (50,42) size 108x113 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00] [dash array={100.00, 20.00, 20.00, 1000.00}]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (42,42) size 116x116 [stroke={[type=SOLID] [color=#D3D3D3] [stroke width=15.00]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (50,42) size 108x113 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00] [dash array={100.00, 20.00, 20.00, 1000.00}]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
     RenderSVGPath {circle} at (47,47) size 106x106 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [cx=100.00] [cy=100.00] [r=50.00]
     RenderSVGPath {circle} at (50,50) size 103x103 [stroke={[type=SOLID] [color=#FF0000] [stroke width=5.00] [dash array={100.00, 20.00, 20.00, 1000.00}]}] [cx=100.00] [cy=100.00] [r=50.00]
-    RenderSVGPath {rect} at (27,27) size 146x146 [stroke={[type=SOLID] [color=#D3D3D3] [stroke width=5.00]}] [x=30.00] [y=30.00] [width=140.00] [height=140.00]
-    RenderSVGPath {rect} at (30,25) size 145x145 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [dash array={100.00, 20.00, 20.00, 1000.00}]}] [x=30.00] [y=30.00] [width=140.00] [height=140.00]
+    RenderSVGRect {rect} at (27,27) size 146x146 [stroke={[type=SOLID] [color=#D3D3D3] [stroke width=5.00]}] [x=30.00] [y=30.00] [width=140.00] [height=140.00]
+    RenderSVGRect {rect} at (30,25) size 145x145 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [dash array={100.00, 20.00, 20.00, 1000.00}]}] [x=30.00] [y=30.00] [width=140.00] [height=140.00]

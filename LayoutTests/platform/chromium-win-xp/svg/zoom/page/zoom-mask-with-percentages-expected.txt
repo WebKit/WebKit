@@ -10,7 +10,7 @@ layer at (0,0) size 933x1036
         RenderSVGResourceLinearGradient {linearGradient} [id="maskedGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-        RenderSVGPath {rect} at (0,0) size 208x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGRect {rect} at (0,0) size 208x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGResourceMasker {mask} [id="mask_1"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
           RenderSVGPath {circle} at (10,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
           RenderSVGPath {circle} at (10,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
@@ -34,7 +34,7 @@ layer at (0,0) size 933x1036
       RenderSVGContainer {g} at (362,171) size 209x202 [transform={m=((1.00,0.00)(0.00,1.00)) t=(175.00,100.00)}]
         RenderSVGContainer {use} at (362,207) size 209x166
           RenderSVGContainer {g} at (362,207) size 209x166
-            RenderSVGPath {rect} at (362,207) size 209x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+            RenderSVGRect {rect} at (362,207) size 209x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (25,-17) size 50x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x18
             chunk 1 (middle anchor) text run 1 at (25.14,-3.00) startOffset 0 endOffset 6 width 49.71: "Masked"
@@ -42,7 +42,7 @@ layer at (0,0) size 933x1036
         RenderSVGContainer {use} at (186,455) size 188x167
           [masker="mask_1"] RenderSVGResourceMasker {mask} at (5,0) size 90x80
           RenderSVGContainer {g} at (176,455) size 208x167
-            RenderSVGPath {rect} at (176,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+            RenderSVGRect {rect} at (176,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (26,-17) size 48x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x18
             chunk 1 (middle anchor) text run 1 at (26.35,-3.00) startOffset 0 endOffset 6 width 47.30: "Mask 1"
@@ -50,7 +50,7 @@ layer at (0,0) size 933x1036
         RenderSVGContainer {use} at (228,745) size 104x84
           [masker="mask_2"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
           RenderSVGContainer {g} at (176,704) size 208x167
-            RenderSVGPath {rect} at (176,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+            RenderSVGRect {rect} at (176,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (26,-17) size 48x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x18
             chunk 1 (middle anchor) text run 1 at (26.35,-3.00) startOffset 0 endOffset 6 width 47.30: "Mask 2"
@@ -58,7 +58,7 @@ layer at (0,0) size 933x1036
         RenderSVGContainer {use} at (590,497) size 105x84
           [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
           RenderSVGContainer {g} at (539,455) size 208x167
-            RenderSVGPath {rect} at (539,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+            RenderSVGRect {rect} at (539,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (26,-17) size 48x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x18
             chunk 1 (middle anchor) text run 1 at (26.35,-3.00) startOffset 0 endOffset 6 width 47.30: "Mask 3"
@@ -66,7 +66,7 @@ layer at (0,0) size 933x1036
         RenderSVGContainer {use} at (547,704) size 189x134
           [masker="mask_4"] RenderSVGResourceMasker {mask} at (5.00,0) size 90.00x64.00
           RenderSVGContainer {g} at (539,704) size 208x167
-            RenderSVGPath {rect} at (539,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+            RenderSVGRect {rect} at (539,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (26,-17) size 48x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x18
             chunk 1 (middle anchor) text run 1 at (26.35,-3.00) startOffset 0 endOffset 6 width 47.30: "Mask 4"

@@ -17,7 +17,7 @@ layer at (0,0) size 785x850
             layer at (0,0) size 294x294
               RenderSVGRoot {svg} at (0,0) size 294x294
                 RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                RenderSVGPath {rect} at (0,0) size 294x294 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGRect {rect} at (0,0) size 294x294 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 294x294 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (38,86) size 218x123
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
@@ -31,7 +31,7 @@ layer at (0,0) size 785x850
             layer at (0,0) size 147x147
               RenderSVGRoot {svg} at (0,0) size 147x147
                 RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                RenderSVGPath {rect} at (0,0) size 147x147 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGRect {rect} at (0,0) size 147x147 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 147x147 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (19,44) size 109x61
                   RenderSVGText {text} at (26,60) size 148x82 contains 1 chunk(s)
@@ -45,7 +45,7 @@ layer at (0,0) size 785x850
             layer at (0,0) size 73x73
               RenderSVGRoot {svg} at (0,0) size 73x73
                 RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                RenderSVGPath {rect} at (0,0) size 73x73 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGRect {rect} at (0,0) size 73x73 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 73x73 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (9,21) size 55x31
                   RenderSVGText {text} at (26,58) size 148x84 contains 1 chunk(s)
@@ -59,7 +59,7 @@ layer at (0,0) size 785x850
             layer at (0,0) size 36x36
               RenderSVGRoot {svg} at (0,0) size 36x36
                 RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                RenderSVGPath {rect} at (0,0) size 36x36 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGRect {rect} at (0,0) size 36x36 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 36x36 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (4,10) size 28x16
                   RenderSVGText {text} at (26,57) size 148x86 contains 1 chunk(s)

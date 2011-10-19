@@ -12,9 +12,9 @@ layer at (0,0) size 500x155 layerType: foreground only
             RenderView at (0,0) size 500x150
           layer at (0,0) size 500x75
             RenderSVGRoot {svg} at (0,0) size 500x75
-              RenderSVGPath {rect} at (0,0) size 500x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=500.00] [height=75.00]
-              RenderSVGPath {rect} at (25,3) size 450x69 [fill={[type=SOLID] [color=#008000]}] [x=25.00] [y=3.75] [width=450.00] [height=67.50]
+              RenderSVGRect {rect} at (0,0) size 500x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=500.00] [height=75.00]
+              RenderSVGRect {rect} at (25,3) size 450x69 [fill={[type=SOLID] [color=#008000]}] [x=25.00] [y=3.75] [width=450.00] [height=67.50]
 layer at (0,80) size 500x75
   RenderSVGRoot {svg} at (0,80) size 500x75
-    RenderSVGPath {rect} at (0,80) size 500x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGPath {rect} at (25,83) size 450x69 [fill={[type=SOLID] [color=#008000]}] [x=5.00] [y=5.00] [width=90.00] [height=90.00]
+    RenderSVGRect {rect} at (0,80) size 500x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (25,83) size 450x69 [fill={[type=SOLID] [color=#008000]}] [x=5.00] [y=5.00] [width=90.00] [height=90.00]

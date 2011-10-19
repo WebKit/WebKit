@@ -5,19 +5,19 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (20,17) size 320x270
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=userSpaceOnUse]
-          RenderSVGPath {rect} at (200,10) size 60x100 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=10.00] [width=60.00] [height=100.00]
+          RenderSVGRect {rect} at (200,10) size 60x100 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=10.00] [width=60.00] [height=100.00]
         RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=userSpaceOnUse]
-          RenderSVGPath {rect} at (90,150) size 175x100 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]
-          RenderSVGPath {rect} at (225,160) size 95x75 [fill={[type=SOLID] [color=#000000]}] [x=225.00] [y=160.00] [width=95.00] [height=75.00]
-      RenderSVGPath {rect} at (200,17) size 60x66 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=440.00] [height=60.00]
+          RenderSVGRect {rect} at (90,150) size 175x100 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]
+          RenderSVGRect {rect} at (225,160) size 95x75 [fill={[type=SOLID] [color=#000000]}] [x=225.00] [y=160.00] [width=95.00] [height=75.00]
+      RenderSVGRect {rect} at (200,17) size 60x66 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=440.00] [height=60.00]
         [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (200,10) size 60x100
       RenderSVGText {text} at (20,102) size 320x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 320x35
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 23 width 320.00: "Rectangle being clipped"
       RenderSVGContainer {g} at (112,152) size 208x98
         [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (90,150) size 230x100
-        RenderSVGPath {rect} at (112,187) size 231x46 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [x=115.00] [y=190.00] [width=225.00] [height=40.00]
-        RenderSVGPath {rect} at (112,237) size 231x46 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=115.00] [y=240.00] [width=225.00] [height=40.00]
+        RenderSVGRect {rect} at (112,187) size 231x46 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [x=115.00] [y=190.00] [width=225.00] [height=40.00]
+        RenderSVGRect {rect} at (112,237) size 231x46 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=115.00] [y=240.00] [width=225.00] [height=40.00]
         RenderSVGText {text} at (115,152) size 320x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 320x35
             chunk 1 text run 1 at (115.00,180.00) startOffset 0 endOffset 26 width 320.00: "Line of text to be clipped"
@@ -25,9 +25,9 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 269x35
           chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 19 width 269.00: "Group being clipped"
       RenderSVGContainer {g} at (89,149) size 232x102
-        RenderSVGPath {rect} at (89,149) size 177x102 [stroke={[type=SOLID] [color=#999999] [stroke width=2.00]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]
-        RenderSVGPath {rect} at (224,159) size 97x77 [stroke={[type=SOLID] [color=#999999] [stroke width=2.00]}] [x=225.00] [y=160.00] [width=95.00] [height=75.00]
+        RenderSVGRect {rect} at (89,149) size 177x102 [stroke={[type=SOLID] [color=#999999] [stroke width=2.00]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]
+        RenderSVGRect {rect} at (224,159) size 97x77 [stroke={[type=SOLID] [color=#999999] [stroke width=2.00]}] [x=225.00] [y=160.00] [width=95.00] [height=75.00]
     RenderSVGText {text} at (10,304) size 281x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 281x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.10 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

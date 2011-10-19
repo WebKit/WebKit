@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,12) size 346x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 346x24
           chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 40 width 346.00: "Test that getBBox() works before SVGLoad"
-      RenderSVGPath {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
       RenderSVGText {text} at (1000,982) size 31x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 31x24
           chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 3 width 31.00: "Abc"
@@ -15,4 +15,4 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,309) size 231x41 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x41
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

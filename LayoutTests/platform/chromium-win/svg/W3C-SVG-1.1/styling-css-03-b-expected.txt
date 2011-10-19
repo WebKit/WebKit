@@ -12,7 +12,7 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 57.00: "This tests "
           chunk 1 text run 1 at (97.00,36.00) startOffset 0 endOffset 38 width 209.00: "ancestor selectors and child selectors"
       RenderSVGContainer {g} at (130,70) size 260x60
-        RenderSVGPath {rect} at (220,80) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+        RenderSVGRect {rect} at (220,80) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
         RenderSVGPath {circle} at (130,70) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
         RenderSVGContainer {g} at (300,70) size 90x50
           RenderSVGPath {polygon} at (300,70) size 90x50 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
@@ -26,9 +26,9 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (97.00,36.00) startOffset 0 endOffset 53 width 285.00: "ancestor, immediate-sibling and first-child selectors"
         RenderSVGContainer {g} at (130,220) size 260x60
           RenderSVGPath {circle} at (130,220) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=160.00] [cy=100.00] [r=30.00]
-          RenderSVGPath {rect} at (220,230) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+          RenderSVGRect {rect} at (220,230) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
           RenderSVGPath {polygon} at (300,220) size 90x50 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

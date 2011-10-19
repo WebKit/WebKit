@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (200,200) size 100x200
     RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
-      RenderSVGPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L2147483648.00,0.00 L2147483648.00,2147483648.00 L0.00,2147483648.00 Z"]
+      RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L2147483648.00,0.00 L2147483648.00,2147483648.00 L0.00,2147483648.00 Z"]
     RenderSVGPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00 Z"]
       [masker="mask"] RenderSVGResourceMasker {mask} at (190,180) size 2147483520x2147483520

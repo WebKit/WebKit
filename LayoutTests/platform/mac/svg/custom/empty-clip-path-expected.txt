@@ -5,14 +5,14 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="nothing"] [clipPathUnits=userSpaceOnUse]
       RenderSVGResourceClipper {clipPath} [id="emptyrect"] [clipPathUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
-    RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+    RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (0,0) size 0x0
       [clipPath="nothing"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (0,0) size 0x0
       [clipPath="emptyrect"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (0,116) size 452x38
       RenderSVGText {text} at (0,116) size 287x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 287x18

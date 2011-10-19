@@ -51,18 +51,18 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 46x11
             chunk 1 (middle anchor) text run 1 at (17.50,30.00) startOffset 0 endOffset 13 width 45.00: "Raster to fit"
         RenderSVGContainer {g} at (20,70) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
-          RenderSVGPath {rect} at (20,70) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
+          RenderSVGRect {rect} at (20,70) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
             [filter="default"] RenderSVGResourceFilter {filter} at (0,0) size 40x40
         RenderSVGText {text} at (13,101) size 45x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 45x11
             chunk 1 (middle anchor) text run 1 at (13.50,110.00) startOffset 0 endOffset 10 width 44.00: "Viewport 1"
         RenderSVGContainer {g} at (10,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
-          RenderSVGPath {rect} at (10,150) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+          RenderSVGRect {rect} at (10,150) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (13,171) size 45x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 45x11
             chunk 1 (middle anchor) text run 1 at (13.50,180.00) startOffset 0 endOffset 10 width 44.00: "Viewport 2"
         RenderSVGContainer {g} at (20,220) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
-          RenderSVGPath {rect} at (20,220) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+          RenderSVGRect {rect} at (20,220) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (120,51) size 120x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]
           RenderSVGText {text} at (0,-29) size 112x11 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 112x11
@@ -71,22 +71,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 26x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "xMin*"
-            RenderSVGPath {rect} at (120,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (120,80) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (120,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (120,80) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMinYMinMeet"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
           RenderSVGContainer {g} at (190,66) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 26x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "xMid*"
-            RenderSVGPath {rect} at (190,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (190,80) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (190,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (190,80) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMidYMidMeet"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
           RenderSVGContainer {g} at (120,116) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
             RenderSVGText {text} at (0,-14) size 27x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 27.00: "xMax*"
-            RenderSVGPath {rect} at (120,130) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (120,130) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (120,130) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (120,130) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMaxYMaxMeet"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
         RenderSVGContainer {g} at (300,51) size 130x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
           RenderSVGText {text} at (0,-29) size 124x11 contains 1 chunk(s)
@@ -96,22 +96,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 28x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 28.00: "*YMin"
-            RenderSVGPath {rect} at (300,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (300,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (300,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (300,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMinYMinMeet"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
           RenderSVGContainer {g} at (350,66) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 28x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 28.00: "*YMid"
-            RenderSVGPath {rect} at (350,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (350,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (350,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (350,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMidYMidMeet"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
           RenderSVGContainer {g} at (400,66) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 29x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 29x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 29.00: "*YMax"
-            RenderSVGPath {rect} at (400,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (400,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (400,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (400,80) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMaxYMaxMeet"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
         RenderSVGContainer {g} at (120,186) size 130x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,185.00)}]
           RenderSVGText {text} at (0,-29) size 127x11 contains 1 chunk(s)
@@ -121,22 +121,22 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 26x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "xMin*"
-            RenderSVGPath {rect} at (120,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (120,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (120,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (120,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMinYMinSlice"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
           RenderSVGContainer {g} at (170,201) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 26x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "xMid*"
-            RenderSVGPath {rect} at (170,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (170,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (170,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (170,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMidYMidSlice"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
           RenderSVGContainer {g} at (220,201) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 27x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 27.00: "xMax*"
-            RenderSVGPath {rect} at (220,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
-            RenderSVGPath {rect} at (220,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
+            RenderSVGRect {rect} at (220,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (220,215) size 30x60 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=30.00] [height=60.00]
               [filter="xMaxYMaxSlice"] RenderSVGResourceFilter {filter} at (0,0) size 30x60
         RenderSVGContainer {g} at (300,186) size 120x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,185.00)}]
           RenderSVGText {text} at (0,-29) size 115x11 contains 1 chunk(s)
@@ -146,25 +146,25 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 28x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 28.00: "*YMin"
-            RenderSVGPath {rect} at (300,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (300,215) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (300,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (300,215) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMinYMinSlice"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
           RenderSVGContainer {g} at (370,201) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 28x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 28.00: "*YMid"
-            RenderSVGPath {rect} at (370,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (370,215) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (370,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (370,215) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMidYMidSlice"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
           RenderSVGContainer {g} at (300,251) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
             RenderSVGText {text} at (0,-14) size 29x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 29x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 29.00: "*YMax"
-            RenderSVGPath {rect} at (300,265) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGPath {rect} at (300,265) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            RenderSVGRect {rect} at (300,265) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (300,265) size 50x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
               [filter="xMaxYMaxSlice"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
     RenderSVGContainer {g} at (10,311) size 210x36
       RenderSVGText {text} at (10,311) size 210x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 210x36
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 210.00: "$Revision: 1.3 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

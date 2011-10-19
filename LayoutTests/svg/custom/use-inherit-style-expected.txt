@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 100x60
       RenderSVGContainer {use} at (0,0) size 100x60
         RenderSVGContainer {g} at (0,0) size 100x60
-          RenderSVGPath {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
+          RenderSVGRect {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
+      RenderSVGRect {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]

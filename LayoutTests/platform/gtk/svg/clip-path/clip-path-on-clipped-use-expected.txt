@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (10,30) size 100x60
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
         [clipPath="clip-circle"] RenderSVGResourceClipper {clipPath} at (10,10) size 100x100
       RenderSVGResourceClipper {clipPath} [id="clip-circle"] [clipPathUnits=userSpaceOnUse]
         RenderSVGPath {circle} at (10,10) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=60.00] [cy=60.00] [r=50.00]
       RenderSVGResourceClipper {clipPath} [id="clip-rect"] [clipPathUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (10,30) size 100x60 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=30.00] [width=100.00] [height=60.00]
+        RenderSVGRect {rect} at (10,30) size 100x60 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=30.00] [width=100.00] [height=60.00]
     RenderSVGContainer {use} at (10,30) size 100x60
       [clipPath="clip-rect"] RenderSVGResourceClipper {clipPath} at (10,30) size 100x60
       RenderSVGContainer {g} at (10,10) size 100x100
-        RenderSVGPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
           [clipPath="clip-circle"] RenderSVGResourceClipper {clipPath} at (10,10) size 100x100
