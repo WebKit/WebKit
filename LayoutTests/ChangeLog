@@ -1,5 +1,17 @@
 2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        inspector/cookie-parser.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=62662
+
+        [Qt] Assertion fail in CSSPrimitiveValue ctor
+        https://bugs.webkit.org/show_bug.cgi?id=69933
+
+        * platform/qt/Skipped: Skip failing tests to paint the bots green.
+
+2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Skip new failing tests.
 
         * platform/qt-mac/Skipped:

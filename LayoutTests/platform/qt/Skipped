@@ -2452,3 +2452,11 @@ http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
 # [Qt] fast/events/media-focus-in-standalone-media-document.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=70110
 fast/events/media-focus-in-standalone-media-document.html
+
+# inspector/cookie-parser.html is a flaky crash
+# https://bugs.webkit.org/show_bug.cgi?id=62662
+inspector/cookie-parser.html
+
+# [Qt] Assertion fail in CSSPrimitiveValue ctor
+# https://bugs.webkit.org/show_bug.cgi?id=69933
+fast/borders/inline-mask-overlay-image-outset.html
