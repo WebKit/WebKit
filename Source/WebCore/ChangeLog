@@ -1,3 +1,17 @@
+2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL][WK2] Added missing files to build WebKit2 EFL
+        https://bugs.webkit.org/show_bug.cgi?id=70312
+
+        Reviewed by Ryosuke Niwa.
+
+        Added missing files to WebCore/CMakeListEfl.txt script:
+        - platform/network/soup/CredentialStorageSoup.cpp
+        - platform/network/soup/ProxyServerSoup.cpp
+        Fixes few linking time errors.
+
+        * CMakeListsEfl.txt:
+
 2011-10-19  Kentaro Hara  <haraken@chromium.org>
 
         Rename AllowAllocation to ConstructorMode

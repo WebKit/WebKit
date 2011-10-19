@@ -147,7 +147,9 @@ IF (WTF_USE_SOUP)
   )
   LIST(APPEND WebCore_SOURCES
     platform/network/soup/CookieJarSoup.cpp
+    platform/network/soup/CredentialStorageSoup.cpp
     platform/network/soup/GOwnPtrSoup.cpp
+    platform/network/soup/ProxyServerSoup.cpp
     platform/network/soup/ResourceHandleSoup.cpp
     platform/network/soup/ResourceRequestSoup.cpp
     platform/network/soup/ResourceResponseSoup.cpp
