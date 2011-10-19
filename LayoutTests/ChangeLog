@@ -1,3 +1,15 @@
+2011-10-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Date.prototype.toISOString fails to throw exception
+        https://bugs.webkit.org/show_bug.cgi?id=70394
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/date-toisostring-expected.txt:
+        * fast/js/script-tests/date-toisostring.js:
+        (throwsRangeError):
+            - fixed test case.
+
 2011-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         fix baseline for fast/history/history-back-twice-with-subframes-assert.html

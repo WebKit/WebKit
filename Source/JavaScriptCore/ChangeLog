@@ -1,3 +1,14 @@
+2011-10-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Date.prototype.toISOString fails to throw exception
+        https://bugs.webkit.org/show_bug.cgi?id=70394
+
+        Reviewed by Sam Weinig.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToISOString):
+            - Should throw a range error if the internal value is not finite.
+
 2011-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static put to putByIndex

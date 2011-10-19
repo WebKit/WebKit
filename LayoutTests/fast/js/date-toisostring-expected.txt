@@ -12,7 +12,7 @@ PASS new Date('1 January 4000 UTC').toISOString() is '4000-01-01T00:00:00.000Z'
 PASS new Date('1 January 100000 UTC').toISOString() is '+100000-01-01T00:00:00.000Z'
 PASS new Date('1 January -1 UTC').toISOString() is '-000001-01-01T00:00:00.000Z'
 PASS new Date('10 March 2000 UTC').toISOString() is '2000-03-10T00:00:00.000Z'
-PASS new Date(NaN).toISOString() is 'Invalid Date'
+PASS throwsRangeError("new Date(NaN).toISOString()") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
