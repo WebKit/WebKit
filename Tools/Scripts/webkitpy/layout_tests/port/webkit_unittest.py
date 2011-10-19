@@ -205,8 +205,12 @@ class MockServerProcess(object):
         self.crashed = False
         self.lines = lines or []
 
-    def read_line(self, timeout):
-        return self.lines.pop(0)
+    def read_stdout_line(self, timeout):
+        return self.lines.pop(0) + "\n"
+
+    def read_either_stdout_or_stderr_line(self, timeout):
+        # FIXME: We should have tests which intermix stderr and stdout lines.
+        return self.read_stdout_line(timeout), None
 
 
 class WebKitDriverTest(unittest.TestCase):

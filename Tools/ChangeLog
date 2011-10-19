@@ -1,3 +1,21 @@
+2011-10-19  Eric Seidel  <eric@webkit.org>
+
+        NRWT ServerProcess can't read lines from stderr and stdio separately
+        https://bugs.webkit.org/show_bug.cgi?id=70435
+
+        Reviewed by Adam Barth.
+
+        This is the underlying bug behind our lack of WK2 support, and timeout detection on Windows.
+        DRT expects RWT to read one line at a time from stderr and stdout independently.
+        This allows DRT to communicate errors over stderr and have them responded to immediately
+        regardless of what state the stdio stream may be in.  Previously NRWT's ServerProcess
+        class only exposed a read_line function which would read a line from stdout
+        and batch all output from stderr into an error buffer.  Callers would only be able
+        to respond to commands over stderr if they happened to correspond with a stdout line boundary.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-10-19  Chang Shu  <cshu@webkit.org>
 
         [Qt] Support WK1-only Skipped list

@@ -179,7 +179,7 @@ class WebKitPort(Port):
     def _read_image_diff(self, sp):
         timeout = 2.0
         deadline = time.time() + timeout
-        output = sp.read_line(timeout)
+        output = sp.read_stdout_line(timeout)
         output_image = ""
         diff_percent = 0
         while not sp.timed_out and not sp.crashed and output:
@@ -187,14 +187,14 @@ class WebKitPort(Port):
                 m = re.match('Content-Length: (\d+)', output)
                 content_length = int(m.group(1))
                 timeout = deadline - time.time()
-                output_image = sp.read(timeout, content_length)
-                output = sp.read_line(timeout)
+                output_image = sp.read_stdout(timeout, content_length)
+                output = sp.read_stdout_line(timeout)
                 break
             elif output.startswith('diff'):
                 break
             else:
                 timeout = deadline - time.time()
-                output = sp.read_line(deadline)
+                output = sp.read_stdout_line(deadline)
 
         if sp.timed_out:
             _log.error("ImageDiff timed out")
@@ -420,6 +420,14 @@ class WebKitDriver(Driver):
         Driver.__init__(self, port, worker_number)
         self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
 
+        # stderr reading is scoped on a per-test (not per-block) basis, so we store the accumulated
+        # stderr output, as well as if we've seen #EOF on this driver instance.
+        # FIXME: We should probably remove _read_first_block and _read_optional_image_block and
+        # instead scope these locally in run_test.
+        self.error_from_test = str()
+        self.err_seen_eof = False
+
+
     # FIXME: This may be unsafe, as python does not guarentee any ordering of __del__ calls
     # I believe it's possible that self._port or self._port._filesystem may already be destroyed.
     def __del__(self):
@@ -470,26 +478,23 @@ class WebKitDriver(Driver):
         return command + "\n"
 
     def _read_first_block(self, deadline):
-        """Reads a block from the server_process and returns (text_content, audio_content)."""
-        if self.detected_crash():
-            return (None, None)
-
+        # returns (text_content, audio_content)
         block = self._read_block(deadline)
         if block.content_type == 'audio/wav':
             return (None, block.decoded_content)
         return (block.decoded_content, None)
 
     def _read_optional_image_block(self, deadline):
-        """Reads a block from the server_process and returns (image, actual_image_hash)."""
-        if self.detected_crash():
-            return (None, None)
-
-        block = self._read_block(deadline)
+        # returns (image, actual_image_hash)
+        block = self._read_block(deadline, wait_for_stderr_eof=True)
         if block.content and block.content_type == 'image/png':
             return (block.decoded_content, block.content_hash)
         return (None, block.content_hash)
 
     def run_test(self, driver_input):
+        self.error_from_test = str()
+        self.err_seen_eof = False
+
         command = self._command_from_driver_input(driver_input)
         start_time = time.time()
         deadline = time.time() + int(driver_input.timeout) / 1000.0
@@ -498,61 +503,77 @@ class WebKitDriver(Driver):
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
         image, actual_image_hash = self._read_optional_image_block(deadline)  # The second (optional) block is image data.
 
-        error_lines = self._server_process.error.splitlines()
-        # FIXME: This is a hack.  It is unclear why sometimes
-        # we do not get any error lines from the server_process
-        # probably we are not flushing stderr.
-        if error_lines and error_lines[-1] == "#EOF":
-            error_lines.pop()  # Remove the expected "#EOF"
-        error = "\n".join(error_lines)
-
-        # FIXME: This seems like the wrong section of code to be resetting _server_process.error.
-        self._server_process.error = ""
+        # We may not have read all output (if an error occured), but we certainly should have read all error bytes.
+        assert not self._server_process._error, "Unprocessed error output: %s" % self._server_process._error
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=self.detected_crash(), test_time=time.time() - start_time,
-            timeout=self._server_process.timed_out, error=error)
+            timeout=self._server_process.timed_out, error=self.error_from_test)
 
-    LENGTH_HEADER = 'Content-Length: '
-    HASH_HEADER = 'ActualHash: '
-    TYPE_HEADER = 'Content-Type: '
-    ENCODING_HEADER = 'Content-Transfer-Encoding: '
+    def _read_header(self, block, line, header_text, header_attr, header_filter=None):
+        if line.startswith(header_text) and getattr(block, header_attr) is None:
+            value = line.split()[1]
+            if header_filter:
+                value = header_filter(value)
+            setattr(block, header_attr, value)
+            return True
+        return False
 
-    def _read_line_until(self, deadline):
-        return self._server_process.read_line(deadline - time.time())
+    def _process_stdout_line(self, block, line):
+        if (self._read_header(block, line, 'Content-Type: ', 'content_type')
+            or self._read_header(block, line, 'Content-Transfer-Encoding: ', 'encoding')
+            or self._read_header(block, line, 'Content-Length: ', '_content_length', int)
+            or self._read_header(block, line, 'ActualHash: ', 'content_hash')):
+            return
+        # If the line wasn't a header, we just append it to the content.
+        block.content += line
 
-    def _read_block(self, deadline):
-        content_type = None
-        encoding = None
-        content_hash = None
-        content_length = None
+    def _strip_eof(self, line):
+        if line and line.endswith("#EOF\n"):
+            return line[:-5], True
+        return line, False
 
-        # Content is treated as binary data even though the text output is usually UTF-8.
-        content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
-        line = self._read_line_until(deadline)
-        eof = False
-        while (not self._server_process.timed_out and not self.detected_crash() and not eof):
-            chomped_line = line.rstrip()  # FIXME: This will remove trailing lines from test output.  Is that right?
-            if chomped_line.endswith("#EOF"):
-                eof = True
-                line = chomped_line[:-4]
+    def _read_block(self, deadline, wait_for_stderr_eof=False):
+        block = ContentBlock()
+        out_seen_eof = False
 
-            if line.startswith(self.TYPE_HEADER) and content_type is None:
-                content_type = line.split()[1]
-            elif line.startswith(self.ENCODING_HEADER) and encoding is None:
-                encoding = line.split()[1]
-            elif line.startswith(self.LENGTH_HEADER) and content_length is None:
-                content_length = int(line[len(self.LENGTH_HEADER):])
-                # FIXME: In real HTTP there should probably be a blank line
-                # after headers before content, but DRT doesn't write one.
-                content = self._server_process.read(deadline - time.time(), content_length)
-            elif line.startswith(self.HASH_HEADER):
-                content_hash = line.split()[1]
-            elif line:
-                content += line
-            if eof:
+        while True:
+            if out_seen_eof and (self.err_seen_eof or not wait_for_stderr_eof):
                 break
-            line = self._read_line_until(deadline)
-        return ContentBlock(content_type, encoding, content_hash, content)
+
+            if self._server_process.timed_out or self.detected_crash():
+                break
+
+            timeout = deadline - time.time()
+
+            if self.err_seen_eof:
+                out_line = self._server_process.read_stdout_line(timeout)
+                err_line = None
+            elif out_seen_eof:
+                out_line = None
+                err_line = self._server_process.read_stderr_line(timeout)
+            else:
+                out_line, err_line = self._server_process.read_either_stdout_or_stderr_line(timeout)
+
+            if out_line:
+                assert not out_seen_eof
+                out_line, out_seen_eof = self._strip_eof(out_line)
+            if err_line:
+                assert not self.err_seen_eof
+                err_line, self.err_seen_eof = self._strip_eof(err_line)
+
+            if out_line:
+                self._process_stdout_line(block, out_line)
+                # FIXME: Unlike HTTP, DRT dumps the content right after printing a Content-Length header.
+                # Don't wait until we're done with headers, just read the binary blob right now.
+                if block._content_length is not None and not block.content:
+                    block.content = self._server_process.read_stdout(deadline - time.time(), block._content_length)
+
+            # FIXME: Need to handle "#CRASHED - WebProcess" and "#CRASHED".
+            if err_line:
+                self.error_from_test += err_line
+
+        block.decode_content()
+        return block
 
     def stop(self):
         if self._server_process:
@@ -561,12 +582,17 @@ class WebKitDriver(Driver):
 
 
 class ContentBlock(object):
-    def __init__(self, content_type, encoding, content_hash, content):
-        self.content_type = content_type
-        self.encoding = encoding
-        self.content_hash = content_hash
-        self.content = content
+    def __init__(self):
+        self.content_type = None
+        self.encoding = None
+        self.content_hash = None
+        self._content_length = None
+        # Content is treated as binary data even though the text output is usually UTF-8.
+        self.content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
+        self.decoded_content = None
+
+    def decode_content(self):
         if self.encoding == 'base64':
-            self.decoded_content = base64.b64decode(content)
+            self.decoded_content = base64.b64decode(self.content)
         else:
-            self.decoded_content = content
+            self.decoded_content = self.content
