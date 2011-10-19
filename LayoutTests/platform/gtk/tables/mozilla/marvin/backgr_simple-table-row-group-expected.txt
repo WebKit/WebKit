@@ -37,7 +37,7 @@ layer at (0,0) size 784x1355
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
         RenderBlock {DD} at (40,15) size 728x15
-          RenderInline {A} at (0,0) size 408x15 [color=#FFFF00]
+          RenderInline {A} at (0,0) size 408x15 [color=#999900]
             RenderText {#text} at (0,0) size 408x15
               text run at (0,0) width 408: "Background Area: Background on 'table-column-group'"
           RenderText {#text} at (0,0) size 0x0
@@ -45,7 +45,7 @@ layer at (0,0) size 784x1355
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "previous"
         RenderBlock {DD} at (40,45) size 728x15
-          RenderInline {A} at (0,0) size 304x15 [color=#FFFF00]
+          RenderInline {A} at (0,0) size 304x15 [color=#999900]
             RenderText {#text} at (0,0) size 304x15
               text run at (0,0) width 304: "Background Area: Background on 'table'"
           RenderText {#text} at (0,0) size 0x0

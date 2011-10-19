@@ -1,3 +1,20 @@
+2011-10-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline and GTK baselines for
+        fast/multicol/vertical-rl/rule-style.html
+
+        * platform/gtk/Skipped: Skip
+        fast/files/url-required-arguments.html, affected by bug 66045
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/rule-style-expected.txt: Added.
+        * platform/gtk/svg/hixie/cascade/002-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+
 2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix after r97845.
