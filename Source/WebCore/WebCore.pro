@@ -2339,7 +2339,6 @@ HEADERS += \
     rendering/svg/RenderSVGInlineText.h \
     rendering/svg/RenderSVGModelObject.h \
     rendering/svg/RenderSVGPath.h \
-    rendering/svg/RenderSVGRect.h \
     rendering/svg/RenderSVGResource.h \
     rendering/svg/RenderSVGResourceClipper.h \
     rendering/svg/RenderSVGResourceContainer.h \
@@ -2354,7 +2353,6 @@ HEADERS += \
     rendering/svg/RenderSVGResourceSolidColor.h \
     rendering/svg/RenderSVGRoot.h \
     rendering/svg/RenderSVGShadowTreeRootContainer.h \
-    rendering/svg/RenderSVGShape.h \
     rendering/svg/RenderSVGTSpan.h \
     rendering/svg/RenderSVGText.h \
     rendering/svg/RenderSVGTextPath.h \
@@ -3330,8 +3328,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/style/SVGRenderStyleDefs.cpp \
         rendering/PointerEventsHitRules.cpp \
         rendering/svg/RenderSVGPath.cpp \
-        rendering/svg/RenderSVGRect.cpp \
-        rendering/svg/RenderSVGShape.cpp \
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \

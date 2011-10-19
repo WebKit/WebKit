@@ -129,7 +129,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (isLengthAttribute) {
-        renderer->setNeedsShapeUpdate();
+        renderer->setNeedsPathUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }

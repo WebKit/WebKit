@@ -68,13 +68,6 @@ bool FloatRect::contains(const FloatRect& other) const
         && y() <= other.y() && maxY() >= other.maxY();
 }
 
-bool FloatRect::contains(const FloatPoint& point, ContainsMode containsMode) const
-{
-    if (containsMode == InsideOrOnStroke)
-        return contains(point.x(), point.y());
-    return x() < point.x() && maxX() > point.x() && y() < point.y() && maxY() > y();
-}
-
 void FloatRect::intersect(const FloatRect& other)
 {
     float l = max(x(), other.x());

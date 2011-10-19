@@ -124,7 +124,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (attrName == SVGNames::pointsAttr) {
-        renderer->setNeedsShapeUpdate();
+        renderer->setNeedsPathUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }

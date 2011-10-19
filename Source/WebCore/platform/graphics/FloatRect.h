@@ -70,11 +70,6 @@ class IntPoint;
 
 class FloatRect {
 public:
-    enum ContainsMode {
-        InsideOrOnStroke,
-        InsideButNotOnStroke
-    };
-
     FloatRect() { }
     FloatRect(const FloatPoint& location, const FloatSize& size)
         : m_location(location), m_size(size) { }
@@ -147,7 +142,6 @@ public:
 
     bool intersects(const FloatRect&) const;
     bool contains(const FloatRect&) const;
-    bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 
     void intersect(const FloatRect&);
     void unite(const FloatRect&);
@@ -157,6 +151,7 @@ public:
     // is really checking for containment of 1x1 rect, but that doesn't make sense with floats.
     bool contains(float px, float py) const
         { return px >= x() && px <= maxX() && py >= y() && py <= maxY(); }
+    bool contains(const FloatPoint& point) const { return contains(point.x(), point.y()); }
 
     void inflateX(float dx) {
         m_location.setX(m_location.x() - dx);

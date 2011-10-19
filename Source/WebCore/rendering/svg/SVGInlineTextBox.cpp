@@ -377,7 +377,7 @@ void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const 
     RenderObject* parentRenderer = parent()->renderer();
     ASSERT(parentRenderer);
 
-    m_paintingResource->postApplyResource(parentRenderer, context, m_paintingResourceMode, path, /*RenderSVGShape*/ 0);
+    m_paintingResource->postApplyResource(parentRenderer, context, m_paintingResourceMode, path);
     m_paintingResource = 0;
 }
 

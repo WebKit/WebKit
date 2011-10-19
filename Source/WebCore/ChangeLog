@@ -1,3 +1,109 @@
+2011-10-19  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed, rolling out r97863.
+        http://trac.webkit.org/changeset/97863
+        https://bugs.webkit.org/show_bug.cgi?id=65769
+
+        Rollout
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::contains):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGPath):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/svg/RenderSVGAllInOne.cpp:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::isGraphicsElement):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::BoundingRectStrokeStyleApplier::BoundingRectStrokeStyleApplier):
+        (WebCore::BoundingRectStrokeStyleApplier::strokeStyle):
+        (WebCore::RenderSVGPath::RenderSVGPath):
+        (WebCore::RenderSVGPath::fillContains):
+        (WebCore::RenderSVGPath::strokeContains):
+        (WebCore::RenderSVGPath::layout):
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGPath::zeroLengthSubpathRect):
+        (WebCore::RenderSVGPath::setupSquareCapPath):
+        (WebCore::RenderSVGPath::setupNonScalingStrokePath):
+        (WebCore::RenderSVGPath::fillAndStrokePath):
+        (WebCore::RenderSVGPath::paint):
+        (WebCore::RenderSVGPath::addFocusRingRects):
+        (WebCore::RenderSVGPath::nodeAtFloatPoint):
+        (WebCore::RenderSVGPath::calculateMarkerBoundsIfNeeded):
+        (WebCore::RenderSVGPath::updateCachedBoundaries):
+        * rendering/svg/RenderSVGPath.h:
+        (WebCore::RenderSVGPath::path):
+        (WebCore::RenderSVGPath::setNeedsPathUpdate):
+        (WebCore::RenderSVGPath::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGPath::setNeedsTransformUpdate):
+        (WebCore::RenderSVGPath::objectBoundingBox):
+        (WebCore::RenderSVGPath::strokeBoundingBox):
+        (WebCore::RenderSVGPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGPath::localToParentTransform):
+        (WebCore::RenderSVGPath::localTransform):
+        (WebCore::toRenderSVGPath):
+        * rendering/svg/RenderSVGRect.cpp: Removed.
+        * rendering/svg/RenderSVGRect.h: Removed.
+        * rendering/svg/RenderSVGResource.h:
+        (WebCore::RenderSVGResource::postApplyResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceClipper::calculateClipContentRepaintRect):
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::postApplyResource):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::postApplyResource):
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/svg/RenderSVGShape.cpp: Removed.
+        * rendering/svg/RenderSVGShape.h: Removed.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::releasePaintingResource):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::prepareToRenderSVGContent):
+        (WebCore::SVGRenderSupport::finishRenderSVGContent):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::operator<<):
+        (WebCore::write):
+        * rendering/svg/SVGRenderTreeAsText.h:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathSegListChanged):
+        * svg/SVGPathElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGRectElement.h:
+
 2011-10-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: worker inspector title should contain worker URL

@@ -1,3 +1,16 @@
+2011-10-19  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed, rolling out r97863.
+        http://trac.webkit.org/changeset/97863
+        https://bugs.webkit.org/show_bug.cgi?id=65769
+
+        Rollout RenderSVGShape patch after assertions in RenderSVGShape::createShape().
+
+        * svg/custom/pointer-events-on-rounded-rect-expected.txt: Removed.
+        * svg/custom/pointer-events-on-rounded-rect.xhtml: Removed.
+        * svg/custom/pointer-events-with-linecaps-and-miterlimits-expected.txt: Removed.
+        * svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml: Removed.
+
 2011-10-19  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: rebaseline remaining diffs for Chromium-Skia on

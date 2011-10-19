@@ -524,8 +524,8 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)
 {
 #if ENABLE(SVG)
-    if (o.isSVGShape()) {
-        write(ts, *toRenderSVGShape(&o), indent);
+    if (o.isSVGPath()) {
+        write(ts, *toRenderSVGPath(&o), indent);
         return;
     }
     if (o.isSVGGradientStop()) {

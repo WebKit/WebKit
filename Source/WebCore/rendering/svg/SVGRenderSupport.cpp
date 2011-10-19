@@ -79,6 +79,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
 bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
 {
     ASSERT(object);
+
     RenderStyle* style = object->style();
     ASSERT(style);
 
@@ -150,7 +151,7 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
     if (resources) {
         if (RenderSVGResourceFilter* filter = resources->filter()) {
-            filter->postApplyResource(static_cast<RenderSVGShape*>(object), paintInfo.context, ApplyToDefaultMode, 0, 0);
+            filter->postApplyResource(object, paintInfo.context, ApplyToDefaultMode, /* path */0);
             paintInfo.context = savedContext;
         }
     }
@@ -222,9 +223,9 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
             if (SVGElement* element = child->node()->isSVGElement() ? static_cast<SVGElement*>(child->node()) : 0) {
                 if (element->isStyled() && static_cast<SVGStyledElement*>(element)->hasRelativeLengths()) {
-                    // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
-                    if (child->isSVGShape())
-                        toRenderSVGShape(child)->setNeedsShapeUpdate();
+                    // When the layout size changed and when using relative values tell the RenderSVGPath to update its Path object
+                    if (child->isSVGPath())
+                        toRenderSVGPath(child)->setNeedsPathUpdate();
 
                     needsLayout = true;
                 }
