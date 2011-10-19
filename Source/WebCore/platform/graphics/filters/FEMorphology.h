@@ -46,7 +46,7 @@ public:
     float radiusY() const;
     bool setRadiusY(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();

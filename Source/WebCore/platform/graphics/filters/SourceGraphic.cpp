@@ -51,10 +51,8 @@ void SourceGraphic::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void SourceGraphic::apply()
+void SourceGraphic::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     ImageBuffer* resultImage = createImageBufferResult();
     Filter* filter = this->filter();
     if (!resultImage || !filter->sourceImage())

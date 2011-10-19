@@ -86,16 +86,10 @@ static inline unsigned char lighten(unsigned char colorA, unsigned char colorB, 
     return ((std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255)) / 255);
 }
 
-void FEBlend::apply()
+void FEBlend::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
-    in->apply();
-    in2->apply();
-    if (!in->hasResult() || !in2->hasResult())
-        return;
 
     ASSERT(m_mode > FEBLEND_MODE_UNKNOWN);
     ASSERT(m_mode <= FEBLEND_MODE_LIGHTEN);

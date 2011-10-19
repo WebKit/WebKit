@@ -196,16 +196,10 @@ void FEComposite::determineAbsolutePaintRect()
     }
 }
 
-void FEComposite::apply()
+void FEComposite::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
-    in->apply();
-    in2->apply();
-    if (!in->hasResult() || !in2->hasResult())
-        return;
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
         ByteArray* dstPixelArray = createPremultipliedImageResult();

@@ -193,14 +193,9 @@ void FEMorphology::platformApply(PaintingData* paintingData)
 }
 
 
-void FEMorphology::apply()
+void FEMorphology::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ByteArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)

@@ -32,7 +32,7 @@ class FETile : public FilterEffect {
 public:
     static PassRefPtr<FETile> create(Filter* filter);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }

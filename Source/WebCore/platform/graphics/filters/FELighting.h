@@ -45,7 +45,7 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
-    virtual void apply();
+    virtual void platformApplySoftware();
 
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 

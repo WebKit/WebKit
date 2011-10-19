@@ -50,7 +50,7 @@ public:
     float scale() const;
     bool setScale(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }

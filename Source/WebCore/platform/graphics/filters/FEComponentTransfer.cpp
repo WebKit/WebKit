@@ -150,14 +150,9 @@ static void gamma(unsigned char* values, const ComponentTransferFunction& transf
     }
 }
 
-void FEComponentTransfer::apply()
+void FEComponentTransfer::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ByteArray* pixelArray = createUnmultipliedImageResult();
     if (!pixelArray)

@@ -48,7 +48,7 @@ public:
     const Vector<float>& values() const;
     bool setValues(const Vector<float>&);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

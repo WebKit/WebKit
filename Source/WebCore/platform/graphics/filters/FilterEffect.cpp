@@ -85,6 +85,23 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
+void FilterEffect::apply()
+{
+    if (hasResult())
+        return;
+    unsigned size = m_inputEffects.size();
+    for (unsigned i = 0; i < size; ++i) {
+        FilterEffect* in = m_inputEffects.at(i).get();
+        in->apply();
+        if (!in->hasResult())
+            return;
+    }
+    determineAbsolutePaintRect();
+    
+    // Add platform specific apply functions here and return earlier.
+    platformApplySoftware();
+}
+
 void FilterEffect::clearResult()
 {
     if (m_imageBufferResult)
@@ -236,7 +253,6 @@ ImageBuffer* FilterEffect::createImageBufferResult()
 {
     // Only one result type is allowed.
     ASSERT(!hasResult());
-    determineAbsolutePaintRect();
     if (m_absolutePaintRect.isEmpty())
         return 0;
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB);
@@ -252,7 +268,6 @@ ByteArray* FilterEffect::createUnmultipliedImageResult()
     ASSERT(!hasResult());
     ASSERT(isFilterSizeValid(m_absolutePaintRect));
 
-    determineAbsolutePaintRect();
     if (m_absolutePaintRect.isEmpty())
         return 0;
     m_unmultipliedImageResult = ByteArray::create(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
@@ -265,7 +280,6 @@ ByteArray* FilterEffect::createPremultipliedImageResult()
     ASSERT(!hasResult());
     ASSERT(isFilterSizeValid(m_absolutePaintRect));
 
-    determineAbsolutePaintRect();
     if (m_absolutePaintRect.isEmpty())
         return 0;
     m_premultipliedImageResult = ByteArray::create(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);

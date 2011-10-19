@@ -51,7 +51,7 @@ public:
 
     static float calculateStdDeviation(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();

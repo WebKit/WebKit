@@ -386,14 +386,9 @@ bool FELighting::drawLighting(ByteArray* pixels, int width, int height)
     return true;
 }
 
-void FELighting::apply()
+void FELighting::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ByteArray* srcPixelArray = createUnmultipliedImageResult();
     if (!srcPixelArray)

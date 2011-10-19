@@ -73,15 +73,9 @@ void FEDropShadow::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEDropShadow::apply()
+void FEDropShadow::platformApplySoftware()
 {
-    if (hasResult())
-        return;
-
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

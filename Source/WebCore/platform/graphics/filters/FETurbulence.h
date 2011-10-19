@@ -62,7 +62,7 @@ public:
     static void fillRegionWorker(void*);
 #endif
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
     
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }

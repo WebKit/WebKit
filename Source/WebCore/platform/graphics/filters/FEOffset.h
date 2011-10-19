@@ -38,7 +38,7 @@ public:
     float dy() const;
     void setDy(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
     
     virtual void determineAbsolutePaintRect();

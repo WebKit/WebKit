@@ -33,7 +33,7 @@ class FEMerge : public FilterEffect {
 public:
     static PassRefPtr<FEMerge> create(Filter*);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

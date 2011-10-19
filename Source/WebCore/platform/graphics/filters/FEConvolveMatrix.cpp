@@ -401,14 +401,9 @@ void FEConvolveMatrix::setInteriorPixelsWorker(InteriorPixelParameters* param)
 }
 #endif
 
-void FEConvolveMatrix::apply()
+void FEConvolveMatrix::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ByteArray* resultImage;
     if (m_preserveAlpha)

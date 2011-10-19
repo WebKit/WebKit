@@ -45,7 +45,7 @@ public:
     BlendModeType blendMode() const;
     bool setBlendMode(BlendModeType);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

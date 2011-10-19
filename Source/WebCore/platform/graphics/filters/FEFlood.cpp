@@ -70,10 +70,8 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-void FEFlood::apply()
+void FEFlood::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
         return;

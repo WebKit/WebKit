@@ -37,7 +37,7 @@ public:
 
     void setAbsoluteSubregion(const FloatRect& absoluteSubregion) { m_absoluteSubregion = absoluteSubregion; }
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();

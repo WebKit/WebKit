@@ -88,16 +88,10 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-void FEDisplacementMap::apply()
+void FEDisplacementMap::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
-    in->apply();
-    in2->apply();
-    if (!in->hasResult() || !in2->hasResult())
-        return;
 
     ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
     ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);

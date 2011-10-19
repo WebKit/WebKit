@@ -52,10 +52,8 @@ void SourceAlpha::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void SourceAlpha::apply()
+void SourceAlpha::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     ImageBuffer* resultImage = createImageBufferResult();
     Filter* filter = this->filter();
     if (!resultImage || !filter->sourceImage())

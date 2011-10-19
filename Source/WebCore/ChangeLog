@@ -1,3 +1,82 @@
+2011-10-19  Dirk Schulze  <krit@webkit.org>
+
+        Make FilterEffect::apply() independent of image data management
+        https://bugs.webkit.org/show_bug.cgi?id=70350
+
+        Reviewed by Zoltan Herczeg.
+        
+        FilterEffect::apply() needs to be independent from the image data management in FilterEffect.
+        This allows implementing effective hardware accelerated alternatives, like OpenGL, CI or OpenCL
+        based filters, to the software rendering. The software rendering code will be used as fallback
+        and moves to platformApplySoftware().
+
+        The patch does not change the behavior of SVG filters. Did not add new test cases.
+
+        * platform/graphics/filters/FEBlend.cpp: Renamed apply() to platformApplyGeneric()
+            and removed validity checks that are done by FilterEffect::apply(). This is a
+            recurring pattern for all following effects. 
+        (WebCore::FEBlend::platformApplySoftware):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::platformApplySoftware):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::platformApplySoftware):
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::platformApplySoftware):
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplySoftware):
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMerge.cpp:
+        (WebCore::FEMerge::platformApplySoftware):
+        * platform/graphics/filters/FEMerge.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::platformApplySoftware):
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/FETile.h:
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/filters/FilterEffect.cpp: Added non-virtual apply() function. This will call the platform specific apply functions,
+            which need to be virtual now.
+        (WebCore::FilterEffect::hasResult): Added a comment for new implementations. This function needs to be updated for every new port.
+        (WebCore::FilterEffect::apply):
+        (WebCore::FilterEffect::createImageBufferResult): Removed determineAbsolutePaintRect() call. This is done in apply() now.
+        (WebCore::FilterEffect::createUnmultipliedImageResult): Ditto.
+        (WebCore::FilterEffect::createPremultipliedImageResult): Ditto.
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::platformApplySoftware):
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::platformApplySoftware):
+        * platform/graphics/filters/SourceGraphic.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+        * svg/graphics/filters/SVGFEImage.h:
+
 2011-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Enable caseSensitive search / Regex support in advanced search.

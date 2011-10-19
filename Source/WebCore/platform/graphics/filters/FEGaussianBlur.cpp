@@ -262,14 +262,9 @@ void FEGaussianBlur::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
-void FEGaussianBlur::apply()
+void FEGaussianBlur::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ByteArray* srcPixelArray = createPremultipliedImageResult();
     if (!srcPixelArray)

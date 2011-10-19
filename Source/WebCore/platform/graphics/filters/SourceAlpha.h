@@ -34,7 +34,7 @@ public:
 
     static const AtomicString& effectName();
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();

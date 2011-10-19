@@ -43,16 +43,11 @@ PassRefPtr<FETile> FETile::create(Filter* filter)
     return adoptRef(new FETile(filter));
 }
 
-void FETile::apply()
+void FETile::platformApplySoftware()
 {
 // FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.
 #if ENABLE(SVG)
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

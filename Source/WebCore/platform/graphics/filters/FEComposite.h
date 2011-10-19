@@ -59,7 +59,7 @@ public:
     float k4() const;
     bool setK4(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
     
     virtual void determineAbsolutePaintRect();

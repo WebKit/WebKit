@@ -39,7 +39,7 @@ public:
     float floodOpacity() const;
     bool setFloodOpacity(float);
 
-    virtual void apply();
+    virtual void platformApplySoftware();
     virtual void dump();
 
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }

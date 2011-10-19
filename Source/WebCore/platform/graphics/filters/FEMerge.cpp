@@ -41,18 +41,10 @@ PassRefPtr<FEMerge> FEMerge::create(Filter* filter)
     return adoptRef(new FEMerge(filter));
 }
 
-void FEMerge::apply()
+void FEMerge::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
-    for (unsigned i = 0; i < size; ++i) {
-        FilterEffect* in = inputEffect(i);
-        in->apply();
-        if (!in->hasResult())
-            return;
-    }
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

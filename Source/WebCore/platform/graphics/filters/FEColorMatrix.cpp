@@ -156,14 +156,9 @@ void effectType(ByteArray* pixelArray, const Vector<float>& values)
     }
 }
 
-void FEColorMatrix::apply()
+void FEColorMatrix::platformApplySoftware()
 {
-    if (hasResult())
-        return;
     FilterEffect* in = inputEffect(0);
-    in->apply();
-    if (!in->hasResult())
-        return;
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

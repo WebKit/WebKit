@@ -56,9 +56,9 @@ void FEImage::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void FEImage::apply()
+void FEImage::platformApplySoftware()
 {
-    if (!m_image.get() || hasResult())
+    if (!m_image.get())
         return;
 
     ImageBuffer* resultImage = createImageBufferResult();

@@ -54,7 +54,6 @@ class FilterEffect : public RefCounted<FilterEffect> {
 public:
     virtual ~FilterEffect();
 
-    bool hasResult() const { return m_imageBufferResult || m_unmultipliedImageResult || m_premultipliedImageResult; }
     void clearResult();
     ImageBuffer* asImageBuffer();
     PassRefPtr<ByteArray> asUnmultipliedImage(const IntRect&);
@@ -65,6 +64,12 @@ public:
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
+    
+    inline bool hasResult() const
+    {
+        // This function needs platform specific checks, if the memory managment is not done by FilterEffect.
+        return m_imageBufferResult || m_unmultipliedImageResult || m_premultipliedImageResult;
+    }
 
     IntRect drawingRegionOfInputImage(const IntRect&) const;
     IntRect requestedRegionOfInputImageData(const IntRect&) const;
@@ -79,7 +84,9 @@ public:
     FloatRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
-    virtual void apply() = 0;
+    void apply();
+    
+    virtual void platformApplySoftware() = 0;
     virtual void dump() = 0;
 
     virtual void determineAbsolutePaintRect();
