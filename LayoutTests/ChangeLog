@@ -1,3 +1,21 @@
+2011-10-18  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. New expected results after http://trac.webkit.org/changeset/97707.
+
+        * fast/table/height-percent-test-vertical-expected.txt: Renamed from LayoutTests/platform/gtk/fast/table/height-percent-test-vertical-expected.txt.
+        * platform/chromium-linux/fast/table/028-vertical-expected.png:
+        * platform/chromium-linux/fast/table/height-percent-test-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/writing-mode/fallback-orientation-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/writing-mode/fallback-orientation-expected.png.
+        * platform/chromium-win-vista/fast/writing-mode/fallback-orientation-expected.png: Removed.
+        * platform/chromium-win-xp/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-win/fast/table/028-vertical-expected.png:
+        * platform/chromium-win/fast/table/028-vertical-expected.txt:
+        * platform/chromium-win/fast/table/height-percent-test-vertical-expected.png:
+        * platform/chromium-win/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-win/fast/writing-mode/fallback-orientation-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.txt: Removed.
+
 2011-10-18  Gavin Barraclough  <barraclough@apple.com>
 
         Date.prototype.toISOString fails to throw exception
