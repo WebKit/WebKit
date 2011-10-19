@@ -1,3 +1,24 @@
+2011-10-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Avoid unecessarily calling gtk_widget_size_allocate on plugin widgets
+        https://bugs.webkit.org/show_bug.cgi?id=70190
+
+        Reviewed by Xan Lopez.
+
+        Instead of always calling gtk_widget_size_allocate on every single plugin
+        widget during scrolling, only call it on widgets that are both in the view
+        and that have moved.
+
+        No new tests. It's difficult to test scrolling performance in an
+        automated way.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded): Reverse the if statement detecting a
+        clipped out plugin. It was incorrect.
+        (WebCore::PluginView::updateWidgetAllocationAndClip): If the current allocation of
+        the plugin widget has not changed or if the widget remains scrolled out, do not call
+        gtk_widget_size_allocate.
+
 2011-10-19  Renata Hodovan  <reni@webkit.org>
 
         Add new renderer for SVGRectElement.

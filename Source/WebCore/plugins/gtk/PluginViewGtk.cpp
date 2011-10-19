@@ -506,9 +506,9 @@ void PluginView::setNPWindowIfNeeded()
     if (m_isWindowed && !platformPluginWidget())
         return;
 
-    // If width or height are null, set the clipRect to null, indicating that
-    // the plugin is not visible/scrolled out.
-    if (!m_clipRect.isEmpty()) {
+    if (m_clipRect.isEmpty()) {
+        // If width or height are null, set the clipRect to null,
+        // indicating that the plugin is not visible/scrolled out.
         m_npWindow.clipRect.left = 0;
         m_npWindow.clipRect.right = 0;
         m_npWindow.clipRect.top = 0;
@@ -574,8 +574,25 @@ void PluginView::updateWidgetAllocationAndClip()
     }
 
     GtkAllocation allocation(m_delayedAllocation);
-    gtk_widget_size_allocate(widget, &allocation);
     m_delayedAllocation = IntRect();
+
+    // The goal is to avoid calling gtk_widget_size_allocate when necessary.
+    // It blocks the main loop and if the widget is offscreen or hasn't moved
+    // it isn't required.
+
+    // Don't do anything if the allocation has not changed.
+    GtkAllocation currentAllocation;
+    gtk_widget_get_allocation(widget, &currentAllocation);
+    if (currentAllocation == allocation)
+        return;
+
+    // Don't do anything if both the old and the new allocations are outside the frame.
+    IntRect currentAllocationRect(currentAllocation);
+    currentAllocationRect.intersect(frameRect());
+    if (currentAllocationRect.isEmpty() && m_clipRect.isEmpty())
+        return;
+
+    gtk_widget_size_allocate(widget, &allocation);
 }
 
 void PluginView::setParentVisible(bool visible)
