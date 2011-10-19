@@ -782,7 +782,7 @@ v8::Local<v8::Context> V8Proxy::currentContext()
 
 v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
 {
-    if (!AllowAllocation::current())
+    if (ConstructorMode::current() == ConstructorMode::CreateNewObject)
         return throwError(TypeError, "Illegal constructor");
 
     return args.This();

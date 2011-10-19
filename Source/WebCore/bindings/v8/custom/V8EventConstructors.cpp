@@ -77,7 +77,7 @@ static v8::Handle<v8::Value> constructV8Event(const v8::Arguments& args, bool (*
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
-    if (AllowAllocation::current())
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     if (args.Length() < 1)

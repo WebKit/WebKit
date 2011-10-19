@@ -1,3 +1,34 @@
+2011-10-19  Kentaro Hara  <haraken@chromium.org>
+
+        Rename AllowAllocation to ConstructorMode
+        https://bugs.webkit.org/show_bug.cgi?id=70397
+
+        Reviewed by Adam Barth.
+
+        The name 'AllowAllocation' is confusing (See discussion here: bug 70015).
+        This patch renames 'AllowAllocation' to 'ConstructorMode' to clarify that
+        this class is for distinguishing the following two situations:
+         1. A programmer allocates an object via "new X"; X is a function with a C++ constructCallback.
+         2. C++ allocates an object via the function template and tries to wrap the object with a JS flavor.
+
+        Tests: fast/events/constructors/*
+
+        * bindings/scripts/CodeGeneratorV8.pm: Renamed AllowAllocation to ConstructorMode.
+        (GenerateConstructorCallback):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Updated a run-binding-tests result.
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/v8/V8Binding.cpp: Renamed AllowAllocation to ConstructorMode.
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        * bindings/v8/V8Binding.h: Ditto.
+        (WebCore::ConstructorMode::ConstructorMode):
+        (WebCore::ConstructorMode::~ConstructorMode):
+        (WebCore::ConstructorMode::current):
+        (WebCore::SafeAllocation::newInstance):
+        * bindings/v8/V8Proxy.cpp: Ditto.
+        (WebCore::V8Proxy::checkNewLegal):
+        * bindings/v8/custom/V8EventConstructors.cpp: Ditto.
+        (WebCore::constructV8Event):
+
 2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Added missing dummy platformDescription function
