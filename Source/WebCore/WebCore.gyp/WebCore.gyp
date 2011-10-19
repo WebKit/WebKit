@@ -1250,7 +1250,7 @@
                   'class_whitelist_regex':
                       'ChromiumWebCoreObjC|TCMVisibleView|RTCMFlippedView',
                   'category_whitelist_regex':
-                      'TCMInterposing',
+                      'TCMInterposing|ScrollAnimatorChromiumMacExt',
                 },
                 'action': [
                   'mac/check_objc_rename.sh',

@@ -3474,13 +3474,6 @@ BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html
 BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-delete.html = TIMEOUT PASS
 BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
 
-BUGWK66577 LEOPARD : fast/events/touch/basic-single-touch-events.html = TIMEOUT
-BUGWK66577 LEOPARD : fast/events/touch/multi-touch-grouped-targets.html = TIMEOUT
-BUGWK66577 LEOPARD : fast/events/touch/touch-gesture-scroll.html = TIMEOUT
-BUGWK66577 LEOPARD : fast/events/touch/touch-target-limited.html = TIMEOUT
-BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
-BUGWK66577 LEOPARD : fast/events/touch/tap-highlight-color.html = TIMEOUT
-
 BUGV8_1634 : fast/js/const.html = TEXT
 
 BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT

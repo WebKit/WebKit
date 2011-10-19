@@ -25,6 +25,9 @@
 
 #include "config.h"
 
+#include <sys/time.h>
+#include <sys/sysctl.h>
+
 #include "ScrollAnimatorChromiumMac.h"
 
 #include "FloatPoint.h"
@@ -46,8 +49,30 @@ using namespace std;
 @protocol NSAnimationDelegate
 @end
 
-@interface NSProcessInfo (NSObject)
+@interface NSProcessInfo (ScrollAnimatorChromiumMacExt)
 - (NSTimeInterval)systemUptime;
+@end
+
+@implementation NSProcessInfo (ScrollAnimatorChromiumMacExt)
+- (NSTimeInterval)systemUptime
+{
+    // Get how long system has been up. Found by looking getting "boottime" from the kernel.
+    static struct timeval boottime = {0};
+    if (!boottime.tv_sec) {
+        int mib[2] = {CTL_KERN, KERN_BOOTTIME};
+        size_t size = sizeof(boottime);
+        if (-1 == sysctl(mib, 2, &boottime, &size, 0, 0))
+            boottime.tv_sec = 0;
+    }
+    struct timeval now;
+    if (boottime.tv_sec && -1 != gettimeofday(&now, 0)) {
+        struct timeval uptime;
+        timersub(&now, &boottime, &uptime);
+        NSTimeInterval result = uptime.tv_sec + (uptime.tv_usec / 1E+6);
+        return result;
+    }
+    return 0;
+}
 @end
 #endif
 

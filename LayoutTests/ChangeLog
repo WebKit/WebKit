@@ -1,3 +1,12 @@
+2011-10-18  Johnny Ding  <jnd@chromium.org>
+
+        Enable touch tests on Mac Leopard. 
+        https://bugs.webkit.org/show_bug.cgi?id=66577
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-18  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. New expected results after http://trac.webkit.org/changeset/97707.

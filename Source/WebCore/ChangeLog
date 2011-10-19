@@ -1,3 +1,14 @@
+2011-10-18  Johnny Ding  <jnd@chromium.org>
+
+        Implement NSProcessInfo::systemUptime on Mac Leopard.
+        https://bugs.webkit.org/show_bug.cgi?id=66577
+
+        Reviewed by Tony Chang.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (-[NSProcessInfo systemUptime]):
+
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
         Try to jostle the windows build back to life.
