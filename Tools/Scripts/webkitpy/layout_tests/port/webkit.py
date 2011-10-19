@@ -298,6 +298,7 @@ class WebKitPort(Port):
         tests_to_skip = []
         for line in skipped_file_contents.split('\n'):
             line = line.strip()
+            line = line.rstrip('/')  # Best to normalize directory names to not include the trailing slash.
             if line.startswith('#') or not len(line):
                 continue
             tests_to_skip.append(line)

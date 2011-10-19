@@ -60,11 +60,15 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 
 # see bug <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
 svg/batik/text/smallFonts.svg
+
+# Java tests don't work on WK2
+java/
 """
     example_skipped_tests = [
         "fast/events/mouseout-on-window.html",
         "fast/events/attempt-scroll-with-no-scrollbars.html",
         "svg/batik/text/smallFonts.svg",
+        "java",
     ]
 
     def test_tests_from_skipped_file_contents(self):

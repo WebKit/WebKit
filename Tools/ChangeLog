@@ -1,3 +1,13 @@
+2011-10-19  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests -2 was crashing due to both "java" and "java/" being listed in Skipped files.
+        Make NRWT normalize directory names in Skipped files during parsing.
+
+        Unreviewed.  Very simple (tested) change.
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-10-19  David Levin  <levin@chromium.org>
 
         watchlist: Should be more robust to bad regex.
