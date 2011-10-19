@@ -1,3 +1,14 @@
+2011-10-19  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        [EFL] Fix DSO linkage of jsc_efl.
+        https://bugs.webkit.org/show_bug.cgi?id=70412
+
+        Unreviewed build fix.
+
+        Need to add -ldl to jsc_efl (requested by dladdr).
+
+        * shell/CMakeListsEfl.txt:
+
 2011-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out last Windows build fix because it was wrong.
