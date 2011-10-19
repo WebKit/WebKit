@@ -976,10 +976,10 @@ function revertDomChanges(domChanges)
 }
 
 /**
- * @param {string=} extraFlags
+ * @param {string=} flags
  * @return {RegExp}
  */
-function createSearchRegex(query, extraFlags)
+function createSearchRegex(query, flags)
 {
     // This should be kept the same as the one in ContentSearchUtils.cpp.
     var regexSpecialCharacters = "[](){}+-*.,?\\^$|";
@@ -990,7 +990,7 @@ function createSearchRegex(query, extraFlags)
             regex += "\\";
         regex += c;
     }
-    return new RegExp(regex, "i" + (extraFlags || ""));
+    return new RegExp(regex, flags || "");
 }
 
 /**

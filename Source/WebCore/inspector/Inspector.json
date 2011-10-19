@@ -223,7 +223,9 @@
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "Frame id for resource to search in." },
                     { "name": "url", "type": "string", "description": "URL of the resource to search in." },
-                    { "name": "query", "type": "string", "description": "String to search for."  }
+                    { "name": "query", "type": "string", "description": "String to search for."  },
+                    { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
+                    { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "SearchMatch" }, "description": "List of search matches." }
@@ -1775,7 +1777,9 @@
                 "name": "searchInContent",
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to search in." },
-                    { "name": "query", "type": "string", "description": "String to search for."  }
+                    { "name": "query", "type": "string", "description": "String to search for."  },
+                    { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
+                    { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "Page.SearchMatch" }, "description": "List of search matches." }

@@ -114,11 +114,13 @@ WebInspector.UISourceCode.prototype = {
 
     /**
      * @param {string} query
-     * @param {function(Array.<Object>)} callback
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
      */
-    searchInContent: function(query, callback)
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
-        this._contentProvider.searchInContent(query, callback);
+        this._contentProvider.searchInContent(query, caseSensitive, isRegex, callback);
     },
 
     /**
@@ -150,9 +152,11 @@ WebInspector.ContentProvider.prototype = {
 
     /**
      * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
      * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
      */
-    searchInContent: function(query, callback) { }
+    searchInContent: function(query, caseSensitive, isRegex, callback) { }
 }
 
 /**

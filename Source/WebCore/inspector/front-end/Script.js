@@ -74,9 +74,11 @@ WebInspector.Script.prototype = {
 
     /**
      * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
      * @param {function(Array.<PageAgent.SearchMatch>)} callback
      */
-    searchInContent: function(query, callback)
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         /**
          * @this {WebInspector.Script}
@@ -87,12 +89,17 @@ WebInspector.Script.prototype = {
         {
             if (error)
                 console.error(error);
-            callback(searchMatches || []);
+            var result = [];
+            for (var i = 0; i < searchMatches.length; ++i) {
+                var searchMatch = new WebInspector.ContentProvider.SearchMatch(searchMatches[i].lineNumber, searchMatches[i].lineContent);
+                result.push(searchMatch);
+            }
+            callback(result || []);
         }
         
         if (this.scriptId) {
             // Script failed to parse.
-            DebuggerAgent.searchInContent(this.scriptId, query, innerCallback.bind(this));
+            DebuggerAgent.searchInContent(this.scriptId, query, caseSensitive, isRegex, innerCallback.bind(this));
         } else
             callback([]);
     },

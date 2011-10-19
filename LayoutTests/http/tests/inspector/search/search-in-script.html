@@ -7,9 +7,8 @@
 <script>
 function test()
 {
-    // This file should not match search query.
-    var text = "searchTest" + "UniqueString";
     InspectorTest.startDebuggerTest(step1);
+    var script;
 
     function step1()
     {
@@ -24,14 +23,43 @@ function test()
     function step3()
     {
         var scripts = WebInspector.debuggerModel.scriptsForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
-        var script = scripts[0];
+        script = scripts[0];
         InspectorTest.addResult(script.sourceURL);
-        script.searchInContent(text, step4);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        script.searchInContent(text, false, false, step4);
     }
 
     function step4(searchMatches)
     {
         InspectorTest.dumpSearchMatches(searchMatches);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        script.searchInContent(text, true, false, step5);
+    }
+
+    function step5(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        script.searchInContent(text, false, true, step6);
+    }
+
+    function step6(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        script.searchInContent(text, true, true, step7);
+    }
+
+    function step7(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
         InspectorTest.completeDebuggerTest();
     }
 }

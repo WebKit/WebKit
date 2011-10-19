@@ -151,9 +151,25 @@ WebInspector.SearchView = function(controller)
     
     this._search = this._searchPanelElement.createChild("input");
     this._search.setAttribute("type", "search");
+    this._search.addStyleClass("search-config-search");
     this._search.setAttribute("results", "0");
     this._search.setAttribute("size", 20);
 
+    this._ignoreCaseLabel = this._searchPanelElement.createChild("label");
+    this._ignoreCaseLabel.addStyleClass("search-config-label");
+    this._ignoreCaseCheckbox = this._ignoreCaseLabel.createChild("input");
+    this._ignoreCaseCheckbox.setAttribute("type", "checkbox");
+    this._ignoreCaseCheckbox.addStyleClass("search-config-checkbox");
+    this._ignoreCaseLabel.appendChild(document.createTextNode(WebInspector.UIString("Ignore case")));
+    
+
+    this._regexLabel = this._searchPanelElement.createChild("label");
+    this._regexLabel.addStyleClass("search-config-label");
+    this._regexCheckbox = this._regexLabel.createChild("input");
+    this._regexCheckbox.setAttribute("type", "checkbox");
+    this._regexCheckbox.addStyleClass("search-config-checkbox");
+    this._regexLabel.appendChild(document.createTextNode(WebInspector.UIString("Regular expression")));
+    
     this._load();
 }
 
@@ -168,6 +184,8 @@ WebInspector.SearchView.prototype = {
     {
         var searchConfig = {};
         searchConfig.query = this._search.value;
+        searchConfig.ignoreCase = this._ignoreCaseCheckbox.checked;
+        searchConfig.isRegex = this._regexCheckbox.checked;
         return searchConfig;
     },
     
@@ -236,6 +254,8 @@ WebInspector.SearchView.prototype = {
     {
         var searchConfig = WebInspector.settings.advancedSearchConfig.get();
         this._search.value = searchConfig.query;
+        this._ignoreCaseCheckbox.checked = searchConfig.ignoreCase;
+        this._regexCheckbox.checked = searchConfig.isRegex;
     },
     
     _onAction: function()
@@ -340,6 +360,25 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
     fileName: function(file) { },
     
     /**
+     * @return {RegExp}
+     */
+    _createSearchRegex: function()
+    {
+        var regexFlags = this._searchConfig.ignoreCase ? "gi" : "g";
+        var regexObject;
+        try {
+            regexObject = new RegExp(this._searchConfig.query, regexFlags);
+        } catch (e) {
+            // Silent catch.
+        }
+
+        if (!regexObject)
+            regexObject = createSearchRegex(this._searchConfig.query, regexFlags);
+        
+        return regexObject;
+    },
+    
+    /**
      * @param {Object} searchResult
      */
     addSearchResult: function(searchResult)
@@ -352,7 +391,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         // Expand first file with matches only.
         var fileTreeElement = this._addFileTreeElement(fileName, searchMatches.length, this._searchResults.length === 1);
         
-        var regexObject = createSearchRegex(this._searchConfig.query, "g");  
+        var regexObject = this._createSearchRegex();
         for (var i = 0; i < searchMatches.length; i++) {
             var lineNumber = searchMatches[i].lineNumber;
             
@@ -432,3 +471,13 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
 }
 
 WebInspector.FileBasedSearchResultsPane.prototype.__proto__ = WebInspector.SearchResultsPane.prototype;
+
+/**
+ * @constructor
+ * @param {Object} file
+ * @param {Array.<Object>} searchMatches
+ */
+WebInspector.FileBasedSearchResultsPane.SearchResult = function(file, searchMatches) {
+    this.file = file;
+    this.searchMatches = searchMatches;
+}

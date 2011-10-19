@@ -55,7 +55,7 @@ WebInspector.ScriptsSearchScope.prototype = {
         function searchCallbackWrapper(uiSourceCode, searchMatches)
         {
             if (searchMatches.length) {
-                var searchResult = {file: uiSourceCode, searchMatches: searchMatches};
+                var searchResult = new WebInspector.FileBasedSearchResultsPane.SearchResult(uiSourceCode, searchMatches);
                 searchResultCallback(searchResult);
             }
             --callbacksLeft;
@@ -72,7 +72,7 @@ WebInspector.ScriptsSearchScope.prototype = {
                 // Increase callbacksLeft first because searchInContent call could be synchronous.
                 callbacksLeft++;
                 // FIXME: We should not request next searchInContent unless previous one is already finished.  
-                uiSourceCode.searchInContent(searchConfig.query, searchCallbackWrapper.bind(this, uiSourceCode));
+                uiSourceCode.searchInContent(searchConfig.query, !searchConfig.ignoreCase, searchConfig.isRegex, searchCallbackWrapper.bind(this, uiSourceCode));
             }
         }
         maybeSearchFinished();

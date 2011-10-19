@@ -321,11 +321,14 @@ static PassRefPtr<InspectorObject> scriptToInspectorObject(ScriptObject scriptOb
     return value->asObject();
 }
 
-void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& scriptId, const String& query, RefPtr<InspectorArray>* results)
+void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& scriptId, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* results)
 {
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
+    bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
+
     ScriptsMap::iterator it = m_scripts.find(scriptId);
     if (it != m_scripts.end())
-        *results = ContentSearchUtils::searchInTextByLines(query, it->second.source);
+        *results = ContentSearchUtils::searchInTextByLines(it->second.source, query, caseSensitive, isRegex);
     else
         *error = "No script for id: " + scriptId;
 }

@@ -883,7 +883,7 @@ WebInspector.Resource.prototype = {
             this._innerRequestContent();
     },
 
-    searchInContent: function(query, callback)
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         function callbackWrapper(error, searchMatches)
         {
@@ -891,7 +891,7 @@ WebInspector.Resource.prototype = {
         }
 
         if (this.frameId)
-            PageAgent.searchInResource(this.frameId, this.url, query, callbackWrapper);
+            PageAgent.searchInResource(this.frameId, this.url, query, caseSensitive, isRegex, callbackWrapper);
         else
             callback([]);
     },

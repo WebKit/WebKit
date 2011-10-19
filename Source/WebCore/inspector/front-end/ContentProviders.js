@@ -39,6 +39,9 @@ WebInspector.ScriptContentProvider = function(script)
 };
 
 WebInspector.ScriptContentProvider.prototype = {
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         function didRequestSource(source)
@@ -48,9 +51,15 @@ WebInspector.ScriptContentProvider.prototype = {
         this._script.requestSource(didRequestSource.bind(this));
     },
 
-    searchInContent: function(query, callback)
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
-        this._script.searchInContent(query, callback);
+        this._script.searchInContent(query, caseSensitive, isRegex, callback);
     }
 }
 
@@ -70,6 +79,9 @@ WebInspector.ConcatenatedScriptsContentProvider.scriptOpenTag = "<script>";
 WebInspector.ConcatenatedScriptsContentProvider.scriptCloseTag = "</script>";
 
 WebInspector.ConcatenatedScriptsContentProvider.prototype = {
+    /**
+     * @return {Array.<WebInspector.Script>}
+     */
     _sortedScripts: function()
     {
         if (this._sortedScriptsArray)
@@ -96,6 +108,9 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
         return this._sortedScriptsArray;
     },
 
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         var scripts = this._sortedScripts();
@@ -110,7 +125,13 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
             scripts[i].requestSource(didRequestSource.bind(this));
     },
 
-    searchInContent: function(query, callback)
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         var results = {};
         var scripts = this._sortedScripts();
@@ -127,13 +148,15 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
             callback(result);
         }
 
+        /**
+         * @param {WebInspector.Script} script
+         * @param {Array.<PageAgent.SearchMatch>} searchMatches
+         */
         function searchCallback(script, searchMatches)
         {
             results[script.scriptId] = [];
             for (var i = 0; i < searchMatches.length; ++i) {
-                var searchMatch = {};
-                searchMatch.lineNumber = searchMatches[i].lineNumber + script.lineOffset;
-                searchMatch.lineContent = searchMatches[i].lineContent;
+                var searchMatch = new WebInspector.ContentProvider.SearchMatch(searchMatches[i].lineNumber + script.lineOffset, searchMatches[i].lineContent);
                 results[script.scriptId].push(searchMatch);
             }
             scriptsLeft--;
@@ -142,9 +165,12 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
 
         maybeCallback();
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].searchInContent(query, searchCallback.bind(this, scripts[i]));
+            scripts[i].searchInContent(query, caseSensitive, isRegex, searchCallback.bind(this, scripts[i]));
     },
 
+    /**
+     * @return {string}
+     */
     _concatenateScriptsContent: function(scripts, sources)
     {
         var content = "";
@@ -187,6 +213,9 @@ WebInspector.ResourceContentProvider = function(resource)
 };
 
 WebInspector.ResourceContentProvider.prototype = {
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         function didRequestContent(content)
@@ -196,9 +225,15 @@ WebInspector.ResourceContentProvider.prototype = {
         this._resource.requestContent(didRequestContent.bind(this));
     },
 
-    searchInContent: function(query, callback)
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
-        this._resource.searchInContent(query, callback);
+        this._resource.searchInContent(query, caseSensitive, isRegex, callback);
     }
 }
 
@@ -216,6 +251,9 @@ WebInspector.CompilerSourceMappingContentProvider = function(sourceURL, compiler
 };
 
 WebInspector.CompilerSourceMappingContentProvider.prototype = {
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         function didLoadSourceCode(sourceCode)
@@ -225,7 +263,13 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
         this._compilerSourceMappingProvider.loadSourceCode(this._sourceURL, didLoadSourceCode.bind(this));
     },
 
-    searchInContent: function(query, callback)
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         callback([]);
     }
@@ -244,12 +288,21 @@ WebInspector.StaticContentProvider = function(mimeType, content)
 };
 
 WebInspector.StaticContentProvider.prototype = {
+    /**
+     * @param {function(string,string)} callback
+     */
     requestContent: function(callback)
     {
         callback(this._mimeType, this._content);
     },
 
-    searchInContent: function(query, callback)
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         callback([]);
     }

@@ -1138,7 +1138,7 @@ WebInspector.NetworkLogView.prototype = {
             currentMatchedRequestId = this._matchedResources[this._currentMatchedResourceIndex];
 
         if (!sortOrFilterApplied)
-            this._searchRegExp = createSearchRegex(searchQuery);
+            this._searchRegExp = createSearchRegex(searchQuery, "i");
 
         this._clearSearchMatchedList();
 

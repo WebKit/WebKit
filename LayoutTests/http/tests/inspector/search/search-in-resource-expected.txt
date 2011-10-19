@@ -8,4 +8,20 @@ lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same l
 lineNumber: 9, line: '    searchTestUniqueString();'
 lineNumber: 10, line: '    // SEARCHTestUniqueString();'
 
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+lineNumber: 10, line: '    // SEARCHTestUniqueString();'
+
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+
 

@@ -40,9 +40,9 @@ class RegularExpression;
 
 namespace ContentSearchUtils {
 
-RegularExpression createSearchRegex(const String& text, bool caseSensitive, bool isRegex);
+RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
 int countRegularExpressionMatches(const RegularExpression&, const String&);
-PassRefPtr<InspectorArray> searchInTextByLines(const String& query, const String& text);
+PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 
 } // namespace ContentSearchUtils
 } // namespace WebCore

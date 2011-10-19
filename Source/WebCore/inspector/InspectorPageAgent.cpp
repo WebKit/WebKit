@@ -484,9 +484,12 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, RefPtr<InspectorArray>* results)
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* results)
 {
     *results = InspectorArray::create();
+
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
+    bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
 
     Frame* frame = frameForId(frameId);
     KURL kurl(ParsedURLString, url);
@@ -510,7 +513,7 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
     if (!success)
         return;
 
-    *results = ContentSearchUtils::searchInTextByLines(query, content);
+    *results = ContentSearchUtils::searchInTextByLines(content, query, caseSensitive, isRegex);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)

@@ -4136,6 +4136,21 @@ a.worker-item:hover {
     font-size: 11px;
 }
 
+.search-view .search-panel input[type="search"].search-config-search {
+    margin-right: 8px;
+    color: #303030;
+}
+
+.search-view .search-panel label.search-config-label {
+    margin-right: 8px;
+    color: #303030;
+}
+
+.search-view .search-panel input[type="checkbox"].search-config-checkbox {
+    vertical-align: bottom;
+    margin-bottom: 6px;
+}
+
 .search-view .search-results {
     position: absolute;
     top: 35px;

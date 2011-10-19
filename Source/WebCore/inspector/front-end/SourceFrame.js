@@ -82,7 +82,7 @@ WebInspector.SourceFrame.createSearchRegex = function(query)
 
     // Otherwise just do case-insensitive search.
     if (!regex)
-        regex = createSearchRegex(query);
+        regex = createSearchRegex(query, "i");
 
     return regex;
 }

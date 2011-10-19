@@ -97,7 +97,7 @@ public:
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
     void getResourceTree(ErrorString*, RefPtr<InspectorObject>*);
     void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded);
-    void searchInResource(ErrorString*, const String& frameId, const String& url, const String&, RefPtr<InspectorArray>*);
+    void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>*);
     void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>*);
 
     // InspectorInstrumentation API

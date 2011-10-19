@@ -1,3 +1,59 @@
+2011-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Enable caseSensitive search / Regex support in advanced search.
+        https://bugs.webkit.org/show_bug.cgi?id=70335
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::createSearchRegex):
+        (WebCore::ContentSearchUtils::searchInTextByLines):
+        * inspector/ContentSearchUtils.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResource):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView):
+        (WebInspector.SearchView.prototype.get searchConfig):
+        (WebInspector.FileBasedSearchResultsPane.prototype._createSearchRegex):
+        (WebInspector.FileBasedSearchResultsPane.prototype.addSearchResult):
+        (WebInspector.FileBasedSearchResultsPane.SearchResult):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.performSearch):
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.ScriptContentProvider.prototype.searchInContent):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent.searchCallback):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype.searchInContent):
+        (WebInspector.ResourceContentProvider.prototype.searchInContent):
+        (WebInspector.CompilerSourceMappingContentProvider.prototype.searchInContent):
+        (WebInspector.StaticContentProvider.prototype.searchInContent):
+        * inspector/front-end/ElementsTreeOutline.js:
+        ():
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.performSearch):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.searchInContent):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.searchInContent):
+        * inspector/front-end/ScriptsSearchScope.js:
+        (WebInspector.ScriptsSearchScope.prototype.performSearch.searchCallbackWrapper):
+        (WebInspector.ScriptsSearchScope.prototype.performSearch):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.createSearchRegex):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.searchInContent):
+        (WebInspector.ContentProvider.prototype.searchInContent):
+        * inspector/front-end/inspector.css:
+        (.search-view .search-panel input[type="search"].search-config-search):
+        (.search-view .search-panel label.search-config-label):
+        (.search-view .search-panel input[type="checkbox"].search-config-checkbox):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-10-19  Andreas Kling  <kling@webkit.org>
 
         MediaList: Remove inheritance from StyleBase.

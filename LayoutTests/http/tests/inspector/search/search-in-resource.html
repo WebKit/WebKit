@@ -6,20 +6,48 @@
 <script>
 function test()
 {
-    // This file should not match search query.
-    var text = "searchTest" + "UniqueString";
     InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+    var resource;
 
     function step2()
     {
-        var resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
         InspectorTest.addResult(resource.url);
-        resource.searchInContent(text, step3);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        resource.searchInContent(text, false, false, step3);
     }
 
     function step3(searchMatches)
     {
         InspectorTest.dumpSearchMatches(searchMatches);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        resource.searchInContent(text, true, false, step4);
+    }
+
+    function step4(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        resource.searchInContent(text, false, true, step5);
+    }
+
+    function step5(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        resource.searchInContent(text, true, true, step6);
+    }
+
+    function step6(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
         InspectorTest.completeTest();
     }
 }

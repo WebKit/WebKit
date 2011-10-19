@@ -27,7 +27,7 @@ function test()
         var scripts = WebInspector.debuggerModel.scriptsForURL(url);
         var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
         InspectorTest.addResult(url);
-        contentProvider.searchInContent(text, step4);
+        contentProvider.searchInContent(text, false, false, step4);
     }
 
     function step4(searchMatches)

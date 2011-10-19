@@ -1,3 +1,16 @@
+2011-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Enable caseSensitive search / Regex support in advanced search.
+        https://bugs.webkit.org/show_bug.cgi?id=70335
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/search/search-in-concatenated-script.html:
+        * http/tests/inspector/search/search-in-resource-expected.txt:
+        * http/tests/inspector/search/search-in-resource.html:
+        * http/tests/inspector/search/search-in-script-expected.txt:
+        * http/tests/inspector/search/search-in-script.html:
+
 2011-10-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: make extension tests pass on chromium
