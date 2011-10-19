@@ -1,5 +1,11 @@
 2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed fix after r97845.
+
+        * platform/qt/test_expectations.txt: Remove a skipped test, because NRWT can't handle duplicated entries.
+
+2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         inspector/cookie-parser.html is a flaky crash
