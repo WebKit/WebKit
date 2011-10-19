@@ -76,6 +76,7 @@ void InitWebCoreSystemInterface(void)
     INIT(WindowSetScaledFrame);
     INIT(MediaControllerThemeAvailable);
     INIT(PopupMenu);
+    INIT(SetBaseCTM);
     INIT(SetCGFontRenderingMode);
     INIT(SetCONNECTProxyAuthorizationForStream);
     INIT(SetCONNECTProxyForStream);
@@ -86,7 +87,6 @@ void InitWebCoreSystemInterface(void)
     INIT(SetHTTPPipeliningMinimumFastLanePriority);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
-    INIT(SetPatternBaseCTM);
     INIT(SetPatternPhaseInUserSpace);
     INIT(GetUserToBaseCTM);
     INIT(SetUpFontCache);

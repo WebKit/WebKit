@@ -269,6 +269,8 @@ namespace WebCore {
         bool isCALayerContext() const;
 
         void setIsAcceleratedContext(bool);
+
+        void setBaseCTM(const AffineTransform&);
 #endif
         bool isAcceleratedContext() const;
 

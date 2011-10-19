@@ -2369,6 +2369,11 @@ static inline IMP getMethod(id o, SEL s)
     return NO;
 }
 
+- (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context
+{
+    WKSetBaseCTM(context, transform);
+}
+
 - (BOOL)interactiveFormValidationEnabled
 {
     return _private->interactiveFormValidationEnabled;

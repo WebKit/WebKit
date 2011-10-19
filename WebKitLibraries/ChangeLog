@@ -1,3 +1,17 @@
+2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70396
+        Focus rings are too thin in HiDPI in WebKit2
+        -and corresponding-
+        <rdar://problem/10086876>
+
+        Reviewed by Dan Bernstein.
+
+        Renamed an existing WebKitSystemInterface function.
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)

@@ -1,3 +1,23 @@
+2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70396
+        Focus rings are too thin in HiDPI in WebKit2
+        -and corresponding-
+        <rdar://problem/10086876>
+
+        Reviewed by Dan Bernstein.
+
+        Rename wkSetPatternBaseCTM to wkSetBaseCTM
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
+        When setting up a HiDPI context, we must also set the base CTM.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates):
+        (WebKit::WebPage::snapshotInViewCoordinates):
+
 2011-10-19  Sam Weinig  <sam@webkit.org>
 
         Add skeleton of an Objective-C WebKit2 API

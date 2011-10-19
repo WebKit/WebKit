@@ -1,3 +1,16 @@
+2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70396
+        Focus rings are too thin in HiDPI in WebKit2
+        -and corresponding-
+        <rdar://problem/10086876>
+
+        Reviewed by Dan Bernstein.
+
+        * fast/hidpi/focus-rings.html: Added.
+        * platform/mac/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/mac/fast/hidpi/focus-rings-expected.txt: Added.
+
 2011-10-19  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Insert the stylesheet dynamically

@@ -1470,6 +1470,11 @@ bool GraphicsContext::isAcceleratedContext() const
     return m_data->m_contextFlags & IsAcceleratedCGContext;
 }
 
+void GraphicsContext::setBaseCTM(const AffineTransform& transform)
+{
+    wkSetBaseCTM(platformContext(), transform);
+}
+
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())

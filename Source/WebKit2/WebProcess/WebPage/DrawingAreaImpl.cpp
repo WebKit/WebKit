@@ -658,7 +658,10 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
     graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
-
+#if USE(CG)
+    graphicsContext->setBaseCTM(graphicsContext->getCTM());
+#endif
+    
     updateInfo.updateRectBounds = bounds;
 
     graphicsContext->translate(-bounds.x(), -bounds.y());

@@ -1,3 +1,22 @@
+2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70396
+        Focus rings are too thin in HiDPI in WebKit2
+        -and corresponding-
+        <rdar://problem/10086876>
+
+        Reviewed by Dan Bernstein.
+
+        Rename wkSetPatternBaseCTM to wkSetBaseCTM
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
+        To create a HiDPI context in DRT, we have to set the base CTM, which currently 
+        requires CG SPI, so we have to do it through WebKitSystemInterface.
+        * WebView/WebView.mm:
+        (-[WebView _setBaseCTM:forContext:]):
+        * WebView/WebViewPrivate.h:
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)
