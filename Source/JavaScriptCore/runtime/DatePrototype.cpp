@@ -503,7 +503,9 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
         return throwVMTypeError(exec);
     
     DateInstance* thisDateObj = asDateInstance(thisValue); 
-    
+    if (!isfinite(thisDateObj->internalNumber()))
+        return throwVMError(exec, createRangeError(exec, "Invalid Date"));
+
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
         return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
