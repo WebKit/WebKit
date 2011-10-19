@@ -44,6 +44,7 @@ typedef float GC3Dfloat;
 typedef float GC3Dclampf;
 typedef signed long int GC3Dintptr;
 typedef signed long int GC3Dsizeiptr;
+typedef char GC3Dchar;
 
 typedef GC3Duint Platform3DObject;
 

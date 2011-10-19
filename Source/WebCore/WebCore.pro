@@ -3615,6 +3615,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLBuffer.h \
         html/canvas/WebGLContextAttributes.h \
         html/canvas/WebGLContextEvent.h \
+        html/canvas/WebGLDebugRendererInfo.h \
+        html/canvas/WebGLDebugShaders.h \
         html/canvas/WebGLExtension.h \
         html/canvas/WebGLFramebuffer.h \
         html/canvas/WebGLGetInfo.h \
@@ -3646,6 +3648,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLBuffer.cpp \
         html/canvas/WebGLContextAttributes.cpp \
         html/canvas/WebGLContextEvent.cpp \
+        html/canvas/WebGLDebugRendererInfo.cpp \
+        html/canvas/WebGLDebugShaders.cpp \
         html/canvas/WebGLExtension.cpp \
         html/canvas/WebGLFramebuffer.cpp \
         html/canvas/WebGLGetInfo.cpp \

@@ -32,7 +32,6 @@
 #include "CachedImage.h"
 #include "CanvasPixelArray.h"
 #include "CheckedInt.h"
-#include "WebKitLoseContext.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Extensions3D.h"
@@ -57,12 +56,15 @@
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLContextEvent.h"
+#include "WebGLDebugRendererInfo.h"
+#include "WebGLDebugShaders.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
+#include "WebKitLoseContext.h"
 
 #include <wtf/ByteArray.h>
 #include <wtf/OwnArrayPtr.h>
@@ -471,6 +473,12 @@ void WebGLRenderingContext::setupFlags()
         m_isGLES2NPOTStrict = !m_context->getExtensions()->isEnabled("GL_ARB_texture_non_power_of_two");
         m_isDepthStencilSupported = m_context->getExtensions()->isEnabled("GL_EXT_packed_depth_stencil");
     }
+}
+
+bool WebGLRenderingContext::allowPrivilegedExtensions() const
+{
+    // FIXME: implement this function.
+    return false;
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()
@@ -2000,6 +2008,20 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return m_webkitLoseContext.get();
     }
 
+    if (allowPrivilegedExtensions()) {
+        if (equalIgnoringCase(name, "WEBGL_debug_renderer_info")) {
+            if (!m_webglDebugRendererInfo)
+                m_webglDebugRendererInfo = WebGLDebugRendererInfo::create(this);
+            return m_webglDebugRendererInfo.get();
+        }
+        if (equalIgnoringCase(name, "WEBGL_debug_shaders")
+            && m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source")) {
+            if (!m_webglDebugShaders)
+                m_webglDebugShaders = WebGLDebugShaders::create(this);
+            return m_webglDebugShaders.get();
+        }
+    }
+
     return 0;
 }
 
@@ -2245,6 +2267,16 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
             return getUnsignedIntParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
+    case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
+        if (m_webglDebugRendererInfo)
+            return WebGLGetInfo(m_context->getString(GraphicsContext3D::RENDERER));
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
+    case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
+        if (m_webglDebugRendererInfo)
+            return WebGLGetInfo(m_context->getString(GraphicsContext3D::VENDOR));
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
     case Extensions3D::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
         if (m_oesVertexArrayObject) {
             if (!m_boundVertexArrayObject->isDefaultObject())
@@ -2417,6 +2449,13 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
     result.append("WEBKIT_lose_context");
+
+    if (allowPrivilegedExtensions()) {
+        if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
+            result.append("WEBGL_debug_shaders");
+        result.append("WEBGL_debug_renderer_info");
+    }
+
     return result;
 }
 

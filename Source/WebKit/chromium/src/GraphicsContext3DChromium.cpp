@@ -887,6 +887,8 @@ DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, 
 DELEGATE_TO_IMPL(rateLimitOffscreenContextCHROMIUM)
 DELEGATE_TO_IMPL_R(getGraphicsResetStatusARB, GC3Denum)
 
+DELEGATE_TO_IMPL_1R(getTranslatedShaderSourceANGLE, Platform3DObject, String)
+
 //----------------------------------------------------------------------
 // GraphicsContext3D
 //

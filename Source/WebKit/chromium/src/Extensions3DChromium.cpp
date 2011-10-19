@@ -115,6 +115,11 @@ void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
 {
 }
 
+String Extensions3DChromium::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+{
+    return m_private->getTranslatedShaderSourceANGLE(shader);
+}
+
 void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM> callback)
 {
     m_private->setSwapBuffersCompleteCallbackCHROMIUM(callback);

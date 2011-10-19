@@ -29,42 +29,44 @@
 
 #include "JSWebGLRenderingContext.h"
 
-#include "WebKitLoseContext.h"
 #include "ExceptionCode.h"
+#include "Float32Array.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
-#include "JSWebKitLoseContext.h"
+#include "Int32Array.h"
+#include "JSFloat32Array.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
+#include "JSInt32Array.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESVertexArrayObject.h"
-#include "JSWebGLVertexArrayObjectOES.h"
+#include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
-#include "JSFloat32Array.h"
 #include "JSWebGLFramebuffer.h"
-#include "JSInt32Array.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLShader.h"
 #include "JSWebGLTexture.h"
 #include "JSWebGLUniformLocation.h"
-#include "JSUint8Array.h"
+#include "JSWebGLVertexArrayObjectOES.h"
 #include "JSWebKitCSSMatrix.h"
+#include "JSWebKitLoseContext.h"
 #include "NotImplemented.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
-#include "WebGLVertexArrayObjectOES.h"
 #include "WebGLBuffer.h"
-#include "Float32Array.h"
+#include "WebGLDebugRendererInfo.h"
+#include "WebGLDebugShaders.h"
 #include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
-#include "Int32Array.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContext.h"
+#include "WebGLVertexArrayObjectOES.h"
+#include "WebKitLoseContext.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
 #include <wtf/FastMalloc.h>
@@ -187,6 +189,10 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
     case WebGLExtension::OESVertexArrayObjectName:
         return toJS(exec, globalObject, static_cast<OESVertexArrayObject*>(extension));
+    case WebGLExtension::WebGLDebugRendererInfoName:
+        return toJS(exec, globalObject, static_cast<WebGLDebugRendererInfo*>(extension));
+    case WebGLExtension::WebGLDebugShadersName:
+        return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

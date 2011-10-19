@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,6 +191,13 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 #if !PLATFORM(GTK) && !PLATFORM(QT) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glBindVertexArrayAPPLE(array);
 #endif
+}
+
+String Extensions3DOpenGL::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+{
+    UNUSED_PARAM(shader);
+    return "";
+    // FIXME: implement this function and add GL_ANGLE_translated_shader_source in supports().
 }
 
 } // namespace WebCore

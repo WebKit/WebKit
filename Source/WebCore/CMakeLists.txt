@@ -303,6 +303,8 @@ SET(WebCore_IDL_FILES
     html/canvas/WebGLActiveInfo.idl
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLContextAttributes.idl
+    html/canvas/WebGLDebugRendererInfo.idl
+    html/canvas/WebGLDebugShaders.idl
     html/canvas/WebGLFramebuffer.idl
     html/canvas/WebGLProgram.idl
     html/canvas/WebGLRenderbuffer.idl
@@ -2150,6 +2152,8 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLContextAttributes.cpp
         html/canvas/WebGLContextEvent.cpp
+        html/canvas/WebGLDebugRendererInfo.cpp
+        html/canvas/WebGLDebugShaders.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLGetInfo.cpp
         html/canvas/WebGLObject.cpp

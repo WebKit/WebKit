@@ -365,6 +365,10 @@ public:
     // state is sticky, rather than reported only once.
     virtual WGC3Denum getGraphicsResetStatusARB() { return 0; /* GL_NO_ERROR */ }
 
+    // FIXME: make this function pure virtual once it is implemented in
+    // both command buffer port and in-process port.
+    virtual WebString getTranslatedShaderSourceANGLE(WebGLId shader) { return WebString(); }
+
 #if WEBKIT_USING_SKIA
     GrGLInterface* createGrGLInterface();
 #endif

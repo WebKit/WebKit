@@ -1,3 +1,51 @@
+2011-10-19  Zhenyao Mo  <zmo@google.com>
+
+        Implement WEBGL_debug_shaders and WEBGL_debug_renderer_info extensions
+        https://bugs.webkit.org/show_bug.cgi?id=70077
+
+        Reviewed by Kenneth Russell.
+
+        * WebCore.gypi: added new extension class files.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * WebCore.pro: ditto.
+        * CMakeLists.txt: ditto.
+        * GNUmakefile.list.am: ditto.
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS): Handles two new extensions.
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object): Ditto.
+        * html/canvas/WebGLDebugRendererInfo.cpp: Added.
+        (WebCore::WebGLDebugRendererInfo::WebGLDebugRendererInfo):
+        (WebCore::WebGLDebugRendererInfo::~WebGLDebugRendererInfo):
+        (WebCore::WebGLDebugRendererInfo::getName):
+        (WebCore::WebGLDebugRendererInfo::create):
+        * html/canvas/WebGLDebugRendererInfo.h: Added.
+        * html/canvas/WebGLDebugRendererInfo.idl: Added.
+        * html/canvas/WebGLDebugShaders.cpp: Added.
+        (WebCore::WebGLDebugShaders::WebGLDebugShaders):
+        (WebCore::WebGLDebugShaders::~WebGLDebugShaders):
+        (WebCore::WebGLDebugShaders::getName):
+        (WebCore::WebGLDebugShaders::create):
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLDebugShaders.h: Added.
+        * html/canvas/WebGLDebugShaders.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::allowPrivilegedExtensions): To be implemented - deciding whether the two extensions should be allowed or not.
+        (WebCore::WebGLRenderingContext::getExtension): Handles two new extensions.
+        (WebCore::WebGLRenderingContext::getParameter): Handles UNMASKED_VENDOR_WEBGL / UNMASKED_RENDERER_WEBGL
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Handles two new extensions.
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/Extensions3D.h: Ditto.
+        * platform/graphics/GraphicsTypes3D.h: Add GC3Dchar.
+        * platform/graphics/chromium/Extensions3DChromium.h: Handles two new extensions.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp: Ditto.
+        (WebCore::getTranslatedShaderSourceANGLE):
+        * platform/graphics/opengl/Extensions3DOpenGL.h: Ditto.
+        * platform/graphics/qt/Extensions3DQt.cpp: Ditto.
+        (WebCore::Extensions3DQt::getTranslatedShaderSourceANGLE):
+        * platform/graphics/qt/Extensions3DQt.h: Ditto.
+
 2011-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed StringImplBase, fusing it into StringImpl

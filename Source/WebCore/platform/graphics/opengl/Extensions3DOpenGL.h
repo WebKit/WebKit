@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,7 @@ public:
     virtual void deleteVertexArrayOES(Platform3DObject);
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
     virtual void bindVertexArrayOES(Platform3DObject);
+    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
 private:
     // This class only needs to be instantiated by GraphicsContext3D implementations.

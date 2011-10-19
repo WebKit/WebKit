@@ -303,6 +303,9 @@ public:
     // GL_ARB_robustness
     GC3Denum getGraphicsResetStatusARB();
 
+    // GL_ANGLE_translated_shader_source
+    String getTranslatedShaderSourceANGLE(Platform3DObject shader);
+
 private:
     GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 

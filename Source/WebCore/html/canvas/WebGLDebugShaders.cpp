@@ -23,36 +23,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DQt_h
-#define Extensions3DQt_h
+#include "config.h"
+
+#if ENABLE(WEBGL)
+
+#include "WebGLDebugShaders.h"
 
 #include "Extensions3D.h"
+#include "WebGLRenderingContext.h"
+#include "WebGLShader.h"
+
+#include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
-class Extensions3DQt : public Extensions3D {
-public:
-    virtual ~Extensions3DQt();
+WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContext* context)
+    : WebGLExtension(context)
+{
+}
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual bool isEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
-    virtual Platform3DObject createVertexArrayOES();
-    virtual void deleteVertexArrayOES(Platform3DObject);
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
-    virtual void bindVertexArrayOES(Platform3DObject);
-    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
+WebGLDebugShaders::~WebGLDebugShaders()
+{
+}
 
-private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DQt();
-};
+WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
+{
+    return WebGLDebugShadersName;
+}
+
+PassOwnPtr<WebGLDebugShaders> WebGLDebugShaders::create(WebGLRenderingContext* context)
+{
+    return adoptPtr(new WebGLDebugShaders(context));
+}
+
+String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader* shader, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    if (m_context->isContextLost())
+        return String();
+    if (!m_context->validateWebGLObject(shader))
+        return "";
+    return m_context->graphicsContext3D()->getExtensions()->getTranslatedShaderSourceANGLE(shader->object());
+}
 
 } // namespace WebCore
 
-#endif // Extensions3DQt_h
+#endif // ENABLE(WEBGL)

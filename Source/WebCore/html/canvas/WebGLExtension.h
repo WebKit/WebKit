@@ -38,6 +38,8 @@ public:
         OESTextureFloatName,
         OESStandardDerivativesName,
         OESVertexArrayObjectName,
+        WebGLDebugRendererInfoName,
+        WebGLDebugShadersName,
     };
 
     void ref() { m_context->ref(); }

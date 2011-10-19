@@ -1,3 +1,17 @@
+2011-10-19  Zhenyao Mo  <zmo@google.com>
+
+        Implement WEBGL_debug_shaders and WEBGL_debug_renderer_info extensions
+        https://bugs.webkit.org/show_bug.cgi?id=70077
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebGraphicsContext3D.h: Added support for getTranslatedShaderSourceANGLE.
+        (WebKit::WebGraphicsContext3D::getTranslatedShaderSourceANGLE):
+        * src/Extensions3DChromium.cpp: Ditto.
+        (WebCore::Extensions3DChromium::getTranslatedShaderSourceANGLE):
+        * src/GraphicsContext3DChromium.cpp: Ditto.
+        * src/GraphicsContext3DPrivate.h: Ditto.
+
 2011-10-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r97850.

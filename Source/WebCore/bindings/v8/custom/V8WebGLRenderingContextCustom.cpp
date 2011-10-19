@@ -56,6 +56,8 @@
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"
 #include "V8WebGLBuffer.h"
+#include "V8WebGLDebugRendererInfo.h"
+#include "V8WebGLDebugShaders.h"
 #include "V8WebGLFramebuffer.h"
 #include "V8WebGLProgram.h"
 #include "V8WebGLRenderbuffer.h"
@@ -181,6 +183,14 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     case WebGLExtension::OESVertexArrayObjectName:
         extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension));
         referenceName = "oesVertexArrayObjectName";
+        break;
+    case WebGLExtension::WebGLDebugRendererInfoName:
+        extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension));
+        referenceName = "webGLDebugRendererInfoName";
+        break;
+    case WebGLExtension::WebGLDebugShadersName:
+        extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension));
+        referenceName = "webGLDebugShadersName";
         break;
     }
     ASSERT(!extensionObject.IsEmpty());

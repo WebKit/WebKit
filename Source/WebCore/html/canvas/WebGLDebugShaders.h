@@ -23,36 +23,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DQt_h
-#define Extensions3DQt_h
+#ifndef WebGLDebugShaders_h
+#define WebGLDebugShaders_h
 
-#include "Extensions3D.h"
+#include "ExceptionCode.h"
+#include "WebGLExtension.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class Extensions3DQt : public Extensions3D {
-public:
-    virtual ~Extensions3DQt();
+class WebGLShader;
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual bool isEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
-    virtual Platform3DObject createVertexArrayOES();
-    virtual void deleteVertexArrayOES(Platform3DObject);
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
-    virtual void bindVertexArrayOES(Platform3DObject);
-    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
+class WebGLDebugShaders : public WebGLExtension {
+public:
+    static PassOwnPtr<WebGLDebugShaders> create(WebGLRenderingContext*);
+
+    virtual ~WebGLDebugShaders();
+    virtual ExtensionName getName() const;
+
+    String getTranslatedShaderSource(WebGLShader*, ExceptionCode&);
 
 private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DQt();
+    WebGLDebugShaders(WebGLRenderingContext*);
 };
 
 } // namespace WebCore
 
-#endif // Extensions3DQt_h
+#endif // WebGLDebugShaders_h

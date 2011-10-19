@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@ public:
     //   GL_OES_standard_derivatives
     //   GL_OES_rgb8_rgba8
     //   GL_OES_vertex_array_object
+    //   GL_ANGLE_translated_shader_source
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -103,6 +104,9 @@ public:
         
         // GL_OES_vertex_array_object names
         VERTEX_ARRAY_BINDING_OES = 0x85B5,
+
+        // GL_ANGLE_translated_shader_source
+        TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE = 0x93A0,
     };
 
     // GL_ARB_robustness
@@ -125,6 +129,9 @@ public:
     virtual void deleteVertexArrayOES(Platform3DObject) = 0;
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
     virtual void bindVertexArrayOES(Platform3DObject) = 0;
+
+    // GL_ANGLE_translated_shader_source
+    virtual String getTranslatedShaderSourceANGLE(Platform3DObject) = 0;
 };
 
 } // namespace WebCore
