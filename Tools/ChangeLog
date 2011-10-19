@@ -1,3 +1,15 @@
+2011-10-19  Chang Shu  <cshu@webkit.org>
+
+        [Qt] Support WK1-only Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=70254
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added a new search path qt-wk1 for skipping WK1-only tests.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py: NRWT
+        * Scripts/old-run-webkit-tests: ORWT
+
 2011-10-19  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [GTK] Enable to use built-product-archive on GTK platform
