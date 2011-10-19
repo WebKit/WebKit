@@ -39,7 +39,7 @@ CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefP
     , m_loading(false)
 {
     if (m_lstMedia)
-        m_lstMedia->setParent(this);
+        m_lstMedia->setParentStyleSheet(parent);
     else
         m_lstMedia = MediaList::create(this, String());
 }
@@ -47,7 +47,7 @@ CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefP
 CSSImportRule::~CSSImportRule()
 {
     if (m_lstMedia)
-        m_lstMedia->setParent(0);
+        m_lstMedia->setParentStyleSheet(0);
     if (m_styleSheet)
         m_styleSheet->setParent(0);
     if (m_cachedSheet)

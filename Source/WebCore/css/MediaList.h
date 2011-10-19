@@ -21,20 +21,21 @@
 #ifndef MediaList_h
 #define MediaList_h
 
-#include "StyleBase.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CSSImportRule;
+class CSSRule;
 class CSSStyleSheet;
 class MediaQuery;
 
 typedef int ExceptionCode;
 
-class MediaList : public StyleBase {
+class MediaList : public RefCounted<MediaList> {
 public:
     static PassRefPtr<MediaList> create()
     {
@@ -76,6 +77,14 @@ public:
     void appendMediaQuery(PassOwnPtr<MediaQuery>);
     const Vector<MediaQuery*>& mediaQueries() const { return m_queries; }
 
+    CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
+    void setParentStyleSheet(CSSStyleSheet* styleSheet)
+    {
+        // MediaList should never be moved between style sheets.
+        ASSERT(styleSheet == m_parentStyleSheet || !m_parentStyleSheet || !styleSheet);
+        m_parentStyleSheet = styleSheet;
+    }
+
 private:
     MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription);
     MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription);
@@ -83,8 +92,10 @@ private:
 
     void notifyChanged();
 
+    bool m_fallback; // true if failed media query parsing should fallback to media description parsing.
+
+    CSSStyleSheet* m_parentStyleSheet;
     Vector<MediaQuery*> m_queries;
-    bool m_fallback; // true if failed media query parsing should fallback to media description parsing
 };
 
 } // namespace

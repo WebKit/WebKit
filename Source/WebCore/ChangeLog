@@ -1,3 +1,58 @@
+2011-10-19  Andreas Kling  <kling@webkit.org>
+
+        MediaList: Remove inheritance from StyleBase.
+        https://bugs.webkit.org/show_bug.cgi?id=70203
+
+        Reviewed by Darin Adler.
+
+        * css/MediaList.h:
+        (WebCore::MediaList::parentStyleSheet):
+        (WebCore::MediaList::setParentStyleSheet):
+        * css/MediaList.cpp:
+        (WebCore::MediaList::MediaList):
+        (WebCore::MediaList::notifyChanged):
+
+            Change MediaList to no longer inherit from StyleBase. The parent()/setParent()
+            mechanism was replaced by explicit parentStyleSheet()/setParentStyleSheet().
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        (WebCore::CSSImportRule::~CSSImportRule):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        (WebCore::CSSMediaRule::~CSSMediaRule):
+
+            Change StyleBase::setParent() calls to MediaList::setParentStyleSheet().
+            CSSRules are never moved between stylesheets, so the parent style sheet pointer
+            is valid for the MediaList's lifetime.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::~StyleSheet):
+
+            Change StyleBase::setParent() calls to MediaList::setParentStyleSheet().
+
+        (WebCore::StyleSheet::setMedia):
+
+            Change StyleBase::setParent() calls to MediaList::setParentStyleSheet().
+            Assert that the parent sheet is either null, or this, as MediaLists should never
+            be reparented to other sheets.
+            Assert that the StyleSheet is indeed a CSSStyleSheet.  XSLStyleSheet inherits from
+            StyleSheet, but it shouldn't be using the MediaList.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+
+            Add MediaList* specific overload for root() since it can't fall back
+            to root(StyleBase*) anymore.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Add some PrivateHeaders to accomodate the JSDOMBinding.h changes.
+
+        * css/CSSMediaRule.h:
+
+            Remove unnecessary forward-declaration of MediaList.
+
 2011-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Console messages for XHR logging should show call stack if available.
