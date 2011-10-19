@@ -30,6 +30,16 @@
 
 namespace WebCore {
 
+static int clampValue(int x, int left, int right)
+{
+    ASSERT(left <= right);
+    if (x < left)
+        x = left;
+    if (right < x)
+        x = right;
+    return x;
+}
+
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned elementByteSize)
 {
     void* data = tryAllocate(numElements, elementByteSize);
@@ -72,6 +82,30 @@ const void* ArrayBuffer::data() const
 unsigned ArrayBuffer::byteLength() const
 {
     return m_sizeInBytes;
+}
+
+PassRefPtr<ArrayBuffer> ArrayBuffer::slice(int begin, int end) const
+{
+    return sliceImpl(clampIndex(begin), clampIndex(end));
+}
+
+PassRefPtr<ArrayBuffer> ArrayBuffer::slice(int begin) const
+{
+    return sliceImpl(clampIndex(begin), byteLength());
+}
+
+PassRefPtr<ArrayBuffer> ArrayBuffer::sliceImpl(unsigned begin, unsigned end) const
+{
+    unsigned size = begin <= end ? end - begin : 0;
+    return ArrayBuffer::create(static_cast<const char*>(data()) + begin, size);
+}
+
+unsigned ArrayBuffer::clampIndex(int index) const
+{
+    unsigned currentLength = byteLength();
+    if (index < 0)
+        index = currentLength + index;
+    return clampValue(index, 0, currentLength);
 }
 
 ArrayBuffer::~ArrayBuffer()

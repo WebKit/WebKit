@@ -32,6 +32,7 @@ module html {
         NoStaticTables
     ] ArrayBuffer {
         readonly attribute int byteLength;
+        ArrayBuffer slice(in long begin, in [Optional] long end);
     };
 
 }

@@ -41,12 +41,18 @@ class ArrayBuffer : public RefCounted<ArrayBuffer> {
     const void* data() const;
     unsigned byteLength() const;
 
+    PassRefPtr<ArrayBuffer> slice(int begin, int end) const;
+    PassRefPtr<ArrayBuffer> slice(int begin) const;
+
     ~ArrayBuffer();
 
   private:
     ArrayBuffer(void* data, unsigned sizeInBytes);
     ArrayBuffer(unsigned numElements, unsigned elementByteSize);
     static void* tryAllocate(unsigned numElements, unsigned elementByteSize);
+    PassRefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
+    unsigned clampIndex(int index) const;
+
     unsigned m_sizeInBytes;
     void* m_data;
 };
