@@ -1,3 +1,16 @@
+2011-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Support CanvasPixelArray in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=70384
+
+        Reviewed by Filip Pizlo.
+
+        Make CanvasPixelArray inherit from ByteArray's ClassInfo so
+        can identify it more sensibly.
+
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+
 2011-10-19  Chang Shu  <cshu@webkit.org>
 
         [Qt] Disable fullscreen api on Qt by default

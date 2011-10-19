@@ -1,3 +1,51 @@
+2011-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Support CanvasPixelArray in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=70384
+
+        Reviewed by Filip Pizlo.
+
+        Add support for the old CanvasPixelArray optimisations to the
+        DFG.  This removes the regression seen in the DFG when using
+        a CPA.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store8):
+        (JSC::MacroAssemblerX86Common::truncateDoubleToInt32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movb_rm):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp8):
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC::isByteArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateByteArray):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::compileClampDoubleToByte):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnByteArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::offsetOfStorage):
+        * wtf/ByteArray.cpp:
+        * wtf/ByteArray.h:
+        (WTF::ByteArray::offsetOfSize):
+        (WTF::ByteArray::offsetOfData):
+
 2011-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         Some rope cleanup following r97827

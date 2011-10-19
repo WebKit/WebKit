@@ -527,6 +527,11 @@ public:
         ASSERT(-128 <= imm.m_value && imm.m_value < 128);
         m_assembler.movb_i8m(imm.m_value, address.offset, address.base, address.index, address.scale);
     }
+    
+    void store8(RegisterID src, BaseIndex address)
+    {
+        m_assembler.movb_rm(src, address.offset, address.base, address.index, address.scale);
+    }
 
 
     // Floating-point operation:
@@ -691,6 +696,12 @@ public:
         return branch32(branchType ? NotEqual : Equal, dest, TrustedImm32(0x80000000));
     }
 
+    void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvttsd2si_rr(src, dest);
+    }
+    
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits

@@ -110,6 +110,8 @@ namespace JSC {
         virtual ~JSByteArray();
 #endif
 
+        static size_t offsetOfStorage() { return OBJECT_OFFSETOF(JSByteArray, m_storage); }
+
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 

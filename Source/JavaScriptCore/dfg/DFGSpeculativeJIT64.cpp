@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGSpeculativeJIT.h"
 
+#include "JSByteArray.h"
+
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
@@ -873,6 +875,13 @@ void SpeculativeJIT::compile(Node& node)
                 speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
             m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
+        } else if (isByteArrayPrediction(predictedType)) {
+            SpeculateCellOperand cell(this, node.child1());
+            GPRReg cellGPR = cell.gpr();
+            if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+                speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+            m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
+            noResult(m_compileIndex);
         } else if (isBooleanPrediction(predictedType)) {
             SpeculateBooleanOperand boolean(this, node.child1());
             m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
@@ -1446,6 +1455,13 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compileGetByValOnByteArray(node);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+
         ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
@@ -1498,6 +1514,11 @@ void SpeculativeJIT::compile(Node& node)
 
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+
         JSValueOperand value(this, node.child3());
         GPRTemporary scratch(this);
 
@@ -1509,7 +1530,7 @@ void SpeculativeJIT::compile(Node& node)
         
         if (!m_compileOkay)
             return;
-
+        
         writeBarrier(baseReg, value.gpr(), node.child3(), WriteBarrierForPropertyAccess, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
@@ -1563,6 +1584,11 @@ void SpeculativeJIT::compile(Node& node)
             
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+
         JSValueOperand value(this, node.child3());
         GPRTemporary scratch(this);
         
@@ -2082,6 +2108,24 @@ void SpeculativeJIT::compile(Node& node)
         integerResult(resultGPR, m_compileIndex);
         break;
     }
+
+    case GetByteArrayLength: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSByteArray::offsetOfStorage()), resultGPR);
+        m_jit.load32(MacroAssembler::Address(baseGPR, ByteArray::offsetOfSize()), resultGPR);
+
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case CheckFunction: {
         SpeculateCellOperand function(this, node.child1());
         speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, function.gpr(), JITCompiler::TrustedImmPtr(node.function())));

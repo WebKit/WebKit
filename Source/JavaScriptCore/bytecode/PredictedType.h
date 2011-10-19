@@ -39,6 +39,7 @@ typedef uint16_t PredictedType;
 static const PredictedType PredictNone          = 0x0000; // We don't know anything yet.
 static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
 static const PredictedType PredictArray         = 0x0002; // It's definitely a JSArray.
+static const PredictedType PredictByteArray     = 0x0004; // It's definitely a JSByteArray.
 static const PredictedType PredictObjectOther   = 0x0010; // It's definitely an object but not JSFinalObject or JSArray.
 static const PredictedType PredictObjectMask    = 0x003f; // Bitmask used for testing for any kind of object prediction.
 static const PredictedType PredictString        = 0x0040; // It's definitely a JSString.
@@ -81,6 +82,11 @@ inline bool isStringPrediction(PredictedType value)
 inline bool isArrayPrediction(PredictedType value)
 {
     return value == PredictArray;
+}
+
+inline bool isByteArrayPrediction(PredictedType value)
+{
+    return value == PredictByteArray;
 }
 
 inline bool isArrayOrOtherPrediction(PredictedType value)

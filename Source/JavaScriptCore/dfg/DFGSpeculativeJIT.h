@@ -449,6 +449,8 @@ private:
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
     void compileValueToInt32(Node&);
+    void compileGetByValOnByteArray(Node&);
+    void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.

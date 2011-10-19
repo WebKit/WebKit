@@ -134,6 +134,7 @@ private:
         OP_TEST_EbGb                    = 0x84,
         OP_TEST_EvGv                    = 0x85,
         OP_XCHG_EvGv                    = 0x87,
+        OP_MOV_EbGb                     = 0x88,
         OP_MOV_EvGv                     = 0x89,
         OP_MOV_GvEv                     = 0x8B,
         OP_LEA                          = 0x8D,
@@ -1085,6 +1086,29 @@ public:
         m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, index, scale, offset);
         m_formatter.immediate8(imm);
     }
+    
+    void movb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+#if CPU(X86)
+        // On 32-bit x86 we can only set the first 4 registers;
+        // esp..edi are mapped to the 'h' registers!
+        if (src >= 4) {
+            RegisterID originalSrc = src;
+            xchgl_rr(src, X86Registers::eax);
+            if (base == X86Registers::eax)
+                base = src;
+            else if (index == X86Registers::eax)
+                index = src;
+            src = X86Registers::eax;
+            
+            m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
+
+            xchgl_rr(originalSrc, X86Registers::eax);
+            return;
+        }
+#endif
+        m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
+    }
 
     void movl_EAXm(const void* addr)
     {
@@ -1941,6 +1965,14 @@ private:
             emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(rm), reg, 0, rm);
             m_buffer.putByteUnchecked(opcode);
             registerModRM(reg, rm);
+        }
+
+        void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg) || regRequiresRex(index) || regRequiresRex(base), reg, index, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, index, scale, offset);
         }
 
         void twoByteOp8(TwoByteOpcodeID opcode, RegisterID reg, RegisterID rm)

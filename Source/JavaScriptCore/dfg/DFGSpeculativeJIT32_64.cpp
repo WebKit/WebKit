@@ -29,6 +29,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "JSByteArray.h"
 #include "DFGJITCompilerInlineMethods.h"
 
 namespace JSC { namespace DFG {
@@ -747,6 +748,13 @@ void SpeculativeJIT::compile(Node& node)
                 speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
             m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
             noResult(m_compileIndex);
+        } else if (isByteArrayPrediction(predictedType)) {
+            SpeculateCellOperand cell(this, node.child1());
+            GPRReg cellGPR = cell.gpr();
+            if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+                speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+            m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
+            noResult(m_compileIndex);
         } else { // FIXME: Add BooleanPrediction handling
             JSValueOperand value(this, node.child1());
             m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node.local()));
@@ -1318,6 +1326,13 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;
         }
+        
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compileGetByValOnByteArray(node);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
 
         ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
@@ -1374,6 +1389,11 @@ void SpeculativeJIT::compile(Node& node)
 
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+
         JSValueOperand value(this, node.child3());
         GPRTemporary scratch(this);
 
@@ -1438,6 +1458,12 @@ void SpeculativeJIT::compile(Node& node)
     case PutByValAlias: {
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
+
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+
         JSValueOperand value(this, node.child3());
         GPRTemporary scratch(this, base);
         
@@ -1995,6 +2021,23 @@ void SpeculativeJIT::compile(Node& node)
         
         m_jit.load32(MacroAssembler::Address(baseGPR, JSString::offsetOfLength()), resultGPR);
 
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+
+    case GetByteArrayLength: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSByteArray::offsetOfStorage()), resultGPR);
+        m_jit.load32(MacroAssembler::Address(baseGPR, ByteArray::offsetOfSize()), resultGPR);
+        
         integerResult(resultGPR, m_compileIndex);
         break;
     }

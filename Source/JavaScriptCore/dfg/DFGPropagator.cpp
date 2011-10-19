@@ -561,6 +561,7 @@ private:
             
         case ValueToDouble:
         case GetArrayLength:
+        case GetByteArrayLength:
         case GetStringLength: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
@@ -734,9 +735,10 @@ private:
         case GetById: {
             bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
             bool isString = isStringPrediction(m_graph[node.child1()].prediction());
-            if (!isArray && !isString)
-                break;
+            bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
             if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
+                break;
+            if (!isArray && !isString && !isByteArray)
                 break;
             if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
                 break;
@@ -744,7 +746,14 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             printf("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
-            node.op = isArray ? GetArrayLength : GetStringLength;
+            if (isArray)
+                node.op = GetArrayLength;
+            else if (isString)
+                node.op = GetStringLength;
+            else if (isByteArray)
+                node.op = GetByteArrayLength;
+            else
+                ASSERT_NOT_REACHED();
             break;
         }
             
@@ -1310,6 +1319,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
+        case GetByteArrayLength:
         case GetCallee:
         case GetStringLength:
         case StringCharAt:

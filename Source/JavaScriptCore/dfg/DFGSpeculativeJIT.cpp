@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "DFGSpeculativeJIT.h"
+#include "JSByteArray.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -383,6 +384,11 @@ void SpeculativeJIT::checkArgumentTypes()
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), temp.gpr());
             speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, temp.gpr(), GPRInfo::tagMaskRegister));
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        } else if (isByteArrayPrediction(predictedType)) {
+            GPRTemporary temp(this);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), temp.gpr());
+            speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, temp.gpr(), GPRInfo::tagMaskRegister));
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
         } else if (isBooleanPrediction(predictedType)) {
             GPRTemporary temp(this);
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), temp.gpr());
@@ -398,6 +404,12 @@ void SpeculativeJIT::checkArgumentTypes()
             speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, temp.gpr(), TrustedImm32(JSValue::CellTag)));
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), temp.gpr());
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        } else if (isByteArrayPrediction(predictedType)) {
+            GPRTemporary temp(this);
+            m_jit.load32(JITCompiler::tagFor(virtualRegister), temp.gpr());
+            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, temp.gpr(), TrustedImm32(JSValue::CellTag)));
+            m_jit.load32(JITCompiler::payloadFor(virtualRegister), temp.gpr());
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
         } // FIXME: need boolean predictions, but we currently don't have that support.
 #endif
     }
@@ -640,6 +652,122 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
     GPRTemporary result(this, op1);
     m_jit.move(op1.gpr(), result.gpr());
     integerResult(result.gpr(), m_compileIndex, op1.format());
+}
+
+static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg source, FPRReg scratch)
+{
+    // Unordered compare so we pick up NaN
+    static const double zero = 0;
+    static const double byteMax = 255;
+    static const double half = 0.5;
+    jit.loadDouble(&zero, scratch);
+    MacroAssembler::Jump tooSmall = jit.branchDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered, source, scratch);
+    jit.loadDouble(&byteMax, scratch);
+    MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThan, source, scratch);
+    
+    jit.loadDouble(&half, scratch);
+    jit.addDouble(source, scratch);
+    jit.truncateDoubleToInt32(scratch, result);   
+    MacroAssembler::Jump truncatedInt = jit.jump();
+    
+    tooSmall.link(&jit);
+    jit.xorPtr(result, result);
+    MacroAssembler::Jump zeroed = jit.jump();
+    
+    tooBig.link(&jit);
+    jit.move(JITCompiler::TrustedImm32(255), result);
+    
+    truncatedInt.link(&jit);
+    zeroed.link(&jit);
+
+}
+
+void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, Node& node)
+{
+    NodeIndex baseIndex = node.child1();
+    NodeIndex valueIndex = node.child3();
+    
+    if (!isByteArrayPrediction(m_state.forNode(baseIndex).m_type))
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+    GPRTemporary value;
+    GPRReg valueGPR;
+
+    if (at(valueIndex).isConstant()) {
+        JSValue jsValue = valueOfJSConstant(valueIndex);
+        if (!jsValue.isNumber()) {
+            terminateSpeculativeExecution();
+            noResult(m_compileIndex);
+            return;
+        }
+        double d = jsValue.asNumber();
+        d += 0.5;
+        if (!(d > 0))
+            d = 0;
+        else if (d > 255)
+            d = 255;
+        GPRTemporary scratch(this);
+        GPRReg scratchReg = scratch.gpr();
+        m_jit.move(Imm32((int)d), scratchReg);
+        value.adopt(scratch);
+        valueGPR = scratchReg;
+    } else if (!at(valueIndex).shouldNotSpeculateInteger()) {
+        SpeculateIntegerOperand valueOp(this, valueIndex);
+        GPRTemporary scratch(this);
+        GPRReg scratchReg = scratch.gpr();
+        m_jit.move(valueOp.gpr(), scratchReg);
+        MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::BelowOrEqual, scratchReg, TrustedImm32(0xff));
+        MacroAssembler::Jump tooBig = m_jit.branch32(MacroAssembler::GreaterThan, scratchReg, TrustedImm32(0xff));
+        m_jit.xorPtr(scratchReg, scratchReg);
+        MacroAssembler::Jump clamped = m_jit.jump();
+        m_jit.move(TrustedImm32(255), scratchReg);
+        clamped.link(&m_jit);
+        inBounds.link(&m_jit);
+        value.adopt(scratch);
+        valueGPR = scratchReg;
+    } else {
+        SpeculateDoubleOperand valueOp(this, valueIndex);
+        GPRTemporary result(this);
+        FPRTemporary floatScratch(this);
+        FPRReg fpr = valueOp.fpr();
+        GPRReg gpr = result.gpr();
+        compileClampDoubleToByte(m_jit, gpr, fpr, floatScratch.fpr());
+        value.adopt(result);
+        valueGPR = gpr;
+    }
+    ASSERT(valueGPR != property);
+    ASSERT(valueGPR != base);
+    GPRTemporary storage(this);
+    GPRReg storageReg = storage.gpr();
+    ASSERT(valueGPR != storageReg);
+    m_jit.loadPtr(MacroAssembler::Address(base, JSByteArray::offsetOfStorage()), storageReg);
+    MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property, MacroAssembler::Address(storageReg, ByteArray::offsetOfSize()));
+    m_jit.store8(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesOne, ByteArray::offsetOfData()));
+    outOfBounds.link(&m_jit);
+    noResult(m_compileIndex);
+}
+
+void SpeculativeJIT::compileGetByValOnByteArray(Node& node)
+{
+    ASSERT(node.child3() == NoNode);
+    SpeculateCellOperand base(this, node.child1());
+    SpeculateStrictInt32Operand property(this, node.child2());
+    
+    GPRReg baseReg = base.gpr();
+    GPRReg propertyReg = property.gpr();
+    
+    if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+
+    // Load the character into scratchReg
+    GPRTemporary storage(this);
+    GPRReg storageReg = storage.gpr();
+    m_jit.loadPtr(MacroAssembler::Address(baseReg, JSByteArray::offsetOfStorage()), storageReg);
+    
+    // unsigned comparison so we can filter out negative indices and indices that are too large
+    speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, ByteArray::offsetOfSize())));
+
+    m_jit.load8(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesOne, ByteArray::offsetOfData()), storageReg);
+    integerResult(storageReg, m_compileIndex);
 }
 
 } } // namespace JSC::DFG

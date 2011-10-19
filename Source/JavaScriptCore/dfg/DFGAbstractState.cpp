@@ -105,6 +105,8 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(PredictInt32);
         else if (isArrayPrediction(prediction))
             root->valuesAtHead.argument(i).set(PredictArray);
+        else if (isByteArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictByteArray);
         else if (isBooleanPrediction(prediction))
             root->valuesAtHead.argument(i).set(PredictBoolean);
         else
@@ -181,6 +183,8 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(node.child1()).filter(PredictInt32);
         else if (isArrayPrediction(predictedType))
             forNode(node.child1()).filter(PredictArray);
+        else if (isByteArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictByteArray);
         else if (isBooleanPrediction(predictedType))
             forNode(node.child1()).filter(PredictBoolean);
         
@@ -375,6 +379,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictString);
             break;
         }
+        if (m_graph[node.child1()].shouldSpeculateByteArray()) {
+            forNode(node.child1()).filter(PredictByteArray);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).makeTop();
@@ -387,6 +397,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         if (!(indexPrediction & PredictInt32) && indexPrediction) {
             clobberStructures(nodeIndex);
             forNode(nodeIndex).makeTop();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateByteArray()) {
+            forNode(node.child1()).filter(PredictByteArray);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
         forNode(node.child1()).filter(PredictArray);
@@ -540,9 +556,14 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).filter(PredictArray);
         forNode(nodeIndex).set(PredictInt32);
         break;
-            
+
     case GetStringLength:
         forNode(node.child1()).filter(PredictString);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+        
+    case GetByteArrayLength:
+        forNode(node.child1()).filter(PredictByteArray);
         forNode(nodeIndex).set(PredictInt32);
         break;
             
