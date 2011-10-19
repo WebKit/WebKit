@@ -1,3 +1,18 @@
+2011-10-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add getConstructData to the MethodTable
+        https://bugs.webkit.org/show_bug.cgi?id=70163
+
+        Reviewed by Geoffrey Garen.
+
+        Adding getConstructData to the MethodTable in order to be able to 
+        remove all calls to getConstructDataVirtual soon.  Part of the process 
+        of de-virtualizing JSCell.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/ClassInfo.h:
+
 2011-10-18  Oliver Hunt  <oliver@apple.com>
 
         Support CanvasPixelArray in the DFG

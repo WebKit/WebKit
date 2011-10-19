@@ -24,6 +24,7 @@
 #define ClassInfo_h
 
 #include "CallFrame.h"
+#include "ConstructData.h"
 
 namespace JSC {
 
@@ -36,11 +37,15 @@ namespace JSC {
 
         typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
         GetCallDataFunctionPtr getCallData;
+
+        typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
+        GetConstructDataFunctionPtr getConstructData;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \
         &ClassName::visitChildren, \
-        &ClassName::getCallData \
+        &ClassName::getCallData, \
+        &ClassName::getConstructData, \
     }, \
     sizeof(ClassName)
 
