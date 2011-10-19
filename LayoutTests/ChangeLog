@@ -1,3 +1,12 @@
+2011-10-19  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Unreviewed gardening. Add platform specific expected result for new tests.
+
+        * platform/qt/fast/multicol/vertical-rl/rule-style-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/rule-style-expected.txt: Added.
+        * platform/qt/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/qt/fast/selectors/visited-descendant-expected.txt: Added.
+
 2011-10-19  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Test expectation change.
