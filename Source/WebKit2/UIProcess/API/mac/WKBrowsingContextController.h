@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
 
-@class WKBrowsingContextController;
-@class WKProcessCluster;
-@class WKViewData;
+@class WKBrowsingContextControllerData;
 
 WK_EXPORT
-@interface WKView : NSView <NSTextInputClient> {
-    WKViewData *_data;
-    unsigned _unused;
+@interface WKBrowsingContextController : NSObject
+{
+    WKBrowsingContextControllerData *_data;
 }
 
-- (id)initWithFrame:(NSRect)frame processCluster:(WKProcessCluster *)processCluster;
+#pragma mark Loading
 
-@property(readonly) WKBrowsingContextController *browsingContextController;
+/* Load a request. This is only valid for requests of non-file: URLs. Passing a
+   file: URL will throw an exception. */
+- (void)loadRequest:(NSURLRequest *)request;
 
-@property BOOL drawsBackground;
-@property BOOL drawsTransparentBackground;
+/* Load a file: URL. Opens the sandbox only for files within allowedDirectory.
+    - Passing a non-file: URL to either parameter will yeild an exception.
+    - Passing nil as the allowedDirectory will open the entire file-system for
+      reading. 
+*/
+- (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory;
+
+/* Stops the load associated with the active URL. */
+- (void)stopLoading;
+
+/* Reload the currently active URL. */
+- (void)reload;
+
+/* Reload the currently active URL, bypassing caches. */
+- (void)reloadFromOrigin;
+
+
+#pragma mark Back/Forward
+
+/* Go to the next page in the back/forward list. */
+- (void)goForward;
+
+/* Returns whether there is a next page in the back/forward list. */
+- (BOOL)canGoForward;
+
+/* Go to the previous page in the back/forward list. */
+- (void)goBack;
+
+/* Returns whether there is a previous page in the back/forward list. */
+- (BOOL)canGoBack;
 
 @end

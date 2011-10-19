@@ -61,16 +61,21 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
-#import <WebCore/LocalizedStrings.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Region.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+
+/* API internals. */
+#import "WKProcessClusterInternal.h"
+#import "WKBrowsingContextControllerInternal.h"
+
 
 @interface NSApplication (WKNSApplicationDetails)
 - (void)speakString:(NSString *)string;
@@ -120,6 +125,9 @@ struct WKViewInterpretKeyEventsParameters {
 @public
     OwnPtr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
+    
+    // Cache of the associated WKBrowsingContextController.
+    RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     // For ToolTips.
     NSToolTipTag _lastToolTipTag;
@@ -175,6 +183,10 @@ struct WKViewInterpretKeyEventsParameters {
 }
 @end
 
+@implementation WKViewData
+@end
+
+
 @interface WKResponderChainSink : NSResponder {
     NSResponder *_lastResponderInChain;
     bool _didReceiveUnhandledCommand;
@@ -184,10 +196,17 @@ struct WKViewInterpretKeyEventsParameters {
 - (bool)didReceiveUnhandledCommand;
 @end
 
-@implementation WKViewData
-@end
-
 @implementation WKView
+
+- (id)initWithFrame:(NSRect)frame
+{
+    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
+}
+
+- (id)initWithFrame:(NSRect)frame processCluster:(WKProcessCluster *)processCluster
+{
+    return [self initWithFrame:frame contextRef:processCluster.contextRef];
+}
 
 - (void)dealloc
 {
@@ -201,6 +220,13 @@ struct WKViewInterpretKeyEventsParameters {
     WebContext::statistics().wkViewCount--;
 
     [super dealloc];
+}
+
+- (WKBrowsingContextController *)browsingContextController
+{
+    if (!_data->_browsingContextController)
+        _data->_browsingContextController.adoptNS([[WKBrowsingContextController alloc] initWithPageRef:[self pageRef]]);
+    return _data->_browsingContextController.get();
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
@@ -2546,11 +2572,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 @end
 
 @implementation WKView (Private)
-
-- (id)initWithFrame:(NSRect)frame
-{
-    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
-}
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
 {   

@@ -1,3 +1,55 @@
+2011-10-19  Sam Weinig  <sam@webkit.org>
+
+        Add skeleton of an Objective-C WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=70438
+
+        Reviewed by Anders Carlsson.
+
+        Adds WKBrowsingContextController (WKPageRef wrapper) and WKProcessCluster
+        (WKContextRef wrapper) as initial files of an Objective-C WebKit2 API. Also,
+        hook them up so that you can get a WKBrowsingContextController from the WKView
+        and you can create a WKView associated with a WKProcessCluster. These names are
+        not final, and this work is mainly about getting the wrapper lifetimes worked
+        out.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Added.
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Added.
+        (-[WKBrowsingContextController dealloc]):
+        (-[WKBrowsingContextController pageRef]):
+        (-[WKBrowsingContextController loadRequest:]):
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]):
+        (-[WKBrowsingContextController stopLoading]):
+        (-[WKBrowsingContextController reload]):
+        (-[WKBrowsingContextController reloadFromOrigin]):
+        (-[WKBrowsingContextController goForward]):
+        (-[WKBrowsingContextController canGoForward]):
+        (-[WKBrowsingContextController goBack]):
+        (-[WKBrowsingContextController canGoBack]):
+        (-[WKBrowsingContextController initWithPageRef:]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h: Added.
+        Add wrapper for WKPageRef.
+
+        * UIProcess/API/mac/WKProcessCluster.h: Added.
+        * UIProcess/API/mac/WKProcessCluster.mm: Added.
+        (-[WKProcessCluster init]):
+        (-[WKProcessCluster initWithInjectedBundleURL:]):
+        (-[WKProcessCluster dealloc]):
+        (-[WKProcessCluster contextRef]):
+        * UIProcess/API/mac/WKProcessClusterInternal.h: Added.
+        Add wrapper for WKContextRef.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processCluster:]):
+        Add new init method which takes a WKProcessCluster.
+
+        (-[WKView browsingContextController]):
+        Add accessor for the WKBrowsingContextController. This works by lazily creating
+        the wrapper and caching it in the view itself.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2011-10-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Rename files and classes to follow conventions

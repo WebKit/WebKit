@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit2/WKBase.h>
+#import "config.h"
+#import "WKProcessCluster.h"
+#import "WKProcessClusterInternal.h"
 
-@class WKBrowsingContextController;
-@class WKProcessCluster;
-@class WKViewData;
+#import "WKContext.h"
+#import "WKRetainPtr.h"
+#import "WKStringCF.h"
 
-WK_EXPORT
-@interface WKView : NSView <NSTextInputClient> {
-    WKViewData *_data;
-    unsigned _unused;
+@interface WKProcessClusterData : NSObject {
+@public
+    WKRetainPtr<WKContextRef> _contextRef;
+}
+@end
+
+@implementation WKProcessClusterData
+@end
+
+@implementation WKProcessCluster
+
+- (id)init
+{
+    return [self initWithInjectedBundleURL:nil];
 }
 
-- (id)initWithFrame:(NSRect)frame processCluster:(WKProcessCluster *)processCluster;
+- (id)initWithInjectedBundleURL:(NSURL *)bundleURL
+{
+    self = [super init];
+    if (!self)
+        return nil;
 
-@property(readonly) WKBrowsingContextController *browsingContextController;
+    _data = [[WKProcessClusterData alloc] init];
+    
+    if (bundleURL) {
+        WKRetainPtr<WKStringRef> bundleURLString = adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL absoluteString]));
+        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(bundleURLString.get()));
+    } else
+        _data->_contextRef = adoptWK(WKContextCreate());
 
-@property BOOL drawsBackground;
-@property BOOL drawsTransparentBackground;
+    return self;
+}
+
+- (void)dealloc
+{
+    [_data release];
+    [super dealloc];
+}
 
 @end
+
+@implementation WKProcessCluster (Internal)
+
+- (WKContextRef)contextRef
+{
+    return _data->_contextRef.get();
+}
+
+@end
+
+
