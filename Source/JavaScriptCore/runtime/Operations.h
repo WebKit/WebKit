@@ -93,7 +93,7 @@ namespace JSC {
         return ropeBuilder.release();
     }
 
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue)
+    ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     {
         JSGlobalData* globalData = &exec->globalData();
         JSString::RopeBuilder ropeBuilder(*globalData);

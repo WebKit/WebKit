@@ -85,9 +85,9 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHea
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
     failures.append(branchPtr(NotEqual, Address(src), TrustedImmPtr(m_globalData->jsStringVPtr)));
-    failures.append(branchTest32(NonZero, Address(src, OBJECT_OFFSETOF(JSString, m_fiberCount))));
     failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
+    failures.append(branchTest32(Zero, dst));
     loadPtr(MacroAssembler::Address(dst, ThunkHelpers::stringImplDataOffset()), dst);
     load16(MacroAssembler::Address(dst, 0), dst);
 }

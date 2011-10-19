@@ -61,7 +61,6 @@ namespace JSC {
         {
             loadCellArgument(argument, dst);
             m_failures.append(branchPtr(NotEqual, Address(dst, 0), TrustedImmPtr(m_globalData->jsStringVPtr)));
-            m_failures.append(branchTest32(NonZero, Address(dst, OBJECT_OFFSETOF(JSString, m_fiberCount))));
         }
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)

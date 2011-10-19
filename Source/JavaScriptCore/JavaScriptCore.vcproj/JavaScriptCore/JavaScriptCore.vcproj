@@ -1102,14 +1102,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\RopeImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\RopeImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\ScopeChain.cpp"
 				>
 			</File>

@@ -171,11 +171,11 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(JSGlobalData* globalData)
     JSInterfaceJIT jit;
     JumpList failures;
     failures.append(jit.branchPtr(NotEqual, Address(regT0), TrustedImmPtr(globalData->jsStringVPtr)));
-    failures.append(jit.branchTest32(NonZero, Address(regT0, OBJECT_OFFSETOF(JSString, m_fiberCount))));
     
     // Load string length to regT1, and start the process of loading the data pointer into regT0
     jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT1);
     jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
+    failures.append(jit.branchTest32(Zero, regT0));
     jit.loadPtr(Address(regT0, ThunkHelpers::stringImplDataOffset()), regT0);
     
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large

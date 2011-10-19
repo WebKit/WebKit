@@ -38,9 +38,10 @@ const ClassInfo JSString::s_info = { "string", 0, 0, 0, CREATE_METHOD_TABLE(JSSt
 
 void JSString::RopeBuilder::expand()
 {
-    ASSERT(m_jsString->m_fiberCount == JSString::s_maxInternalRopeLength);
+    ASSERT(m_index == JSString::s_maxInternalRopeLength);
     JSString* jsString = m_jsString;
     m_jsString = jsStringBuilder(&m_globalData);
+    m_index = 0;
     append(jsString);
 }
 
@@ -53,7 +54,7 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSString* thisObject = static_cast<JSString*>(cell);
     Base::visitChildren(thisObject, visitor);
-    for (size_t i = 0; i < thisObject->m_fiberCount; ++i)
+    for (size_t i = 0; i < s_maxInternalRopeLength && thisObject->m_fibers[i]; ++i)
         visitor.append(&thisObject->m_fibers[i]);
 }
 
@@ -69,21 +70,20 @@ void JSString::resolveRope(ExecState* exec) const
         return;
     }
 
-    for (size_t i = 0; i < m_fiberCount; ++i) {
+    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         if (m_fibers[i]->isRope())
             return resolveRopeSlowCase(exec, buffer);
     }
 
     UChar* position = buffer;
-    for (size_t i = 0; i < m_fiberCount; ++i) {
+    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         StringImpl* string = m_fibers[i]->m_value.impl();
         unsigned length = string->length();
         StringImpl::copyChars(position, string->characters(), length);
         position += length;
+        m_fibers[i].clear();
     }
     ASSERT((buffer + m_length) == position);
-
-    m_fiberCount = 0;
     ASSERT(!isRope());
 }
 
@@ -101,43 +101,36 @@ void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
 {
     UNUSED_PARAM(exec);
 
-    UChar* position = buffer + m_length;
-
+    UChar* position = buffer + m_length; // We will be working backwards over the rope.
     Vector<JSString*, 32> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
-    JSString* currentFiber;
-    for (unsigned i = 0; i < (m_fiberCount - 1); ++i)
+    
+    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
         workQueue.append(m_fibers[i].get());
-    currentFiber = m_fibers[m_fiberCount - 1].get();
-    while (true) {
+
+    while (!workQueue.isEmpty()) {
+        JSString* currentFiber = workQueue.last();
+        workQueue.removeLast();
+
         if (currentFiber->isRope()) {
-            // Copy the contents of the current rope into the workQueue, with the last item in 'currentFiber'
-            // (we will be working backwards over the rope).
-            unsigned fiberCountMinusOne = currentFiber->fiberCount() - 1;
-            for (unsigned i = 0; i < fiberCountMinusOne; ++i)
+            for (size_t i = 0; i < s_maxInternalRopeLength && currentFiber->m_fibers[i]; ++i)
                 workQueue.append(currentFiber->m_fibers[i].get());
-            currentFiber = currentFiber->m_fibers[fiberCountMinusOne].get();
-        } else {
-            StringImpl* string = static_cast<StringImpl*>(currentFiber->m_value.impl());
-            unsigned length = string->length();
-            position -= length;
-            StringImpl::copyChars(position, string->characters(), length);
-
-            if (workQueue.isEmpty()) {
-                m_fiberCount = 0;
-                ASSERT(buffer == position);
-                ASSERT(!isRope());
-                return;
-            }
-
-            currentFiber = workQueue.last();
-            workQueue.removeLast();
+            continue;
         }
+
+        StringImpl* string = static_cast<StringImpl*>(currentFiber->m_value.impl());
+        unsigned length = string->length();
+        position -= length;
+        StringImpl::copyChars(position, string->characters(), length);
     }
+
+    ASSERT(buffer == position);
+    ASSERT(!isRope());
 }
 
 void JSString::outOfMemory(ExecState* exec) const
 {
-    m_fiberCount = 0;
+    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
+        m_fibers[i].clear();
     ASSERT(!isRope());
     ASSERT(m_value == UString());
     if (exec)

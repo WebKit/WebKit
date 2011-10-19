@@ -33,7 +33,6 @@ namespace WTF {
 class StringImplBase {
     WTF_MAKE_NONCOPYABLE(StringImplBase); WTF_MAKE_FAST_ALLOCATED;
 public:
-    bool isStringImpl() { return (m_refCountAndFlags & s_refCountInvalidForStringImpl) != s_refCountInvalidForStringImpl; }
     unsigned length() const { return m_length; }
     void ref() { m_refCountAndFlags += s_refCountIncrement; }
 
@@ -52,7 +51,6 @@ protected:
         : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | ownership)
         , m_length(length)
     {
-        ASSERT(isStringImpl());
     }
 
     enum StaticStringConstructType { ConstructStaticString };
@@ -60,17 +58,6 @@ protected:
         : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
         , m_length(length)
     {
-        ASSERT(isStringImpl());
-    }
-
-    // This constructor is not used when creating StringImpl objects,
-    // and sets the flags into a state marking the object as such.
-    enum NonStringImplConstructType { ConstructNonStringImpl };
-    StringImplBase(NonStringImplConstructType)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountInvalidForStringImpl)
-        , m_length(0)
-    {
-        ASSERT(!isStringImpl());
     }
 
     // The bottom 7 bits hold flags, the top 25 bits hold the ref count.
@@ -84,10 +71,6 @@ protected:
     static const unsigned s_refCountFlagShouldReportedCost = 0x8;
     static const unsigned s_refCountFlagIsIdentifier = 0x4;
     static const unsigned s_refCountMaskBufferOwnership = 0x3;
-    // An invalid permutation of flags (static & shouldReportedCost - static strings do not
-    // set shouldReportedCost in the constructor, and this bit is only ever cleared, not set).
-    // Used by "ConstructNonStringImpl" constructor, above.
-    static const unsigned s_refCountInvalidForStringImpl = s_refCountFlagStatic | s_refCountFlagShouldReportedCost;
 
     unsigned m_refCountAndFlags;
     unsigned m_length;

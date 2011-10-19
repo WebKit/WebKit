@@ -1,3 +1,71 @@
+2011-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Some rope cleanup following r97827
+        https://bugs.webkit.org/show_bug.cgi?id=70398
+
+        Reviewed by Oliver Hunt.
+
+        9% speedup on date-format-xparb, neutral overall.
+        
+        - Removed RopeImpl*.
+        - Removed JSString::m_fiberCount, since this can be deduced from other data.
+        - Renamed a jsString() variant to jsStringFromArguments for clarity.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.order:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed RopeImpl*.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad): Use a NULL m_value to signal rope-iness, instead
+        of testing m_fiberCount, since m_fiberCount is gone now.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::RopeBuilder::expand):
+        (JSC::JSString::visitChildren):
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::resolveRopeSlowCase):
+        (JSC::JSString::outOfMemory): Use a NULL fiber to indicate "last fiber
+        in the vector" instead of testing m_fiberCount, since m_fiberCount is gone now.
+
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::finishCreation):
+        (JSC::RopeBuilder::offsetOfLength):
+        (JSC::RopeBuilder::isRope):
+        (JSC::RopeBuilder::string): Removed m_fiberCount. Renamed
+        jsString => jsStringFromArguments for clarity.
+
+        * runtime/Operations.h:
+        (JSC::jsStringFromArguments): Renamed.
+
+        * runtime/RopeImpl.cpp: Removed.
+        * runtime/RopeImpl.h: Removed.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString): Switched to StringImpl::empty,
+        which is slightly faster.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncConcat): Updated for rename.
+
+        * wtf/text/StringImplBase.h:
+        (WTF::StringImplBase::StringImplBase): Removed the concept of an invalid
+        StringImpl, since this was only used by RopeImpl, which is now gone.
+
 2011-10-19  Rafael Antognolli  <antognolli@profusion.mobi>
 
         [EFL] Fix DSO linkage of jsc_efl.

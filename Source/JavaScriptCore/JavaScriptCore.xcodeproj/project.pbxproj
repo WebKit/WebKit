@@ -336,8 +336,6 @@
 		86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A7135E5E1C00963012 /* SH4Assembler.h */; };
 		86AE6C4D136A11E400963012 /* DFGFPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE6C4B136A11E400963012 /* DFGFPRInfo.h */; };
 		86AE6C4E136A11E400963012 /* DFGGPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE6C4C136A11E400963012 /* DFGGPRInfo.h */; };
-		86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */; };
-		86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AB7117E391E00DF5A90 /* RopeImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE1117E578100DF5A90 /* StringBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE4117E578100DF5A90 /* StringImplBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE2117E578100DF5A90 /* StringImplBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BB09BE138E381B0056702F /* DFGRepatch.cpp */; };
@@ -1115,8 +1113,6 @@
 		86AE64A7135E5E1C00963012 /* SH4Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SH4Assembler.h; sourceTree = "<group>"; };
 		86AE6C4B136A11E400963012 /* DFGFPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFPRInfo.h; path = dfg/DFGFPRInfo.h; sourceTree = "<group>"; };
 		86AE6C4C136A11E400963012 /* DFGGPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGPRInfo.h; path = dfg/DFGGPRInfo.h; sourceTree = "<group>"; };
-		86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RopeImpl.cpp; sourceTree = "<group>"; };
-		86B99AB7117E391E00DF5A90 /* RopeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RopeImpl.h; sourceTree = "<group>"; };
 		86B99AE1117E578100DF5A90 /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuffer.h; path = text/StringBuffer.h; sourceTree = "<group>"; };
 		86B99AE2117E578100DF5A90 /* StringImplBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringImplBase.h; path = text/StringImplBase.h; sourceTree = "<group>"; };
 		86BB09BE138E381B0056702F /* DFGRepatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGRepatch.cpp; path = dfg/DFGRepatch.cpp; sourceTree = "<group>"; };
@@ -2208,8 +2204,6 @@
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
-				86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */,
-				86B99AB7117E391E00DF5A90 /* RopeImpl.h */,
 				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
 				9374D3A7038D9D74008635CE /* ScopeChain.h */,
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
@@ -2780,7 +2774,6 @@
 				86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				BC18C4600E16F5CD00B34460 /* RetainPtr.h in Headers */,
-				86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */,
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
 				BC18C4610E16F5CD00B34460 /* ScopeChain.h in Headers */,
 				969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */,
@@ -3373,7 +3366,6 @@
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */,
-				86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */,
 				76FB9F1112E851960051A2EB /* SHA1.cpp in Sources */,

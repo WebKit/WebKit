@@ -28,7 +28,6 @@
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"
-#include "RopeImpl.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -76,15 +75,15 @@ namespace JSC {
             RopeBuilder(JSGlobalData& globalData)
                 : m_globalData(globalData)
                 , m_jsString(jsStringBuilder(&globalData))
+                , m_index(0)
             {
             }
 
             void append(JSString* jsString)
             {
-                if (m_jsString->m_fiberCount == JSString::s_maxInternalRopeLength)
+                if (m_index == JSString::s_maxInternalRopeLength)
                     expand();
-                m_jsString->m_fibers[m_jsString->m_fiberCount].set(m_globalData, m_jsString, jsString);
-                m_jsString->m_fiberCount += 1;
+                m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
                 m_jsString->m_length += jsString->m_length;
             }
 
@@ -102,19 +101,18 @@ namespace JSC {
 
             JSGlobalData& m_globalData;
             JSString* m_jsString;
+            size_t m_index;
         };
 
     private:
         JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
             : JSCell(globalData, globalData.stringStructure.get())
             , m_value(value)
-            , m_fiberCount(0)
         {
         }
 
         JSString(JSGlobalData& globalData)
             : JSCell(globalData, globalData.stringStructure.get())
-            , m_fiberCount(0)
         {
         }
 
@@ -143,7 +141,6 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length();
-            m_fiberCount = 2;
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
         }
@@ -152,7 +149,6 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length() + s3->length();
-            m_fiberCount = 3;
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
             m_fibers[2].set(globalData, this, s3);
@@ -235,7 +231,6 @@ namespace JSC {
         }
 
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
-        static size_t offsetOfFiberCount() { return OBJECT_OFFSETOF(JSString, m_fiberCount); }
         static size_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_value); }
 
         static const ClassInfo s_info;
@@ -245,7 +240,6 @@ namespace JSC {
     private:
         JSString(VPtrStealingHackType) 
             : JSCell(VPtrStealingHack)
-            , m_fiberCount(0)
         {
         }
 
@@ -264,20 +258,18 @@ namespace JSC {
 
         static const unsigned s_maxInternalRopeLength = 3;
 
-        // A string is represented either by a UString or a RopeImpl.
+        // A string is represented either by a UString or a rope of fibers.
         unsigned m_length;
         mutable UString m_value;
-        mutable unsigned m_fiberCount;
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
 
-        bool isRope() const { return m_fiberCount; }
+        bool isRope() const { return m_value.isNull(); }
         UString& string() { ASSERT(!isRope()); return m_value; }
-        unsigned fiberCount() { return m_fiberCount ? m_fiberCount : 1; }
 
-        friend JSValue jsString(ExecState* exec, JSString* s1, JSString* s2);
-        friend JSValue jsString(ExecState* exec, Register* strings, unsigned count);
-        friend JSValue jsString(ExecState* exec, JSValue thisValue);
-        friend JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length);
+        friend JSValue jsString(ExecState*, JSString*, JSString*);
+        friend JSValue jsString(ExecState*, Register*, unsigned count);
+        friend JSValue jsStringFromArguments(ExecState*, JSValue thisValue);
+        friend JSString* jsSubstring(ExecState*, JSString*, unsigned offset, unsigned length);
     };
 
     JSString* asString(JSValue);
