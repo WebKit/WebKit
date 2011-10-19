@@ -93,4 +93,10 @@ PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL&)
     return 0;
 }
 
+const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
+{
+    notImplemented();
+    return 0;
+}
+
 } // namespace WebKit

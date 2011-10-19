@@ -1,3 +1,15 @@
+2011-10-19  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL][WK2] Added missing dummy interpretKeyEvent function
+        https://bugs.webkit.org/show_bug.cgi?id=70311
+
+        Reviewed by Ryosuke Niwa.
+
+        Added missing dummy interpretKeyEvent function needed to compile WK2.
+
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::interpretKeyEvent):
+
 2011-10-18  Sam Weinig  <sam@webkit.org>
 
         Move uses of C SPI out of WKView.h and into WKViewPrivate.h
