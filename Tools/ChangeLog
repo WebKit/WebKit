@@ -1,3 +1,18 @@
+2011-10-19  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Add a suggest-nominations command to webkit-patch for computing potential committer/reviewer nominations
+        https://bugs.webkit.org/show_bug.cgi?id=62166
+
+        Reviewed by Eric Seidel.
+
+        Included options to control committer/reviewer patch count requirements,
+        an age-limit on patches, and verbose output for more in-depth analysis.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py: Added.
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py: Added.
+
 2011-10-19  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests -2 was crashing due to both "java" and "java/" being listed in Skipped files.

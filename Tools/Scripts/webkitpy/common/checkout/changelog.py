@@ -77,8 +77,15 @@ class ChangeLogEntry(object):
     # e.g. * Source/WebCore/page/EventHandler.cpp: Implement FooBarQuux.
     touched_files_regexp = r'\s*\*\s*(?P<file>.+)\:'
 
+    # e.g. Reviewed by Darin Adler.
+    # (Discard everything after the first period to match more invalid lines.)
+    reviewed_by_regexp = r'Reviewed by (?P<reviewer>.*?)[\.,]?\s*$'
+
     # e.g. == Rolled over to ChangeLog-2011-02-16 ==
     rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
+
+    # e.g. git-svn-id: http://svn.webkit.org/repository/webkit/trunk@96161 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    svn_id_regexp = r'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) '
 
     def __init__(self, contents, committer_list=CommitterList()):
         self._contents = contents
@@ -94,7 +101,7 @@ class ChangeLogEntry(object):
         self._author_name = match.group("name") if match else None
         self._author_email = match.group("email") if match else None
 
-        match = re.search("^\s+Reviewed by (?P<reviewer>.*?)[\.,]?\s*$", self._contents, re.MULTILINE) # Discard everything after the first period
+        match = re.search(self.reviewed_by_regexp, self._contents, re.MULTILINE)
         self._reviewer_text = match.group("reviewer") if match else None
 
         self._reviewer = self._committer_list.committer_by_name(self._reviewer_text)

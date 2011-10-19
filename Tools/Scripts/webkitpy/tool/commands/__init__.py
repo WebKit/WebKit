@@ -18,3 +18,4 @@ from webkitpy.tool.commands.rebaselineserver import RebaselineServer
 from webkitpy.tool.commands.roll import *
 from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
+from webkitpy.tool.commands.suggestnominations import *
