@@ -23,6 +23,7 @@
 #include "RenderSVGResourceSolidColor.h"
 
 #include "GraphicsContext.h"
+#include "RenderSVGShape.h"
 #include "RenderStyle.h"
 #include "SVGRenderSupport.h"
 
@@ -74,16 +75,22 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
     return true;
 }
 
-void RenderSVGResourceSolidColor::postApplyResource(RenderObject*, GraphicsContext*& context, unsigned short resourceMode, const Path* path)
+void RenderSVGResourceSolidColor::postApplyResource(RenderObject*, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
 
-    if (path && !(resourceMode & ApplyToTextMode)) {
-        if (resourceMode & ApplyToFillMode)
+    if (resourceMode & ApplyToFillMode) {
+        if (path)
             context->fillPath(*path);
-        else if (resourceMode & ApplyToStrokeMode)
+        else if (shape)
+            shape->fillShape(context);
+    }
+    if (resourceMode & ApplyToStrokeMode) {
+        if (path)
             context->strokePath(*path);
+        else if (shape)
+            shape->strokeShape(context);
     }
 }
 

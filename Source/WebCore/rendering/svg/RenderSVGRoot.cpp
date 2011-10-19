@@ -253,7 +253,6 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.context->paintingDisabled())
         return;
-
     bool isVisible = style()->visibility() == VISIBLE;
     LayoutPoint borderBoxOriginInContainer = paintOffset + parentOriginToBorderBox();
 

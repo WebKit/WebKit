@@ -1,3 +1,161 @@
+2011-10-19  Renata Hodovan  <reni@webkit.org>
+
+        Add new renderer for SVGRectElement.
+        https://bugs.webkit.org/show_bug.cgi?id=65769
+
+        Reviewed by Dirk Schulze.
+
+        This patch introduces a new common base class called RenderSVGShape which
+        replaces the RenderSVGPath. This new base class has the same purpose
+        as the replaced class and has specialized descendants for common
+        shapes (like Rectangles and Circles), which allows faster painting
+        of these shapes when certain conditions are fulfilled. On some
+        benchmark programs we have seen 5% speedup.
+
+        The biggest motivation of this refactor is taking advantage
+        of faster primitive drawing in the most common and frequent
+        cases. However in some rare cases, like painting rounded
+        rects, we need to fallback to the original code path, which
+        is fully kept in the RenderSVGShape base class. Some other
+        cases, like dashed strokes, can be painted but mouse pointer
+        events cannot be handled by the descendant classes. A different
+        fallback mechanism is used in such cases which redirects
+        only the pointer event handling to the base class.
+
+        Tests: svg/custom/pointer-events-on-rounded-rect.xhtml
+               svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::contains):
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::contains):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGRect):
+        (WebCore::RenderObject::isSVGShape):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/svg/RenderSVGAllInOne.cpp:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::isGraphicsElement):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::RenderSVGPath):
+        (WebCore::RenderSVGPath::inflateWithMarkerBounds): Unite the markerBounds with strokeBoundingBox.
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.cpp: Added.
+        (WebCore::RenderSVGRect::RenderSVGRect):
+        (WebCore::RenderSVGRect::~RenderSVGRect):
+        (WebCore::RenderSVGRect::createShape):
+        (WebCore::RenderSVGRect::objectBoundingBox):
+        (WebCore::RenderSVGRect::strokeBoundingBox):
+        (WebCore::RenderSVGRect::fillShape):
+        (WebCore::RenderSVGRect::strokeShape):
+        (WebCore::RenderSVGRect::shapeDependentStrokeContains):
+        (WebCore::RenderSVGRect::shapeDependentFillContains):
+        * rendering/svg/RenderSVGRect.h: Added.
+        (WebCore::RenderSVGRect::isSVGRect):
+        (WebCore::RenderSVGRect::renderName):
+        (WebCore::RenderSVGRect::isEmpty):
+        * rendering/svg/RenderSVGResource.h:
+        (WebCore::RenderSVGResource::postApplyResource): A new shape argument was added to allow shape specific faster painting.
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceClipper::calculateClipContentRepaintRect):
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::postApplyResource):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::postApplyResource):
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * rendering/svg/RenderSVGShape.cpp: Copied from Source/WebCore/rendering/svg/RenderSVGPath.cpp.
+        (WebCore::RenderSVGShape::RenderSVGShape):
+        (WebCore::RenderSVGShape::~RenderSVGShape):
+        (WebCore::RenderSVGShape::createShape):
+        (WebCore::RenderSVGShape::isEmpty):
+        (WebCore::RenderSVGShape::fillShape):
+        (WebCore::RenderSVGShape::objectBoundingBox):
+        (WebCore::RenderSVGShape::strokeBoundingBox):
+        (WebCore::RenderSVGShape::strokeShape):
+        (WebCore::RenderSVGShape::shapeDependentStrokeContains):
+        The purpose of this virtual function allows decendants to use their own fast checks.
+        (WebCore::RenderSVGShape::shapeDependentFillContains):
+        The purpose of this virtual function allows decendants to use their own fast checks.
+        (WebCore::RenderSVGShape::fillContains):
+        (WebCore::RenderSVGShape::strokeContains):
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGShape::zeroLengthSubpathRect):
+        (WebCore::RenderSVGShape::setupSquareCapPath):
+        (WebCore::RenderSVGShape::setupNonScalingStrokePath):
+        (WebCore::RenderSVGShape::fillAndStrokePath):
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::addFocusRingRects):
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+        (WebCore::RenderSVGShape::calculateMarkerBoundsIfNeeded):
+        (WebCore::RenderSVGShape::updateCachedBoundaries):
+        (WebCore::RenderSVGShape::strokeWidth):
+        * rendering/svg/RenderSVGShape.h: Copied from Source/WebCore/rendering/svg/RenderSVGPath.h.
+        (WebCore::BoundingRectStrokeStyleApplier::BoundingRectStrokeStyleApplier):
+        (WebCore::BoundingRectStrokeStyleApplier::strokeStyle):
+        (WebCore::RenderSVGShape::setNeedsShapeUpdate):
+        (WebCore::RenderSVGShape::setNeedsBoundariesUpdate):
+        (WebCore::RenderSVGShape::setNeedsTransformUpdate):
+        (WebCore::RenderSVGShape::isPaintingFallback):
+        (WebCore::RenderSVGShape::path):
+        (WebCore::RenderSVGShape::setIsPaintingFallback):
+        (WebCore::RenderSVGShape::setStrokeAndMarkerBoundingBox):
+        (WebCore::RenderSVGShape::hasPath):
+        (WebCore::RenderSVGShape::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGShape::localToParentTransform):
+        (WebCore::RenderSVGShape::localTransform):
+        (WebCore::RenderSVGShape::isSVGShape):
+        (WebCore::RenderSVGShape::renderName):
+        (WebCore::RenderSVGShape::isRoundedRect):
+        (WebCore::RenderSVGShape::inflateWithMarkerBounds):
+        (WebCore::toRenderSVGShape):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::releasePaintingResource):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::finishRenderSVGContent):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::operator<<):
+        (WebCore::write):
+        * rendering/svg/SVGRenderTreeAsText.h:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathSegListChanged):
+        (WebCore::SVGPathElement::createRenderer):
+        * svg/SVGPathElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        (WebCore::SVGRectElement::createRenderer):
+        * svg/SVGRectElement.h:
+
 2011-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: buttons of number type <input> controls are not fully accessible

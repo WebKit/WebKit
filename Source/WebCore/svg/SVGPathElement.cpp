@@ -269,7 +269,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         }
 
         if (renderer)
-            renderer->setNeedsPathUpdate();
+            renderer->setNeedsShapeUpdate();
     }
 
     if (renderer)
@@ -355,8 +355,14 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
     if (!renderer)
         return;
 
-    renderer->setNeedsPathUpdate();
+    renderer->setNeedsShapeUpdate();
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+}
+
+RenderObject* SVGPathElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    // By default, any subclass is expected to do path-based drawing
+    return new (arena) RenderSVGPath(this);
 }
 
 }

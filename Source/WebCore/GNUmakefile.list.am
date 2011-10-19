@@ -3260,6 +3260,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/RenderSVGModelObject.h \
 	Source/WebCore/rendering/svg/RenderSVGPath.cpp \
 	Source/WebCore/rendering/svg/RenderSVGPath.h \
+	Source/WebCore/rendering/svg/RenderSVGRect.cpp \
+	Source/WebCore/rendering/svg/RenderSVGRect.h \
 	Source/WebCore/rendering/svg/RenderSVGResourceClipper.cpp \
 	Source/WebCore/rendering/svg/RenderSVGResourceClipper.h \
 	Source/WebCore/rendering/svg/RenderSVGResourceContainer.cpp \
@@ -3288,6 +3290,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/RenderSVGRoot.h \
 	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.cpp \
 	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGShape.cpp \
+	Source/WebCore/rendering/svg/RenderSVGShape.h \
 	Source/WebCore/rendering/svg/RenderSVGTSpan.cpp \
 	Source/WebCore/rendering/svg/RenderSVGTSpan.h \
 	Source/WebCore/rendering/svg/RenderSVGText.cpp \

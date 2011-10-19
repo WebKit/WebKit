@@ -259,7 +259,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path*)
+void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path*, const RenderSVGShape*)
 {
     ASSERT(object);
     ASSERT(context);
@@ -293,7 +293,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
     }
 
     FilterEffect* lastEffect = filterData->builder->lastEffect();
-    
+
     if (lastEffect && !filterData->boundaries.isEmpty() && !lastEffect->filterPrimitiveSubregion().isEmpty()) {
         // This is the real filtering of the object. It just needs to be called on the
         // initial filtering process. We just take the stored filter result on a

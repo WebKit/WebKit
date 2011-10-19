@@ -21,6 +21,7 @@
 #define RenderSVGResource_h
 
 #if ENABLE(SVG)
+#include "RenderSVGShape.h"
 #include "RenderStyleConstants.h"
 #include "SVGDocumentExtensions.h"
 
@@ -61,7 +62,7 @@ public:
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true) = 0;
 
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) = 0;
-    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short, const Path*) { }
+    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short, const Path*, const RenderSVGShape*) { }
     virtual FloatRect resourceBoundingBox(RenderObject*) = 0;
 
     virtual RenderSVGResourceType resourceType() const = 0;

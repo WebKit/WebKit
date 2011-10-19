@@ -25,12 +25,15 @@
 
 #include "Attribute.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGRect.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
 namespace WebCore {
+
+class RenderSVGRect;
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGRectElement, SVGNames::xAttr, X, x)
@@ -137,12 +140,12 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGRect* renderer = static_cast<RenderSVGRect*>(this->renderer());
     if (!renderer)
         return;
 
     if (isLengthAttribute) {
-        renderer->setNeedsPathUpdate();
+        renderer->setNeedsShapeUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
@@ -196,6 +199,11 @@ bool SVGRectElement::selfHasRelativeLengths() const
         || height().isRelative()
         || rx().isRelative()
         || ry().isRelative();
+}
+
+RenderObject* SVGRectElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGRect(this);
 }
 
 }

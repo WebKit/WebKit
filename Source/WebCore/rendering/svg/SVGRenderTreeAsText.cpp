@@ -55,6 +55,7 @@
 #include "RenderSVGResourceRadialGradient.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
 #include "SVGCircleElement.h"
@@ -289,18 +290,18 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
         writeNameValuePair(ts, "transform", object.localTransform());
     writeIfNotDefault(ts, "image rendering", style->imageRendering(), RenderStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity", style->opacity(), RenderStyle::initialOpacity());
-    if (object.isSVGPath()) {
-        const RenderSVGPath& path = static_cast<const RenderSVGPath&>(object);
-        ASSERT(path.node());
-        ASSERT(path.node()->isSVGElement());
+    if (object.isSVGShape()) {
+        const RenderSVGShape& shape = static_cast<const RenderSVGShape&>(object);
+        ASSERT(shape.node());
+        ASSERT(shape.node()->isSVGElement());
 
         Color fallbackColor;
-        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGPath*>(&path), path.style(), fallbackColor)) {
+        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape*>(&shape), shape.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
 
-            SVGElement* element = static_cast<SVGElement*>(path.node());
+            SVGElement* element = static_cast<SVGElement*>(shape.node());
             double dashOffset = svgStyle->strokeDashOffset().value(element);
             double strokeWidth = svgStyle->strokeWidth().value(element);
             const Vector<SVGLength>& dashes = svgStyle->strokeDashArray();
@@ -322,7 +323,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             ts << "}]";
         }
 
-        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGPath*>(&path), path.style(), fallbackColor)) {
+        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape*>(&shape), shape.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [fill={" << s;
             writeSVGPaintingResource(ts, fillPaintingResource);
@@ -346,12 +347,12 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& obj
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderSVGPath& path)
+static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
 {
-    writePositionAndStyle(ts, path);
+    writePositionAndStyle(ts, shape);
 
-    ASSERT(path.node()->isSVGElement());
-    SVGElement* svgElement = static_cast<SVGElement*>(path.node());
+    ASSERT(shape.node()->isSVGElement());
+    SVGElement* svgElement = static_cast<SVGElement*>(shape.node());
 
     if (svgElement->hasTagName(SVGNames::rectTag)) {
         SVGRectElement* element = static_cast<SVGRectElement*>(svgElement);
@@ -653,11 +654,11 @@ void writeSVGImage(TextStream& ts, const RenderSVGImage& image, int indent)
     writeResources(ts, image, indent);
 }
 
-void write(TextStream& ts, const RenderSVGPath& path, int indent)
+void write(TextStream& ts, const RenderSVGShape& shape, int indent)
 {
-    writeStandardPrefix(ts, path, indent);
-    ts << path << "\n";
-    writeResources(ts, path, indent);
+    writeStandardPrefix(ts, shape, indent);
+    ts << shape << "\n";
+    writeResources(ts, shape, indent);
 }
 
 void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, int indent)

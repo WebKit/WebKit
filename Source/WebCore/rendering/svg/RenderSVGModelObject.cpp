@@ -154,7 +154,7 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 // image, line, path, polygon, polyline, rect, text and use.
 static bool isGraphicsElement(RenderObject* renderer)
 {
-    return renderer->isSVGPath() || renderer->isSVGText() || renderer->isSVGImage() || renderer->isSVGShadowTreeRootContainer();
+    return renderer->isSVGShape() || renderer->isSVGText() || renderer->isSVGImage() || renderer->isSVGShadowTreeRootContainer();
 }
 
 bool RenderSVGModelObject::checkIntersection(RenderObject* renderer, const FloatRect& rect)

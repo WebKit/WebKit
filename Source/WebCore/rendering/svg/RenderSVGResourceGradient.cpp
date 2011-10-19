@@ -27,6 +27,7 @@
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
+#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "SVGImageBufferTools.h"
 #include "SVGRenderSupport.h"
@@ -231,7 +232,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path* path)
+void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
@@ -259,11 +260,19 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
 #else
         UNUSED_PARAM(object);
 #endif
-    } else if (path) {
-        if (resourceMode & ApplyToFillMode)
-            context->fillPath(*path);
-        else if (resourceMode & ApplyToStrokeMode)
-            context->strokePath(*path);
+    } else {
+        if (resourceMode & ApplyToFillMode) {
+            if (path)
+                context->fillPath(*path);
+            else if (shape)
+                shape->fillShape(context);
+        }
+        if (resourceMode & ApplyToStrokeMode) {
+            if (path)
+                context->strokePath(*path);
+            else if (shape)
+                shape->strokeShape(context);
+        }
     }
 
     context->restore();

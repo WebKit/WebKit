@@ -1,3 +1,17 @@
+2011-10-19  Renata Hodovan  <reni@webkit.org>
+
+        Add new renderer for SVGRectElement.
+        https://bugs.webkit.org/show_bug.cgi?id=65769
+
+        Add new tests to check the new shape based rendering mechanism of SVGRectElement.
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/pointer-events-on-rounded-rect-expected.txt: Added.
+        * svg/custom/pointer-events-on-rounded-rect.xhtml: Added.
+        * svg/custom/pointer-events-with-linecaps-and-miterlimits-expected.txt: Added.
+        * svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml: Added.
+
 2011-10-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         inspector/cookie-parser.html is a flaky crash
@@ -3240,7 +3254,8 @@
         * platform/mac/fast/repaint/region-painting-via-layout-expected.png: Added.
         * platform/mac/fast/repaint/region-painting-via-layout-expected.txt: Added.
 
-2011-10-13  Renata Hodovan  <reni@webkit.org>
+2011-10-13  Renata Hodovan  <
+}5reni@webkit.org>
 
         FEComponentTransfer element doesn't support dynamic invalidation
         https://bugs.webkit.org/show_bug.cgi?id=69747

@@ -188,16 +188,22 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     return true;
 }
 
-void RenderSVGResourcePattern::postApplyResource(RenderObject*, GraphicsContext*& context, unsigned short resourceMode, const Path* path)
+void RenderSVGResourcePattern::postApplyResource(RenderObject*, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
 
-    if (path && !(resourceMode & ApplyToTextMode)) {
-        if (resourceMode & ApplyToFillMode)
+    if (resourceMode & ApplyToFillMode) {
+        if (path)
             context->fillPath(*path);
-        else if (resourceMode & ApplyToStrokeMode)
+        else if (shape)
+            shape->fillShape(context);
+    }
+    if (resourceMode & ApplyToStrokeMode) {
+        if (path)
             context->strokePath(*path);
+        else if (shape)
+            shape->strokeShape(context);
     }
 
     context->restore();
