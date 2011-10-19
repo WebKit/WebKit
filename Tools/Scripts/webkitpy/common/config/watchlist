@@ -3,7 +3,7 @@
 # When editing this file, please run the following command to make sure you
 # haven't introduced any syntax errors:
 #
-# ./Tools/Scripts/test-webkitpy webkitpy.common.watchlist
+# ./Tools/Scripts/check-webkit-style
 #
 # If you want to test your regular expressions, you can edit various files and
 # then try following command:
@@ -13,21 +13,21 @@
 {
     "DEFINITIONS": {
         "ChromiumGraphics": {
-            "filename": r"Source/WebCore/platform/graphics/chromium/.*",
+            "filename": r"Source/WebCore/platform/graphics/chromium/",
         },
         "ChromiumPublicApi": {
-            "filename": r"Source/WebKit/chromium/public/.*"
+            "filename": r"Source/WebKit/chromium/public/"
         },
         "WebIDL": {
             "filename": r"Source/WebCore/(?!inspector).*\.idl"
         },
         "ThreadingFiles": {
-            "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\..*"
-                        r"|Source/JavaScriptCore/wtf/ThreadSafeRefCounted\..*"
-                        r"|Source/JavaScriptCore/wtf/ThreadingPrimitives\..*"
-                        r"|Source/JavaScriptCore/wtf/Threading\..*"
-                        r"|Source/WebCore/dom/CrossThreadTask\..*"
-                        r"|Source/WebCore/platform/CrossThreadCopier\..*",
+            "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\."
+                        r"|Source/JavaScriptCore/wtf/ThreadSafeRefCounted\."
+                        r"|Source/JavaScriptCore/wtf/ThreadingPrimitives\."
+                        r"|Source/JavaScriptCore/wtf/Threading\."
+                        r"|Source/WebCore/dom/CrossThreadTask\."
+                        r"|Source/WebCore/platform/CrossThreadCopier\.",
         },
         "ThreadingUsage": {
             # The intention of this regex is to detect places where people are using common threading mechanisms,
@@ -37,13 +37,13 @@
                     r"|createCallbackTask|crossThreadString|deprecatedTurnOffVerifier|threadsafeCopy)(?!\.(h|cpp))",
         },
         "WatchListScript": {
-            "filename": r"Tools/Scripts/webkitpy/common/watchlist/.*",
+            "filename": r"Tools/Scripts/webkitpy/common/watchlist/",
         },
         "webkitpy": {
-            "filename": r"Tools/Scripts/webkitpy/.*",
+            "filename": r"Tools/Scripts/webkitpy/",
         },
         "TestFailures": {
-            "filename": r"Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/.*",
+            "filename": r"Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/",
         },
         "SecurityCritical": {
             "more": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
@@ -51,19 +51,19 @@
             "filename": r"XSS|[Ss]ecurity",
         },
         "V8Bindings": {
-            "filename": r"Source/WebCore/bindings/v8/.*",
+            "filename": r"Source/WebCore/bindings/v8/",
         },
         "BindingsScripts": {
-            "filename": r"Source/WebCore/bindings/scripts/.*",
+            "filename": r"Source/WebCore/bindings/scripts/",
         },
         "FrameLoader": {
             "more": r"FrameLoader\.(cpp|h)",
         },
         "Loader": {
-            "filename": r"Source/WebCore/loader/.*",
+            "filename": r"Source/WebCore/loader/",
         },
         "StyleChecker": {
-            "filename": r"Tools/Scripts/webkitpy/style/.*",
+            "filename": r"Tools/Scripts/webkitpy/style/",
         },
     },
     "CC_RULES": {
@@ -81,7 +81,7 @@
         "Loader": [ "japhet@chromium.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org" ],
-        "TestFailures": [ "dglazkov@chromium.org", "abarth@webkit.org" ],
+        "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "

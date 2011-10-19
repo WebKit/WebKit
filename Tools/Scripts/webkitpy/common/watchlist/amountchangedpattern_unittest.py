@@ -30,7 +30,10 @@
 '''Unit tests for amountchangedpattern.py.'''
 
 
+import re
 import unittest
+
+
 from webkitpy.common.watchlist.amountchangedpattern import AmountChangedPattern
 
 
@@ -47,18 +50,21 @@ class AmountChangedPatternTest(unittest.TestCase):
                   (0, 3, 'both'),
                   )
 
+    def run_amount_changed_pattern_match(self, pattern, index_for_zero_value):
+        return AmountChangedPattern(re.compile(pattern), index_for_zero_value).match(None, self._DIFF_FILE)
+
     def test_added_lines(self):
-        self.assertTrue(AmountChangedPattern('hi', 0).match(None, self._DIFF_FILE))
-        self.assertTrue(AmountChangedPattern('hi hi', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('other', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('both', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('bye', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('MatchesNothing', 0).match(None, self._DIFF_FILE))
+        self.assertTrue(self.run_amount_changed_pattern_match('hi', 0))
+        self.assertTrue(self.run_amount_changed_pattern_match('hi hi', 0))
+        self.assertFalse(self.run_amount_changed_pattern_match('other', 0))
+        self.assertFalse(self.run_amount_changed_pattern_match('both', 0))
+        self.assertFalse(self.run_amount_changed_pattern_match('bye', 0))
+        self.assertFalse(self.run_amount_changed_pattern_match('MatchesNothing', 0))
 
     def test_removed_lines(self):
-        self.assertFalse(AmountChangedPattern('hi', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('hi hi', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('other', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('both', 1).match(None, self._DIFF_FILE))
-        self.assertTrue(AmountChangedPattern('bye', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(AmountChangedPattern('MatchesNothing', 1).match(None, self._DIFF_FILE))
+        self.assertFalse(self.run_amount_changed_pattern_match('hi', 1))
+        self.assertFalse(self.run_amount_changed_pattern_match('hi hi', 1))
+        self.assertFalse(self.run_amount_changed_pattern_match('other', 1))
+        self.assertFalse(self.run_amount_changed_pattern_match('both', 1))
+        self.assertTrue(self.run_amount_changed_pattern_match('bye', 1))
+        self.assertFalse(self.run_amount_changed_pattern_match('MatchesNothing', 1))

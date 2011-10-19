@@ -1,5 +1,26 @@
 2011-10-19  David Levin  <levin@chromium.org>
 
+        watchlist: Should be more robust to bad regex.
+        https://bugs.webkit.org/show_bug.cgi?id=69486
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/watchlist: Change the instructions due to
+          watchlist being checked by check-webkit-style (bug 69487) and remove the .* from file
+          patterns since they are no longer anchored on the right hand side.
+        * Scripts/webkitpy/common/watchlist/amountchangedpattern.py: Change *pattern to take a compiled regex directly.
+        * Scripts/webkitpy/common/watchlist/amountchangedpattern_unittest.py: Ditto.
+        * Scripts/webkitpy/common/watchlist/changedlinepattern.py: Ditto.
+        * Scripts/webkitpy/common/watchlist/changedlinepattern_unittest.py: Ditto.
+        * Scripts/webkitpy/common/watchlist/filenamepattern.py: Ditto.
+        * Scripts/webkitpy/common/watchlist/filenamepattern_unittest.py: Ditto and change a test now that
+        filenames are no longer anchored on the right hand side.
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py: Catch regex errors and log them as errors.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py: Add some tests to verify that bad regexes
+        don't kill everything.
+
+2011-10-19  David Levin  <levin@chromium.org>
+
         watchlist: Add a stylecheck to do validity checks for the watchlist config.
         https://bugs.webkit.org/show_bug.cgi?id=69487
 

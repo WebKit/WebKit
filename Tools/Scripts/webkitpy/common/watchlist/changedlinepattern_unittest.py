@@ -28,7 +28,10 @@
 
 '''Unit tests for changedlinepattern.py.'''
 
+import re
 import unittest
+
+
 from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 
 
@@ -45,18 +48,21 @@ class ChangedLinePatternTest(unittest.TestCase):
                   (0, 3, 'both'),
                   )
 
+    def run_changed_line_pattern_match(self, pattern, index_for_zero_value):
+        return ChangedLinePattern(re.compile(pattern), index_for_zero_value).match(None, self._DIFF_FILE)
+
     def test_added_lines(self):
-        self.assertTrue(ChangedLinePattern('hi', 0).match(None, self._DIFF_FILE))
-        self.assertTrue(ChangedLinePattern('h.', 0).match(None, self._DIFF_FILE))
-        self.assertTrue(ChangedLinePattern('both', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(ChangedLinePattern('bye', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(ChangedLinePattern('y', 0).match(None, self._DIFF_FILE))
-        self.assertFalse(ChangedLinePattern('other', 0).match(None, self._DIFF_FILE))
+        self.assertTrue(self.run_changed_line_pattern_match('hi', 0))
+        self.assertTrue(self.run_changed_line_pattern_match('h.', 0))
+        self.assertTrue(self.run_changed_line_pattern_match('both', 0))
+        self.assertFalse(self.run_changed_line_pattern_match('bye', 0))
+        self.assertFalse(self.run_changed_line_pattern_match('y', 0))
+        self.assertFalse(self.run_changed_line_pattern_match('other', 0))
 
     def test_removed_lines(self):
-        self.assertFalse(ChangedLinePattern('hi', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(ChangedLinePattern('h.', 1).match(None, self._DIFF_FILE))
-        self.assertTrue(ChangedLinePattern('both', 1).match(None, self._DIFF_FILE))
-        self.assertTrue(ChangedLinePattern('bye', 1).match(None, self._DIFF_FILE))
-        self.assertTrue(ChangedLinePattern('y', 1).match(None, self._DIFF_FILE))
-        self.assertFalse(ChangedLinePattern('other', 1).match(None, self._DIFF_FILE))
+        self.assertFalse(self.run_changed_line_pattern_match('hi', 1))
+        self.assertFalse(self.run_changed_line_pattern_match('h.', 1))
+        self.assertTrue(self.run_changed_line_pattern_match('both', 1))
+        self.assertTrue(self.run_changed_line_pattern_match('bye', 1))
+        self.assertTrue(self.run_changed_line_pattern_match('y', 1))
+        self.assertFalse(self.run_changed_line_pattern_match('other', 1))

@@ -67,6 +67,40 @@ class WatchListParserTest(webkitunittest.TestCase):
         OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
                                        expected_logs='Invalid character "|" in definition "WatchList1|A".\n')
 
+    def test_bad_filename_regex(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"*",'
+            '            "more": r"RefCounted",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": ["levin@chromium.org"],'
+            '     },'
+            '}')
+
+        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
+                                       expected_logs='The regex "*" is invalid due to "nothing to repeat".\n')
+
+    def test_bad_more_regex(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"aFileName\\.cpp",'
+            '            "more": r"*",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": ["levin@chromium.org"],'
+            '     },'
+            '}')
+
+        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
+                                       expected_logs='The regex "*" is invalid due to "nothing to repeat".\n')
+
     def test_bad_match_type(self):
         watch_list = (
             '{'

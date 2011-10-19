@@ -26,22 +26,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import unittest
+
+
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 
 
 class FileNamePatternTest(unittest.TestCase):
     def test_filename_pattern_literal(self):
-        filename_pattern = FilenamePattern(r'MyFileName\.cpp')
+        filename_pattern = FilenamePattern(re.compile(r'MyFileName\.cpp'))
 
         # Note the follow filenames are not regex.
         self.assertTrue(filename_pattern.match('MyFileName.cpp', None))
-        self.assertFalse(filename_pattern.match('MyFileName.cppa', None))
+        self.assertTrue(filename_pattern.match('MyFileName.cppa', None))
         self.assertFalse(filename_pattern.match('aMyFileName.cpp', None))
         self.assertFalse(filename_pattern.match('MyFileNamebcpp', None))
 
     def test_filename_pattern_substring(self):
-        filename_pattern = FilenamePattern(r'.*\\MyFileName\..*')
+        filename_pattern = FilenamePattern(re.compile(r'.*\\MyFileName\..*'))
 
         # Note the follow filenames are not regex.
         self.assertTrue(filename_pattern.match(r'\\MyFileName.cpp', None))

@@ -57,10 +57,10 @@ class WatchListParser(object):
         }
         self._definition_pattern_parsers = {
             'filename': FilenamePattern,
-            'in_added_lines': (lambda regex: ChangedLinePattern(regex, 0)),
-            'in_deleted_lines': (lambda regex: ChangedLinePattern(regex, 1)),
-            'less': (lambda regex: AmountChangedPattern(regex, 1)),
-            'more': (lambda regex: AmountChangedPattern(regex, 0)),
+            'in_added_lines': (lambda compiled_regex: ChangedLinePattern(compiled_regex, 0)),
+            'in_deleted_lines': (lambda compiled_regex: ChangedLinePattern(compiled_regex, 1)),
+            'less': (lambda compiled_regex: AmountChangedPattern(compiled_regex, 1)),
+            'more': (lambda compiled_regex: AmountChangedPattern(compiled_regex, 0)),
         }
 
     def parse(self, watch_list_contents):
@@ -109,7 +109,13 @@ class WatchListParser(object):
                                     % (pattern_type, name))
                     continue
 
-                pattern = pattern_parser(definition[pattern_type])
+                try:
+                    compiled_regex = re.compile(definition[pattern_type])
+                except Exception, e:
+                    self._log_error('The regex "%s" is invalid due to "%s".' % (definition[pattern_type], str(e)))
+                    continue
+
+                pattern = pattern_parser(compiled_regex)
                 definitions[name].append(pattern)
             if not definitions[name]:
                 self._log_error('The definition "%s" has no patterns, so it should be deleted.' % name)

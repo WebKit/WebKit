@@ -26,12 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
-
 
 class ChangedLinePattern:
-    def __init__(self, regex, index_for_zero_value):
-        self._regex = re.compile(regex)
+    def __init__(self, compile_regex, index_for_zero_value):
+        self._regex = compile_regex
         self._index_for_zero_value = index_for_zero_value
 
     def match(self, path, diff_file):

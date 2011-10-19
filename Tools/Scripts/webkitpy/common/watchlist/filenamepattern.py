@@ -26,12 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
-
 
 class FilenamePattern:
-    def __init__(self, regex):
-        self._regex = re.compile(regex + '$')
+    def __init__(self, compiled_regex):
+        self._regex = compiled_regex
 
     def match(self, path, diff_file):
         return self._regex.match(path)
