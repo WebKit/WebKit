@@ -74,8 +74,6 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void insertedIntoDocument();
-
-    void createLinkDecl();
     
     virtual bool isURLAttribute(Attribute*) const;
     
@@ -91,10 +89,6 @@ private:
     virtual int scrollWidth();
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-    
-    virtual void didMoveToNewOwnerDocument();
-
-    RefPtr<CSSMutableStyleDeclaration> m_linkDecl;
 };
 
 } //namespace

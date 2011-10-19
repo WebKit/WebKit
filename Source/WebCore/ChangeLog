@@ -1,3 +1,23 @@
+2011-10-19  Andreas Kling  <kling@webkit.org>
+
+        HTMLBodyElement: Simplify link/alink/vlink attribute parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=70429
+
+        Reviewed by Antonio Gomes.
+
+        Instead of carrying around a CSSMutableStyleDeclaration with the body element,
+        just use CSSParser::parseColor() to parse the three link color attributes.
+
+        * html/HTMLBodyElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::~HTMLBodyElement):
+
+            Remove HTMLBodyElement::m_linkDecl and all the voodoo that went along with it.
+
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+
+            Use CSSParser directly to parse the color values for {link,alink,vlink}Attr.
+
 2011-10-18  Oliver Hunt  <oliver@apple.com>
 
         Support CanvasPixelArray in the DFG
