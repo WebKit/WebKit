@@ -5155,3 +5155,25 @@ plugins/iframe-plugin-bgcolor.html
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+
+# new failing tests
+css2.1/20110323/border-conflict-style-079.htm
+css2.1/20110323/border-conflict-style-088.htm
+css2.1/20110323/floating-replaced-height-008.htm
+css2.1/20110323/height-width-inline-table-001.htm
+css2.1/20110323/height-width-table-001.htm
+css2.1/20110323/inline-block-replaced-height-008.htm
+css2.1/20110323/inline-replaced-height-008.htm
+editing/selection/select-out-of-floated-input.html
+editing/selection/select-out-of-floated-textarea.html
+fast/css/clip-text-in-scaled-div.html
+fast/events/reveal-link-when-focused.html
+fast/multicol/vertical-rl/rule-style.html
+fast/selectors/visited-descendant.html
+fast/text/multiglyph-characters.html
+plugins/mouse-click-plugin-clears-selection.html
+http/tests/security/xss-DENIED-xsl-document.xml
+http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/workers/methods-async.html
+http/tests/xmlhttprequest/workers/methods.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html

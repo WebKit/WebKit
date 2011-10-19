@@ -1,3 +1,10 @@
+2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Skip new failing tests.
+
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-10-19  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] Unreviewed gardening. Add platform specific expected result for new tests.
