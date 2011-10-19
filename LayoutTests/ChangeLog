@@ -1,5 +1,17 @@
 2011-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        fix baseline for fast/history/history-back-twice-with-subframes-assert.html
+        https://bugs.webkit.org/show_bug.cgi?id=70393
+
+        Reviewed by James Robinson.
+
+        the baseline added in r97821 appears to have had a couple of
+        extra lines in it.
+
+        * fast/history/history-back-twice-with-subframes-assert-expected.txt:
+
+2011-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         Update chromium leopard cg baseline.
 
         Unreviewed, baseline update.
