@@ -1,3 +1,15 @@
+2011-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Incorrect pagination in flipped-blocks writing modes with border/padding before
+        https://bugs.webkit.org/show_bug.cgi?id=70444
+
+        Reviewed by Darin Adler.
+
+        Test: fast/multicol/flipped-blocks-border-after.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Account for flipped blocks when adjusting the page offset.
+
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70396

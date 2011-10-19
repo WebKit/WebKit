@@ -1,3 +1,14 @@
+2011-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Incorrect pagination in flipped-blocks writing modes with border/padding before
+        https://bugs.webkit.org/show_bug.cgi?id=70444
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/flipped-blocks-border-after-expected.png: Added.
+        * fast/multicol/flipped-blocks-border-after-expected.txt: Added.
+        * fast/multicol/flipped-blocks-border-after.html: Added.
+
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70396
