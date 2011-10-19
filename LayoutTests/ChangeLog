@@ -1,3 +1,11 @@
+2011-10-19  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Test expectation change.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-18  Kentaro Hara  <haraken@chromium.org>
 
         Generate a SharedWorker constructor of V8 using [Constructor] IDL
