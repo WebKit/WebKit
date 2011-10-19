@@ -1,6 +1,5 @@
 <html>
 <head>
-<link rel="stylesheet" href="resources/js-test-style.css">
 <script src="resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -21,7 +20,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '19');
+shouldBe("e.line", '18');
 
 e = undefined;
 try {
@@ -31,7 +30,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '29');
+shouldBe("e.line", '28');
 
 e = undefined;
 try {
@@ -41,7 +40,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '39');
+shouldBe("e.line", '38');
 
 e = undefined;
 try {
@@ -51,7 +50,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '49');
+shouldBe("e.line", '48');
 
 e = undefined;
 // Raises an exception inside a function to check that its line number
@@ -62,7 +61,7 @@ try {
     e = exception;
 }
 shouldBe("typeof e.sourceURL", '"string"');
-shouldBe("e.line", '12');
+shouldBe("e.line", '11');
 
 var successfullyParsed = true;
 </script>

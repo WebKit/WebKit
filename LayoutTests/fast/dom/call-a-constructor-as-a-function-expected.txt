@@ -1,5 +1,8 @@
 This tests if TypeError is thrown or not when we call a constructor as a normal function.
 
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS ArrayBuffer() threw exception TypeError: '[object ArrayBufferConstructor]' is not a function (evaluating 'ArrayBuffer()').
 SKIP AudioContext is not implemented.
 PASS FormData() threw exception TypeError: '[object FormDataConstructor]' is not a function (evaluating 'FormData()').

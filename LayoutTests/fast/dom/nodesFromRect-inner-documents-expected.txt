@@ -1,4 +1,5 @@
-A   PASS successfullyParsed is true
+A  
+PASS successfullyParsed is true
 
 TEST COMPLETE
 PASS All correct nodes found for rect

@@ -1,5 +1,8 @@
 
+
+
 This tests the behavior of a cancel button in search input forms.
+
 
 Test on the input form with disabled=false and readonly=false
 Click the cancel button:

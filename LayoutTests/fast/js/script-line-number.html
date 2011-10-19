@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<link rel="stylesheet" href="resources/js-test-style.css">
 <script src="resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -11,12 +10,12 @@
 document.write("\n\n\n");
 </script>
 
-<script src="resources/script-line-number.js" onload="try { nonExistentFunctionOnLine14(); } catch (e) { assertErrorOnLine(e, 14); }"></script>
+<script src="resources/script-line-number.js" onload="try { nonExistentFunctionOnLine13(); } catch (e) { assertErrorOnLine(e, 13); }"></script>
 <script>
 try {
-    nonExistentFunctionOnLine17();
+    nonExistentFunctionOnLine16();
 } catch (e) {
-    assertErrorOnLine(e, 17);
+    assertErrorOnLine(e, 16);
 }
 </script>
 <script src="resources/js-test-post.js"></script>

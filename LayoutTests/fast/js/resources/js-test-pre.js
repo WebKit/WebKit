@@ -47,6 +47,50 @@ var description, debug;
         getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
         span.innerHTML = msg + '<br />';
     };
+
+    function findPath() {
+        var scripts = document.getElementsByTagName("script");
+        var regExp = /^(.*resources\/)js-test-pre\.js/;
+        for (var i = scripts.length - 1; i >= 0; i--) {
+            var src = scripts[i].getAttribute("src");
+            var match;
+            regExp.lastIndex = 0;
+            if (src && (match = regExp.exec(src)))
+                return match[1];
+        }
+        return null;
+    }
+
+    // FIXME: No test should depend on this stylesheet.
+    function hasStyleSheet() {
+        var links = document.getElementsByTagName("link");
+        var regExp = /resources\/js-test-style.css/;
+        for (var i = 0; i < links.length; i++) {
+            var link = links[i];
+            if (link.rel.toLowerCase() === "stylesheet" && regExp.test(link.href))
+                return true;
+        }
+        return false;
+    }
+
+    function insertStyleSheet() {
+        if (hasStyleSheet())
+            return;
+
+        // FIXME: Once all tests have been updated to not depend on this link element
+        // we should remove this and replace with a simple style element instead.
+        var path = findPath();
+        if (!path == null)
+            return;
+
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = path + "js-test-style.css";
+        document.documentElement.appendChild(link);
+    }
+    
+    insertStyleSheet();
+
 })();
 
 function descriptionQuiet(msg) { description(msg, true); }

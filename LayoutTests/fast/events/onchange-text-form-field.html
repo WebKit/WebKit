@@ -63,31 +63,31 @@
     shouldBe("simulateTextEntry(elements[0], '', BEFORE);", "false");
     shouldBe("simulateTextEntry(elements[0], 'fo', BEFORE);", "true");
     shouldBe("simulateTextEntry(elements[0], 'o');", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE); ", "false");
-    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE); ", "false");
-    shouldBe("simulateTextEntry(elements[0], ' '); ", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE); ", "true");
-    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE); ", "false");
-    shouldBe("setTextValue(elements[0], 'foo'); ", "false");
+    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE);", "false");
+    shouldBe("simulateTextEntry(elements[0], 'foo', BEFORE);", "false");
+    shouldBe("simulateTextEntry(elements[0], ' ');", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE);", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE);", "false");
+    shouldBe("setTextValue(elements[0], 'foo');", "false");
     shouldBe("simulateTextEntry(elements[0], 'foo bar', BEFORE);", "true");
 
     shouldBe("simulateTextEntry(elements[1], '', BEFORE);", "true");
     shouldBe("simulateTextEntry(elements[1], 'fo', BEFORE);", "true");
     shouldBe("simulateTextEntry(elements[1], 'o');", "true");
-    shouldBe("simulateTextEntry(elements[1], 'foo', BEFORE); ", "false");
+    shouldBe("simulateTextEntry(elements[1], 'foo', BEFORE);", "false");
 
     shouldBe("simulateTextEntry(elements[2], 'wee', AFTER);", "false");
     shouldBe("simulateTextEntry(elements[2], 'foo', BEFORE | AFTER);", "false");
     shouldBe("simulateTextEntry(elements[2], 'fo', BEFORE);", "true");
     shouldBe("simulateTextEntry(elements[2], 'o');", "true");
-    shouldBe("simulateTextEntry(elements[2], 'foo', BEFORE); ", "false");
+    shouldBe("simulateTextEntry(elements[2], 'foo', BEFORE);", "false");
 
     shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE);", "false");
     shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE);", "false");
-    shouldBe("setTextValue(elements[3], ''); ", "false");
+    shouldBe("setTextValue(elements[3], '');", "false");
     shouldBe("simulateTextEntry(elements[3], 'fo', BEFORE);", "true");
     shouldBe("simulateTextEntry(elements[3], 'o');", "true");
-    shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE); ", "false");
+    shouldBe("simulateTextEntry(elements[3], 'foo', BEFORE);", "false");
 
     shouldBe("simulateTextEntry(elements[4], 'foo', AFTER);", "false");
     shouldBe("simulateTextEntry(elements[4], 'foo');", "true");

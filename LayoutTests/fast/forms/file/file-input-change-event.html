@@ -6,13 +6,10 @@
 <body>
 <input type="file" id="singleFile" name="upfile" onchange="singleFileSelected()" />
 <input type="file" id="multipleFiles" name="upfile[]" multiple="multiple" onchange="multipleFilesSelected()" />
-<div id="console">
-<p>
-This tests the condition that triggers a 'change' event on file input forms.
-</p>
-</div>
 <script>
 var changeDispatched;
+
+description("This tests the condition that triggers a 'change' event on file input forms.");
 
 if (window.layoutTestController) {
     var singleFileInput = document.getElementById("singleFile");

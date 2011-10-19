@@ -2,7 +2,8 @@ This test ensures change event is fired for input[type=number] when the user rev
 
 PASS eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired is 1
 PASS test.value = '34';numberOfChangeEventsFired is 1
-PASS test.focus();test.value = '34';document.execCommand('SelectAll'); eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired is 2
+PASS test.focus();test.value = '34';document.execCommand('SelectAll');
+eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

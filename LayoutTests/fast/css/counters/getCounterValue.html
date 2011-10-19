@@ -1,6 +1,5 @@
 <html>
 <head>
-<link rel=stylesheet href="../../js/resources/js-test-style.css">
 <script src="../../js/resources/js-test-pre.js"></script>
 <style>
 body {
@@ -34,7 +33,7 @@ function getCounter(cssRule) {
     return cssRule.style.getPropertyCSSValue('content')[0].getCounterValue();
 }
 
-var rules = document.styleSheets[1].cssRules;
+var rules = document.styleSheets[0].cssRules;
 var counters = [];
 for (var i = 2; i < rules.length; i++) {
     counters.push(getCounter(rules[i]));

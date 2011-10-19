@@ -15,7 +15,7 @@ How Now Brown Co                                w
 How Now Brown Cow
 
 test
-PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+ PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "3"

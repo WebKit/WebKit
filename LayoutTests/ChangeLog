@@ -1,3 +1,16 @@
+2011-10-19  Erik Arvidsson  <arv@chromium.org>
+
+        JS Test Harness: Insert the stylesheet dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=70432
+
+        Reviewed by Ojan Vafai.
+
+        This injects the js-test-style.css file dynamically so that the test files can be simpler.
+        This patch also removes the markup from the existing files in LayoutTests/fast/
+
+        * fast/*.html: Remove <link rel=:"stylesheet" href="...js-test-style.css">
+        * fast/js/resources/js-test-pre.js: Inject the stylesheet dynamically.
+
 2011-10-19  Daniel Cheng  <dcheng@chromium.org>
 
         Add missing expectations updates for r97878.

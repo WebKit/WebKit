@@ -1,7 +1,6 @@
 <html>
 <head>
 <link rel="stylesheet" href="resources/detached-style.css" type="text/css" media="screen">
-<link rel="stylesheet" href="../../js/resources/js-test-style.css">
 <style>* { }</style>
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
@@ -32,7 +31,7 @@ Test that &lt;link> elements only have stylesheets when in document.</p>
     shouldBe('link.sheet.ownerNode', 'link')
 
     debug("Testing &lt;style>...");
-    sheet = document.styleSheets[1];
+    sheet = document.styleSheets[0];
     head = document.getElementsByTagName("head")[0];
     style = document.getElementsByTagName("style")[0];
 

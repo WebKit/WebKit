@@ -6,17 +6,16 @@
 </head>
 <body>
 <input id="search" type="search" onsearch="searchEventDispatched()" />
-<div id="console">
-<p>
-This tests if the value in a search input form is cleared
-and a 'search' event is triggered, when we press the Escape key.
-To run (a part of) this test manually,
-type some text in the search form and then press the Escape key.
-If the text is cleared, then the test passes.
+<p id="description">
+
 </p>
-</div>
+
 <script>
 var searchEventObserved;
+
+description("This tests if the value in a search input form is cleared and a 'search' event is triggered, when we press the Escape key. " +
+            "To run (a part of) this test manually, type some text in the search form and then press the Escape key. " +
+            "If the text is cleared, then the test passes.");
 
 if (window.layoutTestController && window.eventSender) {
     var input = $("search");

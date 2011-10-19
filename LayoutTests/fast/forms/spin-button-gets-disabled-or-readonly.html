@@ -6,7 +6,6 @@
 <body>
 <input id="readonlyNumber" type="number" onmouseup="mouseupEventOnReadonlyNumber()" />
 <input id="disabledNumber" type="number" onmouseup="mouseupEventOnDisabledNumber()" />
-<div id="console">
 <p>
 This tests if the value of a number input form does not continue
 to increase/decrease in the following scenario.<br/>
@@ -19,7 +18,7 @@ At this point, click the spin-down button quickly and
 do not move the cursor from the spin-down button after the click.
 If the value decreases by just 1, this test passes.
 </p>
-</div>
+<div id="console"></div>
 <script>
 var testInputs;
 var testDelays;
