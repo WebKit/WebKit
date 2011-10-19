@@ -50,7 +50,9 @@ function evaluateOnFrontend(expression, callback)
     channel.port1.start();
     if (callback)
         channel.port1.addEventListener("message", callbackWrapper, false);
-    top.postMessage({ expression: expression }, [ channel.port2 ], "*");
+    webInspector.inspectedWindow.eval("", function() {
+        top.postMessage({ expression: expression }, [ channel.port2 ], "*");
+    });
 }
 
 function output(message)
