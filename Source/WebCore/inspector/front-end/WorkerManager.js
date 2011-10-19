@@ -47,11 +47,17 @@ WebInspector.WorkerManager.isWorkerFrontend = function()
 WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["dedicatedWorkerId"];
-    if (!workerId) {
+    if (workerId)
+        WebInspector.WorkerManager._initializeDedicatedWorkerFrontend(workerId);
+    else
         WebInspector.workerManager = new WebInspector.WorkerManager();
-        return;
-    }
 
+    if (WebInspector.WorkerManager.isWorkerFrontend())
+        WebInspector.WorkerManager._calculateWorkerInspectorTitle();
+}
+
+WebInspector.WorkerManager._initializeDedicatedWorkerFrontend = function(workerId)
+{
     function receiveMessage(event)
     {
         var message = event.data;
@@ -68,6 +74,22 @@ WebInspector.WorkerManager.loaded = function()
     InspectorFrontendHost.loaded = function()
     {
         window.opener.postMessage({workerId: workerId, command: "loaded"}, "*");
+    }
+}
+
+WebInspector.WorkerManager._calculateWorkerInspectorTitle = function()
+{
+    var expression = "location.href";
+    if (WebInspector.queryParamsObject["isSharedWorker"])
+        expression += " + (this.name ? ' (' + this.name + ')' : '')";
+    RuntimeAgent.evaluate.invoke({expression:expression, doNotPauseOnExceptions:true, returnByValue: true}, evalCallback.bind(this));
+    function evalCallback(error, result, wasThrown)
+    {
+        if (error || wasThrown) {
+            console.error(error);
+            return;
+        }
+        InspectorFrontendHost.inspectedURLChanged(result.value);
     }
 }
 

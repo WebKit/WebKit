@@ -1,3 +1,16 @@
+2011-10-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: worker inspector title should contain worker URL
+        https://bugs.webkit.org/show_bug.cgi?id=70424
+
+        Worker inspector title is now evaluated when the front-end starts.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.loaded):
+        (WebInspector.WorkerManager._calculateWorkerInspectorTitle):
+
 2011-10-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Avoid unecessarily calling gtk_widget_size_allocate on plugin widgets
