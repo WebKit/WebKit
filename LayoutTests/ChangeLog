@@ -1,3 +1,17 @@
+2011-10-19  Erik Arvidsson  <arv@chromium.org>
+
+        [Chromium] Update the test expectations for r97881.
+
+        * platform/chromium-cg-mac-snowleopard/fast/dom/call-a-constructor-as-a-function-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/dom/error-to-string-stack-overflow-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/parser/entity-end-script-tag-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/dom/call-a-constructor-as-a-function-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/dom/error-to-string-stack-overflow-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/parser/entity-end-script-tag-expected.txt: Added.
+        * platform/chromium-linux/fast/dom/call-a-constructor-as-a-function-expected.txt: Added.
+        * platform/chromium-linux/fast/dom/error-to-string-stack-overflow-expected.txt: Added.
+        * platform/chromium-linux/fast/parser/entity-end-script-tag-expected.txt: Added.
+
 2011-10-19  Dan Bernstein  <mitz@apple.com>
 
         Incorrect pagination in flipped-blocks writing modes with border/padding before
