@@ -1,3 +1,22 @@
+2011-10-19  Anna Cavender  <annacc@chromium.org>
+
+        Update WebVTTParser to require at least one space between timestamps and arrows, e.g.:
+        00:04:01.000 --> 00:03:00.500 is OK
+        00:04:01.000-->00:03:00.500 is not OK
+        https://bugs.webkit.org/show_bug.cgi?id=70274
+
+        Reviewed by Eric Carlson.
+
+        Existing tests:
+        media/track/track-webvtt-tc008-timings-no-hours.html
+        (see media/track/captions-webvtt/tc008-timings-no-hour-errors.vtt #6)
+        media/track/track-webvtt-tc009-timings-hour.html
+        (see media/track/captions-webvtt/tc009-timings-hour-error.vtt #6) 
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::collectTimingsAndSettings): Check that the
+            character before and after the '-->' is a space character
+
 2011-10-19  Daniel Cheng  <dcheng@chromium.org>
 
         Don't always select images during an image drag.

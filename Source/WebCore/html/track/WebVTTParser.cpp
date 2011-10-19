@@ -190,12 +190,16 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
     m_currentStartTime = collectTimeStamp(line, &position);
     if (m_currentStartTime == malformedTime)
         return BadCue;
+    if (line[position++] != ' ' && line[position++] != '\t')
+        return BadCue;
     skipWhiteSpace(line, &position);
 
     // 6-9 - If the next three characters are not "-->", abort and return failure.
     if (line.find("-->", position) == notFound)
         return BadCue;
     position += 3;
+    if (line[position++] != ' ' && line[position++] != '\t')
+        return BadCue;
     skipWhiteSpace(line, &position);
 
     // 10-11 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue end time be the collected time.
