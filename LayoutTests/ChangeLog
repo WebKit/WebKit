@@ -1,3 +1,11 @@
+2011-10-19  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Test expectation change for platform/chromium/compositing/zoom-animator-scale-test2.html
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-19  Kentaro Hara  <haraken@chromium.org>
 
         MessageEvent.data can be stored as ScriptValue.
