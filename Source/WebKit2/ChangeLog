@@ -1,3 +1,16 @@
+2011-10-20  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/9412849> and https://bugs.webkit.org/show_bug.cgi?id=70535
+        WK2 - Crash deref'ing a null context menu
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didSelectItemFromActiveContextMenu): In some cases that we still can't reproduce,
+          this message can be received in the WebProcess after the context menu has been cleared, leading
+          to a crash. Turning the ASSERT in to an early return will prevent the crash while we try to learn more
+          about how this could happen.
+
 2011-10-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         GTK+ build fix. Wk2 documentation will be dealt with in future
