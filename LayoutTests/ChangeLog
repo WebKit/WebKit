@@ -1,3 +1,15 @@
+2011-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r97926 and skip a failing plugin
+        test.
+
+        * platform/gtk/Skipped: Skip plugins/resize-from-plugin.html.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardning.

@@ -1643,3 +1643,6 @@ http/tests/local/blob/send-hybrid-blob.html
 
 # Microdata DOM API is not yet enabled.
 fast/dom/MicroData
+
+# https://bugs.webkit.org/show_bug.cgi?id=70481
+plugins/resize-from-plugin.html
