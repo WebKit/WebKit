@@ -99,6 +99,17 @@ void DeviceOrientationController::removeAllListeners(DOMWindow* window)
         m_client->stopUpdating();
 }
 
+void DeviceOrientationController::suspend()
+{
+    m_client->stopUpdating();
+}
+
+void DeviceOrientationController::resume()
+{
+    if (!m_listeners.isEmpty())
+        m_client->startUpdating();
+}
+
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* orientation)
 {
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation);

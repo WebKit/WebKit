@@ -97,6 +97,18 @@ void DeviceMotionController::removeAllListeners(DOMWindow* window)
         m_client->stopUpdating();
 }
 
+void DeviceMotionController::suspend()
+{
+    if (m_client)
+        m_client->stopUpdating();
+}
+
+void DeviceMotionController::resume()
+{
+    if (m_client && !m_listeners.isEmpty())
+        m_client->startUpdating();
+}
+
 void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotionData)
 {
     RefPtr<DeviceMotionEvent> event = DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData);

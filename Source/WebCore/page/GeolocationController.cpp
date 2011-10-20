@@ -80,6 +80,18 @@ void GeolocationController::removeObserver(Geolocation* observer)
     }
 }
 
+void GeolocationController::suspend()
+{
+    if (m_client)
+        m_client->stopUpdating();
+}
+
+void GeolocationController::resume()
+{
+    if (m_client && !m_observers.isEmpty())
+        m_client->startUpdating();
+}
+
 void GeolocationController::requestPermission(Geolocation* geolocation)
 {
     if (m_client)

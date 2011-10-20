@@ -1,3 +1,36 @@
+2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Properly suspend/resume Geolocation/DeviceMotion/DeviceOrientation objects
+        https://bugs.webkit.org/show_bug.cgi?id=70328
+
+        Reviewed by Simon Hausmann.
+
+        Based on code from iOS and the N9.
+
+        No new tests, as the suspend/resume functionality is not fully working yet.
+
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::suspend):
+        (WebCore::DeviceMotionController::resume):
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::addListener):
+        (WebCore::DeviceOrientationController::removeListener):
+        (WebCore::DeviceOrientationController::removeAllListeners):
+        (WebCore::DeviceOrientationController::suspend):
+        (WebCore::DeviceOrientationController::resume):
+        * dom/DeviceOrientationController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        (WebCore::Document::stopActiveDOMObjects):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::suspend):
+        (WebCore::GeolocationController::resume):
+        * page/GeolocationController.h:
+
 2011-10-20  Antti Koivisto  <antti@apple.com>
 
         Move rule matching and applying to separate functions from CSSStyleSelector::styleForElement

@@ -564,6 +564,11 @@ public:
     virtual void attach();
     virtual void detach();
 
+    // Override ScriptExecutionContext methods to do additional work
+    virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
+    virtual void resumeActiveDOMObjects() OVERRIDE;
+    virtual void stopActiveDOMObjects() OVERRIDE;
+
     RenderArena* renderArena() { return m_renderArena.get(); }
 
     RenderView* renderView() const;
