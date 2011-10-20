@@ -1,3 +1,26 @@
+2011-10-20  Daniel Cheng  <dcheng@chromium.org>
+
+        Update expectations after r97878.
+        https://bugs.webkit.org/show_bug.cgi?id=70527
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/selection/drag-to-contenteditable-iframe-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/drag-to-contenteditable-iframe-expected.png: Added.
+        * platform/chromium-cg-mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png:
+        * platform/chromium-linux/editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/drag-to-contenteditable-iframe-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/selection/drag-to-contenteditable-iframe-expected.png.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/drag-to-contenteditable-iframe-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png:
+        * platform/chromium-win/editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Add EFL baselines for the overflow, parser, reflections, regions,
