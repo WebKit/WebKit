@@ -1,5 +1,25 @@
 2011-10-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Remove the empty paint() implementation in ScrollbarEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=70428
+
+        Reviewed by Antonio Gomes.
+
+        Remove the empty reimplementation of Scrollbar::paint(), as this would
+        cause ScrollView::paintScrollbars() to paint nothing at all.
+
+        If we have mock scrollbars enabled, this will paint them; otherwise,
+        the code path will end up in WidgetEfl::paint(), which also does
+        nothing, so the behavior should not change.
+
+        No new tests, this is machinery needed to run the current ones.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::frameRectsChanged):
+        * platform/efl/ScrollbarEfl.h:
+
+2011-10-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Do not always consider a ScrollView will have an Evas/Evas_Object.
         https://bugs.webkit.org/show_bug.cgi?id=70426
 

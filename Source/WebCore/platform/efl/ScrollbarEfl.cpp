@@ -209,8 +209,3 @@ void ScrollbarEfl::frameRectsChanged()
     evas_object_move(object, x + rect.x(), y + rect.y());
     evas_object_resize(object, rect.width(), rect.height());
 }
-
-void ScrollbarEfl::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
-{
-}
-

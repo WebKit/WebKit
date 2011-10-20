@@ -49,8 +49,6 @@ public:
 
     virtual void frameRectsChanged();
 
-    virtual void paint(GraphicsContext*, const IntRect&);
-
 protected:
     ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
