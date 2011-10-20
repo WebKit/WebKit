@@ -1,3 +1,9 @@
+2011-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing test in GTK.
+
+        * platform/gtk/Skipped: Skip fast/events/drag-selects-image.html
+
 2011-10-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: encode source map url as source map page url query parameter.
