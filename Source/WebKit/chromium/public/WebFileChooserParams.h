@@ -54,7 +54,13 @@ struct WebFileChooserParams {
     // The dialog may restrict selectable files to the specified MIME types.
     // This value comes from an 'accept' attribute value of an INPUT element, so it
     // might be an incorrectly formatted string.
+    // DEPRECATED: Use acceptMIMETypes;
     WebString acceptTypes;
+    // This contains MIME type strings such as "audio/*" "text/plain".
+    // The dialog may restrict selectable files to the specified MIME types.
+    // This list comes from an 'accept' attribute value of an INPUT element, and
+    // it contains only lower-cased MIME type strings of which format is valid.
+    WebVector<WebString> acceptMIMETypes;
     // |selectedFiles| has filenames which a file upload control already selected.
     // A WebViewClient implementation may ask a user to select
     //  - removing a file from the selected files,

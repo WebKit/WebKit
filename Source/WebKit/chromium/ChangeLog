@@ -1,3 +1,17 @@
+2011-10-19  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium]: Move from FileChooserSettings deprecatedAcceptType to acceptMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=70003
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFileChooserParams.h:
+        Add acceptMIMETypes, and make acceptTypes deprecated.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+        - Set WebFileChooserParams::acceptMIMETypes
+        - Set a joined string to WebFileChooserParams::acceptTypes until we remove acceptTypes.
+
 2011-10-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Update MediaStream to use WebCore platform interfaces
