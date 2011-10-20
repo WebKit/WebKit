@@ -4128,6 +4128,12 @@ class WebKitStyleTest(CppStyleTestBase):
             'gst_structure_id_get(FOO, VALUE, G_TYPE_INT, &value, NULL);',
             '')
         self.assert_lint(
+            'gst_caps_new_simple(mime, "value", G_TYPE_INT, &value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_caps_new_full(structure1, structure2, NULL);',
+            '')
+        self.assert_lint(
             'gchar* result = g_strconcat("part1", "part2", "part3", NULL);',
             '')
         self.assert_lint(

@@ -1,3 +1,14 @@
+2011-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        [style] Allow usage of NULL in gst_*
+        https://bugs.webkit.org/show_bug.cgi?id=70498
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Simplified the detection
+        of gst_ calls. Now just ignore NULL in all of them.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Test for above change.
+
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Build fix after r97043.
