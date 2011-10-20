@@ -1,3 +1,16 @@
+2011-10-20  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a MessageEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=70296
+
+        Reviewed by Adam Barth.
+
+        Enabled message-event-constructor.html for chromium,
+        since now V8 has the MessageEvent constructor.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium/fast/events/constructors/message-event-constructor-expected.txt: Added.
+
 2011-10-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing test in GTK.

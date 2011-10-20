@@ -30,7 +30,7 @@ module events {
     interface [
         NoStaticTables,
         CanBeConstructed,
-        JSCustomConstructor
+        CustomConstructor
     ] MessageEvent : Event {
         readonly attribute DOMString origin;
         readonly attribute DOMString lastEventId;

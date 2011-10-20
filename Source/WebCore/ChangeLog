@@ -1,3 +1,19 @@
+2011-10-20  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a MessageEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=70296
+
+        Reviewed by Adam Barth.
+
+        Test: fast/events/constructors/message-event-constructor.html
+
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::getKeyValue): Returns RefPtr<DOMWindow> corresponding to a given key.
+        (WebCore::OptionsObject::getKeyValue): Returns MessagePortArray corresponding to a given key.
+        * bindings/v8/OptionsObject.h:
+        * bindings/v8/custom/V8EventConstructors.cpp: Added a MessageEvent constructor.
+        * dom/MessageEvent.idl: Makes MessageEvent constructible for V8.
+
 2011-10-20  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: reimplement protocol backend/frontend source generator

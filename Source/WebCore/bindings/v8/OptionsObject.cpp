@@ -28,6 +28,8 @@
 
 #include "DOMStringList.h"
 #include "V8Binding.h"
+#include "V8DOMWindow.h"
+#include "V8MessagePortCustom.h"
 #include <limits>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -221,6 +223,32 @@ bool OptionsObject::getKeyValue(const String& key, unsigned long long& value) co
     else
         value = static_cast<unsigned long long>(fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0));
     return true;
+}
+
+bool OptionsObject::getKeyValue(const String& key, RefPtr<DOMWindow>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    DOMWindow* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), wrapper);
+        if (!window.IsEmpty())
+            source = V8DOMWindow::toNative(window);
+    }
+    value = source;
+    return true;
+}
+
+bool OptionsObject::getKeyValue(const String& key, MessagePortArray& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    return getMessagePortArray(v8Value, value);
 }
 
 } // namespace WebCore

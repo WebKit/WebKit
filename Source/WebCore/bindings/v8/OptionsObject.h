@@ -26,6 +26,7 @@
 #ifndef OptionsObject_h
 #define OptionsObject_h
 
+#include "MessagePort.h"
 #include "PlatformString.h"
 #include "ScriptValue.h"
 #include <v8.h>
@@ -33,6 +34,7 @@
 namespace WebCore {
 
 class DOMStringList;
+class DOMWindow;
 class IDBKeyRange;
 
 class OptionsObject {
@@ -80,6 +82,8 @@ public:
     bool getKeyValue(const String&, unsigned short&) const;
     bool getKeyValue(const String&, unsigned&) const;
     bool getKeyValue(const String&, unsigned long long&) const;
+    bool getKeyValue(const String& key, RefPtr<DOMWindow>& value) const;
+    bool getKeyValue(const String& key, MessagePortArray& value) const;
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;
