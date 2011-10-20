@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 346x19
+        text run at (0,0) width 112: "TEST PASSED: "
+        text run at (112,0) width 234: "If the popup menu only says \"Text\". "
+      RenderBR {BR} at (346,15) size 0x0
+      RenderText {#text} at (0,19) size 425x19
+        text run at (0,19) width 109: "TEST FAILED: "
+        text run at (109,19) width 316: "If the popup menu says \"document.write('Text')\". "
+      RenderBR {BR} at (425,34) size 0x0
+      RenderMenuList {SELECT} at (2,40) size 87x39 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 31x19
+          RenderText at (0,0) size 31x19
+            text run at (0,0) width 31: "Text"
+      RenderText {#text} at (0,0) size 0x0

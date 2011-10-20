@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x43
+  RenderBlock {HTML} at (0,0) size 800x43
+    RenderBody {BODY} at (8,8) size 784x27
+      RenderTextControl {INPUT} at (2,2) size 133x23 [color=#202020]
+        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 126x13
+          RenderBlock {DIV} at (0,6) size 0x0
+          RenderBlock {DIV} at (0,0) size 126x13
+          RenderBlock {DIV} at (126,6) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (14,16) size 126x13
+  RenderBlock {DIV} at (0,0) size 126x13
+layer at (14,16) size 126x13
+  RenderBlock (relative positioned) {DIV} at (4,6) size 126x13 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 88x13
+      text run at (1,0) width 88: "Search for Events"

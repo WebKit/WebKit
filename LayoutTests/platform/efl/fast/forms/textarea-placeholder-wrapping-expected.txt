@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (206,37) size 4x19
+        text run at (206,37) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 202x48 clip at (10,10) size 187x48 scrollHeight 105
+  RenderTextControl {TEXTAREA} at (2,2) size 202x48 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 180x95
+      RenderText {#text} at (0,0) size 180x76
+        text run at (0,0) width 177: "A quick brown fox jumps "
+        text run at (0,19) width 174: "over the lazy dog. A quic"
+        text run at (0,38) width 180: "k brown fox jumps over th"
+        text run at (0,57) width 77: "e lazy dog."
+        text run at (77,57) width 0: " "
+      RenderBR {BR} at (0,76) size 0x19
+layer at (220,10) size 202x48 clip at (220,10) size 187x48 scrollHeight 82
+  RenderTextControl {TEXTAREA} at (212,2) size 202x48 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 180x19
+layer at (224,16) size 180x76 backgroundClip at (220,10) size 187x48 clip at (220,10) size 187x48 outlineClip at (220,10) size 187x48
+  RenderBlock (relative positioned) {DIV} at (4,6) size 180x76 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 180x76
+      text run at (0,0) width 177: "A quick brown fox jumps "
+      text run at (0,19) width 174: "over the lazy dog. A quic"
+      text run at (0,38) width 180: "k brown fox jumps over th"
+      text run at (0,57) width 77: "e lazy dog."

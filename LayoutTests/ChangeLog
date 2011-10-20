@@ -1,3 +1,19 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add part of EFL baselines for the fast/ suite.
+
+        * platform/efl/fast/doctypes: [...]
+        * platform/efl/fast/dom: [...]
+        * platform/efl/fast/dynamic: [...]
+        * platform/efl/fast/encoding: [...]
+        * platform/efl/fast/events: [...]
+        * platform/efl/fast/fast-mobile-scrolling: [...]
+        * platform/efl/fast/files: [...]
+        * platform/efl/fast/flexbox: [...]
+        * platform/efl/fast/forms: [...]
+        * platform/efl/fast/frames: [...]
+        * platform/efl/fast/gradients: [...]
+
 2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Temporarily skip 5436 tests until rebaselines landed.

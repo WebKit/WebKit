@@ -1,0 +1,119 @@
+Test 1
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 40.000. Was 41.000.
+PASS rect.width.toFixed(3) is "300.000"
+PASS rect.height.toFixed(3) is "100.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 2
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 188.000. Was 190.000.
+PASS rect.width.toFixed(3) is "320.000"
+PASS rect.height.toFixed(3) is "120.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 3
+PASS rect.left.toFixed(3) is "18.000"
+FAIL rect.top.toFixed(3) should be 356.000. Was 359.000.
+PASS rect.width.toFixed(3) is "300.000"
+PASS rect.height.toFixed(3) is "100.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 4
+PASS rect.left.toFixed(3) is "37.289"
+FAIL rect.top.toFixed(3) should be 483.289. Was 487.289.
+PASS rect.width.toFixed(3) is "141.421"
+PASS rect.height.toFixed(3) is "141.421"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 5
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 652.000. Was 657.000.
+PASS rect.width.toFixed(3) is "300.000"
+FAIL rect.height.toFixed(3) should be 374.000. Was 398.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 6
+Known failure. Skipping.
+
+Test 7
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 1490.000. Was 1544.000.
+PASS rect.width.toFixed(3) is "288.000"
+FAIL rect.height.toFixed(3) should be 464.000. Was 493.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 8
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2002.000. Was 2086.000.
+PASS rect.width.toFixed(3) is "300.000"
+FAIL rect.height.toFixed(3) should be 74.000. Was 78.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 9
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2140.000. Was 2230.000.
+PASS rect.width.toFixed(3) is "300.000"
+FAIL rect.height.toFixed(3) should be 90.000. Was 95.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 10
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2280.000. Was 2376.000.
+PASS rect.width.toFixed(3) is "300.000"
+FAIL rect.height.toFixed(3) should be 34.000. Was 36.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 11
+PASS rect.left.toFixed(3) is "10.000"
+FAIL rect.top.toFixed(3) should be 2402.000. Was 2503.000.
+PASS rect.width.toFixed(3) is "147.000"
+FAIL rect.height.toFixed(3) should be 34.000. Was 36.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 12
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2538.000. Was 2645.000.
+PASS rect.width.toFixed(3) is "100.000"
+PASS rect.height.toFixed(3) is "100.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 13
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2789.000. Was 2898.000.
+PASS rect.width.toFixed(3) is "260.000"
+FAIL rect.height.toFixed(3) should be 16.000. Was 17.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 14
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 2869.000. Was 2981.000.
+PASS rect.width.toFixed(3) is "300.000"
+FAIL rect.height.toFixed(3) should be 232.000. Was 234.000.
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+Test 15
+PASS rect.left.toFixed(3) is "8.000"
+FAIL rect.top.toFixed(3) should be 3165.000. Was 3281.000.
+PASS rect.width.toFixed(3) is "0.000"
+PASS rect.height.toFixed(3) is "0.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

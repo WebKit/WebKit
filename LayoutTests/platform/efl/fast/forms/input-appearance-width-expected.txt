@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 344x19
+        text run at (0,0) width 344: "This tests that the new text fields use the correct width."
+      RenderBR {BR} at (344,15) size 0x0
+      RenderTextControl {INPUT} at (2,21) size 195x29 [color=#202020]
+      RenderBR {BR} at (199,42) size 0x0
+      RenderTextControl {INPUT} at (0,54) size 200x29 [color=#202020]
+      RenderBR {BR} at (200,75) size 0x0
+      RenderTextControl {INPUT} at (2,87) size 465x29 [color=#202020]
+      RenderBR {BR} at (469,108) size 0x0
+      RenderTextControl {INPUT} at (0,120) size 200x29 [color=#202020]
+      RenderBR {BR} at (200,141) size 0x0
+      RenderTextControl {INPUT} at (2,153) size 105x29 [color=#202020]
+      RenderBR {BR} at (109,174) size 0x0
+layer at (14,35) size 188x19
+  RenderBlock {DIV} at (4,6) size 188x19
+layer at (12,68) size 193x19
+  RenderBlock {DIV} at (4,6) size 193x19
+    RenderText {#text} at (1,0) size 132x19
+      text run at (1,0) width 132: "styled width 200px"
+layer at (14,101) size 458x19
+  RenderBlock {DIV} at (4,6) size 458x19
+    RenderText {#text} at (1,0) size 51x19
+      text run at (1,0) width 51: "size 50"
+layer at (12,134) size 193x19 scrollWidth 209
+  RenderBlock {DIV} at (4,6) size 193x19
+    RenderText {#text} at (1,0) size 207x19
+      text run at (1,0) width 207: "styled width 200px & size=10"
+layer at (14,167) size 98x19
+  RenderBlock {DIV} at (4,6) size 98x19
+    RenderText {#text} at (1,0) size 51x19
+      text run at (1,0) width 51: "size 10"

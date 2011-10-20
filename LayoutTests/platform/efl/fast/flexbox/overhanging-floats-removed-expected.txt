@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x160
+        RenderBlock {DIV} at (0,0) size 80x80 [bgcolor=#0000FF]
+        RenderBlock {DIV} at (0,80) size 80x80 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 176x51
+            text run at (0,0) width 64: "Test"
+            text run at (0,17) width 176: "overhanging"
+            text run at (0,34) width 96: "floats"
