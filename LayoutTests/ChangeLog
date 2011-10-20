@@ -1,3 +1,26 @@
+2011-10-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Update chromium expectations after r97889.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-cg-mac-snowleopard/fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+        * platform/chromium-cg-mac-snowleopard/fast/dom/error-to-string-stack-overflow-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/dom/error-to-string-stack-overflow-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/parser/entity-end-script-tag-expected.txt: Removed.
+        * platform/chromium-linux/fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+        * platform/chromium-linux/fast/dom/error-to-string-stack-overflow-expected.txt: Removed.
+        * platform/chromium-linux/fast/parser/entity-end-script-tag-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/call-a-constructor-as-a-function-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/call-a-constructor-as-a-function-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/dom/error-to-string-stack-overflow-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/error-to-string-stack-overflow-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/parser/entity-end-script-tag-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/parser/entity-end-script-tag-expected.txt.
+        * platform/chromium-mac/fast/parser/entity-end-script-tag-expected.txt: Removed.
+        * platform/chromium-win/fast/parser/entity-end-script-tag-expected.txt: Removed.
+        * platform/chromium/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/chromium/fast/dom/error-to-string-stack-overflow-expected.txt:
+        * platform/chromium/fast/parser/entity-end-script-tag-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac-snowleopard/fast/parser/entity-end-script-tag-expected.txt.
+
 2011-10-19  Gavin Barraclough  <barraclough@apple.com>
 
         Poisoning of strict caller,arguments inappropriately poisoning "in"
