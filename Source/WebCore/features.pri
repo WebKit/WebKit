@@ -120,7 +120,7 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
 
 # geolocation support if QtMobility exists
 !contains(DEFINES, ENABLE_GEOLOCATION=.) {
-    contains(MOBILITY_CONFIG, location) {
+    contains(MOBILITY_CONFIG, location)|contains(QT_CONFIG, location) {
        DEFINES += ENABLE_GEOLOCATION=1
        DEFINES += ENABLE_CLIENT_BASED_GEOLOCATION=1
     }
