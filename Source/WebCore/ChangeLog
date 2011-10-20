@@ -1,3 +1,22 @@
+2011-10-19  Carol Szabo  <carol@webkit.org>
+
+        CSS Counters have wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=69605
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/counters/after-continuation.html
+
+        Added a new method for getting the renderer of the "after"
+        pseudo-element that handles continuations.
+        Hooked up the new method with the CSS counter code.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::rendererOfAfterPseudoElement):
+        (WebCore::previousInPreOrder):
+        (WebCore::nextInPreOrder):
+        * rendering/RenderObject.h:
+
 2011-10-19  Anna Cavender  <annacc@chromium.org>
 
         Adding some IDL files for <track>.

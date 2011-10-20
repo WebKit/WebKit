@@ -1,0 +1,30 @@
+<html><head>
+    <style>
+        .c0:after { counter-increment:section; content: counter(section); }
+    </style>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        function run()
+        {
+            shouldBe("layoutTestController.counterValueForElementById('c2')", "'2'");
+
+            debug('');
+            debug('TEST COMPLETE');
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</head><body onload="setTimeout('run()', 0);">
+    <p>This test passes if the numbers displayed below are 1 and 2 in this order.</p>
+    <div>
+        <div style="counter-reset: section;"></div>
+        <div><span id="c1" class=c0><div></div></span></div>
+        <div id="c2" class=c0></div>
+    </div>
+    <div id="console"></div>
+</body></html>
+

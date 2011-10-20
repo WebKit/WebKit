@@ -1,3 +1,16 @@
+2011-10-19  Carol Szabo  <carol@webkit.org>
+
+        CSS Counters have wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=69605
+
+        Reviewed by Darin Adler.
+
+        This test highlights the ability of the CSS counter handling code to
+        find a counter attached to a continuation of a renderer.
+
+        * fast/css/counters/after-continuation-expected.txt: Added.
+        * fast/css/counters/after-continuation.html: Added.
+
 2011-10-19  Erik Arvidsson  <arv@chromium.org>
 
         Clean up tests to not depend on js-test-style.css
