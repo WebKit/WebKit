@@ -23,6 +23,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragIcon.h>
@@ -38,12 +39,14 @@ using namespace WebCore;
 enum {
     PROP_0,
 
-    PROP_WEB_CONTEXT
+    PROP_WEB_CONTEXT,
+    PROP_ESTIMATED_LOAD_PROGRESS
 };
 
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
     CString customTextEncoding;
+    double estimatedLoadProgress;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
 };
@@ -57,7 +60,8 @@ static void webkitWebViewConstructed(GObject* object)
 
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), webkitWebContextGetWKContext(priv->context), 0);
 
-    priv->loaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, "web-view", webView, NULL)));
+    static GRefPtr<WebKitWebLoaderClient> defaultLoaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, NULL)));
+    webkit_web_view_set_loader_client(webView, defaultLoaderClient.get());
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -80,6 +84,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     switch (propId) {
     case PROP_WEB_CONTEXT:
         g_value_take_object(value, webView->priv->context);
+        break;
+    case PROP_ESTIMATED_LOAD_PROGRESS:
+        g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -122,9 +129,33 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "The web context for the view",
                                                         WEBKIT_TYPE_WEB_CONTEXT,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+    /**
+     * WebKitWebView:estimated-load-progress:
+     *
+     * An estimate of the percent completion for the current loading operation.
+     * This value will range from 0.0 to 1.0 and, once a load completes,
+     * will remain at 1.0 until a new load starts, at which point it
+     * will be reset to 0.0.
+     * The value is an estimate based on the total number of bytes expected
+     * to be received for a document, including all its possible subresources
+     * and child documents.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ESTIMATED_LOAD_PROGRESS,
+                                    g_param_spec_double("estimated-load-progress",
+                                                        "Estimated Load Progress",
+                                                        "An estimate of the percent completion for a document load",
+                                                        0.0, 1.0, 0.0,
+                                                        WEBKIT_PARAM_READABLE));
 }
 
-// Public API.
+void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
+{
+    if (webView->priv->estimatedLoadProgress == estimatedLoadProgress)
+        return;
+    webView->priv->estimatedLoadProgress = estimatedLoadProgress;
+    g_object_notify(G_OBJECT(webView), "estimated-load-progress");
+}
 
 /**
  * webkit_web_view_new:
@@ -202,6 +233,8 @@ void webkit_web_view_set_loader_client(WebKitWebView* webView, WebKitWebLoaderCl
     if (priv->loaderClient.get() == loaderClient)
         return;
 
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    attachLoaderClientToPage(toAPI(page), loaderClient);
     priv->loaderClient = loaderClient;
 }
 
@@ -352,4 +385,21 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKRetainPtr<WKStringRef> wkEncodingName = charset ? adoptWK(WKStringCreateWithUTF8CString(charset)) : 0;
     WKPageSetCustomTextEncodingName(toAPI(page), wkEncodingName.get());
+}
+
+/*
+ * webkit_web_view_get_estimated_load_progress:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the value of #WebKitWebView:estimated-load-progress.
+ * You can monitor the estimated progress of a load operation by
+ * connecting to the ::notify signal of @web_view.
+ *
+ * Returns: an estimate of the of the percent complete for a document
+ *     load as a range from 0.0 to 1.0.
+ */
+gdouble webkit_web_view_get_estimated_load_progress(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    return webView->priv->estimatedLoadProgress;
 }

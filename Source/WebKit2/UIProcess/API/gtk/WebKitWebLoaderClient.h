@@ -36,8 +36,6 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_LOADER_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_LOADER_CLIENT))
 #define WEBKIT_WEB_LOADER_CLIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_LOADER_CLIENT, WebKitWebLoaderClientClass))
 
-typedef struct _WebKitWebLoaderClient        WebKitWebLoaderClient;
-typedef struct _WebKitWebLoaderClientClass   WebKitWebLoaderClientClass;
 typedef struct _WebKitWebLoaderClientPrivate WebKitWebLoaderClientPrivate;
 
 struct _WebKitWebLoaderClient {
@@ -50,23 +48,26 @@ struct _WebKitWebLoaderClientClass {
     GObjectClass parent_class;
 
     /* virtual table */
-    gboolean (* provisional_load_started)                  (WebKitWebLoaderClient *loader_client);
-    gboolean (* provisional_load_received_server_redirect) (WebKitWebLoaderClient *loader_client);
+    gboolean (* provisional_load_started)                  (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view);
+    gboolean (* provisional_load_received_server_redirect) (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view);
     gboolean (* provisional_load_failed)                   (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view,
                                                             const gchar           *failing_uri,
                                                             GError                *error);
-    gboolean (* load_committed)                            (WebKitWebLoaderClient *loader_client);
-    gboolean (* load_finished)                             (WebKitWebLoaderClient *loader_client);
+    gboolean (* load_committed)                            (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view);
+    gboolean (* load_finished)                             (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view);
     gboolean (* load_failed)                               (WebKitWebLoaderClient *loader_client,
+                                                            WebKitWebView         *web_view,
                                                             const gchar           *failing_uri,
                                                             GError                *error);
 };
 
 WEBKIT_API GType
 webkit_web_loader_client_get_type               (void);
-
-WEBKIT_API gdouble
-webkit_web_loader_client_get_estimated_progress (WebKitWebLoaderClient* client);
 
 G_END_DECLS
 

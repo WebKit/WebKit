@@ -1,3 +1,34 @@
+2011-10-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Allow sharing page clients between WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=69814
+
+        No longer associate WebPage client wrappers with a WebKitWebView. This allows the
+        same client to be used with more than one WebKitWebView.
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Add the new WebKitWebViewPrivate header.
+        * UIProcess/API/gtk/WebKitDefines.h: Added some forward declarations for API classes.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp: C API callbacks now convert their WKPageRef argument
+        into a WebKitWebView directly and pass it as a parameter to signals. Remove the web-view property.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h: Move the estimated-progress property to WebKitWebView.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Add an estimated-load-progress property.
+        (webkitWebViewConstructed):Only allocate one default WebKitWebLoaderClient.
+        (webkitWebViewGetProperty): Add support for the new property.
+        (webkit_web_view_class_init): Ditto.
+        (webkitWebViewSetEstimatedLoadProgress): Added this private method so that the WebKitWebLoaderClient
+        can update the appropriate WebKitWebView.
+        (webkit_web_view_set_loader_client): Attach the C API callbacks here now.
+        (webkit_web_view_get_estimated_load_progress): Moved from WebKitWebLoaderClient.
+        * UIProcess/API/gtk/WebKitWebView.h: Added new method definition.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Copied from Source/WebKit2/UIProcess/API/gtk/WebKitDefines.h.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp: Updated the load tracking tests callbacks to take the new parameter.
+        (LoadTrackingTest::LoadTrackingTest): Listen to the WebKitWebView property now.
+        (LoadTrackingTest::estimatedProgressChanged):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp: Added a test to verify that two WebViews share the same default client.
+        * UIProcess/API/gtk/webkit2marshal.list: Updated the marshallers here.
+
 2011-10-19  Anders Carlsson  <andersca@apple.com>
 
         White flash when painting a previously crashed WKView

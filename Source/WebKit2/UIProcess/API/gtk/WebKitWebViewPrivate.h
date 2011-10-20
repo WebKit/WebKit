@@ -23,31 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
-#error "Only <webkit2/webkit2.h> can be included directly."
-#endif
+#ifndef WebKitWebViewPrivate_h
+#define WebKitWebViewPrivate_h
 
-#ifndef WebKitDefines_h
-#define WebKitDefines_h
+#include "WebKitWebView.h"
+#include <WebKit2/WebKit2.h>
 
-typedef struct _WebKitWebView WebKitWebView;
-typedef struct _WebKitWebViewClass WebKitWebViewClass;
+void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
 
-typedef struct _WebKitWebLoaderClient        WebKitWebLoaderClient;
-typedef struct _WebKitWebLoaderClientClass   WebKitWebLoaderClientClass;
+void attachLoaderClientToPage(WKPageRef, WebKitWebLoaderClient*);
 
-#include <glib.h>
-
-#ifdef G_OS_WIN32
-#    ifdef BUILDING_WEBKIT
-#        define WEBKIT_API __declspec(dllexport)
-#    else
-#        define WEBKIT_API __declspec(dllimport)
-#    endif
-#    define WEBKIT_OBSOLETE_API WEBKIT_API
-#else
-#    define WEBKIT_API __attribute__((visibility("default")))
-#    define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
-#endif
-
-#endif // WebKitDefines_h
+#endif // WebKitWebViewPrivate_h

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include "LoadTrackingTest.h"
+#include <wtf/gobject/GRefPtr.h>
 
 static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
 {
@@ -36,11 +37,21 @@ static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
     g_assert(!webkit_web_view_get_custom_charset(test->m_webView));
 }
 
+static void testWebViewsShareClients(Test* test, gconstpointer)
+{
+    GRefPtr<GtkWidget> webView1 = webkit_web_view_new();
+    GRefPtr<GtkWidget> webView2 = webkit_web_view_new();
+    WebKitWebLoaderClient* client1 = webkit_web_view_get_loader_client(WEBKIT_WEB_VIEW(webView1.get()));
+    WebKitWebLoaderClient* client2 = webkit_web_view_get_loader_client(WEBKIT_WEB_VIEW(webView2.get()));
+    g_assert(client1);
+    g_assert(client1 == client2);
+}
 
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
+    Test::add("WebKitWebView", "webviews-share-clients", testWebViewsShareClients);
 }
 
 void afterAll()

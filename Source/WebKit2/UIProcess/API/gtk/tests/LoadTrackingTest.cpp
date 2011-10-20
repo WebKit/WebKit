@@ -22,37 +22,37 @@
 
 #include <webkit2/webkit2.h>
 
-static gboolean provisionalLoadStartedCallback(WebKitWebLoaderClient* client, LoadTrackingTest* test)
+static gboolean provisionalLoadStartedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
     test->provisionalLoadStarted(client);
     return TRUE;
 }
 
-static gboolean provisionalLoadReceivedServerRedirectCallback(WebKitWebLoaderClient* client, LoadTrackingTest* test)
+static gboolean provisionalLoadReceivedServerRedirectCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
     test->provisionalLoadReceivedServerRedirect(client);
     return TRUE;
 }
 
-static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error, LoadTrackingTest* test)
+static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
     test->provisionalLoadFailed(client, failingURI, error);
     return TRUE;
 }
 
-static gboolean loadCommittedCallback(WebKitWebLoaderClient* client, LoadTrackingTest* test)
+static gboolean loadCommittedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
     test->loadCommitted(client);
     return TRUE;
 }
 
-static gboolean loadFinishedCallback(WebKitWebLoaderClient* client, LoadTrackingTest* test)
+static gboolean loadFinishedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
     test->loadFinished(client);
     return TRUE;
 }
 
-static gboolean loadFailedCallback(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error, LoadTrackingTest* test)
+static gboolean loadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
     test->loadFailed(client, failingURI, error);
     return TRUE;
@@ -73,13 +73,14 @@ LoadTrackingTest::LoadTrackingTest()
     g_signal_connect(client, "load-committed", G_CALLBACK(loadCommittedCallback), this);
     g_signal_connect(client, "load-finished", G_CALLBACK(loadFinishedCallback), this);
     g_signal_connect(client, "load-failed", G_CALLBACK(loadFailedCallback), this);
-    g_signal_connect(client, "notify::estimated-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
+    g_signal_connect(m_webView, "notify::estimated-load-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
 }
 
 LoadTrackingTest::~LoadTrackingTest()
 {
     WebKitWebLoaderClient* client = webkit_web_view_get_loader_client(m_webView);
     g_signal_handlers_disconnect_matched(client, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
 }
 
 void LoadTrackingTest::waitUntilLoadFinished()
@@ -127,8 +128,8 @@ void LoadTrackingTest::loadFailed(WebKitWebLoaderClient* client, const gchar* fa
 
 void LoadTrackingTest::estimatedProgressChanged()
 {
-    WebKitWebLoaderClient* client = webkit_web_view_get_loader_client(m_webView);
-    double progress = webkit_web_loader_client_get_estimated_progress(client);
+    double progress = webkit_web_view_get_estimated_load_progress(m_webView);
     g_assert_cmpfloat(m_estimatedProgress, <, progress);
     m_estimatedProgress = progress;
 }
+
