@@ -1,3 +1,19 @@
+2011-10-20  Ken Buchanan <kenrb@chromium.org>
+
+        Crash in updateFirstLetter on :after generated content
+        https://bugs.webkit.org/show_bug.cgi?id=70031
+
+        Reviewed by David Hyatt.
+
+        Preventing findBeforeAfterParent() from returning a first-letter block and overwriting its style.
+        Instead, it returns the block's parent.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::findBeforeAfterParent)
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent): First-letter siblings now already have style applied, so this clause is redundant
+
 2011-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Add a way to print the Frame tree from the debugger.

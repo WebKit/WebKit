@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <style type="text/css">
+            div::first-letter { float: right; content: "AB" }
+            div::after { display: table; content: "CD" }
+        </style>
+        <div></div>
+        PASS, if the script does not cause a crash or ASSERT failure
+        <script>
+            function runTest() {
+                document.body.offsetTop;
+                document.body.style.color = "blue";
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+            }
+            window.onload = runTest;
+        </script>
+    </body>
+</html>

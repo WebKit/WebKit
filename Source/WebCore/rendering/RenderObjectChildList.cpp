@@ -286,9 +286,13 @@ static RenderObject* findBeforeAfterParent(RenderObject* object)
     if (!(object->isTable() || object->isTableSection() || object->isTableRow()))
         return object;
 
+    // If there is a :first-letter style applied on the :before or :after content,
+    // then we want the parent of the first-letter block
     RenderObject* beforeAfterParent = object;
-    while (beforeAfterParent && !(beforeAfterParent->isText() || beforeAfterParent->isImage()))
+    while (beforeAfterParent && !(beforeAfterParent->isText() || beforeAfterParent->isImage())
+        && (beforeAfterParent->style()->styleType() != FIRST_LETTER))
         beforeAfterParent = beforeAfterParent->firstChild();
+
     return beforeAfterParent ? beforeAfterParent->parent() : 0;
 }
 
@@ -447,14 +451,6 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                     // RenderListItem may insert a list marker here. We do not need to care about this case.
                     // Otherwise, genChild must be a first-letter container. updateFirstLetter() will take care of it.
                     ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER);
-                }
-            }
-
-            // Update style on the remaining text fragment after the first-letter.
-            if (beforeAfterParent->style()->styleType() == FIRST_LETTER) {
-                if (RenderObject* nextSibling = beforeAfterParent->nextSibling()) {
-                    if (nextSibling->isText() && nextSibling->style()->styleType() == child->style()->styleType())
-                        nextSibling->setStyle(pseudoElementStyle);
                 }
             }
         }
