@@ -313,6 +313,12 @@ bool PluginProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent)
     return handled;
 }
 
+bool PluginProxy::handleContextMenuEvent(const WebMouseEvent&)
+{
+    // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
+    return true;
+}
+
 bool PluginProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     bool handled = false;

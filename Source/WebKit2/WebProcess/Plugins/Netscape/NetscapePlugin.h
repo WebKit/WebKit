@@ -187,6 +187,7 @@ private:
     virtual bool handleWheelEvent(const WebWheelEvent&);
     virtual bool handleMouseEnterEvent(const WebMouseEvent&);
     virtual bool handleMouseLeaveEvent(const WebMouseEvent&);
+    virtual bool handleContextMenuEvent(const WebMouseEvent&);
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&);
     virtual void setFocus(bool);
     virtual NPObject* pluginScriptableNPObject();

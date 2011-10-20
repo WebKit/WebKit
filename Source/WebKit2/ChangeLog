@@ -1,3 +1,25 @@
+2011-10-20  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r96823): Contextual menu closes immediately when control-clicking in Flash plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=70534
+        <rdar://problem/10308827>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp: (WebKit::NetscapePlugin::handleContextMenuEvent):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp: (WebKit::PluginProxy::handleContextMenuEvent):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp: (WebKit::PluginView::handleEvent):
+        Return true when handling contextmenu event, so that plug-ins won't get a default WebKit
+        context menu. We can't know if the plug-in is handling mousedown (or even mouseup) by
+        displaying a menu.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: (WebKit::BuiltInPDFView::handleContextMenuEvent):
+        PDF is the only "plug-in" that wants default WebKit menu now.
+
 2011-10-20  Sam Weinig  <sam@webkit.org>
 
         Put the WebKit2 C SPI in PrivateHeaders

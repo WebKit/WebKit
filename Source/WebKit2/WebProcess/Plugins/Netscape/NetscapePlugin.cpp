@@ -822,6 +822,12 @@ bool NetscapePlugin::handleMouseLeaveEvent(const WebMouseEvent& mouseEvent)
     return platformHandleMouseLeaveEvent(mouseEvent);
 }
 
+bool NetscapePlugin::handleContextMenuEvent(const WebMouseEvent&)
+{
+    // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
+    return true;
+}
+
 bool NetscapePlugin::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     ASSERT(m_isStarted);

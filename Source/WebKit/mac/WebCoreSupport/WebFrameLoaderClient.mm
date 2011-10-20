@@ -1621,6 +1621,8 @@ public:
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseEntered:currentNSEvent];
         else if (event->type() == eventNames().mouseoutEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseExited:currentNSEvent];
+        else if (event->type() == eventNames().contextmenuEvent)
+            event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
     }
 
 private:

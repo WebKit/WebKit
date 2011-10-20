@@ -169,6 +169,9 @@ public:
     // Tells the plug-in to handle the passed in mouse leave event. The plug-in should return true if it processed the event.
     virtual bool handleMouseLeaveEvent(const WebMouseEvent&) = 0;
 
+    // Tells the plug-in to handle the passed in context menu event. The plug-in should return true if it processed the event.
+    virtual bool handleContextMenuEvent(const WebMouseEvent&) = 0;
+
     // Tells the plug-in to handle the passed in keyboard event. The plug-in should return true if it processed the event.
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) = 0;
     

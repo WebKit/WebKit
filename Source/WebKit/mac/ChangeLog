@@ -1,3 +1,15 @@
+2011-10-20  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r96823): Contextual menu closes immediately when control-clicking in Flash plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=70534
+        <rdar://problem/10308827>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (NetscapePluginWidget::handleEvent): Return true
+        for contextmenu event, so that plug-ins won't get a default WebKit context menu. We can't
+        know if the plug-in is handling mousedown (or even mouseup) by displaying a menu.
+
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70396
