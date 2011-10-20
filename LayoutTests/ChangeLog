@@ -1,3 +1,16 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add remaining EFL baselines.
+
+        * platform/efl/fast/html: Added.
+        * platform/efl/fast/html/keygen-expected.txt: Added.
+        * platform/efl/fast/html/link-rel-stylesheet-expected.txt: Added.
+        * platform/efl/fast/html/listing-expected.txt: Added.
+        * platform/efl/fast/html/marquee-scroll-expected.txt: Added.
+        * platform/efl/fast/html/marquee-scrollamount-expected.txt: Added.
+        * platform/efl/fast/loader: Added.
+        * platform/efl/fast/loader/text-document-wrapping-expected.txt: Added.
+
 2011-10-20  Ken Buchanan <kenrb@chromium.org>
 
         Crash in updateFirstLetter on :after generated content
