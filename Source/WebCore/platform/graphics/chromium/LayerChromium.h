@@ -160,7 +160,7 @@ public:
     virtual bool drawsContent() const { return false; }
     virtual void paintContentsIfDirty() { }
     virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*) { }
-    virtual void setIsMask(bool) {}
+    virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
     virtual void protectVisibleTileTextures() { }

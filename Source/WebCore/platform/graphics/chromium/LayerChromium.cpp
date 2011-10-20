@@ -31,12 +31,10 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-
 #include "LayerChromium.h"
 
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
-#include "GraphicsContext3D.h"
 #if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"

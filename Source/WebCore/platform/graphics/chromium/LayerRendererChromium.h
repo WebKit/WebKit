@@ -130,7 +130,7 @@ public:
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
 
-    void getFramebufferPixels(void *pixels, const IntRect& rect);
+    void getFramebufferPixels(void *pixels, const IntRect&);
 
     TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
     TextureAllocator* renderSurfaceTextureAllocator() const { return m_renderSurfaceTextureAllocator.get(); }

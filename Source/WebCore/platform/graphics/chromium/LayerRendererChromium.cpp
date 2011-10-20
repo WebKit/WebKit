@@ -41,17 +41,17 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
-#include "ManagedTexture.h"
 #include "LayerTextureUpdaterCanvas.h"
+#include "ManagedTexture.h"
 #include "NonCompositedContentHost.h"
 #include "NotImplemented.h"
 #include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureManager.h"
-#include "TreeSynchronizer.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
+#include "TreeSynchronizer.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -157,9 +157,8 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
 bool LayerRendererChromium::initialize()
 {
     m_context->makeContextCurrent();
-    if (settings().acceleratePainting) {
+    if (settings().acceleratePainting)
         m_capabilities.usingAcceleratedPainting = true;
-    }
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
     m_capabilities.usingMapSub = extensions->supports("GL_CHROMIUM_map_sub");
