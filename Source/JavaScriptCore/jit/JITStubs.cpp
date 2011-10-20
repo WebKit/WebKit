@@ -1902,6 +1902,7 @@ DEFINE_STUB_FUNCTION(void, op_check_has_instance)
     VM_THROW_EXCEPTION_AT_END();
 }
 
+#if ENABLE(DFG_JIT)
 DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2058,6 +2059,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
     
     codeBlock->optimizeSoon();
 }
+#endif // ENABLE(DFG_JIT)
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 {
