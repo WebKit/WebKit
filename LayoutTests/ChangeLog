@@ -1,5 +1,19 @@
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
+        Unreviewed. Add EFL baselines for the overflow, parser, reflections, regions,
+        repaint, replaced, ruby and runing suites inside the "fast" suites.
+
+        * platform/efl/fast/overflow: [...]
+        * platform/efl/fast/parser: [...]
+        * platform/efl/fast/reflections: [...]
+        * platform/efl/fast/regions: [...]
+        * platform/efl/fast/repaint: [...]
+        * platform/efl/fast/replaced: [...]
+        * platform/efl/fast/ruby: [...]
+        * platform/efl/fast/runin: [...]
+
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
         Unreviewed. Add more EFL baselines for the fast/ suite.
 
         * platform/efl/fast/images: [...]

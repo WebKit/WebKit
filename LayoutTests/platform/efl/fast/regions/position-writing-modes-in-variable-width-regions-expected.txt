@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x485 layerType: background only
+layer at (40,77) size 80x80
+  RenderBlock (positioned) zI: -1 {DIV} at (32,50) size 80x80 [bgcolor=#FF0000]
+layer at (40,397) size 80x80
+  RenderBlock (positioned) zI: -1 {DIV} at (32,370) size 80x80 [bgcolor=#FF0000]
+layer at (216,77) size 80x80
+  RenderBlock (positioned) zI: -1 {DIV} at (208,50) size 80x80 [bgcolor=#FF0000]
+layer at (216,397) size 80x80
+  RenderBlock (positioned) zI: -1 {DIV} at (208,370) size 80x80 [bgcolor=#FF0000]
+layer at (0,0) size 800x485 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x485
+    RenderBody {BODY} at (8,8) size 784x469
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 490x19
+          text run at (0,0) width 490: "You should see four 80x80 green squares below and no red should be visible."
+layer at (8,27) size 550x450
+  RenderBlock (relative positioned) {DIV} at (0,19) size 550x450
+    RenderBlock {DIV} at (0,0) size 550x450
+      RenderRegion {DIV} at (0,0) size 500x50
+      RenderRegion {DIV} at (0,50) size 320x400
+      RenderBlock {DIV} at (0,450) size 550x0
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 500x450
+      RenderFlowThread at (0,0) size 500x450
+        RenderBlock {DIV} at (0,50) size 500x400
+    layer at (50,50) size 400x400
+      RenderBlock (relative positioned) {DIV} at (50,0) size 400x400
+    layer at (32,50) size 80x80
+      RenderBlock (positioned) {DIV} at (-18,0) size 80x80 [bgcolor=#00FF00]
+    layer at (208,50) size 80x80
+      RenderBlock (positioned) {DIV} at (158,0) size 80x80 [bgcolor=#00DD00]
+    layer at (32,370) size 80x80
+      RenderBlock (positioned) {DIV} at (-18,320) size 80x80 [bgcolor=#00BB00]
+    layer at (325,370) size 125x80
+      RenderBlock (positioned) {DIV} at (275,320) size 125x80 [bgcolor=#009900]
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
