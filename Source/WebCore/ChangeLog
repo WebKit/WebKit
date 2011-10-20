@@ -1,3 +1,17 @@
+2011-10-19  Kent Tamura  <tkent@chromium.org>
+
+        Reject invalid MIME type strings for a file selection dialog parameter
+        https://bugs.webkit.org/show_bug.cgi?id=70095
+
+        Reviewed by Darin Fisher and Darin Adler.
+
+        No new tests. This affect only a value passed to WebKit layer.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::isRFC2616TokenCharacter): Added.
+        (WebCore::HTMLInputElement::acceptMIMETypes):
+        Validate a MIME type string, and don't add invalid strings to the output Vector.
+
 2011-10-19  Darin Adler  <darin@apple.com>
 
         Remove OptionElement (first half)

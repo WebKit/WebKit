@@ -1307,6 +1307,23 @@ void HTMLInputElement::setDefaultName(const AtomicString& name)
     m_name = name;
 }
 
+static inline bool isRFC2616TokenCharacter(UChar ch)
+{
+    return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
+}
+
+static inline bool isValidMIMEType(const String& type)
+{
+    size_t slashPosition = type.find('/');
+    if (slashPosition == notFound || !slashPosition || slashPosition == type.length() - 1)
+        return false;
+    for (size_t i = 0; i < type.length(); ++i) {
+        if (!isRFC2616TokenCharacter(type[i]) && i != slashPosition)
+            return false;
+    }
+    return true;
+}
+
 Vector<String> HTMLInputElement::acceptMIMETypes()
 {
     Vector<String> mimeTypes;
@@ -1319,8 +1336,11 @@ Vector<String> HTMLInputElement::acceptMIMETypes()
     acceptString.split(',', false, splitTypes);
     for (size_t i = 0; i < splitTypes.size(); ++i) {
         String trimmedMimeType = stripLeadingAndTrailingHTMLSpaces(splitTypes[i]);
-        if (!trimmedMimeType.isEmpty())
-            mimeTypes.append(trimmedMimeType);
+        if (trimmedMimeType.isEmpty())
+            continue;
+        if (!isValidMIMEType(trimmedMimeType))
+            continue;
+        mimeTypes.append(trimmedMimeType.lower());
     }
 
     return mimeTypes;
