@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x270 [border: (4px solid #0000FF)]
+        RenderTableSection {TBODY} at (4,4) size 776x262
+          RenderTableRow {TR} at (0,2) size 776x258
+            RenderTableCell {TD} at (2,2) size 600x115 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 596x111 [border: (4px solid #008000)]
+                RenderTableSection {TBODY} at (4,4) size 588x103
+                  RenderTableRow {TR} at (0,2) size 588x99
+                    RenderTableCell {TD} at (2,2) size 584x99 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 564x95
+                        text run at (2,2) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
+                        text run at (2,21) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
+                        text run at (2,40) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
+                        text run at (2,59) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
+                        text run at (2,78) width 280: "this is a bunch of text. this is a bunch of text."
+            RenderTableCell {TD} at (604,2) size 170x258 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 166x254 [border: (4px solid #008000)]
+                RenderTableSection {TBODY} at (4,4) size 158x246
+                  RenderTableRow {TR} at (0,2) size 158x242
+                    RenderTableCell {TD} at (2,2) size 154x242 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock (anonymous) at (2,2) size 150x19
+                        RenderText {#text} at (0,0) size 118x19
+                          text run at (0,0) width 118: "this cell is nowrap."
+                      RenderTable {TABLE} at (2,21) size 150x219 [border: (4px solid #FF0000)]
+                        RenderTableSection {TBODY} at (4,4) size 142x211
+                          RenderTableRow {TR} at (0,2) size 142x207
+                            RenderTableCell {TD} at (2,2) size 138x207 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+                              RenderBlock (anonymous) at (2,2) size 134x57
+                                RenderText {#text} at (0,0) size 133x57
+                                  text run at (0,0) width 133: "this text is in a cell of"
+                                  text run at (0,19) width 126: "a table, contained in"
+                                  text run at (0,38) width 7: "a"
+                              RenderBlock {P} at (2,75) size 134x19
+                                RenderInline {B} at (0,0) size 134x19
+                                  RenderText {#text} at (0,0) size 134x19
+                                    text run at (0,0) width 134: "cell with NOWRAP"
+                              RenderBlock (anonymous) at (2,110) size 134x95
+                                RenderText {#text} at (0,0) size 133x95
+                                  text run at (0,0) width 119: "but this text should"
+                                  text run at (0,19) width 41: "wrap! "
+                                  text run at (41,19) width 83: "only the bold"
+                                  text run at (0,38) width 129: "text should not wrap"
+                                  text run at (0,57) width 133: "be cause is contained"
+                                  text run at (0,76) width 128: "in a P that's nowrap."
+      RenderBlock (anonymous) at (0,270) size 784x38
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,19) size 325x19
+          text run at (0,19) width 325: "Tables have a thick border, cells have a thin border."

@@ -1,0 +1,112 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 191x19
+          text run at (0,0) width 191: "Tests of padding in table cells."
+      RenderTable {TABLE} at (0,35) size 392x128
+        RenderTableSection {TBODY} at (0,0) size 392x128
+          RenderTableRow {TR} at (0,2) size 392x124
+            RenderTableCell {TD} at (2,2) size 135x124 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 115x19
+                RenderInline {B} at (0,0) size 115x19
+                  RenderText {#text} at (0,0) size 115x19
+                    text run at (0,0) width 115: "1) padding: 20px"
+              RenderTable {TABLE} at (10,45) size 83x69 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 81x67
+                  RenderTableRow {TR} at (0,2) size 81x63
+                    RenderTableCell {TD} at (2,2) size 77x63 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (21,21) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+            RenderTableCell {TD} at (139,2) size 251x124 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 231x19
+                RenderInline {B} at (0,0) size 231x19
+                  RenderText {#text} at (0,0) size 231x19
+                    text run at (0,0) width 231: "2) padding: 10px 25px 30px 45px;"
+              RenderTable {TABLE} at (10,45) size 113x69 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 111x67
+                  RenderTableRow {TR} at (0,2) size 111x63
+                    RenderTableCell {TD} at (2,2) size 107x63 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (46,11) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+      RenderBlock (anonymous) at (0,163) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,182) size 694x109
+        RenderTableSection {TBODY} at (0,0) size 694x109
+          RenderTableRow {TR} at (0,2) size 694x105
+            RenderTableCell {TD} at (2,2) size 161x86 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 141x19
+                RenderInline {B} at (0,0) size 141x19
+                  RenderText {#text} at (0,0) size 141x19
+                    text run at (0,0) width 141: "3) padding-left: 20px"
+              RenderTable {TABLE} at (10,45) size 64x31 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 62x29
+                  RenderTableRow {TR} at (0,2) size 62x25
+                    RenderTableCell {TD} at (2,2) size 58x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (21,2) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+            RenderTableCell {TD} at (165,2) size 173x86 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 153x19
+                RenderInline {B} at (0,0) size 153x19
+                  RenderText {#text} at (0,0) size 153x19
+                    text run at (0,0) width 153: "4) padding-right: 20px"
+              RenderTable {TABLE} at (10,45) size 64x31 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 62x29
+                  RenderTableRow {TR} at (0,2) size 62x25
+                    RenderTableCell {TD} at (2,2) size 58x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (2,2) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+            RenderTableCell {TD} at (340,2) size 162x105 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 142x19
+                RenderInline {B} at (0,0) size 142x19
+                  RenderText {#text} at (0,0) size 142x19
+                    text run at (0,0) width 142: "5) padding-top: 20px"
+              RenderTable {TABLE} at (10,45) size 45x50 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 43x48
+                  RenderTableRow {TR} at (0,2) size 43x44
+                    RenderTableCell {TD} at (2,2) size 39x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (2,21) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+            RenderTableCell {TD} at (504,2) size 188x105 [r=0 c=3 rs=1 cs=1]
+              RenderBlock {P} at (10,10) size 168x19
+                RenderInline {B} at (0,0) size 168x19
+                  RenderText {#text} at (0,0) size 168x19
+                    text run at (0,0) width 168: "6) padding-bottom: 20px"
+              RenderTable {TABLE} at (10,45) size 45x50 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 43x48
+                  RenderTableRow {TR} at (0,2) size 43x44
+                    RenderTableCell {TD} at (2,2) size 39x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (2,2) size 35x21 [border: (1px dashed #FF0000)]
+                        RenderText {#text} at (1,1) size 33x19
+                          text run at (1,1) width 33: "FOO"
+      RenderBlock (anonymous) at (0,291) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {P} at (0,326) size 784x19
+        RenderInline {B} at (0,0) size 240x19
+          RenderText {#text} at (0,0) size 240x19
+            text run at (0,0) width 240: "misc) padding: 20px 10px 40px 0px"
+      RenderTable {TABLE} at (0,361) size 53x89 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 51x87
+          RenderTableRow {TR} at (0,2) size 51x83
+            RenderTableCell {TD} at (2,2) size 47x83 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,21) size 35x21 [border: (1px dashed #FF0000)]
+                RenderText {#text} at (1,1) size 33x19
+                  text run at (1,1) width 33: "FOO"
+      RenderBlock {P} at (0,466) size 784x19
+        RenderInline {B} at (0,0) size 329x19
+          RenderText {#text} at (0,0) size 329x19
+            text run at (0,0) width 329: "misc) padding-top: 10px; padding-bottom: 20px;"
+      RenderTable {TABLE} at (0,501) size 45x59 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 43x57
+          RenderTableRow {TR} at (0,2) size 43x53
+            RenderTableCell {TD} at (2,2) size 39x53 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (2,11) size 35x21 [border: (1px dashed #FF0000)]
+                RenderText {#text} at (1,1) size 33x19
+                  text run at (1,1) width 33: "FOO"
