@@ -1,3 +1,17 @@
+2011-10-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: detach should call hide so that overrides are processed.
+        https://bugs.webkit.org/show_bug.cgi?id=70503
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.hide):
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.hide):
+        (WebInspector.View.prototype.detach):
+
 2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Roll-back r97964, r97972 and fix in https://bugs.webkit.org/show_bug.cgi?id=70328.

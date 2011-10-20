@@ -36,6 +36,7 @@ WebInspector.View = function()
     this.element.__view = this;
     this._visible = false;
     this._children = [];
+    this._inDetach = false;
 }
 
 WebInspector.View.prototype = {
@@ -85,7 +86,8 @@ WebInspector.View.prototype = {
     hide: function()
     {
         this.dispatchToSelfAndChildren("willHide", true);
-        this.element.removeStyleClass("visible");
+        if (!this._inDetach)
+            this.element.removeStyleClass("visible");
         this._visible = false;
     },
 
@@ -100,8 +102,9 @@ WebInspector.View.prototype = {
     detach: function()
     {
         if (this._visible) {
-            this.dispatchToSelfAndChildren("willHide", true);
-            this._visible = false;
+            this._inDetach = true;
+            this.hide();
+            this._inDetach = false;
         }
 
         this.dispatchToSelfAndChildren("willDetach", false);

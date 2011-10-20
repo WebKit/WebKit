@@ -63,7 +63,6 @@ WebInspector.ConsolePanel.prototype = {
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
-        this._view.detach();
         if (this._drawerWasVisible) {
             WebInspector.drawer.show(this._view, WebInspector.Drawer.AnimationType.Immediately);
             delete this._drawerWasVisible;
