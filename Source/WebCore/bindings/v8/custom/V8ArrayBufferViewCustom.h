@@ -98,6 +98,9 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     int argLen = args.Length();
     if (!argLen) {
         // This happens when we return a previously constructed

@@ -53,6 +53,9 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
 

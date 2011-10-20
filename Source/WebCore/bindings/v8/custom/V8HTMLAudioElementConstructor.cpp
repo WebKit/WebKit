@@ -56,6 +56,9 @@ static v8::Handle<v8::Value> v8HTMLAudioElementConstructorCallback(const v8::Arg
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
         return throwError("Audio constructor associated frame is unavailable", V8Proxy::ReferenceError);

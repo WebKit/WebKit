@@ -47,6 +47,9 @@ v8::Handle<v8::Value> V8DOMFormData::constructorCallback(const v8::Arguments& ar
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     HTMLFormElement* form = 0;
     if (args.Length() > 0 && V8HTMLFormElement::HasInstance(args[0]))
         form = V8HTMLFormElement::toNative(args[0]->ToObject());

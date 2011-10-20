@@ -45,6 +45,9 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     // If we return a previously constructed ArrayBuffer,
     // e.g. from the call to ArrayBufferView.buffer, this code is called
     // with a zero-length argument list. The V8DOMWrapper will then

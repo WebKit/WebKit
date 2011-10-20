@@ -50,6 +50,9 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     // Expect no parameters.
     // Allocate a XMLHttpRequest object as its internal field.
     ScriptExecutionContext* context = getScriptExecutionContext();

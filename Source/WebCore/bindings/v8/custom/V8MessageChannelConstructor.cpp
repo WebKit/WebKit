@@ -53,6 +53,9 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     // Get the ScriptExecutionContext (WorkerContext or Document)
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)

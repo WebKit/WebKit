@@ -1,3 +1,49 @@
+2011-10-19  Kentaro Hara  <haraken@chromium.org>
+
+        Added a ConstructorMode check to all existing custom V8 constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=70464
+
+        Reviewed by Adam Barth.
+
+        This patch adds the following two lines to all existing custom V8 constructors:
+
+            if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+                return args.Holder();
+
+        This checks whether a programmer is trying to allocate an object via "new X",
+        or C++ is trying to allocate an object via the function template and wrap the
+        object with a JS flavor. (See here for more details: bug 70015) In the latter case,
+        a constructor callback should not be executed (i.e. should return immediately).
+
+        No new tests. No change in behavior.
+
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp: Added the ConstructorMode check.
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h: Ditto.
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8AudioContextCustom.cpp: Ditto.
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp: Ditto.
+        (WebCore::V8DOMFormData::constructorCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp: Ditto.
+        (WebCore::V8DataView::constructorCallback):
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp: Ditto.
+        (WebCore::v8HTMLAudioElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp: Ditto.
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp: Ditto.
+        (WebCore::v8HTMLOptionElementConstructorCallback):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp: Ditto.
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp: Ditto.
+        (WebCore::V8WebKitMutationObserver::constructorCallback):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp: Ditto.
+        (WebCore::V8WebKitPoint::constructorCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp: Ditto.
+        (WebCore::V8WebSocket::constructorCallback):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp: Ditto.
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
 2011-10-19  Carol Szabo  <carol@webkit.org>
 
         CSS Counters have wrong values

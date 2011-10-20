@@ -41,6 +41,9 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     if (!args.Length()) {
         // see constructWebGLArray -- we don't seem to be able to distingish between
         // 'new DataView()' and the call used to construct the cached DataView object.

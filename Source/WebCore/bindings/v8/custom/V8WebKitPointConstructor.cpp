@@ -47,6 +47,9 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& ar
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
     float x = 0;
     float y = 0;
     if (args.Length() > 1) {
