@@ -1,3 +1,14 @@
+2011-10-20  Tony Chang  <tony@chromium.org>
+
+        Fix a compiler warning in MediaStreamTrack.cpp:
+        ../../third_party/WebKit/Source/WebCore/dom/MediaStreamTrack.cpp: In member function 'WTF::String WebCore::MediaStreamTrack::kind() const':
+        ../../third_party/WebKit/Source/WebCore/dom/MediaStreamTrack.cpp:61:1: error: control reaches end of non-void function [-Werror=return-type]
+
+        Unreviewed build fix.
+
+        * dom/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::kind):
+
 2011-10-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         One more GTK+ build fix. Remove CueLoader files from the build.
