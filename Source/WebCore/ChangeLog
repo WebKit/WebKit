@@ -1,3 +1,15 @@
+2011-10-20  Dan Bernstein  <mitz@apple.com>
+
+        Flipped-blocks writing mode blocks do not hit test their overflow
+        https://bugs.webkit.org/show_bug.cgi?id=70546
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/writing-mode/flipped-blocks-hit-test-overflow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint): Flip the overflow rect if necessary.
+
 2011-10-20  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70539

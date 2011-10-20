@@ -4113,6 +4113,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (!isRenderView()) {
         // Check if we need to do anything at all.
         LayoutRect overflowBox = visualOverflowRect();
+        flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedLocation);
         if (!overflowBox.intersects(result.rectForPoint(pointInContainer)))
             return false;
