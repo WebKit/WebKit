@@ -57,7 +57,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
 void CCSingleThreadProxy::start()
 {
     DebugScopedSetImplThread impl;
-    m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl();
+    m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
 }
 
 CCSingleThreadProxy::~CCSingleThreadProxy()
@@ -151,7 +151,7 @@ void CCSingleThreadProxy::setNeedsCommit()
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
+        m_layerTreeHost->commitToOnImplThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
 
 #if !ASSERT_DISABLED
@@ -183,7 +183,7 @@ void CCSingleThreadProxy::stop()
     ASSERT(CCProxy::isMainThread());
     {
         DebugScopedSetImplThread impl;
-        m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
+        m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;
@@ -223,7 +223,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
         bool ok;
         {
             DebugScopedSetImplThread impl;
-            m_layerTreeHost->deleteContentsTexturesOnCCThread(m_layerTreeHostImpl->contentsTextureAllocator());
+            m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
             ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
             if (ok)
                 m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -260,7 +260,7 @@ void CCSingleThreadProxy::commitIfNeeded()
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitToOnCCThread(m_layerTreeHostImpl.get());
+        m_layerTreeHost->commitToOnImplThread(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
     m_layerTreeHost->commitComplete();

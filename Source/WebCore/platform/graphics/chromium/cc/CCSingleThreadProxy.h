@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CCLayerTreeHost;
 
-class CCSingleThreadProxy : public CCProxy {
+class CCSingleThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
 public:
     static PassOwnPtr<CCProxy> create(CCLayerTreeHost*);
     virtual ~CCSingleThreadProxy();
@@ -54,6 +54,10 @@ public:
     virtual void setNeedsRedraw();
     virtual void start();
     virtual void stop();
+
+    // CCLayerTreeHostImplClient implementation
+    virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
+    virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
 
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();

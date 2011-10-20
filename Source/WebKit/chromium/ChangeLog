@@ -1,3 +1,20 @@
+2011-10-17  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Allow CCLayerTreeHostImpl to call back to proxy via CCLayerTreeHostImplClient
+        https://bugs.webkit.org/show_bug.cgi?id=70291
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebCore::CCLayerTreeHostImplTest::CCLayerTreeHostImplTest):
+        (WebCore::CCLayerTreeHostImplTest::setNeedsRedrawOnImplThread):
+        (WebCore::CCLayerTreeHostImplTest::setNeedsCommitOnImplThread):
+        (WebCore::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostImpl::create):
+        (WTF::MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImpl):
+
 2011-10-20  Vincent Scheib  <scheib@chromium.org>
 
         MouseLock compile and run time flags.

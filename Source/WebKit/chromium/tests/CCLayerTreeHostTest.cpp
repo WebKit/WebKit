@@ -63,9 +63,9 @@ public:
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
 class MockLayerTreeHostImpl : public CCLayerTreeHostImpl {
 public:
-    static PassOwnPtr<MockLayerTreeHostImpl> create(TestHooks* testHooks, const CCSettings& settings)
+    static PassOwnPtr<MockLayerTreeHostImpl> create(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
     {
-        return adoptPtr(new MockLayerTreeHostImpl(testHooks, settings));
+        return adoptPtr(new MockLayerTreeHostImpl(testHooks, settings, client));
     }
 
     virtual void beginCommit()
@@ -87,8 +87,8 @@ public:
     }
 
 private:
-    MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings)
-        : CCLayerTreeHostImpl(settings)
+    MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
+        : CCLayerTreeHostImpl(settings, client)
         , m_testHooks(testHooks)
     {
     }
@@ -104,9 +104,9 @@ public:
         return adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
     }
 
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl()
+    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
     {
-        return MockLayerTreeHostImpl::create(m_testHooks, settings());
+        return MockLayerTreeHostImpl::create(m_testHooks, settings(), client);
     }
 
 private:

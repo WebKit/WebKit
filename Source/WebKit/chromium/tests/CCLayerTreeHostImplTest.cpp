@@ -34,13 +34,18 @@ using namespace WebCore;
 
 namespace {
 
-class CCLayerTreeHostImplTest : public testing::Test {
+class CCLayerTreeHostImplTest : public testing::Test, CCLayerTreeHostImplClient {
 public:
     CCLayerTreeHostImplTest()
+        : m_didRequestCommit(false)
+        , m_didRequestRedraw(false)
     {
         CCSettings settings;
-        m_hostImpl = CCLayerTreeHostImpl::create(settings);
+        m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
     }
+
+    virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
+    virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
 
     static void expectClearedScrollDeltasRecursive(CCLayerImpl* layer)
     {
@@ -66,6 +71,8 @@ public:
 protected:
     DebugScopedSetImplThread m_alwaysImplThread;
     OwnPtr<CCLayerTreeHostImpl> m_hostImpl;
+    bool m_didRequestCommit;
+    bool m_didRequestRedraw;
 };
 
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaNoLayers)
@@ -130,6 +137,17 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta + scrollDelta2);
     ASSERT_EQ(scrollInfo->size(), 0u);
     expectClearedScrollDeltasRecursive(root.get());
+}
+
+TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
+{
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollPosition(IntPoint(0, 0));
+    root->setMaxScrollPosition(IntSize(100, 100));
+    m_hostImpl->setRootLayer(root);
+    m_hostImpl->scrollRootLayer(IntSize(0, 10));
+    ASSERT(m_didRequestRedraw);
+    ASSERT(m_didRequestCommit);
 }
 
 } // namespace

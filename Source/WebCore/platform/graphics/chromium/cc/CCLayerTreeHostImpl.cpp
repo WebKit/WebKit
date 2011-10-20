@@ -38,13 +38,14 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCSettings& settings)
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCSettings& settings, CCLayerTreeHostImplClient* client)
 {
-    return adoptPtr(new CCLayerTreeHostImpl(settings));
+    return adoptPtr(new CCLayerTreeHostImpl(settings, client));
 }
 
-CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings)
-    : m_sourceFrameNumber(-1)
+CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTreeHostImplClient* client)
+    : m_client(client)
+    , m_sourceFrameNumber(-1)
     , m_frameNumber(0)
     , m_settings(settings)
 {
@@ -166,6 +167,8 @@ void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
         return;
 
     m_rootLayerImpl->scrollBy(scrollDelta);
+    m_client->setNeedsCommitOnImplThread();
+    m_client->setNeedsRedrawOnImplThread();
 }
 
 PassOwnPtr<CCScrollUpdateSet> CCLayerTreeHostImpl::processScrollDeltas()

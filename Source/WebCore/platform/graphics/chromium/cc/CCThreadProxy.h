@@ -39,11 +39,9 @@ class CCScheduler;
 class CCScopedMainThreadProxy;
 class CCThread;
 class CCThreadProxySchedulerClient;
-class CCThreadProxyScrollControllerAdapter;
 
-class CCThreadProxy : public CCProxy {
+class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
     friend class CCThreadProxySchedulerClient;
-    friend class CCThreadProxyScrollControllerAdapter;
 public:
     static void setThread(CCThread*);
 
@@ -67,6 +65,10 @@ public:
     virtual void start();
     virtual void stop();
 
+    // CCLayerTreeHostImplClient implementation
+    virtual void setNeedsRedrawOnImplThread();
+    virtual void setNeedsCommitOnImplThread();
+
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
 
@@ -74,21 +76,19 @@ private:
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet>);
 
     // Called on CCThread
-    void postBeginFrameAndCommitOnCCThread();
-    PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnCCThread();
+    void postBeginFrameAndCommitOnImplThread();
+    PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
-    void commitOnCCThread(CCCompletionEvent*);
-    void drawLayersAndPresentOnCCThread();
-    void drawLayersOnCCThread();
-    void drawLayersAndReadbackOnCCThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
-    void finishAllRenderingOnCCThread(CCCompletionEvent*);
-    void initializeImplOnCCThread(CCCompletionEvent*);
-    void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
-    void setNeedsAnimateOnCCThread();
-    void setNeedsCommitOnCCThread();
-    void setNeedsRedrawOnCCThread();
-    void setNeedsCommitThenRedrawOnCCThread();
-    void layerTreeHostClosedOnCCThread(CCCompletionEvent*);
+    void commitOnImplThread(CCCompletionEvent*);
+    void drawLayersAndPresentOnImplThread();
+    void drawLayersOnImplThread();
+    void drawLayersAndReadbackOnImplThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
+    void finishAllRenderingOnImplThread(CCCompletionEvent*);
+    void initializeImplOnImplThread(CCCompletionEvent*);
+    void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
+    void setNeedsAnimateOnImplThread();
+    void setNeedsCommitThenRedrawOnImplThread();
+    void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
 
     // Accessed on main thread only.
     bool m_animationRequested;
@@ -102,13 +102,12 @@ private:
 
     // Used on the CCThread only
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
-    int m_numBeginFrameAndCommitsIssuedOnCCThread;
+    int m_numBeginFrameAndCommitsIssuedOnImplThread;
 
-    OwnPtr<CCInputHandler> m_inputHandlerOnCCThread;
-    OwnPtr<CCThreadProxyScrollControllerAdapter> m_scrollControllerAdapterOnCCThread;
+    OwnPtr<CCInputHandler> m_inputHandlerOnImplThread;
 
-    OwnPtr<CCScheduler> m_schedulerOnCCThread;
-    OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnCCThread;
+    OwnPtr<CCScheduler> m_schedulerOnImplThread;
+    OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnImplThread;
 
     RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
 

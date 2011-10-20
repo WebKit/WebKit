@@ -27,6 +27,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCScrollController.h"
 #include <wtf/RefPtr.h>
 
 #if USE(SKIA)
@@ -42,12 +43,22 @@ class TextureAllocator;
 struct LayerRendererCapabilities;
 class TransformationMatrix;
 
+// CCLayerTreeHost->CCProxy callback interface.
+class CCLayerTreeHostImplClient {
+public:
+    virtual void setNeedsRedrawOnImplThread() = 0;
+    virtual void setNeedsCommitOnImplThread() = 0;
+};
+
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
-class CCLayerTreeHostImpl {
+class CCLayerTreeHostImpl : public CCScrollController {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
 public:
-    static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&);
+    static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
     virtual ~CCLayerTreeHostImpl();
+
+    // CCScrollController implementation
+    virtual void scrollRootLayer(const IntSize&);
 
     // Virtual for testing
     virtual void beginCommit();
@@ -83,12 +94,11 @@ public:
 
     const CCSettings& settings() const { return m_settings; }
 
-    void scrollRootLayer(const IntSize&);
-
     PassOwnPtr<CCScrollUpdateSet> processScrollDeltas();
 
 protected:
-    explicit CCLayerTreeHostImpl(const CCSettings&);
+    CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
+    CCLayerTreeHostImplClient* m_client;
     int m_sourceFrameNumber;
     int m_frameNumber;
 

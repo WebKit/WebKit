@@ -97,7 +97,7 @@ CCLayerTreeHost::~CCLayerTreeHost()
     clearPendingUpdate();
 }
 
-void CCLayerTreeHost::deleteContentsTexturesOnCCThread(TextureAllocator* allocator)
+void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
 {
     ASSERT(CCProxy::isImplThread());
     if (m_contentsTextureManager)
@@ -116,7 +116,7 @@ void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
 // code that is logically a main thread operation, e.g. deletion of a LayerChromium,
 // should be delayed until the CCLayerTreeHost::commitComplete, which will run
 // after the commit, but on the main thread.
-void CCLayerTreeHost::commitToOnCCThread(CCLayerTreeHostImpl* hostImpl)
+void CCLayerTreeHost::commitToOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
@@ -151,9 +151,9 @@ PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createLayerTreeHostContext3D()
     return m_client->createLayerTreeHostContext3D();
 }
 
-PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl()
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
 {
-    return CCLayerTreeHostImpl::create(m_settings);
+    return CCLayerTreeHostImpl::create(m_settings, client);
 }
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)

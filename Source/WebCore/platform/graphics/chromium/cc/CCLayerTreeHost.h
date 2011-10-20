@@ -99,11 +99,11 @@ public:
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
     void commitComplete();
-    void commitToOnCCThread(CCLayerTreeHostImpl*);
+    void commitToOnImplThread(CCLayerTreeHostImpl*);
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
+    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didRecreateGraphicsContext(bool success);
-    void deleteContentsTexturesOnCCThread(TextureAllocator*);
+    void deleteContentsTexturesOnImplThread(TextureAllocator*);
 
     // CCLayerTreeHost interface to WebView.
     bool animating() const { return m_animating; }
