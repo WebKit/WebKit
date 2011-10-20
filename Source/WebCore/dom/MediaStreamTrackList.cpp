@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +30,13 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrackList> MediaStreamTrackList::create(const TrackVector& tracks)
+PassRefPtr<MediaStreamTrackList> MediaStreamTrackList::create(const MediaStreamTrackVector& trackVector)
 {
-    return adoptRef(new MediaStreamTrackList(tracks));
+    return adoptRef(new MediaStreamTrackList(trackVector));
 }
 
-MediaStreamTrackList::MediaStreamTrackList(const TrackVector& tracks)
-    : m_tracks(tracks)
+MediaStreamTrackList::MediaStreamTrackList(const MediaStreamTrackVector& trackVector)
+    : m_trackVector(trackVector)
 {
 }
 
@@ -45,15 +46,13 @@ MediaStreamTrackList::~MediaStreamTrackList()
 
 unsigned MediaStreamTrackList::length() const
 {
-    return m_tracks.size();
+    return m_trackVector.size();
 }
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrackList::item(unsigned index) const
+MediaStreamTrack* MediaStreamTrackList::item(unsigned index) const
 {
-    if (index < m_tracks.size())
-        return m_tracks.at(index);
-    else
-        return PassRefPtr<MediaStreamTrack>();
+    ASSERT(index < length());
+    return m_trackVector[index].get();
 }
 
 } // namespace WebCore

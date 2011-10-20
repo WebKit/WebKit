@@ -28,7 +28,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamFrameController.h"
-#include "MediaStreamTrackList.h"
 #include "SecurityOrigin.h"
 #include <wtf/Vector.h>
 
@@ -81,16 +80,6 @@ void MediaStreamController::unregisterFrameController(MediaStreamFrameController
 
     for (Vector<int>::iterator it = frameRequests.begin(); it != frameRequests.end(); ++it)
         m_requests.remove(*it);
-
-    Vector<String> frameStreams;
-    for (StreamMap::iterator it = m_streams.begin(); it != m_streams.end(); ++it)
-        if (it->second == frameController)
-            frameStreams.append(it->first);
-
-    for (Vector<String>::iterator it = frameStreams.begin(); it != frameStreams.end(); ++it)
-        m_streams.remove(*it);
-
-    // FIXME: Add unregister functionality for peer connection objects.
 }
 
 int MediaStreamController::registerRequest(int localId, MediaStreamFrameController* frameController)
@@ -101,13 +90,6 @@ int MediaStreamController::registerRequest(int localId, MediaStreamFrameControll
     return m_nextGlobalRequestId++;
 }
 
-void MediaStreamController::registerStream(const String& streamLabel, MediaStreamFrameController* frameController)
-{
-    ASSERT(frameController);
-    ASSERT(!m_streams.contains(streamLabel));
-    m_streams.add(streamLabel, frameController);
-}
-
 void MediaStreamController::generateStream(MediaStreamFrameController* frameController, int localId, GenerateStreamOptionFlags flags, PassRefPtr<SecurityOrigin> securityOrigin)
 {
     ASSERT(m_client);
@@ -115,25 +97,14 @@ void MediaStreamController::generateStream(MediaStreamFrameController* frameCont
     m_client->generateStream(controllerRequestId, flags, securityOrigin);
 }
 
-void MediaStreamController::stopGeneratedStream(const String& streamLabel)
-{
-    m_client->stopGeneratedStream(streamLabel);
-}
-
-void MediaStreamController::setMediaStreamTrackEnabled(const String& trackId, bool enabled)
-{
-    m_client->setMediaStreamTrackEnabled(trackId, enabled);
-}
-
-void MediaStreamController::streamGenerated(int controllerRequestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks)
+void MediaStreamController::streamGenerated(int controllerRequestId, const MediaStreamSourceVector& sources)
 {
     // Don't assert since the frame controller can have been destroyed while the request reply was coming back.
     if (m_requests.contains(controllerRequestId)) {
         const Request& request = m_requests.get(controllerRequestId);
-        registerStream(streamLabel, request.frameController());
         m_requests.remove(controllerRequestId);
         ASSERT(request.frameController());
-        request.frameController()->streamGenerated(request.localId(), streamLabel, tracks);
+        request.frameController()->streamGenerated(request.localId(), sources);
     }
 }
 
@@ -145,13 +116,6 @@ void MediaStreamController::streamGenerationFailed(int controllerRequestId, Navi
         m_requests.remove(controllerRequestId);
         request.frameController()->streamGenerationFailed(request.localId(), code);
     }
-}
-
-void MediaStreamController::streamFailed(const String& streamLabel)
-{
-    // Don't assert since the frame controller can have been destroyed by the time this is called.
-    if (m_streams.contains(streamLabel))
-        m_streams.get(streamLabel)->streamFailed(streamLabel);
 }
 
 } // namespace WebCore

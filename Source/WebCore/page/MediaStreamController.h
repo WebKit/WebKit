@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamClient.h"
+#include "MediaStreamSource.h"
 #include "NavigatorUserMediaError.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -38,7 +39,6 @@ namespace WebCore {
 
 class MediaStreamClient;
 class MediaStreamFrameController;
-class MediaStreamTrackList;
 class SecurityOrigin;
 
 class MediaStreamController {
@@ -51,25 +51,17 @@ public:
     void unregisterFrameController(MediaStreamFrameController*);
 
     void generateStream(MediaStreamFrameController*, int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>);
-    void stopGeneratedStream(const String& streamLabel);
 
-    // Enable/disable an track.
-    void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
-
-    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
+    void streamGenerated(int requestId, const MediaStreamSourceVector& sources);
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
-    void streamFailed(const String& streamLabel);
 
 private:
     int registerRequest(int localRequestId, MediaStreamFrameController*);
-    void registerStream(const String& streamLabel, MediaStreamFrameController*);
 
     class Request;
     typedef HashMap<int, Request> RequestMap;
-    typedef HashMap<String, MediaStreamFrameController*> StreamMap;
 
     RequestMap m_requests;
-    StreamMap m_streams;
 
     MediaStreamClient* m_client;
     int m_nextGlobalRequestId;

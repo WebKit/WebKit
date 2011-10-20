@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,36 +28,33 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamDescriptor.h"
 #include "PlatformString.h"
-#include "MediaStreamFrameController.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class MediaStreamTrack : public RefCounted<MediaStreamTrack>,
-                         public MediaStreamFrameController::GenericClient {
+class MediaStreamTrack : public RefCounted<MediaStreamTrack> {
 public:
-    static PassRefPtr<MediaStreamTrack> create(const String& id, const String& kind, const String& label);
+    static PassRefPtr<MediaStreamTrack> create(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);
     virtual ~MediaStreamTrack();
 
-    const String& kind() const;
-    const String& label() const;
+    String kind() const;
+    String label() const;
 
     bool enabled() const;
-    void setEnabled(bool enabled);
+    void setEnabled(bool);
 
 private:
-    MediaStreamTrack(const String& id, const String& kind, const String& label);
+    MediaStreamTrack(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);
 
-    String m_id;
-    String m_kind;
-    String m_label;
-    bool m_enabled;
+    RefPtr<MediaStreamDescriptor> m_streamDescriptor;
+    const size_t m_trackIndex;
 };
 
-typedef Vector<RefPtr<MediaStreamTrack> > TrackVector;
+typedef Vector<RefPtr<MediaStreamTrack> > MediaStreamTrackVector;
 
 } // namespace WebCore
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,33 +29,26 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStream.h"
-#include <wtf/Forward.h>
+#include "Timer.h"
 
 namespace WebCore {
 
 class LocalMediaStream : public MediaStream {
 public:
-    static PassRefPtr<LocalMediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks);
+    static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, const MediaStreamSourceVector&);
     virtual ~LocalMediaStream();
 
     void stop();
 
-    // MediaStreamFrameController::StreamClient implementation.
-    virtual void detachEmbedder();
-    virtual void streamEnded();
-
     // EventTarget.
     virtual LocalMediaStream* toLocalMediaStream();
 
-protected:
-    virtual bool isLocalMediaStream() const { return true; }
-
 private:
-    LocalMediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks);
-    class DispatchUpdateTask;
-    friend class DispatchUpdateTask;
+    LocalMediaStream(ScriptExecutionContext*, const MediaStreamSourceVector&);
 
-    void onStop();
+    void stopTimerFired(Timer<LocalMediaStream>*);
+
+    Timer<LocalMediaStream> m_stopTimer;
 };
 
 } // namespace WebCore

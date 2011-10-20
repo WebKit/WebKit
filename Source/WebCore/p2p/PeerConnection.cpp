@@ -129,8 +129,7 @@ void PeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode&
 
     m_localStreams->append(stream);
 
-    // FIXME: get from stream->descriptor() when it's available, see http://webkit.org/b/68464
-    MediaStreamDescriptor* streamDescriptor = 0;
+    MediaStreamDescriptor* streamDescriptor = stream->descriptor();
     size_t i = m_pendingRemoveStreams.find(streamDescriptor);
     if (i != notFound) {
         m_pendingRemoveStreams.remove(i);
@@ -156,8 +155,7 @@ void PeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
 
     m_localStreams->remove(stream);
 
-    // FIXME: get from stream->descriptor() when it's available, see http://webkit.org/b/68464
-    MediaStreamDescriptor* streamDescriptor = 0;
+    MediaStreamDescriptor* streamDescriptor = stream->descriptor();
     size_t i = m_pendingAddStreams.find(streamDescriptor);
     if (i != notFound) {
         m_pendingAddStreams.remove(i);
@@ -215,8 +213,7 @@ void PeerConnection::remoteStreamAdded(PassRefPtr<MediaStreamDescriptor> streamD
     if (m_readyState == CLOSED)
         return;
 
-    // FIXME: create a new MediaStream from the streamDescriptor once it's possible, see http://webkit.org/b/68464
-    RefPtr<MediaStream> stream = 0;
+    RefPtr<MediaStream> stream = MediaStream::create(scriptExecutionContext(), streamDescriptor);
     m_remoteStreams->append(stream);
 
     dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));

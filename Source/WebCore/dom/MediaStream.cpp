@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,20 +33,35 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStream> MediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
-    return adoptRef(new MediaStream(frameController, label, tracks, isLocalMediaStream));
+    return adoptRef(new MediaStream(context, streamDescriptor));
 }
 
-MediaStream::MediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream)
-    : MediaStreamClient(frameController, label, isLocalMediaStream)
-    , m_readyState(LIVE)
-    , m_tracks(tracks)
+MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+    : m_scriptExecutionContext(context)
+    , m_descriptor(streamDescriptor)
 {
+    m_descriptor->setOwner(this);
+
+    MediaStreamTrackVector trackVector;
+    size_t numberOfTracks = m_descriptor->numberOfComponents();
+
+    trackVector.reserveCapacity(numberOfTracks);
+    for (size_t i = 0; i < numberOfTracks; i++)
+        trackVector.append(MediaStreamTrack::create(m_descriptor, i));
+
+    m_tracks = MediaStreamTrackList::create(trackVector);
 }
 
 MediaStream::~MediaStream()
 {
+    m_descriptor->setOwner(0);
+}
+
+MediaStream::ReadyState MediaStream::readyState() const
+{
+    return m_descriptor->ended() ? ENDED : LIVE;
 }
 
 MediaStream* MediaStream::toMediaStream()
@@ -55,14 +71,17 @@ MediaStream* MediaStream::toMediaStream()
 
 void MediaStream::streamEnded()
 {
-    ASSERT(m_readyState != ENDED);
-    m_readyState = ENDED;
+    if (readyState() == ENDED)
+        return;
+
+    m_descriptor->setEnded();
+
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 }
 
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const
 {
-    return mediaStreamFrameController() ? mediaStreamFrameController()->scriptExecutionContext() : 0;
+    return m_scriptExecutionContext.get();
 }
 
 EventTargetData* MediaStream::eventTargetData()

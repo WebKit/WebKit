@@ -1,3 +1,65 @@
+2011-10-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Update MediaStream to use WebCore platform interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=68464
+
+        Reviewed by Adam Barth.
+
+        This is one in a series of patches that update the MediaStream feature
+        to use WebCore platform interfaces.
+
+        Tests will be provided by http://webkit.org/b/56587
+
+        * dom/LocalMediaStream.cpp:
+        (WebCore::LocalMediaStream::create):
+        (WebCore::LocalMediaStream::LocalMediaStream):
+        (WebCore::LocalMediaStream::stop):
+        (WebCore::LocalMediaStream::stopTimerFired):
+        (WebCore::LocalMediaStream::~LocalMediaStream):
+        (WebCore::LocalMediaStream::toLocalMediaStream):
+        * dom/LocalMediaStream.h:
+        * dom/LocalMediaStream.idl:
+        * dom/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::readyState):
+        (WebCore::MediaStream::streamEnded):
+        (WebCore::MediaStream::scriptExecutionContext):
+        * dom/MediaStream.h:
+        (WebCore::MediaStream::label):
+        (WebCore::MediaStream::tracks):
+        (WebCore::MediaStream::descriptor):
+        * dom/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::kind):
+        (WebCore::MediaStreamTrack::label):
+        (WebCore::MediaStreamTrack::enabled):
+        (WebCore::MediaStreamTrack::setEnabled):
+        * dom/MediaStreamTrack.h:
+        * dom/MediaStreamTrack.idl:
+        * dom/MediaStreamTrackList.cpp:
+        (WebCore::MediaStreamTrackList::create):
+        (WebCore::MediaStreamTrackList::MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::length):
+        (WebCore::MediaStreamTrackList::item):
+        * dom/MediaStreamTrackList.h:
+        * p2p/PeerConnection.cpp:
+        (WebCore::PeerConnection::addStream):
+        (WebCore::PeerConnection::removeStream):
+        (WebCore::PeerConnection::remoteStreamAdded):
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::unregisterFrameController):
+        (WebCore::MediaStreamController::streamGenerated):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::enterDetachedState):
+        (WebCore::MediaStreamFrameController::disconnectFrame):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        * page/MediaStreamFrameController.h:
+
 2011-10-19  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Shorten animation time for ZoomAnimator.

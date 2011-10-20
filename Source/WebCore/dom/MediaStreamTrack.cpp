@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +30,14 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(const String& id, const String& kind, const String& label)
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
 {
-    return adoptRef(new MediaStreamTrack(id, kind, label));
+    return adoptRef(new MediaStreamTrack(streamDescriptor, trackIndex));
 }
 
-MediaStreamTrack::MediaStreamTrack(const String& id, const String& kind, const String& label)
-    : m_id(id)
-    , m_kind(kind)
-    , m_label(label)
-    , m_enabled(true)
+MediaStreamTrack::MediaStreamTrack(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
+    : m_streamDescriptor(streamDescriptor)
+    , m_trackIndex(trackIndex)
 {
 }
 
@@ -46,27 +45,39 @@ MediaStreamTrack::~MediaStreamTrack()
 {
 }
 
-const String& MediaStreamTrack::kind() const
+String MediaStreamTrack::kind() const
 {
-    return m_kind;
+    DEFINE_STATIC_LOCAL(String, audioKind, ("audio"));
+    DEFINE_STATIC_LOCAL(String, videoKind, ("video"));
+
+    switch (m_streamDescriptor->component(m_trackIndex)->source()->type()) {
+    case MediaStreamSource::TypeAudio:
+        return audioKind;
+    case MediaStreamSource::TypeVideo:
+        return videoKind;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
-const String& MediaStreamTrack::label() const
+String MediaStreamTrack::label() const
 {
-    return m_label;
+    return m_streamDescriptor->component(m_trackIndex)->source()->name();
 }
 
 bool MediaStreamTrack::enabled() const
 {
-    return m_enabled;
+    return m_streamDescriptor->component(m_trackIndex)->enabled();
 }
 
 void MediaStreamTrack::setEnabled(bool enabled)
 {
-    m_enabled = enabled;
+    if (enabled == m_streamDescriptor->component(m_trackIndex)->enabled())
+        return;
 
-    if (mediaStreamFrameController())
-        mediaStreamFrameController()->setMediaStreamTrackEnabled(m_id, enabled);
+    m_streamDescriptor->component(m_trackIndex)->setEnabled(enabled);
+
+    // FIXME: tell the platform that the track was enabled/disabled
 }
 
 } // namespace WebCore

@@ -27,9 +27,9 @@ module core {
     interface [
         Conditional=MEDIA_STREAM,
     ] MediaStreamTrack {
-      readonly attribute DOMString kind;
-      readonly attribute DOMString label;
-               attribute boolean enabled;
+        readonly attribute DOMString kind;
+        readonly attribute DOMString label;
+                 attribute boolean enabled;
     };
 
 }

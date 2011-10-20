@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +28,37 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "EventNames.h"
 #include "EventTarget.h"
-#include "MediaStreamFrameController.h"
+#include "MediaStreamDescriptor.h"
 #include "MediaStreamTrackList.h"
-#include "ScriptExecutionContext.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class MediaStream : public RefCounted<MediaStream>,
-                    public EventTarget,
-                    public MediaStreamFrameController::MediaStreamClient {
+class ScriptExecutionContext;
+
+class MediaStream : public RefCounted<MediaStream>, public EventTarget {
 public:
     // Must match the constants in the .idl file.
-    enum {
+    enum ReadyState {
         LIVE = 1,
         ENDED = 2
     };
 
-    static PassRefPtr<MediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream = false);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
     virtual ~MediaStream();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
-    unsigned short readyState() const { return m_readyState; }
-    const String& label() const { return clientId(); }
+    ReadyState readyState() const;
+    String label() const { return m_descriptor->label(); }
 
-    PassRefPtr<MediaStreamTrackList> tracks() { return m_tracks; }
+    MediaStreamTrackList* tracks() { return m_tracks.get(); }
 
-    // MediaStreamFrameController::MediaStreamClient implementation.
-    virtual void streamEnded();
+    void streamEnded();
+
+    MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 
     // EventTarget implementation.
     virtual MediaStream* toMediaStream();
@@ -69,24 +68,23 @@ public:
     using RefCounted<MediaStream>::deref;
 
 protected:
-    MediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream);
+    MediaStream(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
 
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    unsigned short m_readyState;
-
 private:
-    void onEnded();
-
     // EventTarget implementation.
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
     EventTargetData m_eventTargetData;
 
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+
     RefPtr<MediaStreamTrackList> m_tracks;
+    RefPtr<MediaStreamDescriptor> m_descriptor;
 };
 
 } // namespace WebCore

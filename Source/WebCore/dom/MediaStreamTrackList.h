@@ -28,28 +28,22 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamTrack.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class MediaStreamTrackList : public RefCounted<MediaStreamTrackList> {
 public:
-    static PassRefPtr<MediaStreamTrackList> create(const TrackVector& m_tracks);
+    static PassRefPtr<MediaStreamTrackList> create(const MediaStreamTrackVector&);
     virtual ~MediaStreamTrackList();
 
     // DOM methods & attributes for MediaStreamTrackList
     unsigned length() const;
-    PassRefPtr<MediaStreamTrack> item(unsigned index) const;
-
-    void associateStream(const String& label) { m_associatedStreamLabel = label; }
+    MediaStreamTrack* item(unsigned index) const;
 
 private:
-    MediaStreamTrackList(const TrackVector& m_tracks);
+    MediaStreamTrackList(const MediaStreamTrackVector&);
 
-    TrackVector m_tracks;
-    String m_associatedStreamLabel;
+    MediaStreamTrackVector m_trackVector;
 };
 
 } // namespace WebCore

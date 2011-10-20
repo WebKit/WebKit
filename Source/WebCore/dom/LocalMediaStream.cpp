@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,44 +28,37 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Event.h"
-#include "EventNames.h"
-#include "MediaStreamFrameController.h"
-#include "ScriptExecutionContext.h"
+#include "UUID.h"
 
 namespace WebCore {
 
-class LocalMediaStream::DispatchUpdateTask : public ScriptExecutionContext::Task {
-public:
-    typedef void (LocalMediaStream::*Callback)();
-
-    static PassOwnPtr<DispatchUpdateTask> create(PassRefPtr<LocalMediaStream> object, Callback callback)
-    {
-        return adoptPtr(new DispatchUpdateTask(object, callback));
-    }
-
-    virtual void performTask(ScriptExecutionContext*)
-    {
-        (m_object.get()->*m_callback)();
-    }
-
-public:
-    DispatchUpdateTask(PassRefPtr<LocalMediaStream> object, Callback callback)
-        : m_object(object)
-        , m_callback(callback) { }
-
-    RefPtr<LocalMediaStream> m_object;
-    Callback m_callback;
-};
-
-PassRefPtr<LocalMediaStream> LocalMediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks)
+PassRefPtr<LocalMediaStream> LocalMediaStream::create(ScriptExecutionContext* context, const MediaStreamSourceVector& sources)
 {
-    return adoptRef(new LocalMediaStream(frameController, label, tracks));
+    return adoptRef(new LocalMediaStream(context, sources));
 }
 
-LocalMediaStream::LocalMediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks)
-    : MediaStream(frameController, label, tracks, true)
+LocalMediaStream::LocalMediaStream(ScriptExecutionContext* context, const MediaStreamSourceVector& sources)
+    : MediaStream(context, MediaStreamDescriptor::create(createCanonicalUUIDString(), sources))
+    , m_stopTimer(this, &LocalMediaStream::stopTimerFired)
 {
+}
+
+void LocalMediaStream::stop()
+{
+    if (!m_stopTimer.isActive())
+        m_stopTimer.startOneShot(0);
+}
+
+void LocalMediaStream::stopTimerFired(Timer<LocalMediaStream>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_stopTimer);
+
+    if (readyState() == ENDED)
+        return;
+
+    // FIXME: tell the platform that the stream was stopped
+
+    streamEnded();
 }
 
 LocalMediaStream::~LocalMediaStream()
@@ -74,41 +68,6 @@ LocalMediaStream::~LocalMediaStream()
 LocalMediaStream* LocalMediaStream::toLocalMediaStream()
 {
     return this;
-}
-
-void LocalMediaStream::detachEmbedder()
-{
-    // Assuming we should stop any live streams when losing access to the embedder.
-    stop();
-
-    MediaStream::detachEmbedder();
-}
-
-void LocalMediaStream::streamEnded()
-{
-    MediaStream::streamEnded();
-}
-
-void LocalMediaStream::stop()
-{
-    if (!mediaStreamFrameController() || m_readyState == ENDED)
-        return;
-
-    mediaStreamFrameController()->stopGeneratedStream(label());
-
-    m_readyState = ENDED;
-
-    // Don't assert since it can be null in degenerate cases like frames detached from their pages.
-    if (!scriptExecutionContext())
-        return;
-
-    ASSERT(scriptExecutionContext()->isContextThread());
-    scriptExecutionContext()->postTask(DispatchUpdateTask::create(this, &LocalMediaStream::onStop));
-}
-
-void LocalMediaStream::onStop()
-{
-    dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 }
 
 } // namespace WebCore

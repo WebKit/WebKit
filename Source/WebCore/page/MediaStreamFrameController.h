@@ -29,6 +29,7 @@
 
 #include "ExceptionCode.h"
 #include "MediaStreamClient.h"
+#include "MediaStreamSource.h"
 #include "NavigatorUserMediaError.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -38,106 +39,16 @@
 namespace WebCore {
 
 class Frame;
-class LocalMediaStream;
-class MediaStream;
 class MediaStreamController;
-class MediaStreamTrackList;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
-class SignalingCallback;
 
 class MediaStreamFrameController {
     WTF_MAKE_NONCOPYABLE(MediaStreamFrameController);
 public:
-    template <typename IdType>
-    class ClientBase {
-        WTF_MAKE_NONCOPYABLE(ClientBase);
-    public:
-        ClientBase() : m_frameController(0), m_clientId(0) { }
-
-        ClientBase(MediaStreamFrameController* frameController, const IdType& id)
-            : m_frameController(frameController)
-            , m_clientId(id) { }
-
-        virtual ~ClientBase() { }
-
-        MediaStreamFrameController* mediaStreamFrameController() const { return m_frameController; }
-        const IdType& clientId() const { return m_clientId; }
-
-        virtual bool isMediaStream() const { return false; }
-        virtual bool isLocalMediaStream() const { return false; }
-        virtual bool isGenericClient() const { return false; }
-
-        // Called when the frame controller is being disconnected to the MediaStreamClient embedder.
-        // Clients should override this to send any required shutdown messages.
-        virtual void detachEmbedder() { }
-
-    protected:
-        // Used for objects that are optionally associated to the frame controller after construction, like the MediaStreamTracks.
-        void associateFrameController(MediaStreamFrameController* frameController, const IdType& id)
-        {
-            ASSERT(!m_frameController && !m_clientId);
-            m_frameController = frameController;
-            m_clientId = id;
-        }
-
-        // Avoids repeating the same code in the unregister method of each derived class.
-        // This is required since the controller's unregister methods make use of the isObject virtuals,
-        // and the unregistration can be triggered either by the destructor of the client or by the disconnection of the frame.
-        template <typename ClientType>
-        void unregisterClient(ClientType* client)
-        {
-            if (!m_frameController)
-                return;
-
-            m_frameController->unregister(static_cast<ClientType*>(client));
-            m_frameController = 0;
-        }
-
-        virtual void unregister() = 0;
-        friend class MediaStreamFrameController;
-
-        MediaStreamFrameController* m_frameController;
-        IdType m_clientId;
-    };
-
-    class MediaStreamClient : public ClientBase<String> {
-    public:
-        MediaStreamClient(MediaStreamFrameController* frameController, const String& label, bool isLocalMediaStream)
-            : ClientBase<String>(frameController, label)
-            , m_isLocalMediaStream(isLocalMediaStream) { }
-
-        virtual ~MediaStreamClient() { unregister(); }
-
-        virtual bool isMediaStream() const { return true; }
-
-        // Accessed by the destructor.
-        virtual bool isLocalMediaStream() const { return m_isLocalMediaStream; }
-
-        // Stream has ended for some external reason.
-        virtual void streamEnded() = 0;
-
-    private:
-        virtual void unregister() { unregisterClient(this); }
-        bool m_isLocalMediaStream;
-    };
-
-    // Generic clients are objects that require access to the frame controller but don't have a global id (like streams do)
-    // or need to receive any messages from the embedder client.
-    class GenericClient : public ClientBase<int> {
-    public:
-        GenericClient() { }
-        GenericClient(MediaStreamFrameController* frameController, int id) : ClientBase<int>(frameController, id) { }
-        virtual ~GenericClient() { unregister(); }
-        virtual bool isGenericClient() const { return true; }
-
-    private:
-        virtual void unregister() { unregisterClient(this); }
-    };
-
     MediaStreamFrameController(Frame*);
     virtual ~MediaStreamFrameController();
 
@@ -151,14 +62,11 @@ public:
 
     static GenerateStreamOptionFlags parseGenerateStreamOptions(const String&);
     void generateStream(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
-    void stopGeneratedStream(const String& streamLabel);
-    void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
 
     // --- Calls coming back from the controller. --- //
 
-    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
+    void streamGenerated(int requestId, const MediaStreamSourceVector& sources);
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
-    void streamFailed(const String& streamLabel);
 
 private:
     class Request;
@@ -180,34 +88,12 @@ private:
         void abortAll();
     };
 
-    template <typename IdType>
-    class ClientMapBase : public HashMap<IdType, ClientBase<IdType>* > {
-        WTF_MAKE_NONCOPYABLE(ClientMapBase);
-    public:
-        typedef HashMap<IdType, ClientBase<IdType>* > MapType;
-
-        ClientMapBase() { }
-        void unregisterAll();
-        void detachEmbedder();
-    };
-
-    // Streams are a special class of clients since they are identified by a global label string instead of an id.
-    typedef ClientMapBase<String> StreamMap;
-
-    // All other types of clients use autogenerated integer ids.
-    class ClientMap : public IdGenerator, public ClientMapBase<int> { };
-
     // Detached from a page, and hence from a embedder client.
     void enterDetachedState();
 
-    void unregister(MediaStreamClient*);
-    void unregister(GenericClient*);
     MediaStreamController* pageController() const;
-    MediaStream* getStreamFromLabel(const String&) const;
 
     RequestMap m_requests;
-    ClientMap m_clients;
-    StreamMap m_streams;
 
     Frame* m_frame;
     bool m_isInDetachedState;

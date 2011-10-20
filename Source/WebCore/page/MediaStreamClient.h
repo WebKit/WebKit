@@ -46,8 +46,6 @@ public:
     // MediaStream functions.
     virtual void mediaStreamDestroyed() = 0;
     virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
-    virtual void setMediaStreamTrackEnabled(const String& trackId, bool enabled) = 0;
 
 protected:
     virtual ~MediaStreamClient() { }
