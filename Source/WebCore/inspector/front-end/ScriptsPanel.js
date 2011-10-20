@@ -643,7 +643,7 @@ WebInspector.ScriptsPanel.prototype = {
     _showSourceLine: function(uiSourceCode, lineNumber)
     {
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
-        if (lineNumber)
+        if (typeof lineNumber === "number")
             sourceFrame.highlightLine(lineNumber);
     },
 

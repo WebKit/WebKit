@@ -976,10 +976,36 @@ function revertDomChanges(domChanges)
 }
 
 /**
+ * @param {string} query
+ * @param {boolean} ignoreCase
+ * @param {boolean} isRegex
+ * @return {RegExp}
+ */
+function createSearchRegex(query, caseSensitive, isRegex)
+{
+    var regexFlags = caseSensitive ? "g" : "gi";
+    var regexObject;
+
+    if (isRegex) {
+        try {
+            regexObject = new RegExp(query, regexFlags);
+        } catch (e) {
+            // Silent catch.
+        }
+    }
+
+    if (!regexObject)
+        regexObject = createPlainTextSearchRegex(query, regexFlags);
+
+    return regexObject;
+}
+
+/**
+ * @param {string} query
  * @param {string=} flags
  * @return {RegExp}
  */
-function createSearchRegex(query, flags)
+function createPlainTextSearchRegex(query, flags)
 {
     // This should be kept the same as the one in ContentSearchUtils.cpp.
     var regexSpecialCharacters = "[](){}+-*.,?\\^$|";

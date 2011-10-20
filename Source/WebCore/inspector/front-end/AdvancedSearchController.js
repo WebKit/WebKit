@@ -360,25 +360,6 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
     fileName: function(file) { },
     
     /**
-     * @return {RegExp}
-     */
-    _createSearchRegex: function()
-    {
-        var regexFlags = this._searchConfig.ignoreCase ? "gi" : "g";
-        var regexObject;
-        try {
-            regexObject = new RegExp(this._searchConfig.query, regexFlags);
-        } catch (e) {
-            // Silent catch.
-        }
-
-        if (!regexObject)
-            regexObject = createSearchRegex(this._searchConfig.query, regexFlags);
-        
-        return regexObject;
-    },
-    
-    /**
      * @param {Object} searchResult
      */
     addSearchResult: function(searchResult)
@@ -391,7 +372,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         // Expand first file with matches only.
         var fileTreeElement = this._addFileTreeElement(fileName, searchMatches.length, this._searchResults.length === 1);
         
-        var regexObject = this._createSearchRegex();
+        var regexObject = createSearchRegex(this._searchConfig.query, !this._searchConfig.ignoreCase, this._searchConfig.isRegex);
         for (var i = 0; i < searchMatches.length; i++) {
             var lineNumber = searchMatches[i].lineNumber;
             

@@ -1,3 +1,13 @@
+2011-10-20  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Enable support for advanced search in script's static content provider.
+        https://bugs.webkit.org/show_bug.cgi?id=70354
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/search/search-in-static-expected.txt: Added.
+        * http/tests/inspector/search/search-in-static.html: Added.
+
 2011-10-20  Kentaro Hara  <haraken@chromium.org>
 
         Implement a MessageEvent constructor for V8

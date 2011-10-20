@@ -82,7 +82,7 @@ WebInspector.ConsolePanel.prototype = {
     {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
         this.searchCanceled();
-        this._searchRegex = createSearchRegex(query, "gi");
+        this._searchRegex = createPlainTextSearchRegex(query, "gi");
 
         this._searchResults = [];
         var messages = WebInspector.consoleView.messages;
