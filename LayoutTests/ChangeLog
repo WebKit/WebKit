@@ -1,5 +1,13 @@
 2011-10-19  Yuzo Fujishima  <yuzo@google.com>
 
+        [chromium] Revert test expectaion change by 97932.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-19  Yuzo Fujishima  <yuzo@google.com>
+
         [chromium] Test expectation change for platform/chromium/compositing/zoom-animator-scale-test2.html
 
         Unreviewed.
