@@ -2811,6 +2811,7 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
         if (!visible)
             m_nonCompositedContentHost->protectVisibleTileTextures();
         m_layerTreeHost->setVisible(visible);
+        graphicsContext3D()->setVisibility(visible);
     }
 #endif
 }

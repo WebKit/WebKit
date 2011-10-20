@@ -140,6 +140,9 @@ public:
     // Resizes the region into which this WebGraphicsContext3D is drawing.
     virtual void reshape(int width, int height) = 0;
 
+    // Changes the visibility of the region
+    virtual void setVisibility(bool visible) = 0;
+
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;
 
