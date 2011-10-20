@@ -34,8 +34,6 @@
 namespace WebCore {
 
 static WTF_ALIGNED(unsigned char, s_FEGaussianBlurConstantsForNeon[], 16) = {
-    // Mapping from ARM to NEON registers.
-    0, 16, 16, 16, 1,  16, 16, 16, 2,  16, 16, 16, 3,  16, 16, 16,
     // Mapping from NEON to ARM registers.
     0, 4,  8,  12, 16, 16, 16, 16
 };
@@ -93,10 +91,7 @@ unsigned char* feGaussianBlurConstantsForNeon()
 #define PIXEL_D11               "d5[1]"
 #define REMAINING_STRIDES_S0    "s12"
 
-#define READ_RANGE              "d16-d18"
-#define REMAP_ARM_NEON1_Q       "d16"
-#define REMAP_ARM_NEON2_Q       "d17"
-#define REMAP_NEON_ARM_Q        "d18"
+#define REMAP_NEON_ARM_Q        "d16"
 
 asm ( // NOLINT
 ".globl " TOSTRING(neonDrawAllChannelGaussianBlur) NL
@@ -119,7 +114,7 @@ TOSTRING(neonDrawAllChannelGaussianBlur) ":" NL
     "movcs " MAX_KERNEL_SIZE_R ", " STRIDE_WIDTH_R NL
     "add " SOURCE_LINE_END_R ", " SOURCE_LINE_END_R ", " SOURCE_R NL
     "vdup.f32 " INVERTED_KERNEL_SIZE_Q ", " INIT_INVERTED_KERNEL_SIZE_R NL
-    "vld1.f32 { " READ_RANGE " }, [" INIT_PAINTING_CONSTANTS_R "]!" NL
+    "vld1.f32 { " REMAP_NEON_ARM_Q " }, [" INIT_PAINTING_CONSTANTS_R "]!" NL
 
 ".allChannelMainLoop:" NL
 
@@ -131,8 +126,8 @@ TOSTRING(neonDrawAllChannelGaussianBlur) ":" NL
     "bcs .allChannelInitSumDone" NL
 ".allChannelInitSum:" NL
     "vld1.u32 " PIXEL_D00 ", [" INIT_SUM_R "], " STRIDE_R NL
-    "vtbl.8 " PIXEL_D1 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON2_Q NL
-    "vtbl.8 " PIXEL_D0 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON1_Q NL
+    "vmovl.u8 " PIXEL_Q ", " PIXEL_D0 NL
+    "vmovl.u16 " PIXEL_Q ", " PIXEL_D0 NL
     "vadd.u32 " SUM_Q ", " SUM_Q ", " PIXEL_Q NL
     "cmp " INIT_SUM_R ", " SOURCE_END_R NL
     "bcc .allChannelInitSum" NL
@@ -154,16 +149,16 @@ TOSTRING(neonDrawAllChannelGaussianBlur) ":" NL
     "cmp " LEFT_R ", " SOURCE_R NL
     "bcc .allChannelSkipLeft" NL
     "vld1.u32 " PIXEL_D00 ", [" LEFT_R "]" NL
-    "vtbl.8 " PIXEL_D1 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON2_Q NL
-    "vtbl.8 " PIXEL_D0 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON1_Q NL
+    "vmovl.u8 " PIXEL_Q ", " PIXEL_D0 NL
+    "vmovl.u16 " PIXEL_Q ", " PIXEL_D0 NL
     "vsub.u32 " SUM_Q ", " SUM_Q ", " PIXEL_Q NL
 ".allChannelSkipLeft: " NL
 
     "cmp " RIGHT_R ", " SOURCE_END_R NL
     "bcs .allChannelSkipRight" NL
     "vld1.u32 " PIXEL_D00 ", [" RIGHT_R "]" NL
-    "vtbl.8 " PIXEL_D1 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON2_Q NL
-    "vtbl.8 " PIXEL_D0 ", {" PIXEL_D0 "}, " REMAP_ARM_NEON1_Q NL
+    "vmovl.u8 " PIXEL_Q ", " PIXEL_D0 NL
+    "vmovl.u16 " PIXEL_Q ", " PIXEL_D0 NL
     "vadd.u32 " SUM_Q ", " SUM_Q ", " PIXEL_Q NL
 ".allChannelSkipRight: " NL
 

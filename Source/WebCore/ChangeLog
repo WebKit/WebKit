@@ -1,3 +1,14 @@
+2011-10-20  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Improve NEON based GaussianBlur
+        https://bugs.webkit.org/show_bug.cgi?id=70493
+
+        Reviewed by Csaba Osztrogonác.
+
+        vmov instruction is less complex than vtbl.
+
+        * platform/graphics/filters/arm/FEGaussianBlurNEON.cpp:
+
 2011-10-20  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: follow up to 97961 - dispatching of hide on detach was missing.
