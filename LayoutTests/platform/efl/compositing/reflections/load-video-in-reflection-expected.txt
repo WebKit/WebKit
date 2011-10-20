@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x351
+  RenderBlock {HTML} at (0,0) size 800x351
+    RenderBody {BODY} at (8,16) size 784x327
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 493x19
+          text run at (0,0) width 493: "You should see a reflected video below, rather than the red video background."
+layer at (8,51) size 300x292
+  RenderBlock {DIV} at (0,35) size 300x292
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,51) size 352x288
+  RenderVideo {VIDEO} at (0,0) size 352x288 [bgcolor=#FF0000]
