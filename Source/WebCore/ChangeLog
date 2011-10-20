@@ -1,3 +1,9 @@
+2011-10-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        One more GTK+ build fix. Remove CueLoader files from the build.
+
+        * GNUmakefile.list.am:
+
 2011-10-20  Ken Buchanan <kenrb@chromium.org>
 
         Crash in updateFirstLetter on :after generated content

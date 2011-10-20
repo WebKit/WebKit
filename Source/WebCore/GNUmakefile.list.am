@@ -2154,8 +2154,6 @@ webcore_sources += \
 	Source/WebCore/loader/CrossOriginAccessControl.h \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.cpp \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.h \
-	Source/WebCore/loader/CueLoader.cpp \
-	Source/WebCore/loader/CueLoader.h \
 	Source/WebCore/loader/TextTrackLoader.cpp \
 	Source/WebCore/loader/TextTrackLoader.h \
 	Source/WebCore/loader/DocumentLoader.cpp \
