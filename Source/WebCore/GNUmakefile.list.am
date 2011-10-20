@@ -1648,8 +1648,6 @@ webcore_sources += \
 	Source/WebCore/html/CollectionType.h \
 	Source/WebCore/html/ColorInputType.cpp \
 	Source/WebCore/html/ColorInputType.h \
-	Source/WebCore/html/CueIndex.cpp \
-	Source/WebCore/html/CueIndex.h \
 	Source/WebCore/html/DateInputType.cpp \
 	Source/WebCore/html/DateInputType.h \
 	Source/WebCore/html/DateTimeInputType.cpp \
@@ -1959,6 +1957,8 @@ webcore_sources += \
 	Source/WebCore/html/TextTrack.h \
 	Source/WebCore/html/TextTrackCue.cpp \
 	Source/WebCore/html/TextTrackCue.h \
+	Source/WebCore/html/TextTrackCueIndex.cpp \
+	Source/WebCore/html/TextTrackCueIndex.h \
 	Source/WebCore/html/TextTrackCueList.cpp \
 	Source/WebCore/html/TextTrackCueList.h \
 	Source/WebCore/html/TimeInputType.cpp \
@@ -2124,8 +2124,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/MemoryCache.cpp \
 	Source/WebCore/loader/cache/CachedCSSStyleSheet.cpp \
 	Source/WebCore/loader/cache/CachedCSSStyleSheet.h \
-	Source/WebCore/loader/cache/CachedCues.cpp \
-	Source/WebCore/loader/cache/CachedCues.h \
 	Source/WebCore/loader/cache/CachedFont.cpp \
 	Source/WebCore/loader/cache/CachedFont.h \
 	Source/WebCore/loader/cache/CachedImage.cpp \
@@ -2145,6 +2143,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedScript.cpp \
 	Source/WebCore/loader/cache/CachedScript.h \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
+	Source/WebCore/loader/cache/CachedTextTrack.cpp \
+	Source/WebCore/loader/cache/CachedTextTrack.h \
 	Source/WebCore/loader/cache/CachedXSLStyleSheet.cpp \
 	Source/WebCore/loader/cache/CachedXSLStyleSheet.h \
 	Source/WebCore/loader/cache/MemoryCache.h \
@@ -2156,6 +2156,8 @@ webcore_sources += \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.h \
 	Source/WebCore/loader/CueLoader.cpp \
 	Source/WebCore/loader/CueLoader.h \
+	Source/WebCore/loader/TextTrackLoader.cpp \
+	Source/WebCore/loader/TextTrackLoader.h \
 	Source/WebCore/loader/DocumentLoader.cpp \
 	Source/WebCore/loader/DocumentLoader.h \
 	Source/WebCore/loader/DocumentLoadTiming.h \

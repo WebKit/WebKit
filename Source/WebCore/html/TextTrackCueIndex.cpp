@@ -27,75 +27,75 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CueIndex.h"
+#include "TextTrackCueIndex.h"
 
 #include "TextTrackCue.h"
 #include "TextTrackCueList.h"
 
 namespace WebCore {
 
-CueSet CueSet::difference(const CueSet&) const
+TextTrackCueSet TextTrackCueSet::difference(const TextTrackCueSet&) const
 {
     // FIXME(62883): Implement.
-    return CueSet();
+    return TextTrackCueSet();
 }
 
-CueSet CueSet::unionSet(const CueSet&) const
+TextTrackCueSet TextTrackCueSet::unionSet(const TextTrackCueSet&) const
 {
     // FIXME(62883): Implement.
-    return CueSet();
+    return TextTrackCueSet();
 }
 
-void CueSet::add(const TextTrackCue&)
-{
-    // FIXME(62883): Implement.
-}
-
-bool CueSet::contains(const TextTrackCue&) const
-{
-    // FIXME(62883): Implement.
-    return false;
-}
-
-void CueSet::remove(const TextTrackCue&)
+void TextTrackCueSet::add(const TextTrackCue&)
 {
     // FIXME(62883): Implement.
 }
 
-bool CueSet::isEmpty() const
+bool TextTrackCueSet::contains(const TextTrackCue&) const
 {
     // FIXME(62883): Implement.
     return false;
 }
 
-int CueSet::size() const
+void TextTrackCueSet::remove(const TextTrackCue&)
+{
+    // FIXME(62883): Implement.
+}
+
+bool TextTrackCueSet::isEmpty() const
+{
+    // FIXME(62883): Implement.
+    return false;
+}
+
+int TextTrackCueSet::size() const
 {
     // FIXME(62883): Implement.
     return 0;
 }
 
-void CueIndex::fetchNewCuesFromLoader(CueLoader*)
+void TextTrackCueIndex::fetchNewCuesFromLoader(TextTrackLoader*)
 {
     // FIXME(62883): Implement.
 }
 
-void CueIndex::removeCuesFromIndex(const TextTrackCueList*)
+void TextTrackCueIndex::removeCuesFromIndex(const TextTrackCueList*)
 {
     // FIXME(62883): Implement.
 }
 
-CueSet CueIndex::visibleCuesAtTime(double) const
+TextTrackCueSet TextTrackCueIndex::visibleCuesAtTime(double) const
 {
     // FIXME(62855): Implement.
-    return CueSet();
+    return TextTrackCueSet();
 }
 
-void CueIndex::add(TextTrackCue*)
+void TextTrackCueIndex::add(TextTrackCue*)
 {
     // FIXME(62890): Implement.
 }
 
-void CueIndex::remove(TextTrackCue*)
+void TextTrackCueIndex::remove(TextTrackCue*)
 {
     // FIXME(62890): Implement.
 }

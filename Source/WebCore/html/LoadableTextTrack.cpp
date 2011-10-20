@@ -44,28 +44,28 @@ LoadableTextTrack::~LoadableTextTrack()
 
 void LoadableTextTrack::load(const KURL& url, ScriptExecutionContext* context)
 {
-    if (!m_cueLoader)
-        m_cueLoader = CueLoader::create(this, context);
-    m_cueLoader->load(url);
+    if (!m_loader)
+        m_loader = TextTrackLoader::create(this, context);
+    m_loader->load(url);
 }
 
-void LoadableTextTrack::newCuesAvailable(CueLoader* loader)
+void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 {
-    ASSERT_UNUSED(loader, m_cueLoader == loader);
+    ASSERT_UNUSED(loader, m_loader == loader);
 
     // FIXME(62885): Implement.
 }
 
-void LoadableTextTrack::cueLoadingStarted(CueLoader* loader)
+void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
 {
-    ASSERT_UNUSED(loader, m_cueLoader == loader);
+    ASSERT_UNUSED(loader, m_loader == loader);
     
     setReadyState(TextTrack::Loading);
 }
 
-void LoadableTextTrack::cueLoadingCompleted(CueLoader* loader, bool)
+void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool)
 {
-    ASSERT_UNUSED(loader, m_cueLoader == loader);
+    ASSERT_UNUSED(loader, m_loader == loader);
 
     // FIXME(62885): Implement.
 }

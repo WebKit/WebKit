@@ -97,10 +97,10 @@
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0753860214489E9800B78452 /* CachedCues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedCues.cpp */; };
-		0753860314489E9800B78452 /* CachedCues.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedCues.h */; };
-		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		073A3AE3142BAFE100977A4C /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */; };
+		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
+		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
+		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		0806E57A12893045007CED32 /* SVGMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0806E57912893045007CED32 /* SVGMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */ = {isa = PBXBuildFile; fileRef = 080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */; };
@@ -4150,20 +4150,20 @@
 		B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */; };
 		B14353F9138EA95B00D53276 /* JSMediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353F7138EA95B00D53276 /* JSMediaStreamList.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
-		B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */; };
-		B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* CueIndex.h */; };
+		B1AD4E5C13A12A0B00846B27 /* TextTrackCueIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */; };
+		B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */; };
 		B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */; };
 		B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */; };
 		B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */; };
 		B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */; };
 		B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */; };
-		B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5613A12A0B00846B27 /* TextTrack.h */; };
+		B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5613A12A0B00846B27 /* TextTrack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */; };
 		B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */; };
 		B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */; };
 		B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */; };
-		B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E7113A12A4600846B27 /* CueLoader.cpp */; };
-		B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E7213A12A4600846B27 /* CueLoader.h */; };
+		B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */; };
+		B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B1E5457A1346291F0092A545 /* LocalMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545711346291F0092A545 /* LocalMediaStream.cpp */; };
 		B1E5457B1346291F0092A545 /* LocalMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545721346291F0092A545 /* LocalMediaStream.h */; };
@@ -7124,12 +7124,12 @@
 		0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySlider.h; sourceTree = "<group>"; };
 		070DD8F50F01868000727DEB /* mediaControls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControls.css; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
-		0753860014489E9800B78452 /* CachedCues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedCues.cpp; sourceTree = "<group>"; };
-		0753860114489E9800B78452 /* CachedCues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedCues.h; sourceTree = "<group>"; };
+		073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
+		0753860014489E9800B78452 /* CachedTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedTextTrack.cpp; sourceTree = "<group>"; };
+		0753860114489E9800B78452 /* CachedTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTextTrack.h; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
-		073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
 		07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsQuickTime.css; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		0806E57912893045007CED32 /* SVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrix.h; sourceTree = "<group>"; };
@@ -11267,8 +11267,8 @@
 		B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353F7138EA95B00D53276 /* JSMediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamList.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
-		B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CueIndex.cpp; sourceTree = "<group>"; };
-		B1AD4E4C13A12A0B00846B27 /* CueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueIndex.h; sourceTree = "<group>"; };
+		B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueIndex.cpp; sourceTree = "<group>"; };
+		B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueIndex.h; sourceTree = "<group>"; };
 		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableTextTrack.cpp; sourceTree = "<group>"; };
 		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableTextTrack.h; sourceTree = "<group>"; };
 		B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableTextTrack.cpp; sourceTree = "<group>"; };
@@ -11279,8 +11279,8 @@
 		B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCue.h; sourceTree = "<group>"; };
 		B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueList.cpp; sourceTree = "<group>"; };
 		B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueList.h; sourceTree = "<group>"; };
-		B1AD4E7113A12A4600846B27 /* CueLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CueLoader.cpp; path = loader/CueLoader.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E7213A12A4600846B27 /* CueLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CueLoader.h; path = loader/CueLoader.h; sourceTree = SOURCE_ROOT; };
+		B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackLoader.cpp; path = loader/TextTrackLoader.cpp; sourceTree = SOURCE_ROOT; };
+		B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackLoader.h; path = loader/TextTrackLoader.h; sourceTree = SOURCE_ROOT; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B1E545711346291F0092A545 /* LocalMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalMediaStream.cpp; sourceTree = "<group>"; };
 		B1E545721346291F0092A545 /* LocalMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalMediaStream.h; sourceTree = "<group>"; };
@@ -17056,8 +17056,6 @@
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				F55B3D7F1251F12D003EF269 /* ColorInputType.cpp */,
 				F55B3D801251F12D003EF269 /* ColorInputType.h */,
-				B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */,
-				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
 				F55B3D811251F12D003EF269 /* DateInputType.cpp */,
 				F55B3D821251F12D003EF269 /* DateInputType.h */,
 				F55B3D831251F12D003EF269 /* DateTimeInputType.cpp */,
@@ -17395,6 +17393,8 @@
 				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
 				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
 				0707569D1422979800414161 /* TextTrackCue.idl */,
+				B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */,
+				B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */,
 				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
 				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
 				0707569E1422979800414161 /* TextTrackCueList.idl */,
@@ -18495,8 +18495,6 @@
 		A8D2B2521287A56000AF4DDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
-				0753860014489E9800B78452 /* CachedCues.cpp */,
-				0753860114489E9800B78452 /* CachedCues.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
@@ -18518,6 +18516,8 @@
 				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
 				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
 				D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */,
+				0753860014489E9800B78452 /* CachedTextTrack.cpp */,
+				0753860114489E9800B78452 /* CachedTextTrack.h */,
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
 				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
@@ -19895,8 +19895,6 @@
 				E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */,
 				E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */,
 				E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */,
-				B1AD4E7113A12A4600846B27 /* CueLoader.cpp */,
-				B1AD4E7213A12A4600846B27 /* CueLoader.h */,
 				93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */,
 				656D371E0ADBA5DE00A4554D /* DocumentLoader.h */,
 				8A12E35C11FA33280025836A /* DocumentLoadTiming.h */,
@@ -19962,6 +19960,8 @@
 				1A8F6B010DB53006001DB794 /* SubstituteResource.h */,
 				F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */,
 				F523D27902DE43D7018635CA /* TextResourceDecoder.h */,
+				B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */,
+				B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */,
 				0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */,
 				0B9056170F2578BE0095FF6A /* ThreadableLoader.h */,
 				0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */,
@@ -21942,8 +21942,6 @@
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
 				501BA9E21393CEA000F7ACEB /* CSSWrapShapes.h in Headers */,
-				B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */,
-				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
@@ -24451,7 +24449,9 @@
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
 				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
 				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
+				B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */,
 				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
+				B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */,
 				498770F11242C535002226BA /* Texture.h in Headers */,
 				97BC84A512370DC8000C6161 /* TextViewSourceParser.h in Headers */,
 				BCE658FF0EA9248A007E4533 /* Theme.h in Headers */,
@@ -24691,7 +24691,7 @@
 				9B375EDB14478A0100F3CAE5 /* MicroDataItemList.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 				71CCB49D144824AC00C676D6 /* ImageBySizeCache.h in Headers */,
-				0753860314489E9800B78452 /* CachedCues.h in Headers */,
+				0753860314489E9800B78452 /* CachedTextTrack.h in Headers */,
 				8AA61D00144D595B00F37350 /* CSSRegionStyleRule.h in Headers */,
 				97665013144FAA4200F6BB51 /* EventFactory.h in Headers */,
 				A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */,
@@ -25275,8 +25275,6 @@
 				1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */,
 				A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */,
 				50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */,
-				B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */,
-				B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */,
 				E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
@@ -27354,7 +27352,9 @@
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
 				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
 				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
+				B1AD4E5C13A12A0B00846B27 /* TextTrackCueIndex.cpp in Sources */,
 				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
+				B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */,
 				498770F01242C535002226BA /* Texture.cpp in Sources */,
 				97BC84A412370DC8000C6161 /* TextViewSourceParser.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
@@ -27554,7 +27554,7 @@
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 				71CCB49C144824AC00C676D6 /* ImageBySizeCache.cpp in Sources */,
-				0753860214489E9800B78452 /* CachedCues.cpp in Sources */,
+				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* CSSRegionStyleRule.cpp in Sources */,
 				9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */,
 				A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */,

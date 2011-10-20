@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CueIndex_h
-#define CueIndex_h
+#ifndef TextTrackCueIndex_h
+#define TextTrackCueIndex_h
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CueLoader.h"
+#include "TextTrackLoader.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -36,12 +36,12 @@ namespace WebCore {
 class TextTrackCue;
 class TextTrackCueList;
 
-class CueSet {
+class TextTrackCueSet {
 public:
-    CueSet() { }
-    ~CueSet() { }
-    CueSet difference(const CueSet&) const;
-    CueSet unionSet(const CueSet&) const;
+    TextTrackCueSet() { }
+    ~TextTrackCueSet() { }
+    TextTrackCueSet difference(const TextTrackCueSet&) const;
+    TextTrackCueSet unionSet(const TextTrackCueSet&) const;
     void add(const TextTrackCue&);
     bool contains(const TextTrackCue&) const;
     void remove(const TextTrackCue&);
@@ -51,14 +51,14 @@ private:
     HashSet<TextTrackCue*> m_set;
 };
 
-class CueIndex : public CueLoaderClient {
+class TextTrackCueIndex : public TextTrackLoaderClient {
 public:
-    // CueLoaderClient methods.
-    void fetchNewCuesFromLoader(CueLoader*);
+    // TextTrackLoaderClient methods.
+    void fetchNewCuesFromLoader(TextTrackLoader*);
     void removeCuesFromIndex(const TextTrackCueList*);
 
     // Returns set of cues visible at a time in seconds.
-    CueSet visibleCuesAtTime(double) const;
+    TextTrackCueSet visibleCuesAtTime(double) const;
     void add(TextTrackCue*);
     void remove(TextTrackCue*);
 };

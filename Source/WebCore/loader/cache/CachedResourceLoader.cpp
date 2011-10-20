@@ -53,7 +53,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO_TRACK)
-#include "CachedCues.h"
+#include "CachedTextTrack.h"
 #endif
 
 #define PRELOAD_DEBUG 0
@@ -87,7 +87,7 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::CueResource:
-        return new CachedCues(request);
+        return new CachedTextTrack(request);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -162,9 +162,9 @@ CachedFont* CachedResourceLoader::requestFont(ResourceRequest& request)
 }
 
 #if ENABLE(VIDEO_TRACK)
-CachedCues* CachedResourceLoader::requestCues(ResourceRequest& request)
+CachedTextTrack* CachedResourceLoader::requestCues(ResourceRequest& request)
 {
-    return static_cast<CachedCues*>(requestResource(CachedResource::CueResource, request, String(), defaultCachedResourceOptions()));
+    return static_cast<CachedTextTrack*>(requestResource(CachedResource::CueResource, request, String(), defaultCachedResourceOptions()));
 }
 #endif
 

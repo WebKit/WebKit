@@ -1,3 +1,72 @@
+2011-10-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Rename some Cue classes to TextTrack
+        https://bugs.webkit.org/show_bug.cgi?id=70346
+
+        Rename CueLoader -> TextTrackLoader, CachedCues -> CachedTextTrack, and CueIndex -> TextTrackIndex.
+
+        Reviewed by Darin Adler.
+
+        No new tests, renames only.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CueIndex.cpp: Removed.
+        * html/CueIndex.h: Removed.
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::load):
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        (WebCore::LoadableTextTrack::cueLoadingStarted):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        * html/LoadableTextTrack.h:
+        (WebCore::LoadableTextTrack::shouldLoadCues):
+        * html/MutableTextTrack.h:
+        * html/TextTrackIndex.cpp: Copied from Source/WebCore/html/CueIndex.cpp.
+        (WebCore::TextTrackCueSet::difference):
+        (WebCore::TextTrackCueSet::unionSet):
+        (WebCore::TextTrackCueSet::add):
+        (WebCore::TextTrackCueSet::contains):
+        (WebCore::TextTrackCueSet::remove):
+        (WebCore::TextTrackCueSet::isEmpty):
+        (WebCore::TextTrackCueSet::size):
+        (WebCore::TextTrackIndex::fetchNewCuesFromLoader):
+        (WebCore::TextTrackIndex::removeCuesFromIndex):
+        (WebCore::TextTrackIndex::visibleCuesAtTime):
+        (WebCore::TextTrackIndex::add):
+        (WebCore::TextTrackIndex::remove):
+        * html/TextTrackIndex.h: Copied from Source/WebCore/html/CueIndex.h.
+        (WebCore::TextTrackCueSet::TextTrackCueSet):
+        (WebCore::TextTrackCueSet::~TextTrackCueSet):
+        * loader/CueLoader.cpp: Removed.
+        * loader/CueLoader.h: Removed.
+        * loader/TextTrackLoader.cpp: Copied from Source/WebCore/loader/CueLoader.cpp.
+        (WebCore::TextTrackLoader::TextTrackLoader):
+        (WebCore::TextTrackLoader::~TextTrackLoader):
+        (WebCore::TextTrackLoader::cueLoadTimerFired):
+        (WebCore::TextTrackLoader::processNewCueData):
+        (WebCore::TextTrackLoader::didReceiveData):
+        (WebCore::TextTrackLoader::notifyFinished):
+        (WebCore::TextTrackLoader::load):
+        (WebCore::TextTrackLoader::newCuesParsed):
+        (WebCore::TextTrackLoader::getNewCues):
+        * loader/TextTrackLoader.h: Copied from Source/WebCore/loader/CueLoader.h.
+        (WebCore::TextTrackLoaderClient::~TextTrackLoaderClient):
+        (WebCore::TextTrackLoader::create):
+        * loader/cache/CachedCues.cpp: Removed.
+        * loader/cache/CachedCues.h: Removed.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestCues):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedTextTrack.cpp: Copied from Source/WebCore/loader/cache/CachedCues.cpp.
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        (WebCore::CachedTextTrack::~CachedTextTrack):
+        (WebCore::CachedTextTrack::data):
+        * loader/cache/CachedTextTrack.h: Copied from Source/WebCore/loader/cache/CachedCues.h.
+
 2011-10-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Remove Now Unused FileChooserSettings.deprecatedAcceptTypes

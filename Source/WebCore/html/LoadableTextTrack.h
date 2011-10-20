@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CueLoader.h"
 #include "TextTrack.h"
+#include "TextTrackLoader.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -46,7 +46,7 @@ public:
     virtual void textTrackLoadingCompleted(LoadableTextTrack*, bool /* loadingFailed */) = 0;
 };
 
-class LoadableTextTrack : public TextTrack, private CueLoaderClient {
+class LoadableTextTrack : public TextTrack, private TextTrackLoaderClient {
 public:
     static PassRefPtr<LoadableTextTrack> create(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
     {
@@ -58,15 +58,15 @@ public:
     bool supportsType(const String&);
 
 private:
-    // CueLoaderClient
-    virtual bool shouldLoadCues(CueLoader*) { return true; }
-    virtual void newCuesAvailable(CueLoader*);
-    virtual void cueLoadingStarted(CueLoader*);
-    virtual void cueLoadingCompleted(CueLoader*, bool loadingFailed);
+    // TextTrackLoaderClient
+    virtual bool shouldLoadCues(TextTrackLoader*) { return true; }
+    virtual void newCuesAvailable(TextTrackLoader*);
+    virtual void cueLoadingStarted(TextTrackLoader*);
+    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed);
 
     LoadableTextTrack(TextTrackClient*, TextTrackLoadingClient*, const String& kind, const String& label, const String& language, bool isDefault);
 
-    OwnPtr<CueLoader> m_cueLoader;
+    OwnPtr<TextTrackLoader> m_loader;
     TextTrackLoadingClient* m_loadingClient;
     bool m_isDefault;
 };

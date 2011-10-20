@@ -42,7 +42,7 @@ unsigned long TextTrackCueList::length() const
     return 0;
 }
 
-TextTrackCue* TextTrackCueList::item(unsigned index) const
+TextTrackCue* TextTrackCueList::item(unsigned) const
 {
     // FIXME(62883): Implement.
     return 0;

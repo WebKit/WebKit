@@ -23,46 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CachedTextTrack_h
+#define CachedTextTrack_h
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CachedCues.h"
-
-#include "CachedResourceClient.h"
-#include "CachedResourceClientWalker.h"
-#include "CachedResourceLoader.h"
-#include "SharedBuffer.h"
-#include "TextResourceDecoder.h"
-#include <wtf/Vector.h>
+#include "CachedResource.h"
+#include "FontOrientation.h"
 
 namespace WebCore {
 
-CachedCues::CachedCues(const ResourceRequest& resourceRequest)
-    : CachedResource(resourceRequest, CueResource)
-{
-}
+class SharedBuffer;
 
-CachedCues::~CachedCues()
-{
-}
+class CachedTextTrack : public CachedResource {
+public:
+    CachedTextTrack(const ResourceRequest&);
+    virtual ~CachedTextTrack();
 
-void CachedCues::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
-{
-    m_data = data;
-    setEncodedSize(m_data.get() ? m_data->size() : 0);
-
-    CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
-    while (CachedResourceClient *client = walker.next())
-        client->didReceiveData(this);
-
-    if (!allDataReceived)
-        return;
-    
-    setLoading(false);
-    checkNotify();
-}
+    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+};
 
 }
 
+#endif
 #endif

@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-class CachedCues;
 class CachedCSSStyleSheet;
 class CachedFont;
 class CachedImage;
 class CachedRawResource;
 class CachedScript;
+class CachedTextTrack;
 class CachedXSLStyleSheet;
 class Document;
 class Frame;
@@ -75,7 +75,7 @@ public:
     CachedResource* requestLinkResource(CachedResource::Type, ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityUnresolved);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    CachedCues* requestCues(ResourceRequest&);
+    CachedTextTrack* requestCues(ResourceRequest&);
 #endif
 
     // Logs an access denied message to the console for the specified URL.

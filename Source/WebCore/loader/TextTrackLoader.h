@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CueLoader_h
-#define CueLoader_h
+#ifndef TextTrackLoader_h
+#define TextTrackLoader_h
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CachedCues.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedTextTrack.h"
 #include "Document.h"
 #include "Timer.h"
 #include "WebVTTParser.h"
@@ -38,28 +38,28 @@
 
 namespace WebCore {
 
-class CueLoader;
+class TextTrackLoader;
 class ScriptExecutionContext;
 
-class CueLoaderClient {
+class TextTrackLoaderClient {
 public:
-    virtual ~CueLoaderClient() { }
+    virtual ~TextTrackLoaderClient() { }
     
-    virtual bool shouldLoadCues(CueLoader*) = 0;
-    virtual void newCuesAvailable(CueLoader*) = 0;
-    virtual void cueLoadingStarted(CueLoader*) = 0;
-    virtual void cueLoadingCompleted(CueLoader*, bool loadingFailed) = 0;
+    virtual bool shouldLoadCues(TextTrackLoader*) = 0;
+    virtual void newCuesAvailable(TextTrackLoader*) = 0;
+    virtual void cueLoadingStarted(TextTrackLoader*) = 0;
+    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) = 0;
 };
 
-class CueLoader : public CachedResourceClient, private WebVTTParserClient {
-    WTF_MAKE_NONCOPYABLE(CueLoader); 
+class TextTrackLoader : public CachedResourceClient, private WebVTTParserClient {
+    WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<CueLoader> create(CueLoaderClient* client, ScriptExecutionContext* context)
+    static PassOwnPtr<TextTrackLoader> create(TextTrackLoaderClient* client, ScriptExecutionContext* context)
     {
-        return adoptPtr(new CueLoader(client, context));
+        return adoptPtr(new TextTrackLoader(client, context));
     }
-    virtual ~CueLoader();
+    virtual ~TextTrackLoader();
     
     bool load(const KURL&);
     void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
@@ -73,18 +73,18 @@ private:
     // WebVTTParserClient
     virtual void newCuesParsed();
     
-    CueLoader(CueLoaderClient*, ScriptExecutionContext*);
+    TextTrackLoader(TextTrackLoaderClient*, ScriptExecutionContext*);
     
     void processNewCueData(CachedResource*);
-    void cueLoadTimerFired(Timer<CueLoader>*);
+    void cueLoadTimerFired(Timer<TextTrackLoader>*);
 
     enum State { Idle, Loading, Finished, Failed };
     
-    CueLoaderClient* m_client;
+    TextTrackLoaderClient* m_client;
     OwnPtr<WebVTTParser> m_cueParser;
-    CachedResourceHandle<CachedCues> m_cachedCueData;
+    CachedResourceHandle<CachedTextTrack> m_cachedCueData;
     ScriptExecutionContext* m_scriptExecutionContext;
-    Timer<CueLoader> m_cueLoadTimer;
+    Timer<TextTrackLoader> m_cueLoadTimer;
     State m_state;
     unsigned m_parseOffset;
     bool m_newCuesAvailable;

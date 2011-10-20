@@ -1714,7 +1714,6 @@ HEADERS += \
     html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
-    html/CueIndex.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
@@ -1819,6 +1818,7 @@ HEADERS += \
     html/TextDocument.h \
     html/TextTrack.h \
     html/TextTrackCue.h \
+    html/TextTrackCueIndex.h \
     html/TextTrackCueList.h \
     html/TimeRanges.h \
     html/ValidityState.h \
@@ -1905,7 +1905,6 @@ HEADERS += \
     loader/cache/MemoryCache.h \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
-    loader/CueLoader.h \
     loader/cache/CachedResourceLoader.h \
     loader/DocumentLoader.h \
     loader/DocumentThreadableLoader.h \
@@ -1930,6 +1929,7 @@ HEADERS += \
     loader/ResourceLoader.h \
     loader/SubresourceLoader.h \
     loader/TextResourceDecoder.h \
+    loader/TextTrackLoader.h \
     loader/ThreadableLoader.h \
     loader/WorkerThreadableLoader.h \
     mathml/MathMLElement.h \
