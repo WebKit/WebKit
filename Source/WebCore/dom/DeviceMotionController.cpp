@@ -48,10 +48,10 @@ DeviceMotionController::~DeviceMotionController()
 void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
-    ASSERT(!m_client || m_client->currentDeviceMotion());
+    ASSERT(m_client->currentDeviceMotion());
     m_timer.stop();
     
-    RefPtr<DeviceMotionData> deviceMotionData = m_client ? m_client->currentDeviceMotion() : DeviceMotionData::create();
+    RefPtr<DeviceMotionData> deviceMotionData = m_client->currentDeviceMotion();
     RefPtr<DeviceMotionEvent> event = DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData.get());
  
     Vector<RefPtr<DOMWindow> > listenersVector;
@@ -63,9 +63,9 @@ void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
     
 void DeviceMotionController::addListener(DOMWindow* window)
 {
-    // If no client is present or the client already has motion data,
+    // If the client already has motion data,
     // immediately trigger an asynchronous response.
-    if (!m_client || m_client->currentDeviceMotion()) {
+    if (m_client->currentDeviceMotion()) {
         m_newListeners.add(window);
         if (!m_timer.isActive())
             m_timer.startOneShot(0);
@@ -73,7 +73,7 @@ void DeviceMotionController::addListener(DOMWindow* window)
     
     bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(window);
-    if (wasEmpty && m_client)
+    if (wasEmpty)
         m_client->startUpdating();
 }
 
@@ -81,7 +81,7 @@ void DeviceMotionController::removeListener(DOMWindow* window)
 {
     m_listeners.remove(window);
     m_newListeners.remove(window);
-    if (m_listeners.isEmpty() && m_client)
+    if (m_listeners.isEmpty())
         m_client->stopUpdating();
 }
 
@@ -93,8 +93,20 @@ void DeviceMotionController::removeAllListeners(DOMWindow* window)
 
     m_listeners.removeAll(window);
     m_newListeners.remove(window);
-    if (m_listeners.isEmpty() && m_client)
+    if (m_listeners.isEmpty())
         m_client->stopUpdating();
+}
+
+void DeviceMotionController::suspend()
+{
+    if (!m_listeners.isEmpty())
+        m_client->stopUpdating();
+}
+
+void DeviceMotionController::resume()
+{
+    if (!m_listeners.isEmpty())
+        m_client->startUpdating();
 }
 
 void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotionData)

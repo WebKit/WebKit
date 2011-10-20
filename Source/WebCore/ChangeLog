@@ -1,3 +1,30 @@
+2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Roll-back r97964, r97972 and fix in https://bugs.webkit.org/show_bug.cgi?id=70328.
+
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::timerFired):
+        (WebCore::DeviceMotionController::addListener):
+        (WebCore::DeviceMotionController::removeListener):
+        (WebCore::DeviceMotionController::removeAllListeners):
+        (WebCore::DeviceMotionController::suspend):
+        (WebCore::DeviceMotionController::resume):
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::suspend):
+        (WebCore::DeviceOrientationController::resume):
+        * dom/DeviceOrientationController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        (WebCore::Document::stopActiveDOMObjects):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::suspend):
+        (WebCore::GeolocationController::resume):
+        * page/GeolocationController.h:
+
 2011-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97964 and r97972.

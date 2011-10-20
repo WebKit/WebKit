@@ -109,9 +109,10 @@ namespace WebCore {
         bool canSuspendActiveDOMObjects();
         // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -
         // step-by-step JS debugging is one example.
-        void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension);
-        void resumeActiveDOMObjects();
-        void stopActiveDOMObjects();
+        virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension);
+        virtual void resumeActiveDOMObjects();
+        virtual void stopActiveDOMObjects();
+
         void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
         void destroyedActiveDOMObject(ActiveDOMObject*);
         typedef const HashMap<ActiveDOMObject*, void*> ActiveDOMObjectsMap;

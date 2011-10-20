@@ -46,6 +46,9 @@ public:
     void removeListener(DOMWindow*);
     void removeAllListeners(DOMWindow*);
 
+    void suspend();
+    void resume();
+
     void didChangeDeviceOrientation(DeviceOrientation*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
