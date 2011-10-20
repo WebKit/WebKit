@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {html} at (0,0) size 800x54
-    RenderBody {body} at (8,16) size 784x22
-      RenderBlock {p} at (0,0) size 784x22
-        RenderInline {a} at (0,0) size 406x22 [color=#551A8B] [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 406x22
-            text run at (0,0) width 406: "You should see a green background assigned by the anchor."
+layer at (0,0) size 800x53
+  RenderBlock {html} at (0,0) size 800x53
+    RenderBody {body} at (8,16) size 784x21
+      RenderBlock {p} at (0,0) size 784x21
+        RenderInline {a} at (0,0) size 430x21 [color=#551A8B] [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 430x21
+            text run at (0,0) width 430: "You should see a green background assigned by the anchor."
         RenderText {#text} at (0,0) size 0x0

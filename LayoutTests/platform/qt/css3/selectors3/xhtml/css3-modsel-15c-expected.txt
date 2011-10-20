@@ -1,21 +1,21 @@
 CONSOLE MESSAGE: line 27: TypeError: 'undefined' is not a function (evaluating 'document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'div')[0].setIdAttribute('title', true)')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x206
-  RenderBlock {html} at (0,0) size 800x206
-    RenderBody {body} at (8,16) size 784x174
-      RenderBlock {p} at (0,0) size 784x22 [color=#000080]
-        RenderText {#text} at (0,0) size 545x22
-          text run at (0,0) width 545: "This test requires support for two or more of XHTML, xml:id, and DOM3 Core."
-      RenderBlock {div} at (0,38) size 784x22 [color=#FF0000]
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "This line should be green."
-      RenderBlock {p} at (0,76) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "This line should be green."
-      RenderBlock {p} at (0,114) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "This line should be green."
-      RenderBlock {p} at (0,152) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "This line should be green."
+layer at (0,0) size 800x201
+  RenderBlock {html} at (0,0) size 800x201
+    RenderBody {body} at (8,16) size 784x169
+      RenderBlock {p} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 542x21
+          text run at (0,0) width 542: "This test requires support for two or more of XHTML, xml:id, and DOM3 Core."
+      RenderBlock {div} at (0,37) size 784x21 [color=#FF0000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {p} at (0,74) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {p} at (0,111) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {p} at (0,148) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."

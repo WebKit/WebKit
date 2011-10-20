@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {test} at (0,0) size 800x54
-    RenderBlock {p} at (0,16) size 800x22 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 607x22
-        text run at (0,0) width 607: "This paragraph should have a green background because its title attribute contains \"bar\""
+layer at (0,0) size 800x53
+  RenderBlock {test} at (0,0) size 800x53
+    RenderBlock {p} at (0,16) size 800x21 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 623x21
+        text run at (0,0) width 623: "This paragraph should have a green background because its title attribute contains \"bar\""

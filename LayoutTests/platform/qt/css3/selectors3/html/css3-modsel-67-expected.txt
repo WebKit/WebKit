@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x130
-  RenderBlock {HTML} at (0,0) size 800x130
-    RenderBody {BODY} at (8,16) size 784x98
-      RenderBlock {DIV} at (0,0) size 784x98
-        RenderBlock {P} at (0,0) size 784x22 [bgcolor=#008000]
-          RenderText {#text} at (0,0) size 592x22
-            text run at (0,0) width 419: "This paragraph should have a green background because the "
-            text run at (419,0) width 173: "enclosing div is in english."
-        RenderBlock {P} at (0,38) size 784x22 [bgcolor=#008000]
-          RenderText {#text} at (0,0) size 489x22
-            text run at (0,0) width 394: "This paragraph should have a green background because "
-            text run at (394,0) width 95: "it is in english."
-        RenderBlock {DIV} at (0,76) size 784x22 [bgcolor=#FF0000]
-          RenderBlock {P} at (0,0) size 784x22 [bgcolor=#008000]
-            RenderText {#text} at (0,0) size 489x22
-              text run at (0,0) width 337: "This paragraph should have a green background "
-              text run at (337,0) width 152: "because it is in english."
+layer at (0,0) size 800x127
+  RenderBlock {HTML} at (0,0) size 800x127
+    RenderBody {BODY} at (8,16) size 784x95
+      RenderBlock {DIV} at (0,0) size 784x95
+        RenderBlock {P} at (0,0) size 784x21 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 627x21
+            text run at (0,0) width 440: "This paragraph should have a green background because the "
+            text run at (440,0) width 187: "enclosing div is in english."
+        RenderBlock {P} at (0,37) size 784x21 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 515x21
+            text run at (0,0) width 414: "This paragraph should have a green background because "
+            text run at (414,0) width 101: "it is in english."
+        RenderBlock {DIV} at (0,74) size 784x21 [bgcolor=#FF0000]
+          RenderBlock {P} at (0,0) size 784x21 [bgcolor=#008000]
+            RenderText {#text} at (0,0) size 515x21
+              text run at (0,0) width 349: "This paragraph should have a green background "
+              text run at (349,0) width 166: "because it is in english."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x316
-  RenderBlock {test} at (0,0) size 800x316
-    RenderBlock {p} at (0,16) size 800x284
-      RenderInline (generated) at (0,0) size 21x22 [color=#FF0000]
-        RenderInline (generated) at (0,0) size 21x42 [color=#00FF00]
-          RenderText at (0,0) size 21x42
-            text run at (0,0) width 21: "T"
+layer at (0,0) size 800x304
+  RenderBlock {test} at (0,0) size 800x304
+    RenderBlock {p} at (0,16) size 800x272
+      RenderInline (generated) at (0,0) size 20x21 [color=#FF0000]
+        RenderInline (generated) at (0,0) size 20x41 [color=#00FF00]
+          RenderText at (0,0) size 20x41
+            text run at (0,0) width 20: "T"
         RenderText at (0,0) size 0x0
-      RenderText {#text} at (21,15) size 791x269
-        text run at (21,15) width 751: "his very long paragraph should have a big green first letter T. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,42) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
-        text run at (0,64) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,86) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
-        text run at (0,108) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,130) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
-        text run at (0,152) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,174) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
-        text run at (0,196) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,218) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
-        text run at (0,240) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
-        text run at (0,262) width 581: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+      RenderText {#text} at (20,15) size 791x257
+        text run at (20,15) width 763: "his very long paragraph should have a big green first letter T. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,41) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+        text run at (0,62) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,83) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+        text run at (0,104) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,125) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+        text run at (0,146) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,167) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+        text run at (0,188) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,209) width 765: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+        text run at (0,230) width 791: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+        text run at (0,251) width 581: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."

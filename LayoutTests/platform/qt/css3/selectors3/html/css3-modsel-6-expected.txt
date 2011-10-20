@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x38
-  RenderBlock {HTML} at (0,0) size 800x38
-    RenderBody {BODY} at (8,8) size 784x22
-      RenderBlock {ADDRESS} at (0,0) size 784x22 [bgcolor=#00FF00]
-        RenderInline {SPAN} at (0,0) size 109x22
-          RenderText {#text} at (0,0) size 109x22
-            text run at (0,0) width 109: "This line should "
+layer at (0,0) size 800x37
+  RenderBlock {HTML} at (0,0) size 800x37
+    RenderBody {BODY} at (8,8) size 784x21
+      RenderBlock {ADDRESS} at (0,0) size 784x21 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (0,0) size 117x21
+          RenderText {#text} at (0,0) size 117x21
+            text run at (0,0) width 117: "This line should "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 171x22
-          RenderText {#text} at (109,0) size 171x22
-            text run at (109,0) width 171: "have a green background."
+        RenderInline {SPAN} at (0,0) size 185x21
+          RenderText {#text} at (117,0) size 185x21
+            text run at (117,0) width 185: "have a green background."
         RenderText {#text} at (0,0) size 0x0

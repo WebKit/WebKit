@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {html} at (0,0) size 800x84
-    RenderBody {body} at (8,16) size 784x60
-      RenderBlock {p} at (0,0) size 784x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 536x22
-          text run at (0,0) width 536: "This paragraph should have green background because its language is \"en-gb\""
-      RenderBlock {address} at (0,38) size 784x22 [bgcolor=#00FF00]
-        RenderInline {span} at (0,0) size 160x22
-          RenderText {#text} at (0,0) size 160x22
-            text run at (0,0) width 160: "This address should also"
-        RenderText {#text} at (160,0) size 4x22
-          text run at (160,0) width 4: " "
-        RenderInline {span} at (0,0) size 528x22
-          RenderText {#text} at (164,0) size 528x22
-            text run at (164,0) width 436: "have green background because the language of the inner SPANs "
-            text run at (600,0) width 92: "is not French."
+layer at (0,0) size 800x82
+  RenderBlock {html} at (0,0) size 800x82
+    RenderBody {body} at (8,16) size 784x58
+      RenderBlock {p} at (0,0) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 561x21
+          text run at (0,0) width 561: "This paragraph should have green background because its language is \"en-gb\""
+      RenderBlock {address} at (0,37) size 784x21 [bgcolor=#00FF00]
+        RenderInline {span} at (0,0) size 178x21
+          RenderText {#text} at (0,0) size 178x21
+            text run at (0,0) width 178: "This address should also"
+        RenderText {#text} at (178,0) size 4x21
+          text run at (178,0) width 4: " "
+        RenderInline {span} at (0,0) size 570x21
+          RenderText {#text} at (182,0) size 570x21
+            text run at (182,0) width 474: "have green background because the language of the inner SPANs "
+            text run at (656,0) width 96: "is not French."
         RenderText {#text} at (0,0) size 0x0

@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x206
-  RenderBlock {html} at (0,0) size 800x206
-    RenderBody {body} at (8,16) size 784x174
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 192x22
-          text run at (0,0) width 192: "This line should be unstyled."
-      RenderBlock {p} at (0,38) size 784x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 288x22
-          text run at (0,0) width 288: "This line should have a green background."
-      RenderBlock {q} at (0,76) size 784x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 288x22
-          text run at (0,0) width 288: "This line should have a green background."
-      RenderBlock {p} at (0,114) size 784x22
-        RenderText {#text} at (0,0) size 199x22
-          text run at (0,0) width 199: "This line should be unstyleed."
-      RenderBlock {p} at (0,152) size 784x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 288x22
-          text run at (0,0) width 288: "This line should have a green background."
+layer at (0,0) size 800x201
+  RenderBlock {html} at (0,0) size 800x201
+    RenderBody {body} at (8,16) size 784x169
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 203x21
+          text run at (0,0) width 203: "This line should be unstyled."
+      RenderBlock {p} at (0,37) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 302x21
+          text run at (0,0) width 302: "This line should have a green background."
+      RenderBlock {q} at (0,74) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 302x21
+          text run at (0,0) width 302: "This line should have a green background."
+      RenderBlock {p} at (0,111) size 784x21
+        RenderText {#text} at (0,0) size 212x21
+          text run at (0,0) width 212: "This line should be unstyleed."
+      RenderBlock {p} at (0,148) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 302x21
+          text run at (0,0) width 302: "This line should have a green background."

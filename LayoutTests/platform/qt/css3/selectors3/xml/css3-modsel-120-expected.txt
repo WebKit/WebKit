@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x168
-  RenderBlock {test} at (0,0) size 800x168
-    RenderBlock {div} at (0,16) size 800x136
-      RenderBlock {p} at (0,0) size 800x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 333x22
-          text run at (0,0) width 333: "This paragraph should have a green background"
-      RenderBlock {p} at (0,38) size 800x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 333x22
-          text run at (0,0) width 333: "This paragraph should have a green background"
-      RenderBlock {l} at (0,76) size 800x22 [bgcolor=#00FF00]
-        RenderInline {p} at (0,0) size 333x22
-          RenderText {#text} at (0,0) size 333x22
-            text run at (0,0) width 208: "This paragraph should have a "
-            text run at (208,0) width 125: "green background"
+layer at (0,0) size 800x164
+  RenderBlock {test} at (0,0) size 800x164
+    RenderBlock {div} at (0,16) size 800x132
+      RenderBlock {p} at (0,0) size 800x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 345x21
+          text run at (0,0) width 345: "This paragraph should have a green background"
+      RenderBlock {p} at (0,37) size 800x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 345x21
+          text run at (0,0) width 345: "This paragraph should have a green background"
+      RenderBlock {l} at (0,74) size 800x21 [bgcolor=#00FF00]
+        RenderInline {p} at (0,0) size 345x21
+          RenderText {#text} at (0,0) size 345x21
+            text run at (0,0) width 216: "This paragraph should have a "
+            text run at (216,0) width 129: "green background"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,114) size 800x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 333x22
-          text run at (0,0) width 333: "This paragraph should have a green background"
+      RenderBlock {p} at (0,111) size 800x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 345x21
+          text run at (0,0) width 345: "This paragraph should have a green background"

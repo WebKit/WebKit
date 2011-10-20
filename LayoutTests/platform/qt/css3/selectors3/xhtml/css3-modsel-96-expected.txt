@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x244
-  RenderBlock {html} at (0,0) size 800x244
-    RenderBody {body} at (8,16) size 784x212
-      RenderBlock {div} at (0,0) size 784x212
-        RenderBlock {p} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 192x22
-            text run at (0,0) width 192: "This line should be unstyled."
-        RenderBlock {elementA} at (0,38) size 784x22
-          RenderText {#text} at (0,0) size 192x22
-            text run at (0,0) width 192: "This line should be unstyled."
-        RenderBlock {elementB} at (0,76) size 784x22
-          RenderText {#text} at (0,0) size 192x22
-            text run at (0,0) width 192: "This line should be unstyled."
-        RenderBlock {div} at (0,114) size 784x98
-          RenderBlock {p} at (0,0) size 784x22 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 284x22
-              text run at (0,0) width 284: "This line should have a green background"
-          RenderBlock {elementA} at (0,38) size 784x22 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 284x22
-              text run at (0,0) width 284: "This line should have a green background"
-          RenderBlock {elementB} at (0,76) size 784x22 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 284x22
-              text run at (0,0) width 284: "This line should have a green background"
+layer at (0,0) size 800x238
+  RenderBlock {html} at (0,0) size 800x238
+    RenderBody {body} at (8,16) size 784x206
+      RenderBlock {div} at (0,0) size 784x206
+        RenderBlock {p} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 203x21
+            text run at (0,0) width 203: "This line should be unstyled."
+        RenderBlock {elementA} at (0,37) size 784x21
+          RenderText {#text} at (0,0) size 203x21
+            text run at (0,0) width 203: "This line should be unstyled."
+        RenderBlock {elementB} at (0,74) size 784x21
+          RenderText {#text} at (0,0) size 203x21
+            text run at (0,0) width 203: "This line should be unstyled."
+        RenderBlock {div} at (0,111) size 784x95
+          RenderBlock {p} at (0,0) size 784x21 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 298x21
+              text run at (0,0) width 298: "This line should have a green background"
+          RenderBlock {elementA} at (0,37) size 784x21 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 298x21
+              text run at (0,0) width 298: "This line should have a green background"
+          RenderBlock {elementB} at (0,74) size 784x21 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 298x21
+              text run at (0,0) width 298: "This line should have a green background"

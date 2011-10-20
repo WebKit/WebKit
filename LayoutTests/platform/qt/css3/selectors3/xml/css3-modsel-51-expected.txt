@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x114
-  RenderBlock {test} at (0,0) size 800x114
-    RenderBlock {div} at (0,0) size 800x98
-      RenderBlock {q} at (0,0) size 800x22 [color=#FF0000]
-        RenderInline {r} at (0,0) size 128x22 [color=#00FF00]
-          RenderText {#text} at (0,0) size 128x22
-            text run at (0,0) width 128: "This text should be"
-        RenderText {#text} at (128,0) size 4x22
-          text run at (128,0) width 4: " "
-        RenderInline {r} at (0,0) size 130x22 [color=#00FF00]
-          RenderText {#text} at (132,0) size 130x22
-            text run at (132,0) width 130: "in green characters"
+layer at (0,0) size 800x111
+  RenderBlock {test} at (0,0) size 800x111
+    RenderBlock {div} at (0,0) size 800x95
+      RenderBlock {q} at (0,0) size 800x21 [color=#FF0000]
+        RenderInline {r} at (0,0) size 134x21 [color=#00FF00]
+          RenderText {#text} at (0,0) size 134x21
+            text run at (0,0) width 134: "This text should be"
+        RenderText {#text} at (134,0) size 4x21
+          text run at (134,0) width 4: " "
+        RenderInline {r} at (0,0) size 136x21 [color=#00FF00]
+          RenderText {#text} at (138,0) size 136x21
+            text run at (138,0) width 136: "in green characters"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {s} at (0,38) size 800x22 [color=#00FF00]
-        RenderText {#text} at (0,0) size 262x22
-          text run at (0,0) width 262: "This text should be in green characters"
-      RenderBlock {p} at (0,76) size 800x22 [color=#00FF00]
-        RenderText {#text} at (0,0) size 262x22
-          text run at (0,0) width 262: "This text should be in green characters"
+      RenderBlock {s} at (0,37) size 800x21 [color=#00FF00]
+        RenderText {#text} at (0,0) size 274x21
+          text run at (0,0) width 274: "This text should be in green characters"
+      RenderBlock {p} at (0,74) size 800x21 [color=#00FF00]
+        RenderText {#text} at (0,0) size 274x21
+          text run at (0,0) width 274: "This text should be in green characters"

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x22
-  RenderBlock {test} at (0,0) size 800x22
-    RenderInline {testA} at (0,0) size 555x22 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 555x22
-        text run at (0,0) width 555: "This paragraph has no declared namespace and should have a green background."
+layer at (0,0) size 800x21
+  RenderBlock {test} at (0,0) size 800x21
+    RenderInline {testA} at (0,0) size 585x21 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 585x21
+        text run at (0,0) width 585: "This paragraph has no declared namespace and should have a green background."
     RenderText {#text} at (0,0) size 0x0

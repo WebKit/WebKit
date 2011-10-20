@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x206
-  RenderBlock {html} at (0,0) size 800x206
-    RenderBody {body} at (8,16) size 784x174
-      RenderBlock {div} at (0,0) size 784x174
-        RenderBlock {p} at (0,0) size 784x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 284x22
-            text run at (0,0) width 111: "This line should "
-            text run at (111,0) width 173: "have a green background"
-        RenderBlock {p} at (0,38) size 784x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 284x22
-            text run at (0,0) width 284: "This line should have a green background"
-        RenderBlock {q} at (0,76) size 784x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 284x22
-            text run at (0,0) width 284: "This line should have a green background"
-        RenderBlock {p} at (0,114) size 784x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 284x22
-            text run at (0,0) width 284: "This line should have a green background"
-        RenderBlock {foo} at (0,152) size 784x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 284x22
-            text run at (0,0) width 284: "This line should have a green background"
+layer at (0,0) size 800x201
+  RenderBlock {html} at (0,0) size 800x201
+    RenderBody {body} at (8,16) size 784x169
+      RenderBlock {div} at (0,0) size 784x169
+        RenderBlock {p} at (0,0) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 298x21
+            text run at (0,0) width 117: "This line should "
+            text run at (117,0) width 181: "have a green background"
+        RenderBlock {p} at (0,37) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 298x21
+            text run at (0,0) width 298: "This line should have a green background"
+        RenderBlock {q} at (0,74) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 298x21
+            text run at (0,0) width 298: "This line should have a green background"
+        RenderBlock {p} at (0,111) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 298x21
+            text run at (0,0) width 298: "This line should have a green background"
+        RenderBlock {foo} at (0,148) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 298x21
+            text run at (0,0) width 298: "This line should have a green background"

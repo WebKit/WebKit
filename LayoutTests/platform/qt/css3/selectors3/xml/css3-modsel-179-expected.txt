@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {test} at (0,0) size 800x54
-    RenderBlock {p} at (0,16) size 800x22 [color=#008000]
-      RenderInline {span} at (0,0) size 173x22
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "This line should be green."
+layer at (0,0) size 800x53
+  RenderBlock {test} at (0,0) size 800x53
+    RenderBlock {p} at (0,16) size 800x21 [color=#008000]
+      RenderInline {span} at (0,0) size 184x21
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
