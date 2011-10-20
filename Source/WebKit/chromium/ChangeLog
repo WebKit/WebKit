@@ -1,3 +1,16 @@
+2011-10-19  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Use clang as compiler!
+        https://bugs.webkit.org/show_bug.cgi?id=70425
+
+        Reviewed by Adam Barth.
+
+        It looks like http://trac.webkit.org/changeset/97415 was all that's
+        needed to get this to work.
+
+        * gyp_webkit:
+        Don't force clang off, which means it's now on by default on mac.
+
 2011-10-19  Darin Adler  <darin@apple.com>
 
         Remove OptionElement (first half)
