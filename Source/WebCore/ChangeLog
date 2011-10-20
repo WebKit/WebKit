@@ -1,5 +1,19 @@
 2011-10-20  Andreas Kling  <kling@webkit.org>
 
+        CSSMutableStyleDeclaration: Simplify setNeedsStyleRecalc().
+        https://bugs.webkit.org/show_bug.cgi?id=70509
+
+        Reviewed by Antti Koivisto.
+
+        We don't need to climb up the entire parent chain here to find the
+        Document, just grab it from the parentStyleSheet() (which will do
+        the climbing for us if necessary.)
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+
+2011-10-20  Andreas Kling  <kling@webkit.org>
+
         CSSStyleDeclaration: Remove inheritance from StyleBase.
         https://bugs.webkit.org/show_bug.cgi?id=70411
 

@@ -519,14 +519,8 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
         return;
     }
 
-    if (!parentStyleSheet())
-        return;
-
-    StyleBase* root = parentStyleSheet();
-    while (StyleBase* parent = root->parent())
-        root = parent;
-    if (root->isCSSStyleSheet()) {
-        if (Document* document = static_cast<CSSStyleSheet*>(root)->document())
+    if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
+        if (Document* document = styleSheet->document())
             document->styleSelectorChanged(DeferRecalcStyle);
     }
 }
