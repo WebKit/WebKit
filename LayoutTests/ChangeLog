@@ -1,3 +1,15 @@
+2011-10-19  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket layout tests are flaky on Chromium Win
+        https://bugs.webkit.org/show_bug.cgi?id=66730
+
+        Reviewed by Mihai Parparita.
+
+        Remove test expectations for WebSocket tests which have not been failing since
+        TcpClientSocketWin fix on Chromium (http://crrev.com/104852).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-19  Carol Szabo  <carol@webkit.org>
 
         CSS Counters have wrong values

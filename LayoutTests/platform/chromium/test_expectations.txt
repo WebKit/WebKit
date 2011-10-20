@@ -3220,9 +3220,6 @@ BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 BUGCR84317 MAC LEOPARD RELEASE : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 
-BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
-BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hybi/client-close.html = PASS TEXT
-
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
@@ -3476,11 +3473,6 @@ BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-de
 BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
 
 BUGV8_1634 : fast/js/const.html = TEXT
-
-BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT
-BUGWK66730 WIN : http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html = PASS TEXT
-BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT
-BUGWK66730 WIN : http/tests/websocket/tests/hybi/close.html = PASS TEXT
 
 BUGWK66217 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
 BUGWK66217 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS
