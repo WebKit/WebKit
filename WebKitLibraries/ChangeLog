@@ -1,5 +1,14 @@
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
+        Try to fix the Chromium build.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
+2011-10-19  Beth Dakin  <bdakin@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=70396
         Focus rings are too thin in HiDPI in WebKit2
         -and corresponding-

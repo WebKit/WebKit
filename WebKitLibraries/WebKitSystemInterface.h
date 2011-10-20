@@ -42,7 +42,10 @@ NSString *WKGetMIMETypeForExtension(NSString *extension);
 NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
+
+#ifndef BUILDING_ON_LEOPARD
 CFArrayRef WKCopyNSURLResponseCertificateChain(NSURLResponse *response);
+#endif
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
@@ -90,6 +93,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
 
+#if !defined(BUILDING_ON_LEOPARD)
 // Remote Accessibility API.
 void WKAXRegisterRemoteApp(void);
 void WKAXInitializeElementWithPresenterPid(id, pid_t);
@@ -98,6 +102,7 @@ id WKAXRemoteElementForToken(NSData *);
 void WKAXSetWindowForRemoteElement(id remoteWindow, id remoteElement);
 void WKAXRegisterRemoteProcess(bool registerProcess, pid_t);
 pid_t WKAXRemoteProcessIdentifier(id remoteElement);
+#endif
 
 void WKSetUpFontCache(void);
 
@@ -151,7 +156,7 @@ void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
 bool WKGetVerticalGlyphsForCharacters(CTFontRef, const UniChar[], CGGlyph[], size_t);
 
 CTLineRef WKCreateCTLineWithUniCharProvider(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
@@ -220,7 +225,7 @@ NSURL *WKQTMovieResolvedURL(QTMovie* movie);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD)
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
@@ -306,6 +311,7 @@ NSArray *WKQTGetSitesInMediaDownloadCache();
 void WKQTClearMediaDownloadCacheForSite(NSString *site);
 void WKQTClearMediaDownloadCache();
     
+#ifndef BUILDING_ON_LEOPARD
 mach_port_t WKInitializeRenderServer(void);
     
 @class CALayer;
@@ -344,6 +350,7 @@ CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_
 
 NSUInteger WKGetInputPanelWindowStyle(void);
 UInt8 WKGetNSEventKeyChar(NSEvent *);
+#endif // !defined(BUILDING_ON_LEOPARD)
 
 @class CAPropertyAnimation;
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
@@ -358,7 +365,7 @@ void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 typedef enum {
     WKEventPhaseNone = 0,
     WKEventPhaseBegan = 1,
@@ -372,6 +379,7 @@ int WKGetNSEventMomentumPhase(NSEvent *);
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
 
+#ifndef BUILDING_ON_LEOPARD
 void WKSyncSurfaceToView(NSView *view);
 
 void WKEnableSettingCursorWhenInBackground(void);
@@ -386,7 +394,9 @@ NSURLResponse *WKNSURLResponseFromSerializableRepresentation(CFDictionaryRef rep
 ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
 #endif
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#endif
+
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
 #endif
 
@@ -401,7 +411,7 @@ void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
 CIFormat WKCIGetRGBA8Format(void);
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 typedef enum {
     WKSandboxExtensionTypeReadOnly,
