@@ -1,3 +1,11 @@
+2011-10-20  Tony Chang  <tony@chromium.org>
+
+        Update chromium-linux flexbox pixel results.  My machine is running
+        a different version of ubuntu and the fonts are antialiased differently.
+
+        * platform/chromium-linux/css3/flexbox/repaint-expected.png:
+        * platform/chromium-linux/css3/flexbox/repaint-rtl-column-expected.png:
+
 2011-10-20  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
