@@ -97,11 +97,12 @@ GTKDOC_LIBS= \
 	$(GTK_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
-include $(top_srcdir)/gtk-doc.make
+# FIXME: need to unbreak this documentation build.
+# include $(top_srcdir)/gtk-doc.make
 
 # Other files to distribute
 # e.g. EXTRA_DIST += version.xml.in
-EXTRA_DIST +=
+#EXTRA_DIST +=
 
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types

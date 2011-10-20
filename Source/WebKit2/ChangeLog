@@ -1,3 +1,10 @@
+2011-10-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        GTK+ build fix. Wk2 documentation will be dealt with in future
+        patches.
+
+        * UIProcess/API/gtk/docs/GNUmakefile.am:
+
 2011-10-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static deleteProperty to deletePropertyByIndex
