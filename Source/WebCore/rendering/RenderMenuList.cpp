@@ -34,10 +34,10 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
+#include "OptionElement.h"
 #include "Page.h"
 #include "PopupMenu.h"
 #include "RenderBR.h"
@@ -151,11 +151,12 @@ void RenderMenuList::updateOptionsWidth()
     FontCachePurgePreventer fontCachePurgePreventer;
 
     for (int i = 0; i < size; ++i) {
-        HTMLElement* element = listItems[i];
-        if (!element->hasTagName(optionTag))
+        Element* element = listItems[i];
+        OptionElement* optionElement = toOptionElement(element);
+        if (!optionElement)
             continue;
 
-        String text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+        String text = optionElement->textIndentedToRespectGroupLabel();
         applyTextTransform(style(), text, ' ');
         if (theme()->popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
@@ -201,8 +202,8 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     String text = "";
     if (i >= 0 && i < size) {
         Element* element = listItems[i];
-        if (element->hasTagName(optionTag)) {
-            text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+        if (OptionElement* optionElement = toOptionElement(element)) {
+            text = optionElement->textIndentedToRespectGroupLabel();
             m_optionStyle = element->renderStyle();
         }
     }
@@ -376,8 +377,8 @@ String RenderMenuList::itemText(unsigned listIndex) const
     Element* element = listItems[listIndex];
     if (element->hasTagName(optgroupTag))
         itemString = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
-    else if (element->hasTagName(optionTag))
-        itemString = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+    else if (OptionElement* optionElement = toOptionElement(element))
+        itemString = optionElement->textIndentedToRespectGroupLabel();
 
     applyTextTransform(style(), itemString, ' ');
     return itemString;
@@ -556,8 +557,9 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
     const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
     if (listIndex >= listItems.size())
         return false;
-    HTMLElement* element = listItems[listIndex];
-    return element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected();
+    if (OptionElement* optionElement = toOptionElement(listItems[listIndex]))
+        return optionElement->selected();
+    return false;
 }
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)

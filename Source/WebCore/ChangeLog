@@ -1,3 +1,85 @@
+2011-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r97917.
+        http://trac.webkit.org/changeset/97917
+        https://bugs.webkit.org/show_bug.cgi?id=70475
+
+        number of crashes on Snow Leopard/Lion tests bots
+        http://build.webkit.org/results/Lion%20Intel%20Release%20(Tests)/r97917%20(2020)/http/tests/inspector
+        /extensions-network-redirect-crash-log.txt (Requested by
+        loislo on #webkit).
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::setSelectedState):
+        (WebCore::OptionElement::optionIndex):
+        (WebCore::OptionElement::collectOptionLabelOrText):
+        (WebCore::OptionElement::collectOptionInnerText):
+        (WebCore::OptionElement::normalizeText):
+        (WebCore::OptionElement::collectOptionTextRespectingGroupLabel):
+        (WebCore::OptionElementData::OptionElementData):
+        (WebCore::OptionElementData::~OptionElementData):
+        (WebCore::toOptionElement):
+        (WebCore::isOptionElement):
+        * dom/OptionElement.h:
+        (WebCore::OptionElement::~OptionElement):
+        (WebCore::OptionElementData::value):
+        (WebCore::OptionElementData::setValue):
+        (WebCore::OptionElementData::label):
+        (WebCore::OptionElementData::setLabel):
+        (WebCore::OptionElementData::selected):
+        (WebCore::OptionElementData::setSelected):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::createForJSConstructor):
+        (WebCore::HTMLOptionElement::text):
+        (WebCore::HTMLOptionElement::index):
+        (WebCore::HTMLOptionElement::parseMappedAttribute):
+        (WebCore::HTMLOptionElement::value):
+        (WebCore::HTMLOptionElement::selected):
+        (WebCore::HTMLOptionElement::setSelected):
+        (WebCore::HTMLOptionElement::setSelectedState):
+        (WebCore::HTMLOptionElement::defaultSelected):
+        (WebCore::HTMLOptionElement::setDefaultSelected):
+        (WebCore::HTMLOptionElement::label):
+        (WebCore::HTMLOptionElement::textIndentedToRespectGroupLabel):
+        (WebCore::HTMLOptionElement::insertedIntoTree):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::nextValidIndex):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::copyImage):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsSelected):
+
 2011-10-20  Carol Szabo  <carol@webkit.org>
 
         Tiled Backing Store does not regenerate tiles when it should

@@ -37,11 +37,9 @@
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
 #include "RenderMenuList.h"
-#include "ScriptElement.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,7 +47,6 @@ using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
-    , m_isSelected(false)
 {
     ASSERT(hasTagName(optionTag));
 }
@@ -78,8 +75,7 @@ PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document
 
     if (!value.isNull())
         element->setValue(value);
-    if (defaultSelected)
-        element->setAttribute(selectedAttr, emptyAtom);
+    element->setDefaultSelected(defaultSelected);
     element->setSelected(selected);
 
     return element.release();
@@ -117,22 +113,7 @@ const AtomicString& HTMLOptionElement::formControlType() const
 
 String HTMLOptionElement::text() const
 {
-    Document* document = this->document();
-    String text;
-
-    // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!document->inQuirksMode())
-        text = fastGetAttribute(labelAttr);
-
-    // FIXME: The following treats an element with the label attribute set to
-    // the empty string the same as an element with no label attribute at all.
-    // Is that correct? If it is, then should the label function work the same way?
-    if (text.isEmpty())
-        text = collectOptionInnerText();
-
-    // FIXME: Is displayStringModifiedByEncoding helpful here?
-    // If it's correct here, then isn't it needed in the value and label functions too?
-    return document->displayStringModifiedByEncoding(text).stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+    return OptionElement::collectOptionLabelOrText(m_data, this);
 }
 
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
@@ -157,47 +138,28 @@ void HTMLOptionElement::accessKeyAction(bool)
 
 int HTMLOptionElement::index() const
 {
-    // It would be faster to cache the index, but harder to get it right in all cases.
-
-    HTMLSelectElement* selectElement = ownerSelectElement();
-    if (!selectElement)
-        return 0;
-
-    int optionIndex = 0;
-
-    const Vector<HTMLElement*>& items = selectElement->listItems();
-    size_t length = items.size();
-    for (size_t i = 0; i < length; ++i) {
-        if (!items[i]->hasTagName(optionTag))
-            continue;
-        if (items[i] == this)
-            return optionIndex;
-        ++optionIndex;
-    }
-
-    return 0;
+    return OptionElement::optionIndex(ownerSelectElement(), this);
 }
 
 void HTMLOptionElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == selectedAttr) {
-        // FIXME: This doesn't match what the HTML specification says.
-        // The specification implies that removing the selected attribute or
-        // changing the value of a selected attribute that is already present
-        // has no effect on whether the element is selected. Further, it seems
-        // that we need to do more than just set m_isSelected to select in that
-        // case; we'd need to do the other work from the setSelected function.
-        m_isSelected = !attr->isNull();
-    } else
+    if (attr->name() == selectedAttr)
+        m_data.setSelected(!attr->isNull());
+    else if (attr->name() == valueAttr)
+        m_data.setValue(attr->value());
+    else if (attr->name() == labelAttr)
+        m_data.setLabel(attr->value());
+    else
         HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 String HTMLOptionElement::value() const
 {
-    const AtomicString& value = fastGetAttribute(valueAttr);
-    if (!value.isNull())
-        return value;
-    return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+    if (!m_data.value().isNull())
+        return m_data.value();
+
+    return collectOptionInnerText(this).stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+
 }
 
 void HTMLOptionElement::setValue(const String& value)
@@ -209,15 +171,15 @@ bool HTMLOptionElement::selected()
 {
     if (HTMLSelectElement* select = ownerSelectElement())
         select->updateListItemSelectedStates();
-    return m_isSelected;
+    return m_data.selected();
 }
 
 void HTMLOptionElement::setSelected(bool selected)
 {
-    if (m_isSelected == selected)
+    if (m_data.selected() == selected)
         return;
 
-    setSelectedState(selected);
+    OptionElement::setSelectedState(m_data, this, selected);
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->setSelectedIndex(selected ? index() : -1, false);
@@ -225,11 +187,7 @@ void HTMLOptionElement::setSelected(bool selected)
 
 void HTMLOptionElement::setSelectedState(bool selected)
 {
-    if (m_isSelected == selected)
-        return;
-
-    m_isSelected = selected;
-    setNeedsStyleRecalc();
+    OptionElement::setSelectedState(m_data, this, selected);
 }
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -251,12 +209,26 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
     return toHTMLSelectElement(select);
 }
 
+bool HTMLOptionElement::defaultSelected() const
+{
+    return fastHasAttribute(selectedAttr);
+}
+
+void HTMLOptionElement::setDefaultSelected(bool b)
+{
+    setAttribute(selectedAttr, b ? "" : 0);
+}
+
 String HTMLOptionElement::label() const
 {
-    const AtomicString& label = fastGetAttribute(labelAttr);
+    String label = m_data.label();
     if (!label.isNull())
-        return label; 
-    return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
+        return label;
+ 
+    label = collectOptionInnerText(this).stripWhiteSpace(isHTMLSpace);
+    label = label.simplifyWhiteSpace(isHTMLSpace);
+
+    return label;
 }
 
 void HTMLOptionElement::setLabel(const String& label)
@@ -279,10 +251,7 @@ RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    ContainerNode* parent = parentNode();
-    if (parent && parent->hasTagName(optgroupTag))
-        return "    " + text();
-    return text();
+    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, this);
 }
 
 bool HTMLOptionElement::disabled() const
@@ -294,45 +263,13 @@ void HTMLOptionElement::insertedIntoTree(bool deep)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();
-        // Do not call selected() since calling updateListItemSelectedStates()
-        // at this time won't do the right thing. (Why, exactly?)
-        if (m_isSelected)
+        // Avoid our selected() getter since it will recalculate list items incorrectly for us.
+        if (m_data.selected())
             select->setSelectedIndex(index(), false);
         select->scrollToSelection();
     }
 
     HTMLFormControlElement::insertedIntoTree(deep);
 }
-
-String HTMLOptionElement::collectOptionInnerText() const
-{
-    StringBuilder text;
-    for (Node* node = firstChild(); node; ) {
-        if (node->isTextNode())
-            text.append(node->nodeValue());
-        // Text nodes inside script elements are not part of the option text.
-        if (node->isElementNode() && toScriptElement(toElement(node)))
-            node = node->traverseNextSibling(this);
-        else
-            node = node->traverseNextNode(this);
-    }
-    return text.toString();
-}
-
-#ifndef NDEBUG
-
-HTMLOptionElement* toHTMLOptionElement(Node* node)
-{
-    ASSERT(!node || node->hasTagName(optionTag));
-    return static_cast<HTMLOptionElement*>(node);
-}
-
-const HTMLOptionElement* toHTMLOptionElement(const Node* node)
-{
-    ASSERT(!node || node->hasTagName(optionTag));
-    return static_cast<const HTMLOptionElement*>(node);
-}
-
-#endif
 
 } // namespace

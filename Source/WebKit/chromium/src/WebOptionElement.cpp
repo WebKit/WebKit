@@ -38,7 +38,6 @@
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
-using namespace HTMLNames;
 
 namespace WebKit {
 
@@ -64,12 +63,12 @@ WebString WebOptionElement::text() const
 
 bool WebOptionElement::defaultSelected() const
 {
-    return constUnwrap<HTMLOptionElement>()->hasAttribute(selectedAttr);
+    return constUnwrap<HTMLOptionElement>()->defaultSelected();
 }
 
 void WebOptionElement::setDefaultSelected(bool newSelected)
 {
-    return unwrap<HTMLOptionElement>()->setAttribute(selectedAttr, newSelected ? "" : 0);
+    return unwrap<HTMLOptionElement>()->setDefaultSelected(newSelected);
 }
 
 WebString WebOptionElement::label() const

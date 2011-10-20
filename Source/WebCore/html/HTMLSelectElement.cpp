@@ -75,12 +75,6 @@ static const unsigned maxSelectItems = 10000;
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-// FIXME: Change all the call sites to use hasTagName and toHTMLOptionElement instead.
-static inline HTMLOptionElement* toOptionElement(Element* element)
-{
-    return element->hasTagName(optionTag) ? toHTMLOptionElement(element) : 0;
-}
-
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
     , m_lastCharTime(0)
@@ -451,7 +445,7 @@ int HTMLSelectElement::nextValidIndex(int listIndex, SkipDirection direction, in
     int size = listItems.size();
     for (listIndex += direction; listIndex >= 0 && listIndex < size; listIndex += direction) {
         --skip;
-        if (!listItems[listIndex]->disabled() && listItems[listIndex]->hasTagName(optionTag)) {
+        if (!listItems[listIndex]->disabled() && isOptionElement(listItems[listIndex])) {
             lastGoodIndex = listIndex;
             if (skip <= 0)
                 break;
@@ -532,7 +526,7 @@ void HTMLSelectElement::saveLastSelection()
     m_lastOnChangeSelection.clear();
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         m_lastOnChangeSelection.append(optionElement && optionElement->selected());
     }
 }
@@ -547,7 +541,7 @@ void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         m_cachedStateForActiveSelection.append(optionElement && optionElement->selected());
     }
 }
@@ -567,7 +561,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         if (!optionElement || items[i]->disabled())
             continue;
 
@@ -599,7 +593,7 @@ void HTMLSelectElement::listBoxOnChange()
     // Update m_lastOnChangeSelection and fire dispatchFormControlChangeEvent.
     bool fireOnChange = false;
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         bool selected = optionElement && optionElement->selected();
         if (selected != m_lastOnChangeSelection[i])
             fireOnChange = true;
@@ -673,7 +667,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 
     m_shouldRecalcListItems = false;
 
-    HTMLOptionElement* foundSelected = 0;
+    OptionElement* foundSelected = 0;
     for (Node* currentNode = this->firstChild(); currentNode;) {
         if (!currentNode->isHTMLElement()) {
             currentNode = currentNode->traverseNextSibling(this);
@@ -693,7 +687,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             }
         }
 
-        if (HTMLOptionElement* optionElement = toOptionElement(current)) {
+        if (OptionElement* optionElement = toOptionElement(current)) {
             m_listItems.append(current);
 
             if (updateSelectedStates && !m_multiple) {
@@ -727,7 +721,7 @@ int HTMLSelectElement::selectedIndex() const
     // Return the number of the first option selected.
     const Vector<HTMLElement*>& items = listItems();
     for (size_t i = 0; i < items.size(); ++i) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i])) {
+        if (OptionElement* optionElement = toOptionElement(items[i])) {
             if (optionElement->selected())
                 return index;
             ++index;
@@ -748,7 +742,7 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     int listIndex = optionToListIndex(optionIndex);
 
     Element* excludeElement = 0;
-    if (HTMLOptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
+    if (OptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
         excludeElement = items[listIndex];
         if (m_activeSelectionAnchorIndex < 0 || deselect)
             setActiveSelectionAnchorIndex(listIndex);
@@ -794,7 +788,7 @@ int HTMLSelectElement::optionToListIndex(int optionIndex) const
 
     int optionIndex2 = -1;
     for (int listIndex = 0; listIndex < listSize; ++listIndex) {
-        if (items[listIndex]->hasTagName(optionTag)) {
+        if (isOptionElement(items[listIndex])) {
             ++optionIndex2;
             if (optionIndex2 == optionIndex)
                 return listIndex;
@@ -807,13 +801,13 @@ int HTMLSelectElement::optionToListIndex(int optionIndex) const
 int HTMLSelectElement::listToOptionIndex(int listIndex) const
 {
     const Vector<HTMLElement*>& items = listItems();
-    if (listIndex < 0 || listIndex >= static_cast<int>(items.size()) || !items[listIndex]->hasTagName(optionTag))
+    if (listIndex < 0 || listIndex >= static_cast<int>(items.size()) || !isOptionElement(items[listIndex]))
         return -1;
 
     // Actual index of option not counting OPTGROUP entries that may be in list.
     int optionIndex = 0;
     for (int i = 0; i < listIndex; ++i) {
-        if (items[i]->hasTagName(optionTag))
+        if (isOptionElement(items[i]))
             ++optionIndex;
     }
 
@@ -846,7 +840,7 @@ void HTMLSelectElement::deselectItemsWithoutValidation(Element* excludeElement)
         if (items[i] == excludeElement)
             continue;
 
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i]))
+        if (OptionElement* optionElement = toOptionElement(items[i]))
             optionElement->setSelectedState(false);
     }
 }
@@ -858,7 +852,7 @@ bool HTMLSelectElement::saveFormControlState(String& value) const
     StringBuilder builder;
     builder.reserveCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         bool selected = optionElement && optionElement->selected();
         builder.append(selected ? 'X' : '.');
     }
@@ -874,7 +868,7 @@ void HTMLSelectElement::restoreFormControlState(const String& state)
     size_t length = items.size();
 
     for (unsigned i = 0; i < length; ++i) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i]))
+        if (OptionElement* optionElement = toOptionElement(items[i]))
             optionElement->setSelectedState(state[i] == 'X');
     }
 
@@ -901,7 +895,7 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
     const Vector<HTMLElement*>& items = listItems();
 
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         if (optionElement && optionElement->selected() && !optionElement->disabled()) {
             list.appendData(name, optionElement->value());
             successful = true;
@@ -916,12 +910,12 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 
 void HTMLSelectElement::reset()
 {
-    HTMLOptionElement* firstOption = 0;
-    HTMLOptionElement* selectedOption = 0;
+    OptionElement* firstOption = 0;
+    OptionElement* selectedOption = 0;
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
+        OptionElement* optionElement = toOptionElement(items[i]);
         if (!optionElement)
             continue;
 
@@ -1122,7 +1116,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     bool multiSelect = m_multiple && multi && !shift;
 
     Element* clickedElement = listItems()[listIndex];
-    HTMLOptionElement* option = toOptionElement(clickedElement);
+    OptionElement* option = toOptionElement(clickedElement);
     if (option) {
         // Keep track of whether an active selection (like during drag
         // selection), should select or deselect.
@@ -1318,7 +1312,7 @@ int HTMLSelectElement::lastSelectedListIndex() const
 {
     const Vector<HTMLElement*>& items = listItems();
     for (size_t i = items.size(); i;) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[--i])) {
+        if (OptionElement* optionElement = toOptionElement(items[--i])) {
             if (optionElement->selected())
                 return i;
         }
@@ -1384,7 +1378,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
     // to use startWith once that is fixed.
     String prefixWithCaseFolded(prefix.foldCase());
     for (int i = 0; i < itemCount; ++i, index = (index + 1) % itemCount) {
-        HTMLOptionElement* optionElement = toOptionElement(items[index]);
+        OptionElement* optionElement = toOptionElement(items[index]);
         if (!optionElement || items[index]->disabled())
             continue;
 
@@ -1420,7 +1414,7 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
     // If this index is already selected, unselect. otherwise update the selected index.
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(index);
-    if (HTMLOptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
+    if (OptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
         if (optionElement->selected())
             optionElement->setSelectedState(false);
         else
@@ -1441,7 +1435,7 @@ unsigned HTMLSelectElement::length() const
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        if (items[i]->hasTagName(optionTag))
+        if (isOptionElement(items[i]))
             ++options;
     }
 

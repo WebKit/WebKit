@@ -43,11 +43,11 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "NodeRenderStyle.h"
+#include "OptionElement.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderLayer.h"
@@ -111,11 +111,11 @@ void RenderListBox::updateFromElement()
         
         float width = 0;
         for (int i = 0; i < size; ++i) {
-            HTMLElement* element = listItems[i];
+            Element* element = listItems[i];
             String text;
             Font itemFont = style()->font();
-            if (element->hasTagName(optionTag))
-                text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+            if (OptionElement* optionElement = toOptionElement(element))
+                text = optionElement->textIndentedToRespectGroupLabel();
             else if (element->hasTagName(optgroupTag)) {
                 text = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
                 FontDescription d = itemFont.fontDescription();
@@ -327,8 +327,8 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
     int size = numItems();
     const Vector<HTMLElement*>& listItems = select->listItems();
     for (int i = 0; i < size; ++i) {
-        HTMLElement* element = listItems[i];
-        if (element->hasTagName(optionTag) && !toHTMLOptionElement(element)->disabled()) {
+        OptionElement* optionElement = toOptionElement(listItems[i]);
+        if (optionElement && !optionElement->disabled()) {
             rects.append(itemBoundingBoxRect(additionalOffset, i));
             return;
         }
@@ -371,7 +371,8 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     FontCachePurgePreventer fontCachePurgePreventer;
 
     const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
-    HTMLElement* element = listItems[listIndex];
+    Element* element = listItems[listIndex];
+    OptionElement* optionElement = toOptionElement(element);
 
     RenderStyle* itemStyle = element->renderStyle();
     if (!itemStyle)
@@ -381,15 +382,14 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     String itemText;
-    bool isOptionElement = element->hasTagName(optionTag);
-    if (isOptionElement)
-        itemText = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+    if (optionElement)
+        itemText = optionElement->textIndentedToRespectGroupLabel();
     else if (element->hasTagName(optgroupTag))
         itemText = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
     Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
-    if (isOptionElement && toHTMLOptionElement(element)->selected()) {
+    if (optionElement && optionElement->selected()) {
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
@@ -422,10 +422,11 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
     const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
-    HTMLElement* element = listItems[listIndex];
+    Element* element = listItems[listIndex];
+    OptionElement* optionElement = toOptionElement(element);
 
     Color backColor;
-    if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected()) {
+    if (optionElement && optionElement->selected()) {
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else

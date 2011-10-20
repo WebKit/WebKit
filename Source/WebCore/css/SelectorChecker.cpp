@@ -37,10 +37,10 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
+#include "OptionElement.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderObject.h"
@@ -1114,7 +1114,9 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
                     return true;
-                if (e->hasTagName(optionTag) && toHTMLOptionElement(e)->selected())
+
+                OptionElement* optionElement = toOptionElement(e);
+                if (optionElement && optionElement->selected())
                     return true;
                 break;
             }
