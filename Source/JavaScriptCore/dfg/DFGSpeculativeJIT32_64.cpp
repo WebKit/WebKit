@@ -181,15 +181,21 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
                 info.fillDouble(fpr);
                 return fpr;
-            } 
-            GPRReg tag = allocate();
-            GPRReg payload = allocate();
-            m_jit.emitLoad(nodeIndex, tag, payload);
-            m_gprs.retain(tag, virtualRegister, SpillOrderSpilled);
-            m_gprs.retain(payload, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(tag, payload, spillFormat);
-            unlock(tag);
-            unlock(payload);
+            }
+
+            FPRReg fpr = fprAllocate();
+            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
+            speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::LowestTag)));
+            m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
+            JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
+
+            isInteger.link(&m_jit);
+            m_jit.convertInt32ToDouble(JITCompiler::payloadFor(virtualRegister), fpr);
+
+            hasUnboxedDouble.link(&m_jit);
+            m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
+            info.fillDouble(fpr);
+            return fpr;
         }
     }
 

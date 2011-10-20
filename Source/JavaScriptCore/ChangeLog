@@ -1,3 +1,21 @@
+2011-10-19  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT 32_64 - remove unnecessary double unboxings in fillDouble/fillSpeculateDouble
+        https://bugs.webkit.org/show_bug.cgi?id=70460
+
+        Reviewed by Filip Pizlo.
+
+        As pointed out by Gavin in bug #70418, when a value is already in memory
+        we can avoid loading it to two GPRs at first and then unboxing them to a FPR.
+        This gives 9% improvement on Kraken if without the change in bug #70418,
+        and 1% if based on the code with bug #70418 change.
+        Performance is neutral in V8 and SunSpider.
+
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
 2011-10-19  Gavin Barraclough  <barraclough@apple.com>
 
         Poisoning of strict caller,arguments inappropriately poisoning "in"
