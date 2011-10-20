@@ -145,7 +145,7 @@ public:
     // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     virtual IntRect visibleContentRect(bool includeScrollbars = false) const;
-    void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
+    virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
     LayoutUnit visibleWidth() const { return visibleContentRect().width(); }
     LayoutUnit visibleHeight() const { return visibleContentRect().height(); }
 

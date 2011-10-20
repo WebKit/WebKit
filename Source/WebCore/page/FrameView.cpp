@@ -1676,6 +1676,15 @@ void FrameView::setScrollPosition(const LayoutPoint& scrollPoint)
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
+void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
+{
+    IntSize offset = scrollOffset();
+    ScrollView::setFixedVisibleContentRect(visibleContentRect);
+    if (offset != scrollOffset())
+        scrollPositionChanged();
+    frame()->loader()->client()->didChangeScrollOffset();
+}
+
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
     repaintFixedElementsAfterScrolling();

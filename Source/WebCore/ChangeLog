@@ -1,3 +1,24 @@
+2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        When user is panning with the tiled backing store, the page
+        isn't notified about the scroll position change
+        https://bugs.webkit.org/show_bug.cgi?id=70495
+
+        Reviewed by Simon Hausmann.
+
+        When using the tiled backing store the UI handles scrolling,
+        and sends setFixedVisibleContentRect after panning/scale ends.
+
+        If we actually changed position we need to send the scroll DOM event.
+
+        Covered by existing tests, though we are not testing the tiled backing store yet.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFixedVisibleContentRect):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::setFixedVisibleContentRect):
+
 2011-10-20  John Knottenbelt  <jknotten@chromium.org>
 
         Touch events should take page scale into account
