@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 89x22
-          text run at (0,0) width 89: "Test case for "
-        RenderInline {A} at (0,0) size 64x22 [color=#0000EE]
-          RenderText {#text} at (89,0) size 64x22
-            text run at (89,0) width 64: "Bug 7265"
-        RenderText {#text} at (153,0) size 764x44
-          text run at (153,0) width 611: " REGRESSION: noscript, noframes, nolayer, noembed tags insert break inside paragraph"
-          text run at (0,22) width 21: "tag"
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 344x22
-          text run at (0,0) width 344: "This sentence contains noscript tags and should be "
-        RenderText {#text} at (344,0) size 77x22
-          text run at (344,0) width 77: "on one line."
-      RenderBlock {P} at (0,98) size 784x22
-        RenderText {#text} at (0,0) size 352x22
-          text run at (0,0) width 352: "This sentence contains noframes tags and should be "
-        RenderText {#text} at (352,0) size 77x22
-          text run at (352,0) width 77: "on one line."
-      RenderBlock {P} at (0,136) size 784x22
-        RenderText {#text} at (0,0) size 340x22
-          text run at (0,0) width 340: "This sentence contains nolayer tags and should be "
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 95x21
+          text run at (0,0) width 95: "Test case for "
+        RenderInline {A} at (0,0) size 69x21 [color=#0000EE]
+          RenderText {#text} at (95,0) size 69x21
+            text run at (95,0) width 69: "Bug 7265"
+        RenderText {#text} at (164,0) size 718x42
+          text run at (164,0) width 554: " REGRESSION: noscript, noframes, nolayer, noembed tags insert break inside"
+          text run at (0,21) width 99: "paragraph tag"
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 367x21
+          text run at (0,0) width 367: "This sentence contains noscript tags and should be "
+        RenderText {#text} at (367,0) size 83x21
+          text run at (367,0) width 83: "on one line."
+      RenderBlock {P} at (0,95) size 784x21
+        RenderText {#text} at (0,0) size 377x21
+          text run at (0,0) width 377: "This sentence contains noframes tags and should be "
+        RenderText {#text} at (377,0) size 83x21
+          text run at (377,0) width 83: "on one line."
+      RenderBlock {P} at (0,132) size 784x21
+        RenderText {#text} at (0,0) size 364x21
+          text run at (0,0) width 364: "This sentence contains nolayer tags and should be "
         RenderInline {NOLAYER} at (0,0) size 0x0
-        RenderText {#text} at (340,0) size 77x22
-          text run at (340,0) width 77: "on one line."
-      RenderBlock {P} at (0,174) size 784x22
-        RenderText {#text} at (0,0) size 351x22
-          text run at (0,0) width 351: "This sentence contains noembed tags and should be "
-        RenderText {#text} at (351,0) size 77x22
-          text run at (351,0) width 77: "on one line."
+        RenderText {#text} at (364,0) size 83x21
+          text run at (364,0) width 83: "on one line."
+      RenderBlock {P} at (0,169) size 784x21
+        RenderText {#text} at (0,0) size 378x21
+          text run at (0,0) width 378: "This sentence contains noembed tags and should be "
+        RenderText {#text} at (378,0) size 83x21
+          text run at (378,0) width 83: "on one line."

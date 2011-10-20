@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44 [color=#008000]
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 565: "This text should be green if the viewport is 800:600 ratio. This is unlikely to happen "
-          text run at (565,0) width 218: "by chance, but the layout testing"
-          text run at (0,22) width 80: "sets this size"
-      RenderBlock {P} at (0,60) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 564x22
-          text run at (0,0) width 564: "This text should be green if the viewport is landscape (minimum aspect ratio of 1:1)."
-      RenderBlock {P} at (0,98) size 784x22
-        RenderText {#text} at (0,0) size 553x22
-          text run at (0,0) width 553: "This text should be green if the viewport is portrait (maximum aspect ratio of 1:1)."
-      RenderBlock {P} at (0,136) size 784x22
-        RenderText {#text} at (0,0) size 493x22
-          text run at (0,0) width 493: "This text should be green if the viewport aspect ratio is greater than 16:9."
+      RenderBlock {P} at (0,0) size 784x42 [color=#008000]
+        RenderText {#text} at (0,0) size 763x42
+          text run at (0,0) width 587: "This text should be green if the viewport is 800:600 ratio. This is unlikely to happen "
+          text run at (587,0) width 176: "by chance, but the layout"
+          text run at (0,21) width 142: "testing sets this size"
+      RenderBlock {P} at (0,58) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 587x21
+          text run at (0,0) width 587: "This text should be green if the viewport is landscape (minimum aspect ratio of 1:1)."
+      RenderBlock {P} at (0,95) size 784x21
+        RenderText {#text} at (0,0) size 566x21
+          text run at (0,0) width 566: "This text should be green if the viewport is portrait (maximum aspect ratio of 1:1)."
+      RenderBlock {P} at (0,132) size 784x21
+        RenderText {#text} at (0,0) size 511x21
+          text run at (0,0) width 511: "This text should be green if the viewport aspect ratio is greater than 16:9."

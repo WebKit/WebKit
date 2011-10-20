@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 521x22
-          text run at (0,0) width 521: "This text should be green if running in a build of WebKit with 2d transforms."
+      RenderBlock {P} at (0,0) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 528x21
+          text run at (0,0) width 528: "This text should be green if running in a build of WebKit with 2d transforms."

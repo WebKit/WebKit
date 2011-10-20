@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderInline {B} at (0,0) size 62x22
-          RenderText {#text} at (0,0) size 62x22
-            text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x22
-          text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 121x22 [color=#0000EE]
-          RenderText {#text} at (66,0) size 121x22
-            text run at (66,0) width 121: "Bugzilla bug 3509"
-        RenderText {#text} at (187,0) size 762x44
-          text run at (187,0) width 575: " REGRESSION(125-412) Portion of nested table is not painted correctly on cafepress"
-          text run at (0,22) width 22: "site"
-      RenderBlock {P} at (0,60) size 784x28 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x22
-          RenderText {#text} at (3,3) size 91x22
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 306x22
-          text run at (94,3) width 4: " "
-          text run at (98,3) width 302: "The blue rectangle will change into a square."
-      RenderBlock {P} at (0,104) size 784x28 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x22
-          RenderText {#text} at (3,3) size 90x22
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 420x22
-          text run at (93,3) width 4: " "
-          text run at (97,3) width 416: "The blue rectangle will change into a shape that is not square."
-      RenderTable {TABLE} at (0,148) size 784x106
+      RenderBlock {P} at (0,0) size 784x42
+        RenderInline {B} at (0,0) size 61x21
+          RenderText {#text} at (0,0) size 61x21
+            text run at (0,0) width 61: "BUG ID:"
+        RenderText {#text} at (61,0) size 4x21
+          text run at (61,0) width 4: " "
+        RenderInline {A} at (0,0) size 129x21 [color=#0000EE]
+          RenderText {#text} at (65,0) size 129x21
+            text run at (65,0) width 129: "Bugzilla bug 3509"
+        RenderText {#text} at (194,0) size 723x42
+          text run at (194,0) width 529: " REGRESSION(125-412) Portion of nested table is not painted correctly on"
+          text run at (0,21) width 98: "cafepress site"
+      RenderBlock {P} at (0,58) size 784x27 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 96x21
+          RenderText {#text} at (3,3) size 96x21
+            text run at (3,3) width 96: "TEST PASS:"
+        RenderText {#text} at (99,3) size 322x21
+          text run at (99,3) width 4: " "
+          text run at (103,3) width 318: "The blue rectangle will change into a square."
+      RenderBlock {P} at (0,101) size 784x27 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 87x21
+          RenderText {#text} at (3,3) size 87x21
+            text run at (3,3) width 87: "TEST FAIL:"
+        RenderText {#text} at (90,3) size 442x21
+          text run at (90,3) width 4: " "
+          text run at (94,3) width 438: "The blue rectangle will change into a shape that is not square."
+      RenderTable {TABLE} at (0,144) size 784x106
         RenderTableSection {TBODY} at (0,0) size 784x106
           RenderTableRow {TR} at (0,2) size 784x102
             RenderTableCell {TD} at (2,2) size 780x102 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,33) size 778x0
               RenderBlock {DIV} at (1,1) size 100x100 [bgcolor=#0000FF]
-                RenderText {#text} at (0,0) size 4x22
+                RenderText {#text} at (0,0) size 4x21
                   text run at (0,0) width 4: " "

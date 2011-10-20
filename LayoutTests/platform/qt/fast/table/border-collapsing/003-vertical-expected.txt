@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (384,0) size 416x600
-  RenderBlock {HTML} at (0,0) size 416x600
-    RenderBody {BODY} at (16,8) size 368x584
-      RenderBlock {P} at (0,0) size 66x584
-        RenderText {#text} at (0,0) size 22x216
-          text run at (0,0) width 216: "The black border below should "
-        RenderInline {I} at (0,0) size 22x21
-          RenderText {#text} at (0,216) size 22x21
-            text run at (0,216) width 21: "not"
-        RenderText {#text} at (0,237) size 44x576
-          text run at (0,237) width 230: " cut through the top left corner of "
-          text run at (0,467) width 109: "the blue border."
-          text run at (22,0) width 327: "It would cut through with our old behavior, but "
-        RenderInline {A} at (0,0) size 22x24 [color=#0000EE]
-          RenderText {#text} at (22,327) size 22x24
-            text run at (22,327) width 24: "this"
-        RenderText {#text} at (22,351) size 44x572
-          text run at (22,351) width 4: " "
-          text run at (22,355) width 217: "bug fix changed our behavior to"
-          text run at (44,0) width 104: "match the spec."
-      RenderBlock {DIV} at (98,32) size 270x520 [border: (1px solid #0000FF)]
+layer at (387,0) size 413x600
+  RenderBlock {HTML} at (0,0) size 413x600
+    RenderBody {BODY} at (16,8) size 365x584
+      RenderBlock {P} at (0,0) size 63x584
+        RenderText {#text} at (0,0) size 21x223
+          text run at (0,0) width 223: "The black border below should "
+        RenderInline {I} at (0,0) size 21x22
+          RenderText {#text} at (0,223) size 21x22
+            text run at (0,223) width 22: "not"
+        RenderText {#text} at (0,245) size 42x532
+          text run at (0,245) width 230: " cut through the top left corner of "
+          text run at (0,475) width 57: "the blue"
+          text run at (21,0) width 378: "border. It would cut through with our old behavior, but "
+        RenderInline {A} at (0,0) size 21x25 [color=#0000EE]
+          RenderText {#text} at (21,378) size 21x25
+            text run at (21,378) width 25: "this"
+        RenderText {#text} at (21,403) size 42x547
+          text run at (21,403) width 4: " "
+          text run at (21,407) width 140: "bug fix changed our"
+          text run at (42,0) width 194: "behavior to match the spec."
+      RenderBlock {DIV} at (95,32) size 270x520 [border: (1px solid #0000FF)]
         RenderTable {DIV} at (1,1) size 220x115 [border:]
           RenderTableSection (anonymous) at (10,1) size 200x104
             RenderTableRow {P} at (0,0) size 100x104

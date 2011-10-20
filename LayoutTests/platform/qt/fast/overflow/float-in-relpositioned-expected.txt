@@ -3,41 +3,41 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 644x22
-          RenderInline {A} at (0,0) size 154x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 154x22
-              text run at (57,0) width 154: "rdar://problem/6059648"
-          RenderText {#text} at (211,0) size 490x22
-            text run at (211,0) width 4: " "
-            text run at (215,0) width 486: "Some content not visible when the window is short at courtneyalbright.com"
-        RenderText {#text} at (701,0) size 4x22
-          text run at (701,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 679x22
-          text run at (0,0) width 504: "Each black box below should have a scroll bar allowing the blue square to "
-          text run at (504,0) width 175: "be scrolled fully into view."
-layer at (18,84) size 102x102 clip at (19,85) size 100x84 scrollWidth 125
-  RenderBlock {DIV} at (10,76) size 102x102 [border: (1px solid #000000)]
-layer at (18,196) size 102x102 clip at (19,197) size 84x100 scrollHeight 125
-  RenderBlock {DIV} at (10,188) size 102x102 [border: (1px solid #000000)]
-layer at (18,308) size 102x102 clip at (19,309) size 100x84 scrollWidth 125
-  RenderBlock {DIV} at (10,300) size 102x102 [border: (1px solid #000000)]
-layer at (18,420) size 102x102 clip at (19,421) size 84x100 scrollHeight 125
-  RenderBlock {DIV} at (10,412) size 102x102 [border: (1px solid #000000)]
-layer at (69,85) size 25x25
+        RenderInline {I} at (0,0) size 695x21
+          RenderInline {A} at (0,0) size 165x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 165x21
+              text run at (57,0) width 165: "rdar://problem/6059648"
+          RenderText {#text} at (222,0) size 530x21
+            text run at (222,0) width 4: " "
+            text run at (226,0) width 526: "Some content not visible when the window is short at courtneyalbright.com"
+        RenderText {#text} at (752,0) size 4x21
+          text run at (752,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 710x21
+          text run at (0,0) width 528: "Each black box below should have a scroll bar allowing the blue square to "
+          text run at (528,0) width 182: "be scrolled fully into view."
+layer at (18,82) size 102x102 clip at (19,83) size 100x84 scrollWidth 125
+  RenderBlock {DIV} at (10,74) size 102x102 [border: (1px solid #000000)]
+layer at (18,194) size 102x102 clip at (19,195) size 84x100 scrollHeight 125
+  RenderBlock {DIV} at (10,186) size 102x102 [border: (1px solid #000000)]
+layer at (18,306) size 102x102 clip at (19,307) size 100x84 scrollWidth 125
+  RenderBlock {DIV} at (10,298) size 102x102 [border: (1px solid #000000)]
+layer at (18,418) size 102x102 clip at (19,419) size 84x100 scrollHeight 125
+  RenderBlock {DIV} at (10,410) size 102x102 [border: (1px solid #000000)]
+layer at (69,83) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
-layer at (19,247) size 25x25
+layer at (19,245) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
-layer at (69,309) size 25x25
+layer at (69,307) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (69,309) size 75x75 backgroundClip at (19,309) size 100x84 clip at (19,309) size 100x84 outlineClip at (19,309) size 100x84
+layer at (69,307) size 75x75 backgroundClip at (19,307) size 100x84 clip at (19,307) size 100x84 outlineClip at (19,307) size 100x84
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
-layer at (19,471) size 25x25
+layer at (19,469) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (19,471) size 75x75 backgroundClip at (19,421) size 84x100 clip at (19,421) size 84x100 outlineClip at (19,421) size 84x100
+layer at (19,469) size 75x75 backgroundClip at (19,419) size 84x100 clip at (19,419) size 84x100 outlineClip at (19,419) size 84x100
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]

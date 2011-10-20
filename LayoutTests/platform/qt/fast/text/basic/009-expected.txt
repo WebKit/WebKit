@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 297x33
-        RenderText {#text} at (0,0) size 182x33
-          text run at (0,0) width 182: "This is some text. "
-        RenderInline {TT} at (0,0) size 115x30
-          RenderText {#text} at (182,1) size 115x30
-            text run at (182,1) width 115: "As is this."
-      RenderText {#text} at (297,0) size 355x33
-        text run at (297,0) width 355: " All of this text should be 24px tall."
+      RenderInline {SPAN} at (0,0) size 297x30
+        RenderText {#text} at (0,0) size 194x30
+          text run at (0,0) width 194: "This is some text. "
+        RenderInline {TT} at (0,0) size 103x30
+          RenderText {#text} at (194,0) size 103x30
+            text run at (194,0) width 103: "As is this."
+      RenderText {#text} at (297,0) size 361x30
+        text run at (297,0) width 361: " All of this text should be 24px tall."

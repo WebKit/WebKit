@@ -5,5 +5,5 @@ layer at (0,0) size 800x126
   RenderBlock {html} at (0,0) size 800x126
     RenderBody {body} at (8,8) size 784x110
       RenderBlock {div} at (0,0) size 784x110
-        RenderText {#text} at (0,0) size 108x22
-          text run at (0,0) width 108: "TEST FAILED"
+        RenderText {#text} at (0,0) size 103x21
+          text run at (0,0) width 103: "TEST FAILED"

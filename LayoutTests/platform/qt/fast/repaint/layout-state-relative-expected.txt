@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {HTML} at (0,0) size 800x84
-    RenderBody {BODY} at (8,16) size 784x60
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 109x22
-          text run at (0,0) width 109: "Repaint test for "
-        RenderInline {I} at (0,0) size 524x22
-          RenderInline {A} at (0,0) size 154x22 [color=#0000EE]
-            RenderText {#text} at (109,0) size 154x22
-              text run at (109,0) width 154: "rdar://problem/6048566"
-          RenderText {#text} at (263,0) size 370x22
-            text run at (263,0) width 4: " "
-            text run at (267,0) width 366: "Repaint original element's position, not its offset position"
-        RenderText {#text} at (633,0) size 4x22
-          text run at (633,0) width 4: "."
-layer at (8,154) size 784x22
-  RenderBlock (relative positioned) {DIV} at (0,38) size 784x22
-    RenderText {#text} at (0,0) size 40x22
-      text run at (0,0) width 40: "PASS"
+layer at (0,0) size 800x82
+  RenderBlock {HTML} at (0,0) size 800x82
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 111x21
+          text run at (0,0) width 111: "Repaint test for "
+        RenderInline {I} at (0,0) size 566x21
+          RenderInline {A} at (0,0) size 165x21 [color=#0000EE]
+            RenderText {#text} at (111,0) size 165x21
+              text run at (111,0) width 165: "rdar://problem/6048566"
+          RenderText {#text} at (276,0) size 401x21
+            text run at (276,0) width 4: " "
+            text run at (280,0) width 397: "Repaint original element's position, not its offset position"
+        RenderText {#text} at (677,0) size 4x21
+          text run at (677,0) width 4: "."
+layer at (8,153) size 784x21
+  RenderBlock (relative positioned) {DIV} at (0,37) size 784x21
+    RenderText {#text} at (0,0) size 44x21
+      text run at (0,0) width 44: "PASS"

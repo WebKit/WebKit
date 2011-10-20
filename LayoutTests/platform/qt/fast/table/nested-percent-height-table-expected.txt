@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H3} at (0,0) size 784x26
-        RenderText {#text} at (0,0) size 192x26
-          text run at (0,0) width 192: "Height:100% Problems"
-      RenderBlock {P} at (0,44) size 784x44
-        RenderText {#text} at (0,0) size 729x44
-          text run at (0,0) width 422: "In the example below, the inner table should be 300 pixels tall. "
-          text run at (422,0) width 307: "Instead the height:100% on the table cell isn't"
-          text run at (0,22) width 61: "honored."
-      RenderTable {TABLE} at (351,104) size 81x300 [bgcolor=#FF0000]
+      RenderBlock {H3} at (0,0) size 784x25
+        RenderText {#text} at (0,0) size 209x25
+          text run at (0,0) width 209: "Height:100% Problems"
+      RenderBlock {P} at (0,43) size 784x42
+        RenderText {#text} at (0,0) size 763x42
+          text run at (0,0) width 444: "In the example below, the inner table should be 300 pixels tall. "
+          text run at (444,0) width 319: "Instead the height:100% on the table cell isn't"
+          text run at (0,21) width 63: "honored."
+      RenderTable {TABLE} at (351,101) size 81x300 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 81x300
           RenderTableRow {TR} at (0,0) size 81x300
             RenderTableCell {TD} at (0,0) size 81x300 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 81x300 [bgcolor=#008000]
                 RenderTableSection {TBODY} at (0,0) size 81x300
                   RenderTableRow {TR} at (0,2) size 81x296
-                    RenderTableCell {TD} at (2,138) size 77x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 75x22
+                    RenderTableCell {TD} at (2,138) size 77x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 75x21
                         text run at (1,1) width 75: "Inner table"

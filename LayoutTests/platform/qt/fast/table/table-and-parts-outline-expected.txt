@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 704x22
-          text run at (0,0) width 704: "You should see a table with a dotted green outline, and four table cells inside it with a solid black outline."
-        RenderBR {BR} at (704,16) size 0x0
-        RenderBR {BR} at (0,22) size 0x22
-      RenderTable {TABLE} at (0,44) size 88x54
-        RenderTableSection {TBODY} at (0,0) size 88x54
-          RenderTableRow {TR} at (0,2) size 88x24
-            RenderTableCell {TD} at (2,2) size 41x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
-                text run at (1,1) width 39: "Cell 1"
-            RenderTableCell {TD} at (45,2) size 41x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
-                text run at (1,1) width 39: "Cell 2"
-          RenderTableRow {TR} at (0,28) size 88x24
-            RenderTableCell {TD} at (2,28) size 41x24 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
-                text run at (1,1) width 39: "Cell 3"
-            RenderTableCell {TD} at (45,28) size 41x24 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
-                text run at (1,1) width 39: "Cell 4"
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 737x21
+          text run at (0,0) width 737: "You should see a table with a dotted green outline, and four table cells inside it with a solid black outline."
+        RenderBR {BR} at (737,16) size 0x0
+        RenderBR {BR} at (0,21) size 0x21
+      RenderTable {TABLE} at (0,42) size 94x52
+        RenderTableSection {TBODY} at (0,0) size 94x52
+          RenderTableRow {TR} at (0,2) size 94x23
+            RenderTableCell {TD} at (2,2) size 44x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x21
+                text run at (1,1) width 42: "Cell 1"
+            RenderTableCell {TD} at (48,2) size 44x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x21
+                text run at (1,1) width 42: "Cell 2"
+          RenderTableRow {TR} at (0,27) size 94x23
+            RenderTableCell {TD} at (2,27) size 44x23 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x21
+                text run at (1,1) width 42: "Cell 3"
+            RenderTableCell {TD} at (48,27) size 44x23 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x21
+                text run at (1,1) width 42: "Cell 4"

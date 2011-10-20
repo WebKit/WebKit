@@ -3,15 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 760x22
-          text run at (0,0) width 190: "This tests for a repaint bug. "
-          text run at (190,0) width 570: "The old caret position should be invalidated when a paragraph separator is inserted."
-      RenderBlock {DIV} at (0,38) size 784x66
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (0,44) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 724x42
+          text run at (0,0) width 195: "This tests for a repaint bug. "
+          text run at (195,0) width 529: "The old caret position should be invalidated when a paragraph separator is"
+          text run at (0,21) width 61: "inserted."
+      RenderBlock {DIV} at (0,58) size 784x63
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (0,42) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
 caret: position 0 of child 0 {BR} of child 4 {DIV} of child 3 {DIV} of body

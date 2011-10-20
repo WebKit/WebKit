@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {B} at (0,0) size 0x0
-      RenderBlock {P} at (0,0) size 784x22
-        RenderInline {B} at (0,0) size 36x22
-          RenderText {#text} at (0,0) size 36x22
-            text run at (0,0) width 36: "Bold "
-        RenderText {#text} at (36,0) size 59x22
-          text run at (36,0) width 59: "Not bold"
-      RenderBlock (anonymous) at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 94x22
-          text run at (0,0) width 94: "Also not bold."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {B} at (0,0) size 40x21
+          RenderText {#text} at (0,0) size 40x21
+            text run at (0,0) width 40: "Bold "
+        RenderText {#text} at (40,0) size 60x21
+          text run at (40,0) width 60: "Not bold"
+      RenderBlock (anonymous) at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 97x21
+          text run at (0,0) width 97: "Also not bold."

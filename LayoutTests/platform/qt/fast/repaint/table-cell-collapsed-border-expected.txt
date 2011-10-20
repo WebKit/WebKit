@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 109x22
-          text run at (0,0) width 109: "Repaint test for "
-        RenderInline {I} at (0,0) size 778x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (109,0) size 304x22
-              text run at (109,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11359"
-          RenderText {#text} at (413,0) size 778x44
-            text run at (413,0) width 4: " "
-            text run at (417,0) width 361: "Incomplete repaint of table cell's collapsed border when"
-            text run at (0,22) width 144: "changing only the cell"
-        RenderText {#text} at (144,22) size 4x22
-          text run at (144,22) width 4: "."
-      RenderTable {TABLE} at (0,60) size 436x405 [border: (5px none #808080)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 111x21
+          text run at (0,0) width 111: "Repaint test for "
+        RenderInline {I} at (0,0) size 744x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (111,0) size 329x21
+              text run at (111,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=11359"
+          RenderText {#text} at (440,0) size 744x42
+            text run at (440,0) width 4: " "
+            text run at (444,0) width 300: "Incomplete repaint of table cell's collapsed"
+            text run at (0,21) width 248: "border when changing only the cell"
+        RenderText {#text} at (248,21) size 4x21
+          text run at (248,21) width 4: "."
+      RenderTable {TABLE} at (0,58) size 436x405 [border: (5px none #808080)]
         RenderTableSection {TBODY} at (0,5) size 436x400
           RenderTableRow {TR} at (0,0) size 436x100
             RenderTableCell {TD} at (0,49) size 110x2 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=1]

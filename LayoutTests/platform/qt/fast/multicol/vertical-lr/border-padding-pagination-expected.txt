@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 191x584
-  RenderBlock {DIV} at (0,0) size 191x584 [border: (2px solid #800000)]
+layer at (8,8) size 185x584
+  RenderBlock {DIV} at (0,0) size 185x584 [border: (2px solid #800000)]
     RenderBlock {DIV} at (2,2) size 110x282
-    RenderBlock {DIV} at (189,2) size 176x379 [bgcolor=#00FF00] [border: (2px solid #000000)]
-      RenderBlock {DIV} at (2,12) size 172x355 [bgcolor=#008000] [border: (2px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 168x203
-          RenderText {#text} at (2,2) size 168x203
-            text run at (2,2) width 181: "In 2nd"
-            text run at (86,2) width 203: "column"
+    RenderBlock {DIV} at (183,2) size 168x379 [bgcolor=#00FF00] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (2,12) size 164x355 [bgcolor=#008000] [border: (2px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 160x207
+          RenderText {#text} at (2,2) size 160x207
+            text run at (2,2) width 180: "In 2nd"
+            text run at (82,2) width 207: "column"
         RenderText {#text} at (0,0) size 0x0

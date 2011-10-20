@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 770x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14449"
-          RenderText {#text} at (361,0) size 770x44
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 405: "REGRESSION (r14345-r14375): Absolutely positioned image"
-            text run at (0,22) width 289: "does not scale to containing element's height"
-        RenderText {#text} at (289,22) size 4x22
-          text run at (289,22) width 4: "."
-layer at (18,68) size 764x200
-  RenderBlock (relative positioned) {DIV} at (10,60) size 764x200
-layer at (18,68) size 100x100
+        RenderInline {I} at (0,0) size 778x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=14449"
+          RenderText {#text} at (386,0) size 778x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 388: "REGRESSION (r14345-r14375): Absolutely positioned"
+            text run at (0,21) width 366: "image does not scale to containing element's height"
+        RenderText {#text} at (366,21) size 4x21
+          text run at (366,21) width 4: "."
+layer at (18,66) size 764x200
+  RenderBlock (relative positioned) {DIV} at (10,58) size 764x200
+layer at (18,66) size 100x100
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#808080]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (18,68) size 50x100
+layer at (18,66) size 50x100
   RenderImage {IMG} at (0,0) size 50x100 [bgcolor=#0000FF]
-layer at (18,278) size 764x200
-  RenderBlock (relative positioned) {DIV} at (10,270) size 764x200
+layer at (18,276) size 764x200
+  RenderBlock (relative positioned) {DIV} at (10,268) size 764x200
     RenderText {#text} at (0,0) size 0x0
-layer at (18,278) size 50x110
-  RenderImage {IMG} at (0,0) size 50x110 [bgcolor=#0000FF]
+layer at (18,276) size 50x105
+  RenderImage {IMG} at (0,0) size 50x105 [bgcolor=#0000FF]

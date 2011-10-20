@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 773x44
-          text run at (0,0) width 514: "The two purple rectangles below should both be at the top of their columns. "
-          text run at (514,0) width 259: "If one is lower than the other, than the"
-          text run at (0,22) width 95: "test has failed."
-layer at (8,52) size 784x304
-  RenderBlock {DIV} at (0,44) size 784x304 [border: (2px solid #000000)]
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 771x42
+          text run at (0,0) width 533: "The two purple rectangles below should both be at the top of their columns. "
+          text run at (533,0) width 238: "If one is lower than the other, than"
+          text run at (0,21) width 128: "the test has failed."
+layer at (8,50) size 784x304
+  RenderBlock {DIV} at (0,42) size 784x304 [border: (2px solid #000000)]
     RenderBlock {DIV} at (2,2) size 382x200 [bgcolor=#800080]
     RenderBlock {DIV} at (2,302) size 382x200 [bgcolor=#800080]

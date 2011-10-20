@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderListItem {DIV} at (30,0) size 754x22
-          RenderListMarker at (-21,0) size 16x22: "1"
-          RenderText {#text} at (0,0) size 158x22
-            text run at (0,0) width 158: "should have a label of 1"
-        RenderListItem {DIV} at (30,22) size 754x22
-          RenderListMarker at (-21,0) size 16x22: "2"
-          RenderText {#text} at (0,0) size 158x22
-            text run at (0,0) width 158: "should have a label of 2"
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderListItem {DIV} at (30,0) size 754x21
+          RenderListMarker at (-22,0) size 17x21: "1"
+          RenderText {#text} at (0,0) size 169x21
+            text run at (0,0) width 169: "should have a label of 1"
+        RenderListItem {DIV} at (30,21) size 754x21
+          RenderListMarker at (-22,0) size 17x21: "2"
+          RenderText {#text} at (0,0) size 169x21
+            text run at (0,0) width 169: "should have a label of 2"

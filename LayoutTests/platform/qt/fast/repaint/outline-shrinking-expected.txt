@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x232
-  RenderBlock {HTML} at (0,0) size 800x232
-    RenderBody {BODY} at (8,16) size 784x208
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 777x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 352x22
-              text run at (111,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9388"
-          RenderText {#text} at (463,0) size 777x44
-            text run at (463,0) width 4: " "
-            text run at (467,0) width 310: "REGRESSION: outlines don't get erased when"
-            text run at (0,22) width 147: "removed in some cases"
-        RenderText {#text} at (147,22) size 4x22
-          text run at (147,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 351x22
-          text run at (0,0) width 351: "There should be a green square and no trace of red."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,108) size 100x100 [bgcolor=#008000]
+layer at (0,0) size 800x229
+  RenderBlock {HTML} at (0,0) size 800x229
+    RenderBody {BODY} at (8,16) size 784x205
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 734x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 379x21
+              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9388"
+          RenderText {#text} at (494,0) size 734x42
+            text run at (494,0) width 4: " "
+            text run at (498,0) width 236: "REGRESSION: outlines don't get"
+            text run at (0,21) width 264: "erased when removed in some cases"
+        RenderText {#text} at (264,21) size 4x21
+          text run at (264,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 367x21
+          text run at (0,0) width 367: "There should be a green square and no trace of red."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,105) size 100x100 [bgcolor=#008000]

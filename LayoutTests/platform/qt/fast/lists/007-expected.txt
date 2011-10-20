@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {UL} at (0,0) size 784x110 [bgcolor=#808080] [border: (25px solid #008000)]
-        RenderListItem {LI} at (50,0) size 734x44
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 718x44
-            text run at (0,0) width 718: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order"
-            text run at (0,22) width 44: "to test."
-        RenderListItem {LI} at (50,44) size 734x66 [bgcolor=#FFFFFF] [border: (25px solid #008000)]
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (50,0) size 680x66
-            text run at (50,0) width 649: "Another list item might not be such a bad idea, either, considering that such things do need to be"
-            text run at (50,22) width 114: "double-checked. "
-            text run at (164,22) width 566: "This list item has its left padding also set to 25 pixels, which should combine with the"
-            text run at (50,44) width 283: "list's padding to make 50 pixels of margin."
+      RenderBlock {UL} at (0,0) size 784x105 [bgcolor=#808080] [border: (25px solid #008000)]
+        RenderListItem {LI} at (50,0) size 734x42
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 707x42
+            text run at (0,0) width 707: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in"
+            text run at (0,21) width 87: "order to test."
+        RenderListItem {LI} at (50,42) size 734x63 [bgcolor=#FFFFFF] [border: (25px solid #008000)]
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (50,0) size 677x63
+            text run at (50,0) width 677: "Another list item might not be such a bad idea, either, considering that such things do need to be"
+            text run at (50,21) width 122: "double-checked. "
+            text run at (172,21) width 537: "This list item has its left padding also set to 25 pixels, which should combine"
+            text run at (50,42) width 354: "with the list's padding to make 50 pixels of margin."

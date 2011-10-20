@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 297x66
-          text run at (0,0) width 297: "BigAndGreen"
-        RenderBR {BR} at (297,48) size 0x0
-        RenderText {#text} at (0,66) size 107x22
-          text run at (0,66) width 107: "SmallAndBlack"
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 301x63
+          text run at (0,0) width 301: "BigAndGreen"
+        RenderBR {BR} at (301,48) size 0x0
+        RenderText {#text} at (0,63) size 110x21
+          text run at (0,63) width 110: "SmallAndBlack"

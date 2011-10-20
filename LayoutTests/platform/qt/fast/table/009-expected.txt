@@ -20,24 +20,23 @@ layer at (0,0) size 800x600
                                   RenderImage {IMG} at (0,0) size 97x180
       RenderBlock {P} at (0,74) size 800x0
       RenderBlock (floating) {DIV} at (0,74) size 104x54 [border: (2px solid #FF0000)]
-        RenderText {#text} at (2,2) size 88x66
-          text run at (2,2) width 85: "Here is some"
-          text run at (2,24) width 33: "text. "
-          text run at (35,24) width 55: "I should"
-          text run at (2,46) width 63: "overflow."
-        RenderBR {BR} at (65,62) size 0x0
-        RenderText {#text} at (2,68) size 63x44
-          text run at (2,68) width 34: "I will"
-          text run at (2,90) width 63: "overflow."
-        RenderBR {BR} at (65,106) size 0x0
-        RenderText {#text} at (2,112) size 100x44
-          text run at (2,112) width 100: "I definitely will"
-          text run at (2,134) width 59: "overflow"
-        RenderBR {BR} at (61,150) size 0x0
-        RenderText {#text} at (2,156) size 71x44
-          text run at (2,156) width 71: "I promis. I"
-          text run at (2,178) width 67: "lvoerflow."
-        RenderBR {BR} at (69,194) size 0x0
-        RenderText {#text} at (2,200) size 47x22
-          text run at (2,200) width 47: "Really."
+        RenderText {#text} at (2,2) size 94x63
+          text run at (2,2) width 94: "Here is some"
+          text run at (2,23) width 33: "text. "
+          text run at (35,23) width 56: "I should"
+          text run at (2,44) width 64: "overflow."
+        RenderBR {BR} at (66,60) size 0x0
+        RenderText {#text} at (2,65) size 100x21
+          text run at (2,65) width 100: "I will overflow."
+        RenderBR {BR} at (102,81) size 0x0
+        RenderText {#text} at (2,86) size 100x42
+          text run at (2,86) width 100: "I definitely will"
+          text run at (2,107) width 60: "overflow"
+        RenderBR {BR} at (62,123) size 0x0
+        RenderText {#text} at (2,128) size 68x42
+          text run at (2,128) width 68: "I promis. I"
+          text run at (2,149) width 68: "lvoerflow."
+        RenderBR {BR} at (70,165) size 0x0
+        RenderText {#text} at (2,170) size 50x21
+          text run at (2,170) width 50: "Really."
       RenderBlock {P} at (0,74) size 800x0

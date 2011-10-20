@@ -7,77 +7,77 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 208x308
           RenderTableRow {TR} at (0,2) size 208x304
             RenderTableCell {TD} at (2,2) size 204x304 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-layer at (14,14) size 200x300 clip at (14,14) size 184x300 scrollHeight 528
+layer at (14,14) size 200x300 clip at (14,14) size 184x300 scrollHeight 504
   RenderBlock {DIV} at (2,2) size 200x300
-    RenderText {#text} at (0,0) size 143x22
-      text run at (0,0) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,16) size 0x0
-    RenderText {#text} at (0,22) size 143x22
-      text run at (0,22) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,38) size 0x0
-    RenderText {#text} at (0,44) size 143x22
-      text run at (0,44) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,60) size 0x0
-    RenderText {#text} at (0,66) size 143x22
-      text run at (0,66) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,82) size 0x0
-    RenderText {#text} at (0,88) size 143x22
-      text run at (0,88) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,104) size 0x0
-    RenderText {#text} at (0,110) size 143x22
-      text run at (0,110) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,126) size 0x0
-    RenderText {#text} at (0,132) size 143x22
-      text run at (0,132) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,148) size 0x0
-    RenderText {#text} at (0,154) size 143x22
-      text run at (0,154) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,170) size 0x0
-    RenderText {#text} at (0,176) size 143x22
-      text run at (0,176) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,192) size 0x0
-    RenderText {#text} at (0,198) size 143x22
-      text run at (0,198) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,214) size 0x0
-    RenderText {#text} at (0,220) size 143x22
-      text run at (0,220) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,236) size 0x0
-    RenderText {#text} at (0,242) size 143x22
-      text run at (0,242) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,258) size 0x0
-    RenderText {#text} at (0,264) size 143x22
-      text run at (0,264) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,280) size 0x0
-    RenderText {#text} at (0,286) size 143x22
-      text run at (0,286) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,302) size 0x0
-    RenderText {#text} at (0,308) size 143x22
-      text run at (0,308) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,324) size 0x0
-    RenderText {#text} at (0,330) size 143x22
-      text run at (0,330) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,346) size 0x0
-    RenderText {#text} at (0,352) size 143x22
-      text run at (0,352) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,368) size 0x0
-    RenderText {#text} at (0,374) size 143x22
-      text run at (0,374) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,390) size 0x0
-    RenderText {#text} at (0,396) size 143x22
-      text run at (0,396) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,412) size 0x0
-    RenderText {#text} at (0,418) size 143x22
-      text run at (0,418) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,434) size 0x0
-    RenderText {#text} at (0,440) size 143x22
-      text run at (0,440) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,456) size 0x0
-    RenderText {#text} at (0,462) size 143x22
-      text run at (0,462) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,478) size 0x0
-    RenderText {#text} at (0,484) size 143x22
-      text run at (0,484) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,500) size 0x0
-    RenderText {#text} at (0,506) size 143x22
-      text run at (0,506) width 143: "Lots of overflow text."
-    RenderBR {BR} at (143,522) size 0x0
+    RenderText {#text} at (0,0) size 144x21
+      text run at (0,0) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,16) size 0x0
+    RenderText {#text} at (0,21) size 144x21
+      text run at (0,21) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,37) size 0x0
+    RenderText {#text} at (0,42) size 144x21
+      text run at (0,42) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,58) size 0x0
+    RenderText {#text} at (0,63) size 144x21
+      text run at (0,63) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,79) size 0x0
+    RenderText {#text} at (0,84) size 144x21
+      text run at (0,84) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,100) size 0x0
+    RenderText {#text} at (0,105) size 144x21
+      text run at (0,105) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,121) size 0x0
+    RenderText {#text} at (0,126) size 144x21
+      text run at (0,126) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,142) size 0x0
+    RenderText {#text} at (0,147) size 144x21
+      text run at (0,147) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,163) size 0x0
+    RenderText {#text} at (0,168) size 144x21
+      text run at (0,168) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,184) size 0x0
+    RenderText {#text} at (0,189) size 144x21
+      text run at (0,189) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,205) size 0x0
+    RenderText {#text} at (0,210) size 144x21
+      text run at (0,210) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,226) size 0x0
+    RenderText {#text} at (0,231) size 144x21
+      text run at (0,231) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,247) size 0x0
+    RenderText {#text} at (0,252) size 144x21
+      text run at (0,252) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,268) size 0x0
+    RenderText {#text} at (0,273) size 144x21
+      text run at (0,273) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,289) size 0x0
+    RenderText {#text} at (0,294) size 144x21
+      text run at (0,294) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,310) size 0x0
+    RenderText {#text} at (0,315) size 144x21
+      text run at (0,315) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,331) size 0x0
+    RenderText {#text} at (0,336) size 144x21
+      text run at (0,336) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,352) size 0x0
+    RenderText {#text} at (0,357) size 144x21
+      text run at (0,357) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,373) size 0x0
+    RenderText {#text} at (0,378) size 144x21
+      text run at (0,378) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,394) size 0x0
+    RenderText {#text} at (0,399) size 144x21
+      text run at (0,399) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,415) size 0x0
+    RenderText {#text} at (0,420) size 144x21
+      text run at (0,420) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,436) size 0x0
+    RenderText {#text} at (0,441) size 144x21
+      text run at (0,441) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,457) size 0x0
+    RenderText {#text} at (0,462) size 144x21
+      text run at (0,462) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,478) size 0x0
+    RenderText {#text} at (0,483) size 144x21
+      text run at (0,483) width 144: "Lots of overflow text."
+    RenderBR {BR} at (144,499) size 0x0

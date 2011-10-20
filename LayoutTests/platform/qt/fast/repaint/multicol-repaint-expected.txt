@@ -5,9 +5,9 @@ layer at (0,0) size 800x118
     RenderBody {BODY} at (8,8) size 784x102
 layer at (8,8) size 402x102
   RenderBlock {DIV} at (0,0) size 402x102 [border: (1px solid #000000)]
-    RenderText {#text} at (1,1) size 13x66
-      text run at (1,1) width 13: " "
-    RenderBR {BR} at (14,1) size 0x66
+    RenderText {#text} at (1,1) size 14x63
+      text run at (1,1) width 14: " "
+    RenderBR {BR} at (15,1) size 0x63
     RenderInline {SPAN} at (0,0) size 300x50
       RenderText {#text} at (1,109) size 300x50
         text run at (1,109) width 300: "XXXXXX"

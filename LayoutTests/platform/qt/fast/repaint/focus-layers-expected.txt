@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 37x22
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 37x21
           text run at (0,0) width 37: "Both "
         RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 58x26
-  RenderInline (relative positioned) {A} at (0,0) size 58x26 [color=#0000EE] [border: (2px solid #FF0000)]
-    RenderText {#text} at (39,0) size 54x22
-      text run at (39,0) width 54: "this and"
-layer at (47,168) size 302x26
-  RenderBlock (positioned) {SPAN} at (2,162) size 302x26 [border: (2px solid #0000FF)]
-    RenderText {#text} at (2,2) size 298x22
-      text run at (2,2) width 298: "this should have correctly placed focus rings"
+layer at (8,8) size 60x25
+  RenderInline (relative positioned) {A} at (0,0) size 60x25 [color=#0000EE] [border: (2px solid #FF0000)]
+    RenderText {#text} at (39,0) size 56x21
+      text run at (39,0) width 56: "this and"
+layer at (47,168) size 317x25
+  RenderBlock (positioned) {SPAN} at (2,162) size 317x25 [border: (2px solid #0000FF)]
+    RenderText {#text} at (2,2) size 313x21
+      text run at (2,2) width 313: "this should have correctly placed focus rings"

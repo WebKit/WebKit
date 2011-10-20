@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-layer at (8,16) size 784x211
-  RenderBlock {DIV} at (0,0) size 784x211 [border: (5px solid #800000)]
-    RenderBlock (anonymous) at (5,5) size 379x22
-      RenderInline {LABEL} at (0,0) size 107x22
-        RenderText {#text} at (0,0) size 107x22
-          text run at (0,0) width 107: "Some inline text"
-    RenderBlock (anonymous) at (5,27) size 379x377
-      RenderSummary {SUMMARY} at (0,0) size 379x377
-        RenderBlock (anonymous) at (0,0) size 379x22
-          RenderText {#text} at (0,0) size 107x22
-            text run at (0,0) width 107: "Some block text"
-        RenderBlock {H2} at (0,41) size 379x33 [bgcolor=#EEEEEE]
-          RenderText {#text} at (0,0) size 58x33
-            text run at (0,0) width 58: "PASS"
-        RenderBlock (anonymous) at (0,93) size 379x284
-          RenderText {#text} at (0,0) size 379x284
-            text run at (0,0) width 379: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
-            text run at (0,22) width 377: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
-            text run at (0,44) width 347: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
-            text run at (0,86) width 347: "purus, vulputate vel, varius ut, euismod et, nisi. Sed"
-            text run at (0,108) width 327: "vitae felis vel orci sagittis aliquam. Cras convallis"
-            text run at (0,130) width 307: "adipiscing sem. Nam nonummy enim. Nullam"
-            text run at (0,152) width 374: "bibendum lobortis neque. Vestibulum velit orci, tempus"
-            text run at (0,174) width 370: "euismod, pretium quis, interdum vitae, nulla. Phasellus"
-            text run at (0,196) width 299: "eget ante et tortor condimentum vestibulum."
-            text run at (0,218) width 372: "Suspendisse hendrerit quam nec felis. Sed varius turpis"
-            text run at (0,240) width 355: "vitae pede. Lorem ipsum dolor sit amet, consectetuer"
-            text run at (0,262) width 96: "adipiscing elit."
-    RenderBlock (anonymous) at (5,404) size 379x0
+layer at (8,16) size 784x203
+  RenderBlock {DIV} at (0,0) size 784x203 [border: (5px solid #800000)]
+    RenderBlock (anonymous) at (5,5) size 379x21
+      RenderInline {LABEL} at (0,0) size 114x21
+        RenderText {#text} at (0,0) size 114x21
+          text run at (0,0) width 114: "Some inline text"
+    RenderBlock (anonymous) at (5,26) size 379x361
+      RenderSummary {SUMMARY} at (0,0) size 379x361
+        RenderBlock (anonymous) at (0,0) size 379x21
+          RenderText {#text} at (0,0) size 113x21
+            text run at (0,0) width 113: "Some block text"
+        RenderBlock {H2} at (0,40) size 379x32 [bgcolor=#EEEEEE]
+          RenderText {#text} at (0,0) size 65x32
+            text run at (0,0) width 65: "PASS"
+        RenderBlock (anonymous) at (0,91) size 379x270
+          RenderText {#text} at (0,0) size 377x270
+            text run at (0,0) width 367: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
+            text run at (0,21) width 349: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
+            text run at (0,42) width 353: "felis quis lectus. Quisque adipiscing rhoncus sem."
+            text run at (0,81) width 377: "Proin nulla purus, vulputate vel, varius ut, euismod et,"
+            text run at (0,102) width 345: "nisi. Sed vitae felis vel orci sagittis aliquam. Cras"
+            text run at (0,123) width 333: "convallis adipiscing sem. Nam nonummy enim."
+            text run at (0,144) width 352: "Nullam bibendum lobortis neque. Vestibulum velit"
+            text run at (0,165) width 358: "orci, tempus euismod, pretium quis, interdum vitae,"
+            text run at (0,186) width 341: "nulla. Phasellus eget ante et tortor condimentum"
+            text run at (0,207) width 356: "vestibulum. Suspendisse hendrerit quam nec felis."
+            text run at (0,228) width 357: "Sed varius turpis vitae pede. Lorem ipsum dolor sit"
+            text run at (0,249) width 240: "amet, consectetuer adipiscing elit."
+    RenderBlock (anonymous) at (5,387) size 379x0
       RenderInline {LABEL} at (0,0) size 0x0

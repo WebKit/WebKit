@@ -1,20 +1,20 @@
 layer at (0,0) size 808x584
   RenderView at (0,0) size 800x584
-layer at (0,0) size 800x190
-  RenderBlock {HTML} at (0,0) size 800x190
-    RenderBody {BODY} at (8,16) size 784x166
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 109x22
-          text run at (0,0) width 109: "Repaint test for "
-        RenderInline {I} at (0,0) size 127x22
-          RenderInline {A} at (0,0) size 127x22 [color=#0000EE]
-            RenderText {#text} at (109,0) size 127x22
-              text run at (109,0) width 127: "Bugzilla bug 23524"
-        RenderText {#text} at (236,0) size 769x44
-          text run at (236,0) width 4: " "
-          text run at (240,0) width 529: "Make sure that a table section doesn't stop painting when vertical alignment of"
-          text run at (0,22) width 176: "cells dynamically changes."
-      RenderBlock {DIV} at (0,60) size 800x106
+layer at (0,0) size 800x188
+  RenderBlock {HTML} at (0,0) size 800x188
+    RenderBody {BODY} at (8,16) size 784x164
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 111x21
+          text run at (0,0) width 111: "Repaint test for "
+        RenderInline {I} at (0,0) size 138x21
+          RenderInline {A} at (0,0) size 138x21 [color=#0000EE]
+            RenderText {#text} at (111,0) size 138x21
+              text run at (111,0) width 138: "Bugzilla bug 23524"
+        RenderText {#text} at (249,0) size 712x42
+          text run at (249,0) width 4: " "
+          text run at (253,0) width 459: "Make sure that a table section doesn't stop painting when vertical"
+          text run at (0,21) width 282: "alignment of cells dynamically changes."
+      RenderBlock {DIV} at (0,58) size 800x106
         RenderTable {TABLE} at (0,0) size 110x106
           RenderTableSection {TBODY} at (0,0) size 110x106
             RenderTableRow {TR} at (0,2) size 110x102

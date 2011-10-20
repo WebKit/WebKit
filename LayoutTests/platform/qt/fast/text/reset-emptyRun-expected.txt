@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 689x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14758"
-          RenderText {#text} at (361,0) size 689x44
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 324: "REGRESSION: Repeated text after line break on"
-            text run at (0,22) width 90: "facebook.com"
-        RenderText {#text} at (90,22) size 4x22
-          text run at (90,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 246x22
-          text run at (0,0) width 246: "These two boxes should be identical:"
-      RenderBlock {DIV} at (0,98) size 76x72 [border: (3px solid #000000)]
-        RenderBlock (anonymous) at (3,3) size 70x44
-          RenderText {#text} at (0,0) size 46x22
-            text run at (0,0) width 46: "Lorem"
-          RenderInline {SPAN} at (0,0) size 41x22
-            RenderText {#text} at (0,22) size 41x22
-              text run at (0,22) width 41: "ipsum"
+        RenderInline {I} at (0,0) size 736x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=14758"
+          RenderText {#text} at (386,0) size 736x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 346: "REGRESSION: Repeated text after line break on"
+            text run at (0,21) width 99: "facebook.com"
+        RenderText {#text} at (99,21) size 4x21
+          text run at (99,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 263x21
+          text run at (0,0) width 263: "These two boxes should be identical:"
+      RenderBlock {DIV} at (0,95) size 76x69 [border: (3px solid #000000)]
+        RenderBlock (anonymous) at (3,3) size 70x42
+          RenderText {#text} at (0,0) size 45x21
+            text run at (0,0) width 45: "Lorem"
+          RenderInline {SPAN} at (0,0) size 43x21
+            RenderText {#text} at (0,21) size 43x21
+              text run at (0,21) width 43: "ipsum"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DIV} at (3,47) size 70x22
-          RenderText {#text} at (0,0) size 36x22
+        RenderBlock {DIV} at (3,45) size 70x21
+          RenderText {#text} at (0,0) size 36x21
             text run at (0,0) width 36: "dolor"
-      RenderBlock (anonymous) at (0,170) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,192) size 76x72 [border: (3px solid #000000)]
-        RenderBlock (anonymous) at (3,3) size 70x44
-          RenderText {#text} at (0,0) size 46x44
-            text run at (0,0) width 46: "Lorem"
-            text run at (0,22) width 41: "ipsum"
-        RenderBlock {DIV} at (3,47) size 70x22
-          RenderText {#text} at (0,0) size 36x22
+      RenderBlock (anonymous) at (0,164) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,185) size 76x69 [border: (3px solid #000000)]
+        RenderBlock (anonymous) at (3,3) size 70x42
+          RenderText {#text} at (0,0) size 45x42
+            text run at (0,0) width 45: "Lorem"
+            text run at (0,21) width 43: "ipsum"
+        RenderBlock {DIV} at (3,45) size 70x21
+          RenderText {#text} at (0,0) size 36x21
             text run at (0,0) width 36: "dolor"

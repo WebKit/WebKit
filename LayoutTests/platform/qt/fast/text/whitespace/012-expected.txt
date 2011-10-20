@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x180
-  RenderBlock {HTML} at (0,0) size 800x180
-    RenderBody {BODY} at (8,8) size 784x60
-      RenderBlock (anonymous) at (0,0) size 784x22
+layer at (0,0) size 800x178
+  RenderBlock {HTML} at (0,0) size 800x178
+    RenderBody {BODY} at (8,8) size 784x58
+      RenderBlock (anonymous) at (0,0) size 784x21
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,3) size 528x17
             text run at (0,3) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 303x22
-          text run at (0,0) width 303: "The following two blocks should be identical."
-      RenderBlock (floating) {DIV} at (16,92) size 112x16 [color=#00FF00] [bgcolor=#008000]
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 317x21
+          text run at (0,0) width 317: "The following two blocks should be identical."
+      RenderBlock (floating) {DIV} at (16,90) size 112x16 [color=#00FF00] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 16x17
           text run at (0,0) width 16: "["
         RenderInline {SPAN} at (0,0) size 16x17
@@ -31,6 +31,6 @@ layer at (0,0) size 800x180
             text run at (80,0) width 16: " "
         RenderText {#text} at (96,0) size 16x17
           text run at (96,0) width 16: "]"
-      RenderBlock (floating) {DIV} at (16,140) size 112x16 [color=#00FF00] [bgcolor=#008000]
+      RenderBlock (floating) {DIV} at (16,138) size 112x16 [color=#00FF00] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 112x17
           text run at (0,0) width 112: "[     ]"

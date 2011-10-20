@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (716,0) size 84x600
-  RenderBlock {HTML} at (0,0) size 84x600
-    RenderBody {BODY} at (8,8) size 68x584
-layer at (724,8) size 68x314
-  RenderBlock (relative positioned) {DIV} at (0,0) size 68x314 [bgcolor=#FF0000] [border: (2px solid #000000)]
-layer at (726,10) size 64x310
-  RenderImage {IMG} at (2,2) size 64x310
-layer at (747,15) size 22x300
-  RenderBlock (relative positioned) zI: 1 {P} at (23,7) size 22x300
-    RenderText zI: 1 {#text} at (0,28) size 22x244
-      text run at (0,28) width 243: "There should be no red on this page"
+layer at (717,0) size 83x600
+  RenderBlock {HTML} at (0,0) size 83x600
+    RenderBody {BODY} at (8,8) size 67x584
+layer at (725,8) size 67x314
+  RenderBlock (relative positioned) {DIV} at (0,0) size 67x314 [bgcolor=#FF0000] [border: (2px solid #000000)]
+layer at (727,10) size 63x310
+  RenderImage {IMG} at (2,2) size 63x310
+layer at (748,15) size 21x300
+  RenderBlock (relative positioned) zI: 1 {P} at (23,7) size 21x300
+    RenderText zI: 1 {#text} at (0,22) size 21x256
+      text run at (0,22) width 256: "There should be no red on this page"

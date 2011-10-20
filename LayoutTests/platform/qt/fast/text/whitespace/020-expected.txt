@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 204x51 [border: (2px solid #FF0000)]
-        RenderInline {FONT} at (0,0) size 180x44 [color=#996699]
+      RenderBlock {DIV} at (0,0) size 204x49 [border: (2px solid #FF0000)]
+        RenderInline {FONT} at (0,0) size 193x42 [color=#996699]
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {NOBR} at (0,0) size 160x22
-            RenderText {#text} at (2,2) size 10x22
+          RenderInline {NOBR} at (0,0) size 167x21
+            RenderText {#text} at (2,2) size 10x21
               text run at (2,2) width 10: "\x{2022} "
-            RenderInline {A} at (0,0) size 130x22 [color=#0000EE]
-              RenderText {#text} at (12,2) size 130x22
-                text run at (12,2) width 130: "Corporate Services"
-            RenderText {#text} at (142,2) size 20x22
-              text run at (142,2) width 20: "     "
+            RenderInline {A} at (0,0) size 137x21 [color=#0000EE]
+              RenderText {#text} at (12,2) size 137x21
+                text run at (12,2) width 137: "Corporate Services"
+            RenderText {#text} at (149,2) size 20x21
+              text run at (149,2) width 20: "     "
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {NOBR} at (0,0) size 180x22
-            RenderText {#text} at (2,24) size 10x22
-              text run at (2,24) width 10: "\x{2022} "
-            RenderInline {A} at (0,0) size 150x22 [color=#0000EE]
-              RenderText {#text} at (12,24) size 134x22
-                text run at (12,24) width 134: "1-800-las-flores.com"
-              RenderInline {SUB} at (0,0) size 16x18
-                RenderText {#text} at (146,31) size 16x18
-                  text run at (146,31) width 16: "sm"
-            RenderText {#text} at (162,24) size 20x22
-              text run at (162,24) width 20: "     "
+          RenderInline {NOBR} at (0,0) size 193x21
+            RenderText {#text} at (2,23) size 10x21
+              text run at (2,23) width 10: "\x{2022} "
+            RenderInline {A} at (0,0) size 163x21 [color=#0000EE]
+              RenderText {#text} at (12,23) size 145x21
+                text run at (12,23) width 145: "1-800-las-flores.com"
+              RenderInline {SUB} at (0,0) size 18x17
+                RenderText {#text} at (157,30) size 18x17
+                  text run at (157,30) width 18: "sm"
+            RenderText {#text} at (175,23) size 20x21
+              text run at (175,23) width 20: "     "
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,51) size 784x0
+      RenderBlock (anonymous) at (0,49) size 784x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#996699]
           RenderText {#text} at (0,0) size 0x0

@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x96
-  RenderBlock {HTML} at (0,0) size 800x96
-    RenderBody {BODY} at (16,16) size 768x64 [color=#0000FF]
-      RenderRuby (inline) {RUBY} at (0,0) size 225x42
-        RenderRubyRun (anonymous) at (0,22) size 204x42
-          RenderRubyText {RT} at (0,-22) size 204x22
-            RenderInline (generated) at (0,0) size 67x22
-              RenderText at (0,0) size 67x22
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (16,16) size 768x62 [color=#0000FF]
+      RenderRuby (inline) {RUBY} at (0,0) size 221x41
+        RenderRubyRun (anonymous) at (0,21) size 200x41
+          RenderRubyText {RT} at (0,-21) size 200x21
+            RenderInline (generated) at (0,0) size 67x21
+              RenderText at (0,0) size 67x21
                 text run at (0,0) width 67: "BEFORE"
-            RenderText {#text} at (67,0) size 81x22
-              text run at (67,0) width 81: "CONTENT"
-            RenderInline (generated) at (0,0) size 56x22
-              RenderText at (148,0) size 56x22
-                text run at (148,0) width 56: "AFTER"
-          RenderRubyBase (anonymous) at (0,0) size 204x42
-            RenderText {#text} at (90,0) size 24x42
-              text run at (90,0) width 24: "A"
-        RenderRubyRun (anonymous) at (204,22) size 21x42
-          RenderRubyBase (anonymous) at (0,0) size 21x42
-            RenderText {#text} at (0,0) size 21x42
+            RenderText {#text} at (67,0) size 79x21
+              text run at (67,0) width 79: "CONTENT"
+            RenderInline (generated) at (0,0) size 54x21
+              RenderText at (146,0) size 54x21
+                text run at (146,0) width 54: "AFTER"
+          RenderRubyBase (anonymous) at (0,0) size 200x41
+            RenderText {#text} at (89,0) size 22x41
+              text run at (89,0) width 22: "A"
+        RenderRubyRun (anonymous) at (200,21) size 21x41
+          RenderRubyBase (anonymous) at (0,0) size 21x41
+            RenderText {#text} at (0,0) size 21x41
               text run at (0,0) width 21: "B"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

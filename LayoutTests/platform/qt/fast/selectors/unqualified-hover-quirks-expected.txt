@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {H3} at (0,0) size 784x26
-        RenderText {#text} at (0,0) size 468x26
-          text run at (0,0) width 468: "Test of unqualifed :hover selector in quirks parsing mode"
-      RenderBlock {P} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 660x22
-          text run at (0,0) width 660: "Moving the mouse anywhere over the document should result no change to the background color."
+      RenderBlock {H3} at (0,0) size 784x25
+        RenderText {#text} at (0,0) size 526x25
+          text run at (0,0) width 526: "Test of unqualifed :hover selector in quirks parsing mode"
+      RenderBlock {P} at (0,43) size 784x21
+        RenderText {#text} at (0,0) size 687x21
+          text run at (0,0) width 687: "Moving the mouse anywhere over the document should result no change to the background color."

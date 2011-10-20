@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x330
-  RenderBlock {HTML} at (0,0) size 800x330
-    RenderBody {BODY} at (8,16) size 784x306
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 63x22
-          text run at (0,0) width 63: "Tests for "
-        RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
-          RenderText {#text} at (63,0) size 322x22
-            text run at (63,0) width 322: "https://bugs.webkit.org/show_bug.cgi?id=24552"
-      RenderBlock (anonymous) at (0,38) size 784x126
-        RenderText {#text} at (120,104) size 4x22
+layer at (0,0) size 800x327
+  RenderBlock {HTML} at (0,0) size 800x327
+    RenderBody {BODY} at (8,16) size 784x303
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 65x21
+          text run at (0,0) width 65: "Tests for "
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (65,0) size 337x21
+            text run at (65,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=24552"
+      RenderBlock (anonymous) at (0,37) size 784x125
+        RenderText {#text} at (120,104) size 4x21
           text run at (120,104) width 4: " "
-        RenderInline {A} at (0,0) size 67x22 [color=#0000EE]
-          RenderText {#text} at (124,104) size 67x22
-            text run at (124,104) width 67: "Link here"
+        RenderInline {A} at (0,0) size 66x21 [color=#0000EE]
+          RenderText {#text} at (124,104) size 66x21
+            text run at (124,104) width 66: "Link here"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,284) size 784x22
-        RenderText {#text} at (0,0) size 178x22
-          text run at (0,0) width 178: "Found link node, so PASS"
-layer at (18,64) size 100x100
+      RenderBlock {DIV} at (0,282) size 784x21
+        RenderText {#text} at (0,0) size 188x21
+          text run at (0,0) width 188: "Found link node, so PASS"
+layer at (18,63) size 100x100
   RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#808080]

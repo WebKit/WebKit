@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x581
-      RenderBlock {P} at (0,0) size 800x26
-        RenderInline {A} at (0,0) size 393x26 [color=#0000EE]
-          RenderText {#text} at (0,0) size 393x26
-            text run at (0,0) width 393: "https://bugs.webkit.org/show_bug.cgi?id=24784"
-      RenderBlock {P} at (0,45) size 800x26
-        RenderText {#text} at (0,0) size 680x26
-          text run at (0,0) width 680: "Test transform lengths with zoom. You should see two green squares below, no red."
+      RenderBlock {P} at (0,0) size 800x25
+        RenderInline {A} at (0,0) size 410x25 [color=#0000EE]
+          RenderText {#text} at (0,0) size 410x25
+            text run at (0,0) width 410: "https://bugs.webkit.org/show_bug.cgi?id=24784"
+      RenderBlock {P} at (0,44) size 800x25
+        RenderText {#text} at (0,0) size 720x25
+          text run at (0,0) width 720: "Test transform lengths with zoom. You should see two green squares below, no red."
 layer at (120,84) size 120x120
   RenderBlock (positioned) {DIV} at (120,84) size 120x120 [bgcolor=#FF0000]
 layer at (300,84) size 120x120

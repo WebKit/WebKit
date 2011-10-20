@@ -1,14 +1,14 @@
-layer at (0,0) size 784x646
+layer at (0,0) size 784x645
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x646
-  RenderBlock {HTML} at (0,0) size 784x646
+layer at (0,0) size 784x645
+  RenderBlock {HTML} at (0,0) size 784x645
     RenderBody {BODY} at (8,8) size 768x576
-      RenderBlock {P} at (0,0) size 768x22 [color=#008000]
-        RenderText {#text} at (0,0) size 337x22
-          text run at (0,0) width 337: "This text should be green if height is at least 30ex ."
-      RenderBlock (floating) {DIV} at (0,38) size 119x210 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 119x22
-          text run at (0,0) width 119: "div of height 30ex"
-      RenderBlock (floating) {DIV} at (119,38) size 129x600 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 129x22
-          text run at (0,0) width 129: "div of height 600px"
+      RenderBlock {P} at (0,0) size 768x21 [color=#008000]
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "This text should be green if height is at least 30ex ."
+      RenderBlock (floating) {DIV} at (0,37) size 125x240 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 125x21
+          text run at (0,0) width 125: "div of height 30ex"
+      RenderBlock (floating) {DIV} at (125,37) size 134x600 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 134x21
+          text run at (0,0) width 134: "div of height 600px"

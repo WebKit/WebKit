@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 283x22
-          text run at (0,0) width 283: "All the text below should be part of a link."
-      RenderBlock (anonymous) at (0,38) size 784x44
-        RenderInline {NOBR} at (0,0) size 29x22
-          RenderInline {A} at (0,0) size 29x22 [color=#0000EE]
-            RenderText {#text} at (0,0) size 29x22
-              text run at (0,0) width 29: "Test"
-        RenderInline {A} at (0,0) size 66x22 [color=#0000EE]
-          RenderText {#text} at (29,0) size 66x22
-            text run at (29,0) width 66: " more test"
-        RenderBR {BR} at (95,16) size 0x0
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 289x21
+          text run at (0,0) width 289: "All the text below should be part of a link."
+      RenderBlock (anonymous) at (0,37) size 784x42
+        RenderInline {NOBR} at (0,0) size 31x21
+          RenderInline {A} at (0,0) size 31x21 [color=#0000EE]
+            RenderText {#text} at (0,0) size 31x21
+              text run at (0,0) width 31: "Test"
+        RenderInline {A} at (0,0) size 69x21 [color=#0000EE]
+          RenderText {#text} at (31,0) size 69x21
+            text run at (31,0) width 69: " more test"
+        RenderBR {BR} at (100,16) size 0x0
         RenderWordBreak {WBR} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 95x22 [color=#0000EE]
-          RenderText {#text} at (0,22) size 95x22
-            text run at (0,22) width 95: "Test more test"
-        RenderBR {BR} at (95,38) size 0x0
+        RenderInline {A} at (0,0) size 100x21 [color=#0000EE]
+          RenderText {#text} at (0,21) size 100x21
+            text run at (0,21) width 100: "Test more test"
+        RenderBR {BR} at (100,37) size 0x0

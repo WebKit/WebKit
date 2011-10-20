@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 600x144
-        RenderInline {SPAN} at (0,0) size 568x146 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
-          RenderText {#text} at (36,4) size 548x136
-            text run at (36,4) width 548: "This sentence is too long to"
-            text run at (104,76) width 372: "fit on a single line."
+        RenderInline {SPAN} at (0,0) size 554x142 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
+          RenderText {#text} at (43,6) size 534x132
+            text run at (43,6) width 534: "This sentence is too long"
+            text run at (70,78) width 440: "to fit on a single line."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,194) size 600x144
-        RenderInline {SPAN} at (0,0) size 568x146 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
-          RenderText {#text} at (36,4) size 548x136
-            text run at (36,4) width 548: "This sentence is too long to"
-            text run at (104,76) width 372: "fit on a single line."
+        RenderInline {SPAN} at (0,0) size 554x142 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
+          RenderText {#text} at (43,6) size 534x132
+            text run at (43,6) width 534: "This sentence is too long"
+            text run at (70,78) width 440: "to fit on a single line."
         RenderText {#text} at (0,0) size 0x0

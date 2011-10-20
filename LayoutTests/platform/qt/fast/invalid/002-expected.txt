@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderInline {I} at (0,0) size 62x22
-          RenderText {#text} at (0,0) size 62x22
-            text run at (0,0) width 62: "Line One"
-      RenderBlock (anonymous) at (0,38) size 784x22
-        RenderBlock {P} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 63x22
-            text run at (0,0) width 63: "Line Two"
-      RenderBlock (anonymous) at (0,76) size 784x22
-        RenderInline {I} at (0,0) size 34x22
-          RenderText {#text} at (0,0) size 34x22
-            text run at (0,0) width 34: "Line "
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderInline {I} at (0,0) size 65x21
+          RenderText {#text} at (0,0) size 65x21
+            text run at (0,0) width 65: "Line One"
+      RenderBlock (anonymous) at (0,37) size 784x21
+        RenderBlock {P} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 66x21
+            text run at (0,0) width 66: "Line Two"
+      RenderBlock (anonymous) at (0,74) size 784x21
+        RenderInline {I} at (0,0) size 35x21
+          RenderText {#text} at (0,0) size 35x21
+            text run at (0,0) width 35: "Line "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {I} at (0,0) size 39x22
-          RenderText {#text} at (34,0) size 39x22
-            text run at (34,0) width 39: "Three"
-      RenderBlock (anonymous) at (0,114) size 784x22
-        RenderBlock {P} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 68x22
+        RenderInline {I} at (0,0) size 42x21
+          RenderText {#text} at (35,0) size 42x21
+            text run at (35,0) width 42: "Three"
+      RenderBlock (anonymous) at (0,111) size 784x21
+        RenderBlock {P} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 68x21
             text run at (0,0) width 68: "Line Four"
-      RenderBlock (anonymous) at (0,152) size 784x22
-        RenderInline {I} at (0,0) size 63x22
-          RenderText {#text} at (0,0) size 63x22
-            text run at (0,0) width 63: "Line Five"
+      RenderBlock (anonymous) at (0,148) size 784x21
+        RenderInline {I} at (0,0) size 66x21
+          RenderText {#text} at (0,0) size 66x21
+            text run at (0,0) width 66: "Line Five"
         RenderText {#text} at (0,0) size 0x0

@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 314x36
-        RenderTableSection {TBODY} at (0,0) size 314x36
-          RenderTableRow {TR} at (0,2) size 314x32
-            RenderTableCell {TD} at (2,2) size 310x32 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 304x26 [border: (2px solid #008000)]
-                RenderInline {NOBR} at (0,0) size 673x22
-                  RenderText {#text} at (2,2) size 673x22
-                    text run at (2,2) width 233: "This text should be all on one line. "
-                    text run at (235,2) width 305: "It should spill out of the 300 pixel wide green "
-                    text run at (540,2) width 135: "and blue rectangles."
+      RenderTable {TABLE} at (0,0) size 314x35
+        RenderTableSection {TBODY} at (0,0) size 314x35
+          RenderTableRow {TR} at (0,2) size 314x31
+            RenderTableCell {TD} at (2,2) size 310x31 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 304x25 [border: (2px solid #008000)]
+                RenderInline {NOBR} at (0,0) size 708x21
+                  RenderText {#text} at (2,2) size 708x21
+                    text run at (2,2) width 246: "This text should be all on one line. "
+                    text run at (248,2) width 318: "It should spill out of the 300 pixel wide green "
+                    text run at (566,2) width 144: "and blue rectangles."
                 RenderText {#text} at (0,0) size 0x0

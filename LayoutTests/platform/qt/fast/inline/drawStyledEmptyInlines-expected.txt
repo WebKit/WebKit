@@ -3,51 +3,52 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 598x22
-          text run at (0,0) width 598: "This test verifies that we draw borders and and backgrounds for inlines without content."
-      RenderBlock (anonymous) at (0,22) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 263x22
-          text run at (0,0) width 263: "There should be two blue boxes below:"
-      RenderBlock (anonymous) at (0,66) size 784x154
-        RenderInline {A} at (0,0) size 15x28 [color=#0000EE] [border: (3px solid #0000EE)]
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 613x21
+          text run at (0,0) width 613: "This test verifies that we draw borders and and backgrounds for inlines without content."
+      RenderBlock (anonymous) at (0,21) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 278x21
+          text run at (0,0) width 278: "There should be two blue boxes below:"
+      RenderBlock (anonymous) at (0,63) size 784x147
+        RenderInline {A} at (0,0) size 15x27 [color=#0000EE] [border: (3px solid #0000EE)]
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 27x28 [color=#0000EE] [border: (3px solid #0000EE)]
-          RenderText {#text} at (23,0) size 12x22
-            text run at (23,0) width 12: "A"
-        RenderText {#text} at (42,0) size 4x22
-          text run at (42,0) width 4: " "
+        RenderInline {A} at (0,0) size 26x27 [color=#0000EE] [border: (3px solid #0000EE)]
+          RenderText {#text} at (23,0) size 11x21
+            text run at (23,0) width 11: "A"
+        RenderText {#text} at (41,0) size 4x21
+          text run at (41,0) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 282x22
-          text run at (0,44) width 282: "There should be a blue box after this text:"
-        RenderInline {A} at (0,0) size 10x32 [bgcolor=#0000FF]
-        RenderText {#text} at (292,44) size 4x22
-          text run at (292,44) width 4: " "
-        RenderBR {BR} at (296,60) size 0x0
-        RenderInline {A} at (0,0) size 10x32 [bgcolor=#0000FF]
-        RenderText {#text} at (10,66) size 296x22
-          text run at (10,66) width 296: "There should be a blue box before this text. "
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 291x21
+          text run at (0,42) width 291: "There should be a blue box after this text:"
+        RenderInline {A} at (0,0) size 10x31 [bgcolor=#0000FF]
+        RenderText {#text} at (301,42) size 4x21
+          text run at (301,42) width 4: " "
+        RenderBR {BR} at (305,58) size 0x0
+        RenderInline {A} at (0,0) size 10x31 [bgcolor=#0000FF]
+        RenderText {#text} at (10,63) size 309x21
+          text run at (10,63) width 309: "There should be a blue box before this text. "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,88) size 0x22
-        RenderInline {A} at (0,0) size 10x32
-        RenderText {#text} at (10,110) size 342x22
-          text run at (10,110) width 342: "There should be 10px of space left before this text. "
+        RenderBR {BR} at (0,84) size 0x21
+        RenderInline {A} at (0,0) size 10x31
+        RenderText {#text} at (10,105) size 359x21
+          text run at (10,105) width 359: "There should be 10px of space left before this text. "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,132) size 0x22
-      RenderBlock {P} at (0,236) size 784x44
-        RenderText {#text} at (0,0) size 205x22
-          text run at (0,0) width 205: "This text is before the anchor. "
+        RenderBR {BR} at (0,126) size 0x21
+      RenderBlock {P} at (0,226) size 784x42
+        RenderText {#text} at (0,0) size 212x21
+          text run at (0,0) width 212: "This text is before the anchor. "
         RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (205,0) size 778x44
-          text run at (205,0) width 442: "This text is after the anchor, but should be flush with the anchor. "
-          text run at (647,0) width 131: "There should be no"
-          text run at (0,22) width 354: "spaces in between the anchor and this following text."
-      RenderBlock {P} at (0,296) size 784x22
-        RenderInline {A} at (0,0) size 775x22
-          RenderText {#text} at (0,0) size 775x22
-            text run at (0,0) width 775: "This text should be flush with the anchor. There should not be a space between the anchor and the text on this line."
+        RenderText {#text} at (212,0) size 780x42
+          text run at (212,0) width 452: "This text is after the anchor, but should be flush with the anchor. "
+          text run at (664,0) width 116: "There should be"
+          text run at (0,21) width 395: "no spaces in between the anchor and this following text."
+      RenderBlock {P} at (0,284) size 784x42
+        RenderInline {A} at (0,0) size 775x42
+          RenderText {#text} at (0,0) size 775x42
+            text run at (0,0) width 775: "This text should be flush with the anchor. There should not be a space between the anchor and the text on this"
+            text run at (0,21) width 30: "line."
         RenderInline {A} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

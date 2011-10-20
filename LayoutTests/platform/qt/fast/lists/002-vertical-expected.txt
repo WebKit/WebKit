@@ -3,19 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {DIV} at (0,0) size 44x584
-        RenderBlock {UL} at (0,0) size 44x584
-          RenderListItem {LI} at (0,40) size 22x544
-            RenderListMarker at (0,-18) size 22x7: bullet
-            RenderInline {A} at (0,0) size 22x40 [color=#0000EE]
-              RenderText {#text} at (0,504) size 22x40
-                text run at (0,504) width 40: "Home"
-          RenderListItem {LI} at (22,40) size 22x544
-            RenderListMarker at (0,-18) size 22x7: bullet
-            RenderInline {A} at (0,0) size 22x60 [color=#0000EE]
-              RenderText {#text} at (0,484) size 22x60
-                text run at (0,484) width 60: "Archives"
-      RenderBlock {P} at (60,0) size 44x584
-        RenderText {#text} at (0,0) size 44x568
-          text run at (0,0) width 568: "This test case illustrates the correct positioning of list item bullets according to CSS3."
-          text run at (22,0) width 546: "The bullets should be on the far left, with the text of the list items on the far right."
+      RenderBlock {DIV} at (0,0) size 42x584
+        RenderBlock {UL} at (0,0) size 42x584
+          RenderListItem {LI} at (0,40) size 21x544
+            RenderListMarker at (0,-18) size 21x7: bullet
+            RenderInline {A} at (0,0) size 21x43 [color=#0000EE]
+              RenderText {#text} at (0,501) size 21x43
+                text run at (0,501) width 43: "Home"
+          RenderListItem {LI} at (21,40) size 21x544
+            RenderListMarker at (0,-18) size 21x7: bullet
+            RenderInline {A} at (0,0) size 21x62 [color=#0000EE]
+              RenderText {#text} at (0,482) size 21x62
+                text run at (0,482) width 62: "Archives"
+      RenderBlock {P} at (58,0) size 63x584
+        RenderText {#text} at (0,0) size 63x570
+          text run at (0,0) width 547: "This test case illustrates the correct positioning of list item bullets according to"
+          text run at (21,0) width 51: "CSS3. "
+          text run at (21,51) width 519: "The bullets should be on the far left, with the text of the list items on the far"
+          text run at (42,0) width 35: "right."

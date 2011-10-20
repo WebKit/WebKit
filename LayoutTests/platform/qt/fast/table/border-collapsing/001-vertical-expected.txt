@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (362,0) size 438x600
-  RenderBlock {HTML} at (0,0) size 438x600
-    RenderBody {BODY} at (8,8) size 422x584
-      RenderBlock {DIV} at (0,0) size 232x584 [border: (10px dotted #0000FF)]
-        RenderTable {TABLE} at (10,10) size 212x322 [border: (5px solid #FF0000)]
-          RenderTableSection {TBODY} at (5,5) size 182x312
-            RenderTableRow {TR} at (0,0) size 44x312
-              RenderTableCell {TD} at (0,0) size 44x312 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (6,6) size 22x35
-                  text run at (6,6) width 35: "Hello"
-            RenderTableRow {TR} at (0,44) size 64x312
-              RenderTableCell {TD} at (44,0) size 64x312 [border: (15px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (16,16) size 22x61
-                  text run at (16,16) width 61: "Goodbye"
-            RenderTableRow {TR} at (0,108) size 74x312
-              RenderTableCell {TD} at (108,0) size 74x312 [border: (25px solid #FF0000)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (26,26) size 22x61
-                  text run at (26,26) width 61: "Goodbye"
-      RenderBlock {DIV} at (392,0) size 30x584 [border: (1px solid #008000)]
-        RenderTable {TABLE} at (1,1) size 28x35 [border: (1px none #808080)]
-          RenderTableSection {TBODY} at (1,1) size 26x33
-            RenderTableRow {TR} at (0,0) size 26x33
-              RenderTableCell {TD} at (0,0) size 26x33 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 22x29
-                  text run at (2,2) width 29: "Test"
+layer at (366,0) size 434x600
+  RenderBlock {HTML} at (0,0) size 434x600
+    RenderBody {BODY} at (8,8) size 418x584
+      RenderBlock {DIV} at (0,0) size 229x584 [border: (10px dotted #0000FF)]
+        RenderTable {TABLE} at (10,10) size 209x322 [border: (5px solid #FF0000)]
+          RenderTableSection {TBODY} at (5,5) size 179x312
+            RenderTableRow {TR} at (0,0) size 43x312
+              RenderTableCell {TD} at (0,0) size 43x312 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (6,6) size 21x38
+                  text run at (6,6) width 38: "Hello"
+            RenderTableRow {TR} at (0,43) size 63x312
+              RenderTableCell {TD} at (43,0) size 63x312 [border: (15px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (16,16) size 21x65
+                  text run at (16,16) width 65: "Goodbye"
+            RenderTableRow {TR} at (0,106) size 73x312
+              RenderTableCell {TD} at (106,0) size 73x312 [border: (25px solid #FF0000)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (26,26) size 21x65
+                  text run at (26,26) width 65: "Goodbye"
+      RenderBlock {DIV} at (389,0) size 29x584 [border: (1px solid #008000)]
+        RenderTable {TABLE} at (1,1) size 27x37 [border: (1px none #808080)]
+          RenderTableSection {TBODY} at (1,1) size 25x35
+            RenderTableRow {TR} at (0,0) size 25x35
+              RenderTableCell {TD} at (0,0) size 25x35 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 21x31
+                  text run at (2,2) width 31: "Test"

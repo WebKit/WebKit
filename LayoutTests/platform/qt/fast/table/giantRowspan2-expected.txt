@@ -3,15 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x92
-        RenderTableSection {TBODY} at (0,0) size 784x92
+      RenderTable {TABLE} at (0,0) size 784x88
+        RenderTableSection {TBODY} at (0,0) size 784x88
           RenderTableRow {TR} at (0,2) size 784x0
-            RenderTableCell {TD} at (2,1) size 780x90 [r=0 c=0 rs=8190 cs=1]
-              RenderText {#text} at (1,1) size 772x88
-                text run at (1,1) width 719: "This test succeeds if it does not crash. We implemented a heuristic a while back to prevent giant rowspans. "
-                text run at (720,1) width 27: "The"
-                text run at (1,23) width 770: "heuristic did not, however, fix this case. This rowpsan was small enough so that we thought it was okay to allocate,"
-                text run at (1,45) width 27: "but "
-                text run at (28,45) width 745: "large enough so that it actually wasn't okay, and we crashed. Firefox seems to hold 8k as the maximum size for"
-                text run at (1,67) width 73: "rowspans. "
-                text run at (74,67) width 543: "So this change matches Firefox and clamps all rowspans to 8k right in the DOM."
+            RenderTableCell {TD} at (2,1) size 780x86 [r=0 c=0 rs=8190 cs=1]
+              RenderText {#text} at (1,1) size 774x84
+                text run at (1,1) width 752: "This test succeeds if it does not crash. We implemented a heuristic a while back to prevent giant rowspans."
+                text run at (1,22) width 774: "The heuristic did not, however, fix this case. This rowpsan was small enough so that we thought it was okay to"
+                text run at (1,43) width 90: "allocate, but "
+                text run at (91,43) width 652: "large enough so that it actually wasn't okay, and we crashed. Firefox seems to hold 8k as the"
+                text run at (1,64) width 205: "maximum size for rowspans. "
+                text run at (206,64) width 564: "So this change matches Firefox and clamps all rowspans to 8k right in the DOM."

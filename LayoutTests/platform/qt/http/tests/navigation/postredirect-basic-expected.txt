@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 762x84
-        text run at (0,0) width 762: "This is just a minimal page that we navigate in response"
-        text run at (0,42) width 272: "to an HTTP POST. "
+      RenderText {#text} at (0,0) size 658x82
+        text run at (0,0) width 658: "This is just a minimal page that we navigate in"
+        text run at (0,41) width 421: "response to an HTTP POST. "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBR {BR} at (0,84) size 0x42
-      RenderText {#text} at (0,126) size 749x126
-        text run at (0,126) width 697: "If the next line is empty after the colon, it probably"
-        text run at (0,168) width 287: "means that we made "
-        text run at (287,168) width 462: "a mistake and requested this page"
-        text run at (0,210) width 632: "with a GET with no query instead of a POST. "
+      RenderBR {BR} at (0,82) size 0x41
+      RenderText {#text} at (0,123) size 731x123
+        text run at (0,123) width 711: "If the next line is empty after the colon, it probably"
+        text run at (0,164) width 309: "means that we made "
+        text run at (309,164) width 413: "a mistake and requested this"
+        text run at (0,205) width 731: "page with a GET with no query instead of a POST. "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBR {BR} at (0,252) size 0x42
-      RenderText {#text} at (0,294) size 754x42
-        text run at (0,294) width 754: "The first text field contained: New form text from user "
+      RenderBR {BR} at (0,246) size 0x41
+      RenderText {#text} at (0,287) size 767x41
+        text run at (0,287) width 767: "The first text field contained: New form text from user "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,336) size 613x42
-        text run at (0,336) width 613: "This page was requested with an HTTP GET"
+      RenderText {#text} at (0,328) size 640x41
+        text run at (0,328) width 640: "This page was requested with an HTTP GET"
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/postredirect-basic.html  **nav target**

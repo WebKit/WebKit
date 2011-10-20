@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 744x22
-          text run at (0,0) width 744: "This test demonstrates that list items are not affected by the quirk that shrinks line boxes with no text children."
-      RenderBlock {UL} at (0,38) size 784x60
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 766x21
+          text run at (0,0) width 766: "This test demonstrates that list items are not affected by the quirk that shrinks line boxes with no text children."
+      RenderBlock {UL} at (0,37) size 784x60
         RenderListItem {LI} at (40,0) size 744x30
           RenderListMarker at (-17,10) size 10x10
-          RenderInline {SPAN} at (0,0) size 28x22
-            RenderText {#text} at (0,4) size 28x22
-              text run at (0,4) width 28: "One"
+          RenderInline {SPAN} at (0,0) size 30x21
+            RenderText {#text} at (0,4) size 30x21
+              text run at (0,4) width 30: "One"
           RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,30) size 744x30
           RenderListMarker at (-17,10) size 10x10
-          RenderInline {SPAN} at (0,0) size 31x22
-            RenderText {#text} at (0,4) size 31x22
+          RenderInline {SPAN} at (0,0) size 31x21
+            RenderText {#text} at (0,4) size 31x21
               text run at (0,4) width 31: "Two"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {UL} at (0,114) size 784x60
+      RenderBlock {UL} at (0,113) size 784x60
         RenderListItem {LI} at (40,0) size 744x30
-          RenderInline {SPAN} at (0,0) size 41x22
-            RenderText {#text} at (0,4) size 41x22
-              text run at (0,4) width 41: "Three"
+          RenderInline {SPAN} at (0,0) size 42x21
+            RenderText {#text} at (0,4) size 42x21
+              text run at (0,4) width 42: "Three"
           RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,30) size 744x30
-          RenderInline {SPAN} at (0,0) size 34x22
-            RenderText {#text} at (0,4) size 34x22
-              text run at (0,4) width 34: "Four"
+          RenderInline {SPAN} at (0,0) size 33x21
+            RenderText {#text} at (0,4) size 33x21
+              text run at (0,4) width 33: "Four"
           RenderText {#text} at (0,0) size 0x0

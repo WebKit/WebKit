@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 667x22
-          RenderInline {A} at (0,0) size 310x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 310x22
-              text run at (57,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=19525"
-          RenderText {#text} at (367,0) size 357x22
-            text run at (367,0) width 4: " "
-            text run at (371,0) width 353: "-webkit-box-reflect in hyperlink causes webkit to crash"
-        RenderText {#text} at (724,0) size 4x22
-          text run at (724,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 185x22
-          text run at (0,0) width 185: "Because it is an inline flow, "
-        RenderInline {SPAN} at (0,0) size 60x22
-          RenderText {#text} at (185,0) size 60x22
-            text run at (185,0) width 60: "this span"
-        RenderText {#text} at (245,0) size 471x22
-          text run at (245,0) width 471: " should not have a reflection, and selecting it should not cause a crash."
+        RenderInline {I} at (0,0) size 722x21
+          RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 337x21
+              text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=19525"
+          RenderText {#text} at (394,0) size 385x21
+            text run at (394,0) width 4: " "
+            text run at (398,0) width 381: "-webkit-box-reflect in hyperlink causes webkit to crash"
+        RenderText {#text} at (779,0) size 4x21
+          text run at (779,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 197x21
+          text run at (0,0) width 197: "Because it is an inline flow, "
+        RenderInline {SPAN} at (0,0) size 64x21
+          RenderText {#text} at (197,0) size 64x21
+            text run at (197,0) width 64: "this span"
+        RenderText {#text} at (261,0) size 499x21
+          text run at (261,0) width 499: " should not have a reflection, and selecting it should not cause a crash."
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body
 selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body

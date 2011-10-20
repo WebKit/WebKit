@@ -1,77 +1,77 @@
-layer at (0,0) size 784x1264
+layer at (0,0) size 784x1254
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1264
-  RenderBlock {HTML} at (0,0) size 784x1264
-    RenderBody {BODY} at (8,8) size 768x1248
-      RenderText {#text} at (0,0) size 303x22
-        text run at (0,0) width 303: "LTR fieldset with left/center/right text-align: "
-      RenderBR {BR} at (303,16) size 0x0
-      RenderFieldSet {FIELDSET} at (16,38) size 228x119 [border: (2px groove #C0C0C0)]
+layer at (0,0) size 784x1254
+  RenderBlock {HTML} at (0,0) size 784x1254
+    RenderBody {BODY} at (8,8) size 768x1238
+      RenderText {#text} at (0,0) size 304x21
+        text run at (0,0) width 304: "LTR fieldset with left/center/right text-align: "
+      RenderBR {BR} at (304,16) size 0x0
+      RenderFieldSet {FIELDSET} at (16,37) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (34,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
-      RenderText {#text} at (260,157) size 4x22
-        text run at (260,157) width 4: " "
-      RenderFieldSet {FIELDSET} at (280,38) size 228x119 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (260,156) size 4x21
+        text run at (260,156) width 4: " "
+      RenderFieldSet {FIELDSET} at (280,37) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (110,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
       RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (16,195) size 228x119 [border: (2px groove #C0C0C0)]
+      RenderFieldSet {FIELDSET} at (16,193) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (62,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
-      RenderText {#text} at (260,314) size 4x22
-        text run at (260,314) width 4: " "
+      RenderText {#text} at (260,312) size 4x21
+        text run at (260,312) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,336) size 303x22
-        text run at (0,336) width 303: "RTL fieldset with left/center/right text-align: "
-      RenderBR {BR} at (303,352) size 0x0
-      RenderFieldSet {FIELDSET} at (16,374) size 228x119 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (0,333) size 304x21
+        text run at (0,333) width 304: "RTL fieldset with left/center/right text-align: "
+      RenderBR {BR} at (304,349) size 0x0
+      RenderFieldSet {FIELDSET} at (16,370) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
-      RenderText {#text} at (260,493) size 4x22
-        text run at (260,493) width 4: " "
-      RenderFieldSet {FIELDSET} at (280,374) size 228x119 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (260,489) size 4x21
+        text run at (260,489) width 4: " "
+      RenderFieldSet {FIELDSET} at (280,370) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (90,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
       RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (16,531) size 228x119 [border: (2px groove #C0C0C0)]
+      RenderFieldSet {FIELDSET} at (16,526) size 228x119 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (62,0) size 104x25
           RenderBlock {DIV} at (2,0) size 100x25 [bgcolor=#FFA500]
-      RenderText {#text} at (260,650) size 4x22
-        text run at (260,650) width 4: " "
+      RenderText {#text} at (260,645) size 4x21
+        text run at (260,645) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,672) size 361x22
-        text run at (0,672) width 361: "Vertical LTR fieldset with left/center/right text-align: "
-      RenderBR {BR} at (361,688) size 0x0
-      RenderFieldSet {FIELDSET} at (16,710) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (0,666) size 362x21
+        text run at (0,666) width 362: "Vertical LTR fieldset with left/center/right text-align: "
+      RenderBR {BR} at (362,682) size 0x0
+      RenderFieldSet {FIELDSET} at (16,703) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,34) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
-      RenderText {#text} at (151,938) size 4x22
-        text run at (151,938) width 4: " "
-      RenderFieldSet {FIELDSET} at (171,710) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (151,931) size 4x21
+        text run at (151,931) width 4: " "
+      RenderFieldSet {FIELDSET} at (171,703) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,110) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
-      RenderText {#text} at (306,938) size 4x22
-        text run at (306,938) width 4: " "
-      RenderFieldSet {FIELDSET} at (326,710) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (306,931) size 4x21
+        text run at (306,931) width 4: " "
+      RenderFieldSet {FIELDSET} at (326,703) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,62) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
-      RenderText {#text} at (461,938) size 4x22
-        text run at (461,938) width 4: " "
+      RenderText {#text} at (461,931) size 4x21
+        text run at (461,931) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,960) size 361x22
-        text run at (0,960) width 361: "Vertical RTL fieldset with left/center/right text-align: "
-      RenderBR {BR} at (361,976) size 0x0
-      RenderFieldSet {FIELDSET} at (16,998) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (0,952) size 362x21
+        text run at (0,952) width 362: "Vertical RTL fieldset with left/center/right text-align: "
+      RenderBR {BR} at (362,968) size 0x0
+      RenderFieldSet {FIELDSET} at (16,989) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,14) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
-      RenderText {#text} at (151,1226) size 4x22
-        text run at (151,1226) width 4: " "
-      RenderFieldSet {FIELDSET} at (171,998) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (151,1217) size 4x21
+        text run at (151,1217) width 4: " "
+      RenderFieldSet {FIELDSET} at (171,989) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,90) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
-      RenderText {#text} at (306,1226) size 4x22
-        text run at (306,1226) width 4: " "
-      RenderFieldSet {FIELDSET} at (326,998) size 119x228 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (306,1217) size 4x21
+        text run at (306,1217) width 4: " "
+      RenderFieldSet {FIELDSET} at (326,989) size 119x228 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (0,62) size 25x104
           RenderBlock {DIV} at (0,2) size 25x100 [bgcolor=#FFA500]
       RenderText {#text} at (0,0) size 0x0

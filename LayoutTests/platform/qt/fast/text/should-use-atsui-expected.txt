@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 759x44
-          RenderText {#text} at (57,0) size 759x44
-            text run at (57,0) width 702: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6132 Incorrect selection highlighting for ATSUI text when"
-            text run at (0,22) width 182: "selected range is \"CG-safe\""
-        RenderText {#text} at (182,22) size 4x22
-          text run at (182,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 760x22
-          text run at (0,0) width 760: "The word \x{201C}dolor\x{201D} below should be highlighted in its entirety. The highlight should not extend beyond that word."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,108) size 784x22
-        RenderInline {SPAN} at (0,0) size 187x22
-          RenderText {#text} at (0,0) size 187x22
-            text run at (0,0) width 187: "Lo\x{308}re\x{300}m ipsum dolor sit amet"
+        RenderInline {I} at (0,0) size 759x42
+          RenderText {#text} at (57,0) size 759x42
+            text run at (57,0) width 702: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6132 Incorrect selection highlighting for ATSUI text"
+            text run at (0,21) width 239: "when selected range is \"CG-safe\""
+        RenderText {#text} at (239,21) size 4x21
+          text run at (239,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 775x21
+          text run at (0,0) width 775: "The word \x{201C}dolor\x{201D} below should be highlighted in its entirety. The highlight should not extend beyond that word."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,105) size 784x21
+        RenderInline {SPAN} at (0,0) size 191x21
+          RenderText {#text} at (0,0) size 191x21
+            text run at (0,0) width 191: "Lo\x{308}re\x{300}m ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 14 of child 0 {#text} of child 7 {SPAN} of body
 selection end:   position 19 of child 0 {#text} of child 7 {SPAN} of body

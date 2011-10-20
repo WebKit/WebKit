@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x100 [bgcolor=#FFFF00]
-        RenderBlock (floating) {DIV} at (0,0) size 79x500 [bgcolor=#008000]
-          RenderText {#text} at (0,0) size 79x22
-            text run at (0,0) width 79: "Hello world"
-      RenderBlock {DIV} at (0,204) size 784x44
-        RenderText {#text} at (79,0) size 702x44
-          text run at (79,0) width 309: "This text should not overlap the purple float? "
-          text run at (388,0) width 393: "Will this happen? I'm really not sure. This is a test of some"
-          text run at (79,22) width 512: "of the strange behavior you will find when using overflow auto or scroll, etc."
-layer at (87,108) size 705x104 clip at (89,110) size 701x100 scrollHeight 400
-  RenderBlock {DIV} at (79,100) size 705x104 [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 154x22
-      text run at (2,2) width 154: "Does the float intrude?"
-    RenderBlock (floating) {SPAN} at (603,2) size 100x400 [bgcolor=#800080]
+        RenderBlock (floating) {DIV} at (0,0) size 81x500 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 81x21
+            text run at (0,0) width 81: "Hello world"
+      RenderBlock {DIV} at (0,204) size 784x42
+        RenderText {#text} at (81,0) size 682x42
+          text run at (81,0) width 317: "This text should not overlap the purple float? "
+          text run at (398,0) width 365: "Will this happen? I'm really not sure. This is a test of"
+          text run at (81,21) width 571: "some of the strange behavior you will find when using overflow auto or scroll, etc."
+layer at (89,108) size 703x104 clip at (91,110) size 699x100 scrollHeight 400
+  RenderBlock {DIV} at (81,100) size 703x104 [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 160x21
+      text run at (2,2) width 160: "Does the float intrude?"
+    RenderBlock (floating) {SPAN} at (601,2) size 100x400 [bgcolor=#800080]
     RenderText {#text} at (0,0) size 0x0

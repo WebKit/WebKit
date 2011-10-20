@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x112
-  RenderBlock {HTML} at (0,0) size 800x112
-    RenderBody {BODY} at (8,8) size 784x96
-      RenderBlock (anonymous) at (0,0) size 784x22
+layer at (0,0) size 800x110
+  RenderBlock {HTML} at (0,0) size 800x110
+    RenderBody {BODY} at (8,8) size 784x94
+      RenderBlock (anonymous) at (0,0) size 784x21
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,3) size 528x17
             text run at (0,3) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 483x22
-          text run at (0,0) width 483: "There should be no red below, only a lime line with a green square in it."
-      RenderBlock {DIV} at (0,76) size 784x20
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 504x21
+          text run at (0,0) width 504: "There should be no red below, only a lime line with a green square in it."
+      RenderBlock {DIV} at (0,74) size 784x20
         RenderBlock {DIV} at (0,0) size 200x20 [bgcolor=#FF0000]
           RenderBlock {DIV} at (0,0) size 140x20 [color=#00FF00] [bgcolor=#008000]
             RenderText {#text} at (0,0) size 200x20

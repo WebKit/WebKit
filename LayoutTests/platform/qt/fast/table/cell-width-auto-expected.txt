@@ -1,55 +1,56 @@
-layer at (0,0) size 784x628
+layer at (0,0) size 784x625
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x628
-  RenderBlock {HTML} at (0,0) size 784x628
-    RenderBody {BODY} at (8,16) size 768x604
-      RenderBlock {DIV} at (0,0) size 600x604
-        RenderBlock {P} at (0,0) size 600x22
-          RenderText {#text} at (0,0) size 301x22
-            text run at (0,0) width 301: "The following two tables should be the same."
-        RenderBlock {P} at (0,38) size 600x22
-          RenderText {#text} at (0,0) size 173x22
-            text run at (0,0) width 173: "Table 1: width in <COL>"
-        RenderTable {TABLE} at (0,76) size 256x248
+layer at (0,0) size 784x625
+  RenderBlock {HTML} at (0,0) size 784x625
+    RenderBody {BODY} at (8,16) size 768x601
+      RenderBlock {DIV} at (0,0) size 600x601
+        RenderBlock {P} at (0,0) size 600x21
+          RenderText {#text} at (0,0) size 319x21
+            text run at (0,0) width 319: "The following two tables should be the same."
+        RenderBlock {P} at (0,37) size 600x21
+          RenderText {#text} at (0,0) size 172x21
+            text run at (0,0) width 172: "Table 1: width in <COL>"
+        RenderTable {TABLE} at (0,74) size 256x237
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
-          RenderTableSection {TBODY} at (0,0) size 256x248
-            RenderTableRow {TR} at (0,2) size 256x244
-              RenderTableCell {TD} at (2,2) size 150x244 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 145x242
+          RenderTableSection {TBODY} at (0,0) size 256x237
+            RenderTableRow {TR} at (0,2) size 256x233
+              RenderTableCell {TD} at (2,2) size 150x233 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 147x231
                   text run at (1,1) width 98: "Cras tincidunt"
-                  text run at (1,23) width 111: "bibendum nunc."
-                  text run at (1,45) width 140: "Morbi condimentum"
-                  text run at (1,67) width 88: "aliquet diam."
-                  text run at (1,89) width 129: "Phasellus pulvinar,"
-                  text run at (1,111) width 145: "nisl at tempor auctor,"
-                  text run at (1,133) width 72: "dolor pede"
-                  text run at (1,155) width 114: "vestibulum risus,"
-                  text run at (1,177) width 131: "placerat malesuada"
-                  text run at (1,199) width 112: "dui enim nec est."
-                  text run at (1,221) width 64: "Nulla leo."
-              RenderTableCell {TD} at (154,112) size 100x24 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 91x22
-                  text run at (1,1) width 91: "Lorem ipsum"
-        RenderBlock {P} at (0,340) size 600x22
-          RenderText {#text} at (0,0) size 161x22
+                  text run at (1,22) width 114: "bibendum nunc."
+                  text run at (1,43) width 140: "Morbi condimentum"
+                  text run at (1,64) width 91: "aliquet diam."
+                  text run at (1,85) width 136: "Phasellus pulvinar,"
+                  text run at (1,106) width 147: "nisl at tempor auctor,"
+                  text run at (1,127) width 76: "dolor pede"
+                  text run at (1,148) width 119: "vestibulum risus,"
+                  text run at (1,169) width 140: "placerat malesuada"
+                  text run at (1,190) width 120: "dui enim nec est."
+                  text run at (1,211) width 68: "Nulla leo."
+              RenderTableCell {TD} at (154,107) size 100x23 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 92x21
+                  text run at (1,1) width 92: "Lorem ipsum"
+        RenderBlock {P} at (0,327) size 600x21
+          RenderText {#text} at (0,0) size 161x21
             text run at (0,0) width 161: "Table 2: width in <TD>"
-        RenderTable {TABLE} at (0,378) size 260x226
-          RenderTableSection {TBODY} at (0,0) size 260x226
-            RenderTableRow {TR} at (0,2) size 260x222
-              RenderTableCell {TD} at (2,2) size 152x222 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 150x220
+        RenderTable {TABLE} at (0,364) size 260x237
+          RenderTableSection {TBODY} at (0,0) size 260x237
+            RenderTableRow {TR} at (0,2) size 260x233
+              RenderTableCell {TD} at (2,2) size 152x233 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 147x231
                   text run at (1,1) width 98: "Cras tincidunt"
-                  text run at (1,23) width 111: "bibendum nunc."
-                  text run at (1,45) width 140: "Morbi condimentum"
-                  text run at (1,67) width 88: "aliquet diam."
-                  text run at (1,89) width 129: "Phasellus pulvinar,"
-                  text run at (1,111) width 145: "nisl at tempor auctor,"
-                  text run at (1,133) width 150: "dolor pede vestibulum"
-                  text run at (1,155) width 95: "risus, placerat"
-                  text run at (1,177) width 135: "malesuada dui enim"
-                  text run at (1,199) width 117: "nec est. Nulla leo."
-              RenderTableCell {TD} at (156,101) size 102x24 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 91x22
-                  text run at (1,1) width 91: "Lorem ipsum"
+                  text run at (1,22) width 114: "bibendum nunc."
+                  text run at (1,43) width 140: "Morbi condimentum"
+                  text run at (1,64) width 91: "aliquet diam."
+                  text run at (1,85) width 136: "Phasellus pulvinar,"
+                  text run at (1,106) width 147: "nisl at tempor auctor,"
+                  text run at (1,127) width 76: "dolor pede"
+                  text run at (1,148) width 119: "vestibulum risus,"
+                  text run at (1,169) width 140: "placerat malesuada"
+                  text run at (1,190) width 120: "dui enim nec est."
+                  text run at (1,211) width 68: "Nulla leo."
+              RenderTableCell {TD} at (156,107) size 102x23 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 92x21
+                  text run at (1,1) width 92: "Lorem ipsum"

@@ -1,107 +1,107 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x364
-  RenderBlock {HTML} at (0,0) size 800x364
-    RenderBody {BODY} at (8,18) size 784x338
-      RenderBlock {H3} at (0,0) size 784x26
-        RenderText {#text} at (0,0) size 236x26
-          text run at (0,0) width 236: "ROWSPAN of 1024 - Works"
-      RenderTable {TABLE} at (0,44) size 183x116 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 181x114
-          RenderTableRow {TR} at (0,2) size 181x26
-            RenderTableCell {TD} at (2,2) size 51x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-            RenderTableCell {TD} at (55,44) size 8x26 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1024 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+layer at (0,0) size 800x354
+  RenderBlock {HTML} at (0,0) size 800x354
+    RenderBody {BODY} at (8,18) size 784x328
+      RenderBlock {H3} at (0,0) size 784x25
+        RenderText {#text} at (0,0) size 248x25
+          text run at (0,0) width 248: "ROWSPAN of 1024 - Works"
+      RenderTable {TABLE} at (0,43) size 192x112 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 190x110
+          RenderTableRow {TR} at (0,2) size 190x25
+            RenderTableCell {TD} at (2,2) size 54x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+            RenderTableCell {TD} at (58,42) size 8x25 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1024 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (65,2) size 51x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-            RenderTableCell {TD} at (118,44) size 8x26 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1024 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (68,2) size 54x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+            RenderTableCell {TD} at (124,42) size 8x25 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1024 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (128,2) size 51x26 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-          RenderTableRow {TR} at (0,30) size 181x26
-            RenderTableCell {TD} at (2,30) size 51x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,2) size 54x25 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+          RenderTableRow {TR} at (0,29) size 190x25
+            RenderTableCell {TD} at (2,29) size 54x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,30) size 51x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,29) size 54x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,30) size 51x26 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,29) size 54x25 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-          RenderTableRow {TR} at (0,58) size 181x26
-            RenderTableCell {TD} at (2,58) size 51x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+          RenderTableRow {TR} at (0,56) size 190x25
+            RenderTableCell {TD} at (2,56) size 54x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,58) size 51x26 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,56) size 54x25 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,58) size 51x26 [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,56) size 54x25 [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-          RenderTableRow {TR} at (0,86) size 181x26
-            RenderTableCell {TD} at (2,86) size 51x26 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+          RenderTableRow {TR} at (0,83) size 190x25
+            RenderTableCell {TD} at (2,83) size 54x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,86) size 51x26 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,83) size 54x25 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,86) size 51x26 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,83) size 54x25 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-      RenderBlock {H3} at (0,178) size 784x26
-        RenderText {#text} at (0,0) size 295x26
-          text run at (0,0) width 295: "ROWSPAN of 1025 - Doesn't Work"
-      RenderTable {TABLE} at (0,222) size 183x116 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 181x114
-          RenderTableRow {TR} at (0,2) size 181x26
-            RenderTableCell {TD} at (2,2) size 51x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-            RenderTableCell {TD} at (55,44) size 8x26 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1026 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+      RenderBlock {H3} at (0,173) size 784x25
+        RenderText {#text} at (0,0) size 313x25
+          text run at (0,0) width 313: "ROWSPAN of 1025 - Doesn't Work"
+      RenderTable {TABLE} at (0,216) size 192x112 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 190x110
+          RenderTableRow {TR} at (0,2) size 190x25
+            RenderTableCell {TD} at (2,2) size 54x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+            RenderTableCell {TD} at (58,42) size 8x25 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1026 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (65,2) size 51x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-            RenderTableCell {TD} at (118,44) size 8x26 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1026 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (68,2) size 54x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+            RenderTableCell {TD} at (124,42) size 8x25 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1026 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (128,2) size 51x26 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "header"
-          RenderTableRow {TR} at (0,30) size 181x26
-            RenderTableCell {TD} at (2,30) size 51x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,2) size 54x25 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "header"
+          RenderTableRow {TR} at (0,29) size 190x25
+            RenderTableCell {TD} at (2,29) size 54x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,30) size 51x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,29) size 54x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,30) size 51x26 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,29) size 54x25 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-          RenderTableRow {TR} at (0,58) size 181x26
-            RenderTableCell {TD} at (2,58) size 51x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+          RenderTableRow {TR} at (0,56) size 190x25
+            RenderTableCell {TD} at (2,56) size 54x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,58) size 51x26 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,56) size 54x25 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,58) size 51x26 [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,56) size 54x25 [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-          RenderTableRow {TR} at (0,86) size 181x26
-            RenderTableCell {TD} at (2,86) size 51x26 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+          RenderTableRow {TR} at (0,83) size 190x25
+            RenderTableCell {TD} at (2,83) size 54x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (65,86) size 51x26 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (68,83) size 54x25 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"
-            RenderTableCell {TD} at (128,86) size 51x26 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
+            RenderTableCell {TD} at (134,83) size 54x25 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x21
                 text run at (2,2) width 45: "foobar"

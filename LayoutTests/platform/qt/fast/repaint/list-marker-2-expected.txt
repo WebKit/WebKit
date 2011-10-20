@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 782x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 304x22
-              text run at (111,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=13209"
-          RenderText {#text} at (415,0) size 782x44
-            text run at (415,0) width 4: " "
-            text run at (419,0) width 363: "REGRESSION (r18756-18765): Incomplete list marker"
-            text run at (0,22) width 193: "repaint when resizing list item"
-        RenderText {#text} at (193,22) size 4x22
-          text run at (193,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "There should be only one bullet, at the bottom left of the rectangle."
-      RenderBlock {UL} at (0,98) size 784x106
-        RenderListItem {LI} at (40,0) size 744x106
-          RenderListMarker at (-18,84) size 7x22: bullet
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 780x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 329x21
+              text run at (115,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=13209"
+          RenderText {#text} at (444,0) size 780x42
+            text run at (444,0) width 4: " "
+            text run at (448,0) width 332: "REGRESSION (r18756-18765): Incomplete list"
+            text run at (0,21) width 263: "marker repaint when resizing list item"
+        RenderText {#text} at (263,21) size 4x21
+          text run at (263,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 465x21
+          text run at (0,0) width 465: "There should be only one bullet, at the bottom left of the rectangle."
+      RenderBlock {UL} at (0,95) size 784x105
+        RenderListItem {LI} at (40,0) size 744x105
+          RenderListMarker at (-18,84) size 7x21: bullet
           RenderImage {IMG} at (0,0) size 100x100

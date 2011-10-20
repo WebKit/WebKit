@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {OL} at (0,0) size 44x584
-        RenderListItem {LI} at (0,40) size 44x544
-          RenderBlock (anonymous) at (0,0) size 22x544
-            RenderListMarker at (0,-21) size 22x16: "1"
-            RenderInline {I} at (0,0) size 22x76
-              RenderInline {U} at (0,0) size 22x76
-                RenderText {#text} at (0,0) size 22x76
-                  text run at (0,0) width 76: "Hello world"
+      RenderBlock {OL} at (0,0) size 42x584
+        RenderListItem {LI} at (0,40) size 42x544
+          RenderBlock (anonymous) at (0,0) size 21x544
+            RenderListMarker at (0,-22) size 21x17: "1"
+            RenderInline {I} at (0,0) size 21x81
+              RenderInline {U} at (0,0) size 21x81
+                RenderText {#text} at (0,0) size 21x81
+                  text run at (0,0) width 81: "Hello world"
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {OL} at (22,0) size 22x544
-            RenderListItem {LI} at (0,40) size 22x504
-              RenderListMarker at (0,-21) size 22x16: "1"
-              RenderText {#text} at (0,0) size 22x61
-                text run at (0,0) width 61: "Goodbye"
+          RenderBlock {OL} at (21,0) size 21x544
+            RenderListItem {LI} at (0,40) size 21x504
+              RenderListMarker at (0,-22) size 21x17: "1"
+              RenderText {#text} at (0,0) size 21x65
+                text run at (0,0) width 65: "Goodbye"

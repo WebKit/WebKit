@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x504 [border: (2px solid #000000)]
       RenderBlock {DIV} at (2,18) size 780x204 [border: (2px solid #800000)]
         RenderBlock (floating) {DIV} at (678,2) size 100x100 [bgcolor=#00FF00]
-        RenderText {#text} at (2,2) size 564x22
-          text run at (2,2) width 317: "Here is some text in a horizontal-bt block flow. "
-          text run at (319,2) width 247: "The block direction is bottom-to-top."
-        RenderBR {BR} at (566,8) size 0x0
-        RenderText {#text} at (2,24) size 234x22
-          text run at (2,24) width 234: "This line should also be horizontal."
+        RenderText {#text} at (2,2) size 580x21
+          text run at (2,2) width 328: "Here is some text in a horizontal-bt block flow. "
+          text run at (330,2) width 252: "The block direction is bottom-to-top."
+        RenderBR {BR} at (582,7) size 0x0
+        RenderText {#text} at (2,23) size 247x21
+          text run at (2,23) width 247: "This line should also be horizontal."

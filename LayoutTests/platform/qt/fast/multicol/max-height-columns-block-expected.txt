@@ -3,44 +3,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 779x88
-          text run at (0,0) width 468: "This is capturing current behavior, but it's not clear that it is correct. "
-          text run at (468,0) width 311: "It's not clear if max-height on a columns block"
-          text run at (0,22) width 314: "constitutes a constraint on the columns or not. "
-          text run at (314,22) width 404: "You obviously begin trying to balance, but only run into the"
-          text run at (0,44) width 415: "constraint once the balanced columns exceed the max-height. "
-          text run at (415,44) width 345: "It's not clear that you should suddenly shift to a fill."
-          text run at (0,66) width 694: "Our current behavior (which matches Firefox) is to just overflow without changing from balance to fill."
-layer at (8,96) size 404x64
-  RenderBlock {DIV} at (0,88) size 404x64 [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 52x132
+      RenderBlock (anonymous) at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 781x84
+          text run at (0,0) width 472: "This is capturing current behavior, but it's not clear that it is correct. "
+          text run at (472,0) width 278: "It's not clear if max-height on a columns"
+          text run at (0,21) width 368: "block constitutes a constraint on the columns or not. "
+          text run at (368,21) width 413: "You obviously begin trying to balance, but only run into the"
+          text run at (0,42) width 441: "constraint once the balanced columns exceed the max-height. "
+          text run at (441,42) width 328: "It's not clear that you should suddenly shift to a"
+          text run at (0,63) width 24: "fill. "
+          text run at (24,63) width 706: "Our current behavior (which matches Firefox) is to just overflow without changing from balance to fill."
+layer at (8,92) size 404x64
+  RenderBlock {DIV} at (0,84) size 404x64 [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 58x120
       text run at (2,2) width 45: "This"
-      text run at (2,35) width 16: "is"
-      text run at (2,68) width 52: "some"
-      text run at (2,101) width 39: "text"
-    RenderBR {BR} at (41,125) size 0x0
-    RenderText {#text} at (2,134) size 52x132
-      text run at (2,134) width 45: "This"
-      text run at (2,167) width 16: "is"
-      text run at (2,200) width 52: "some"
-      text run at (2,233) width 39: "text"
-    RenderBR {BR} at (41,257) size 0x0
-    RenderText {#text} at (2,266) size 52x132
-      text run at (2,266) width 45: "This"
-      text run at (2,299) width 16: "is"
-      text run at (2,332) width 52: "some"
-      text run at (2,365) width 39: "text"
-    RenderBR {BR} at (41,389) size 0x0
-    RenderText {#text} at (2,398) size 52x132
-      text run at (2,398) width 45: "This"
-      text run at (2,431) width 16: "is"
-      text run at (2,464) width 52: "some"
-      text run at (2,497) width 39: "text"
-    RenderBR {BR} at (41,521) size 0x0
-    RenderText {#text} at (2,530) size 52x132
-      text run at (2,530) width 45: "This"
-      text run at (2,563) width 16: "is"
-      text run at (2,596) width 52: "some"
-      text run at (2,629) width 39: "text"
-    RenderBR {BR} at (41,653) size 0x0
+      text run at (2,32) width 17: "is"
+      text run at (2,62) width 58: "some"
+      text run at (2,92) width 39: "text"
+    RenderBR {BR} at (41,115) size 0x0
+    RenderText {#text} at (2,122) size 58x120
+      text run at (2,122) width 45: "This"
+      text run at (2,152) width 17: "is"
+      text run at (2,182) width 58: "some"
+      text run at (2,212) width 39: "text"
+    RenderBR {BR} at (41,235) size 0x0
+    RenderText {#text} at (2,242) size 58x120
+      text run at (2,242) width 45: "This"
+      text run at (2,272) width 17: "is"
+      text run at (2,302) width 58: "some"
+      text run at (2,332) width 39: "text"
+    RenderBR {BR} at (41,355) size 0x0
+    RenderText {#text} at (2,362) size 58x120
+      text run at (2,362) width 45: "This"
+      text run at (2,392) width 17: "is"
+      text run at (2,422) width 58: "some"
+      text run at (2,452) width 39: "text"
+    RenderBR {BR} at (41,475) size 0x0
+    RenderText {#text} at (2,482) size 58x120
+      text run at (2,482) width 45: "This"
+      text run at (2,512) width 17: "is"
+      text run at (2,542) width 58: "some"
+      text run at (2,572) width 39: "text"
+    RenderBR {BR} at (41,595) size 0x0

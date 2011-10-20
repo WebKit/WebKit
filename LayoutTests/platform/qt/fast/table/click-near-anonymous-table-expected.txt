@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 184x22
-          text run at (0,0) width 184: "This is a regression test for "
-        RenderInline {I} at (0,0) size 773x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (184,0) size 352x22
-              text run at (184,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9879"
-          RenderText {#text} at (536,0) size 773x44
-            text run at (536,0) width 4: " "
-            text run at (540,0) width 233: "REGRESSION: Repro crash when"
-            text run at (0,22) width 273: "clicking to the side of an anonymous table"
-        RenderText {#text} at (273,22) size 4x22
-          text run at (273,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 649x22
-          text run at (0,0) width 649: "If the browser does not crash as you click to the right of each of the lines below, it passes the test."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,108) size 784x88
-        RenderTable at (0,0) size 189x88
-          RenderTableSection (anonymous) at (0,22) size 189x44
-            RenderTableRow {DIV} at (0,0) size 189x22
-              RenderTableCell (anonymous) at (0,0) size 189x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 189x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 194x21
+          text run at (0,0) width 194: "This is a regression test for "
+        RenderInline {I} at (0,0) size 780x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (194,0) size 379x21
+              text run at (194,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9879"
+          RenderText {#text} at (573,0) size 780x42
+            text run at (573,0) width 4: " "
+            text run at (577,0) width 203: "REGRESSION: Repro crash"
+            text run at (0,21) width 339: "when clicking to the side of an anonymous table"
+        RenderText {#text} at (339,21) size 4x21
+          text run at (339,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 682x21
+          text run at (0,0) width 682: "If the browser does not crash as you click to the right of each of the lines below, it passes the test."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,105) size 784x84
+        RenderTable at (0,0) size 189x84
+          RenderTableSection (anonymous) at (0,21) size 189x42
+            RenderTableRow {DIV} at (0,0) size 189x21
+              RenderTableCell (anonymous) at (0,0) size 189x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 189x21
                   text run at (0,0) width 189: "Click to the right of this text"
-            RenderTableRow (anonymous) at (0,22) size 189x22
-              RenderTableCell {DIV} at (0,22) size 189x22 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 189x22
+            RenderTableRow (anonymous) at (0,21) size 189x21
+              RenderTableCell {DIV} at (0,21) size 189x21 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 189x21
                   text run at (0,0) width 189: "Click to the right of this text"
-          RenderBlock {DIV} at (0,0) size 189x22
-            RenderText {#text} at (0,0) size 189x22
+          RenderBlock {DIV} at (0,0) size 189x21
+            RenderText {#text} at (0,0) size 189x21
               text run at (0,0) width 189: "Click to the right of this text"
-          RenderTableSection {DIV} at (0,66) size 189x22
-            RenderTableRow (anonymous) at (0,0) size 189x22
-              RenderTableCell (anonymous) at (0,0) size 189x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 189x22
+          RenderTableSection {DIV} at (0,63) size 189x21
+            RenderTableRow (anonymous) at (0,0) size 189x21
+              RenderTableCell (anonymous) at (0,0) size 189x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 189x21
                   text run at (0,0) width 189: "Click to the right of this text"
 caret: position 40 of child 0 {#text} of child 7 {DIV} of child 7 {DIV} of body

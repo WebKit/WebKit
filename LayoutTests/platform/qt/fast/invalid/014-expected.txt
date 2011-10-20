@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 639x22
-          text run at (0,0) width 302: "Random tests of some bizarre combinations. "
-          text run at (302,0) width 337: "H2 should allow a form inside it, but p should not."
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 665x21
+          text run at (0,0) width 318: "Random tests of some bizarre combinations. "
+          text run at (318,0) width 347: "H2 should allow a form inside it, but p should not."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {FORM} at (0,22) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 40x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 12x22
-            RenderText at (0,0) size 12x22
-              text run at (0,0) width 12: "A"
+      RenderBlock {FORM} at (0,21) size 784x30
+        RenderMenuList {SELECT} at (2,2) size 39x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 11x21
+            RenderText at (0,0) size 11x21
+              text run at (0,0) width 11: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,69) size 784x0
-layer at (470,49) size 53x69
-  RenderBlock (positioned) {H2} at (470,49) size 53x69 [border: (2px solid #008000)]
+      RenderBlock {P} at (0,67) size 784x0
+layer at (470,48) size 53x69
+  RenderBlock (positioned) {H2} at (470,48) size 53x69 [border: (2px solid #008000)]
     RenderBlock {FORM} at (2,2) size 49x41
       RenderMenuList {SELECT} at (2,2) size 45x37 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 17x33
-          RenderText at (0,0) size 17x33
+        RenderBlock (anonymous) at (4,2) size 17x32
+          RenderText at (0,0) size 17x32
             text run at (0,0) width 17: "A"
       RenderText {#text} at (0,0) size 0x0
-layer at (470,46) size 4x4
-  RenderBlock (positioned) {P} at (470,46) size 4x4 [border: (2px solid #008000)]
+layer at (470,45) size 4x4
+  RenderBlock (positioned) {P} at (470,45) size 4x4 [border: (2px solid #008000)]

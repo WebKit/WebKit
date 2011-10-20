@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 408x22
-          text run at (0,0) width 408: "Test for bug 13234, layout of selected justified text is broken."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 265x22
-          text run at (0,0) width 265: "The two blue boxes should be identical."
-      RenderBlock {DIV} at (0,76) size 256x50 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 189x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 426x21
+          text run at (0,0) width 426: "Test for bug 13234, layout of selected justified text is broken."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 281x21
+          text run at (0,0) width 281: "The two blue boxes should be identical."
+      RenderBlock {DIV} at (0,74) size 256x48 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 189x21
           text run at (3,3) width 189: "Lorem ipsum dolor si"
-        RenderInline {SPAN} at (0,0) size 61x22 [color=#008000] [bgcolor=#FFFF00]
-          RenderText {#text} at (192,3) size 61x22
+        RenderInline {SPAN} at (0,0) size 61x21 [color=#008000] [bgcolor=#FFFF00]
+          RenderText {#text} at (192,3) size 61x21
             text run at (192,3) width 61: "t amet,"
-        RenderText {#text} at (3,25) size 184x22
-          text run at (3,25) width 184: "consectetuer adipiscing elit."
-      RenderBlock (anonymous) at (0,126) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {P} at (0,164) size 256x50 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 250x44
+        RenderText {#text} at (3,24) size 197x21
+          text run at (3,24) width 197: "consectetuer adipiscing elit."
+      RenderBlock (anonymous) at (0,122) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {P} at (0,159) size 256x48 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 250x42
           text run at (3,3) width 250: "Lorem ipsum dolor sit amet,"
-          text run at (3,25) width 184: "consectetuer adipiscing elit."
+          text run at (3,24) width 197: "consectetuer adipiscing elit."
 selection start: position 20 of child 0 {#text} of child 8 {P} of body
 selection end:   position 27 of child 0 {#text} of child 8 {P} of body

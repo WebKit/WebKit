@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {H2} at (0,0) size 784x33 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 58x33
-          text run at (0,0) width 58: "PASS"
-layer at (8,60) size 760x237
-  RenderBlock {DIV} at (0,52) size 760x237 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,13) size 750x71
-      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 58x33
-          text run at (0,0) width 58: "PASS"
-layer at (13,65) size 750x8
+      RenderBlock {H2} at (0,0) size 784x32 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 65x32
+          text run at (0,0) width 65: "PASS"
+layer at (8,59) size 760x230
+  RenderBlock {DIV} at (0,51) size 760x230 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,13) size 750x70
+      RenderBlock {H2} at (0,19) size 750x32 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 65x32
+          text run at (0,0) width 65: "PASS"
+layer at (13,64) size 750x8
   RenderBlock (anonymous multi-column) at (5,5) size 750x8
     RenderBlock {SPAN} at (0,8) size 367x0
-layer at (13,144) size 750x148
-  RenderBlock (anonymous multi-column) at (5,84) size 750x148
-    RenderBlock {SPAN} at (0,16) size 367x264
-      RenderBlock (anonymous) at (0,0) size 367x264
-        RenderText {#text} at (0,0) size 367x264
-          text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
-          text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
-          text run at (0,44) width 329: "felis quis lectus. Quisque adipiscing rhoncus sem."
-          text run at (0,66) width 367: "Proin nulla purus, vulputate vel, varius ut, euismod et,"
-          text run at (0,88) width 325: "nisi. Sed vitae felis vel orci sagittis aliquam. Cras"
-          text run at (0,110) width 315: "convallis adipiscing sem. Nam nonummy enim."
-          text run at (0,132) width 341: "Nullam bibendum lobortis neque. Vestibulum velit"
-          text run at (0,154) width 348: "orci, tempus euismod, pretium quis, interdum vitae,"
-          text run at (0,176) width 326: "nulla. Phasellus eget ante et tortor condimentum"
-          text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
-          text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
-          text run at (0,242) width 184: "consectetuer adipiscing elit."
-      RenderBlock {DL} at (0,280) size 367x0
+layer at (13,142) size 750x142
+  RenderBlock (anonymous multi-column) at (5,83) size 750x142
+    RenderBlock {SPAN} at (0,16) size 367x252
+      RenderBlock (anonymous) at (0,0) size 367x252
+        RenderText {#text} at (0,0) size 367x252
+          text run at (0,0) width 367: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
+          text run at (0,21) width 349: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
+          text run at (0,42) width 353: "felis quis lectus. Quisque adipiscing rhoncus sem."
+          text run at (0,63) width 356: "Proin nulla purus, vulputate vel, varius ut, euismod"
+          text run at (0,84) width 366: "et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras"
+          text run at (0,105) width 333: "convallis adipiscing sem. Nam nonummy enim."
+          text run at (0,126) width 352: "Nullam bibendum lobortis neque. Vestibulum velit"
+          text run at (0,147) width 358: "orci, tempus euismod, pretium quis, interdum vitae,"
+          text run at (0,168) width 341: "nulla. Phasellus eget ante et tortor condimentum"
+          text run at (0,189) width 356: "vestibulum. Suspendisse hendrerit quam nec felis."
+          text run at (0,210) width 357: "Sed varius turpis vitae pede. Lorem ipsum dolor sit"
+          text run at (0,231) width 240: "amet, consectetuer adipiscing elit."
+      RenderBlock {DL} at (0,268) size 367x0

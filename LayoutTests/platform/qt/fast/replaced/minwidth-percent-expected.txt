@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 489x22
-          text run at (0,0) width 489: "In this test you should see two identical blue squares, each 50px by 50px."
-      RenderBlock {DIV} at (0,38) size 100x50
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 518x21
+          text run at (0,0) width 518: "In this test you should see two identical blue squares, each 50px by 50px."
+      RenderBlock {DIV} at (0,37) size 100x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,88) size 784x72
-        RenderBR {BR} at (0,0) size 0x22
-        RenderImage {IMG} at (0,22) size 50x50
+      RenderBlock (anonymous) at (0,87) size 784x71
+        RenderBR {BR} at (0,0) size 0x21
+        RenderImage {IMG} at (0,21) size 50x50
         RenderText {#text} at (0,0) size 0x0

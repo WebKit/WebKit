@@ -3,74 +3,74 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 775x44
-          text run at (0,0) width 775: "Test of various CSS display types for list elements. All visible elements that have a display-type of list-item are given"
-          text run at (0,22) width 343: "a number. This is generally going to be LI element."
-      RenderBlock {OL} at (0,60) size 784x374
-        RenderListItem {LI} at (40,0) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "3"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 3"
-        RenderListItem {LI} at (40,22) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "4"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 4"
-        RenderBlock {LI} at (40,44) size 744x22
-          RenderText {#text} at (0,0) size 180x22
-            text run at (0,0) width 180: "Should not have a number"
-        RenderListItem {LI} at (40,66) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "5"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 5"
-        RenderBlock (anonymous) at (40,88) size 744x22
-          RenderInline {LI} at (0,0) size 180x22
-            RenderText {#text} at (0,0) size 180x22
-              text run at (0,0) width 180: "Should not have a number"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 775x42
+          text run at (0,0) width 775: "Test of various CSS display types for list elements. All visible elements that have a display-type of list-item are"
+          text run at (0,21) width 400: "given a number. This is generally going to be LI element."
+      RenderBlock {OL} at (0,58) size 784x357
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "3"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 3"
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "4"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 4"
+        RenderBlock {LI} at (40,42) size 744x21
+          RenderText {#text} at (0,0) size 187x21
+            text run at (0,0) width 187: "Should not have a number"
+        RenderListItem {LI} at (40,63) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "5"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 5"
+        RenderBlock (anonymous) at (40,84) size 744x21
+          RenderInline {LI} at (0,0) size 187x21
+            RenderText {#text} at (0,0) size 187x21
+              text run at (0,0) width 187: "Should not have a number"
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,110) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "6"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 6"
-        RenderBlock {DIV} at (40,132) size 744x22
-          RenderText {#text} at (0,0) size 180x22
-            text run at (0,0) width 180: "Should not have a number"
-        RenderListItem {DIV} at (40,154) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "7"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 7"
-        RenderListItem {LI} at (40,176) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "8"
-          RenderText {#text} at (0,0) size 80x22
-            text run at (0,0) width 80: "Should be 8"
-        RenderListItem {LI} at (40,198) size 744x22
-          RenderText {#text} at (0,0) size 180x22
-            text run at (0,0) width 180: "Should not have a number"
-        RenderListItem {LI} at (40,220) size 744x22
-          RenderListMarker at (-29,0) size 24x22: "10"
-          RenderText {#text} at (0,0) size 88x22
-            text run at (0,0) width 88: "Should be 10"
-        RenderListItem {LI} at (40,242) size 744x22
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 126x22
-            text run at (0,0) width 126: "Should have a disc"
-        RenderListItem {LI} at (40,264) size 744x22
-          RenderListMarker at (-29,0) size 24x22: "12"
-          RenderText {#text} at (0,0) size 88x22
-            text run at (0,0) width 88: "Should be 12"
-        RenderListItem {LI} at (40,286) size 744x22
-          RenderListMarker at (-18,0) size 7x22: black square
-          RenderText {#text} at (0,0) size 146x22
-            text run at (0,0) width 146: "Should have a square"
-        RenderListItem {LI} at (40,308) size 744x22
-          RenderListMarker at (-29,0) size 24x22: "14"
-          RenderText {#text} at (0,0) size 88x22
-            text run at (0,0) width 88: "Should be 14"
-        RenderListItem {LI} at (40,330) size 744x22
-          RenderListMarker at (-18,0) size 7x22: white bullet
-          RenderText {#text} at (0,0) size 136x22
-            text run at (0,0) width 136: "Should have a circle"
-        RenderListItem {LI} at (40,352) size 744x22
-          RenderListMarker at (-29,0) size 24x22: "16"
-          RenderText {#text} at (0,0) size 88x22
-            text run at (0,0) width 88: "Should be 16"
+        RenderListItem {LI} at (40,105) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "6"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 6"
+        RenderBlock {DIV} at (40,126) size 744x21
+          RenderText {#text} at (0,0) size 187x21
+            text run at (0,0) width 187: "Should not have a number"
+        RenderListItem {DIV} at (40,147) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "7"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 7"
+        RenderListItem {LI} at (40,168) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "8"
+          RenderText {#text} at (0,0) size 86x21
+            text run at (0,0) width 86: "Should be 8"
+        RenderListItem {LI} at (40,189) size 744x21
+          RenderText {#text} at (0,0) size 187x21
+            text run at (0,0) width 187: "Should not have a number"
+        RenderListItem {LI} at (40,210) size 744x21
+          RenderListMarker at (-31,0) size 26x21: "10"
+          RenderText {#text} at (0,0) size 95x21
+            text run at (0,0) width 95: "Should be 10"
+        RenderListItem {LI} at (40,231) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 136x21
+            text run at (0,0) width 136: "Should have a disc"
+        RenderListItem {LI} at (40,252) size 744x21
+          RenderListMarker at (-31,0) size 26x21: "12"
+          RenderText {#text} at (0,0) size 95x21
+            text run at (0,0) width 95: "Should be 12"
+        RenderListItem {LI} at (40,273) size 744x21
+          RenderListMarker at (-18,0) size 7x21: black square
+          RenderText {#text} at (0,0) size 156x21
+            text run at (0,0) width 156: "Should have a square"
+        RenderListItem {LI} at (40,294) size 744x21
+          RenderListMarker at (-31,0) size 26x21: "14"
+          RenderText {#text} at (0,0) size 95x21
+            text run at (0,0) width 95: "Should be 14"
+        RenderListItem {LI} at (40,315) size 744x21
+          RenderListMarker at (-18,0) size 7x21: white bullet
+          RenderText {#text} at (0,0) size 145x21
+            text run at (0,0) width 145: "Should have a circle"
+        RenderListItem {LI} at (40,336) size 744x21
+          RenderListMarker at (-31,0) size 26x21: "16"
+          RenderText {#text} at (0,0) size 95x21
+            text run at (0,0) width 95: "Should be 16"

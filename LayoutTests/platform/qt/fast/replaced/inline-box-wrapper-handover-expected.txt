@@ -3,47 +3,47 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 271x22
-          text run at (0,0) width 271: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 770x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (271,0) size 352x22
-              text run at (271,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
-          RenderText {#text} at (623,0) size 770x44
-            text run at (623,0) width 4: " "
-            text run at (627,0) width 143: "Image thumbnails are"
-            text run at (0,22) width 199: "misplaced on forum.2ostrov.ru"
-        RenderText {#text} at (199,22) size 4x22
-          text run at (199,22) width 4: "."
-      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,78) size 784x22
-        RenderText {#text} at (0,0) size 244x22
-          text run at (0,0) width 244: "Box 1 and box 2 should be identical."
-      RenderBlock (anonymous) at (0,116) size 784x22
-        RenderText {#text} at (0,0) size 44x22
-          text run at (0,0) width 44: "Box 1:"
-      RenderBlock {DIV} at (0,138) size 67x84 [border: (1px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 288x21
+          text run at (0,0) width 288: "This test checks for a regression against "
+        RenderInline {I} at (0,0) size 715x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (288,0) size 379x21
+              text run at (288,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
+          RenderText {#text} at (667,0) size 715x42
+            text run at (667,0) width 4: " "
+            text run at (671,0) width 44: "Image"
+            text run at (0,21) width 322: "thumbnails are misplaced on forum.2ostrov.ru"
+        RenderText {#text} at (322,21) size 4x21
+          text run at (322,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,76) size 784x21
+        RenderText {#text} at (0,0) size 257x21
+          text run at (0,0) width 257: "Box 1 and box 2 should be identical."
+      RenderBlock (anonymous) at (0,113) size 784x21
+        RenderText {#text} at (0,0) size 45x21
+          text run at (0,0) width 45: "Box 1:"
+      RenderBlock {DIV} at (0,134) size 67x87 [border: (1px solid #000000)]
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
-        RenderText {#text} at (6,30) size 16x22
-          text run at (6,30) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
-        RenderText {#text} at (6,56) size 15x22
-          text run at (6,56) width 15: "B "
-        RenderBlock {DIV} at (21,52) size 20x20 [bgcolor=#008000]
-        RenderText {#text} at (41,56) size 16x22
-          text run at (41,56) width 16: " C"
-      RenderBlock (anonymous) at (0,222) size 784x44
-        RenderBR {BR} at (0,0) size 0x22
-        RenderText {#text} at (0,22) size 44x22
-          text run at (0,22) width 44: "Box 2:"
-      RenderBlock {DIV} at (0,266) size 67x84 [border: (1px solid #000000)]
+        RenderText {#text} at (46,10) size 15x21
+          text run at (46,10) width 15: " A"
+        RenderBlock {DIV} at (6,31) size 35x20 [bgcolor=#FF0000]
+        RenderText {#text} at (41,35) size 15x21
+          text run at (41,35) width 15: " B"
+        RenderBlock {DIV} at (6,56) size 20x20 [bgcolor=#008000]
+        RenderText {#text} at (26,60) size 16x21
+          text run at (26,60) width 16: " C"
+      RenderBlock (anonymous) at (0,221) size 784x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 45x21
+          text run at (0,21) width 45: "Box 2:"
+      RenderBlock {DIV} at (0,263) size 67x87 [border: (1px solid #000000)]
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
-        RenderText {#text} at (6,30) size 16x22
-          text run at (6,30) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
-        RenderText {#text} at (6,56) size 15x22
-          text run at (6,56) width 15: "B "
-        RenderBlock {DIV} at (21,52) size 20x20 [bgcolor=#008000]
-        RenderText {#text} at (41,56) size 16x22
-          text run at (41,56) width 16: " C"
+        RenderText {#text} at (46,10) size 15x21
+          text run at (46,10) width 15: " A"
+        RenderBlock {DIV} at (6,31) size 35x20 [bgcolor=#FF0000]
+        RenderText {#text} at (41,35) size 15x21
+          text run at (41,35) width 15: " B"
+        RenderBlock {DIV} at (6,56) size 20x20 [bgcolor=#008000]
+        RenderText {#text} at (26,60) size 16x21
+          text run at (26,60) width 16: " C"

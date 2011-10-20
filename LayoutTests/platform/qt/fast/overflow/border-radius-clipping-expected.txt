@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 470x22
-          text run at (0,0) width 470: "You should see a green rectangle with a rounded black border below."
-layer at (8,46) size 320x320 clip at (18,56) size 300x300 scrollWidth 310 scrollHeight 310
-  RenderBlock {DIV} at (0,38) size 320x320 [bgcolor=#FF0000] [border: (10px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 491x21
+          text run at (0,0) width 491: "You should see a green rectangle with a rounded black border below."
+layer at (8,45) size 320x320 clip at (18,55) size 300x300 scrollWidth 310 scrollHeight 310
+  RenderBlock {DIV} at (0,37) size 320x320 [bgcolor=#FF0000] [border: (10px solid #000000)]
     RenderBlock {DIV} at (0,0) size 320x320 [bgcolor=#008000]

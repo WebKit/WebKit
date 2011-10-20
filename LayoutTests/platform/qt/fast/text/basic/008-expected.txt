@@ -3,26 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 783x22
-          text run at (0,0) width 104: "This is a test of "
-          text run at (104,0) width 195: "some code to make sure that "
-          text run at (299,0) width 236: "white-space gets properly ignored. "
-          text run at (535,0) width 248: "If it does, then this should render the"
-        RenderInline {A} at (0,0) size 32x22 [color=#0000EE]
-          RenderText {#text} at (0,22) size 32x22
-            text run at (0,22) width 32: "way "
-        RenderText {#text} at (32,22) size 384x22
-          text run at (32,22) width 125: "one would expect. "
-          text run at (157,22) width 259: "Hopefully it does render the way we w"
-        RenderInline {I} at (0,0) size 8x22
-          RenderText {#text} at (416,22) size 8x22
-            text run at (416,22) width 8: "a"
-        RenderInline {B} at (0,0) size 9x22
-          RenderText {#text} at (424,22) size 9x22
-            text run at (424,22) width 9: "n"
-        RenderText {#text} at (433,22) size 301x22
-          text run at (433,22) width 43: "t it to. "
-          text run at (476,22) width 88: "If it does not "
-          text run at (564,22) width 97: "that would be "
-          text run at (661,22) width 73: "a problem."
+      RenderBlock {DIV} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 744x42
+          text run at (0,0) width 110: "This is a test of "
+          text run at (110,0) width 207: "some code to make sure that "
+          text run at (317,0) width 248: "white-space gets properly ignored. "
+          text run at (565,0) width 179: "If it does, then this should"
+          text run at (0,21) width 76: "render the "
+        RenderInline {A} at (0,0) size 33x21 [color=#0000EE]
+          RenderText {#text} at (76,21) size 33x21
+            text run at (76,21) width 33: "way "
+        RenderText {#text} at (109,21) size 402x21
+          text run at (109,21) width 133: "one would expect. "
+          text run at (242,21) width 269: "Hopefully it does render the way we w"
+        RenderInline {I} at (0,0) size 9x21
+          RenderText {#text} at (511,21) size 9x21
+            text run at (511,21) width 9: "a"
+        RenderInline {B} at (0,0) size 10x21
+          RenderText {#text} at (520,21) size 10x21
+            text run at (520,21) width 10: "n"
+        RenderText {#text} at (530,21) size 768x42
+          text run at (530,21) width 41: "t it to. "
+          text run at (571,21) width 89: "If it does not "
+          text run at (660,21) width 99: "that would be "
+          text run at (759,21) width 9: "a"
+          text run at (0,42) width 62: "problem."

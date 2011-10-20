@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 371x22
-          text run at (0,0) width 371: "The following two green rectangles should be identical:"
-      RenderTable {TABLE} at (0,38) size 301x104
-        RenderTableSection {TBODY} at (0,0) size 301x104
-          RenderTableRow {TR} at (0,2) size 301x100
-            RenderTableCell {TD} at (2,2) size 297x100 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 295x98 [bgcolor=#008000] [border: (3px solid #000000)]
-                RenderText {#text} at (3,3) size 289x22
-                  text run at (3,3) width 289: "This text should have a green background."
-      RenderTable {TABLE} at (0,142) size 301x104
-        RenderTableSection {TBODY} at (0,0) size 301x104
-          RenderTableRow {TR} at (0,2) size 301x100
-            RenderTableCell {TD} at (2,2) size 297x100 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 295x98 [bgcolor=#008000] [border: (3px solid #000000)]
-                RenderText {#text} at (3,3) size 289x22
-                  text run at (3,3) width 289: "This text should have a green background."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 390x21
+          text run at (0,0) width 390: "The following two green rectangles should be identical:"
+      RenderTable {TABLE} at (0,37) size 313x104
+        RenderTableSection {TBODY} at (0,0) size 313x104
+          RenderTableRow {TR} at (0,2) size 313x100
+            RenderTableCell {TD} at (2,2) size 309x100 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 307x98 [bgcolor=#008000] [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 301x21
+                  text run at (3,3) width 301: "This text should have a green background."
+      RenderTable {TABLE} at (0,141) size 313x104
+        RenderTableSection {TBODY} at (0,0) size 313x104
+          RenderTableRow {TR} at (0,2) size 313x100
+            RenderTableCell {TD} at (2,2) size 309x100 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 307x98 [bgcolor=#008000] [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 301x21
+                  text run at (3,3) width 301: "This text should have a green background."

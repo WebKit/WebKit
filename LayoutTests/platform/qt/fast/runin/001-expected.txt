@@ -1,47 +1,47 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x258
-  RenderBlock {HTML} at (0,0) size 800x258
-    RenderBody {BODY} at (8,8) size 784x242
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 54x22
-          text run at (0,0) width 54: "Case A:"
-      RenderBlock {DIV} at (0,22) size 784x44
-        RenderBlock (run-in) {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 118x22
-            text run at (0,0) width 118: "This should NOT"
-        RenderBlock (anonymous) at (0,22) size 784x22
-          RenderInline {DIV} at (0,0) size 46x22
-            RenderText {#text} at (0,0) size 46x22
-              text run at (0,0) width 46: "run in."
+layer at (0,0) size 800x247
+  RenderBlock {HTML} at (0,0) size 800x247
+    RenderBody {BODY} at (8,8) size 784x231
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Case A:"
+      RenderBlock {DIV} at (0,21) size 784x42
+        RenderBlock (run-in) {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 121x21
+            text run at (0,0) width 121: "This should NOT"
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderInline {DIV} at (0,0) size 44x21
+            RenderText {#text} at (0,0) size 44x21
+              text run at (0,0) width 44: "run in."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,66) size 784x22
-        RenderText {#text} at (0,0) size 53x22
-          text run at (0,0) width 53: "Case B:"
-      RenderBlock {DIV} at (0,88) size 784x44
-        RenderBlock (run-in) {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 118x22
-            text run at (0,0) width 118: "This should NOT"
-        RenderBlock (anonymous) at (0,22) size 784x22
-          RenderText {#text} at (0,0) size 46x22
-            text run at (0,0) width 46: "run in."
-      RenderBlock (anonymous) at (0,132) size 784x22
-        RenderText {#text} at (0,0) size 54x22
-          text run at (0,0) width 54: "Case C:"
-      RenderBlock {DIV} at (0,154) size 784x22
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderInline (run-in) {DIV} at (0,0) size 83x22
-            RenderText {#text} at (0,0) size 83x22
-              text run at (0,0) width 83: "This should "
-          RenderText {#text} at (83,0) size 46x22
-            text run at (83,0) width 46: "run in."
-      RenderBlock (anonymous) at (0,176) size 784x22
-        RenderText {#text} at (0,0) size 54x22
-          text run at (0,0) width 54: "Case D:"
-      RenderBlock {DIV} at (0,198) size 784x44
-        RenderBlock (run-in) {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 118x22
-            text run at (0,0) width 118: "This should NOT"
-        RenderBlock (run-in) {DIV} at (0,22) size 784x22
-          RenderText {#text} at (0,0) size 46x22
-            text run at (0,0) width 46: "run in."
+      RenderBlock (anonymous) at (0,63) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Case B:"
+      RenderBlock {DIV} at (0,84) size 784x42
+        RenderBlock (run-in) {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 121x21
+            text run at (0,0) width 121: "This should NOT"
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "run in."
+      RenderBlock (anonymous) at (0,126) size 784x21
+        RenderText {#text} at (0,0) size 58x21
+          text run at (0,0) width 58: "Case C:"
+      RenderBlock {DIV} at (0,147) size 784x21
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderInline (run-in) {DIV} at (0,0) size 87x21
+            RenderText {#text} at (0,0) size 87x21
+              text run at (0,0) width 87: "This should "
+          RenderText {#text} at (87,0) size 44x21
+            text run at (87,0) width 44: "run in."
+      RenderBlock (anonymous) at (0,168) size 784x21
+        RenderText {#text} at (0,0) size 58x21
+          text run at (0,0) width 58: "Case D:"
+      RenderBlock {DIV} at (0,189) size 784x42
+        RenderBlock (run-in) {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 121x21
+            text run at (0,0) width 121: "This should NOT"
+        RenderBlock (run-in) {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "run in."

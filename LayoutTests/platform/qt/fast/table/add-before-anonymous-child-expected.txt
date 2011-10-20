@@ -3,25 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 228x22
-          text run at (0,0) width 228: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 766x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (228,0) size 352x22
-              text run at (228,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5868"
-          RenderText {#text} at (580,0) size 766x44
-            text run at (580,0) width 4: " "
-            text run at (584,0) width 182: "Crash on HP.com with ToT"
-            text run at (0,22) width 350: "and Safari 2.0.2 in khtml::RenderContainer::detach()"
-        RenderText {#text} at (350,22) size 4x22
-          text run at (350,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 772x22
-          text run at (0,0) width 428: "There should be two 100x100 squares stacked vertically below. "
-          text run at (428,0) width 344: "The green square should be above the blue square."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,108) size 104x204
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 242x21
+          text run at (0,0) width 242: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 784x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (242,0) size 379x21
+              text run at (242,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5868"
+          RenderText {#text} at (621,0) size 784x42
+            text run at (621,0) width 4: " "
+            text run at (625,0) width 159: "Crash on HP.com with"
+            text run at (0,21) width 401: "ToT and Safari 2.0.2 in khtml::RenderContainer::detach()"
+        RenderText {#text} at (401,21) size 4x21
+          text run at (401,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 453: "There should be two 100x100 squares stacked vertically below. "
+          text run at (453,0) width 309: "The green square should be above the blue"
+          text run at (0,21) width 53: "square."
+      RenderBlock {HR} at (0,116) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,126) size 104x204
         RenderTableSection {TBODY} at (0,0) size 104x204
           RenderTableRow (anonymous) at (0,2) size 104x200
             RenderTableCell (anonymous) at (2,2) size 100x200 [r=0 c=0 rs=1 cs=1]

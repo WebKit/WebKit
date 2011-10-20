@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x114
-  RenderBlock {HTML} at (0,0) size 800x114
-    RenderBody {BODY} at (8,16) size 784x82
-      RenderBlock {P} at (0,0) size 784x44
-        RenderInline {SPAN} at (0,0) size 500x44
-          RenderBR {BR} at (0,0) size 0x22
-          RenderText {#text} at (0,22) size 500x22
-            text run at (0,22) width 500: "There shouldn\x{2019}t be a black dot or line above the first letter of this sentence"
-        RenderText {#text} at (500,22) size 4x22
-          text run at (500,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+layer at (0,0) size 800x111
+  RenderBlock {HTML} at (0,0) size 800x111
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x42
+        RenderInline {SPAN} at (0,0) size 519x42
+          RenderBR {BR} at (0,0) size 0x21
+          RenderText {#text} at (0,21) size 519x21
+            text run at (0,21) width 519: "There shouldn\x{2019}t be a black dot or line above the first letter of this sentence"
+        RenderText {#text} at (519,21) size 4x21
+          text run at (519,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 657x22
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14245"
-          RenderText {#text} at (361,0) size 353x22
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 349: "Underline painted under <br>, not repainted properly"
-        RenderText {#text} at (714,0) size 4x22
-          text run at (714,0) width 4: "."
+        RenderInline {I} at (0,0) size 704x21
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=14245"
+          RenderText {#text} at (386,0) size 375x21
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 371: "Underline painted under <br>, not repainted properly"
+        RenderText {#text} at (761,0) size 4x21
+          text run at (761,0) width 4: "."

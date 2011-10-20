@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 779x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=13353"
-          RenderText {#text} at (361,0) size 779x44
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 414: "REGRESSION (r20754-20766): Textarea does not resize when"
-            text run at (0,22) width 122: "scrollbar is present"
-        RenderText {#text} at (122,22) size 4x22
-          text run at (122,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x44
-        RenderText {#text} at (0,0) size 758x44
-          text run at (0,0) width 610: "To test interactively, verify that you can resize each of the boxes below. The automatic test "
-          text run at (610,0) width 148: "resizes them to 125 by"
-          text run at (0,22) width 28: "125."
-      RenderBlock (floating) {DIV} at (0,120) size 125x125 [bgcolor=#FF0000]
-      RenderBlock (floating) {DIV} at (135,120) size 125x125 [bgcolor=#FF0000]
-      RenderBlock (floating) {DIV} at (270,120) size 125x125 [bgcolor=#FF0000]
-      RenderBlock (floating) {DIV} at (405,120) size 125x125 [bgcolor=#FF0000]
-layer at (8,128) size 125x125
+        RenderInline {I} at (0,0) size 748x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=13353"
+          RenderText {#text} at (386,0) size 748x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 358: "REGRESSION (r20754-20766): Textarea does not"
+            text run at (0,21) width 224: "resize when scrollbar is present"
+        RenderText {#text} at (224,21) size 4x21
+          text run at (224,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 776x42
+          text run at (0,0) width 638: "To test interactively, verify that you can resize each of the boxes below. The automatic test "
+          text run at (638,0) width 138: "resizes them to 125"
+          text run at (0,21) width 52: "by 125."
+      RenderBlock (floating) {DIV} at (0,116) size 125x125 [bgcolor=#FF0000]
+      RenderBlock (floating) {DIV} at (135,116) size 125x125 [bgcolor=#FF0000]
+      RenderBlock (floating) {DIV} at (270,116) size 125x125 [bgcolor=#FF0000]
+      RenderBlock (floating) {DIV} at (405,116) size 125x125 [bgcolor=#FF0000]
+layer at (8,124) size 125x125
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (143,128) size 125x125 clip at (143,128) size 109x109
+layer at (143,124) size 125x125 clip at (143,124) size 109x109
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (278,128) size 125x125 clip at (278,128) size 109x125
+layer at (278,124) size 125x125 clip at (278,124) size 109x125
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (413,128) size 125x125 clip at (413,128) size 125x109
+layer at (413,124) size 125x125 clip at (413,124) size 125x109
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100

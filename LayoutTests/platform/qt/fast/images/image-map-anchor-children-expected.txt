@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderImage {IMG} at (0,0) size 479x150
-      RenderText {#text} at (479,134) size 4x22
+      RenderText {#text} at (479,134) size 4x21
         text run at (479,134) width 4: " "
-      RenderInline {MAP} at (0,0) size 238x22
+      RenderInline {MAP} at (0,0) size 244x21
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 98x22 [color=#0000EE]
-          RenderText {#text} at (0,156) size 98x22
-            text run at (0,156) width 98: "John Hancock"
-        RenderText {#text} at (98,156) size 12x22
-          text run at (98,156) width 12: " | "
-        RenderInline {A} at (0,0) size 41x22 [color=#0000EE]
-          RenderText {#text} at (110,156) size 41x22
-            text run at (110,156) width 41: "Nokia"
-        RenderText {#text} at (151,156) size 12x22
-          text run at (151,156) width 12: " | "
-        RenderInline {A} at (0,0) size 75x22 [color=#0000EE]
-          RenderText {#text} at (163,156) size 75x22
-            text run at (163,156) width 75: "Downtown"
+        RenderInline {A} at (0,0) size 102x21 [color=#0000EE]
+          RenderText {#text} at (0,155) size 102x21
+            text run at (0,155) width 102: "John Hancock"
+        RenderText {#text} at (102,155) size 12x21
+          text run at (102,155) width 12: " | "
+        RenderInline {A} at (0,0) size 42x21 [color=#0000EE]
+          RenderText {#text} at (114,155) size 42x21
+            text run at (114,155) width 42: "Nokia"
+        RenderText {#text} at (156,155) size 12x21
+          text run at (156,155) width 12: " | "
+        RenderInline {A} at (0,0) size 76x21 [color=#0000EE]
+          RenderText {#text} at (168,155) size 76x21
+            text run at (168,155) width 76: "Downtown"
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

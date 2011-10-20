@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 222x22
-          text run at (0,0) width 222: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 766x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (222,0) size 352x22
-              text run at (222,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8081"
-          RenderText {#text} at (574,0) size 766x44
-            text run at (574,0) width 4: " "
-            text run at (578,0) width 188: "REGRESSION: Drop-down"
-            text run at (0,22) width 132: "menu has gap at top"
-        RenderText {#text} at (132,22) size 4x22
-          text run at (132,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 564x22
-          text run at (0,0) width 564: "You should see two identical green squares, 100x100 pixels each, next to each other."
-      RenderTable {TABLE} at (0,98) size 107x156
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 237x21
+          text run at (0,0) width 237: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 776x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (237,0) size 379x21
+              text run at (237,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8081"
+          RenderText {#text} at (616,0) size 776x42
+            text run at (616,0) width 4: " "
+            text run at (620,0) width 156: "REGRESSION: Drop-"
+            text run at (0,21) width 187: "down menu has gap at top"
+        RenderText {#text} at (187,21) size 4x21
+          text run at (187,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 603x21
+          text run at (0,0) width 603: "You should see two identical green squares, 100x100 pixels each, next to each other."
+      RenderTable {TABLE} at (0,95) size 107x156
         RenderTableSection {TBODY} at (0,0) size 107x156
           RenderTableRow {TR} at (0,2) size 107x50
             RenderTableCell {TD} at (2,26) size 103x2 [r=0 c=0 rs=1 cs=2]
           RenderTableRow {TR} at (0,54) size 107x100
             RenderTableCell {TD} at (2,54) size 100x2 [bgcolor=#008000] [r=1 c=0 rs=1 cs=1]
             RenderTableCell (anonymous) at (104,54) size 1x0 [r=1 c=1 rs=1 cs=1]
-layer at (11,161) size 98x98
-  RenderBlock (positioned) {DIV} at (11,161) size 98x98
-layer at (112,160) size 102x102
-  RenderBlock (positioned) {TD} at (112,160) size 102x102 [bgcolor=#008000]
+layer at (11,158) size 98x98
+  RenderBlock (positioned) {DIV} at (11,158) size 98x98
+layer at (112,157) size 102x102
+  RenderBlock (positioned) {TD} at (112,157) size 102x102 [bgcolor=#008000]

@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x220
-  RenderBlock {HTML} at (0,0) size 800x220
-    RenderBody {BODY} at (8,8) size 784x204
-      RenderBlock (anonymous) at (0,0) size 784x22
+layer at (0,0) size 800x218
+  RenderBlock {HTML} at (0,0) size 800x218
+    RenderBody {BODY} at (8,8) size 784x202
+      RenderBlock (anonymous) at (0,0) size 784x21
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,3) size 528x17
             text run at (0,3) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 641x22
-          text run at (0,0) width 641: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
-      RenderBlock {DIV} at (0,76) size 304x128 [color=#00FF00] [bgcolor=#008000]
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 657x21
+          text run at (0,0) width 657: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
+      RenderBlock {DIV} at (0,74) size 304x128 [color=#00FF00] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 304x33
           text run at (0,0) width 0: " "
           text run at (0,16) width 304: "1234567890123456789"

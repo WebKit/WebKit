@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,100) size 800x500
       RenderBlock {DIV} at (100,0) size 600x100
-      RenderBlock (anonymous) at (0,200) size 800x44
-        RenderText {#text} at (0,0) size 799x44
-          text run at (0,0) width 518: "You should see a 100x100 green rect at 100x100 above with the word PASS. "
-          text run at (518,0) width 251: "There should be no red on this page. "
-          text run at (769,0) width 30: "This"
-          text run at (0,22) width 431: "is a test case for https://bugs.webkit.org/show_bug.cgi?id=25252"
+      RenderBlock (anonymous) at (0,200) size 800x42
+        RenderText {#text} at (0,0) size 766x42
+          text run at (0,0) width 550: "You should see a 100x100 green rect at 100x100 above with the word PASS. "
+          text run at (550,0) width 216: "There should be no red on this"
+          text run at (0,21) width 44: "page. "
+          text run at (44,21) width 490: "This is a test case for https://bugs.webkit.org/show_bug.cgi?id=25252"
         RenderText {#text} at (0,0) size 0x0
 layer at (100,100) size 100x100
   RenderBlock (positioned) {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]
-    RenderText {#text} at (0,0) size 39x22
-      text run at (0,0) width 39: "FAIL"
+    RenderText {#text} at (0,0) size 34x21
+      text run at (0,0) width 34: "FAIL"
 layer at (100,100) size 100x100
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-    RenderText {#text} at (0,0) size 40x22
-      text run at (0,0) width 40: "PASS"
+    RenderText {#text} at (0,0) size 44x21
+      text run at (0,0) width 44: "PASS"

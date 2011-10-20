@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 8x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 8x21
           text run at (0,0) width 8: "x"
-      RenderBlock {DIV} at (0,38) size 784x22
-        RenderBlock {DIV} at (0,0) size 784x22 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 40x22 [color=#000000]
-            RenderText at (0,0) size 40x22
-              text run at (0,0) width 40: "PASS"
-          RenderText {#text} at (40,0) size 229x22
-            text run at (40,0) width 229: " < this should say still say \x{201C}PASS\x{201D}"
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderBlock {DIV} at (0,0) size 784x21 [color=#0000FF]
+          RenderInline (generated) at (0,0) size 44x21 [color=#000000]
+            RenderText at (0,0) size 44x21
+              text run at (0,0) width 44: "PASS"
+          RenderText {#text} at (44,0) size 238x21
+            text run at (44,0) width 238: " < this should say still say \x{201C}PASS\x{201D}"

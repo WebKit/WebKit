@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 762x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=17464"
-          RenderText {#text} at (361,0) size 762x44
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 397: "REGRESSION: Crash in RenderBlock::findNextLineBreak"
-            text run at (0,22) width 253: "reading r30444 commit email in GMail"
-        RenderText {#text} at (253,22) size 4x22
-          text run at (253,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 164x22
-          text run at (0,0) width 164: "No crash means success."
-      RenderBlock {DIV} at (0,98) size 100x44
-        RenderText {#text} at (0,0) size 91x22
-          text run at (0,0) width 91: "Lorem ipsum"
+        RenderInline {I} at (0,0) size 566x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=17464"
+          RenderText {#text} at (386,0) size 566x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 176: "REGRESSION: Crash in"
+            text run at (0,21) width 506: "RenderBlock::findNextLineBreak reading r30444 commit email in GMail"
+        RenderText {#text} at (506,21) size 4x21
+          text run at (506,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 182x21
+          text run at (0,0) width 182: "No crash means success."
+      RenderBlock {DIV} at (0,95) size 100x42
+        RenderText {#text} at (0,0) size 92x21
+          text run at (0,0) width 92: "Lorem ipsum"
         RenderWordBreak {WBR} at (0,0) size 0x0
-        RenderText {#text} at (0,22) size 92x22
-          text run at (0,22) width 92: "dolor sit amet"
+        RenderText {#text} at (0,21) size 95x21
+          text run at (0,21) width 95: "dolor sit amet"

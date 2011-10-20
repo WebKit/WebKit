@@ -1,119 +1,119 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x343
-  RenderBlock {HTML} at (0,0) size 800x343
-    RenderBody {BODY} at (8,16) size 784x319
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 731x22
-          text run at (0,0) width 461: "The background color of this paragraph should turn to green when "
-          text run at (461,0) width 270: "the mouse pointer hovers either its text ("
-        RenderInline {STRONG} at (0,0) size 30x22
-          RenderText {#text} at (731,0) size 30x22
-            text run at (731,0) width 30: "here"
-        RenderText {#text} at (761,0) size 766x44
-          text run at (761,0) width 5: ")"
-          text run at (0,22) width 207: "or its whitespace background, "
-        RenderInline {STRONG} at (0,0) size 30x22
-          RenderText {#text} at (207,22) size 30x22
-            text run at (207,22) width 30: "here"
-        RenderText {#text} at (237,22) size 5x22
-          text run at (237,22) width 5: ":"
-      RenderBlock {ADDRESS} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 167x22
-          text run at (0,0) width 167: "The background color of "
-        RenderInline {A} at (0,0) size 117x22 [color=#0000EE]
-          RenderText {#text} at (167,0) size 83x22
-            text run at (167,0) width 83: "this anchor ("
-          RenderInline {STRONG} at (0,0) size 29x22
-            RenderText {#text} at (250,0) size 29x22
-              text run at (250,0) width 29: "here"
-          RenderText {#text} at (279,0) size 5x22
-            text run at (279,0) width 5: ")"
-        RenderText {#text} at (284,0) size 398x22
-          text run at (284,0) width 398: " should turn to green when the pointing device hovers over it."
-      RenderTable {TABLE} at (0,82) size 322x237
-        RenderTableSection {TBODY} at (0,0) size 322x237
-          RenderTableRow {TR} at (0,5) size 322x24
-            RenderTableCell {TD} at (5,5) size 105x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 76x22
-                text run at (1,1) width 76: "The cells in"
-            RenderTableCell {TD} at (115,5) size 93x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 61x22
-                text run at (1,1) width 61: "this table"
-            RenderTableCell {TD} at (213,5) size 104x24 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 65x22
-                text run at (1,1) width 65: "should go"
-          RenderTableRow {TR} at (0,34) size 322x24
-            RenderTableCell {TD} at (5,34) size 105x24 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 79x22
-                text run at (1,1) width 79: "green when"
-            RenderTableCell {TD} at (115,34) size 93x24 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "you hover"
-            RenderTableCell {TD} at (213,34) size 104x24 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 81x22
-                text run at (1,1) width 81: "the pointing"
-          RenderTableRow {TR} at (0,63) size 322x24
-            RenderTableCell {TD} at (5,63) size 105x24 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 76x22
-                text run at (1,1) width 76: "device over"
-            RenderTableCell {TD} at (115,63) size 93x24 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x22
-                text run at (1,1) width 43: "them ("
-              RenderInline {STRONG} at (0,0) size 30x22
-                RenderText {#text} at (44,1) size 30x22
-                  text run at (44,1) width 30: "here"
-              RenderText {#text} at (74,1) size 9x22
-                text run at (74,1) width 9: ")."
-            RenderTableCell {TD} at (213,74) size 104x2 [r=2 c=2 rs=1 cs=1]
-          RenderTableRow {TR} at (0,92) size 322x24
-            RenderTableCell {TD} at (5,92) size 105x24 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 81x22
-                text run at (1,1) width 81: "The rows in"
-            RenderTableCell {TD} at (115,92) size 93x24 [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 61x22
-                text run at (1,1) width 61: "this table"
-            RenderTableCell {TD} at (213,92) size 104x24 [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 65x22
-                text run at (1,1) width 65: "should go"
-          RenderTableRow {TR} at (0,121) size 322x24
-            RenderTableCell {TD} at (5,121) size 105x24 [r=4 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 75x22
-                text run at (1,1) width 75: "dark green"
-            RenderTableCell {TD} at (115,121) size 93x24 [r=4 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 62x22
-                text run at (1,1) width 62: "when the"
-            RenderTableCell {TD} at (213,121) size 104x24 [r=4 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 102x22
-                text run at (1,1) width 102: "pointing device"
-          RenderTableRow {TR} at (0,150) size 322x24
-            RenderTableCell {TD} at (5,150) size 105x24 [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 69x22
-                text run at (1,1) width 69: "is over the"
-            RenderTableCell {TD} at (115,150) size 93x24 [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 60x22
-                text run at (1,1) width 60: "five pixel"
-            RenderTableCell {TD} at (213,150) size 104x24 [r=5 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 102x22
-                text run at (1,1) width 102: "border spacing"
-          RenderTableRow {TR} at (0,179) size 322x24
-            RenderTableCell {TD} at (5,179) size 105x24 [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 94x22
-                text run at (1,1) width 94: "and when it is"
-            RenderTableCell {TD} at (115,179) size 93x24 [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 91x22
-                text run at (1,1) width 91: "over the cells."
-            RenderTableCell {TD} at (213,190) size 104x2 [r=6 c=2 rs=1 cs=1]
-          RenderTableRow {TR} at (0,208) size 322x24
-            RenderTableCell {TD} at (5,208) size 105x24 [r=7 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 69x22
+layer at (0,0) size 800x332
+  RenderBlock {HTML} at (0,0) size 800x332
+    RenderBody {BODY} at (8,16) size 784x308
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 742x42
+          text run at (0,0) width 470: "The background color of this paragraph should turn to green when "
+          text run at (470,0) width 272: "the mouse pointer hovers either its text"
+          text run at (0,21) width 5: "("
+        RenderInline {STRONG} at (0,0) size 34x21
+          RenderText {#text} at (5,21) size 34x21
+            text run at (5,21) width 34: "here"
+        RenderText {#text} at (39,21) size 224x21
+          text run at (39,21) width 224: ") or its whitespace background, "
+        RenderInline {STRONG} at (0,0) size 34x21
+          RenderText {#text} at (263,21) size 34x21
+            text run at (263,21) width 34: "here"
+        RenderText {#text} at (297,21) size 4x21
+          text run at (297,21) width 4: ":"
+      RenderBlock {ADDRESS} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 176x21
+          text run at (0,0) width 176: "The background color of "
+        RenderInline {A} at (0,0) size 126x21 [color=#0000EE]
+          RenderText {#text} at (176,0) size 87x21
+            text run at (176,0) width 87: "this anchor ("
+          RenderInline {STRONG} at (0,0) size 34x21
+            RenderText {#text} at (263,0) size 34x21
+              text run at (263,0) width 34: "here"
+          RenderText {#text} at (297,0) size 5x21
+            text run at (297,0) width 5: ")"
+        RenderText {#text} at (302,0) size 429x21
+          text run at (302,0) width 429: " should turn to green when the pointing device hovers over it."
+      RenderTable {TABLE} at (0,79) size 339x229
+        RenderTableSection {TBODY} at (0,0) size 339x229
+          RenderTableRow {TR} at (0,5) size 339x23
+            RenderTableCell {TD} at (5,5) size 109x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 82x21
+                text run at (1,1) width 82: "The cells in"
+            RenderTableCell {TD} at (119,5) size 100x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x21
+                text run at (1,1) width 64: "this table"
+            RenderTableCell {TD} at (224,5) size 110x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 70x21
+                text run at (1,1) width 70: "should go"
+          RenderTableRow {TR} at (0,33) size 339x23
+            RenderTableCell {TD} at (5,33) size 109x23 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 84x21
+                text run at (1,1) width 84: "green when"
+            RenderTableCell {TD} at (119,33) size 100x23 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 70x21
+                text run at (1,1) width 70: "you hover"
+            RenderTableCell {TD} at (224,33) size 110x23 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 83x21
+                text run at (1,1) width 83: "the pointing"
+          RenderTableRow {TR} at (0,61) size 339x23
+            RenderTableCell {TD} at (5,61) size 109x23 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 82x21
+                text run at (1,1) width 82: "device over"
+            RenderTableCell {TD} at (119,61) size 100x23 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 44x21
+                text run at (1,1) width 44: "them ("
+              RenderInline {STRONG} at (0,0) size 34x21
+                RenderText {#text} at (45,1) size 34x21
+                  text run at (45,1) width 34: "here"
+              RenderText {#text} at (79,1) size 9x21
+                text run at (79,1) width 9: ")."
+            RenderTableCell {TD} at (224,71) size 110x2 [r=2 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,89) size 339x23
+            RenderTableCell {TD} at (5,89) size 109x23 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 83x21
+                text run at (1,1) width 83: "The rows in"
+            RenderTableCell {TD} at (119,89) size 100x23 [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x21
+                text run at (1,1) width 64: "this table"
+            RenderTableCell {TD} at (224,89) size 110x23 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 70x21
+                text run at (1,1) width 70: "should go"
+          RenderTableRow {TR} at (0,117) size 339x23
+            RenderTableCell {TD} at (5,117) size 109x23 [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 76x21
+                text run at (1,1) width 76: "dark green"
+            RenderTableCell {TD} at (119,117) size 100x23 [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 65x21
+                text run at (1,1) width 65: "when the"
+            RenderTableCell {TD} at (224,117) size 110x23 [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 108x21
+                text run at (1,1) width 108: "pointing device"
+          RenderTableRow {TR} at (0,145) size 339x23
+            RenderTableCell {TD} at (5,145) size 109x23 [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 73x21
+                text run at (1,1) width 73: "is over the"
+            RenderTableCell {TD} at (119,145) size 100x23 [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 63x21
+                text run at (1,1) width 63: "five pixel"
+            RenderTableCell {TD} at (224,145) size 110x23 [r=5 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 106x21
+                text run at (1,1) width 106: "border spacing"
+          RenderTableRow {TR} at (0,173) size 339x23
+            RenderTableCell {TD} at (5,173) size 109x23 [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 98x21
+                text run at (1,1) width 98: "and when it is"
+            RenderTableCell {TD} at (119,173) size 100x23 [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 98x21
+                text run at (1,1) width 98: "over the cells."
+            RenderTableCell {TD} at (224,183) size 110x2 [r=6 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,201) size 339x23
+            RenderTableCell {TD} at (5,201) size 109x23 [r=7 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 69x21
                 text run at (1,1) width 69: "Including "
-              RenderInline {STRONG} at (0,0) size 30x22
-                RenderText {#text} at (70,1) size 30x22
-                  text run at (70,1) width 30: "here"
-              RenderText {#text} at (100,1) size 4x22
-                text run at (100,1) width 4: ","
-            RenderTableCell {TD} at (115,219) size 93x2 [r=7 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (213,208) size 104x24 [r=7 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 75x22
-                text run at (1,1) width 75: "blank cells."
+              RenderInline {STRONG} at (0,0) size 34x21
+                RenderText {#text} at (70,1) size 34x21
+                  text run at (70,1) width 34: "here"
+              RenderText {#text} at (104,1) size 4x21
+                text run at (104,1) width 4: ","
+            RenderTableCell {TD} at (119,211) size 100x2 [r=7 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (224,201) size 110x23 [r=7 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 80x21
+                text run at (1,1) width 80: "blank cells."

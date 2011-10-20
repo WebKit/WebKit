@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H4} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 334x22
-          text run at (0,0) width 334: "Deleting into a nested block (was Radar 4056100)"
-      RenderBlock {DIV} at (0,43) size 400x66
-        RenderText {#text} at (0,0) size 398x66
-          text run at (0,0) width 370: "The bug's symptom was that the visual result were two"
-          text run at (0,22) width 398: "instances of the word \"three\", because the original was not"
-          text run at (0,44) width 187: "erased. Resize cleared it up."
-      RenderBlock {HR} at (0,117) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,127) size 784x100
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 35x22
-            text run at (0,0) width 35: "three"
+      RenderBlock {H4} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 372x21
+          text run at (0,0) width 372: "Deleting into a nested block (was Radar 4056100)"
+      RenderBlock {DIV} at (0,42) size 400x63
+        RenderText {#text} at (0,0) size 387x63
+          text run at (0,0) width 384: "The bug's symptom was that the visual result were two"
+          text run at (0,21) width 387: "instances of the word \"three\", because the original was"
+          text run at (0,42) width 228: "not erased. Resize cleared it up."
+      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,123) size 784x100
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 36x21
+            text run at (0,0) width 36: "three"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

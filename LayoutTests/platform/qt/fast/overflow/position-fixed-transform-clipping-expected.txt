@@ -3,14 +3,14 @@ layer at (0,0) size 784x2000
 layer at (0,0) size 784x2000
   RenderBlock {HTML} at (0,0) size 784x2000
     RenderBody {BODY} at (0,0) size 784x2000
-layer at (0,116) size 322x44
-  RenderBlock (positioned) {P} at (0,116) size 322x44
-    RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
-      RenderText {#text} at (0,0) size 322x22
-        text run at (0,0) width 322: "https://bugs.webkit.org/show_bug.cgi?id=29346"
-    RenderBR {BR} at (322,16) size 0x0
-    RenderText {#text} at (0,22) size 262x22
-      text run at (0,22) width 262: "Green box should fill the black border."
+layer at (0,116) size 337x42
+  RenderBlock (positioned) {P} at (0,116) size 337x42
+    RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+      RenderText {#text} at (0,0) size 337x21
+        text run at (0,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=29346"
+    RenderBR {BR} at (337,16) size 0x0
+    RenderText {#text} at (0,21) size 268x21
+      text run at (0,21) width 268: "Green box should fill the black border."
 layer at (0,25) size 404x54 clip at (2,27) size 400x50
   RenderBlock (positioned) {DIV} at (0,0) size 404x54 [border: (2px solid #000000)]
 layer at (2,27) size 400x50

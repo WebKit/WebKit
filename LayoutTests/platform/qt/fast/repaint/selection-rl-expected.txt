@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (564,0) size 236x600
-  RenderBlock {HTML} at (0,0) size 236x600
-    RenderBody {BODY} at (8,8) size 220x584
-      RenderInline {SPAN} at (0,0) size 22x155
-        RenderText {#text} at (0,0) size 22x155
-          text run at (0,0) width 155: "Testing both hit testing"
-      RenderText {#text} at (0,155) size 22x172
-        text run at (0,155) width 172: " and painting of selection."
-      RenderBR {BR} at (0,327) size 22x0
-      RenderText {#text} at (22,0) size 22x327
-        text run at (22,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (22,327) size 22x0
-      RenderText {#text} at (44,0) size 22x327
-        text run at (44,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (44,327) size 22x0
-      RenderText {#text} at (66,0) size 22x327
-        text run at (66,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (66,327) size 22x0
-      RenderText {#text} at (88,0) size 22x327
-        text run at (88,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (88,327) size 22x0
-      RenderText {#text} at (110,0) size 22x327
-        text run at (110,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (110,327) size 22x0
-      RenderText {#text} at (132,0) size 22x327
-        text run at (132,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (132,327) size 22x0
-      RenderText {#text} at (154,0) size 22x327
-        text run at (154,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (154,327) size 22x0
-      RenderText {#text} at (176,0) size 22x327
-        text run at (176,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (176,327) size 22x0
-      RenderText {#text} at (198,0) size 22x327
-        text run at (198,0) width 327: "Testing both hit testing and painting of selection."
-      RenderBR {BR} at (198,327) size 22x0
-selection start: position 5 of child 0 {#text} of child 1 {SPAN} of body
+layer at (574,0) size 226x600
+  RenderBlock {HTML} at (0,0) size 226x600
+    RenderBody {BODY} at (8,8) size 210x584
+      RenderInline {SPAN} at (0,0) size 21x160
+        RenderText {#text} at (0,0) size 21x160
+          text run at (0,0) width 160: "Testing both hit testing"
+      RenderText {#text} at (0,160) size 21x181
+        text run at (0,160) width 181: " and painting of selection."
+      RenderBR {BR} at (0,341) size 21x0
+      RenderText {#text} at (21,0) size 21x341
+        text run at (21,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (21,341) size 21x0
+      RenderText {#text} at (42,0) size 21x341
+        text run at (42,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (42,341) size 21x0
+      RenderText {#text} at (63,0) size 21x341
+        text run at (63,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (63,341) size 21x0
+      RenderText {#text} at (84,0) size 21x341
+        text run at (84,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (84,341) size 21x0
+      RenderText {#text} at (105,0) size 21x341
+        text run at (105,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (105,341) size 21x0
+      RenderText {#text} at (126,0) size 21x341
+        text run at (126,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (126,341) size 21x0
+      RenderText {#text} at (147,0) size 21x341
+        text run at (147,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (147,341) size 21x0
+      RenderText {#text} at (168,0) size 21x341
+        text run at (168,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (168,341) size 21x0
+      RenderText {#text} at (189,0) size 21x341
+        text run at (189,0) width 341: "Testing both hit testing and painting of selection."
+      RenderBR {BR} at (189,341) size 21x0
+selection start: position 4 of child 0 {#text} of child 1 {SPAN} of body
 selection end:   position 17 of child 0 {#text} of child 1 {SPAN} of body

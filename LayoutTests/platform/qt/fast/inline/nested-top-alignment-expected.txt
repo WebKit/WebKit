@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (0,0) size 61x28 [border: (1px solid #000000)]
         RenderBlock {SPAN} at (1,1) size 59x26
           RenderBlock {SPAN} at (0,0) size 59x26
-            RenderText {#text} at (0,3) size 59x18
+            RenderText {#text} at (0,3) size 59x17
               text run at (0,3) width 59: "Float Text"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (63,0) size 499x22
-        text run at (63,0) width 499: "The float on the left should have a black border enclosing its text contents."
+      RenderText {#text} at (63,0) size 521x21
+        text run at (63,0) width 521: "The float on the left should have a black border enclosing its text contents."

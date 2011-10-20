@@ -3,111 +3,111 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 639x22
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14395"
-          RenderText {#text} at (361,0) size 335x22
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 331: "When a <p> is inside <li> two <BR>s are rendered"
-        RenderText {#text} at (696,0) size 4x22
-          text run at (696,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 516x22
-          text run at (0,0) width 516: "In all of the following, the bullets should be lined up with the first line of text."
-      RenderBlock {UL} at (0,76) size 784x22
-        RenderListItem {LI} at (40,0) size 744x22
+        RenderInline {I} at (0,0) size 689x21
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=14395"
+          RenderText {#text} at (386,0) size 360x21
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 356: "When a <p> is inside <li> two <BR>s are rendered"
+        RenderText {#text} at (746,0) size 4x21
+          text run at (746,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 529x21
+          text run at (0,0) width 529: "In all of the following, the bullets should be lined up with the first line of text."
+      RenderBlock {UL} at (0,74) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
           RenderBlock (anonymous) at (0,0) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderBlock {DIV} at (0,0) size 744x22
-              RenderListMarker at (-18,0) size 7x22: bullet
-              RenderText {#text} at (0,0) size 29x22
-                text run at (0,0) width 29: "item"
-          RenderBlock (anonymous) at (0,22) size 744x0
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderBlock {DIV} at (0,0) size 744x21
+              RenderListMarker at (-18,0) size 7x21: bullet
+              RenderText {#text} at (0,0) size 30x21
+                text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,21) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock {UL} at (0,114) size 784x22
-        RenderListItem {LI} at (40,0) size 744x22
+      RenderBlock {UL} at (0,111) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
           RenderBlock (anonymous) at (0,0) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (0,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 29x22
-              text run at (0,0) width 29: "item"
-      RenderBlock {UL} at (0,152) size 784x22
-        RenderListItem {LI} at (40,0) size 744x22
+          RenderBlock {DIV} at (0,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 30x21
+              text run at (0,0) width 30: "item"
+      RenderBlock {UL} at (0,148) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
           RenderBlock (anonymous) at (0,0) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {I} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderBlock {DIV} at (0,0) size 744x22
-              RenderListMarker at (-18,0) size 7x22: bullet
-              RenderText {#text} at (0,0) size 27x22
-                text run at (0,0) width 27: "item"
-          RenderBlock (anonymous) at (0,22) size 744x0
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderBlock {DIV} at (0,0) size 744x21
+              RenderListMarker at (-18,0) size 7x21: bullet
+              RenderText {#text} at (0,0) size 30x21
+                text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,21) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {I} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock {UL} at (0,190) size 784x44
-        RenderListItem {LI} at (40,0) size 744x44
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderInline {SPAN} at (0,0) size 43x22
-              RenderInline (generated) at (0,0) size 43x22
-                RenderText at (0,0) size 43x22
-                  text run at (0,0) width 43: "before"
+      RenderBlock {UL} at (0,185) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderInline {SPAN} at (0,0) size 45x21
+              RenderInline (generated) at (0,0) size 45x21
+                RenderText at (0,0) size 45x21
+                  text run at (0,0) width 45: "before"
               RenderText {#text} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,22) size 744x22
-            RenderBlock {DIV} at (0,0) size 744x22
-              RenderText {#text} at (0,0) size 29x22
-                text run at (0,0) width 29: "item"
-          RenderBlock (anonymous) at (0,44) size 744x0
+          RenderBlock (anonymous) at (0,21) size 744x21
+            RenderBlock {DIV} at (0,0) size 744x21
+              RenderText {#text} at (0,0) size 30x21
+                text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,42) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock {UL} at (0,250) size 784x44
-        RenderListItem {LI} at (40,0) size 744x44
+      RenderBlock {UL} at (0,243) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
           RenderBlock (anonymous) at (0,0) size 744x0
             RenderInline {SPAN} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderBlock {UL} at (0,0) size 744x22
-              RenderListItem {LI} at (40,0) size 704x22
-                RenderListMarker at (-58,0) size 7x22: bullet
-                RenderListMarker at (-18,0) size 7x22: white bullet
-                RenderText {#text} at (0,0) size 29x22
-                  text run at (0,0) width 29: "item"
-          RenderBlock (anonymous) at (0,22) size 744x22
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderBlock {UL} at (0,0) size 744x21
+              RenderListItem {LI} at (40,0) size 704x21
+                RenderListMarker at (-58,0) size 7x21: bullet
+                RenderListMarker at (-18,0) size 7x21: white bullet
+                RenderText {#text} at (0,0) size 30x21
+                  text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,21) size 744x21
             RenderInline {SPAN} at (0,0) size 0x0
-            RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {UL} at (0,310) size 784x44
-        RenderListItem {LI} at (40,0) size 744x44
-          RenderBlock {DIV} at (0,0) size 744x22
-            RenderBlock {UL} at (0,0) size 744x22
-              RenderListItem {LI} at (40,0) size 704x22
-                RenderListMarker at (-58,0) size 7x22: bullet
-                RenderListMarker at (-18,0) size 7x22: white bullet
-                RenderText {#text} at (0,0) size 29x22
-                  text run at (0,0) width 29: "item"
-          RenderBlock (anonymous) at (0,22) size 744x22
-            RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {P} at (0,370) size 784x22
-        RenderText {#text} at (0,0) size 554x22
-          text run at (0,0) width 554: "In this case, the solid bullet should be one line above the hollow bullet and the text."
-      RenderBlock {UL} at (0,408) size 784x66
-        RenderListItem {LI} at (40,0) size 744x66
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-          RenderBlock {UL} at (0,22) size 744x22
-            RenderListItem {LI} at (40,0) size 704x22
-              RenderListMarker at (-18,0) size 7x22: white bullet
-              RenderText {#text} at (0,0) size 29x22
-                text run at (0,0) width 29: "item"
-          RenderBlock (anonymous) at (0,44) size 744x22
-            RenderBR {BR} at (0,0) size 0x22
+            RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {UL} at (0,301) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderBlock {DIV} at (0,0) size 744x21
+            RenderBlock {UL} at (0,0) size 744x21
+              RenderListItem {LI} at (40,0) size 704x21
+                RenderListMarker at (-58,0) size 7x21: bullet
+                RenderListMarker at (-18,0) size 7x21: white bullet
+                RenderText {#text} at (0,0) size 30x21
+                  text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,21) size 744x21
+            RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {P} at (0,359) size 784x21
+        RenderText {#text} at (0,0) size 584x21
+          text run at (0,0) width 584: "In this case, the solid bullet should be one line above the hollow bullet and the text."
+      RenderBlock {UL} at (0,396) size 784x63
+        RenderListItem {LI} at (40,0) size 744x63
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+          RenderBlock {UL} at (0,21) size 744x21
+            RenderListItem {LI} at (40,0) size 704x21
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 30x21
+                text run at (0,0) width 30: "item"
+          RenderBlock (anonymous) at (0,42) size 744x21
+            RenderBR {BR} at (0,0) size 0x21

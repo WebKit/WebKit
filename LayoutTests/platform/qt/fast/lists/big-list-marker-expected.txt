@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 658x22
-          text run at (0,0) width 553: "This tests that the size of the list marker is not effected by the width of the border. "
-          text run at (553,0) width 105: "See bug #11957"
-      RenderBlock {UL} at (0,38) size 784x42 [border: (10px dashed #000000)]
-        RenderListItem {LI} at (50,10) size 724x22
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 285x22
-            text run at (0,0) width 285: "The list-marker should be the normal size."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 687x21
+          text run at (0,0) width 569: "This tests that the size of the list marker is not effected by the width of the border. "
+          text run at (569,0) width 118: "See bug #11957"
+      RenderBlock {UL} at (0,37) size 784x41 [border: (10px dashed #000000)]
+        RenderListItem {LI} at (50,10) size 724x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 296x21
+            text run at (0,0) width 296: "The list-marker should be the normal size."

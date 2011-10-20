@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x106
+        RenderText {#text} at (0,0) size 48x21
+          text run at (0,0) width 48: "Image:"
+        RenderBR {BR} at (48,16) size 0x0
+        RenderImage {IMG} at (0,21) size 80x80
+        RenderText {#text} at (80,85) size 4x21
+          text run at (80,85) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,106) size 784x35
+        RenderText {#text} at (0,14) size 123x21
+          text run at (0,14) width 123: "QT progress bar: "
+        RenderEmbeddedObject {OBJECT} at (123,0) size 300x30 [QT: geometry: {at (131,114) size 300x30} isHidden: 0 isSelfVisible: 1 isParentVisible: 1 mask: {at (0,0) size 300x30} ] 
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,141) size 784x35
+        RenderText {#text} at (0,14) size 174x21
+          text run at (0,14) width 174: "You should not see this: "
+        RenderEmbeddedObject {OBJECT} at (174,0) size 300x30 [QT: geometry: {at (182,149) size 300x30} isHidden: 1 isSelfVisible: 0 isParentVisible: 1 mask: {at (0,0) size 300x30} ] 
+        RenderText {#text} at (0,0) size 0x0

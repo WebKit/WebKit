@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {DIV} at (0,0) size 60x584
-        RenderBlock {DL} at (0,0) size 60x584
-          RenderBlock {DT} at (0,0) size 22x584
-            RenderText {#text} at (0,0) size 22x166
-              text run at (0,0) width 166: "DT text is rendered here"
-          RenderBlock {DD} at (38,0) size 22x584
-            RenderBlock {UL} at (0,0) size 22x584
-              RenderListItem {LI} at (0,0) size 22x584
+      RenderBlock {DIV} at (0,0) size 58x584
+        RenderBlock {DL} at (0,0) size 58x584
+          RenderBlock {DT} at (0,0) size 21x584
+            RenderText {#text} at (0,0) size 21x171
+              text run at (0,0) width 171: "DT text is rendered here"
+          RenderBlock {DD} at (37,0) size 21x584
+            RenderBlock {UL} at (0,0) size 21x584
+              RenderListItem {LI} at (0,0) size 21x584
                 RenderListMarker at (4,0) size 12x9
-                RenderText {#text} at (0,16) size 22x119
-                  text run at (0,16) width 119: "LI text is here too"
+                RenderText {#text} at (0,16) size 21x120
+                  text run at (0,16) width 120: "LI text is here too"

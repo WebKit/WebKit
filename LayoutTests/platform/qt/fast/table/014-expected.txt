@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (0,0) size 132x86
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {H2} at (0,105) size 784x0
-      RenderTable {TABLE} at (0,105) size 132x44
-        RenderTableSection {TBODY} at (0,0) size 132x44
-          RenderTableRow {TR} at (0,0) size 132x22
-            RenderTableCell {TD} at (0,0) size 132x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 32x22
-                text run at (0,0) width 32: "hello"
-          RenderTableRow {TR} at (0,22) size 132x22
-            RenderTableCell {TD} at (0,22) size 132x22 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 57x22
-                text run at (0,0) width 57: "goodbye"
+      RenderTable {TABLE} at (0,105) size 132x42
+        RenderTableSection {TBODY} at (0,0) size 132x42
+          RenderTableRow {TR} at (0,0) size 132x21
+            RenderTableCell {TD} at (0,0) size 132x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 35x21
+                text run at (0,0) width 35: "hello"
+          RenderTableRow {TR} at (0,21) size 132x21
+            RenderTableCell {TD} at (0,21) size 132x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 62x21
+                text run at (0,0) width 62: "goodbye"

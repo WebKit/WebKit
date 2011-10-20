@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 784: "Test that opacity doesn't cause clipping of transformed, reflected content. You should see a rotated green box and its"
-          text run at (0,22) width 93: "full reflection."
-layer at (108,72) size 102x102
-  RenderBlock {DIV} at (100,64) size 102x102 [border: (1px solid #000000)]
-layer at (109,73) size 200x100
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 768x42
+          text run at (0,0) width 768: "Test that opacity doesn't cause clipping of transformed, reflected content. You should see a rotated green box"
+          text run at (0,21) width 145: "and its full reflection."
+layer at (108,70) size 102x102
+  RenderBlock {DIV} at (100,62) size 102x102 [border: (1px solid #000000)]
+layer at (109,71) size 200x100
   RenderBlock {DIV} at (1,1) size 200x100 [bgcolor=#008000]

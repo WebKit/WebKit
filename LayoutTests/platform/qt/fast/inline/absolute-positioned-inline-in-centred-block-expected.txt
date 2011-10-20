@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-layer at (111,524) size 278x66
-  RenderBlock (positioned) {FONT} at (111,524) size 278x66
-    RenderText {#text} at (35,0) size 208x66
-      text run at (35,0) width 208: "Hello World, And"
-      text run at (105,33) width 68: "Stuff!"
+layer at (113,530) size 273x60
+  RenderBlock (positioned) {FONT} at (113,530) size 273x60
+    RenderText {#text} at (36,0) size 201x60
+      text run at (36,0) width 201: "Hello World, And"
+      text run at (102,30) width 69: "Stuff!"

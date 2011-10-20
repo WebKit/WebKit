@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-      RenderBlock {DIV} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 139x22
-          text run at (0,0) width 139: "This is a testcase for "
-        RenderInline {A} at (0,0) size 503x22 [color=#0000EE]
-          RenderText {#text} at (139,0) size 503x22
-            text run at (139,0) width 503: "REGRESSION: (r13028) Scrolling causes incomplete drawing of ul bullets"
-        RenderText {#text} at (642,0) size 4x22
-          text run at (642,0) width 4: "."
-layer at (8,-4) size 423x22 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderBlock (positioned) {UL} at (8,-4) size 423x22
-    RenderListItem {LI} at (40,0) size 383x22
-      RenderListMarker at (-18,0) size 7x22: bullet
-      RenderText {#text} at (0,0) size 383x22
-        text run at (0,0) width 120: "This is a list item. "
-        text run at (120,0) width 263: "You should see a list marker to the left."
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 149x21
+          text run at (0,0) width 149: "This is a testcase for "
+        RenderInline {A} at (0,0) size 526x21 [color=#0000EE]
+          RenderText {#text} at (149,0) size 526x21
+            text run at (149,0) width 526: "REGRESSION: (r13028) Scrolling causes incomplete drawing of ul bullets"
+        RenderText {#text} at (675,0) size 4x21
+          text run at (675,0) width 4: "."
+layer at (8,-4) size 439x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderBlock (positioned) {UL} at (8,-4) size 439x21
+    RenderListItem {LI} at (40,0) size 399x21
+      RenderListMarker at (-18,0) size 7x21: bullet
+      RenderText {#text} at (0,0) size 399x21
+        text run at (0,0) width 126: "This is a list item. "
+        text run at (126,0) width 273: "You should see a list marker to the left."

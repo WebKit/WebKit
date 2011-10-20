@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 47x22
-        text run at (0,0) width 47: "Line 1 "
-      RenderInline {SPAN} at (0,0) size 47x22
+      RenderText {#text} at (0,0) size 48x21
+        text run at (0,0) width 48: "Line 1 "
+      RenderInline {SPAN} at (0,0) size 48x21
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 43x22
-          RenderText {#text} at (47,2) size 43x22
-            text run at (47,2) width 43: "Line 2"
-        RenderText {#text} at (90,0) size 4x22
-          text run at (90,0) width 4: " "
-      RenderText {#text} at (94,0) size 43x22
-        text run at (94,0) width 43: "Line 3"
+        RenderInline {SPAN} at (0,0) size 44x21
+          RenderText {#text} at (48,2) size 44x21
+            text run at (48,2) width 44: "Line 2"
+        RenderText {#text} at (92,0) size 4x21
+          text run at (92,0) width 4: " "
+      RenderText {#text} at (96,0) size 44x21
+        text run at (96,0) width 44: "Line 3"

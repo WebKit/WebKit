@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (100,100) size 474x54
-  RenderBlock (positioned) {HTML} at (100,100) size 474x54 [bgcolor=#008000]
-    RenderBody {BODY} at (8,16) size 458x22
-      RenderBlock {P} at (0,0) size 458x22
-        RenderText {#text} at (0,0) size 458x22
-          text run at (0,0) width 458: "Tests that the entire viewport is painted with a floated html element."
+layer at (100,100) size 489x53
+  RenderBlock (positioned) {HTML} at (100,100) size 489x53 [bgcolor=#008000]
+    RenderBody {BODY} at (8,16) size 473x21
+      RenderBlock {P} at (0,0) size 473x21
+        RenderText {#text} at (0,0) size 473x21
+          text run at (0,0) width 473: "Tests that the entire viewport is painted with a floated html element."

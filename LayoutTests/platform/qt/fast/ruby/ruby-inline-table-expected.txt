@@ -3,43 +3,43 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 779x44
-          text run at (0,0) width 779: "Test that <ruby> rendered as inline-table (or somesuch) is not affected by ruby rendering. Both <div> below should"
-          text run at (0,22) width 100: "look the same. "
-        RenderBR {BR} at (100,38) size 0x0
-        RenderBR {BR} at (0,44) size 0x22
-      RenderBlock {DIV} at (3,69) size 778x54 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
-        RenderText {#text} at (9,23) size 234x22
-          text run at (9,23) width 234: "This is some XHTML1.1 text with "
-        RenderTable {SPAN} at (243,9) size 42x36
-          RenderTableSection {SPAN} at (0,14) size 42x22
-            RenderTableRow (anonymous) at (0,0) size 42x22
-              RenderTableCell (anonymous) at (0,0) size 42x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,0) size 38x22
-                  text run at (2,0) width 38: "Ruby"
-          RenderTableSection {SPAN} at (0,0) size 42x14
-            RenderTableRow (anonymous) at (0,0) size 42x14
-              RenderTableCell (anonymous) at (0,0) size 42x14 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 42x14
-                  text run at (0,0) width 42: "guide text"
-        RenderText {#text} at (285,23) size 63x22
-          text run at (285,23) width 63: " markup."
-      RenderBlock (anonymous) at (0,126) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (3,151) size 778x54 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
-        RenderText {#text} at (9,23) size 234x22
-          text run at (9,23) width 234: "This is some XHTML1.1 text with "
-        RenderTable {RUBY} at (243,9) size 42x36
-          RenderTableSection {RB} at (0,14) size 42x22
-            RenderTableRow (anonymous) at (0,0) size 42x22
-              RenderTableCell (anonymous) at (0,0) size 42x22 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,0) size 38x22
-                  text run at (2,0) width 38: "Ruby"
-          RenderTableSection {RT} at (0,0) size 42x14
-            RenderTableRow (anonymous) at (0,0) size 42x14
-              RenderTableCell (anonymous) at (0,0) size 42x14 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 42x14
-                  text run at (0,0) width 42: "guide text"
-        RenderText {#text} at (285,23) size 63x22
-          text run at (285,23) width 63: " markup."
+      RenderBlock (anonymous) at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 752x42
+          text run at (0,0) width 752: "Test that <ruby> rendered as inline-table (or somesuch) is not affected by ruby rendering. Both <div> below"
+          text run at (0,21) width 159: "should look the same. "
+        RenderBR {BR} at (159,37) size 0x0
+        RenderBR {BR} at (0,42) size 0x21
+      RenderBlock {DIV} at (3,66) size 778x52 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+        RenderText {#text} at (9,22) size 237x21
+          text run at (9,22) width 237: "This is some XHTML1.1 text with "
+        RenderTable {SPAN} at (246,9) size 46x34
+          RenderTableSection {SPAN} at (0,13) size 46x21
+            RenderTableRow (anonymous) at (0,0) size 46x21
+              RenderTableCell (anonymous) at (0,0) size 46x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (4,0) size 38x21
+                  text run at (4,0) width 38: "Ruby"
+          RenderTableSection {SPAN} at (0,0) size 46x13
+            RenderTableRow (anonymous) at (0,0) size 46x13
+              RenderTableCell (anonymous) at (0,0) size 46x13 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 46x13
+                  text run at (0,0) width 46: "guide text"
+        RenderText {#text} at (292,22) size 61x21
+          text run at (292,22) width 61: " markup."
+      RenderBlock (anonymous) at (0,121) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (3,145) size 778x52 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+        RenderText {#text} at (9,22) size 237x21
+          text run at (9,22) width 237: "This is some XHTML1.1 text with "
+        RenderTable {RUBY} at (246,9) size 46x34
+          RenderTableSection {RB} at (0,13) size 46x21
+            RenderTableRow (anonymous) at (0,0) size 46x21
+              RenderTableCell (anonymous) at (0,0) size 46x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (4,0) size 38x21
+                  text run at (4,0) width 38: "Ruby"
+          RenderTableSection {RT} at (0,0) size 46x13
+            RenderTableRow (anonymous) at (0,0) size 46x13
+              RenderTableCell (anonymous) at (0,0) size 46x13 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 46x13
+                  text run at (0,0) width 46: "guide text"
+        RenderText {#text} at (292,22) size 61x21
+          text run at (292,22) width 61: " markup."

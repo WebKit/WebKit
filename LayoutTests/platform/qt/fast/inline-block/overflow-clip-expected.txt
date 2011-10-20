@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 778x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 352x22
-              text run at (111,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
-          RenderText {#text} at (463,0) size 778x44
-            text run at (463,0) width 315: " REGRESSION (r13595): Inline block's clipped"
-            text run at (0,22) width 229: "overflow increases table row height"
-        RenderText {#text} at (229,22) size 4x22
-          text run at (229,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 288x22
-          text run at (0,0) width 288: "You should see a green square and no red."
-      RenderTable {TABLE} at (0,98) size 100x100 [bgcolor=#FF0000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 770x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 379x21
+              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
+          RenderText {#text} at (494,0) size 770x42
+            text run at (494,0) width 276: " REGRESSION (r13595): Inline block's"
+            text run at (0,21) width 306: "clipped overflow increases table row height"
+        RenderText {#text} at (306,21) size 4x21
+          text run at (306,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 306x21
+          text run at (0,0) width 306: "You should see a green square and no red."
+      RenderTable {TABLE} at (0,95) size 100x100 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x100
             RenderTableCell {TD} at (0,0) size 100x100 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 0x0
-layer at (8,106) size 100x100 scrollHeight 200
+layer at (8,103) size 100x100 scrollHeight 200
   RenderBlock {DIV} at (0,0) size 100x100
     RenderBlock {DIV} at (0,0) size 100x200 [bgcolor=#008000]

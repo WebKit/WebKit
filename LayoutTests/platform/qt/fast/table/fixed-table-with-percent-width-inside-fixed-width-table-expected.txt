@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x68 [bgcolor=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 784x68
-          RenderTableRow {TR} at (0,2) size 784x64
-            RenderTableCell {TD} at (2,2) size 780x64 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 778x62
-                RenderBlock (anonymous) at (0,0) size 778x22
-                  RenderText {#text} at (0,0) size 25x22
-                    text run at (0,0) width 25: "boo"
-                RenderTable {TABLE} at (0,22) size 100x40 [bgcolor=#800080]
-                  RenderTableSection {TBODY} at (0,0) size 100x40
-                    RenderTableRow {TR} at (0,2) size 100x36
-                      RenderTableCell {TD} at (2,2) size 96x36 [r=0 c=0 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 94x34 [bgcolor=#0000FF]
-                          RenderTableSection {TBODY} at (0,0) size 94x34
-                            RenderTableRow {TR} at (0,2) size 94x30
-                              RenderTableCell {TD} at (2,2) size 90x30 [r=0 c=0 rs=1 cs=1]
-                                RenderTable {TABLE} at (1,1) size 88x28 [bgcolor=#008000]
-                                  RenderTableSection {TBODY} at (0,0) size 88x28
-                                    RenderTableRow {TR} at (0,2) size 88x24
-                                      RenderTableCell {TD} at (2,2) size 84x24 [r=0 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (1,1) size 55x22
-                                          text run at (1,1) width 55: "Content"
+      RenderTable {TABLE} at (0,0) size 784x66 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 784x66
+          RenderTableRow {TR} at (0,2) size 784x62
+            RenderTableCell {TD} at (2,2) size 780x62 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 778x60
+                RenderBlock (anonymous) at (0,0) size 778x21
+                  RenderText {#text} at (0,0) size 27x21
+                    text run at (0,0) width 27: "boo"
+                RenderTable {TABLE} at (0,21) size 100x39 [bgcolor=#800080]
+                  RenderTableSection {TBODY} at (0,0) size 100x39
+                    RenderTableRow {TR} at (0,2) size 100x35
+                      RenderTableCell {TD} at (2,2) size 96x35 [r=0 c=0 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 94x33 [bgcolor=#0000FF]
+                          RenderTableSection {TBODY} at (0,0) size 94x33
+                            RenderTableRow {TR} at (0,2) size 94x29
+                              RenderTableCell {TD} at (2,2) size 90x29 [r=0 c=0 rs=1 cs=1]
+                                RenderTable {TABLE} at (1,1) size 88x27 [bgcolor=#008000]
+                                  RenderTableSection {TBODY} at (0,0) size 88x27
+                                    RenderTableRow {TR} at (0,2) size 88x23
+                                      RenderTableCell {TD} at (2,2) size 84x23 [r=0 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (1,1) size 56x21
+                                          text run at (1,1) width 56: "Content"

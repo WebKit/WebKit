@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 740x32 [bgcolor=#008000]
-        RenderTableSection {TBODY} at (0,0) size 740x32
-          RenderTableRow {TR} at (0,2) size 740x28
-            RenderTableCell {TD} at (2,16) size 1x0 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (5,2) size 733x28 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 586x28
-                RenderTableSection {TBODY} at (0,0) size 586x28
-                  RenderTableRow {TR} at (0,2) size 586x24
-                    RenderTableCell {TD} at (2,2) size 582x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 111x22
-                        text run at (1,1) width 111: "here is some text"
+      RenderTable {TABLE} at (0,0) size 740x31 [bgcolor=#008000]
+        RenderTableSection {TBODY} at (0,0) size 740x31
+          RenderTableRow {TR} at (0,2) size 740x27
+            RenderTableCell {TD} at (2,15) size 1x0 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (5,2) size 733x27 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 586x27
+                RenderTableSection {TBODY} at (0,0) size 586x27
+                  RenderTableRow {TR} at (0,2) size 586x23
+                    RenderTableCell {TD} at (2,2) size 582x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 120x21
+                        text run at (1,1) width 120: "here is some text"

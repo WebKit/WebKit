@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (0,0) size 215x110 [border: (2px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 211x22
+      RenderBlock (floating) {DIV} at (0,0) size 223x109 [border: (2px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 219x21
           RenderText {#text} at (0,0) size 0x0
           RenderImage {IMG} at (2,2) size 100x100 [bgcolor=#008000]
-          RenderText {#text} at (102,86) size 111x22
-            text run at (102,86) width 111: "This is some text"
+          RenderText {#text} at (102,86) size 119x21
+            text run at (102,86) width 119: "This is some text"

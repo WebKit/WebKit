@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 310x232 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 306x228
-          RenderTableRow {TR} at (0,2) size 306x224
-            RenderTableCell {TD} at (2,2) size 237x224 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (101,101) size 35x22
-                text run at (101,101) width 35: "Hello"
-            RenderTableCell {TD} at (241,102) size 63x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 61x22
-                text run at (1,1) width 61: "Goodbye"
-      RenderBlock {DIV} at (0,232) size 784x0
+      RenderTable {TABLE} at (0,0) size 317x231 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 313x227
+          RenderTableRow {TR} at (0,2) size 313x223
+            RenderTableCell {TD} at (2,2) size 240x223 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (101,101) size 38x21
+                text run at (101,101) width 38: "Hello"
+            RenderTableCell {TD} at (244,102) size 67x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 65x21
+                text run at (1,1) width 65: "Goodbye"
+      RenderBlock {DIV} at (0,231) size 784x0

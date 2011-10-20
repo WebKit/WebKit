@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 742x105
-        RenderTableSection {TBODY} at (0,0) size 742x105
-          RenderTableRow {TR} at (0,2) size 742x101
-            RenderTableCell {TD} at (2,40) size 311x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 309x22
-                text run at (1,1) width 309: "This text should be to the left of the cat image."
-            RenderTableCell {TD} at (315,2) size 100x101 [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 766x105
+        RenderTableSection {TBODY} at (0,0) size 766x105
+          RenderTableRow {TR} at (0,2) size 766x101
+            RenderTableCell {TD} at (2,41) size 324x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 322x21
+                text run at (1,1) width 322: "This text should be to the left of the cat image."
+            RenderTableCell {TD} at (328,2) size 100x101 [r=0 c=1 rs=1 cs=1]
               RenderImage {OBJECT} at (1,1) size 98x99
-            RenderTableCell {TD} at (417,40) size 323x24 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 321x22
-                text run at (1,1) width 321: "This text should be to the right of the cat image."
+            RenderTableCell {TD} at (430,41) size 334x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 332x21
+                text run at (1,1) width 332: "This text should be to the right of the cat image."

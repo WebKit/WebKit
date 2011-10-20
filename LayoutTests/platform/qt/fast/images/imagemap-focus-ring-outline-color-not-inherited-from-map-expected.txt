@@ -3,17 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 760x44
-          text run at (0,0) width 760: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that the focus ring color is not"
-          text run at (0,22) width 289: "inherited for an <area> (by default) as per "
-        RenderInline {A} at (0,0) size 754x44 [color=#0000EE]
-          RenderText {#text} at (289,22) size 754x44
-            text run at (289,22) width 465: "section 18.4 \"Dynamic outlines: the 'outline' property\" of the CSS2.1"
-            text run at (0,44) width 29: "spec"
-        RenderText {#text} at (29,44) size 677x22
-          text run at (29,44) width 677: ". This test FAILED if a red-colored focus ring is drawn around the <area> in the imagemap (below)."
-      RenderBlock (anonymous) at (0,82) size 784x128
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 770x42
+          text run at (0,0) width 770: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that the focus ring color is"
+          text run at (0,21) width 321: "not inherited for an <area> (by default) as per "
+        RenderInline {A} at (0,0) size 739x42 [color=#0000EE]
+          RenderText {#text} at (321,21) size 739x42
+            text run at (321,21) width 418: "section 18.4 \"Dynamic outlines: the 'outline' property\" of the"
+            text run at (0,42) width 94: "CSS2.1 spec"
+        RenderText {#text} at (94,42) size 726x42
+          text run at (94,42) width 632: ". This test FAILED if a red-colored focus ring is drawn around the <area> in the imagemap"
+          text run at (0,63) width 57: "(below)."
+      RenderBlock (anonymous) at (0,100) size 784x128
         RenderInline {MAP} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

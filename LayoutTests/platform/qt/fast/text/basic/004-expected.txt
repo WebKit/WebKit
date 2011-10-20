@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {P} at (0,16) size 672x26 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 668x22
-          text run at (2,2) width 668: "There should be 30px of word spacing between each word."
+      RenderBlock (floating) {P} at (0,16) size 692x25 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 688x21
+          text run at (2,2) width 688: "There should be 30px of word spacing between each word."
       RenderBlock {DIV} at (0,0) size 784x100
-      RenderTable {TABLE} at (0,100) size 100x158
-        RenderTableSection {TBODY} at (0,0) size 100x158
-          RenderTableRow {TR} at (0,0) size 100x158
-            RenderTableCell {TD} at (0,0) size 100x158 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (0,0) size 100x158 [border: (2px solid #008000)]
-                RenderText {#text} at (2,2) size 90x154
-                  text run at (2,2) width 41: "There"
-                  text run at (2,24) width 80: "should be"
-                  text run at (2,46) width 65: "15px of"
-                  text run at (2,68) width 36: "word"
-                  text run at (2,90) width 51: "spacing"
-                  text run at (2,112) width 56: "between"
-                  text run at (2,134) width 90: "each word."
+      RenderTable {TABLE} at (0,100) size 100x151
+        RenderTableSection {TBODY} at (0,0) size 100x151
+          RenderTableRow {TR} at (0,0) size 100x151
+            RenderTableCell {TD} at (0,0) size 100x151 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (0,0) size 100x151 [border: (2px solid #008000)]
+                RenderText {#text} at (2,2) size 93x147
+                  text run at (2,2) width 42: "There"
+                  text run at (2,23) width 85: "should be"
+                  text run at (2,44) width 67: "15px of"
+                  text run at (2,65) width 35: "word"
+                  text run at (2,86) width 56: "spacing"
+                  text run at (2,107) width 61: "between"
+                  text run at (2,128) width 93: "each word."

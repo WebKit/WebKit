@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 164x22
-          text run at (0,0) width 164: "This is a repaint test for "
-        RenderInline {I} at (0,0) size 784x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (164,0) size 304x22
-              text run at (164,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11277"
-          RenderText {#text} at (468,0) size 784x44
-            text run at (468,0) width 4: " "
-            text run at (472,0) width 312: "REGRESSION: Incomplete repaint of overflow"
-            text run at (0,22) width 130: "areas when deleting"
-        RenderText {#text} at (130,22) size 4x22
-          text run at (130,22) width 4: "."
-      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
-layer at (8,78) size 80x36
-  RenderBlock {DIV} at (0,70) size 80x36
-    RenderText {#text} at (0,0) size 78x22
-      text run at (0,0) width 78: "Lorem ipsu"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 168x21
+          text run at (0,0) width 168: "This is a repaint test for "
+        RenderInline {I} at (0,0) size 765x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (168,0) size 329x21
+              text run at (168,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=11277"
+          RenderText {#text} at (497,0) size 765x42
+            text run at (497,0) width 4: " "
+            text run at (501,0) width 264: "REGRESSION: Incomplete repaint of"
+            text run at (0,21) width 208: "overflow areas when deleting"
+        RenderText {#text} at (208,21) size 4x21
+          text run at (208,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+layer at (8,76) size 80x36
+  RenderBlock {DIV} at (0,68) size 80x36
+    RenderText {#text} at (0,0) size 79x21
+      text run at (0,0) width 79: "Lorem ipsu"

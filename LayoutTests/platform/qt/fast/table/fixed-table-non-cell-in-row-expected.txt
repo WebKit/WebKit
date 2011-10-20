@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 67x22
-          text run at (0,0) width 67: "This tests "
-        RenderInline {A} at (0,0) size 62x22 [color=#0000EE]
-          RenderText {#text} at (67,0) size 62x22
-            text run at (67,0) width 62: "bug 6960"
-        RenderText {#text} at (129,0) size 770x44
-          text run at (129,0) width 641: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can arise"
-          text run at (0,22) width 132: "with forms, at least."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 457x22
-          text run at (0,0) width 457: "The test is simply that the empty table below does not cause a crash."
-      RenderTable {TABLE} at (0,98) size 100x100 [border: (3px solid #FF0000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 72x21
+          text run at (0,0) width 72: "This tests "
+        RenderInline {A} at (0,0) size 67x21 [color=#0000EE]
+          RenderText {#text} at (72,0) size 67x21
+            text run at (72,0) width 67: "bug 6960"
+        RenderText {#text} at (139,0) size 768x42
+          text run at (139,0) width 629: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can"
+          text run at (0,21) width 174: "arise with forms, at least."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 484x21
+          text run at (0,0) width 484: "The test is simply that the empty table below does not cause a crash."
+      RenderTable {TABLE} at (0,95) size 100x100 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 94x94
           RenderTableRow {TR} at (0,2) size 94x90
             RenderTableCell {TD} at (2,46) size 90x2 [r=0 c=0 rs=1 cs=1]

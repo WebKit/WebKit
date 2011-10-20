@@ -3,18 +3,18 @@ layer at (0,0) size 810x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x560
-      RenderBlock {DIV} at (0,0) size 784x110 [border: (3px solid #FFA500)]
+      RenderBlock {DIV} at (0,0) size 784x109 [border: (3px solid #FFA500)]
         RenderBlock (floating) {DIV} at (11,11) size 122x122 [bgcolor=#FFA500] [border: (3px solid #FFA500)]
-        RenderListItem {DIV} at (11,11) size 762x88 [border: (3px solid #FFA500)]
-          RenderListItem {DIV} at (11,11) size 740x66 [border: (3px solid #FFA500)]
-            RenderListItem {DIV} at (11,11) size 718x44 [border: (3px solid #FFA500)]
-              RenderListMarker at (103,11) size 7x22: bullet
-              RenderListMarker at (103,11) size 7x22: bullet
-              RenderListMarker at (103,11) size 7x22: bullet
-              RenderText {#text} at (132,11) size 92x22
+        RenderListItem {DIV} at (11,11) size 762x87 [border: (3px solid #FFA500)]
+          RenderListItem {DIV} at (11,11) size 740x65 [border: (3px solid #FFA500)]
+            RenderListItem {DIV} at (11,11) size 718x43 [border: (3px solid #FFA500)]
+              RenderListMarker at (103,11) size 7x21: bullet
+              RenderListMarker at (103,11) size 7x21: bullet
+              RenderListMarker at (103,11) size 7x21: bullet
+              RenderText {#text} at (132,11) size 92x21
                 text run at (132,11) width 92: "List item text."
-      RenderBlock {UL} at (0,126) size 784x126
-        RenderListItem {LI} at (40,0) size 744x126 [border: (2px solid #FF0000)]
-          RenderListMarker at (755,52) size 7x22: bullet
-          RenderText {#text} at (159,52) size 533x22
-            text run at (159,52) width 533: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl asjdlksajdk"
+      RenderBlock {UL} at (0,125) size 784x125
+        RenderListItem {LI} at (40,0) size 744x125 [border: (2px solid #FF0000)]
+          RenderListMarker at (755,52) size 7x21: bullet
+          RenderText {#text} at (147,52) size 545x21
+            text run at (147,52) width 545: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl asjdlksajdk"

@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 399x22
-          text run at (0,0) width 399: "Tests selection painting on a transformed, replaced element"
-        RenderBR {BR} at (399,16) size 0x0
-        RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
-          RenderText {#text} at (0,22) size 322x22
-            text run at (0,22) width 322: "https://bugs.webkit.org/show_bug.cgi?id=15739"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 422x21
+          text run at (0,0) width 422: "Tests selection painting on a transformed, replaced element"
+        RenderBR {BR} at (422,16) size 0x0
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (0,21) size 337x21
+            text run at (0,21) width 337: "https://bugs.webkit.org/show_bug.cgi?id=15739"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 551x22
-          text run at (0,0) width 551: "You should see a dark green square rotated 45\x{B0}. If you see any red, the test failed."
-      RenderBlock {DIV} at (0,98) size 784x150
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 581x21
+          text run at (0,0) width 581: "You should see a dark green square rotated 45\x{B0}. If you see any red, the test failed."
+      RenderBlock {DIV} at (0,95) size 784x150
         RenderText {#text} at (0,0) size 0x0
-layer at (58,156) size 100x100
+layer at (58,153) size 100x100
   RenderImage {IMG} at (50,50) size 100x100 [bgcolor=#FF0000]
 selection start: position 0 of child 1 {IMG} of child 4 {DIV} of body
 selection end:   position 1 of child 1 {IMG} of child 4 {DIV} of body

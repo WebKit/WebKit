@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x390
-  RenderBlock {HTML} at (0,0) size 800x390
-    RenderBody {BODY} at (8,16) size 784x366
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 109x22
-          text run at (0,0) width 109: "Repaint test for "
-        RenderInline {I} at (0,0) size 740x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (109,0) size 304x22
-              text run at (109,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=10699"
-          RenderText {#text} at (413,0) size 740x44
-            text run at (413,0) width 4: " "
-            text run at (417,0) width 323: "div with border-radius does not redraw properly if"
-            text run at (0,22) width 177: "element inside div is resized"
-        RenderText {#text} at (177,22) size 4x22
-          text run at (177,22) width 4: "."
-      RenderBlock {DIV} at (0,60) size 222x142 [border: (1px solid #0000FF)]
+layer at (0,0) size 800x387
+  RenderBlock {HTML} at (0,0) size 800x387
+    RenderBody {BODY} at (8,16) size 784x363
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 111x21
+          text run at (0,0) width 111: "Repaint test for "
+        RenderInline {I} at (0,0) size 777x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (111,0) size 329x21
+              text run at (111,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=10699"
+          RenderText {#text} at (440,0) size 777x42
+            text run at (440,0) width 4: " "
+            text run at (444,0) width 333: "div with border-radius does not redraw properly"
+            text run at (0,21) width 213: "if element inside div is resized"
+        RenderText {#text} at (213,21) size 4x21
+          text run at (213,21) width 4: "."
+      RenderBlock {DIV} at (0,58) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x68 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x40 [bgcolor=#C0C0C0]
-      RenderBlock (anonymous) at (0,202) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,224) size 222x142 [border: (1px solid #0000FF)]
+      RenderBlock (anonymous) at (0,200) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,221) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x88 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x60 [bgcolor=#C0C0C0]

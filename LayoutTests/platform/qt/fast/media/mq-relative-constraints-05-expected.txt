@@ -3,12 +3,12 @@ layer at (0,0) size 808x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock {P} at (0,0) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 383x22
-          text run at (0,0) width 383: "This text should be green if viewport is wider than 30em."
-      RenderBlock {DIV} at (0,38) size 480x22 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 128x22
-          text run at (0,0) width 128: "div of length 30 em"
-      RenderBlock {DIV} at (0,60) size 800x22 [bgcolor=#ADD8E6]
-        RenderText {#text} at (0,0) size 129x22
-          text run at (0,0) width 129: "div of length 800px"
+      RenderBlock {P} at (0,0) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 397x21
+          text run at (0,0) width 397: "This text should be green if viewport is wider than 30em."
+      RenderBlock {DIV} at (0,37) size 480x21 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 134x21
+          text run at (0,0) width 134: "div of length 30 em"
+      RenderBlock {DIV} at (0,58) size 800x21 [bgcolor=#ADD8E6]
+        RenderText {#text} at (0,0) size 134x21
+          text run at (0,0) width 134: "div of length 800px"

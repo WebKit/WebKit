@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 784: "Test that text with 0px font size is not displayed, even if a non-zero minimum font size setting is specified. On success,"
-          text run at (0,22) width 389: "this paragraph should be the only text visible on the page."
-      RenderBlock {DIV} at (0,60) size 784x0 [color=#FF0000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 762: "Test that text with 0px font size is not displayed, even if a non-zero minimum font size setting is specified. On"
+          text run at (0,21) width 473: "success, this paragraph should be the only text visible on the page."
+      RenderBlock {DIV} at (0,58) size 784x0 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
           text run at (0,0) width 0: "FAIL"
-      RenderBlock {DIV} at (0,60) size 784x0 [color=#FF0000]
+      RenderBlock {DIV} at (0,58) size 784x0 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
           text run at (0,0) width 0: "FAIL"

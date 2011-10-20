@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x308
-  RenderBlock {HTML} at (0,0) size 800x308
-    RenderBody {BODY} at (8,16) size 784x284
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+layer at (0,0) size 800x305
+  RenderBlock {HTML} at (0,0) size 800x305
+    RenderBody {BODY} at (8,16) size 784x281
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
-          RenderText {#text} at (57,0) size 322x22
-            text run at (57,0) width 322: "https://bugs.webkit.org/show_bug.cgi?id=17840"
-        RenderText {#text} at (379,0) size 317x22
-          text run at (379,0) width 317: ". The rotated box should be correctly redrawn."
-      RenderBlock (anonymous) at (0,38) size 784x22
-      RenderBlock (anonymous) at (0,60) size 784x202
-      RenderBlock (anonymous) at (0,262) size 784x22
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 337x21
+            text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=17840"
+        RenderText {#text} at (394,0) size 323x21
+          text run at (394,0) width 323: ". The rotated box should be correctly redrawn."
+      RenderBlock (anonymous) at (0,37) size 784x21
+      RenderBlock (anonymous) at (0,58) size 784x202
+      RenderBlock (anonymous) at (0,260) size 784x21
         RenderText {#text} at (0,0) size 0x0
-layer at (18,114) size 89x62
-  RenderInline (relative positioned) {SPAN} at (0,0) size 89x62 [bgcolor=#DDDDDD]
-    RenderText {#text} at (20,0) size 69x22
-      text run at (20,0) width 69: "Container"
-layer at (108,176) size 202x202
+layer at (18,113) size 90x61
+  RenderInline (relative positioned) {SPAN} at (0,0) size 90x61 [bgcolor=#DDDDDD]
+    RenderText {#text} at (20,0) size 70x21
+      text run at (20,0) width 70: "Container"
+layer at (108,174) size 202x202
   RenderBlock (relative positioned) {DIV} at (0,0) size 202x202 [bgcolor=#CCCCCC] [border: (1px solid #000000)]
-layer at (18,338) size 20x62
-  RenderInline (relative positioned) {SPAN} at (0,0) size 20x62 [bgcolor=#DDDDDD]
+layer at (18,336) size 20x61
+  RenderInline (relative positioned) {SPAN} at (0,0) size 20x61 [bgcolor=#DDDDDD]
