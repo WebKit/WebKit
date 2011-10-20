@@ -1,3 +1,16 @@
+2011-10-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Streamline wk1 documentation build
+        https://bugs.webkit.org/show_bug.cgi?id=70447
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: include the documentation's GNUmakefile.am;
+        * autogen.sh: we no longer call gtkdocize, since we now ship
+          a modified gtk-doc.make;
+        * configure.ac: no longer generate a separate GNUmakefile for
+          the documentation build.
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)

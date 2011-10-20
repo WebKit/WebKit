@@ -383,11 +383,7 @@ EXTRA_DIST += \
 	$(WebKit)/ChangeLog \
 	$(WebKit)/NEWS \
 	$(WebKit)/webkitmarshal.list \
-	$(WebKit)/docs/GNUmakefile.* \
-	$(WebKit)/docs/webkitenvironment.xml \
-	$(WebKit)/docs/webkitgtk-docs.sgml \
-	$(WebKit)/docs/webkitgtk-sections.txt \
-	$(WebKit)/docs/version.xml.in \
+	$(WebKit)/GNUmakefile.gtk-doc.am \
 	$(WebKit)/po/* \
 	$(WebKit)/resources/* \
 	$(WebKit)/tests/resources/* \
@@ -591,8 +587,6 @@ CLEANFILES += \
 	$(top_builddir)/Programs/GtkLauncher
 
 DISTCLEANFILES += \
-	$(top_builddir)/Source/WebKit/gtk/docs/version.xml \
-	$(top_builddir)/Source/WebKit/gtk/docs/GNUmakefile \
 	$(top_builddir)/Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
 	$(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml \
 	$(top_builddir)/Source/WebKit/gtk/webkit/webkitversion.h

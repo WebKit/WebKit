@@ -74,55 +74,51 @@ IGNORE_HFILES = \
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
 HTML_IMAGES=
 
-# Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
-# e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files=webkitenvironment.xml
-
-# SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
-# These files must be listed here *and* in content_files
-# e.g. expand_content_files=running.sgml
-expand_content_files=
-
 # CFLAGS and LDFLAGS for compiling gtkdoc-scangobj with your library.
 # Only needed if you are using gtkdoc-scangobj to dynamically query widget
 # signals and properties.
 # e.g. INCLUDES=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
 INCLUDES= \
-	-I$(top_srcdir)/Source/WebKit/gtk \
-	-I$(top_builddir)/Source/WebKit/gtk \
+	-I$(abs_srcdir)/Source/WebKit/gtk \
+	-I$(abs_builddir)/Source/WebKit/gtk \
 	$(global_cppflags) \
 	$(global_cflags) \
-	-I$(top_srcdir)/Source \
-	-I$(top_srcdir)/Source/JavaScriptCore \
-	-I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
-	-I$(top_srcdir)/Source/JavaScriptCore/parser \
-	-I$(top_srcdir)/Source/JavaScriptCore/wtf \
-	-I$(top_builddir)/DerivedSources \
-	-I$(top_srcdir)/Source/WebCore/platform/network/soup/cache \
+	-I$(abs_srcdir)/Source \
+	-I$(abs_srcdir)/Source/JavaScriptCore \
+	-I$(abs_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
+	-I$(abs_srcdir)/Source/JavaScriptCore/parser \
+	-I$(abs_srcdir)/Source/JavaScriptCore/wtf \
+	-I$(abs_builddir)/DerivedSources \
+	-I$(abs_srcdir)/Source/WebCore/platform/network/soup/cache \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 GTKDOC_LIBS= \
-	$(top_builddir)/libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(top_builddir)/libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(abs_builddir)/libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(abs_builddir)/libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBSOUP_LIBS)
 
-# This includes the standard gtk-doc make rules, copied by gtkdocize.
-include $(top_srcdir)/gtk-doc.make
+# This includes our custom gtk-doc make rules.
+include $(top_srcdir)/Source/WebKit/gtk/GNUmakefile.gtk-doc.am
 
 # Other files to distribute
 # e.g. EXTRA_DIST += version.xml.in
-EXTRA_DIST +=
+EXTRA_DIST += \
+	$(WebKit)/docs/webkitenvironment.xml \
+	$(WebKit)/docs/webkitgtk-docs.sgml \
+	$(WebKit)/docs/webkitgtk-sections.txt \
+	$(WebKit)/docs/version.xml.in
 
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
-#DISTCLEANFILES +=
+DISTCLEANFILES += \
+	$(top_builddir)/Source/WebKit/gtk/docs/version.xml
 
 # Comment this out if you want your docs-status tested during 'make check'
 #TESTS = $(GTKDOC_CHECK)

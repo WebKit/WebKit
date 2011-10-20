@@ -12,7 +12,6 @@ rm -f $top_srcdir/autom4te.cache
 
 touch README INSTALL
 
-gtkdocize --copy > /dev/null 2>&1 || echo "Warning: not running gtk-docize."
 if test -z `which autoreconf`; then
     echo "Error: autoreconf not found, please install it."
     exit 1

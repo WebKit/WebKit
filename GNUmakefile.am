@@ -194,18 +194,19 @@ endif
 
 EXTRA_DIST += \
 	$(srcdir)/Source/autotools/symbols.filter \
-	$(srcdir)/gtk-doc.make \
 	$(srcdir)/Source/WebKit/LICENSE
 
 # Include module makefiles
 if USE_JSC
 include Source/JavaScriptCore/GNUmakefile.am
 endif
+
 include Source/WebCore/GNUmakefile.am
 include Source/WebKit/gtk/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Tools/GNUmakefile.am
 include Source/WebKit/gtk/po/GNUmakefile.am
+include Source/WebKit/gtk/docs/GNUmakefile.am
 include Tools/DumpRenderTree/gtk/GNUmakefile.ImageDiff.am
 
 if ENABLE_WEBKIT2

@@ -1194,10 +1194,7 @@ GNUmakefile
 
 AC_CONFIG_FILES([
 Source/WebKit/gtk/webkit/webkitversion.h
-Source/WebKit/gtk/docs/GNUmakefile
-Source/WebKit/gtk/docs/version.xml
-Source/WebKit2/UIProcess/API/gtk/docs/GNUmakefile
-Source/WebKit2/UIProcess/API/gtk/docs/version.xml
+Documentation/version.xml:Source/WebKit/gtk/docs/version.xml.in
 ])
 
 AC_CONFIG_FILES([
@@ -1213,6 +1210,8 @@ Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaS
 if test "$enable_webkit2" = "yes"; then
     AC_CONFIG_FILES([
     Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in
+    Source/WebKit2/UIProcess/API/gtk/docs/version.xml
+    Source/WebKit2/UIProcess/API/gtk/docs/GNUmakefile
     ]
     ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
     )
