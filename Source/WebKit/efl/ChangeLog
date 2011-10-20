@@ -1,3 +1,25 @@
+2011-10-19  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        [EFL] Fix typos on ewk_view and ewk_js.
+        https://bugs.webkit.org/show_bug.cgi?id=70430
+
+        Unreviewed build fix.
+
+        Fixes for typos that were introduced when renaming variables to follow
+        webkit coding style.
+
+        * ewk/ewk_js.cpp:
+        (ewk_js_property_set):
+        (ewk_js_class_new):
+        (ewk_js_npobject_to_object):
+        (ewk_js_object_new):
+        (ewk_js_object_invoke):
+        (ewk_js_object_type_get):
+        (ewk_js_object_type_set):
+        (ewk_js_variant_free):
+        * ewk/ewk_view.cpp:
+        (ewk_view_js_object_add):
+
 2011-10-18  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Clear list of visited pages before each test.

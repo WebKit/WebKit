@@ -29,8 +29,8 @@
 #include <string.h>
 
 #define EINA_MAGIC_CHECK_OR_RETURN(o, ...) \
-    if (!EINA_MAGIC_CHECK(obj, EWK_JS_OBJECT_MAGIC)) { \
-        EINA_MAGIC_FAIL(obj, EWK_JS_OBJECT_MAGIC); \
+    if (!EINA_MAGIC_CHECK(o, EWK_JS_OBJECT_MAGIC)) { \
+        EINA_MAGIC_FAIL(o, EWK_JS_OBJECT_MAGIC); \
         return __VA_ARGS__; \
     }
 
@@ -152,7 +152,7 @@ static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPV
     Ewk_JS_Property* prop;
     bool fail = false;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(npObj, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
     EINA_MAGIC_CHECK_OR_RETURN(obj, false);
 
     if (!_NPN_IdentifierIsString(name)) {
@@ -340,20 +340,20 @@ Ewk_JS_Class* ewk_js_class_new(const Ewk_JS_Class_Meta* jsMetaClass)
     }
 
     cls->meta = jsMetaClass;
-    cls->default_prop = meta->default_prop;
+    cls->default_prop = cls->meta->default_prop;
 
     // Don't free methods since they point to meta class methods(will be freed when meta class is freed).
     cls->methods = eina_hash_pointer_new(0);
-    for (int i = 0; meta->methods && meta->methods[i].name; i++) {
-        NPIdentifier id = _NPN_GetStringIdentifier(meta->methods[i].name);
-        eina_hash_add(cls->methods, id, &meta->methods[i]);
+    for (int i = 0; cls->meta->methods && cls->meta->methods[i].name; i++) {
+        NPIdentifier id = _NPN_GetStringIdentifier(cls->meta->methods[i].name);
+        eina_hash_add(cls->methods, id, &cls->meta->methods[i]);
     }
 
-    // Don't free properties since they point to meta class properties(will be freed when meta class is freed).
+    // Don't free properties since they point to cls->meta class properties(will be freed when cls->meta class is freed).
     cls->properties = eina_hash_pointer_new(0);
-    for (int i = 0; meta->properties && meta->properties[i].name; i++) {
-        NPIdentifier id = _NPN_GetStringIdentifier(meta->properties[i].name);
-        eina_hash_add(cls->properties, id, &meta->properties[i]);
+    for (int i = 0; cls->meta->properties && cls->meta->properties[i].name; i++) {
+        NPIdentifier id = _NPN_GetStringIdentifier(cls->meta->properties[i].name);
+        eina_hash_add(cls->properties, id, &cls->meta->properties[i]);
     }
 
     return cls;
@@ -401,7 +401,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
     if (EINA_MAGIC_CHECK(reinterpret_cast<Ewk_JS_Object*>(npObject), EWK_JS_OBJECT_MAGIC))
         return reinterpret_cast<Ewk_JS_Object*>(npObject);
 
-    if (!_NPN_Enumerate(0, np_obj, &values, &np_props_count))
+    if (!_NPN_Enumerate(0, npObject, &values, &np_props_count))
         return 0;
 
     cls = static_cast<Ewk_JS_Class*>(malloc(sizeof(Ewk_JS_Class)));
@@ -420,7 +420,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
     cls->methods = eina_hash_pointer_new(0);
     cls->properties = eina_hash_pointer_new(reinterpret_cast<Eina_Free_Cb>(ewk_js_property_free));
     for (uint32_t i = 0; i < np_props_count; i++) {
-        if (_NPN_HasProperty(0, np_obj, values[i])) {
+        if (_NPN_HasProperty(0, npObject, values[i])) {
             NPVariant var;
             Ewk_JS_Property* prop = static_cast<Ewk_JS_Property*>(calloc(sizeof(Ewk_JS_Property), 1));
             if (!prop) {
@@ -428,7 +428,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
                 goto error;
             }
 
-            _NPN_GetProperty(0, np_obj, values[i], &var);
+            _NPN_GetProperty(0, npObject, values[i], &var);
             ewk_js_npvariant_to_variant(&(prop->value), &var);
             prop->name = _NPN_UTF8FromIdentifier(values[i]);
             eina_hash_add(cls->properties, values[i], prop);
@@ -529,7 +529,7 @@ Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
     Ewk_JS_Object* obj;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(meta_cls, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsMetaClass, 0);
 
     obj = static_cast<Ewk_JS_Object*>(malloc(sizeof(Ewk_JS_Object)));
     if (!obj) {
@@ -637,7 +637,7 @@ Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, in
     if (argCount)
         EINA_SAFETY_ON_NULL_RETURN_VAL(args, EINA_FALSE);
 
-    np_args = static_cast<NPVariant*>(malloc(sizeof(NPVariant)  *arg_count));
+    np_args = static_cast<NPVariant*>(malloc(sizeof(NPVariant)  *argCount));
     if (!np_args) {
         ERR("Could not allocate memory to method arguments");
         return EINA_FALSE;
@@ -660,9 +660,9 @@ end:
 Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, EWK_JS_OBJECT_OBJECT);
-    EINA_MAGIC_CHECK_OR_RETURN(jsOobject, EWK_JS_OBJECT_OBJECT);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, EWK_JS_OBJECT_OBJECT);
 
-    return obj->type;
+    return jsObject->type;
 }
 
 void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
@@ -670,13 +670,13 @@ void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
     EINA_SAFETY_ON_NULL_RETURN(jsObject);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject);
 
-    object->type = type;
+    jsObject->type = type;
 }
 
 void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
 {
     EINA_SAFETY_ON_NULL_RETURN(jsVariant);
-    if (variant->type == EWK_JS_VARIANT_STRING)
+    if (jsVariant->type == EWK_JS_VARIANT_STRING)
         free(jsVariant->value.s);
     else if (jsVariant->type == EWK_JS_VARIANT_OBJECT)
         ewk_js_object_free(jsVariant->value.o);
