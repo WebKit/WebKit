@@ -18,6 +18,9 @@
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
         },
+        "GStreamerGraphics": {
+            "filename": r"Source/WebCore/platform/graphics/gstreamer/",
+        },
         "WebIDL": {
             "filename": r"Source/WebCore/(?!inspector).*\.idl"
         },
@@ -72,6 +75,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "GStreamerGraphics": [ "pnormand@igalia.com", ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
