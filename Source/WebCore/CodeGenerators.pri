@@ -783,7 +783,7 @@ addExtraCompiler(fontnames)
 
 # GENERATOR 5-E:
 eventfactory.output = $${WC_GENERATED_SOURCES_DIR}/EventFactory.cpp
-xmlnsnames.input = EVENT_FACTORY
+eventfactory.input = EVENT_FACTORY
 eventfactory.wkScript = $$PWD/dom/make_event_factory.pl
 eventfactory.commands = perl -I$$PWD/bindings/scripts $$fontnames.wkScript --events $$EVENT_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
 entities.depends = $$PWD/dom/make_event_factory.pl $$EVENT_FACTORY
