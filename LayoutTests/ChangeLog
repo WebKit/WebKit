@@ -1,3 +1,20 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add part of EFL baselines for the fast/ suite.
+
+        * platform/efl/fast: Added.
+        * platform/efl/fast/backgrounds: [...]
+        * platform/efl/fast/block: [...]
+        * platform/efl/fast/body-propagation: [...]
+        * platform/efl/fast/borders: [...]
+        * platform/efl/fast/box-shadow: [...]
+        * platform/efl/fast/box-sizing: [...]
+        * platform/efl/fast/canvas: [...]
+        * platform/efl/fast/clip: [...]
+        * platform/efl/fast/compact: [...]
+        * platform/efl/fast/css: [...]
+        * platform/efl/fast/css-generated-content: [...]
+
 2011-10-20  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Removing test from Skipped list. Test passes: fast/text/justify-padding-distribution.html

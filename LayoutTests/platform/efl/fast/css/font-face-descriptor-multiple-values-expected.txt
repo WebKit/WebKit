@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 63x19
+          text run at (0,0) width 63: "This tests "
+        RenderInline {TT} at (0,0) size 80x15
+          RenderText {#text} at (63,4) size 80x15
+            text run at (63,4) width 80: "@font-face"
+        RenderText {#text} at (143,0) size 346x19
+          text run at (143,0) width 247: " rules with font descriptors that specify "
+          text run at (390,0) width 99: "multiple values."
+      RenderBlock {P} at (0,35) size 784x38
+        RenderText {#text} at (0,0) size 740x38
+          text run at (0,0) width 740: "Helvetica is assigned to weights 100 and 900 while courier is assigned to 400. Faces are assigned to other weights are"
+          text run at (0,19) width 405: "according to the heuristic in the CSS3 Web Fonts working draft."
+      RenderBlock {DIV} at (0,89) size 784x44
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (0,0) size 60x41
+            text run at (0,0) width 60: "100"
+        RenderText {#text} at (60,3) size 22x41
+          text run at (60,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (82,0) size 60x41
+            text run at (82,0) width 60: "200"
+        RenderText {#text} at (142,3) size 22x41
+          text run at (142,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (164,0) size 60x41
+            text run at (164,0) width 60: "300"
+        RenderText {#text} at (224,3) size 22x41
+          text run at (224,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 66x41
+          RenderText {#text} at (246,3) size 66x41
+            text run at (246,3) width 66: "400"
+        RenderText {#text} at (312,3) size 22x41
+          text run at (312,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 66x41
+          RenderText {#text} at (334,3) size 66x41
+            text run at (334,3) width 66: "500"
+        RenderText {#text} at (400,3) size 22x41
+          text run at (400,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (422,0) size 60x41
+            text run at (422,0) width 60: "600"
+        RenderText {#text} at (482,3) size 22x41
+          text run at (482,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (504,0) size 60x41
+            text run at (504,0) width 60: "700"
+        RenderText {#text} at (564,3) size 22x41
+          text run at (564,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (586,0) size 60x41
+            text run at (586,0) width 60: "800"
+        RenderText {#text} at (646,3) size 22x41
+          text run at (646,3) width 22: " "
+        RenderInline {SPAN} at (0,0) size 60x41
+          RenderText {#text} at (668,0) size 60x41
+            text run at (668,0) width 60: "900"
+        RenderText {#text} at (0,0) size 0x0

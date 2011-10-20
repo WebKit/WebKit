@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 84x85
+  RenderBlock (positioned) {DIV} at (0,0) size 84x85 [bgcolor=#ADD8E6]
+    RenderBlock (floating) {SPAN} at (4,0) size 80x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 80x17
+        text run at (0,0) width 80: "float"
+    RenderBlock (floating) {SPAN} at (4,17) size 64x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 64x17
+        text run at (0,0) width 64: "floa"
+    RenderText {#text} at (0,34) size 64x17
+      text run at (0,34) width 64: "word"
+    RenderBlock (floating) {SPAN} at (4,51) size 48x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 48x17
+        text run at (0,0) width 48: "flo"
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {SPAN} at (4,68) size 32x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 32x17
+        text run at (0,0) width 32: "fl"
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,104) size 96x85
+  RenderBlock (positioned) {DIV} at (0,0) size 96x85 [bgcolor=#ADD8E6]
+    RenderBlock (floating) {SPAN} at (4,0) size 80x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 80x17
+        text run at (0,0) width 80: "float"
+    RenderBlock (floating) {SPAN} at (4,17) size 64x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 64x17
+        text run at (0,0) width 64: "floa"
+    RenderText {#text} at (0,34) size 96x34
+      text run at (0,34) width 96: "longer"
+      text run at (0,51) width 64: "word"
+    RenderBlock (floating) {SPAN} at (4,68) size 48x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 48x17
+        text run at (0,0) width 48: "flo"
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {SPAN} at (56,68) size 32x17 [color=#0000FF]
+      RenderText {#text} at (0,0) size 32x17
+        text run at (0,0) width 32: "fl"
+    RenderText {#text} at (0,0) size 0x0

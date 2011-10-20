@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 100x100 [color=#008000] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 54x23
+          text run at (0,0) width 54: "FAIL_"
+        RenderBR {BR} at (54,18) size 0x0
+        RenderText {#text} at (0,23) size 70x23
+          text run at (0,23) width 70: "XXXXX"
+        RenderBR {BR} at (70,41) size 0x0
+        RenderText {#text} at (0,46) size 70x23
+          text run at (0,46) width 70: "XXXXX"
+        RenderBR {BR} at (70,64) size 0x0
+        RenderText {#text} at (0,69) size 70x23
+          text run at (0,69) width 70: "XXXXX"
+        RenderBR {BR} at (70,87) size 0x0
+        RenderText {#text} at (0,92) size 54x23
+          text run at (0,92) width 54: "_FAIL"
+        RenderBR {BR} at (54,110) size 0x0

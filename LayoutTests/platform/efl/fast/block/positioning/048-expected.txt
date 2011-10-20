@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 79x79
+  RenderBlock (positioned) {DIV} at (8,8) size 79x79 [border: (2px solid #0000FF)]
+    RenderBlock {DIV} at (2,2) size 75x75 [bgcolor=#808080]
+layer at (10,10) size 33x33
+  RenderBlock (positioned) {DIV} at (2,2) size 33x33 [border: (2px solid #008000)]
+layer at (52,10) size 33x33
+  RenderBlock (positioned) {DIV} at (44,2) size 33x33 [border: (2px solid #008000)]
+layer at (52,52) size 33x33
+  RenderBlock (positioned) {DIV} at (44,44) size 33x33 [border: (2px solid #008000)]
+layer at (10,52) size 33x33
+  RenderBlock (positioned) {DIV} at (2,44) size 33x33 [border: (2px solid #008000)]
+layer at (100,0) size 99x99
+  RenderBlock (positioned) {DIV} at (100,0) size 99x99 [border: (2px solid #0000FF)]
+    RenderBlock {DIV} at (12,12) size 75x75 [bgcolor=#808080]
+layer at (102,2) size 33x33
+  RenderBlock (positioned) {DIV} at (2,2) size 33x33 [border: (2px solid #008000)]
+layer at (164,2) size 33x33
+  RenderBlock (positioned) {DIV} at (64,2) size 33x33 [border: (2px solid #008000)]
+layer at (164,64) size 33x33
+  RenderBlock (positioned) {DIV} at (64,64) size 33x33 [border: (2px solid #008000)]
+layer at (102,64) size 33x33
+  RenderBlock (positioned) {DIV} at (2,64) size 33x33 [border: (2px solid #008000)]
