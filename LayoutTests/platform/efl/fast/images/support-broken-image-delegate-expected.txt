@@ -1,0 +1,3 @@
+Radar 8610908 - Add a resource delegate method to query if WebCore should paint the broken image.
+
+PASS

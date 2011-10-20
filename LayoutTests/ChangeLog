@@ -1,3 +1,18 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add more EFL baselines for the fast/ suite.
+
+        * platform/efl/fast/images: [...]
+        * platform/efl/fast/inline: [...]
+        * platform/efl/fast/inline-block: [...]
+        * platform/efl/fast/innerHTML: [...]
+        * platform/efl/fast/inspector-support: [...]
+        * platform/efl/fast/invalid: [...]
+        * platform/efl/fast/layers: [...]
+        * platform/efl/fast/lists: [...]
+        * platform/efl/fast/media: [...]
+        * platform/efl/fast/multicol: [...]
+
 2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] FontCache::createFontPlatformData() is broken, a default font is returned
