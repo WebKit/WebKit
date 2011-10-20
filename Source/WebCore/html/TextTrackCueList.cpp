@@ -36,6 +36,18 @@ TextTrackCueList::TextTrackCueList()
     // FIXME(62883): Implement.
 }
 
+unsigned long TextTrackCueList::length() const
+{
+    // FIXME(62883): Implement.
+    return 0;
+}
+
+TextTrackCue* TextTrackCueList::item(unsigned index) const
+{
+    // FIXME(62883): Implement.
+    return 0;
+}
+
 TextTrackCue* TextTrackCueList::getCueById(const String&) const
 {
     // FIXME(62883): Implement.

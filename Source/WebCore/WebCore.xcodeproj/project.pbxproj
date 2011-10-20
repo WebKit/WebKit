@@ -82,12 +82,25 @@
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
+		0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07075688142262D600414161 /* HTMLTrackElement.cpp */; };
+		0707568C142262D600414161 /* HTMLTrackElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 07075689142262D600414161 /* HTMLTrackElement.h */; };
+		070756941422668D00414161 /* JSTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0707568E1422668C00414161 /* JSTextTrack.cpp */; };
+		070756951422668D00414161 /* JSTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0707568F1422668C00414161 /* JSTextTrack.h */; };
+		070756D314239A4E00414161 /* JSHTMLTrackElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756D114239A4E00414161 /* JSHTMLTrackElement.cpp */; };
+		070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756D214239A4E00414161 /* JSHTMLTrackElement.h */; };
+		070756DD14239B4E00414161 /* JSTextTrackCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756D714239B4B00414161 /* JSTextTrackCue.cpp */; };
+		070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756D814239B4B00414161 /* JSTextTrackCue.h */; };
+		070756DF14239B4E00414161 /* JSTextTrackCueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756D914239B4C00414161 /* JSTextTrackCueList.cpp */; };
+		070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756DA14239B4E00414161 /* JSTextTrackCueList.h */; };
+		070756E61423C96A00414161 /* JSMutableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756E41423C96500414161 /* JSMutableTextTrack.cpp */; };
+		070756E71423C96A00414161 /* JSMutableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756E51423C96700414161 /* JSMutableTextTrack.h */; };
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0753860214489E9800B78452 /* CachedCues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedCues.cpp */; };
 		0753860314489E9800B78452 /* CachedCues.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedCues.h */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
+		073A3AE3142BAFE100977A4C /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		0806E57A12893045007CED32 /* SVGMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0806E57912893045007CED32 /* SVGMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */ = {isa = PBXBuildFile; fileRef = 080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */; };
@@ -7089,6 +7102,23 @@
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
+		07075688142262D600414161 /* HTMLTrackElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTrackElement.cpp; sourceTree = "<group>"; };
+		07075689142262D600414161 /* HTMLTrackElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTrackElement.h; sourceTree = "<group>"; };
+		0707568A142262D600414161 /* HTMLTrackElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTrackElement.idl; sourceTree = "<group>"; };
+		0707568E1422668C00414161 /* JSTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrack.cpp; sourceTree = "<group>"; };
+		0707568F1422668C00414161 /* JSTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrack.h; sourceTree = "<group>"; };
+		0707569C1422979800414161 /* TextTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrack.idl; sourceTree = "<group>"; };
+		0707569D1422979800414161 /* TextTrackCue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackCue.idl; sourceTree = "<group>"; };
+		0707569E1422979800414161 /* TextTrackCueList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackCueList.idl; sourceTree = "<group>"; };
+		070756D114239A4E00414161 /* JSHTMLTrackElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTrackElement.cpp; sourceTree = "<group>"; };
+		070756D214239A4E00414161 /* JSHTMLTrackElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTrackElement.h; sourceTree = "<group>"; };
+		070756D714239B4B00414161 /* JSTextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCue.cpp; sourceTree = "<group>"; };
+		070756D814239B4B00414161 /* JSTextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCue.h; sourceTree = "<group>"; };
+		070756D914239B4C00414161 /* JSTextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueList.cpp; sourceTree = "<group>"; };
+		070756DA14239B4E00414161 /* JSTextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCueList.h; sourceTree = "<group>"; };
+		070756E31423C7DF00414161 /* MutableTextTrack.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MutableTextTrack.idl; sourceTree = "<group>"; };
+		070756E41423C96500414161 /* JSMutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutableTextTrack.cpp; sourceTree = "<group>"; };
+		070756E51423C96700414161 /* JSMutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutableTextTrack.h; sourceTree = "<group>"; };
 		0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySlider.h; sourceTree = "<group>"; };
 		070DD8F50F01868000727DEB /* mediaControls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControls.css; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
@@ -7097,6 +7127,7 @@
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
+		073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
 		07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsQuickTime.css; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		0806E57912893045007CED32 /* SVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrix.h; sourceTree = "<group>"; };
@@ -17288,6 +17319,9 @@
 				A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */,
 				A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */,
 				A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */,
+				07075688142262D600414161 /* HTMLTrackElement.cpp */,
+				07075689142262D600414161 /* HTMLTrackElement.h */,
+				0707568A142262D600414161 /* HTMLTrackElement.idl */,
 				A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */,
 				A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */,
 				1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */,
@@ -17321,6 +17355,7 @@
 				F55B3D921251F12D003EF269 /* MonthInputType.h */,
 				B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */,
 				B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */,
+				070756E31423C7DF00414161 /* MutableTextTrack.idl */,
 				F55B3D931251F12D003EF269 /* NumberInputType.cpp */,
 				F55B3D941251F12D003EF269 /* NumberInputType.h */,
 				F55B3D951251F12D003EF269 /* PasswordInputType.cpp */,
@@ -17351,10 +17386,13 @@
 				BCEF453F0E676AC1001C1287 /* TextMetrics.idl */,
 				B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */,
 				B1AD4E5613A12A0B00846B27 /* TextTrack.h */,
+				0707569C1422979800414161 /* TextTrack.idl */,
 				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
 				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
+				0707569D1422979800414161 /* TextTrackCue.idl */,
 				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
 				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
+				0707569E1422979800414161 /* TextTrackCueList.idl */,
 				F55B3DA71251F12D003EF269 /* TimeInputType.cpp */,
 				F55B3DA81251F12D003EF269 /* TimeInputType.h */,
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
@@ -17766,6 +17804,8 @@
 				A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */,
 				A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */,
 				A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */,
+				070756D114239A4E00414161 /* JSHTMLTrackElement.cpp */,
+				070756D214239A4E00414161 /* JSHTMLTrackElement.h */,
 				1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */,
 				1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */,
 				6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */,
@@ -17782,6 +17822,8 @@
 				49C7B9831042D2D30009D447 /* JSInt8Array.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
+				070756E41423C96500414161 /* JSMutableTextTrack.cpp */,
+				070756E51423C96700414161 /* JSMutableTextTrack.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
 				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
@@ -17790,6 +17832,12 @@
 				77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */,
 				BCEF45F30E687B5C001C1287 /* JSTextMetrics.cpp */,
 				BCEF45F40E687B5C001C1287 /* JSTextMetrics.h */,
+				0707568E1422668C00414161 /* JSTextTrack.cpp */,
+				0707568F1422668C00414161 /* JSTextTrack.h */,
+				070756D714239B4B00414161 /* JSTextTrackCue.cpp */,
+				070756D814239B4B00414161 /* JSTextTrackCue.h */,
+				070756D914239B4C00414161 /* JSTextTrackCueList.cpp */,
+				070756DA14239B4E00414161 /* JSTextTrackCueList.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
 				49EECEFE105070C400099FAB /* JSUint16Array.cpp */,
@@ -19667,6 +19715,7 @@
 				08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */,
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
+				073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */,
 				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
@@ -24618,6 +24667,12 @@
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
+				0707568C142262D600414161 /* HTMLTrackElement.h in Headers */,
+				070756951422668D00414161 /* JSTextTrack.h in Headers */,
+				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
+				070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */,
+				070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */,
+				070756E71423C96A00414161 /* JSMutableTextTrack.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxRegionInfo.h in Headers */,
 				59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */,
@@ -27470,6 +27525,13 @@
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */,
+				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,
+				070756941422668D00414161 /* JSTextTrack.cpp in Sources */,
+				070756D314239A4E00414161 /* JSHTMLTrackElement.cpp in Sources */,
+				070756DD14239B4E00414161 /* JSTextTrackCue.cpp in Sources */,
+				070756DF14239B4E00414161 /* JSTextTrackCueList.cpp in Sources */,
+				070756E61423C96A00414161 /* JSMutableTextTrack.cpp in Sources */,
+				073A3AE3142BAFE100977A4C /* JSTextTrackCustom.cpp in Sources */,
 				A85F22091430377D007CC884 /* JSPopStateEventCustom.cpp in Sources */,
 				319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */,
 				319AE069142D78DD006563A1 /* FilterOperations.cpp in Sources */,

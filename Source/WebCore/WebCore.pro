@@ -3568,6 +3568,14 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     }
 }
 
+contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
+
+    !v8 {
+        SOURCES += \
+            bindings/js/JSTextTrackCustom.cpp
+    }
+}
+
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     HEADERS += \
         websockets/CloseEvent.h \

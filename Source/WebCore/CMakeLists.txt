@@ -277,7 +277,11 @@ SET(WebCore_IDL_FILES
     html/HTMLVideoElement.idl
     html/ImageData.idl
     html/MediaError.idl
+    html/MutableTextTrack.idl
     html/TextMetrics.idl
+    html/TextTrack.idl
+    html/TextTrackCue.idl
+    html/TextTrackCueList.idl
     html/TimeRanges.idl
     html/ValidityState.idl
     html/VoidCallback.idl

@@ -2850,6 +2850,7 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "DOMImplementation";
     return 0 if $interfaceName eq "DOMStringMap";
     return 0 if $interfaceName eq "DOMTokenList";
+    return 0 if $interfaceName eq "TextTrack";
 
     # For everything else, do what JSC does.
     return $dataNode->extendedAttributes->{"CustomToJS"};

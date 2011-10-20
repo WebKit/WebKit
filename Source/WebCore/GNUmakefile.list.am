@@ -375,6 +375,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessagePort.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
+	DerivedSources/WebCore/JSMutableTextTrack.cpp \
+	DerivedSources/WebCore/JSMutableTextTrack.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSMutationRecord.cpp \
@@ -488,6 +490,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSText.h \
 	DerivedSources/WebCore/JSTextMetrics.cpp \
 	DerivedSources/WebCore/JSTextMetrics.h \
+	DerivedSources/WebCore/JSTextTrack.cpp \
+	DerivedSources/WebCore/JSTextTrack.h \
+	DerivedSources/WebCore/JSTextTrackCue.cpp \
+	DerivedSources/WebCore/JSTextTrackCue.h \
+	DerivedSources/WebCore/JSTextTrackCueList.cpp \
+	DerivedSources/WebCore/JSTextTrackCueList.h \
 	DerivedSources/WebCore/JSTimeRanges.cpp \
 	DerivedSources/WebCore/JSTimeRanges.h \
 	DerivedSources/WebCore/JSTouch.cpp \
@@ -830,6 +838,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	Source/WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	Source/WebCore/bindings/js/JSTextCustom.cpp \
+	Source/WebCore/bindings/js/JSTextTrackCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchListCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \

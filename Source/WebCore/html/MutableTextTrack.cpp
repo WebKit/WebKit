@@ -39,12 +39,12 @@ MutableTextTrack::MutableTextTrack(TextTrackClient* trackClient, const String& k
 {
 }
 
-void MutableTextTrack::addCue(PassRefPtr<TextTrackCue>)
+void MutableTextTrack::addCue(PassRefPtr<TextTrackCue>, ExceptionCode&)
 {
     // FIXME(62890): Implement.
 }
 
-void MutableTextTrack::removeCue(PassRefPtr<TextTrackCue>)
+void MutableTextTrack::removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&)
 {
     // FIXME(62890): Implement.
 }

@@ -244,6 +244,9 @@
 #include "JSMetadata.cpp"
 #include "JSMetadataCallback.cpp"
 #include "JSMouseEvent.cpp"
+#if ENABLE(VIDEO_TRACK)
+#include "JSMutableTextTrack.cpp"
+#endif
 #include "JSMutationCallback.cpp"
 #include "JSMutationEvent.cpp"
 #include "JSMutationRecord.cpp"
@@ -448,6 +451,11 @@
 #include "JSText.cpp"
 #include "JSTextEvent.cpp"
 #include "JSTextMetrics.cpp"
+#if ENABLE(VIDEO_TRACK)
+#include "JSTextTrack.cpp"
+#include "JSTextTrackCue.cpp"
+#include "JSTextTrackCueList.cpp"
+#endif
 #include "JSTimeRanges.cpp"
 #include "JSTouch.cpp"
 #include "JSTouchEvent.cpp"

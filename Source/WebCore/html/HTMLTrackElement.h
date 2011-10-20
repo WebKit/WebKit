@@ -48,6 +48,7 @@ public:
     void setSrclang(const String&);
     void setLabel(const String&);
     void setIsDefault(bool);
+    TextTrack* track() const;
     
     void load(ScriptExecutionContext*, TextTrackClient*);
 

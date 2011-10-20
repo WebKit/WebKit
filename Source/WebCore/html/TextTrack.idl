@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,42 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextTrackCueList_h
-#define TextTrackCueList_h
+module html {
 
-#if ENABLE(VIDEO_TRACK)
+    interface [
+        Conditional=VIDEO_TRACK,
+        EnabledAtRuntime=webkitVideoTrack,
+        CustomToJS
+    ] TextTrack {
+        readonly attribute DOMString kind;
+        readonly attribute DOMString label;
+        readonly attribute DOMString language;
 
-#include "TextTrackCue.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+        const [Reflect=NONE] unsigned short None = 0;
+        const [Reflect=LOADING] unsigned short Loading = 1;
+        const [Reflect=LOADED] unsigned short Loaded = 2;
+        const [Reflect=ERROR] unsigned short Error = 3;
+        readonly attribute unsigned short readyState;
 
-namespace WebCore {
+        const [Reflect=DISABLED] unsigned short Disabled = 0;
+        const [Reflect=HIDDEN] unsigned short Hidden = 1;
+        const [Reflect=SHOWING] unsigned short Showing = 2;
+        attribute unsigned short mode
+            setter raises (DOMException);
 
-class TextTrackCueList : public RefCounted<TextTrackCueList> {
-public:
-    static PassRefPtr<TextTrackCueList> create()
-    {
-        return adoptRef(new TextTrackCueList);
-    }
-
-    unsigned long length() const;
-    TextTrackCue* item(unsigned index) const;
-    TextTrackCue* getCueById(const String&) const;
-    PassRefPtr<TextTrackCueList> activeCues();
-
-    void append(const PassRefPtr<TextTrackCue>&);
-    void append(Vector<PassRefPtr<TextTrackCue> >&);
-    void remove(const PassRefPtr<TextTrackCue>&);
-
-private:
-    TextTrackCueList();
-};
-
-} // namespace WebCore
-
-#endif
-#endif
+        readonly attribute TextTrackCueList cues;
+        readonly attribute TextTrackCueList activeCues;
+    };
+}

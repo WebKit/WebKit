@@ -1,3 +1,65 @@
+2011-10-19  Anna Cavender  <annacc@chromium.org>
+
+        Adding some IDL files for <track>.
+        https://bugs.webkit.org/show_bug.cgi?id=62887
+
+        Reviewed by Adam Barth.
+
+        Tests:
+        MutableTextTrack.idl and addTrack() in HTMLMediaElement.idl are tested by:
+        media/track/track-mutable.html
+
+        TextTrack.idl is tested by:
+        media/track/track-text-track.html
+
+        TextTrackCue.idl is tested by:
+        media/track/track-webvtt-tc006-cue-identifiers.html
+        media/track/track-webvtt-tc007-cue-no-id.html
+        media/track/track-webvtt-tc008-timings-no-hours.html
+        media/track/track-webvtt-tc009-timings-hour.html
+        media/track/track-webvtt-tc013-settings.html
+        media/track/track-webvtt-tc023-markup.html
+
+        TextTrackCueList.idl is tested by:
+        media/track/track-text-track-cue-list.html
+
+        * CMakeLists.txt: Adding files to build systems.
+        * CodeGenerators.pri: Adding files to build systems.
+        * DerivedSources.cpp: Adding files to build systems.
+        * DerivedSources.make: Adding files to build systems.
+        * GNUmakefile.list.am: Adding files to build systems.
+        * WebCore.gypi: Adding files to build systems.
+        * WebCore.pro: Adding files to build systems.
+        * WebCore.xcodeproj/project.pbxproj: Adding files to build systems.
+        * bindings/gobject/GNUmakefile.am: Adding files to build systems.
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp: Adding files to build systems.
+        * bindings/js/JSBindingsAllInOne.cpp: Adding files to build systems.
+
+        * bindings/js/JSTextTrackCustom.cpp: Added.
+        (WebCore::toJS):
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (HasCustomToV8Implementation): Special check for TextTrack since V8 can auto-generate
+        it, but JS cannot yet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTrack): creates and returns a new MutableTextTrack.
+        * html/HTMLMediaElement.h: Adding addTrack() function.
+        * html/HTMLMediaElement.idl: Adding addTrack() function.
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::track): Adding track getter.
+        * html/HTMLTrackElement.h: Adding track getter.
+        * html/HTMLTrackElement.idl: Adding track getter.
+        * html/MutableTextTrack.idl: Added.
+        * html/TextTrack.idl: Added.
+        * html/TextTrackCue.idl: Added.
+        * html/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::length):
+        (WebCore::TextTrackCueList::item): Used for [] operator.
+        * html/TextTrackCueList.h: Added item() for [] operator.
+        * html/TextTrackCueList.idl: Added.
+        * page/DOMWindow.idl: Adding TextTrackCue new operator.
+
 2011-10-19  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix webkit style on a few files.

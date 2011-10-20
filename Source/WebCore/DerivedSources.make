@@ -297,6 +297,7 @@ DOM_CLASSES = \
     Metadata \
     MetadataCallback \
     MouseEvent \
+    MutableTextTrack \
     MutationCallback \
     MutationEvent \
     MutationRecord \
@@ -520,6 +521,9 @@ DOM_CLASSES = \
     Text \
     TextEvent \
     TextMetrics \
+    TextTrack \
+    TextTrackCue \
+    TextTrackCueList \
     TimeRanges \
     Touch \
     TouchEvent \

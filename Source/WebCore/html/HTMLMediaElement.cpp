@@ -88,6 +88,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
+#include "MutableTextTrack.h"
 #include "RuntimeEnabledFeatures.h"
 #endif
 
@@ -1978,6 +1979,14 @@ float HTMLMediaElement::percentLoaded() const
     }
     return buffered / duration;
 }
+
+#if ENABLE(VIDEO_TRACK)
+PassRefPtr<MutableTextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language)
+{
+    RefPtr<MutableTextTrack> mutableTrack = MutableTextTrack::create(this, kind, label, language);
+    return mutableTrack.release();
+}
+#endif
 
 bool HTMLMediaElement::havePotentialSourceChild()
 {

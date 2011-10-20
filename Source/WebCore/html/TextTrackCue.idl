@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,42 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextTrackCueList_h
-#define TextTrackCueList_h
+module html {
 
-#if ENABLE(VIDEO_TRACK)
+    interface [
+        Conditional=VIDEO_TRACK,
+        EnabledAtRuntime=webkitVideoTrack,
+        CanBeConstructed,
+        GenerateNativeConverter,
+        Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=CallWithDefaultValue] DOMString settings, in [Optional=CallWithDefaultValue] boolean pauseOnExit),
+        CallWith=ScriptExecutionContext
+    ] TextTrackCue {
+        readonly attribute TextTrack track;
+        readonly attribute DOMString id;
 
-#include "TextTrackCue.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+        readonly attribute double startTime;
+        readonly attribute double endTime;
+        readonly attribute boolean pauseOnExit;
 
-namespace WebCore {
+        readonly attribute DOMString direction;
+        readonly attribute boolean snapToLines;
+        readonly attribute long linePosition;
+        readonly attribute long textPosition;
+        readonly attribute long size;
+        readonly attribute DOMString alignment;
 
-class TextTrackCueList : public RefCounted<TextTrackCueList> {
-public:
-    static PassRefPtr<TextTrackCueList> create()
-    {
-        return adoptRef(new TextTrackCueList);
-    }
+        DOMString getCueAsSource();
+        DocumentFragment getCueAsHTML();
+    };
 
-    unsigned long length() const;
-    TextTrackCue* item(unsigned index) const;
-    TextTrackCue* getCueById(const String&) const;
-    PassRefPtr<TextTrackCueList> activeCues();
-
-    void append(const PassRefPtr<TextTrackCue>&);
-    void append(Vector<PassRefPtr<TextTrackCue> >&);
-    void remove(const PassRefPtr<TextTrackCue>&);
-
-private:
-    TextTrackCueList();
-};
-
-} // namespace WebCore
-
-#endif
-#endif
+}

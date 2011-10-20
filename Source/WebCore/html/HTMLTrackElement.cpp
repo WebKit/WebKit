@@ -125,6 +125,13 @@ void HTMLTrackElement::setIsDefault(bool isDefault)
     setBooleanAttribute(defaultAttr, isDefault);
 }
 
+TextTrack* HTMLTrackElement::track() const
+{
+    if (m_track)
+        return m_track.get();
+    return 0;
+}
+
 bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
 {
     return attribute->name() == srcAttr;

@@ -577,6 +577,14 @@ contains(DEFINES, ENABLE_SVG=1) {
     svg/SVGVKernElement.idl
 }
 
+contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
+  IDL_BINDINGS += \
+    html/MutableTextTrack.idl \
+    html/TextTrack.idl \
+    html/TextTrackCue.idl \
+    html/TextTrackCueList.idl \
+}
+
 v8: wrapperFactoryArg = --wrapperFactoryV8
 else: wrapperFactoryArg = --wrapperFactory
 

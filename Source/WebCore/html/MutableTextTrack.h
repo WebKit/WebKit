@@ -45,8 +45,8 @@ public:
     }
     virtual ~MutableTextTrack() { }
 
-    void addCue(PassRefPtr<TextTrackCue>);
-    void removeCue(PassRefPtr<TextTrackCue>);
+    void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
+    void removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
 
     virtual void newCuesLoaded();
     virtual void fetchNewestCues(Vector<TextTrackCue*>&);
