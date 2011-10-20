@@ -1,3 +1,20 @@
+2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        m_client in DeviceMotionController can never be 0, so no need to check for it
+        https://bugs.webkit.org/show_bug.cgi?id=70490
+
+        Reviewed by Simon Hausmann.
+
+        No behavior change, thus no new tests.
+
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::timerFired):
+        (WebCore::DeviceMotionController::addListener):
+        (WebCore::DeviceMotionController::removeListener):
+        (WebCore::DeviceMotionController::removeAllListeners):
+        (WebCore::DeviceMotionController::suspend):
+        (WebCore::DeviceMotionController::resume):
+
 2011-10-20  Cary Clark  <caryclark@google.com>
 
         [Chromium Skia on Mac] Improve focus ring
