@@ -52,6 +52,15 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     MessageEvent* event = static_cast<MessageEvent*>(impl());
     JSValue result;
     switch (event->dataType()) {
+    case MessageEvent::DataTypeScriptValue: {
+        ScriptValue scriptValue = event->dataAsScriptValue();
+        if (scriptValue.hasNoValue())
+            result = jsNull();
+        else
+            result = scriptValue.jsValue();
+        break;
+    }
+
     case MessageEvent::DataTypeSerializedScriptValue:
         if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue()) {
             MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
@@ -91,7 +100,7 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
     return constructArray(exec, globalObject(), list);
 }
 
-static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec, bool doTransfer)
+static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec)
 {
     const UString& typeArg = exec->argument(0).toString(exec);
     bool canBubbleArg = exec->argument(1).toBoolean(exec);
@@ -106,30 +115,24 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         if (exec->hadException())
             return jsUndefined();
     }
-    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3), doTransfer ? messagePorts.get() : 0);
+    ScriptValue dataArg = ScriptValue(exec->globalData(), exec->argument(3));
     if (exec->hadException())
         return jsUndefined();
- 
-    MessageEvent* event = static_cast<MessageEvent*>(jsEvent->impl());
-    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg.release(), ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
-    JSValue result;
-    if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
-        result = serializedValue->deserialize(exec, jsEvent->globalObject(), event->ports(), NonThrowing);
-    else
-        result = jsNull();
-    jsEvent->m_data.set(exec->globalData(), jsEvent, result);
-    return jsUndefined();
 
+    MessageEvent* event = static_cast<MessageEvent*>(jsEvent->impl());
+    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg, ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
+    jsEvent->m_data.set(exec->globalData(), jsEvent, dataArg.jsValue());
+    return jsUndefined();
 }
 
 JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
 {
-    return handleInitMessageEvent(this, exec, false);
+    return handleInitMessageEvent(this, exec);
 }
 
 JSC::JSValue JSMessageEvent::webkitInitMessageEvent(JSC::ExecState* exec)
 {
-    return handleInitMessageEvent(this, exec, true);
+    return handleInitMessageEvent(this, exec);
 }
 
 } // namespace WebCore
