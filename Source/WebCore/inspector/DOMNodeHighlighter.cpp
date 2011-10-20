@@ -47,6 +47,7 @@
 #include "Settings.h"
 #include "StyledElement.h"
 #include "TextRun.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -230,22 +231,23 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     DEFINE_STATIC_LOCAL(Color, pxAndBorderColor, (128, 128, 128));
 
     DEFINE_STATIC_LOCAL(String, pxString, ("px"));
-    const static UChar timesUChar[] = { 0x00D7, 0 };
+    const static UChar timesUChar[] = { 0x0020, 0x00D7, 0x0020, 0 };
     DEFINE_STATIC_LOCAL(String, timesString, (timesUChar)); // &times; string
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
     Element* element = static_cast<Element*>(node);
     bool isXHTML = element->document()->isXHTMLDocument();
-    String nodeTitle(isXHTML ? element->nodeName() : element->nodeName().lower());
+    StringBuilder nodeTitle;
+    nodeTitle.append(isXHTML ? element->nodeName() : element->nodeName().lower());
     unsigned tagNameLength = nodeTitle.length();
 
     const AtomicString& idValue = element->getIdAttribute();
     unsigned idStringLength = 0;
     String idString;
     if (!idValue.isNull() && !idValue.isEmpty()) {
-        nodeTitle += "#";
-        nodeTitle += idValue;
+        nodeTitle.append("#");
+        nodeTitle.append(idValue);
         idStringLength = 1 + idValue.length();
     }
 
@@ -259,8 +261,8 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
             if (usedClassNames.contains(className))
                 continue;
             usedClassNames.add(className);
-            nodeTitle += ".";
-            nodeTitle += className;
+            nodeTitle.append(".");
+            nodeTitle.append(className);
             classesStringLength += 1 + className.length();
         }
     }
@@ -268,17 +270,19 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
 
     String widthNumberPart = " " + String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetWidth(), modelObject) : boundingBox.width());
-    nodeTitle += widthNumberPart + pxString;
-    nodeTitle += timesString;
+    nodeTitle.append(widthNumberPart);
+    nodeTitle.append(pxString);
+    nodeTitle.append(timesString);
     String heightNumberPart = String::number(modelObject ? adjustForAbsoluteZoom(modelObject->offsetHeight(), modelObject) : boundingBox.height());
-    nodeTitle += heightNumberPart + pxString;
+    nodeTitle.append(heightNumberPart);
+    nodeTitle.append(pxString);
 
     FontDescription desc;
     setUpFontDescription(desc, settings);
     Font font = Font(desc, 0, 0);
     font.update(0);
 
-    TextRun nodeTitleRun(nodeTitle);
+    TextRun nodeTitleRun(nodeTitle.toString());
     LayoutPoint titleBasePoint = LayoutPoint(anchorBox.x(), anchorBox.maxY() - 1);
     titleBasePoint.move(rectInflatePx, rectInflatePx);
     LayoutRect titleRect = enclosingLayoutRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
