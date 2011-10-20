@@ -21,11 +21,11 @@
 #include "config.h"
 #include "QtTouchViewInterface.h"
 
+#include "QtWebError.h"
 #include "qtouchwebpage.h"
 #include "qtouchwebpage_p.h"
 #include "qtouchwebview.h"
 #include "qtouchwebview_p.h"
-#include "qweberror.h"
 
 #include <QDeclarativeEngine>
 #include <QSGView>
@@ -132,7 +132,7 @@ void QtTouchViewInterface::loadDidSucceed()
     emit m_pageView->loadSucceeded();
 }
 
-void QtTouchViewInterface::loadDidFail(const QWebError& error)
+void QtTouchViewInterface::loadDidFail(const QtWebError& error)
 {
     emit m_pageView->loadFailed(static_cast<QTouchWebPage::ErrorType>(error.type()), error.errorCode(), error.url());
 }

@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
-class QWebError;
+class QtWebError;
 class QWebPreferences;
 class QWKHistory;
 
@@ -133,7 +133,7 @@ public:
     void loadDidBegin();
     void loadDidCommit();
     void loadDidSucceed();
-    void loadDidFail(const QWebError&);
+    void loadDidFail(const QtWebError&);
     void didChangeLoadProgress(int);
     int loadProgress() const { return m_loadProgress; }
 

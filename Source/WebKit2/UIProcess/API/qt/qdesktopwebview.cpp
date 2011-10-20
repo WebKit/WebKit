@@ -21,9 +21,9 @@
 #include "config.h"
 #include "qdesktopwebview.h"
 
+#include "QtWebError.h"
 #include "UtilsQt.h"
 #include "qdesktopwebview_p.h"
-#include "qweberror.h"
 #include <QFileDialog>
 #include <QGraphicsSceneEvent>
 #include <QGraphicsSceneResizeEvent>
@@ -160,7 +160,7 @@ void QDesktopWebViewPrivate::loadDidSucceed()
     emit q->loadSucceeded();
 }
 
-void QDesktopWebViewPrivate::loadDidFail(const QWebError& error)
+void QDesktopWebViewPrivate::loadDidFail(const QtWebError& error)
 {
     emit q->loadFailed(static_cast<QDesktopWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }

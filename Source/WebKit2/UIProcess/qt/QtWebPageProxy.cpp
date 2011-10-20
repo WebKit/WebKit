@@ -21,7 +21,7 @@
 #include "config.h"
 #include "QtWebPageProxy.h"
 
-#include "qweberror.h"
+#include "QtWebError.h"
 #include "qwebpreferences_p.h"
 
 #include "ClientImpl.h"
@@ -411,7 +411,7 @@ void QtWebPageProxy::loadDidSucceed()
     m_viewInterface->loadDidSucceed();
 }
 
-void QtWebPageProxy::loadDidFail(const QWebError& error)
+void QtWebPageProxy::loadDidFail(const QtWebError& error)
 {
     m_viewInterface->loadDidFail(error);
 }

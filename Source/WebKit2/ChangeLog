@@ -1,3 +1,36 @@
+2011-10-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] qweberror* should follow the new file and class naming rules
+        https://bugs.webkit.org/show_bug.cgi?id=70550
+
+        Reviewed by Noam Rosenthal.
+
+        Renaming qweberror* files and class to QtWebError*.
+        QWebErrorPrivate is now merged into QtWebError.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidFail):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (dispatchLoadFailed):
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::loadDidFail):
+        * UIProcess/qt/QtTouchViewInterface.h:
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtWebError.cpp: Renamed from Source/WebKit2/UIProcess/qt/qweberror.cpp.
+        (QtWebError::QtWebError):
+        (QtWebError::type):
+        (QtWebError::errorCode):
+        (QtWebError::url):
+        * UIProcess/qt/QtWebError.h: Renamed from Source/WebKit2/UIProcess/qt/qweberror.h.
+        (QtWebError::errorCodeAsHttpStatusCode):
+        (QtWebError::errorCodeAsNetworkError):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidFail):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/qweberror_p.h: Removed.
+        * WebKit2.pro:
+
 2011-10-20  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r96823): Contextual menu closes immediately when control-clicking in Flash plug-in

@@ -19,9 +19,8 @@
  */
 
 #include "config.h"
-#include "qweberror.h"
+#include "QtWebError.h"
 
-#include "qweberror_p.h"
 #include <QtCore/QUrl>
 #include <WKSharedAPICast.h>
 #include <WKString.h>
@@ -32,51 +31,32 @@
 
 using namespace WebKit;
 
-QWebError::QWebError(QWebErrorPrivate* priv)
-    : d(priv)
-{
-}
-
-QWebError::QWebError(const QWebError& other)
-    : d(other.d)
-{
-}
-
-QWebError QWebErrorPrivate::createQWebError(WKErrorRef errorRef)
-{
-    return QWebError(new QWebErrorPrivate(errorRef));
-}
-
-QWebErrorPrivate::QWebErrorPrivate(WKErrorRef errorRef)
+QtWebError::QtWebError(WKErrorRef errorRef)
     : error(errorRef)
 {
 }
 
-QWebErrorPrivate::~QWebErrorPrivate()
+QtWebError::Type QtWebError::type() const
 {
-}
-
-QWebError::Type QWebError::type() const
-{
-    WKRetainPtr<WKStringRef> errorDomainPtr = adoptWK(WKErrorCopyDomain(d->error.get()));
+    WKRetainPtr<WKStringRef> errorDomainPtr = adoptWK(WKErrorCopyDomain(error.get()));
     WTF::String errorDomain = toWTFString(errorDomainPtr.get());
 
     if (errorDomain == "QtNetwork")
-        return QWebError::NetworkError;
+        return QtWebError::NetworkError;
     if (errorDomain == "HTTP")
-        return QWebError::HttpError;
+        return QtWebError::HttpError;
     if (errorDomain == "Download")
-        return QWebError::DownloadError;
-    return QWebError::EngineError;
+        return QtWebError::DownloadError;
+    return QtWebError::EngineError;
 }
 
-int QWebError::errorCode() const
+int QtWebError::errorCode() const
 {
-    return WKErrorGetErrorCode(d->error.get());
+    return WKErrorGetErrorCode(error.get());
 }
 
-QUrl QWebError::url() const
+QUrl QtWebError::url() const
 {
-    WKRetainPtr<WKURLRef> failingURL = adoptWK(WKErrorCopyFailingURL(d->error.get()));
+    WKRetainPtr<WKURLRef> failingURL = adoptWK(WKErrorCopyFailingURL(error.get()));
     return WKURLCopyQUrl(failingURL.get());
 }

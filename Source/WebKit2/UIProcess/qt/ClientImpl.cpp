@@ -20,12 +20,11 @@
 #include "config.h"
 #include "ClientImpl.h"
 
+#include "QtWebError.h"
 #include "WebFrameProxy.h"
 #include "WKAPICast.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
-#include "qweberror.h"
-#include "qweberror_p.h"
 #include <QtPolicyInterface.h>
 #include <QtViewInterface.h>
 #include <QtWebPageProxy.h>
@@ -79,7 +78,7 @@ static void dispatchLoadFailed(WKFrameRef frame, const void* clientInfo, WKError
     if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad)
         return;
 
-    toQtWebPageProxy(clientInfo)->loadDidFail(QWebErrorPrivate::createQWebError(error));
+    toQtWebPageProxy(clientInfo)->loadDidFail(QtWebError(error));
 }
 
 void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)

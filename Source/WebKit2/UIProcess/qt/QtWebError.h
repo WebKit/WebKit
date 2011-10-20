@@ -18,20 +18,19 @@
  *
  */
 
-#ifndef qweberror_h
-#define qweberror_h
+#ifndef QtWebError_h
+#define QtWebError_h
 
 #include "qwebkitglobal.h"
-#include <QSharedDataPointer>
 #include <QtNetwork/QNetworkReply>
-
-class QWebErrorPrivate;
+#include <WKError.h>
+#include <WKRetainPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QUrl;
 QT_END_NAMESPACE
 
-class QWebError {
+class QtWebError {
 public:
     enum Type {
         EngineError,
@@ -47,13 +46,12 @@ public:
     int errorCodeAsHttpStatusCode() const { return errorCode(); }
     QNetworkReply::NetworkError errorCodeAsNetworkError() const { return static_cast<QNetworkReply::NetworkError>(errorCode()); }
 
-    QWebError(const QWebError&);
+    QtWebError(const QtWebError&);
+
+    QtWebError(WKErrorRef);
 
 private:
-    QWebError(QWebErrorPrivate*);
-
-    QSharedDataPointer<QWebErrorPrivate> d;
-    friend class QWebErrorPrivate;
+    WKRetainPtr<WKErrorRef> error;
 };
 
-#endif /* qweberror_h */
+#endif /* QtWebError_h */
