@@ -2650,8 +2650,7 @@ BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
 // Take new baselines from the bots when 68035 lands.
 BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
 BUGWK70046 LEOPARD : platform/chromium/compositing/zoom-animator-scale-test2.html = MISSING
-BUGWK70046 SNOWLEOPARD CPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS
-BUGWK70046 SNOWLEOPARD CPU GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = TIMEOUT
+BUGWK70046 SNOWLEOPARD : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS TIMEOUT
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
