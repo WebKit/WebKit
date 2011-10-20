@@ -1,3 +1,20 @@
+2011-10-19  Jer Noble  <jer.noble@apple.com>
+
+        compositing/video tests time out on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=70448
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        AVFoundation will occasionally fill it's playback buffers before collecting enough
+        statistical information to answer YES to isLikelyToKeepUp.  In this situation, set the
+        ready state to HAVE_ENOUGH_DATA, on the presumption that if the playback buffers are
+        full, playback will probably not stall.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+
 2011-10-19  Kentaro Hara  <haraken@chromium.org>
 
         MessageEvent.data can be stored as ScriptValue.

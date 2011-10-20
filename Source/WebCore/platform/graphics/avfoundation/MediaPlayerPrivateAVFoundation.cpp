@@ -450,10 +450,13 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 break;
 
             case MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp:
+            case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
+                // If the status becomes PlaybackBufferFull, loading stops and the status will not
+                // progress to LikelyToKeepUp. Set the readyState to  HAVE_ENOUGH_DATA, on the
+                // presumption that if the playback buffer is full, playback will probably not stall.
                 m_readyState = MediaPlayer::HaveEnoughData;
                 break;
 
-            case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
             case MediaPlayerAVPlayerItemStatusReadyToPlay:
                 // If the readyState is already HaveEnoughData, don't go lower because of this state change.
                 if (m_readyState == MediaPlayer::HaveEnoughData)
