@@ -443,7 +443,7 @@ static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function
     float scaleFactor = JSValueToNumber(context, arguments[0], exception);
     float x = JSValueToNumber(context, arguments[1], exception);
     float y = JSValueToNumber(context, arguments[2], exception);
-    ewk_view_page_scale(view, scaleFactor, x, y);
+    ewk_view_scale_set(view, scaleFactor, x, y);
 
     return JSValueMakeUndefined(context);
 }

@@ -176,7 +176,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_setting_scripts_can_close_windows_set(mainView(), EINA_TRUE);
 
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);
-    ewk_view_page_scale(mainView(), 1.0, 0, 0);
+    ewk_view_scale_set(mainView(), 1.0, 0, 0);
 
     ewk_history_clear(ewk_view_history_get(mainView()));
 

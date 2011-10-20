@@ -1,3 +1,12 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix after r97043.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): Use ewk_view_scale_set() instead of ewk_view_page_scale().
+        * DumpRenderTree/efl/EventSender.cpp:
+        (scalePageByCallback): Ditto.
+
 2011-10-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed. Adding myself to watchlists.
