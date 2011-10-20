@@ -1,3 +1,19 @@
+2011-10-19  Raymond Toy  <rtoy@google.com>
+
+        Flush denormals to zero on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=70140
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::processWithGainFromMonoStereo):
+        Flush any denormals to zero before saving the result.  Change
+        double gain to float gain to match existing float operations.
+        * platform/audio/DenormalDisabler.h:
+        (WebCore::DenormalDisabler::flushDenormalFloatToZero):
+        New function to flush the given float to zero, if it is a denormal
+        number.
+
 2011-10-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Remove the empty paint() implementation in ScrollbarEfl.

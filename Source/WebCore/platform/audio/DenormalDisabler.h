@@ -25,6 +25,8 @@
 #ifndef DenormalDisabler_h
 #define DenormalDisabler_h
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 // Deal with denormals. They can very seriously impact performance on x86.
@@ -43,6 +45,11 @@ public:
         setCSR(m_savedCSR);
     }
 
+    // This is a nop if we can flush denormals to zero in hardware.
+    static inline float flushDenormalFloatToZero(float f)
+    {
+        return f;
+    }
 private:
     inline int getCSR()
     {
@@ -65,6 +72,18 @@ private:
 class DenormalDisabler {
 public:
     DenormalDisabler() { }
+
+    static inline float flushDenormalFloatToZero(float f)
+    {
+#if OS(WINDOWS) && COMPILER(MSVC) && (!_M_IX86_FP)
+        // For systems using x87 instead of sse, there's no hardware support
+        // to flush denormals automatically. Hence, we need to flush
+        // denormals to zero manually.
+        return (fabs(f) < FLT_MIN) ? 0.0f : f;
+#else
+        return f;
+#endif
+    }
 };
 
 #endif

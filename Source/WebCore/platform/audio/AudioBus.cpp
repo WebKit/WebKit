@@ -32,6 +32,8 @@
 
 #include "AudioBus.h"
 
+#include "DenormalDisabler.h"
+
 #if !PLATFORM(MAC)
 #include "SincResampler.h"
 #endif
@@ -238,11 +240,13 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
     // FIXME: Need fast path here when gain has converged on targetGain. In this case, de-zippering is no longer needed.
     // FIXME: Need fast path when this==sourceBus && lastMixGain==targetGain==1.0 && sumToBus==false (this is a NOP)
 
+    // FIXME: targetGain and lastMixGain should be changed to floats instead of doubles.
+    
     // Take master bus gain into account as well as the targetGain.
-    double totalDesiredGain = m_busGain * targetGain;
+    float totalDesiredGain = static_cast<float>(m_busGain * targetGain);
 
     // First time, snap directly to totalDesiredGain.
-    double gain = m_isFirstTime ? totalDesiredGain : *lastMixGain;
+    float gain = static_cast<float>(m_isFirstTime ? totalDesiredGain : *lastMixGain);
     m_isFirstTime = false;
 
     int numberOfSourceChannels = sourceBus.numberOfChannels();
@@ -255,7 +259,7 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
     float* destinationL = channelByType(ChannelLeft)->data();
     float* destinationR = numberOfDestinationChannels > 1 ? channelByType(ChannelRight)->data() : 0;
 
-    const double DezipperRate = 0.005;
+    const float DezipperRate = 0.005f;
     int framesToProcess = length();
 
     if (sumToBus) {
@@ -263,33 +267,39 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
         if (sourceR && destinationR) {
             // Stereo
             while (framesToProcess--) {
-                float sampleL = *sourceL++;
-                float sampleR = *sourceR++;
-                *destinationL++ += static_cast<float>(gain * sampleL);
-                *destinationR++ += static_cast<float>(gain * sampleR);
+                float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++);
+                float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + gain * *sourceR++);
+                *destinationL++ = sumL;
+                *destinationR++ = sumR;
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         } else if (destinationR) {
             // Mono -> stereo (mix equally into L and R)
             // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
             while (framesToProcess--) {
-                float sample = *sourceL++;
-                *destinationL++ += static_cast<float>(gain * sample);
-                *destinationR++ += static_cast<float>(gain * sample);
+                float scaled = gain * *sourceL++;
+                float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + scaled);
+                float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + scaled);
+
+                *destinationL++ = sumL;
+                *destinationR++ = sumR;
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         } else {
             // Mono
             while (framesToProcess--) {
-                float sampleL = *sourceL++;
-                *destinationL++ += static_cast<float>(gain * sampleL);
+                float sum = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++);
+                *destinationL++ = sum;
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         }
     } else {
@@ -299,37 +309,40 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
             while (framesToProcess--) {
                 float sampleL = *sourceL++;
                 float sampleR = *sourceR++;
-                *destinationL++ = static_cast<float>(gain * sampleL);
-                *destinationR++ = static_cast<float>(gain * sampleR);
+                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL);
+                *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleR);
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         } else if (destinationR) {
             // Mono -> stereo (mix equally into L and R)
             // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
             while (framesToProcess--) {
                 float sample = *sourceL++;
-                *destinationL++ = static_cast<float>(gain * sample);
-                *destinationR++ = static_cast<float>(gain * sample);
+                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample);
+                *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample);
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         } else {
             // Mono
             while (framesToProcess--) {
                 float sampleL = *sourceL++;
-                *destinationL++ = static_cast<float>(gain * sampleL);
+                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL);
 
                 // Slowly change gain to desired gain.
                 gain += (totalDesiredGain - gain) * DezipperRate;
+                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
             }
         }
     }
 
     // Save the target gain as the starting point for next time around.
-    *lastMixGain = gain;
+    *lastMixGain = static_cast<double>(gain);
 }
 
 void AudioBus::processWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, double targetGain, bool sumToBus)
