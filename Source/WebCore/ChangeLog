@@ -1,3 +1,17 @@
+2011-10-19  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Shorten animation time for ZoomAnimator.
+        https://bugs.webkit.org/show_bug.cgi?id=70419
+
+        Reviewed by Kenneth Russell.
+
+        Shorten animation time for ZoomAnimator.
+
+        Existing test coverage sufficient.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::zoom):
+
 2011-10-19  Zhenyao Mo  <zmo@google.com>
 
         Implement WEBGL_debug_shaders and WEBGL_debug_renderer_info extensions

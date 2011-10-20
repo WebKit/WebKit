@@ -55,6 +55,7 @@ namespace WebCore {
 static double kFrameRate = 60;
 static double kTickTime = 1 / kFrameRate;
 static double kMinimumTimerInterval = .001;
+static double kZoomTicks = 11;
 
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
@@ -496,7 +497,7 @@ void ScrollAnimatorNone::zoom(const PlatformGestureEvent& pge)
         }
 #endif
         m_zoomData.m_lastAnimationTime = currentTime;
-        m_zoomData.m_animationTime = 50 * kTickTime;
+        m_zoomData.m_animationTime = kZoomTicks * kTickTime;
 
         bool isContinuing = m_zoomData.animateZoom(currentTime);
 
