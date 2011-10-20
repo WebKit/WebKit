@@ -23,6 +23,7 @@
 #include "WebKitError.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
+#include "WebKitWebLoaderClientPrivate.h"
 #include "WebKitWebView.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -42,10 +43,6 @@ enum {
     LOAD_FAILED,
 
     LAST_SIGNAL
-};
-
-struct _WebKitWebLoaderClientPrivate {
-    GRefPtr<WebKitWebView> view;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -128,11 +125,11 @@ static void didChangeProgress(WKPageRef page, const void* clientInfo)
     webkitWebViewSetEstimatedLoadProgress(webView, WKPageGetEstimatedProgress(page));
 }
 
-void attachLoaderClientToPage(WKPageRef page, WebKitWebLoaderClient* client)
+void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
 {
-    WKPageLoaderClient loaderClient = {
+    WKPageLoaderClient wkLoaderClient = {
         kWKPageLoaderClientCurrentVersion,
-        client, // clientInfo
+        loaderClient, // clientInfo
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -159,7 +156,7 @@ void attachLoaderClientToPage(WKPageRef page, WebKitWebLoaderClient* client)
         0, // shouldGoToBackForwardListItem
         0 // didFailToInitializePlugin
     };
-    WKPageSetPageLoaderClient(page, &loaderClient);
+    WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);
 }
 
 static gboolean webkitWebLoaderClientLoadFailed(WebKitWebLoaderClient* client, WebKitWebView* webView, const gchar* failingURI, GError* error)
@@ -175,23 +172,13 @@ static gboolean webkitWebLoaderClientLoadFailed(WebKitWebLoaderClient* client, W
     return TRUE;
 }
 
-static void webkitWebLoaderClientFinalize(GObject* object)
-{
-    WEBKIT_WEB_LOADER_CLIENT(object)->priv->~WebKitWebLoaderClientPrivate();
-    G_OBJECT_CLASS(webkit_web_loader_client_parent_class)->finalize(object);
-}
-
 static void webkit_web_loader_client_init(WebKitWebLoaderClient* client)
 {
-    WebKitWebLoaderClientPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(client, WEBKIT_TYPE_WEB_LOADER_CLIENT, WebKitWebLoaderClientPrivate);
-    client->priv = priv;
-    new (priv) WebKitWebLoaderClientPrivate();
 }
 
 static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clientClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(clientClass);
-    objectClass->finalize = webkitWebLoaderClientFinalize;
     clientClass->provisional_load_failed = webkitWebLoaderClientLoadFailed;
     clientClass->load_failed = webkitWebLoaderClientLoadFailed;
 
@@ -347,6 +334,4 @@ static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass* clie
                      WEBKIT_TYPE_WEB_VIEW,
                      G_TYPE_STRING,
                      G_TYPE_POINTER);
-
-    g_type_class_add_private(clientClass, sizeof(WebKitWebLoaderClientPrivate));
 }

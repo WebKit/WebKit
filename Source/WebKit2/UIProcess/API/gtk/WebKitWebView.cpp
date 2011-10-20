@@ -22,6 +22,7 @@
 
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
+#include "WebKitWebLoaderClientPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitPrivate.h"
@@ -234,7 +235,7 @@ void webkit_web_view_set_loader_client(WebKitWebView* webView, WebKitWebLoaderCl
         return;
 
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    attachLoaderClientToPage(toAPI(page), loaderClient);
+    webkitWebLoaderClientAttachLoaderClientToPage(loaderClient, toAPI(page));
     priv->loaderClient = loaderClient;
 }
 

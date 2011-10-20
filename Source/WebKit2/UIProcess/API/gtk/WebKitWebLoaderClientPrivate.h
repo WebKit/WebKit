@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewPrivate_h
-#define WebKitWebViewPrivate_h
+#ifndef WebKitWebLoaderClientPrivate_h
+#define WebKitWebLoaderClientPrivate_h
 
-#include "WebKitWebView.h"
+#include "WebKitWebLoaderClient.h"
 #include <WebKit2/WebKit2.h>
 
-void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
+void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient*, WKPageRef);
 
-#endif // WebKitWebViewPrivate_h
+#endif // WebKitWebLoaderClientPrivate_h

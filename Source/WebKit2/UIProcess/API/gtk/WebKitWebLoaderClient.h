@@ -36,12 +36,8 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_LOADER_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_LOADER_CLIENT))
 #define WEBKIT_WEB_LOADER_CLIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_LOADER_CLIENT, WebKitWebLoaderClientClass))
 
-typedef struct _WebKitWebLoaderClientPrivate WebKitWebLoaderClientPrivate;
-
 struct _WebKitWebLoaderClient {
     GObject parent;
-
-    WebKitWebLoaderClientPrivate *priv;
 };
 
 struct _WebKitWebLoaderClientClass {
@@ -67,7 +63,7 @@ struct _WebKitWebLoaderClientClass {
 };
 
 WEBKIT_API GType
-webkit_web_loader_client_get_type               (void);
+webkit_web_loader_client_get_type (void);
 
 G_END_DECLS
 
