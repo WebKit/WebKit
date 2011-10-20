@@ -1,0 +1,55 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x403
+  RenderBlock {HTML} at (0,0) size 800x403
+    RenderBody {BODY} at (8,16) size 784x371
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 234x19
+          text run at (0,0) width 234: "This sentence should be left-justified."
+      RenderBlock {P} at (0,35) size 784x19 [color=#000080]
+        RenderText {#text} at (541,0) size 243x19
+          text run at (541,0) width 243: "This sentence should be right-justified."
+      RenderBlock {P} at (0,70) size 784x19 [color=#000080]
+        RenderText {#text} at (286,0) size 212x19
+          text run at (286,0) width 212: "This sentence should be centered."
+      RenderBlock {P} at (0,105) size 784x266 [color=#000080]
+        RenderText {#text} at (0,0) size 496x19
+          text run at (0,0) width 392: "This paragraph should be justified (the right and left margins "
+          text run at (392,0) width 104: "should line up). "
+        RenderInline {SPAN} at (0,0) size 784x266 [color=#C0C0C0]
+          RenderText {#text} at (496,0) size 784x266
+            text run at (496,0) width 288: "This is just lovely dummy text. Dummy text."
+            text run at (0,19) width 56: "Dummy "
+            text run at (56,19) width 529: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (585,19) width 199: "This is just lovely dummy text."
+            text run at (0,38) width 349: "This is just lovely dummy text. Dummy text. Dummy "
+            text run at (349,38) width 435: "text. This is just lovely dummy text. This is just lovely dummy text."
+            text run at (0,57) width 88: "Dummy text. "
+            text run at (88,57) width 550: "This is just lovely dummy text. This is just lovely dummy text. Dummy text. Dummy "
+            text run at (638,57) width 146: "text. This is just lovely"
+            text run at (0,76) width 379: "dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (379,76) width 405: "This is just lovely dummy text. This is just lovely dummy text."
+            text run at (0,95) width 145: "Dummy text. Dummy "
+            text run at (145,95) width 525: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (670,95) width 114: "This is just lovely"
+            text run at (0,114) width 434: "dummy text. This is just lovely dummy text. Dummy text. Dummy "
+            text run at (434,114) width 350: "text. This is just lovely dummy text. This is just lovely"
+            text run at (0,133) width 170: "dummy text. Dummy text. "
+            text run at (170,133) width 540: "This is just lovely dummy text. This is just lovely dummy text. Dummy text. Dummy "
+            text run at (710,133) width 74: "text. This is"
+            text run at (0,152) width 458: "just lovely dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (458,152) width 326: "This is just lovely dummy text. This is just lovely"
+            text run at (0,171) width 226: "dummy text. Dummy text. Dummy "
+            text run at (226,171) width 515: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (741,171) width 43: "This is"
+            text run at (0,190) width 505: "just lovely dummy text. This is just lovely dummy text. Dummy text. Dummy "
+            text run at (505,190) width 279: "text. This is just lovely dummy text. This is"
+            text run at (0,209) width 242: "just lovely dummy text. Dummy text. "
+            text run at (242,209) width 542: "This is just lovely dummy text. This is just lovely dummy text. Dummy text. Dummy"
+            text run at (0,228) width 516: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
+            text run at (516,228) width 268: "This is just lovely dummy text. This is just"
+            text run at (0,247) width 269: "lovely dummy text. Dummy text. Dummy "
+            text run at (269,247) width 118: "text. Dummy text. "
+        RenderText {#text} at (387,247) size 381x19
+          text run at (387,247) width 260: "This sentence should be at the end of the "
+          text run at (647,247) width 121: "block, not justified."
