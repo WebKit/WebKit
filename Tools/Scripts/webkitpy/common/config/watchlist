@@ -72,7 +72,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
-        "WebIDL": [ "abarth@webkit.org" ],
+        "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
@@ -80,7 +80,7 @@
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
-        "webkitpy": [ "abarth@webkit.org" ],
+        "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
     },
     "MESSAGE_RULES": {
