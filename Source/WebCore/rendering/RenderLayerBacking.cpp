@@ -340,7 +340,7 @@ static LayoutRect clipBox(RenderBox* renderer)
         result = renderer->overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
 
     if (renderer->hasClip())
-        result.intersect(renderer->clipRect(LayoutPoint()));
+        result.intersect(renderer->clipRect(LayoutPoint(), 0)); // FIXME: Incorrect for CSS regions.
 
     return result;
 }

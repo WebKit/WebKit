@@ -1,3 +1,23 @@
+2011-10-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70539
+        
+        Make the 'clip' property work in variable width regions.
+
+        Reviewed by Dan Bernstein.
+
+        Added new test in fast/regions.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clipRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::repaintBlockSelectionGaps):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox):
+
 2011-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build breakage on some platforms after r98008.

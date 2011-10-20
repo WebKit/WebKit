@@ -1,3 +1,15 @@
+2011-10-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70539
+        
+        Make the 'clip' property work in variable width regions.
+
+        Reviewed by Dan Bernstein.
+
+        * fast/regions/positioned-objects-clipped-spanning-regions.html: Added.
+        * platform/mac/fast/regions/positioned-objects-clipped-spanning-regions-expected.png: Added.
+        * platform/mac/fast/regions/positioned-objects-clipped-spanning-regions-expected.txt: Added.
+
 2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] FontCache::createFontPlatformData() is broken, a default font is returned

@@ -3529,7 +3529,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
-            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset);
+            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, region);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -3594,7 +3594,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
 
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset);
+            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, region);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -3668,7 +3668,7 @@ void RenderLayer::repaintBlockSelectionGaps()
     if (renderer()->hasOverflowClip())
         rect.intersect(toRenderBox(renderer())->overflowClipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
     if (renderer()->hasClip())
-        rect.intersect(toRenderBox(renderer())->clipRect(LayoutPoint()));
+        rect.intersect(toRenderBox(renderer())->clipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
     if (!rect.isEmpty())
         renderer()->repaintRectangle(rect);
 }

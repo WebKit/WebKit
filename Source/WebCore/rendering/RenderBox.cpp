@@ -1247,20 +1247,25 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderRegion
     return clipRect;
 }
 
-LayoutRect RenderBox::clipRect(const LayoutPoint& location)
+LayoutRect RenderBox::clipRect(const LayoutPoint& location, RenderRegion* region)
 {
-    LayoutRect clipRect(location, size());
+    LayoutRect borderBoxRect = borderBoxRectInRegion(region);
+    LayoutRect clipRect = LayoutRect(borderBoxRect.location() + location, borderBoxRect.size());
+
     if (!style()->clipLeft().isAuto()) {
-        LayoutUnit c = style()->clipLeft().calcValue(width());
+        LayoutUnit c = style()->clipLeft().calcValue(borderBoxRect.width());
         clipRect.move(c, 0);
         clipRect.contract(c, 0);
     }
+
+    // We don't use the region-specific border box's width and height since clip offsets are (stupidly) specified
+    // from the left and top edges. Therefore it's better to avoid constraining to smaller widths and heights.
 
     if (!style()->clipRight().isAuto())
         clipRect.contract(width() - style()->clipRight().calcValue(width()), 0);
 
     if (!style()->clipTop().isAuto()) {
-        LayoutUnit c = style()->clipTop().calcValue(height());
+        LayoutUnit c = style()->clipTop().calcValue(borderBoxRect.height());
         clipRect.move(0, c);
         clipRect.contract(0, c);
     }
