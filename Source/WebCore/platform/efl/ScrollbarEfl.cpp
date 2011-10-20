@@ -53,7 +53,6 @@ ScrollbarEfl::ScrollbarEfl(ScrollableArea* scrollableArea, ScrollbarOrientation 
     , m_lastTotalSize(0)
     , m_lastVisibleSize(0)
 {
-    Widget::setFrameRect(IntRect(0, 0, 0, 0));
 }
 
 ScrollbarEfl::~ScrollbarEfl()
@@ -90,7 +89,6 @@ static void scrollbarEflEdjeMessage(void* data, Evas_Object* object, Edje_Messag
 void ScrollbarEfl::setParent(ScrollView* view)
 {
     Evas_Object* object = evasObject();
-    Evas_Coord w, h;
 
     Widget::setParent(view);
 
@@ -132,12 +130,6 @@ void ScrollbarEfl::setParent(ScrollView* view)
     setPlatformWidget(object);
     evas_object_smart_member_add(object, view->evasObject());
     evas_object_show(object);
-
-    edje_object_size_min_get(object, &w, &h);
-
-    IntRect rect = frameRect();
-    rect.setSize(IntSize(w, h));
-    setFrameRect(rect);
 }
 
 void ScrollbarEfl::updateThumbPosition()
