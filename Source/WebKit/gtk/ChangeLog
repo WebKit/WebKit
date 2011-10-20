@@ -1,5 +1,14 @@
 2011-10-19  Gustavo Noronha Silva  <gns@gnome.org>
 
+        GTK+ build fix. Rename the INCLUDES variable so it is not picked
+        up by random bystanders. Also do some more cleanup on stuff we
+        inherited from gtk-doc.make.
+
+        * GNUmakefile.gtk-doc.am:
+        * docs/GNUmakefile.am:
+
+2011-10-19  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Streamline wk1 documentation build
         https://bugs.webkit.org/show_bug.cgi?id=70447
 

@@ -1,8 +1,5 @@
 ## Process this file with automake to produce GNUmakefile.in
 
-# We require automake 1.6 at least.
-AUTOMAKE_OPTIONS = 1.6
-
 # This is a blank Makefile.am for using gtk-doc.
 # Copy this to your project's API docs directory and modify the variables to
 # suit your project. See the GTK+ Makefiles in gtk+/docs/reference for examples
@@ -79,7 +76,7 @@ HTML_IMAGES=
 # signals and properties.
 # e.g. INCLUDES=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
-INCLUDES= \
+GTKDOC_INCLUDES= \
 	-I$(abs_srcdir)/Source/WebKit/gtk \
 	-I$(abs_builddir)/Source/WebKit/gtk \
 	$(global_cppflags) \
@@ -96,6 +93,7 @@ INCLUDES= \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
+
 GTKDOC_LIBS= \
 	$(abs_builddir)/libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(abs_builddir)/libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
