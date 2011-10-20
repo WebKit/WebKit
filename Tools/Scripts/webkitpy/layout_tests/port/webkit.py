@@ -532,8 +532,12 @@ class WebKitDriver(Driver):
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
         image, actual_image_hash = self._read_optional_image_block(deadline)  # The second (optional) block is image data.
 
-        # We may not have read all output (if an error occured), but we certainly should have read all error bytes.
-        assert not self._server_process._error, "Unprocessed error output: %s" % self._server_process._error
+        # We may not have read all of the output if an error (crash) occured.
+        # Since some platforms output the stacktrace over error, we should
+        # dump any buffered error into self.error_from_test.
+        # FIXME: We may need to also read stderr until the process dies?
+        self.error_from_test += self._server_process.pop_all_buffered_stderr()
+
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=self._detected_crash(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=self.error_from_test,

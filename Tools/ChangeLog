@@ -1,5 +1,18 @@
 2011-10-20  Eric Seidel  <eric@webkit.org>
 
+        Possible REGRESSION(97879): NRWT fails when DumpRenderTree crashes
+        https://bugs.webkit.org/show_bug.cgi?id=70524
+
+        Reviewed by Adam Barth.
+
+        This is a speculative fix, since I do not use a platform
+        which outputs crashlogs over stderr.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2011-10-20  Eric Seidel  <eric@webkit.org>
+
         REGRESSION(97879): Pixel tests no longer work with NRWT on Mac
         https://bugs.webkit.org/show_bug.cgi?id=70492
 

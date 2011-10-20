@@ -142,6 +142,9 @@ class ServerProcess:
             return self._pop_error_bytes(index_after_newline)
         return None
 
+    def pop_all_buffered_stderr(self):
+        return self._pop_error_bytes(len(self._error))
+
     def read_stdout_line(self, deadline):
         return self._read(deadline, self._pop_stdout_line_if_ready)
 
