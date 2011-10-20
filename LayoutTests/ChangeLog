@@ -1,3 +1,22 @@
+2011-10-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [nrwt] results.html should differentiate expected missing and unexpected missing
+        https://bugs.webkit.org/show_bug.cgi?id=70372
+
+        Reviewed by Ojan Vafai.
+
+        Fixed the bug by moving the code to set isExpected above where we find tests with missing results
+        in processGlobalStateFor, and replacing testList for the missing results table by failingTestsTable.
+
+        Also fixed a bug in updateTogglingImages that was erroneously replacing links to .png files by
+        links to -diffs.html that don't exist for tests with missing results.
+
+        * fast/harness/resources/results-test.js: Added a test.
+        * fast/harness/results-expected.txt: Rebaselined.
+        * fast/harness/results.html:
+        * platform/chromium/fast/harness/results-expected.txt: Rebaselined.
+        * platform/win/fast/harness/results-expected.txt: Rebaselined.
+
 2011-10-20  Tony Chang  <tony@chromium.org>
 
         fix repaint bugs in new flexbox

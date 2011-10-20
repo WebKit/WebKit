@@ -138,10 +138,10 @@ function runTests()
     subtree['bar.html'].is_missing_image = true;
     runTest(results, function() {
         assertTrue(!document.getElementById('results-table'));
-        assertTrue(document.querySelector('#new-tests-table .test-link').textContent == 'foo/bar.html');
-        assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(1)').textContent == 'audio result');
-        assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(2)').textContent == 'result');
-        assertTrue(document.querySelector('#new-tests-table .result-link:nth-child(3)').textContent == 'images');
+        assertTrue(document.querySelector('#missing-table .test-link').textContent == 'foo/bar.html');
+        assertTrue(document.getElementsByClassName('result-link')[0].textContent == 'audio result');
+        assertTrue(document.getElementsByClassName('result-link')[1].textContent == 'result');
+        assertTrue(document.getElementsByClassName('result-link')[2].textContent == 'png result');
     });
 
     results = mockResults();
@@ -507,6 +507,28 @@ function runTests()
         assertTrue(resultText.indexOf('crash.html') != -1);
         assertTrue(resultText.indexOf('flaky-fail.html') != -1);
         assertTrue(resultText.indexOf('crash.html') < resultText.indexOf('flaky-fail.html'));
+    });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['expected-missing.html'] = mockExpectation('MISSING', 'MISSING');
+    subtree['expected-missing.html'].is_missing_text = true;
+    subtree['expected-missing.html'].is_missing_image = true;
+    subtree['unexpected-missing.html'] = mockExpectation('PASS', 'MISSING');
+    subtree['unexpected-missing.html'].is_missing_text = true;
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+        assertTrue(visibleExpandLinks().length == 1);
+        assertTrue(document.querySelector('#missing-table tbody.expected .test-link').textContent == 'foo/expected-missing.html');
+        assertTrue(document.querySelector('#missing-table tbody.expected').getElementsByClassName('result-link')[0].textContent == 'result');
+        assertTrue(document.querySelector('#missing-table tbody.expected').getElementsByClassName('result-link')[1].textContent == 'png result');
+        assertTrue(document.querySelector('#missing-table tbody:not(.expected) .test-link').textContent == 'foo/unexpected-missing.html');
+        assertTrue(document.querySelector('#missing-table tbody:not(.expected) .result-link').textContent == 'result');
+
+        document.getElementById('unexpected-results').checked = false;
+        document.getElementById('unexpected-results').onchange();
+        expandAllExpectations();
+        assertTrue(visibleExpandLinks().length == 2);
     });
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';

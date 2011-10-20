@@ -179,7 +179,7 @@ function globalState()
             hasHttpTests: false,
             hasImageFailures: false,
             hasTextFailures: false,
-            newTests: [],
+            missingResults: [],
             results: {},
             shouldToggleImages: true,
             nonFlakyFailingTests: [],
@@ -435,16 +435,16 @@ function processGlobalStateFor(testObject)
     globalState().hasHttpTests = globalState().hasHttpTests || test.indexOf('http/') == 0;
 
     var actual = testObject.actual;    
-    if (actual == 'MISSING') {
-        // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
-        // tests with MISSING results.
-        globalState().newTests.push(testObject);
-        return;
-    }
-
     var expected = testObject.expected || 'PASS';
     if (globalState().results.uses_expectations_file)
         testObject.isExpected = isFailureExpected(expected, actual);
+
+    if (actual == 'MISSING') {
+        // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
+        // tests with MISSING results.
+        globalState().missingResults.push(testObject);
+        return;
+    }
 
     if (actual.indexOf(' ') != -1) {
         globalState().flakyTests.push(testObject);
@@ -516,6 +516,7 @@ function tableRow(testObject)
     row += '<td>';
     
     var actual = testObject.actual;
+    var expected = testObject.expected;
     if (actual.indexOf('TEXT') != -1) {
         globalState().hasTextFailures = true;
         row += textResultLinks(test_prefix);
@@ -524,6 +525,14 @@ function tableRow(testObject)
     if (actual.indexOf('AUDIO') != -1) {
         row += resultLink(test_prefix, '-expected.wav', 'expected audio');
         row += resultLink(test_prefix, '-actual.wav', 'actual audio');
+    }
+
+    if (actual.indexOf('MISSING') != -1) {
+        expected = '';
+        if (testObject.is_missing_audio)
+            row += resultLink(test_prefix, '-actual.wav', 'audio result');
+        if (testObject.is_missing_text)
+            row += resultLink(test_prefix, '-actual.txt', 'result');
     }
 
     row += '</td><td>';
@@ -550,13 +559,19 @@ function tableRow(testObject)
         }
     }
 
+    if (actual.indexOf('MISSING') != -1) {
+        expected = '';
+        if (testObject.is_missing_image)
+            row += resultLink(test_prefix, '-actual.png', 'png result');
+    }
+
     row += '</td>';
 
     if (globalState().results.uses_expectations_file || actual.indexOf(' ') != -1)
         row += '<td>' + actual + '</td>';
 
     if (globalState().results.uses_expectations_file)
-        row += '<td>' + testObject.expected + '</td>';
+        row += '<td>' + expected + '</td>';
 
     row += '</tr></tbody>';
     return row;
@@ -615,14 +630,7 @@ function testList(tests, header, tableId)
         else if (tableId == 'timeout-tests-table') {
             // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
             html += textResultLinks(stripExtension(test));
-        } else if (tableId == 'new-tests-table') {
-            if (testObject.is_missing_audio)
-                html += resultLink(stripExtension(test), '-actual.wav', 'audio result');
-            if (testObject.is_missing_text)
-                html += resultLink(stripExtension(test), '-actual.txt', 'result');
-            if (testObject.is_missing_image)
-                html += resultLink(stripExtension(test), '-actual.png', 'png result');
-        } 
+        }
         
         html += '</td></tr></tbody>';
     }
@@ -928,10 +936,10 @@ function updateTogglingImages()
     globalState().shouldToggleImages = shouldToggle;
     
     if (shouldToggle) {
-        forEach(document.querySelectorAll('tbody:not([mismatchreftest]) a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
+        forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
             return resultLink(prefix, '-diffs.html', 'images');
         }));
-        forEach(document.querySelectorAll('tbody:not([mismatchreftest]) img[src$=".png"]'), convertToTogglingHandler(togglingImage));
+        forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) img[src$=".png"]'), convertToTogglingHandler(togglingImage));
     } else {
         forEach(document.querySelectorAll('a[href$="-diffs.html"]'), convertToNonTogglingHandler(resultLink));
         forEach(document.querySelectorAll('.animatedImage'), convertToNonTogglingHandler(function (absolutePrefix, suffix) {
@@ -1036,14 +1044,14 @@ function generatePage()
     html += failingTestsTable(globalState().nonFlakyFailingTests,
         'Tests where results did not match expected results', 'results-table');
 
+    html += failingTestsTable(globalState().missingResults,
+        'Tests that had no expected results (probably new)', 'missing-table');
+
     html += failingTestsTable(globalState().flakyTests,
         'Flaky tests (failed the first run and got a different result on retry)', 'flaky-tests-table');
 
     if (globalState().timeoutTests.length)
         html += testList(globalState().timeoutTests, 'Tests that timed out', 'timeout-tests-table');
-
-    if (globalState().newTests.length)
-        html += testList(globalState().newTests, 'Tests that had no expected results (probably new)', 'new-tests-table');
 
     if (globalState().testsWithStderr.length)
         html += testList(globalState().testsWithStderr, 'Tests that had stderr output', 'stderr-table');
