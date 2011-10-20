@@ -1,3 +1,13 @@
+2011-10-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Fix DSO linkage of wtf_efl.
+
+        Unreviewed build fix.
+
+        Need to add -ldl to jsc_efl (requested by dladdr).
+
+        * wtf/CMakeListsEfl.txt:
+
 2011-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed StringImplBase, fusing it into StringImpl
