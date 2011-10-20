@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {OL} at (0,0) size 784x66
-        RenderListItem {LI} at (40,0) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "1"
-          RenderInline {U} at (0,0) size 536x22
-            RenderText {#text} at (0,0) size 536x22
-              text run at (0,0) width 536: "This tests for a crash when making and removing lists from underlined content."
-        RenderListItem {LI} at (40,22) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "2"
-          RenderInline {U} at (0,0) size 294x22
-            RenderText {#text} at (0,0) size 294x22
-              text run at (0,0) width 294: "All three paragraphs should be in list items."
-        RenderListItem {LI} at (40,44) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "3"
-          RenderInline {U} at (0,0) size 240x22
-            RenderText {#text} at (0,0) size 240x22
-              text run at (0,0) width 240: "And all three should be underlined."
-      RenderBlock (anonymous) at (0,82) size 784x0
+      RenderBlock {OL} at (0,0) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "1"
+          RenderInline {U} at (0,0) size 553x21
+            RenderText {#text} at (0,0) size 553x21
+              text run at (0,0) width 553: "This tests for a crash when making and removing lists from underlined content."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "2"
+          RenderInline {U} at (0,0) size 305x21
+            RenderText {#text} at (0,0) size 305x21
+              text run at (0,0) width 305: "All three paragraphs should be in list items."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "3"
+          RenderInline {U} at (0,0) size 248x21
+            RenderText {#text} at (0,0) size 248x21
+              text run at (0,0) width 248: "And all three should be underlined."
+      RenderBlock (anonymous) at (0,79) size 784x0
 selection start: position 0 of child 0 {#text} of child 0 {U} of child 0 {LI} of child 0 {OL} of body
 selection end:   position 35 of child 0 {#text} of child 0 {U} of child 2 {LI} of child 0 {OL} of body

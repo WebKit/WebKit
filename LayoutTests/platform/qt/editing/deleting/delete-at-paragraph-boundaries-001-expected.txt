@@ -13,29 +13,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x275 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x99
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x258 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 737x66
-            text run at (0,33) width 737: "Deleting when a selection starts in a blank line created by a block with a"
-            text run at (0,66) width 553: "BR placeholder in it and extends to the end of a block."
-        RenderBlock {DIV} at (14,129) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 725x99
-            text run at (0,33) width 725: "Should see the three lines in the red box. First line should be \"A\". Next"
-            text run at (0,66) width 690: "two lines should be empty. Insertion point should be blinking on the"
-            text run at (0,99) width 328: "second line (the first blank one)."
-      RenderBlock {DIV} at (0,299) size 784x103
-        RenderBlock {DIV} at (0,0) size 784x103 [border: (2px solid #FF0000)]
-          RenderBlock {P} at (2,2) size 780x33
-            RenderText {#text} at (0,0) size 17x33
-              text run at (0,0) width 17: "A"
-          RenderBlock {P} at (2,35) size 780x33
-            RenderBR {BR} at (0,0) size 0x33
-          RenderBlock {P} at (2,68) size 780x33
-            RenderBR {BR} at (0,0) size 0x33
+          RenderText {#text} at (0,32) size 755x60
+            text run at (0,32) width 755: "Deleting when a selection starts in a blank line created by a block with a"
+            text run at (0,62) width 570: "BR placeholder in it and extends to the end of a block."
+        RenderBlock {DIV} at (14,122) size 756x122
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 742x90
+            text run at (0,32) width 742: "Should see the three lines in the red box. First line should be \"A\". Next"
+            text run at (0,62) width 704: "two lines should be empty. Insertion point should be blinking on the"
+            text run at (0,92) width 337: "second line (the first blank one)."
+      RenderBlock {DIV} at (0,282) size 784x94
+        RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
+          RenderBlock {P} at (2,2) size 780x30
+            RenderText {#text} at (0,0) size 16x30
+              text run at (0,0) width 16: "A"
+          RenderBlock {P} at (2,32) size 780x30
+            RenderBR {BR} at (0,0) size 0x30
+          RenderBlock {P} at (2,62) size 780x30
+            RenderBR {BR} at (0,0) size 0x30
 caret: position 0 of child 0 {BR} of child 3 {P} of child 1 {DIV} of child 3 {DIV} of body

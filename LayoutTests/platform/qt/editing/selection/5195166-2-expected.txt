@@ -14,12 +14,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 695x22
-          text run at (0,0) width 695: "This tests for a bug where selection change notifications would post the wrong proposed selected range."
-      RenderBlock {DIV} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 379x22
-          text run at (0,0) width 379: "There should be five characters selected in this sentence."
-      RenderBlock {UL} at (0,76) size 784x0
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 735x21
+          text run at (0,0) width 735: "This tests for a bug where selection change notifications would post the wrong proposed selected range."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 406x21
+          text run at (0,0) width 406: "There should be five characters selected in this sentence."
+      RenderBlock {UL} at (0,74) size 784x0
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 2 {DIV} of body

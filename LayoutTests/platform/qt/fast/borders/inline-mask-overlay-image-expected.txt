@@ -1,17 +1,17 @@
-layer at (0,0) size 784x2104
+layer at (0,0) size 784x2000
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x2104
-  RenderBlock {HTML} at (0,0) size 784x2104
-    RenderBody {BODY} at (8,8) size 768x2088
+layer at (0,0) size 784x2000
+  RenderBlock {HTML} at (0,0) size 784x2000
+    RenderBody {BODY} at (8,8) size 768x1984
       RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 656x2088
-  RenderInline {SPAN} at (0,0) size 656x2088 [bgcolor=#800000]
-    RenderText {#text} at (0,0) size 656x2088
-      text run at (0,0) width 378: "This"
-      text run at (0,261) width 634: "content"
-      text run at (0,522) width 567: "should"
-      text run at (0,783) width 200: "be"
-      text run at (0,1044) width 656: "masked"
-      text run at (0,1305) width 528: "with a"
-      text run at (0,1566) width 312: "soft"
-      text run at (0,1827) width 450: "glow."
+layer at (8,8) size 700x1984
+  RenderInline {SPAN} at (0,0) size 700x1984 [bgcolor=#800000]
+    RenderText {#text} at (0,0) size 700x1984
+      text run at (0,0) width 377: "This"
+      text run at (0,248) width 656: "content"
+      text run at (0,496) width 588: "should"
+      text run at (0,744) width 222: "be"
+      text run at (0,992) width 700: "masked"
+      text run at (0,1240) width 522: "with a"
+      text run at (0,1488) width 323: "soft"
+      text run at (0,1736) width 466: "glow."

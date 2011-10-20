@@ -3,71 +3,71 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 591x22
-        text run at (0,0) width 269: "This tests that styled popups look right. "
-        text run at (269,0) width 322: "(Aqua for now- later, we will honor the styling)."
-      RenderBR {BR} at (591,16) size 0x0
-      RenderMenuList {SELECT} at (2,24) size 53x28 [bgcolor=#FF0000] [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (5,3) size 23x22
-          RenderText at (0,0) size 23x22
-            text run at (0,0) width 23: "test"
-      RenderText {#text} at (57,27) size 4x22
-        text run at (57,27) width 4: " "
-      RenderBR {BR} at (61,43) size 0x0
-      RenderText {#text} at (0,54) size 570x22
-        text run at (0,54) width 570: "This tests that background color is white by default regardless of the parent element."
-      RenderBR {BR} at (570,70) size 0x0
-      RenderInline {SPAN} at (0,0) size 69x32 [bgcolor=#FF0000]
+      RenderText {#text} at (0,0) size 604x21
+        text run at (0,0) width 278: "This tests that styled popups look right. "
+        text run at (278,0) width 326: "(Aqua for now- later, we will honor the styling)."
+      RenderBR {BR} at (604,16) size 0x0
+      RenderMenuList {SELECT} at (2,23) size 55x27 [bgcolor=#FF0000] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (5,3) size 25x21
+          RenderText at (0,0) size 25x21
+            text run at (0,0) width 25: "test"
+      RenderText {#text} at (59,26) size 4x21
+        text run at (59,26) width 4: " "
+      RenderBR {BR} at (63,42) size 0x0
+      RenderText {#text} at (0,52) size 592x21
+        text run at (0,52) width 592: "This tests that background color is white by default regardless of the parent element."
+      RenderBR {BR} at (592,68) size 0x0
+      RenderInline {SPAN} at (0,0) size 71x31 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,78) size 51x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 23x22
-            RenderText at (0,0) size 23x22
-              text run at (0,0) width 23: "test"
-        RenderText {#text} at (60,80) size 4x22
-          text run at (60,80) width 4: " "
+        RenderMenuList {SELECT} at (7,75) size 53x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 25x21
+            RenderText at (0,0) size 25x21
+              text run at (0,0) width 25: "test"
+        RenderText {#text} at (62,77) size 4x21
+          text run at (62,77) width 4: " "
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,107) size 678x22
-        text run at (0,107) width 678: "This tests that background color is inherited from the parent if background-color:inherit is specified."
-      RenderBR {BR} at (678,123) size 0x0
-      RenderInline {SPAN} at (0,0) size 71x32 [bgcolor=#FF0000]
+      RenderText {#text} at (0,103) size 693x21
+        text run at (0,103) width 693: "This tests that background color is inherited from the parent if background-color:inherit is specified."
+      RenderBR {BR} at (693,119) size 0x0
+      RenderInline {SPAN} at (0,0) size 73x31 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,131) size 53x28 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (5,3) size 23x22
-            RenderText at (0,0) size 23x22
-              text run at (0,0) width 23: "test"
-        RenderText {#text} at (62,134) size 4x22
-          text run at (62,134) width 4: " "
+        RenderMenuList {SELECT} at (7,126) size 55x27 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (5,3) size 25x21
+            RenderText at (0,0) size 25x21
+              text run at (0,0) width 25: "test"
+        RenderText {#text} at (64,129) size 4x21
+          text run at (64,129) width 4: " "
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,161) size 692x22
-        text run at (0,161) width 692: "This tests that background color is the same as the parent if background-color:transparent is specified."
-      RenderBR {BR} at (692,177) size 0x0
-      RenderInline {SPAN} at (0,0) size 71x32 [bgcolor=#FF0000]
+      RenderText {#text} at (0,155) size 718x21
+        text run at (0,155) width 718: "This tests that background color is the same as the parent if background-color:transparent is specified."
+      RenderBR {BR} at (718,171) size 0x0
+      RenderInline {SPAN} at (0,0) size 73x31 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,185) size 53x28 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (5,3) size 23x22
-            RenderText at (0,0) size 23x22
-              text run at (0,0) width 23: "test"
-        RenderText {#text} at (62,188) size 4x22
-          text run at (62,188) width 4: " "
+        RenderMenuList {SELECT} at (7,178) size 55x27 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (5,3) size 25x21
+            RenderText at (0,0) size 25x21
+              text run at (0,0) width 25: "test"
+        RenderText {#text} at (64,181) size 4x21
+          text run at (64,181) width 4: " "
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,215) size 532x22
-        text run at (0,215) width 532: "This tests that background is white if only background-image:none is specified."
-      RenderBR {BR} at (532,231) size 0x0
-      RenderMenuList {SELECT} at (2,239) size 51x27 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 23x22
-          RenderText at (0,0) size 23x22
-            text run at (0,0) width 23: "test"
-      RenderText {#text} at (55,241) size 4x22
-        text run at (55,241) width 4: " "
-      RenderBR {BR} at (59,257) size 0x0
-      RenderText {#text} at (0,268) size 445x22
-        text run at (0,268) width 445: "This tests that the image specified for background-image is visible."
-      RenderBR {BR} at (445,284) size 0x0
-      RenderMenuList {SELECT} at (2,292) size 53x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (5,3) size 23x22
-          RenderText at (0,0) size 23x22
-            text run at (0,0) width 23: "test"
+      RenderText {#text} at (0,207) size 555x21
+        text run at (0,207) width 555: "This tests that background is white if only background-image:none is specified."
+      RenderBR {BR} at (555,223) size 0x0
+      RenderMenuList {SELECT} at (2,230) size 53x26 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 25x21
+          RenderText at (0,0) size 25x21
+            text run at (0,0) width 25: "test"
+      RenderText {#text} at (57,232) size 4x21
+        text run at (57,232) width 4: " "
+      RenderBR {BR} at (61,248) size 0x0
+      RenderText {#text} at (0,258) size 469x21
+        text run at (0,258) width 469: "This tests that the image specified for background-image is visible."
+      RenderBR {BR} at (469,274) size 0x0
+      RenderMenuList {SELECT} at (2,281) size 55x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (5,3) size 25x21
+          RenderText at (0,0) size 25x21
+            text run at (0,0) width 25: "test"
       RenderText {#text} at (0,0) size 0x0

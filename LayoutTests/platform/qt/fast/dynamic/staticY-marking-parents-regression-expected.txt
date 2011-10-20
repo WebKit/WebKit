@@ -3,35 +3,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 745x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=12818"
-          RenderText {#text} at (361,0) size 745x44
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 380: "REGRESSION (r19148): shacknews.com does not render"
-            text run at (0,22) width 68: "completely"
-        RenderText {#text} at (68,22) size 4x22
-          text run at (68,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 356x22
-          text run at (0,0) width 356: "There should be a green square to the left of the text."
-      RenderBlock {DIV} at (0,98) size 100x100 [bgcolor=#008000]
-      RenderBlock {DIV} at (0,198) size 784x22
-        RenderText {#text} at (0,0) size 40x22
-          text run at (0,0) width 40: "PASS"
-layer at (8,106) size 792x154
-  RenderBlock (positioned) {DIV} at (8,106) size 792x154
-    RenderBlock {DIV} at (100,0) size 692x154
-      RenderBlock {DIV} at (0,0) size 692x154
-        RenderText {#text} at (0,0) size 689x154
-          text run at (0,0) width 673: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed"
-          text run at (0,22) width 689: "neque. Quisque eu nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit"
-          text run at (0,44) width 659: "sed, sapien. Phasellus vehicula, sem at posuere vehicula, augue nibh molestie nisl, nec ullamcorper"
-          text run at (0,66) width 664: "lacus ante vulputate pede. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur"
-          text run at (0,88) width 686: "ridiculus mus. Mauris viverra augue vitae purus. Morbi sed sem. Donec dui nisi, ultrices non, pretium"
-          text run at (0,110) width 662: "quis, hendrerit non, est. Donec tellus. Donec eget dui id eros pharetra rutrum. Suspendisse sodales"
-          text run at (0,132) width 595: "lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a, tellus."
+        RenderInline {I} at (0,0) size 749x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12818"
+          RenderText {#text} at (386,0) size 749x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 359: "REGRESSION (r19148): shacknews.com does not"
+            text run at (0,21) width 127: "render completely"
+        RenderText {#text} at (127,21) size 4x21
+          text run at (127,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 371x21
+          text run at (0,0) width 371: "There should be a green square to the left of the text."
+      RenderBlock {DIV} at (0,95) size 100x100 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,195) size 784x21
+        RenderText {#text} at (0,0) size 44x21
+          text run at (0,0) width 44: "PASS"
+layer at (8,103) size 792x168
+  RenderBlock (positioned) {DIV} at (8,103) size 792x168
+    RenderBlock {DIV} at (100,0) size 692x168
+      RenderBlock {DIV} at (0,0) size 692x168
+        RenderText {#text} at (0,0) size 692x168
+          text run at (0,0) width 664: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh"
+          text run at (0,21) width 667: "sed neque. Quisque eu nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet"
+          text run at (0,42) width 684: "non, suscipit sed, sapien. Phasellus vehicula, sem at posuere vehicula, augue nibh molestie nisl,"
+          text run at (0,63) width 692: "nec ullamcorper lacus ante vulputate pede. Cum sociis natoque penatibus et magnis dis parturient"
+          text run at (0,84) width 684: "montes, nascetur ridiculus mus. Mauris viverra augue vitae purus. Morbi sed sem. Donec dui nisi,"
+          text run at (0,105) width 689: "ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros pharetra rutrum."
+          text run at (0,126) width 656: "Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu,"
+          text run at (0,147) width 111: "aliquet a, tellus."

@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x126
-  RenderBlock {html} at (0,0) size 800x126 [color=#FF0000]
-    RenderBody {body} at (8,8) size 784x110
-      RenderBlock {test3} at (0,0) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {test3} at (0,22) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {test3} at (0,44) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {test2} at (0,66) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {test1} at (0,88) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
+layer at (0,0) size 800x121
+  RenderBlock {html} at (0,0) size 800x121 [color=#FF0000]
+    RenderBody {body} at (8,8) size 784x105
+      RenderBlock {test3} at (0,0) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {test3} at (0,21) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {test3} at (0,42) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {test2} at (0,63) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {test1} at (0,84) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."

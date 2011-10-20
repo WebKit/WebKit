@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 770x102 [bgcolor=#000000]
-layer at (8,8) size 770x102
-  RenderBlock (relative positioned) {DIV} at (0,0) size 770x102 [bgcolor=#FF0000]
-    RenderTable {TABLE} at (0,0) size 101x80
-      RenderTableSection {TBODY} at (0,0) size 101x80
-        RenderTableRow {TR} at (0,2) size 101x24
-          RenderTableCell {TD} at (2,2) size 97x24 [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 95x22
-              text run at (1,1) width 95: "Some content."
-        RenderTableRow {TR} at (0,28) size 101x24
-          RenderTableCell {TD} at (2,28) size 97x24 [r=1 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 93x22
-              text run at (1,1) width 93: "more content."
-        RenderTableRow {TR} at (0,54) size 101x24
-          RenderTableCell {TD} at (2,54) size 97x24 [r=2 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 74x22
-              text run at (1,1) width 74: "even more."
-    RenderBlock {DIV} at (0,80) size 770x22 [color=#FFFFFF] [bgcolor=#008000]
-      RenderText {#text} at (0,0) size 159x22
-        text run at (0,0) width 159: "Hello. Here I am below."
+      RenderBlock {DIV} at (0,0) size 770x98 [bgcolor=#000000]
+layer at (8,8) size 770x98
+  RenderBlock (relative positioned) {DIV} at (0,0) size 770x98 [bgcolor=#FF0000]
+    RenderTable {TABLE} at (0,0) size 108x77
+      RenderTableSection {TBODY} at (0,0) size 108x77
+        RenderTableRow {TR} at (0,2) size 108x23
+          RenderTableCell {TD} at (2,2) size 104x23 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 102x21
+              text run at (1,1) width 102: "Some content."
+        RenderTableRow {TR} at (0,27) size 108x23
+          RenderTableCell {TD} at (2,27) size 104x23 [r=1 c=0 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 96x21
+              text run at (1,1) width 96: "more content."
+        RenderTableRow {TR} at (0,52) size 108x23
+          RenderTableCell {TD} at (2,52) size 104x23 [r=2 c=0 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 79x21
+              text run at (1,1) width 79: "even more."
+    RenderBlock {DIV} at (0,77) size 770x21 [color=#FFFFFF] [bgcolor=#008000]
+      RenderText {#text} at (0,0) size 166x21
+        text run at (0,0) width 166: "Hello. Here I am below."

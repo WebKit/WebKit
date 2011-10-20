@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 742x44
-          text run at (0,0) width 742: "Mousing over the yellow square below should not cause an assertion failure or crash. This tests for regressions"
-          text run at (0,22) width 52: "against "
-        RenderInline {A} at (0,0) size 32x22 [color=#0000EE]
-          RenderText {#text} at (52,22) size 32x22
-            text run at (52,22) width 32: "6931"
-        RenderText {#text} at (84,22) size 4x22
-          text run at (84,22) width 4: "."
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 782x42
+          text run at (0,0) width 782: "Mousing over the yellow square below should not cause an assertion failure or crash. This tests for regressions"
+          text run at (0,21) width 56: "against "
+        RenderInline {A} at (0,0) size 36x21 [color=#0000EE]
+          RenderText {#text} at (56,21) size 36x21
+            text run at (56,21) width 36: "6931"
+        RenderText {#text} at (92,21) size 4x21
+          text run at (92,21) width 4: "."
 layer at (50,50) size 200x200
   RenderBlock (positioned) zI: 1 {DIV} at (50,50) size 200x200 [bgcolor=#FFFF00]
 caret: position 1 of child 2 {#text} of child 1 {DIV} of body

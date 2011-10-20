@@ -8,11 +8,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x587
       RenderBlock {PRE} at (0,0) size 800x85
-        RenderText {#text} at (0,0) size 31x68
-          text run at (0,0) width 31: "Test."
-          text run at (31,0) width 0: " "
-          text run at (0,17) width 31: "Test."
-          text run at (31,17) width 0: " "
+        RenderText {#text} at (0,0) size 30x68
+          text run at (0,0) width 30: "Test."
+          text run at (30,0) width 0: " "
+          text run at (0,17) width 30: "Test."
+          text run at (30,17) width 0: " "
           text run at (0,34) width 0: " "
           text run at (0,51) width 0: " "
         RenderText {#text} at (0,68) size 0x17

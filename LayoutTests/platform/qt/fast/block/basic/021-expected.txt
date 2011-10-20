@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x156
-  RenderBlock {HTML} at (0,0) size 800x156
-    RenderBody {BODY} at (8,8) size 784x140
-      RenderBlock {DIV} at (0,0) size 784x112 [border: (3px solid #FFFF00)]
-        RenderBlock (anonymous) at (3,3) size 778x22
-          RenderText {#text} at (0,0) size 47x22
-            text run at (0,0) width 47: "Yellow"
-        RenderBlock {DIV} at (3,25) size 778x84 [border: (3px solid #0000FF)]
-          RenderBlock (anonymous) at (3,3) size 772x22
-            RenderText {#text} at (0,0) size 31x22
-              text run at (0,0) width 31: "Blue"
-          RenderBlock {DIV} at (3,25) size 772x28 [border: (3px solid #008000)]
-            RenderText {#text} at (3,3) size 42x22
-              text run at (3,3) width 42: "Green"
-          RenderBlock {DIV} at (3,53) size 772x28 [border: (3px solid #FF0000)]
-            RenderText {#text} at (3,3) size 28x22
-              text run at (3,3) width 28: "Red"
-      RenderBlock {DIV} at (0,112) size 784x28 [border: (3px solid #000080)]
-        RenderBlock {DIV} at (3,3) size 778x22
-          RenderText {#text} at (0,0) size 36x22
-            text run at (0,0) width 36: "Navy"
+layer at (0,0) size 800x151
+  RenderBlock {HTML} at (0,0) size 800x151
+    RenderBody {BODY} at (8,8) size 784x135
+      RenderBlock {DIV} at (0,0) size 784x108 [border: (3px solid #FFFF00)]
+        RenderBlock (anonymous) at (3,3) size 778x21
+          RenderText {#text} at (0,0) size 49x21
+            text run at (0,0) width 49: "Yellow"
+        RenderBlock {DIV} at (3,24) size 778x81 [border: (3px solid #0000FF)]
+          RenderBlock (anonymous) at (3,3) size 772x21
+            RenderText {#text} at (0,0) size 33x21
+              text run at (0,0) width 33: "Blue"
+          RenderBlock {DIV} at (3,24) size 772x27 [border: (3px solid #008000)]
+            RenderText {#text} at (3,3) size 44x21
+              text run at (3,3) width 44: "Green"
+          RenderBlock {DIV} at (3,51) size 772x27 [border: (3px solid #FF0000)]
+            RenderText {#text} at (3,3) size 30x21
+              text run at (3,3) width 30: "Red"
+      RenderBlock {DIV} at (0,108) size 784x27 [border: (3px solid #000080)]
+        RenderBlock {DIV} at (3,3) size 778x21
+          RenderText {#text} at (0,0) size 37x21
+            text run at (0,0) width 37: "Navy"

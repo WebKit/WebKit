@@ -15,16 +15,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 758x22
-          text run at (0,0) width 280: "This test deletes the contents of a sub-list. "
-          text run at (280,0) width 478: "Then it deletes the empty list item. The list item below it should remain."
-      RenderBlock {DIV} at (0,38) size 784x44
-        RenderBlock {UL} at (0,0) size 784x44
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderBR {BR} at (0,0) size 0x22
-          RenderListItem {LI} at (40,22) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderBR {BR} at (0,0) size 0x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 740x42
+          text run at (0,0) width 299: "This test deletes the contents of a sub-list. "
+          text run at (299,0) width 441: "Then it deletes the empty list item. The list item below it should"
+          text run at (0,21) width 53: "remain."
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderBlock {UL} at (0,0) size 784x42
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderBR {BR} at (0,0) size 0x21
+          RenderListItem {LI} at (40,21) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderBR {BR} at (0,0) size 0x21
 caret: position 0 of child 0 {BR} of child 0 {LI} of child 0 {UL} of child 3 {DIV} of body

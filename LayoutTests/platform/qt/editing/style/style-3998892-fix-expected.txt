@@ -13,34 +13,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x209 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x99
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x198 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 117x33
-            text run at (0,33) width 117: "Bug fix for "
-          RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
-            RenderText {#text} at (117,33) size 275x33
-              text run at (117,33) width 275: "<rdar://problem/3998892>"
-          RenderText {#text} at (392,33) size 734x66
-            text run at (392,33) width 342: " REGRESSION (Mail): bolding a"
-            text run at (0,66) width 95: "selection "
-            text run at (95,66) width 576: "from end of line changes unselected text on starting line."
-        RenderBlock {DIV} at (14,129) size 756x66
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 639x33
-            text run at (0,33) width 639: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
-      RenderBlock {DIV} at (0,233) size 784x70
-        RenderBlock {DIV} at (0,0) size 784x70 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x33
-            RenderText {#text} at (0,0) size 32x33
-              text run at (0,0) width 32: "foo"
-          RenderBlock {DIV} at (2,35) size 780x33
-            RenderInline {B} at (0,0) size 36x33
-              RenderText {#text} at (0,0) size 36x33
-                text run at (0,0) width 36: "bar"
+          RenderText {#text} at (0,32) size 115x30
+            text run at (0,32) width 115: "Bug fix for "
+          RenderInline {A} at (0,0) size 274x30 [color=#0000EE]
+            RenderText {#text} at (115,32) size 274x30
+              text run at (115,32) width 274: "<rdar://problem/3998892>"
+          RenderText {#text} at (389,32) size 731x60
+            text run at (389,32) width 342: " REGRESSION (Mail): bolding a"
+            text run at (0,62) width 100: "selection "
+            text run at (100,62) width 595: "from end of line changes unselected text on starting line."
+        RenderBlock {DIV} at (14,122) size 756x62
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 638x30
+            text run at (0,32) width 638: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
+      RenderBlock {DIV} at (0,222) size 784x66
+        RenderBlock {DIV} at (0,0) size 784x66 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x30
+            RenderText {#text} at (0,0) size 33x30
+              text run at (0,0) width 33: "foo"
+          RenderBlock {DIV} at (2,32) size 780x32
+            RenderInline {B} at (0,0) size 37x32
+              RenderText {#text} at (0,0) size 37x32
+                text run at (0,0) width 37: "bar"
 selection start: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 0 {B} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

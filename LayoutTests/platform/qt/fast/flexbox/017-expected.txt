@@ -3,89 +3,89 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 769x44
-          text run at (0,0) width 333: "You should see identical rows of numbers below. "
-          text run at (333,0) width 436: "Every row should look exactly the same. If any objects are out of"
-          text run at (0,22) width 200: "order, then the test has failed."
-      RenderDeprecatedFlexibleBox {DIV} at (0,60) size 784x210
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x42
-          RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "1"
-          RenderBlock {DIV} at (32,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "2"
-          RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "3"
-          RenderBlock {DIV} at (88,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "4"
-          RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "5"
-        RenderDeprecatedFlexibleBox {DIV} at (0,42) size 784x42
-          RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "5"
-          RenderBlock {DIV} at (88,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "4"
-          RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "3"
-          RenderBlock {DIV} at (32,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "2"
-          RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "1"
-        RenderDeprecatedFlexibleBox {DIV} at (0,84) size 784x42
-          RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "1"
-          RenderBlock {DIV} at (32,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "2"
-          RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "3"
-          RenderBlock {DIV} at (88,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "4"
-          RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "5"
-        RenderDeprecatedFlexibleBox {DIV} at (0,126) size 784x42
-          RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "3"
-          RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "1"
-          RenderBlock {DIV} at (88,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "4"
-          RenderBlock {DIV} at (32,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "2"
-          RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "5"
-        RenderDeprecatedFlexibleBox {DIV} at (0,168) size 784x42
-          RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "3"
-          RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "1"
-          RenderBlock {DIV} at (88,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "4"
-          RenderBlock {DIV} at (32,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "2"
-          RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
-            RenderText {#text} at (6,6) size 8x22
-              text run at (6,6) width 8: "5"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 759x42
+          text run at (0,0) width 351: "You should see identical rows of numbers below. "
+          text run at (351,0) width 408: "Every row should look exactly the same. If any objects are"
+          text run at (0,21) width 251: "out of order, then the test has failed."
+      RenderDeprecatedFlexibleBox {DIV} at (0,58) size 784x205
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x41
+          RenderBlock {DIV} at (4,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "1"
+          RenderBlock {DIV} at (33,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "2"
+          RenderBlock {DIV} at (62,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "3"
+          RenderBlock {DIV} at (91,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "4"
+          RenderBlock {DIV} at (120,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "5"
+        RenderDeprecatedFlexibleBox {DIV} at (0,41) size 784x41
+          RenderBlock {DIV} at (120,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "5"
+          RenderBlock {DIV} at (91,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "4"
+          RenderBlock {DIV} at (62,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "3"
+          RenderBlock {DIV} at (33,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "2"
+          RenderBlock {DIV} at (4,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "1"
+        RenderDeprecatedFlexibleBox {DIV} at (0,82) size 784x41
+          RenderBlock {DIV} at (4,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "1"
+          RenderBlock {DIV} at (33,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "2"
+          RenderBlock {DIV} at (62,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "3"
+          RenderBlock {DIV} at (91,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "4"
+          RenderBlock {DIV} at (120,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "5"
+        RenderDeprecatedFlexibleBox {DIV} at (0,123) size 784x41
+          RenderBlock {DIV} at (62,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "3"
+          RenderBlock {DIV} at (4,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "1"
+          RenderBlock {DIV} at (91,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "4"
+          RenderBlock {DIV} at (33,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "2"
+          RenderBlock {DIV} at (120,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "5"
+        RenderDeprecatedFlexibleBox {DIV} at (0,164) size 784x41
+          RenderBlock {DIV} at (62,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "3"
+          RenderBlock {DIV} at (4,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "1"
+          RenderBlock {DIV} at (91,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "4"
+          RenderBlock {DIV} at (33,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "2"
+          RenderBlock {DIV} at (120,4) size 21x33 [border: (2px solid #000000)]
+            RenderText {#text} at (6,6) size 9x21
+              text run at (6,6) width 9: "5"

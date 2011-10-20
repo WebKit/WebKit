@@ -1,70 +1,70 @@
-layer at (0,0) size 784x758
+layer at (0,0) size 784x754
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x758
-  RenderBlock {HTML} at (0,0) size 784x758
-    RenderBody {BODY} at (8,16) size 768x734
-      RenderBlock {P} at (0,0) size 768x44
-        RenderText {#text} at (0,0) size 761x44
-          text run at (0,0) width 761: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on"
-          text run at (0,22) width 54: "the left, "
-          text run at (54,22) width 399: "and padding, an orange border, and a margin on the right."
-      RenderBlock {H1} at (0,60) size 768x22
-        RenderText {#text} at (0,0) size 89x22
-          text run at (0,0) width 89: "Left-to-Right"
-      RenderBlock {DIV} at (0,92) size 768x284 [border: (1px solid #000000)]
+layer at (0,0) size 784x754
+  RenderBlock {HTML} at (0,0) size 784x754
+    RenderBody {BODY} at (8,16) size 768x730
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 762: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin"
+          text run at (0,21) width 77: "on the left, "
+          text run at (77,21) width 407: "and padding, an orange border, and a margin on the right."
+      RenderBlock {H1} at (0,58) size 768x21
+        RenderText {#text} at (0,0) size 95x21
+          text run at (0,0) width 95: "Left-to-Right"
+      RenderBlock {DIV} at (0,89) size 768x284 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 756x32
-          RenderText {#text} at (0,5) size 135x22
-            text run at (0,5) width 135: "Lorem ipsum dolor "
-          RenderInline {SPAN} at (0,0) size 196x24 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (180,5) size 141x22
-              text run at (180,5) width 141: "sit amet, consectetur "
-          RenderText {#text} at (366,5) size 355x22
-            text run at (366,5) width 355: "adipisicing elit, sed do eiusmod tempor incididunt ut."
+          RenderText {#text} at (0,5) size 136x21
+            text run at (0,5) width 136: "Lorem ipsum dolor "
+          RenderInline {SPAN} at (0,0) size 204x23 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (181,5) size 149x21
+              text run at (181,5) width 149: "sit amet, consectetur "
+          RenderText {#text} at (375,5) size 370x21
+            text run at (375,5) width 370: "adipisicing elit, sed do eiusmod tempor incididunt ut."
         RenderBlock {P} at (6,70) size 756x192
-          RenderText {#text} at (0,5) size 737x54
-            text run at (0,5) width 631: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
-            text run at (631,5) width 106: "labore et dolore"
-            text run at (0,37) width 512: "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 742x120 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (512,37) size 742x118
-              text run at (512,37) width 180: "laboris nisi ut aliquip ex ea"
-              text run at (0,69) width 424: "commodo consequat. Duis aute irure dolor in reprehenderit in "
-              text run at (424,69) width 318: "voluptate velit esse cillum dolore eu fugiat nulla"
-              text run at (0,101) width 296: "pariatur. Excepteur sint occaecat cupidatat "
-              text run at (296,101) width 436: "non proident, sunt in culpa qui officia deserunt mollit anim id est"
-              text run at (45,133) width 201: "laborum. Lorem ipsum dolor "
-          RenderText {#text} at (246,133) size 738x54
-            text run at (246,133) width 492: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut"
-            text run at (0,165) width 106: "labore et dolore"
-      RenderBlock {H1} at (0,386) size 768x22
-        RenderText {#text} at (0,0) size 89x22
-          text run at (0,0) width 89: "Right-to-Left"
-      RenderBlock {DIV} at (0,418) size 768x316 [border: (1px solid #000000)]
+          RenderText {#text} at (0,5) size 717x53
+            text run at (0,5) width 655: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
+            text run at (655,5) width 62: "labore et"
+            text run at (0,37) width 579: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
+          RenderInline {SPAN} at (0,0) size 716x119 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (579,37) size 716x117
+              text run at (579,37) width 94: "laboris nisi ut"
+              text run at (0,69) width 532: "aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
+              text run at (532,69) width 182: "voluptate velit esse cillum"
+              text run at (0,101) width 457: "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
+              text run at (457,101) width 259: "non proident, sunt in culpa qui officia"
+              text run at (45,133) width 391: "deserunt mollit anim id est laborum. Lorem ipsum dolor "
+          RenderText {#text} at (436,133) size 743x53
+            text run at (436,133) width 307: "sit amet, consectetur adipisicing elit, sed do"
+            text run at (0,165) width 319: "eiusmod tempor incididunt ut labore et dolore"
+      RenderBlock {H1} at (0,383) size 768x21
+        RenderText {#text} at (0,0) size 95x21
+          text run at (0,0) width 95: "Right-to-Left"
+      RenderBlock {DIV} at (0,414) size 768x316 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 756x32
-          RenderText {#text} at (39,5) size 135x22
-            text run at (39,5) width 135: "Lorem ipsum dolor "
-          RenderInline {SPAN} at (0,0) size 196x24 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (219,5) size 141x22
-              text run at (219,5) width 141: "sit amet, consectetur "
-          RenderText {#text} at (35,5) size 721x22
-            text run at (35,5) width 4 RTL: "."
-            text run at (405,5) width 351: "adipisicing elit, sed do eiusmod tempor incididunt ut"
+          RenderText {#text} at (15,5) size 136x21
+            text run at (15,5) width 136: "Lorem ipsum dolor "
+          RenderInline {SPAN} at (0,0) size 204x23 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (196,5) size 149x21
+              text run at (196,5) width 149: "sit amet, consectetur "
+          RenderText {#text} at (11,5) size 745x21
+            text run at (11,5) width 4 RTL: "."
+            text run at (390,5) width 366: "adipisicing elit, sed do eiusmod tempor incididunt ut"
         RenderBlock {P} at (6,70) size 756x224
-          RenderText {#text} at (19,5) size 737x54
-            text run at (19,5) width 631: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
-            text run at (650,5) width 106: "labore et dolore"
-            text run at (19,37) width 512: "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 742x120 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (576,37) size 742x118
-              text run at (576,37) width 180: "laboris nisi ut aliquip ex ea"
-              text run at (14,69) width 424: "commodo consequat. Duis aute irure dolor in reprehenderit in "
-              text run at (438,69) width 318: "voluptate velit esse cillum dolore eu fugiat nulla"
-              text run at (24,101) width 296: "pariatur. Excepteur sint occaecat cupidatat "
-              text run at (320,101) width 436: "non proident, sunt in culpa qui officia deserunt mollit anim id est"
-              text run at (18,133) width 201: "laborum. Lorem ipsum dolor "
-          RenderText {#text} at (264,133) size 713x86
-            text run at (264,133) width 492: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut"
-            text run at (43,165) width 110: "labore et dolore "
-            text run at (153,165) width 603: "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut"
-            text run at (705,197) width 4 RTL: "."
-            text run at (709,197) width 47: "aliquip"
+          RenderText {#text} at (39,5) size 718x53
+            text run at (39,5) width 655: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
+            text run at (694,5) width 62: "labore et"
+            text run at (38,37) width 579: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
+          RenderInline {SPAN} at (0,0) size 743x119 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (662,37) size 743x117
+              text run at (662,37) width 94: "laboris nisi ut"
+              text run at (42,69) width 532: "aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
+              text run at (574,69) width 182: "voluptate velit esse cillum"
+              text run at (40,101) width 457: "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
+              text run at (497,101) width 259: "non proident, sunt in culpa qui officia"
+              text run at (13,133) width 391: "deserunt mollit anim id est laborum. Lorem ipsum dolor "
+          RenderText {#text} at (449,133) size 703x85
+            text run at (449,133) width 307: "sit amet, consectetur adipisicing elit, sed do"
+            text run at (53,165) width 323: "eiusmod tempor incididunt ut labore et dolore "
+            text run at (376,165) width 380: "magna aliqua. Ut enim ad minim veniam, quis nostrud"
+            text run at (460,197) width 4 RTL: "."
+            text run at (464,197) width 292: "exercitation ullamco laboris nisi ut aliquip"

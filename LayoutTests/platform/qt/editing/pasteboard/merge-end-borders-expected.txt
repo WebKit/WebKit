@@ -15,26 +15,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 780x66
-          text run at (0,0) width 780: "This is a test for the merge that paste does of the last paragraph of the incoming fragment with content after the end"
-          text run at (0,22) width 226: "of the selection being pasted into. "
-          text run at (226,22) width 535: "A fragment that ends in with paragraph surrounded by a blue border is pasted"
-          text run at (0,44) width 458: "into a selection ending in a paragraph surrounded by a red border. "
-          text run at (458,44) width 187: "The red border should win."
-      RenderBlock {P} at (0,82) size 784x22
-        RenderInline {B} at (0,0) size 587x22
-          RenderText {#text} at (0,0) size 587x22
-            text run at (0,0) width 587: "The second paragraph should be surrounded by a red border before and after the test."
-      RenderBlock {DIV} at (0,120) size 784x46
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 36x22
-            text run at (0,0) width 36: "First "
-          RenderText {#text} at (36,0) size 73x22
-            text run at (36,0) width 73: "paragraph"
-        RenderBlock {DIV} at (0,22) size 784x24 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 30x22
-            text run at (1,1) width 30: "This"
-          RenderText {#text} at (31,1) size 297x22
-            text run at (31,1) width 297: " text should be surrounded by a red border."
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 775x63
+          text run at (0,0) width 775: "This is a test for the merge that paste does of the last paragraph of the incoming fragment with content after the"
+          text run at (0,21) width 272: "end of the selection being pasted into. "
+          text run at (272,21) width 493: "A fragment that ends in with paragraph surrounded by a blue border is"
+          text run at (0,42) width 523: "pasted into a selection ending in a paragraph surrounded by a red border. "
+          text run at (523,42) width 190: "The red border should win."
+      RenderBlock {P} at (0,79) size 784x21
+        RenderInline {B} at (0,0) size 655x21
+          RenderText {#text} at (0,0) size 655x21
+            text run at (0,0) width 655: "The second paragraph should be surrounded by a red border before and after the test."
+      RenderBlock {DIV} at (0,116) size 784x44
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 35x21
+            text run at (0,0) width 35: "First "
+          RenderText {#text} at (35,0) size 73x21
+            text run at (35,0) width 73: "paragraph"
+        RenderBlock {DIV} at (0,21) size 784x23 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 31x21
+            text run at (1,1) width 31: "This"
+          RenderText {#text} at (32,1) size 303x21
+            text run at (32,1) width 303: " text should be surrounded by a red border."
 caret: position 4 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of body

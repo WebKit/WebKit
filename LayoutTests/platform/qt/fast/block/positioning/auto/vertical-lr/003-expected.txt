@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {P} at (0,0) size 66x584
-        RenderText {#text} at (0,0) size 66x566
-          text run at (0,0) width 566: "In this test, you should see three blocks that are aligned to the bottom within a black"
-          text run at (22,0) width 33: "box. "
-          text run at (22,33) width 515: "They should be stacked horizontally with the green box in between two olive"
-          text run at (44,0) width 46: "boxes. "
-          text run at (44,46) width 363: "The olive boxes and the green box should be 100x100."
-layer at (90,8) size 340x240
-  RenderBlock (positioned) {DIV} at (90,8) size 340x240 [border: (20px solid #000000)]
+      RenderBlock {P} at (0,0) size 63x584
+        RenderText {#text} at (0,0) size 63x576
+          text run at (0,0) width 545: "In this test, you should see three blocks that are aligned to the bottom within a"
+          text run at (21,0) width 76: "black box. "
+          text run at (21,76) width 500: "They should be stacked horizontally with the green box in between two"
+          text run at (42,0) width 89: "olive boxes. "
+          text run at (42,89) width 389: "The olive boxes and the green box should be 100x100."
+layer at (87,8) size 340x240
+  RenderBlock (positioned) {DIV} at (87,8) size 340x240 [border: (20px solid #000000)]
     RenderBlock {DIV} at (70,120) size 0x100
-layer at (210,128) size 100x100
+layer at (207,128) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (110,128) size 100x100
+layer at (107,128) size 100x100
   RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#808000]
-layer at (310,128) size 100x100
+layer at (307,128) size 100x100
   RenderBlock (positioned) {DIV} at (220,120) size 100x100 [bgcolor=#808000]

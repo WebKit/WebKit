@@ -9,18 +9,18 @@ layer at (0,0) size 800x600
         layer at (0,0) size 397x600
           RenderBlock {HTML} at (0,0) size 397x600
             RenderBody {BODY} at (8,8) size 381x576
-              RenderBlock {P} at (0,0) size 381x44
-                RenderText {#text} at (0,0) size 358x44
-                  text run at (0,0) width 358: "This tests that navigating to two pages in a subframe,"
-                  text run at (0,22) width 328: "and then going back does not cause an assertion."
-              RenderBlock {P} at (0,60) size 381x22
-                RenderText {#text} at (0,0) size 178x22
-                  text run at (0,0) width 178: "SUCCESS - Didn't assert!"
+              RenderBlock {P} at (0,0) size 381x42
+                RenderText {#text} at (0,0) size 374x42
+                  text run at (0,0) width 374: "This tests that navigating to two pages in a subframe,"
+                  text run at (0,21) width 351: "and then going back does not cause an assertion."
+              RenderBlock {P} at (0,58) size 381x21
+                RenderText {#text} at (0,0) size 185x21
+                  text run at (0,0) width 185: "SUCCESS - Didn't assert!"
       RenderFrame {FRAME} at (403,0) size 397x600
         layer at (0,0) size 397x600
           RenderView at (0,0) size 397x600
         layer at (0,0) size 397x600
           RenderBlock {HTML} at (0,0) size 397x600
             RenderBody {BODY} at (8,8) size 381x584
-              RenderText {#text} at (0,0) size 31x22
-                text run at (0,0) width 31: "test1"
+              RenderText {#text} at (0,0) size 34x21
+                text run at (0,0) width 34: "test1"

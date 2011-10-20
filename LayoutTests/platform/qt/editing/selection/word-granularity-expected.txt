@@ -9,45 +9,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 721x22
-          text run at (0,0) width 401: "This tests modifying a selection created with a double click. "
-          text run at (401,0) width 320: "The new selection should use word granularity."
-      RenderBlock {P} at (0,38) size 784x66 [color=#008000]
-        RenderText {#text} at (0,0) size 744x66
-          text run at (0,0) width 241: "This test does not run interactively. "
-          text run at (241,0) width 442: "It uses the layoutTestControllers eventSender to do mouse clicks. "
-          text run at (683,0) width 61: "To run it"
-          text run at (0,22) width 464: "manually, double click on the blue 'g', then drag down to the red 'g'. "
-          text run at (464,22) width 263: "As you drag, watch the selection that is"
-          text run at (0,44) width 405: "created, it should always start and end on word boundaries."
-      RenderBlock {DIV} at (0,120) size 784x132
-        RenderText {#text} at (0,0) size 92x22
-          text run at (0,0) width 92: "This is a para"
-        RenderInline {SPAN} at (0,0) size 8x22 [color=#0000FF]
-          RenderText {#text} at (92,0) size 8x22
-            text run at (92,0) width 8: "g"
-        RenderText {#text} at (100,0) size 37x22
-          text run at (100,0) width 37: "raph."
-        RenderBR {BR} at (137,16) size 0x0
-        RenderText {#text} at (0,22) size 66x22
-          text run at (0,22) width 66: "Some text"
-        RenderBR {BR} at (66,38) size 0x0
-        RenderText {#text} at (0,44) size 66x22
-          text run at (0,44) width 66: "Some text"
-        RenderBR {BR} at (66,60) size 0x0
-        RenderText {#text} at (0,66) size 66x22
-          text run at (0,66) width 66: "Some text"
-        RenderBR {BR} at (66,82) size 0x0
-        RenderText {#text} at (0,88) size 66x22
-          text run at (0,88) width 66: "Some text"
-        RenderBR {BR} at (66,104) size 0x0
-        RenderText {#text} at (0,110) size 92x22
-          text run at (0,110) width 92: "This is a para"
-        RenderInline {SPAN} at (0,0) size 8x22 [color=#FF0000]
-          RenderText {#text} at (92,110) size 8x22
-            text run at (92,110) width 8: "g"
-        RenderText {#text} at (100,110) size 37x22
-          text run at (100,110) width 37: "raph."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 756x21
+          text run at (0,0) width 422: "This tests modifying a selection created with a double click. "
+          text run at (422,0) width 334: "The new selection should use word granularity."
+      RenderBlock {P} at (0,37) size 784x63 [color=#008000]
+        RenderText {#text} at (0,0) size 773x63
+          text run at (0,0) width 249: "This test does not run interactively. "
+          text run at (249,0) width 466: "It uses the layoutTestControllers eventSender to do mouse clicks. "
+          text run at (715,0) width 58: "To run it"
+          text run at (0,21) width 475: "manually, double click on the blue 'g', then drag down to the red 'g'. "
+          text run at (475,21) width 275: "As you drag, watch the selection that is"
+          text run at (0,42) width 420: "created, it should always start and end on word boundaries."
+      RenderBlock {DIV} at (0,116) size 784x126
+        RenderText {#text} at (0,0) size 96x21
+          text run at (0,0) width 96: "This is a para"
+        RenderInline {SPAN} at (0,0) size 9x21 [color=#0000FF]
+          RenderText {#text} at (96,0) size 9x21
+            text run at (96,0) width 9: "g"
+        RenderText {#text} at (105,0) size 36x21
+          text run at (105,0) width 36: "raph."
+        RenderBR {BR} at (141,16) size 0x0
+        RenderText {#text} at (0,21) size 71x21
+          text run at (0,21) width 71: "Some text"
+        RenderBR {BR} at (71,37) size 0x0
+        RenderText {#text} at (0,42) size 71x21
+          text run at (0,42) width 71: "Some text"
+        RenderBR {BR} at (71,58) size 0x0
+        RenderText {#text} at (0,63) size 71x21
+          text run at (0,63) width 71: "Some text"
+        RenderBR {BR} at (71,79) size 0x0
+        RenderText {#text} at (0,84) size 71x21
+          text run at (0,84) width 71: "Some text"
+        RenderBR {BR} at (71,100) size 0x0
+        RenderText {#text} at (0,105) size 96x21
+          text run at (0,105) width 96: "This is a para"
+        RenderInline {SPAN} at (0,0) size 9x21 [color=#FF0000]
+          RenderText {#text} at (96,105) size 9x21
+            text run at (96,105) width 9: "g"
+        RenderText {#text} at (105,105) size 36x21
+          text run at (105,105) width 36: "raph."
 selection start: position 11 of child 0 {#text} of child 5 {DIV} of body
 selection end:   position 4 of child 14 {#text} of child 5 {DIV} of body

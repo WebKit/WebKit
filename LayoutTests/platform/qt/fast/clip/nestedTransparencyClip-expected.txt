@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 734x66
-          text run at (0,0) width 705: "This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more"
-          text run at (0,22) width 734: "worthwhile. Below, \"Peach,\" \"Plum,\" and \"Pear\" should appear. Before, we were clipping out \"Plum\" and"
-          text run at (0,44) width 54: "\"Pear.\""
-        RenderBR {BR} at (54,60) size 0x0
-        RenderBR {BR} at (0,66) size 0x22
-layer at (8,96) size 784x22
-  RenderBlock {DIV} at (0,88) size 784x22
-    RenderText {#text} at (0,0) size 41x22
-      text run at (0,0) width 41: "Peach"
+      RenderBlock (anonymous) at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 737x63
+          text run at (0,0) width 737: "This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more"
+          text run at (0,21) width 737: "worthwhile. Below, \"Peach,\" \"Plum,\" and \"Pear\" should appear. Before, we were clipping out \"Plum\" and"
+          text run at (0,42) width 50: "\"Pear.\""
+        RenderBR {BR} at (50,58) size 0x0
+        RenderBR {BR} at (0,63) size 0x21
+layer at (8,92) size 784x21
+  RenderBlock {DIV} at (0,84) size 784x21
+    RenderText {#text} at (0,0) size 46x21
+      text run at (0,0) width 46: "Peach"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,118) size 36x22
-  RenderBlock (positioned) {DIV} at (8,118) size 36x22
-    RenderText {#text} at (0,0) size 36x22
-      text run at (0,0) width 36: "Plum"
+layer at (8,113) size 37x21
+  RenderBlock (positioned) {DIV} at (8,113) size 37x21
+    RenderText {#text} at (0,0) size 37x21
+      text run at (0,0) width 37: "Plum"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,140) size 32x22
-  RenderBlock (positioned) {DIV} at (0,22) size 32x22
-    RenderText {#text} at (0,0) size 32x22
-      text run at (0,0) width 32: "Pear"
+layer at (8,134) size 34x21
+  RenderBlock (positioned) {DIV} at (0,21) size 34x21
+    RenderText {#text} at (0,0) size 34x21
+      text run at (0,0) width 34: "Pear"

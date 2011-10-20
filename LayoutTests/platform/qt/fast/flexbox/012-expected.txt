@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 775x66
-          text run at (0,0) width 334: "You should see a 300x100 green rectangle below. "
-          text run at (334,0) width 441: "If you see any red, the test has failed. This test makes a positioned"
-          text run at (0,22) width 220: "vertical box with three children. "
-          text run at (220,22) width 519: "The first and third children are absolutely positioned at the edges of the box. "
-          text run at (739,22) width 32: "Box-"
-          text run at (0,44) width 474: "align of center is used to align the second child in the center of the box."
-layer at (8,90) size 300x100
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,82) size 300x100 [bgcolor=#FF0000]
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 775x63
+          text run at (0,0) width 360: "You should see a 300x100 green rectangle below. "
+          text run at (360,0) width 389: "If you see any red, the test has failed. This test makes a"
+          text run at (0,21) width 301: "positioned vertical box with three children. "
+          text run at (301,21) width 474: "The first and third children are absolutely positioned at the edges of"
+          text run at (0,42) width 60: "the box. "
+          text run at (60,42) width 532: "Box-align of center is used to align the second child in the center of the box."
+layer at (8,87) size 300x100
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,79) size 300x100 [bgcolor=#FF0000]
     RenderDeprecatedFlexibleBox {DIV} at (100,0) size 100x100 [bgcolor=#008000]
-layer at (8,90) size 100x100
+layer at (8,87) size 100x100
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-layer at (208,90) size 100x100
+layer at (208,87) size 100x100
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (200,0) size 100x100 [bgcolor=#008000]

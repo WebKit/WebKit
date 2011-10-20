@@ -15,42 +15,42 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x176
+      RenderBlock (anonymous) at (0,0) size 784x175
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-                RenderBlock {DIV} at (0,0) size 284x22
-                  RenderBR {BR} at (0,0) size 0x22
+                RenderBlock {DIV} at (0,0) size 284x21
+                  RenderBR {BR} at (0,0) size 0x21
         RenderBR {BR} at (304,154) size 0x0
-        RenderBR {BR} at (0,154) size 0x22
-      RenderBlock {P} at (0,192) size 784x44
-        RenderInline {B} at (0,0) size 664x22
-          RenderText {#text} at (0,0) size 664x22
-            text run at (0,0) width 491: "This test uses the eventSender to do a mouse click to focus the subframe. "
-            text run at (491,0) width 173: "It won't run interactively."
-        RenderText {#text} at (664,0) size 729x44
-          text run at (664,0) width 4: " "
-          text run at (668,0) width 61: "To run it"
-          text run at (0,22) width 374: "manually, click on the iframe, Select All, then hit delete."
-      RenderBlock (anonymous) at (0,252) size 784x66
-        RenderText {#text} at (0,0) size 774x66
-          text run at (0,0) width 774: "Selecting all the content in a contenteditable iframe should select the iframe itself (to help the user delete the iframe)"
-          text run at (0,22) width 279: "only if the iframe is in an editable region. "
-          text run at (279,22) width 453: "This test loads ../resources/select-all-iframe-src.html into an iframe. "
-          text run at (732,22) width 33: "That"
-          text run at (0,44) width 200: "file does a Select All + Delete. "
-          text run at (200,44) width 185: "Two things should happen:"
-      RenderBlock {UL} at (0,334) size 784x66
-        RenderListItem {LI} at (40,0) size 744x44
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 711x44
-            text run at (0,0) width 479: "The Select All operation should not select the iframe, only it's contents. "
-            text run at (479,0) width 232: "The results of the Select All will be"
-            text run at (0,22) width 550: "apparent from the delegate messages that DumpRenderTree receives and dumps."
-        RenderListItem {LI} at (40,44) size 744x22
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 359x22
-            text run at (0,0) width 359: "The contents of the editable iframe should be deleted."
+        RenderBR {BR} at (0,154) size 0x21
+      RenderBlock {P} at (0,191) size 784x42
+        RenderInline {B} at (0,0) size 748x21
+          RenderText {#text} at (0,0) size 748x21
+            text run at (0,0) width 564: "This test uses the eventSender to do a mouse click to focus the subframe. "
+            text run at (564,0) width 184: "It won't run interactively."
+        RenderText {#text} at (748,0) size 771x42
+          text run at (748,0) width 4: " "
+          text run at (752,0) width 19: "To"
+          text run at (0,21) width 428: "run it manually, click on the iframe, Select All, then hit delete."
+      RenderBlock (anonymous) at (0,249) size 784x63
+        RenderText {#text} at (0,0) size 762x63
+          text run at (0,0) width 762: "Selecting all the content in a contenteditable iframe should select the iframe itself (to help the user delete the"
+          text run at (0,21) width 342: "iframe) only if the iframe is in an editable region. "
+          text run at (342,21) width 418: "This test loads ../resources/select-all-iframe-src.html into an"
+          text run at (0,42) width 52: "iframe. "
+          text run at (52,42) width 253: "That file does a Select All + Delete. "
+          text run at (305,42) width 192: "Two things should happen:"
+      RenderBlock {UL} at (0,328) size 784x63
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 724x42
+            text run at (0,0) width 502: "The Select All operation should not select the iframe, only it's contents. "
+            text run at (502,0) width 222: "The results of the Select All will"
+            text run at (0,21) width 603: "be apparent from the delegate messages that DumpRenderTree receives and dumps."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 379x21
+            text run at (0,0) width 379: "The contents of the editable iframe should be deleted."

@@ -1,31 +1,32 @@
-layer at (0,0) size 784x608
+layer at (0,0) size 784x610
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x608
-  RenderBlock {HTML} at (0,0) size 784x608
-    RenderBody {BODY} at (8,8) size 768x576
-      RenderBlock {H1} at (0,0) size 768x128
-        RenderText {#text} at (0,0) size 666x128
-          text run at (0,0) width 666: "Inheritance bug for floated first-"
-          text run at (0,64) width 108: "letter"
-      RenderBlock {P} at (0,160) size 768x228 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (0,0) size 784x610
+  RenderBlock {HTML} at (0,0) size 784x610
+    RenderBody {BODY} at (8,8) size 768x578
+      RenderBlock {H1} at (0,0) size 768x124
+        RenderText {#text} at (0,0) size 723x124
+          text run at (0,0) width 723: "Inheritance bug for floated first-"
+          text run at (0,62) width 118: "letter"
+      RenderBlock {P} at (0,156) size 768x216 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
         RenderInline (generated) at (0,0) size 54x96 [color=#008000] [border: (1px dashed #008000)]
           RenderText {#text} at (2,1) size 52x94
             text run at (2,1) width 52: "H"
-        RenderText {#text} at (55,49) size 765x178
+        RenderText {#text} at (55,49) size 764x166
           text run at (55,49) width 699: "ere is the first paragraph. Here the CSS :first-line rule sets the text"
-          text run at (1,95) width 270: "to a green, sans-serif font. "
-          text run at (271,95) width 487: "Then, the CSS :first-letter rule sets the font size"
-          text run at (1,128) width 757: "to 3em, and makes the text bold. And here's some more text to pad out the"
-          text run at (1,161) width 765: "paragraph and make things look nice (or, at least, to illustrate the problem"
-          text run at (1,194) width 108: "correctly)."
-      RenderBlock {P} at (0,412) size 768x164 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+          text run at (1,95) width 285: "to a green, sans-serif font. "
+          text run at (286,95) width 455: "Then, the CSS :first-letter rule sets the font"
+          text run at (1,125) width 761: "size to 3em, and makes the text bold. And here's some more text to pad"
+          text run at (1,155) width 764: "out the paragraph and make things look nice (or, at least, to illustrate the"
+          text run at (1,185) width 197: "problem correctly)."
+      RenderBlock {P} at (0,396) size 768x182 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
         RenderBlock (floating) at (1,1) size 54x96 [color=#008000] [border: (1px dashed #008000)]
           RenderText {#text} at (1,1) size 52x94
             text run at (1,1) width 52: "H"
-        RenderText {#text} at (55,1) size 750x162
+        RenderText {#text} at (55,1) size 754x180
           text run at (55,1) width 674: "ere is the second paragraph. This is just like the first except that"
-          text run at (55,31) width 446: "the rule p.floated:first-letter floats the first "
-          text run at (501,31) width 166: "letter to the left."
-          text run at (55,64) width 696: "However, this floated element should still inherit the font properties"
-          text run at (1,97) width 731: "(green and sans-serif) from the first-line: selector. It does not -- instead,"
-          text run at (1,130) width 744: "the font is black, and uses the serif font. .... And here's some more text ...."
+          text run at (55,31) width 441: "the rule p.floated:first-letter floats the first "
+          text run at (496,31) width 166: "letter to the left."
+          text run at (55,61) width 700: "However, this floated element should still inherit the font properties"
+          text run at (55,91) width 663: "(green and sans-serif) from the first-line: selector. It does not --"
+          text run at (1,121) width 732: "instead, the font is black, and uses the serif font. .... And here's some"
+          text run at (1,151) width 135: "more text ...."

@@ -1,39 +1,38 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x304
-  RenderBlock {HTML} at (0,0) size 800x304
-    RenderBody {BODY} at (8,16) size 784x280
-      RenderBlock {P} at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 777x88
-          text run at (0,0) width 690: "This is a test to check if the loading of a stylesheet is properly cancelled (count of pending style sheets is"
-          text run at (0,22) width 731: "decremented) when its link tag is changed through the DOM after the link tag is appended to the document. "
-          text run at (731,22) width 41: "When"
-          text run at (0,44) width 777: "the div with style is moved, it appears on the screen if the style was loaded properly, and doesn't appear when there"
-          text run at (0,66) width 387: "are out-standing stylesheets according to the DocLoader. "
-          text run at (387,66) width 27: "See "
-        RenderInline {A} at (0,0) size 32x22 [color=#0000EE]
-          RenderText {#text} at (414,66) size 32x22
-            text run at (414,66) width 32: "6999"
-      RenderBlock {P} at (0,104) size 784x22
-        RenderInline {SPAN} at (0,0) size 32x22 [color=#FF0000]
-          RenderText {#text} at (0,0) size 32x22
-            text run at (0,0) width 32: "Fails"
-        RenderText {#text} at (32,0) size 56x22
-          text run at (32,0) width 56: " if there "
-        RenderInline {SPAN} at (0,0) size 31x22 [color=#FF0000]
-          RenderText {#text} at (88,0) size 31x22
-            text run at (88,0) width 31: "is no"
-        RenderText {#text} at (119,0) size 161x22
-          text run at (119,0) width 161: " pink box on the screen."
-      RenderBlock {P} at (0,142) size 784x22
-        RenderInline {SPAN} at (0,0) size 43x22 [color=#008000]
-          RenderText {#text} at (0,0) size 43x22
-            text run at (0,0) width 43: "Passes"
-        RenderText {#text} at (43,0) size 56x22
-          text run at (43,0) width 56: " if there "
-        RenderInline {SPAN} at (0,0) size 10x22 [color=#008000]
-          RenderText {#text} at (99,0) size 10x22
-            text run at (99,0) width 10: "is"
-        RenderText {#text} at (109,0) size 173x22
-          text run at (109,0) width 173: " a pink box on the screen."
-      RenderBlock {DIV} at (0,180) size 100x100 [bgcolor=#FFCCFF]
+layer at (0,0) size 800x298
+  RenderBlock {HTML} at (0,0) size 800x298
+    RenderBody {BODY} at (8,16) size 784x274
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 776x84
+          text run at (0,0) width 735: "This is a test to check if the loading of a stylesheet is properly cancelled (count of pending style sheets is"
+          text run at (0,21) width 752: "decremented) when its link tag is changed through the DOM after the link tag is appended to the document."
+          text run at (0,42) width 776: "When the div with style is moved, it appears on the screen if the style was loaded properly, and doesn't appear"
+          text run at (0,63) width 490: "when there are out-standing stylesheets according to the DocLoader. "
+          text run at (490,63) width 33: "See "
+        RenderInline {A} at (0,0) size 36x21 [color=#0000EE]
+          RenderText {#text} at (523,63) size 36x21
+            text run at (523,63) width 36: "6999"
+      RenderBlock {P} at (0,100) size 784x21
+        RenderInline {SPAN} at (0,0) size 36x21 [color=#FF0000]
+          RenderText {#text} at (0,0) size 36x21
+            text run at (0,0) width 36: "Fails"
+        RenderText {#text} at (36,0) size 56x21
+          text run at (36,0) width 56: " if there "
+        RenderInline {SPAN} at (0,0) size 37x21 [color=#FF0000]
+          RenderText {#text} at (92,0) size 37x21
+            text run at (92,0) width 37: "is no"
+        RenderText {#text} at (129,0) size 168x21
+          text run at (129,0) width 168: " pink box on the screen."
+      RenderBlock {P} at (0,137) size 784x21
+        RenderInline {SPAN} at (0,0) size 56x21 [color=#008000]
+          RenderText {#text} at (0,0) size 56x21
+            text run at (0,0) width 56: "Passes"
+        RenderText {#text} at (56,0) size 56x21
+          text run at (56,0) width 56: " if there "
+        RenderInline {SPAN} at (0,0) size 13x21 [color=#008000]
+          RenderText {#text} at (112,0) size 13x21
+            text run at (112,0) width 13: "is"
+        RenderText {#text} at (125,0) size 181x21
+          text run at (125,0) width 181: " a pink box on the screen."
+      RenderBlock {DIV} at (0,174) size 100x100 [bgcolor=#FFCCFF]

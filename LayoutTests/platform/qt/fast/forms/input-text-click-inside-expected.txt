@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 425x75 [bgcolor=#FFFF00]
-        RenderTextControl {INPUT} at (27,27) size 166x26
-      RenderBlock {P} at (0,91) size 784x44
-        RenderText {#text} at (0,0) size 731x44
-          text run at (0,0) width 731: "This test clicks inside an input element, and must result in the element receiving focus. If the test succeeds the"
-          text run at (0,22) width 224: "element should have a focus ring."
-layer at (37,37) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
+        RenderTextControl {INPUT} at (27,27) size 186x25
+      RenderBlock {P} at (0,91) size 784x42
+        RenderText {#text} at (0,0) size 773x42
+          text run at (0,0) width 773: "This test clicks inside an input element, and must result in the element receiving focus. If the test succeeds the"
+          text run at (0,21) width 238: "element should have a focus ring."
+layer at (37,37) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of child 0 {DIV} of body

@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 419x22
-          text run at (0,0) width 419: "This tests Range.selectNodeContents() of a text node and a br."
-      RenderBlock {DIV} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 24x22
-          text run at (0,0) width 24: "one"
-      RenderBlock {DIV} at (0,60) size 784x44
-        RenderText {#text} at (0,0) size 25x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 444x21
+          text run at (0,0) width 444: "This tests Range.selectNodeContents() of a text node and a br."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 27x21
+          text run at (0,0) width 27: "one"
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 25x21
           text run at (0,0) width 25: "two"
         RenderBR {BR} at (25,16) size 0x0
-        RenderText {#text} at (0,22) size 35x22
-          text run at (0,22) width 35: "three"
-      RenderBlock {DIV} at (0,104) size 784x22
-        RenderText {#text} at (0,0) size 29x22
-          text run at (0,0) width 29: "four"
-      RenderBlock {UL} at (0,142) size 784x22
-        RenderListItem {LI} at (40,0) size 744x22
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 55x22
-            text run at (0,0) width 55: "Success."
+        RenderText {#text} at (0,21) size 36x21
+          text run at (0,21) width 36: "three"
+      RenderBlock {DIV} at (0,100) size 784x21
+        RenderText {#text} at (0,0) size 27x21
+          text run at (0,0) width 27: "four"
+      RenderBlock {UL} at (0,137) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 65x21
+            text run at (0,0) width 65: "Success."

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (42,42) size 716x516
-      RenderBlock {P} at (0,0) size 716x44
-        RenderText {#text} at (0,0) size 706x44
-          text run at (0,0) width 706: "This test checks for a regression against rdar://problem/4364302 leftmargin and topmargin should match"
-          text run at (0,22) width 300: "marginwidth and marginheight respectively."
-      RenderBlock {P} at (0,60) size 716x22
-        RenderText {#text} at (0,0) size 490x22
-          text run at (0,0) width 490: "If it passes, the left, top, right, and bottom margins of the page will be 42."
+      RenderBlock {P} at (0,0) size 716x42
+        RenderText {#text} at (0,0) size 685x42
+          text run at (0,0) width 685: "This test checks for a regression against rdar://problem/4364302 leftmargin and topmargin should"
+          text run at (0,21) width 355: "match marginwidth and marginheight respectively."
+      RenderBlock {P} at (0,58) size 716x21
+        RenderText {#text} at (0,0) size 506x21
+          text run at (0,0) width 506: "If it passes, the left, top, right, and bottom margins of the page will be 42."

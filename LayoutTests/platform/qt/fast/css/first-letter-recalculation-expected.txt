@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x92
-  RenderBlock {HTML} at (0,0) size 800x92
-    RenderBody {BODY} at (8,16) size 784x60
-      RenderBlock {P} at (0,0) size 784x22
-        RenderInline {A} at (0,0) size 32x22 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 10x22
-            RenderText {#text} at (0,0) size 10x22
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 31x21 [color=#0000FF]
+          RenderInline (generated) at (0,0) size 10x21
+            RenderText {#text} at (0,0) size 10x21
               text run at (0,0) width 10: "F"
-          RenderText {#text} at (10,0) size 22x22
-            text run at (10,0) width 22: "irst"
-        RenderText {#text} at (32,0) size 205x22
-          text run at (32,0) width 205: " letter should be bold and blue"
-      RenderBlock {P} at (0,38) size 784x22
-        RenderInline (generated) at (0,0) size 12x22
-          RenderText {#text} at (0,0) size 12x22
+          RenderText {#text} at (10,0) size 21x21
+            text run at (10,0) width 21: "irst"
+        RenderText {#text} at (31,0) size 214x21
+          text run at (31,0) width 214: " letter should be bold and blue"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline (generated) at (0,0) size 12x21
+          RenderText {#text} at (0,0) size 12x21
             text run at (0,0) width 12: "H"
-        RenderText {#text} at (12,0) size 656x22
-          text run at (12,0) width 656: "ere the first letter should be bold and black, but with Safari build 416.13 it is blue. See bug #6170."
+        RenderText {#text} at (12,0) size 684x21
+          text run at (12,0) width 684: "ere the first letter should be bold and black, but with Safari build 416.13 it is blue. See bug #6170."

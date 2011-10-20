@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 679x44
-          text run at (0,0) width 679: "This tests that the selection tint is grey when the WebView is not focused (using the pixel output from"
-          text run at (0,22) width 135: "DumpRenderTree)."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 188x22
-          text run at (0,0) width 188: "This text should be selected."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 707x42
+          text run at (0,0) width 707: "This tests that the selection tint is grey when the WebView is not focused (using the pixel output from"
+          text run at (0,21) width 138: "DumpRenderTree)."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 202x21
+          text run at (0,0) width 202: "This text should be selected."
 selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 29 of child 0 {#text} of child 3 {DIV} of body

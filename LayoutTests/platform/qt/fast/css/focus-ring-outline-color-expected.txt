@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 766x44
-          text run at (0,0) width 766: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn with"
-          text run at (0,22) width 130: "green outline color."
-      RenderBlock (anonymous) at (0,60) size 784x22
-        RenderInline {A} at (0,0) size 29x22 [color=#0000EE]
-          RenderText {#text} at (0,0) size 29x22
-            text run at (0,0) width 29: "Test"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 766x42
+          text run at (0,0) width 766: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn"
+          text run at (0,21) width 169: "with green outline color."
+      RenderBlock (anonymous) at (0,58) size 784x21
+        RenderInline {A} at (0,0) size 31x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 31x21
+            text run at (0,0) width 31: "Test"
         RenderText {#text} at (0,0) size 0x0

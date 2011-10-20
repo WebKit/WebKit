@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 745x44
-          text run at (0,0) width 745: "This tests to make sure that rich editing commands like Bold can be performed on text in a document in design"
-          text run at (0,22) width 41: "mode."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderInline {B} at (0,0) size 166x22
-          RenderText {#text} at (0,0) size 166x22
-            text run at (0,0) width 166: "This text should be bold."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 775x42
+          text run at (0,0) width 775: "This tests to make sure that rich editing commands like Bold can be performed on text in a document in design"
+          text run at (0,21) width 44: "mode."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderInline {B} at (0,0) size 187x21
+          RenderText {#text} at (0,0) size 187x21
+            text run at (0,0) width 187: "This text should be bold."
 selection start: position 0 of child 0 {#text} of child 0 {B} of child 2 {DIV} of body
 selection end:   position 25 of child 0 {#text} of child 0 {B} of child 2 {DIV} of body

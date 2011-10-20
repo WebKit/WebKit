@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 561x22
-          text run at (0,0) width 561: "This tests for a bug where spaces couldn't be inserted before signatures and replies."
-      RenderBlock {DIV} at (0,38) size 784x44
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 4x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 593x21
+          text run at (0,0) width 593: "This tests for a bug where spaces couldn't be inserted before signatures and replies."
+      RenderBlock {DIV} at (0,37) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 4x21
             text run at (0,0) width 4: " "
           RenderBR {BR} at (4,16) size 0x0
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderText {#text} at (0,0) size 372x22
-            text run at (0,0) width 372: "There should be a single space in the paragraph above."
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 395x21
+            text run at (0,0) width 395: "There should be a single space in the paragraph above."
 caret: position 1 of child 0 {#text} of child 2 {DIV} of body

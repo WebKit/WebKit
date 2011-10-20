@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 147x22
-          text run at (0,0) width 147: "This is a pixel test for "
-        RenderInline {I} at (0,0) size 752x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (147,0) size 352x22
-              text run at (147,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4334"
-          RenderText {#text} at (499,0) size 752x44
-            text run at (499,0) width 4: " "
-            text run at (503,0) width 249: "REGRESSION: Flickering when css-"
-            text run at (0,22) width 322: "hover should change opacity on floating elements"
-        RenderText {#text} at (322,22) size 4x22
-          text run at (322,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 297x22
-          text run at (0,0) width 297: "There should be a solid green square below."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {DIV} at (0,108) size 100x100 [bgcolor=#008000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 153x21
+          text run at (0,0) width 153: "This is a pixel test for "
+        RenderInline {I} at (0,0) size 765x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (153,0) size 379x21
+              text run at (153,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4334"
+          RenderText {#text} at (532,0) size 765x42
+            text run at (532,0) width 4: " "
+            text run at (536,0) width 229: "REGRESSION: Flickering when"
+            text run at (0,21) width 380: "css-hover should change opacity on floating elements"
+        RenderText {#text} at (380,21) size 4x21
+          text run at (380,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 316x21
+          text run at (0,0) width 316: "There should be a solid green square below."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,105) size 100x100 [bgcolor=#008000]

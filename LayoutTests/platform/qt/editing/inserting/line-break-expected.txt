@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 758x44
-          text run at (0,0) width 306: "This testcase used to break InsertLineBreak. "
-          text run at (306,0) width 452: "The editable region below should have two empty paragraphs in it,"
-          text run at (0,22) width 254: "and the caret should be in the second."
-      RenderBlock {DIV} at (0,60) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x44
-          RenderBR {BR} at (0,0) size 0x22
-          RenderBR {BR} at (0,22) size 0x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 772x42
+          text run at (0,0) width 318: "This testcase used to break InsertLineBreak. "
+          text run at (318,0) width 454: "The editable region below should have two empty paragraphs in"
+          text run at (0,21) width 285: "it, and the caret should be in the second."
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x42
+          RenderBR {BR} at (0,0) size 0x21
+          RenderBR {BR} at (0,21) size 0x21
 caret: position 0 of child 2 {BR} of child 0 {DIV} of child 2 {DIV} of body

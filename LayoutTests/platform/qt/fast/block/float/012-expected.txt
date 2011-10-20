@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (0,0) size 319x26 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 315x22 [border: (50px solid #0000FF) none (50px solid #0000FF)]
-          RenderText {#text} at (102,2) size 115x22
-            text run at (102,2) width 115: "This is some text."
+      RenderBlock (floating) {DIV} at (0,0) size 327x25 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 323x21 [border: (50px solid #0000FF) none (50px solid #0000FF)]
+          RenderText {#text} at (102,2) size 123x21
+            text run at (102,2) width 123: "This is some text."
       RenderBlock {P} at (0,0) size 784x0
-      RenderBlock (floating) {DIV} at (693,0) size 91x48 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 87x44 [border: (10px solid #008000) none (10px solid #008000)]
-          RenderText {#text} at (12,2) size 77x44
-            text run at (12,2) width 60: "First line"
-            text run at (72,2) width 0: " "
-            text run at (2,24) width 77: "Second line"
+      RenderBlock (floating) {DIV} at (685,0) size 99x46 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 95x42 [border: (10px solid #008000) none (10px solid #008000)]
+          RenderText {#text} at (12,2) size 85x42
+            text run at (12,2) width 61: "First line"
+            text run at (73,2) width 0: " "
+            text run at (2,23) width 85: "Second line"

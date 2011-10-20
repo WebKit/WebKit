@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 593x22
-          text run at (0,0) width 593: "This tests for sentence boundary when there are empty line breaks between lines of text."
-        RenderBR {BR} at (593,16) size 0x0
-        RenderText {#text} at (0,22) size 531x22
-          text run at (0,22) width 531: "The result insertion point should be at the end of the sentence \"How are you?\""
-      RenderBlock {DIV} at (0,60) size 784x132
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 32x22
-            text run at (0,0) width 32: "hello"
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (0,44) size 784x22
-          RenderText {#text} at (0,0) size 40x22
-            text run at (0,0) width 40: "world"
-        RenderBlock {DIV} at (0,66) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (0,88) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (0,110) size 784x22
-          RenderText {#text} at (0,0) size 277x22
-            text run at (0,0) width 91: "This is a test. "
-            text run at (91,0) width 99: "How are you? "
-            text run at (190,0) width 87: "Life is sweet!"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 622x21
+          text run at (0,0) width 622: "This tests for sentence boundary when there are empty line breaks between lines of text."
+        RenderBR {BR} at (622,16) size 0x0
+        RenderText {#text} at (0,21) size 550x21
+          text run at (0,21) width 550: "The result insertion point should be at the end of the sentence \"How are you?\""
+      RenderBlock {DIV} at (0,58) size 784x126
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 35x21
+            text run at (0,0) width 35: "hello"
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (0,42) size 784x21
+          RenderText {#text} at (0,0) size 39x21
+            text run at (0,0) width 39: "world"
+        RenderBlock {DIV} at (0,63) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (0,84) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (0,105) size 784x21
+          RenderText {#text} at (0,0) size 292x21
+            text run at (0,0) width 97: "This is a test. "
+            text run at (97,0) width 103: "How are you? "
+            text run at (200,0) width 92: "Life is sweet!"
 caret: position 30 of child 0 {#text} of child 9 {DIV} of child 2 {DIV} of body

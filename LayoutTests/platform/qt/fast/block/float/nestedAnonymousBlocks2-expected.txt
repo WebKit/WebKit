@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderBlock (anonymous) at (0,0) size 784x44
-          RenderText {#text} at (0,0) size 771x44
-            text run at (0,0) width 771: "Test anonymous boxes removal on style change. This should not crash or hang. Render tree dump should not gain"
-            text run at (0,22) width 196: "additional anonymous boxes."
-        RenderBlock {DIV} at (0,44) size 784x0
-        RenderBlock {DIV} at (0,44) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x42
+          RenderText {#text} at (0,0) size 774x42
+            text run at (0,0) width 774: "Test anonymous boxes removal on style change. This should not crash or hang. Render tree dump should not"
+            text run at (0,21) width 243: "gain additional anonymous boxes."
+        RenderBlock {DIV} at (0,42) size 784x0
+        RenderBlock {DIV} at (0,42) size 784x0

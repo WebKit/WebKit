@@ -8,21 +8,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 656x22
-          text run at (0,0) width 656: "This tests inserting a paragraph separator before a special element at the start of an editable root."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 655x22
-          text run at (0,0) width 655: "Visually, it should leave a blank line before the link, and the caret selection at the start of the link."
-      RenderBlock {P} at (0,76) size 784x44
-        RenderText {#text} at (0,0) size 777x44
-          text run at (0,0) width 777: "Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See Radar"
-          text run at (0,22) width 68: "#5452675."
-      RenderBlock {DIV} at (0,136) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock (anonymous) at (0,22) size 784x22
-          RenderInline {A} at (0,0) size 59x22 [color=#0000EE]
-            RenderText {#text} at (0,0) size 59x22
-              text run at (0,0) width 59: "applesite"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 684x21
+          text run at (0,0) width 684: "This tests inserting a paragraph separator before a special element at the start of an editable root."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 679x21
+          text run at (0,0) width 679: "Visually, it should leave a blank line before the link, and the caret selection at the start of the link."
+      RenderBlock {P} at (0,74) size 784x42
+        RenderText {#text} at (0,0) size 755x42
+          text run at (0,0) width 755: "Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See"
+          text run at (0,21) width 124: "Radar #5452675."
+      RenderBlock {DIV} at (0,132) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderInline {A} at (0,0) size 65x21 [color=#0000EE]
+            RenderText {#text} at (0,0) size 65x21
+              text run at (0,0) width 65: "applesite"
 caret: position 0 of child 0 {#text} of child 1 {A} of child 6 {DIV} of body

@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 755x44
-          text run at (0,0) width 579: "This tests for a crash when attempting to break a blockquote at the end of its content. "
-          text run at (579,0) width 176: "The caret should be in the"
-          text run at (0,22) width 461: "first of two empty paragraphs between two pieces of quoted content."
-      RenderBlock {DIV} at (0,60) size 784x88
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (7,0) size 777x22
-            RenderText {#text} at (0,0) size 21x22
-              text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,22) size 784x44
-          RenderBR {BR} at (0,0) size 0x22
-          RenderBR {BR} at (0,22) size 0x22
-        RenderBlock {BLOCKQUOTE} at (0,66) size 784x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (7,0) size 777x22
-            RenderText {#text} at (0,0) size 24x22
-              text run at (0,0) width 24: "bar"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 782x42
+          text run at (0,0) width 598: "This tests for a crash when attempting to break a blockquote at the end of its content. "
+          text run at (598,0) width 184: "The caret should be in the"
+          text run at (0,21) width 478: "first of two empty paragraphs between two pieces of quoted content."
+      RenderBlock {DIV} at (0,58) size 784x84
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (7,0) size 777x21
+            RenderText {#text} at (0,0) size 22x21
+              text run at (0,0) width 22: "foo"
+        RenderBlock (anonymous) at (0,21) size 784x42
+          RenderBR {BR} at (0,0) size 0x21
+          RenderBR {BR} at (0,21) size 0x21
+        RenderBlock {BLOCKQUOTE} at (0,63) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (7,0) size 777x21
+            RenderText {#text} at (0,0) size 23x21
+              text run at (0,0) width 23: "bar"
 caret: position 0 of child 2 {BR} of child 2 {DIV} of body

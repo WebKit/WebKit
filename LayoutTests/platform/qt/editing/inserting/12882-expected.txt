@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 775x44
-          text run at (0,0) width 592: "This tests for a bug where images with align right/left would fail to be inserted on paste. "
-          text run at (592,0) width 183: "You should see a picture of"
-          text run at (0,22) width 358: "abe in the editable region below, aligned to the right. "
-        RenderInline {B} at (0,0) size 779x44
-          RenderText {#text} at (358,22) size 779x44
-            text run at (358,22) width 421: "This demonstrates a bug: the focus halo for the editable region"
-            text run at (0,44) width 327: "doesn't expand to fit an image with align='right'."
-      RenderBlock {DIV} at (0,82) size 784x44
-        RenderText {#text} at (0,0) size 212x22
-          text run at (0,0) width 212: "Four score and seven years ago"
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 739x42
+          text run at (0,0) width 615: "This tests for a bug where images with align right/left would fail to be inserted on paste. "
+          text run at (615,0) width 124: "You should see a"
+          text run at (0,21) width 443: "picture of abe in the editable region below, aligned to the right. "
+        RenderInline {B} at (0,0) size 774x42
+          RenderText {#text} at (443,21) size 774x42
+            text run at (443,21) width 331: "This demonstrates a bug: the focus halo for"
+            text run at (0,42) width 505: "the editable region doesn't expand to fit an image with align='right'."
+      RenderBlock {DIV} at (0,79) size 784x42
+        RenderText {#text} at (0,0) size 228x21
+          text run at (0,0) width 228: "Four score and seven years ago"
         RenderImage {IMG} at (708,0) size 76x103
-        RenderText {#text} at (212,0) size 690x44
-          text run at (212,0) width 474: " our fathers brought forth on this continent a new nation, conceived in"
-          text run at (686,0) width 4: " "
-          text run at (0,22) width 475: "liberty and dedicated to the proposition that all men are created equal."
+        RenderText {#text} at (228,0) size 700x42
+          text run at (228,0) width 468: " our fathers brought forth on this continent a new nation, conceived"
+          text run at (696,0) width 4: " "
+          text run at (0,21) width 509: "in liberty and dedicated to the proposition that all men are created equal."
 caret: position 1 of child 1 {IMG} of child 2 {DIV} of body

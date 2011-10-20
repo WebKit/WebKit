@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 88x22
-          text run at (0,0) width 88: "Pixel test for "
-        RenderInline {I} at (0,0) size 576x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (88,0) size 304x22
-              text run at (88,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=12043"
-          RenderText {#text} at (392,0) size 576x44
-            text run at (392,0) width 4: " "
-            text run at (396,0) width 180: "Another assertion failure in"
-            text run at (0,22) width 250: "WebCore::RenderObject::drawBorder"
-        RenderText {#text} at (250,22) size 4x22
-          text run at (250,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 327x22
-          text run at (0,0) width 327: "There should be three squres and a circle below."
-      RenderBlock {DIV} at (0,98) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,164) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,230) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,296) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 91x21
+          text run at (0,0) width 91: "Pixel test for "
+        RenderInline {I} at (0,0) size 614x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (91,0) size 329x21
+              text run at (91,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12043"
+          RenderText {#text} at (420,0) size 614x42
+            text run at (420,0) width 4: " "
+            text run at (424,0) width 190: "Another assertion failure in"
+            text run at (0,21) width 266: "WebCore::RenderObject::drawBorder"
+        RenderText {#text} at (266,21) size 4x21
+          text run at (266,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 345x21
+          text run at (0,0) width 345: "There should be three squres and a circle below."
+      RenderBlock {DIV} at (0,95) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,161) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,227) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,293) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]

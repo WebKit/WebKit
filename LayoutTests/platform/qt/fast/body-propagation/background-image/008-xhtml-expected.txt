@@ -6,6 +6,6 @@ layer at (0,0) size 800x20
   RenderBlock (positioned) {head} at (0,0) size 800x20
 layer at (0,0) size 800x20
   RenderBody {body} at (0,0) size 800x20 [color=#000080]
-    RenderBlock {p} at (0,0) size 800x22
-      RenderText {#text} at (0,0) size 293x22
-        text run at (0,0) width 293: "This line should have a yellow background."
+    RenderBlock {p} at (0,0) size 800x21
+      RenderText {#text} at (0,0) size 307x21
+        text run at (0,0) width 307: "This line should have a yellow background."

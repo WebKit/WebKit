@@ -7,21 +7,21 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x0
       RenderBlock {P} at (0,0) size 784x0
       RenderBlock {P} at (0,0) size 784x0
-layer at (8,200) size 792x174
-  RenderBlock (positioned) {DIV} at (8,200) size 792x174
-    RenderBlock {P} at (0,16) size 792x44
-      RenderText {#text} at (0,0) size 762x44
-        text run at (0,0) width 481: "Test for iframe flattening, with three inner frames just outside the view "
-        text run at (481,0) width 281: "and of the size 200x200 px, plus one inner"
-        text run at (0,22) width 149: "frame is partly visible."
-    RenderBlock {P} at (0,76) size 792x44
-      RenderText {#text} at (0,0) size 780x44
-        text run at (0,0) width 478: "This yellow, red and blue inner frames must remain offscreen, and the "
-        text run at (478,0) width 302: "green inner frames should be of size 300x300"
-        text run at (0,22) width 116: "(200x200 visible)."
-    RenderBlock {P} at (0,136) size 792x22
-      RenderText {#text} at (0,0) size 495x22
-        text run at (0,0) width 495: "NOTE: The test only works in the DRT or with frame flattening enabled."
+layer at (8,200) size 792x169
+  RenderBlock (positioned) {DIV} at (8,200) size 792x169
+    RenderBlock {P} at (0,16) size 792x42
+      RenderText {#text} at (0,0) size 790x42
+        text run at (0,0) width 491: "Test for iframe flattening, with three inner frames just outside the view "
+        text run at (491,0) width 299: "and of the size 200x200 px, plus one inner"
+        text run at (0,21) width 153: "frame is partly visible."
+    RenderBlock {P} at (0,74) size 792x42
+      RenderText {#text} at (0,0) size 752x42
+        text run at (0,0) width 495: "This yellow, red and blue inner frames must remain offscreen, and the "
+        text run at (495,0) width 257: "green inner frames should be of size"
+        text run at (0,21) width 192: "300x300 (200x200 visible)."
+    RenderBlock {P} at (0,132) size 792x21
+      RenderText {#text} at (0,0) size 501x21
+        text run at (0,0) width 501: "NOTE: The test only works in the DRT or with frame flattening enabled."
 layer at (-100,-100) size 300x300 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
   RenderPartObject {IFRAME} at (-100,-100) size 300x300
     layer at (0,0) size 300x300

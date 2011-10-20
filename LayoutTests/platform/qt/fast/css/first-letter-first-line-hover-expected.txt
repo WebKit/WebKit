@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600 [color=#FF0000]
     RenderBody {BODY} at (8,8) size 784x544
-      RenderBlock {P} at (0,0) size 784x86
-        RenderInline (generated) at (0,0) size 35x64 [color=#008000] [bgcolor=#FFC0CB]
-          RenderText {#text} at (0,0) size 35x64
-            text run at (0,0) width 35: "A"
-        RenderText {#text} at (35,0) size 200x64
-          text run at (35,0) width 200: "BCDEFG"
-        RenderBR {BR} at (235,47) size 0x0
-        RenderInline {SPAN} at (0,0) size 243x22 [color=#000000]
-          RenderText {#text} at (0,64) size 243x22
-            text run at (0,64) width 243: "Hover over \"A\". It must stay green."
+      RenderBlock {P} at (0,0) size 784x81
+        RenderInline (generated) at (0,0) size 32x60 [color=#008000] [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,0) size 32x60
+            text run at (0,0) width 32: "A"
+        RenderText {#text} at (32,0) size 200x60
+          text run at (32,0) width 200: "BCDEFG"
+        RenderBR {BR} at (232,46) size 0x0
+        RenderInline {SPAN} at (0,0) size 241x21 [color=#000000]
+          RenderText {#text} at (0,60) size 241x21
+            text run at (0,60) width 241: "Hover over \"A\". It must stay green."
         RenderText {#text} at (0,0) size 0x0

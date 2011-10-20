@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 747x44
-          text run at (0,0) width 417: "This tests selecting and deleting the paragraph before a table. "
-          text run at (417,0) width 330: "You should see only a table in the editable region"
-          text run at (0,22) width 234: "below, with the caret just before it."
-      RenderBlock {DIV} at (0,60) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32
-          RenderTable {TABLE} at (0,0) size 32x32 [border: (1px solid #BBBBBB)]
-            RenderTableSection {TBODY} at (1,1) size 30x30
-              RenderTableRow {TR} at (0,2) size 30x26
-                RenderTableCell {TD} at (2,2) size 12x26 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 8x22
-                    text run at (2,2) width 8: "1"
-                RenderTableCell {TD} at (16,2) size 12x26 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (2,2) size 8x22
-                    text run at (2,2) width 8: "2"
-          RenderBlock (anonymous) at (0,32) size 784x0
-        RenderBlock (anonymous) at (0,32) size 784x0
-      RenderBlock {UL} at (0,108) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 741x42
+          text run at (0,0) width 440: "This tests selecting and deleting the paragraph before a table. "
+          text run at (440,0) width 301: "You should see only a table in the editable"
+          text run at (0,21) width 288: "region below, with the caret just before it."
+      RenderBlock {DIV} at (0,58) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31
+          RenderTable {TABLE} at (0,0) size 34x31 [border: (1px solid #BBBBBB)]
+            RenderTableSection {TBODY} at (1,1) size 32x29
+              RenderTableRow {TR} at (0,2) size 32x25
+                RenderTableCell {TD} at (2,2) size 13x25 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 9x21
+                    text run at (2,2) width 9: "1"
+                RenderTableCell {TD} at (17,2) size 13x25 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (2,2) size 9x21
+                    text run at (2,2) width 9: "2"
+          RenderBlock (anonymous) at (0,31) size 784x0
+        RenderBlock (anonymous) at (0,31) size 784x0
+      RenderBlock {UL} at (0,105) size 784x0
 caret: position 0 of child 0 {TABLE} of child 1 {DIV} of child 2 {DIV} of body

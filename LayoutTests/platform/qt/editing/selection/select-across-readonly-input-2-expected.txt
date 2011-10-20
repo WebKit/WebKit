@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 783: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a"
-          text run at (0,22) width 83: "mouse drag."
-      RenderBlock {P} at (0,60) size 784x44
-        RenderText {#text} at (0,0) size 780x44
-          text run at (0,0) width 780: "To manually test, select text by a mouse drag starting in \"world\" and ending in \"hello\". Selection should not extend"
-          text run at (0,22) width 151: "into the input element."
-      RenderBlock {DIV} at (0,120) size 784x30
-        RenderTextControl {INPUT} at (0,2) size 49x26
-        RenderText {#text} at (49,4) size 4x22
-          text run at (49,4) width 4: " "
-        RenderInline {SPAN} at (0,0) size 40x22
-          RenderText {#text} at (53,4) size 40x22
-            text run at (53,4) width 40: "world"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 746x42
+          text run at (0,0) width 746: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be"
+          text run at (0,21) width 166: "made by a mouse drag."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 751x42
+          text run at (0,0) width 751: "To manually test, select text by a mouse drag starting in \"world\" and ending in \"hello\". Selection should not"
+          text run at (0,21) width 208: "extend into the input element."
+      RenderBlock {DIV} at (0,116) size 784x29
+        RenderTextControl {INPUT} at (0,2) size 56x25
+        RenderText {#text} at (56,4) size 4x21
+          text run at (56,4) width 4: " "
+        RenderInline {SPAN} at (0,0) size 39x21
+          RenderText {#text} at (60,4) size 39x21
+            text run at (60,4) width 39: "world"
         RenderText {#text} at (0,0) size 0x0
-layer at (10,132) size 45x22
-  RenderBlock {DIV} at (2,2) size 45x22
-    RenderText {#text} at (1,0) size 32x22
-      text run at (1,0) width 32: "hello"
+layer at (10,128) size 52x21
+  RenderBlock {DIV} at (2,2) size 52x21
+    RenderText {#text} at (1,0) size 35x21
+      text run at (1,0) width 35: "hello"
 selection start: position 0 of child 2 {#text} of child 5 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body

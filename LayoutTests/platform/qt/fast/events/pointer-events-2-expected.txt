@@ -1,93 +1,97 @@
 layer at (0,0) size 784x640
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x188
-  RenderBlock {HTML} at (0,0) size 784x188
-    RenderBody {BODY} at (8,21) size 768x151
-      RenderBlock {H1} at (0,0) size 768x42
-        RenderText {#text} at (0,0) size 759x42
-          text run at (0,0) width 759: "Testing the values of 'pointer-events' on HTML content"
-      RenderBlock {P} at (0,63) size 768x88
-        RenderText {#text} at (0,0) size 766x88
-          text run at (0,0) width 623: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
-          text run at (623,0) width 125: "the elements in the"
-          text run at (0,22) width 440: "first column, making sure the actual result (3rd column) matches "
-          text run at (440,22) width 300: "the expected result (2nd column). Repeat for"
-          text run at (0,44) width 368: "click target (4th column), expected result (5th column) "
-          text run at (368,44) width 398: "and actual result (6th column). Note: You should click on a"
-          text run at (0,66) width 157: "yellow inline element if "
-          text run at (157,66) width 283: "one exists, otherwise anywhere in the box."
+layer at (0,0) size 784x226
+  RenderBlock {HTML} at (0,0) size 784x226
+    RenderBody {BODY} at (8,21) size 768x189
+      RenderBlock {H1} at (0,0) size 768x84
+        RenderText {#text} at (0,0) size 721x84
+          text run at (0,0) width 721: "Testing the values of 'pointer-events' on HTML"
+          text run at (0,42) width 118: "content"
+      RenderBlock {P} at (0,105) size 768x84
+        RenderText {#text} at (0,0) size 768x84
+          text run at (0,0) width 634: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
+          text run at (634,0) width 134: "the elements in the"
+          text run at (0,21) width 453: "first column, making sure the actual result (3rd column) matches "
+          text run at (453,21) width 313: "the expected result (2nd column). Repeat for"
+          text run at (0,42) width 380: "click target (4th column), expected result (5th column) "
+          text run at (380,42) width 376: "and actual result (6th column). Note: You should click"
+          text run at (0,63) width 201: "on a yellow inline element if "
+          text run at (201,63) width 300: "one exists, otherwise anywhere in the box."
 layer at (10,140) size 300x100
   RenderBlock (positioned) {DIV} at (10,140) size 300x100
 layer at (10,140) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (10,140) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 76x44
+    RenderText {#text} at (0,0) size 54x63
       text run at (0,0) width 54: "pointer-"
-      text run at (0,22) width 76: "events auto"
+      text run at (0,21) width 47: "events"
+      text run at (0,42) width 31: "auto"
 layer at (110,140) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p1"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p1"
 layer at (210,140) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p1"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p1"
 layer at (10,240) size 300x100
   RenderBlock (positioned) {DIV} at (10,240) size 300x100
 layer at (10,240) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (10,240) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 79x44
+    RenderText {#text} at (0,0) size 54x63
       text run at (0,0) width 54: "pointer-"
-      text run at (0,22) width 79: "events none"
+      text run at (0,21) width 47: "events"
+      text run at (0,42) width 36: "none"
 layer at (110,240) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 33x22
-      text run at (0,0) width 33: "none"
+    RenderText {#text} at (0,0) size 36x21
+      text run at (0,0) width 36: "none"
 layer at (210,240) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 33x22
-      text run at (0,0) width 33: "none"
+    RenderText {#text} at (0,0) size 36x21
+      text run at (0,0) width 36: "none"
 layer at (10,340) size 300x100
   RenderBlock (positioned) {DIV} at (10,340) size 300x100
 layer at (10,340) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (10,340) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 77x44
-      text run at (0,0) width 59: "siblings -"
-      text run at (0,22) width 77: "auto on top"
+    RenderText {#text} at (0,0) size 79x42
+      text run at (0,0) width 64: "siblings -"
+      text run at (0,21) width 79: "auto on top"
 layer at (10,340) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80
 layer at (110,340) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p4"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p4"
 layer at (210,340) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p4"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p4"
 layer at (10,440) size 300x100
   RenderBlock (positioned) {DIV} at (10,440) size 300x100
 layer at (10,440) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (10,440) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 80x44
-      text run at (0,0) width 59: "siblings -"
-      text run at (0,22) width 80: "none on top"
+    RenderText {#text} at (0,0) size 64x63
+      text run at (0,0) width 64: "siblings -"
+      text run at (0,21) width 58: "none on"
+      text run at (0,42) width 22: "top"
 layer at (10,440) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80
 layer at (110,440) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p5"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p5"
 layer at (210,440) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p5"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p5"
 layer at (10,540) size 300x100
   RenderBlock (positioned) {DIV} at (10,540) size 300x100
 layer at (10,540) size 80x80
@@ -96,17 +100,17 @@ layer at (10,540) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (10,540) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 70x44
-      text run at (0,0) width 52: "nested -"
-      text run at (0,22) width 70: "auto outer"
+    RenderText {#text} at (0,0) size 71x42
+      text run at (0,0) width 57: "nested -"
+      text run at (0,21) width 71: "auto outer"
 layer at (110,540) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p7"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p7"
 layer at (210,540) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 17x22
-      text run at (0,0) width 17: "p7"
+    RenderText {#text} at (0,0) size 18x21
+      text run at (0,0) width 18: "p7"
 layer at (340,140) size 300x100
   RenderBlock (positioned) {DIV} at (340,140) size 300x100
 layer at (340,140) size 80x80
@@ -115,17 +119,17 @@ layer at (340,140) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (340,140) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderText {#text} at (0,0) size 73x44
-      text run at (0,0) width 52: "nested -"
-      text run at (0,22) width 73: "none outer"
+    RenderText {#text} at (0,0) size 76x42
+      text run at (0,0) width 57: "nested -"
+      text run at (0,21) width 76: "none outer"
 layer at (440,140) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p10"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p10"
 layer at (540,140) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p10"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p10"
 layer at (340,240) size 300x100
   RenderBlock (positioned) {DIV} at (340,240) size 300x100
 layer at (340,240) size 80x80
@@ -134,12 +138,12 @@ layer at (340,240) size 80x80
   RenderImage {IMG} at (0,0) size 80x80
 layer at (440,240) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p11"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p11"
 layer at (540,240) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p11"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p11"
 layer at (340,340) size 300x100
   RenderBlock (positioned) {DIV} at (340,340) size 300x100
 layer at (340,340) size 80x80
@@ -148,53 +152,53 @@ layer at (340,340) size 80x80
   RenderImage {IMG} at (0,0) size 80x80
 layer at (440,340) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 33x22
-      text run at (0,0) width 33: "none"
+    RenderText {#text} at (0,0) size 36x21
+      text run at (0,0) width 36: "none"
 layer at (540,340) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 33x22
-      text run at (0,0) width 33: "none"
+    RenderText {#text} at (0,0) size 36x21
+      text run at (0,0) width 36: "none"
 layer at (340,440) size 300x100
   RenderBlock (positioned) {DIV} at (340,440) size 300x100
 layer at (340,440) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (340,440) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderInline {SPAN} at (0,0) size 37x22 [bgcolor=#FFFF00]
-      RenderText {#text} at (0,0) size 37x22
-        text run at (0,0) width 37: "inline"
-    RenderText {#text} at (37,0) size 64x88
-      text run at (37,0) width 27: " has"
-      text run at (0,22) width 34: "auto,"
-      text run at (0,44) width 45: "parent"
-      text run at (0,66) width 33: "none"
+    RenderInline {SPAN} at (0,0) size 39x21 [bgcolor=#FFFF00]
+      RenderText {#text} at (0,0) size 39x21
+        text run at (0,0) width 39: "inline"
+    RenderText {#text} at (39,0) size 69x84
+      text run at (39,0) width 30: " has"
+      text run at (0,21) width 35: "auto,"
+      text run at (0,42) width 45: "parent"
+      text run at (0,63) width 36: "none"
 layer at (440,440) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p14"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p14"
 layer at (540,440) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p14"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p14"
 layer at (340,540) size 300x100
   RenderBlock (positioned) {DIV} at (340,540) size 300x100
 layer at (340,540) size 80x80
   RenderBlock (positioned) {DIV} at (0,0) size 80x80
 layer at (340,540) size 80x80
   RenderBlock (positioned) {P} at (0,0) size 80x80 [bgcolor=#808080]
-    RenderInline {SPAN} at (0,0) size 37x22 [bgcolor=#FFFF00]
-      RenderText {#text} at (0,0) size 37x22
-        text run at (0,0) width 37: "inline"
-    RenderText {#text} at (37,0) size 79x66
-      text run at (37,0) width 27: " has"
-      text run at (0,22) width 37: "none,"
-      text run at (0,44) width 79: "parent auto"
+    RenderInline {SPAN} at (0,0) size 39x21 [bgcolor=#FFFF00]
+      RenderText {#text} at (0,0) size 39x21
+        text run at (0,0) width 39: "inline"
+    RenderText {#text} at (39,0) size 80x63
+      text run at (39,0) width 30: " has"
+      text run at (0,21) width 40: "none,"
+      text run at (0,42) width 80: "parent auto"
 layer at (440,540) size 80x80
   RenderBlock (positioned) {DIV} at (100,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p15"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p15"
 layer at (540,540) size 80x80
   RenderBlock (positioned) {DIV} at (200,0) size 80x80
-    RenderText {#text} at (0,0) size 25x22
-      text run at (0,0) width 25: "p15"
+    RenderText {#text} at (0,0) size 27x21
+      text run at (0,0) width 27: "p15"
 caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {P} of child 1 {DIV} of child 23 {DIV} of body

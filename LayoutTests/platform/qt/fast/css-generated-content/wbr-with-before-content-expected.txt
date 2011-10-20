@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 197x22
-          text run at (0,0) width 197: "You should not see any cyan."
-      RenderBlock {DIV} at (0,22) size 202x27 [bgcolor=#00FFFF] [border: (1px solid #777777)]
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 209x21
+          text run at (0,0) width 209: "You should not see any cyan."
+      RenderBlock {DIV} at (0,21) size 202x27 [bgcolor=#00FFFF] [border: (1px solid #777777)]
         RenderBlock {A} at (1,1) size 200x25 [color=#0000EE] [bgcolor=#FFFFFF]
-          RenderText {#text} at (0,1) size 21x22
-            text run at (0,1) width 21: "foo"
+          RenderText {#text} at (0,2) size 22x21
+            text run at (0,2) width 22: "foo"
           RenderWordBreak {WBR} at (0,0) size 0x0
-          RenderText {#text} at (21,1) size 24x22
-            text run at (21,1) width 24: "bar"
+          RenderText {#text} at (22,2) size 23x21
+            text run at (22,2) width 23: "bar"

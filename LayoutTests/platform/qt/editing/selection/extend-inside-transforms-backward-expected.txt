@@ -5,11 +5,11 @@ layer at (0,0) size 800x216
     RenderBody {BODY} at (8,8) size 784x200
 layer at (8,8) size 200x200
   RenderBlock {DIV} at (0,0) size 200x200
-    RenderBlock {P} at (0,0) size 200x62
-      RenderText {#text} at (0,0) size 117x62
-        text run at (0,0) width 117: "hello"
-    RenderBlock {P} at (0,62) size 200x62
-      RenderText {#text} at (0,0) size 135x62
-        text run at (0,0) width 135: "world"
+    RenderBlock {P} at (0,0) size 200x63
+      RenderText {#text} at (0,0) size 106x63
+        text run at (0,0) width 106: "hello"
+    RenderBlock {P} at (0,63) size 200x63
+      RenderText {#text} at (0,0) size 120x63
+        text run at (0,0) width 120: "world"
 selection start: position 4 of child 0 {#text} of child 1 {P} of child 1 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 3 {P} of child 1 {DIV} of body

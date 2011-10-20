@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {DIV} at (0,0) size 371x22
-        RenderTableSection (anonymous) at (0,0) size 371x22
-          RenderTableRow (anonymous) at (0,0) size 371x22
-            RenderTableCell (anonymous) at (0,0) size 371x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 371x22
-                text run at (0,0) width 371: "Only the third word in this sentence should be selected."
+      RenderTable {DIV} at (0,0) size 390x21
+        RenderTableSection (anonymous) at (0,0) size 390x21
+          RenderTableRow (anonymous) at (0,0) size 390x21
+            RenderTableCell (anonymous) at (0,0) size 390x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 390x21
+                text run at (0,0) width 390: "Only the third word in this sentence should be selected."
 selection start: position 9 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 14 of child 0 {#text} of child 1 {DIV} of body

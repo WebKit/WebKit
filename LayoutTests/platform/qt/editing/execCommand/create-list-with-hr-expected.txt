@@ -9,21 +9,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 560x22
-          text run at (0,0) width 560: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
-        RenderInline {B} at (0,0) size 765x44
-          RenderText {#text} at (560,0) size 765x44
-            text run at (560,0) width 205: "This demonstrates what might"
-            text run at (0,22) width 63: "be a bug:"
-        RenderText {#text} at (63,22) size 463x22
-          text run at (63,22) width 463: " the horizontal rule appears before the list marker in the render tree."
-      RenderBlock {DIV} at (0,60) size 784x32
-        RenderBlock {UL} at (0,0) size 784x32
-          RenderListItem {LI} at (40,0) size 744x32
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 572x21
+          text run at (0,0) width 572: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
+        RenderInline {B} at (0,0) size 754x42
+          RenderText {#text} at (572,0) size 754x42
+            text run at (572,0) width 182: "This demonstrates what"
+            text run at (0,21) width 118: "might be a bug:"
+        RenderText {#text} at (118,21) size 473x21
+          text run at (118,21) width 473: " the horizontal rule appears before the list marker in the render tree."
+      RenderBlock {DIV} at (0,58) size 784x31
+        RenderBlock {UL} at (0,0) size 784x31
+          RenderListItem {LI} at (40,0) size 744x31
             RenderBlock (anonymous) at (0,0) size 744x0
             RenderBlock {HR} at (0,0) size 744x2 [border: (1px inset #000000)]
-            RenderBlock (anonymous) at (0,10) size 744x22
-              RenderListMarker at (-18,0) size 7x22: bullet
-        RenderBlock (anonymous) at (0,48) size 784x0
+            RenderBlock (anonymous) at (0,10) size 744x21
+              RenderListMarker at (-18,0) size 7x21: bullet
+        RenderBlock (anonymous) at (0,47) size 784x0
 caret: position 0 of child 0 {HR} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

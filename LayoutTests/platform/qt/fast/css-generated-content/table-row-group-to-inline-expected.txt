@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderInline {SPAN} at (0,0) size 678x22
-          RenderText {#text} at (0,0) size 678x22
-            text run at (0,0) width 678: "This test passes if it does not crash, and if we successfully destroy the table-section generated content."
-        RenderText {#text} at (678,0) size 4x22
-          text run at (678,0) width 4: " "
-        RenderBR {BR} at (682,16) size 0x0
-      RenderBlock {UL} at (0,38) size 784x44
-        RenderListItem {LI} at (40,0) size 744x44
-          RenderBlock (anonymous) at (0,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderInline (generated) at (0,0) size 32x22
-              RenderText at (0,0) size 32x22
-                text run at (0,0) width 32: "hello"
-          RenderTable at (0,22) size 0x0
-          RenderBlock (anonymous) at (0,22) size 744x22
-            RenderText {#text} at (0,0) size 23x22
-              text run at (0,0) width 23: "test"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderInline {SPAN} at (0,0) size 723x21
+          RenderText {#text} at (0,0) size 723x21
+            text run at (0,0) width 723: "This test passes if it does not crash, and if we successfully destroy the table-section generated content."
+        RenderText {#text} at (723,0) size 4x21
+          text run at (723,0) width 4: " "
+        RenderBR {BR} at (727,16) size 0x0
+      RenderBlock {UL} at (0,37) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderInline (generated) at (0,0) size 35x21
+              RenderText at (0,0) size 35x21
+                text run at (0,0) width 35: "hello"
+          RenderTable at (0,21) size 0x0
+          RenderBlock (anonymous) at (0,21) size 744x21
+            RenderText {#text} at (0,0) size 25x21
+              text run at (0,0) width 25: "test"

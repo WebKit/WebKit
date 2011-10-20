@@ -17,14 +17,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 80x33
-          RenderText {#text} at (14,14) size 42x33
-            text run at (14,14) width 42: "bar "
-          RenderInline {SPAN} at (0,0) size 6x33
-            RenderText {#text} at (56,14) size 6x33
-              text run at (56,14) width 6: " "
-          RenderText {#text} at (62,14) size 32x33
-            text run at (62,14) width 32: "foo"
+      RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 81x30
+          RenderText {#text} at (14,14) size 41x30
+            text run at (14,14) width 41: "bar "
+          RenderInline {SPAN} at (0,0) size 7x30
+            RenderText {#text} at (55,14) size 7x30
+              text run at (55,14) width 7: " "
+          RenderText {#text} at (62,14) size 33x30
+            text run at (62,14) width 33: "foo"
         RenderText {#text} at (0,0) size 0x0
 caret: position 4 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

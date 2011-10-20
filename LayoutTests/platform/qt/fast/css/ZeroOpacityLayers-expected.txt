@@ -9,19 +9,21 @@ layer at (20,20) size 180x180
   RenderBlock (positioned) {DIV} at (10,10) size 180x180 [bgcolor=#00FF00]
 layer at (30,30) size 160x160
   RenderBlock (positioned) {DIV} at (10,10) size 160x160 [bgcolor=#FF0000]
-    RenderText {#text} at (0,0) size 159x22
-      text run at (0,0) width 159: "Should not see this text."
+    RenderText {#text} at (0,0) size 136x42
+      text run at (0,0) width 136: "Should not see this"
+      text run at (0,21) width 29: "text."
     RenderText {#text} at (0,0) size 0x0
 layer at (40,40) size 140x140
   RenderBlock (positioned) {DIV} at (10,10) size 140x140 [bgcolor=#FFFFFF]
-    RenderText {#text} at (0,0) size 126x44
-      text run at (0,0) width 126: "Should not see this"
-      text run at (0,22) width 29: "text."
+    RenderText {#text} at (0,0) size 136x42
+      text run at (0,0) width 136: "Should not see this"
+      text run at (0,21) width 29: "text."
 layer at (100,100) size 200x200
   RenderBlock (positioned) {DIV} at (80,80) size 200x200 [bgcolor=#FFFF00]
-layer at (10,316) size 790x66
-  RenderBlock (positioned) {P} at (10,316) size 790x66
-    RenderText {#text} at (0,0) size 789x66
-      text run at (0,0) width 773: "Below are four boxes all within each other, and a box overlaping other boxes. The 3rd inner box is red, and has an"
-      text run at (0,22) width 762: "opacity of zero, and the box within it is black and has an opacity of 1. As the third box has opacity zero, the inner"
-      text run at (0,44) width 789: "black is not visible. The yellow block has opacity of 0.5, and is as the same level in the DOM tree as the 3rd inner box."
+layer at (10,316) size 790x84
+  RenderBlock (positioned) {P} at (10,316) size 790x84
+    RenderText {#text} at (0,0) size 781x84
+      text run at (0,0) width 781: "Below are four boxes all within each other, and a box overlaping other boxes. The 3rd inner box is red, and has"
+      text run at (0,21) width 768: "an opacity of zero, and the box within it is black and has an opacity of 1. As the third box has opacity zero, the"
+      text run at (0,42) width 767: "inner black is not visible. The yellow block has opacity of 0.5, and is as the same level in the DOM tree as the"
+      text run at (0,63) width 97: "3rd inner box."

@@ -3,22 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 776x22
-          text run at (0,0) width 776: "The word \"PASSED\" should be shown below with a cirlce before and a square after. This is a test for WebKit bug"
-        RenderInline {A} at (0,0) size 40x22 [color=#0000EE]
-          RenderText {#text} at (0,22) size 40x22
-            text run at (0,22) width 40: "11197"
-        RenderText {#text} at (40,22) size 4x22
-          text run at (40,22) width 4: "."
-      RenderBlock (anonymous) at (0,60) size 784x16
-        RenderInline {CODE} at (0,0) size 64x15
-          RenderInline (generated) at (0,0) size 8x15
-            RenderCounter at (0,0) size 8x15
-              text run at (0,0) width 8: "\x{25E6}"
-          RenderText {#text} at (8,0) size 48x15
-            text run at (8,0) width 48: "PASSED"
-          RenderInline (generated) at (0,0) size 8x15
-            RenderCounter at (56,0) size 8x15
-              text run at (56,0) width 8: "\x{25A0}"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 766x42
+          text run at (0,0) width 766: "The word \"PASSED\" should be shown below with a cirlce before and a square after. This is a test for WebKit"
+          text run at (0,21) width 31: "bug "
+        RenderInline {A} at (0,0) size 45x21 [color=#0000EE]
+          RenderText {#text} at (31,21) size 45x21
+            text run at (31,21) width 45: "11197"
+        RenderText {#text} at (76,21) size 4x21
+          text run at (76,21) width 4: "."
+      RenderBlock (anonymous) at (0,58) size 784x17
+        RenderInline {CODE} at (0,0) size 62x17
+          RenderInline (generated) at (0,0) size 4x17
+            RenderCounter at (0,0) size 4x17
+              text run at (0,0) width 4: "\x{25E6}"
+          RenderText {#text} at (4,0) size 54x17
+            text run at (4,0) width 54: "PASSED"
+          RenderInline (generated) at (0,0) size 4x17
+            RenderCounter at (58,0) size 4x17
+              text run at (58,0) width 4: "\x{25A0}"
         RenderText {#text} at (0,0) size 0x0

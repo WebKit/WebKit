@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 728x44
-          text run at (0,0) width 636: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
-          text run at (636,0) width 92: "only works in"
-          text run at (0,22) width 575: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
-      RenderBlock {FORM} at (0,60) size 784x44
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderBlock {INPUT} at (3,6) size 12x12
-          RenderInline {LABEL} at (0,0) size 179x22
-            RenderText {#text} at (18,0) size 28x22
-              text run at (18,0) width 28: "one "
-            RenderBlock {INPUT} at (49,6) size 12x12
-            RenderInline {LABEL} at (0,0) size 133x22
-              RenderText {#text} at (64,0) size 29x22
-                text run at (64,0) width 29: "two "
-              RenderBlock {INPUT} at (96,6) size 12x12
-              RenderInline {LABEL} at (0,0) size 86x22
-                RenderText {#text} at (111,0) size 39x22
-                  text run at (111,0) width 39: "three "
-                RenderBlock {INPUT} at (153,6) size 12x12
-                RenderInline {LABEL} at (0,0) size 29x22
-                  RenderText {#text} at (168,0) size 29x22
-                    text run at (168,0) width 29: "four"
-        RenderBlock (anonymous) at (0,22) size 784x22
-          RenderBlock {DIV} at (0,0) size 784x22
-            RenderText {#text} at (0,0) size 109x22
-              text run at (0,0) width 109: "Test Succeeded!"
-        RenderBlock (anonymous) at (0,44) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 761x42
+          text run at (0,0) width 668: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
+          text run at (668,0) width 93: "only works in"
+          text run at (0,21) width 590: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
+      RenderBlock {FORM} at (0,58) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderBlock {INPUT} at (4,6) size 12x12
+          RenderInline {LABEL} at (0,0) size 187x21
+            RenderText {#text} at (20,0) size 31x21
+              text run at (20,0) width 31: "one "
+            RenderBlock {INPUT} at (55,6) size 12x12
+            RenderInline {LABEL} at (0,0) size 136x21
+              RenderText {#text} at (71,0) size 29x21
+                text run at (71,0) width 29: "two "
+              RenderBlock {INPUT} at (104,6) size 12x12
+              RenderInline {LABEL} at (0,0) size 87x21
+                RenderText {#text} at (120,0) size 40x21
+                  text run at (120,0) width 40: "three "
+                RenderBlock {INPUT} at (164,6) size 12x12
+                RenderInline {LABEL} at (0,0) size 27x21
+                  RenderText {#text} at (180,0) size 27x21
+                    text run at (180,0) width 27: "four"
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderBlock {DIV} at (0,0) size 784x21
+            RenderText {#text} at (0,0) size 120x21
+              text run at (0,0) width 120: "Test Succeeded!"
+        RenderBlock (anonymous) at (0,42) size 784x0
           RenderInline {LABEL} at (0,0) size 0x0
             RenderInline {LABEL} at (0,0) size 0x0
               RenderInline {LABEL} at (0,0) size 0x0

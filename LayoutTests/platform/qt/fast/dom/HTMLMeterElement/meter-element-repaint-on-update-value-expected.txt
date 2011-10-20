@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderMeter {METER} at (0,3) size 80x16
         RenderBlock {DIV} at (0,0) size 80x16
           RenderBlock {DIV} at (0,0) size 40x16
-      RenderText {#text} at (80,0) size 4x22
+      RenderText {#text} at (80,0) size 4x21
         text run at (80,0) width 4: " "
       RenderMeter {METER} at (84,3) size 80x16
         RenderBlock {DIV} at (0,0) size 80x16

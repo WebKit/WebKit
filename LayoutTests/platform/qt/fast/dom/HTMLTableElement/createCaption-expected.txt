@@ -3,86 +3,86 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 290x22
-          text run at (0,0) width 290: "Tests: the TABLE.createCaption() method"
-        RenderBR {BR} at (290,16) size 0x0
-      RenderBlock {P} at (0,38) size 784x66
-        RenderText {#text} at (0,0) size 79x22
-          text run at (0,0) width 79: "Conditions:"
-        RenderBR {BR} at (79,16) size 0x0
-        RenderText {#text} at (0,22) size 759x44
-          text run at (0,22) width 736: "If no caption exists, the method should create an empty caption, add it to the table, and return a pointer to it. "
-          text run at (736,22) width 23: "If a"
-          text run at (0,44) width 398: "caption does exist, the method should return a pointer to it."
-      RenderBlock {P} at (0,120) size 784x44
-        RenderText {#text} at (0,0) size 346x22
-          text run at (0,0) width 346: "If successful, the first table should have the caption "
-        RenderInline {B} at (0,0) size 43x22
-          RenderText {#text} at (346,0) size 43x22
-            text run at (346,0) width 43: "Fruity"
-        RenderText {#text} at (389,0) size 314x22
-          text run at (389,0) width 314: ", and the second table should have the caption "
-        RenderInline {B} at (0,0) size 75x22
-          RenderText {#text} at (703,0) size 75x22
-            text run at (703,0) width 75: "Vegetabley"
-        RenderText {#text} at (778,0) size 782x44
-          text run at (778,0) width 4: "."
-          text run at (0,22) width 666: "Upon failure, the first table will have no caption, and the second table will have the caption Things."
-      RenderBlock {HR} at (0,180) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,190) size 116x110 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 114x22
-          RenderInline {B} at (0,0) size 44x22
-            RenderText {#text} at (35,0) size 44x22
-              text run at (35,0) width 44: "Fruity"
-        RenderTableSection {TBODY} at (1,23) size 114x86
-          RenderTableRow {TR} at (0,2) size 114x26
-            RenderTableCell {TH} at (2,2) size 57x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,2) size 35x22
-                text run at (11,2) width 35: "Fruit"
-            RenderTableCell {TH} at (61,2) size 51x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,2) size 39x22
-                text run at (6,2) width 39: "Color"
-          RenderTableRow {TR} at (0,30) size 114x26
-            RenderTableCell {TD} at (2,30) size 57x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 53x22
-                text run at (2,2) width 53: "Banana"
-            RenderTableCell {TD} at (61,30) size 51x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "Yellow"
-          RenderTableRow {TR} at (0,58) size 114x26
-            RenderTableCell {TD} at (2,58) size 57x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 43x22
-                text run at (2,2) width 43: "Grape"
-            RenderTableCell {TD} at (61,58) size 51x26 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x22
-                text run at (2,2) width 46: "Purple"
-      RenderBlock (anonymous) at (0,300) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,322) size 140x110 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 138x22
-          RenderInline {B} at (0,0) size 76x22
-            RenderText {#text} at (31,0) size 76x22
-              text run at (31,0) width 76: "Vegetabley"
-        RenderTableSection {TBODY} at (1,23) size 138x86
-          RenderTableRow {TR} at (0,2) size 138x26
-            RenderTableCell {TH} at (2,2) size 77x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,2) size 67x22
-                text run at (5,2) width 67: "Vegetable"
-            RenderTableCell {TH} at (81,2) size 55x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (8,2) size 39x22
-                text run at (8,2) width 39: "Color"
-          RenderTableRow {TR} at (0,30) size 138x26
-            RenderTableCell {TD} at (2,30) size 77x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x22
-                text run at (2,2) width 47: "Carrot"
-            RenderTableCell {TD} at (81,30) size 55x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x22
-                text run at (2,2) width 51: "Orange"
-          RenderTableRow {TR} at (0,58) size 138x26
-            RenderTableCell {TD} at (2,58) size 77x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 73x22
-                text run at (2,2) width 73: "Cucumber"
-            RenderTableCell {TD} at (81,58) size 55x26 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 42x22
-                text run at (2,2) width 42: "Green"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 296x21
+          text run at (0,0) width 296: "Tests: the TABLE.createCaption() method"
+        RenderBR {BR} at (296,16) size 0x0
+      RenderBlock {P} at (0,37) size 784x63
+        RenderText {#text} at (0,0) size 81x21
+          text run at (0,0) width 81: "Conditions:"
+        RenderBR {BR} at (81,16) size 0x0
+        RenderText {#text} at (0,21) size 776x42
+          text run at (0,21) width 755: "If no caption exists, the method should create an empty caption, add it to the table, and return a pointer to it. "
+          text run at (755,21) width 21: "If a"
+          text run at (0,42) width 411: "caption does exist, the method should return a pointer to it."
+      RenderBlock {P} at (0,116) size 784x63
+        RenderText {#text} at (0,0) size 362x21
+          text run at (0,0) width 362: "If successful, the first table should have the caption "
+        RenderInline {B} at (0,0) size 44x21
+          RenderText {#text} at (362,0) size 44x21
+            text run at (362,0) width 44: "Fruity"
+        RenderText {#text} at (406,0) size 329x21
+          text run at (406,0) width 329: ", and the second table should have the caption"
+        RenderInline {B} at (0,0) size 85x21
+          RenderText {#text} at (0,21) size 85x21
+            text run at (0,21) width 85: "Vegetabley"
+        RenderText {#text} at (85,21) size 728x42
+          text run at (85,21) width 643: ". Upon failure, the first table will have no caption, and the second table will have the caption"
+          text run at (0,42) width 53: "Things."
+      RenderBlock {HR} at (0,195) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,205) size 121x106 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 119x21
+          RenderInline {B} at (0,0) size 45x21
+            RenderText {#text} at (37,0) size 45x21
+              text run at (37,0) width 45: "Fruity"
+        RenderTableSection {TBODY} at (1,22) size 119x83
+          RenderTableRow {TR} at (0,2) size 119x25
+            RenderTableCell {TH} at (2,2) size 60x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (12,2) size 36x21
+                text run at (12,2) width 36: "Fruit"
+            RenderTableCell {TH} at (64,2) size 53x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,2) size 43x21
+                text run at (5,2) width 43: "Color"
+          RenderTableRow {TR} at (0,29) size 119x25
+            RenderTableCell {TD} at (2,29) size 60x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "Banana"
+            RenderTableCell {TD} at (64,29) size 53x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "Yellow"
+          RenderTableRow {TR} at (0,56) size 119x25
+            RenderTableCell {TD} at (2,56) size 60x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 44x21
+                text run at (2,2) width 44: "Grape"
+            RenderTableCell {TD} at (64,56) size 53x25 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x21
+                text run at (2,2) width 47: "Purple"
+      RenderBlock (anonymous) at (0,311) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,332) size 145x106 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 143x21
+          RenderInline {B} at (0,0) size 85x21
+            RenderText {#text} at (29,0) size 85x21
+              text run at (29,0) width 85: "Vegetabley"
+        RenderTableSection {TBODY} at (1,22) size 143x83
+          RenderTableRow {TR} at (0,2) size 143x25
+            RenderTableCell {TH} at (2,2) size 80x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 76x21
+                text run at (2,2) width 76: "Vegetable"
+            RenderTableCell {TH} at (84,2) size 57x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (7,2) size 43x21
+                text run at (7,2) width 43: "Color"
+          RenderTableRow {TR} at (0,29) size 143x25
+            RenderTableCell {TD} at (2,29) size 80x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 44x21
+                text run at (2,2) width 44: "Carrot"
+            RenderTableCell {TD} at (84,29) size 57x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x21
+                text run at (2,2) width 53: "Orange"
+          RenderTableRow {TR} at (0,56) size 143x25
+            RenderTableCell {TD} at (2,56) size 80x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 74x21
+                text run at (2,2) width 74: "Cucumber"
+            RenderTableCell {TD} at (84,56) size 57x25 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 44x21
+                text run at (2,2) width 44: "Green"

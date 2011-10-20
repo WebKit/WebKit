@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 770x44
-          text run at (0,0) width 689: "This tests that inserting a newline at the beginning of quoted content doesn't add an extra quoted line. "
-          text run at (689,0) width 81: "The test has"
-          text run at (0,22) width 492: "passed if there are no empty lines (quoted or unquoted) in the box below."
-      RenderBlock {DIV} at (0,60) size 784x110
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 65x22
-            text run at (0,0) width 65: "unquoted"
-          RenderBR {BR} at (65,16) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,22) size 784x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (12,0) size 772x22
-            RenderText {#text} at (0,0) size 100x22
-              text run at (0,0) width 100: "quote level one"
-        RenderBlock {BLOCKQUOTE} at (0,44) size 784x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (12,0) size 772x22
-            RenderText {#text} at (0,0) size 100x22
-              text run at (0,0) width 100: "quote level one"
-        RenderBlock (anonymous) at (0,66) size 784x22
-          RenderText {#text} at (0,0) size 65x22
-            text run at (0,0) width 65: "unquoted"
-          RenderBR {BR} at (65,16) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,88) size 784x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (12,0) size 772x22
-            RenderBlock {BLOCKQUOTE} at (0,0) size 772x22 [border: (2px solid #0000FF)]
-              RenderBlock {DIV} at (12,0) size 760x22
-                RenderText {#text} at (0,0) size 101x22
-                  text run at (0,0) width 101: "quote level two"
-      RenderBlock {PRE} at (0,183) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 775x42
+          text run at (0,0) width 718: "This tests that inserting a newline at the beginning of quoted content doesn't add an extra quoted line. "
+          text run at (718,0) width 57: "The test"
+          text run at (0,21) width 544: "has passed if there are no empty lines (quoted or unquoted) in the box below."
+      RenderBlock {DIV} at (0,58) size 784x105
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 67x21
+            text run at (0,0) width 67: "unquoted"
+          RenderBR {BR} at (67,16) size 0x0
+        RenderBlock {BLOCKQUOTE} at (0,21) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (12,0) size 772x21
+            RenderText {#text} at (0,0) size 109x21
+              text run at (0,0) width 109: "quote level one"
+        RenderBlock {BLOCKQUOTE} at (0,42) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (12,0) size 772x21
+            RenderText {#text} at (0,0) size 109x21
+              text run at (0,0) width 109: "quote level one"
+        RenderBlock (anonymous) at (0,63) size 784x21
+          RenderText {#text} at (0,0) size 67x21
+            text run at (0,0) width 67: "unquoted"
+          RenderBR {BR} at (67,16) size 0x0
+        RenderBlock {BLOCKQUOTE} at (0,84) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (12,0) size 772x21
+            RenderBlock {BLOCKQUOTE} at (0,0) size 772x21 [border: (2px solid #0000FF)]
+              RenderBlock {DIV} at (12,0) size 760x21
+                RenderText {#text} at (0,0) size 107x21
+                  text run at (0,0) width 107: "quote level two"
+      RenderBlock {PRE} at (0,176) size 784x0
 caret: position 8 of child 6 {#text} of child 3 {DIV} of body

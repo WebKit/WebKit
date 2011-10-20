@@ -12,22 +12,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 768x44
-          text run at (0,0) width 768: "When the selection to delete ends at the end of a paragraph, that paragraph will be completely deleted, but a <br>"
-          text run at (0,22) width 641: "or an empty block will remain. Merging must happen to remove that <br> or prune that block."
-      RenderBlock {P} at (0,60) size 784x44
-        RenderText {#text} at (0,0) size 755x44
-          text run at (0,0) width 755: "This test illustrates a case where merging wasn't allowed to happen just because the end of the selection to delete"
-          text run at (0,22) width 305: "was in a fully selected line, which is nonsense."
-      RenderBlock {P} at (0,120) size 784x66
-        RenderText {#text} at (0,0) size 772x66
-          text run at (0,0) width 337: "Fixing that bug exposed a problem with merging. "
-          text run at (337,0) width 418: "If deletion empties out the block that contained the start of the"
-          text run at (0,22) width 578: "selection to delete, that block can collapse away and become impossible to merge into. "
-          text run at (578,22) width 194: "So we insert a placeholder to"
-          text run at (0,44) width 290: "prop it open so that the merge can happen."
-      RenderBlock {DIV} at (5,202) size 774x36 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (6,6) size 762x24 [border: (1px solid #FF0000)]
-          RenderBR {BR} at (1,1) size 0x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 763x42
+          text run at (0,0) width 763: "When the selection to delete ends at the end of a paragraph, that paragraph will be completely deleted, but a"
+          text run at (0,21) width 683: "<br> or an empty block will remain. Merging must happen to remove that <br> or prune that block."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 756x42
+          text run at (0,0) width 756: "This test illustrates a case where merging wasn't allowed to happen just because the end of the selection to"
+          text run at (0,21) width 378: "delete was in a fully selected line, which is nonsense."
+      RenderBlock {P} at (0,116) size 784x63
+        RenderText {#text} at (0,0) size 778x63
+          text run at (0,0) width 348: "Fixing that bug exposed a problem with merging. "
+          text run at (348,0) width 430: "If deletion empties out the block that contained the start of the"
+          text run at (0,21) width 618: "selection to delete, that block can collapse away and become impossible to merge into. "
+          text run at (618,21) width 101: "So we insert a"
+          text run at (0,42) width 407: "placeholder to prop it open so that the merge can happen."
+      RenderBlock {DIV} at (5,195) size 774x35 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (6,6) size 762x23 [border: (1px solid #FF0000)]
+          RenderBR {BR} at (1,1) size 0x21
 caret: position 0 of child 0 {BR} of child 0 {DIV} of child 6 {DIV} of body

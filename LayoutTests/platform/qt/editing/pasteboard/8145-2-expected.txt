@@ -11,26 +11,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 781x66
-          text run at (0,0) width 316: "This tests a change made with the fix for 8145. "
-          text run at (316,0) width 465: "The paragraph separator inserted to prevent nesting blocks from the"
-          text run at (0,22) width 765: "fragment to paste inside the block where the paste occured was incorrectly inserted when the paste occured at the"
-          text run at (0,44) width 141: "start of a paragraph."
-      RenderBlock {DIV} at (0,82) size 784x90 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 782x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-          RenderBR {BR} at (21,16) size 0x0
-        RenderBlock {DIV} at (1,23) size 782x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (1,45) size 782x44
-          RenderText {#text} at (0,0) size 24x22
-            text run at (0,0) width 24: "bar"
-          RenderText {#text} at (24,0) size 24x22
-            text run at (24,0) width 24: "bar"
-          RenderBR {BR} at (48,16) size 0x0
-          RenderText {#text} at (0,22) size 24x22
-            text run at (0,22) width 24: "baz"
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 783x63
+          text run at (0,0) width 331: "This tests a change made with the fix for 8145. "
+          text run at (331,0) width 452: "The paragraph separator inserted to prevent nesting blocks from"
+          text run at (0,21) width 724: "the fragment to paste inside the block where the paste occured was incorrectly inserted when the paste"
+          text run at (0,42) width 245: "occured at the start of a paragraph."
+      RenderBlock {DIV} at (0,79) size 784x86 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x21
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "foo"
+          RenderBR {BR} at (22,16) size 0x0
+        RenderBlock {DIV} at (1,22) size 782x21
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "foo"
+        RenderBlock (anonymous) at (1,43) size 782x42
+          RenderText {#text} at (0,0) size 23x21
+            text run at (0,0) width 23: "bar"
+          RenderText {#text} at (23,0) size 23x21
+            text run at (23,0) width 23: "bar"
+          RenderBR {BR} at (46,16) size 0x0
+          RenderText {#text} at (0,21) size 26x21
+            text run at (0,21) width 26: "baz"
 caret: position 3 of child 3 {#text} of child 2 {DIV} of body

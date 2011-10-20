@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 767x44
-          text run at (0,0) width 481: "This tests that the graphics context is restored after painting solid color "
-          text run at (481,0) width 286: "images. The highlight color should be light"
-          text run at (0,22) width 33: "blue."
-      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,70) size 784x22
-        RenderText {#text} at (0,0) size 21x22
-          text run at (0,0) width 21: "foo"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 765x42
+          text run at (0,0) width 499: "This tests that the graphics context is restored after painting solid color "
+          text run at (499,0) width 266: "images. The highlight color should be"
+          text run at (0,21) width 69: "light blue."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,68) size 784x21
+        RenderText {#text} at (0,0) size 22x21
+          text run at (0,0) width 22: "foo"
 selection start: position 9 of child 0 {#text} of child 5 {DIV} of body
 selection end:   position 12 of child 0 {#text} of child 5 {DIV} of body

@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 752x44
-          text run at (0,0) width 516: "This tests to make sure that breaking a quoted list doesn't renumber the list. "
-          text run at (516,0) width 236: "You should see a list broken in two"
-          text run at (0,22) width 269: "below, the list items numbered 1, 2, 3, 4."
-      RenderBlock {DIV} at (0,60) size 784x142
-        RenderBlock {BLOCKQUOTE} at (2,0) size 742x44 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {OL} at (2,0) size 740x44
-            RenderListItem {LI} at (40,0) size 700x22
-              RenderListMarker at (-21,0) size 16x22: "1"
-              RenderText {#text} at (0,0) size 28x22
-                text run at (0,0) width 28: "One"
-            RenderListItem {LI} at (40,22) size 700x22
-              RenderListMarker at (-21,0) size 16x22: "2"
-              RenderText {#text} at (0,0) size 31x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 781x42
+          text run at (0,0) width 534: "This tests to make sure that breaking a quoted list doesn't renumber the list. "
+          text run at (534,0) width 247: "You should see a list broken in two"
+          text run at (0,21) width 283: "below, the list items numbered 1, 2, 3, 4."
+      RenderBlock {DIV} at (0,58) size 784x137
+        RenderBlock {BLOCKQUOTE} at (2,0) size 742x42 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {OL} at (2,0) size 740x42
+            RenderListItem {LI} at (40,0) size 700x21
+              RenderListMarker at (-22,0) size 17x21: "1"
+              RenderText {#text} at (0,0) size 30x21
+                text run at (0,0) width 30: "One"
+            RenderListItem {LI} at (40,21) size 700x21
+              RenderListMarker at (-22,0) size 17x21: "2"
+              RenderText {#text} at (0,0) size 31x21
                 text run at (0,0) width 31: "Two"
-        RenderBlock (anonymous) at (0,60) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {BLOCKQUOTE} at (2,98) size 742x44 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {OL} at (2,0) size 740x44
-            RenderListItem {LI} at (40,0) size 700x22
-              RenderListMarker at (-21,0) size 16x22: "3"
-              RenderText {#text} at (0,0) size 41x22
-                text run at (0,0) width 41: "Three"
-            RenderListItem {LI} at (40,22) size 700x22
-              RenderListMarker at (-21,0) size 16x22: "4"
-              RenderText {#text} at (0,0) size 34x22
-                text run at (0,0) width 34: "Four"
+        RenderBlock (anonymous) at (0,58) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {BLOCKQUOTE} at (2,95) size 742x42 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {OL} at (2,0) size 740x42
+            RenderListItem {LI} at (40,0) size 700x21
+              RenderListMarker at (-22,0) size 17x21: "3"
+              RenderText {#text} at (0,0) size 42x21
+                text run at (0,0) width 42: "Three"
+            RenderListItem {LI} at (40,21) size 700x21
+              RenderListMarker at (-22,0) size 17x21: "4"
+              RenderText {#text} at (0,0) size 33x21
+                text run at (0,0) width 33: "Four"
 caret: position 0 of child 2 {BR} of child 3 {DIV} of body

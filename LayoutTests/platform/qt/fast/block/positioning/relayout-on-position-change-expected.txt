@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 228x22
-          text run at (0,0) width 228: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 782x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (228,0) size 352x22
-              text run at (228,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7095"
-          RenderText {#text} at (580,0) size 782x44
-            text run at (580,0) width 4: " "
-            text run at (584,0) width 198: "Removing positioning from an"
-            text run at (0,22) width 223: "element does not relayout properly"
-        RenderText {#text} at (223,22) size 4x22
-          text run at (223,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 398x22
-          text run at (0,0) width 398: "The green square should be to the left of the yellow square."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-layer at (8,116) size 200x100
-  RenderBlock (relative positioned) {DIV} at (0,108) size 200x100 [bgcolor=#FFFF00]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 242x21
+          text run at (0,0) width 242: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 780x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (242,0) size 379x21
+              text run at (242,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7095"
+          RenderText {#text} at (621,0) size 780x42
+            text run at (621,0) width 4: " "
+            text run at (625,0) width 155: "Removing positioning"
+            text run at (0,21) width 302: "from an element does not relayout properly"
+        RenderText {#text} at (302,21) size 4x21
+          text run at (302,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 418x21
+          text run at (0,0) width 418: "The green square should be to the left of the yellow square."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+layer at (8,113) size 200x100
+  RenderBlock (relative positioned) {DIV} at (0,105) size 200x100 [bgcolor=#FFFF00]
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

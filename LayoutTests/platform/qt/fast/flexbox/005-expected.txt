@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 764x44
-          text run at (0,0) width 700: "You should see a green rectangle below that is 100 pixels tall and that fills the width of the content area. "
-          text run at (700,0) width 64: "If you see"
-          text run at (0,22) width 214: "any red, then the test has failed."
-      RenderBlock {DIV} at (0,44) size 784x100 [bgcolor=#FF0000]
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 772x42
+          text run at (0,0) width 734: "You should see a green rectangle below that is 100 pixels tall and that fills the width of the content area. "
+          text run at (734,0) width 38: "If you"
+          text run at (0,21) width 254: "see any red, then the test has failed."
+      RenderBlock {DIV} at (0,42) size 784x100 [bgcolor=#FF0000]
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x100 [bgcolor=#008000]
           RenderBlock {DIV} at (0,0) size 0x100 [bgcolor=#FF0000]

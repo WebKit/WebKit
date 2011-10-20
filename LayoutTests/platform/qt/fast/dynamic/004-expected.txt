@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x42 [border: (10px solid #008000)]
-        RenderText {#text} at (10,10) size 327x22
-          text run at (10,10) width 327: "I should be surrounded by a thick green border."
+      RenderBlock {P} at (0,0) size 784x41 [border: (10px solid #008000)]
+        RenderText {#text} at (10,10) size 333x21
+          text run at (10,10) width 333: "I should be surrounded by a thick green border."

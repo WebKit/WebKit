@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 698x22
-          text run at (0,0) width 382: "This tests for a bug when replacing the contents of a list. "
-          text run at (382,0) width 316: "The list shouldn't be removed, just its contents."
-      RenderBlock {DIV} at (0,38) size 784x22
-        RenderBlock {UL} at (0,0) size 784x22
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 188x22
-              text run at (0,0) width 188: "This should be in a list item."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 728x21
+          text run at (0,0) width 399: "This tests for a bug when replacing the contents of a list. "
+          text run at (399,0) width 329: "The list shouldn't be removed, just its contents."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderBlock {UL} at (0,0) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 197x21
+              text run at (0,0) width 197: "This should be in a list item."
 caret: position 30 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

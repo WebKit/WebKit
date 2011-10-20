@@ -16,22 +16,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 739x66
-          text run at (14,14) width 733: "Should see \"foo\" and \"baz\" centered in their own red boxes. The \"bar\""
-          text run at (747,14) width 6: " "
-          text run at (14,47) width 281: "line should not be centered."
-      RenderBlock {DIV} at (0,118) size 784x127
-        RenderBlock {DIV} at (0,0) size 784x127 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (14,14) size 756x33
-            RenderText {#text} at (362,0) size 32x33
-              text run at (362,0) width 32: "foo"
-          RenderBlock (anonymous) at (14,47) size 756x33
-            RenderText {#text} at (0,0) size 36x33
-              text run at (0,0) width 36: "bar"
-            RenderBR {BR} at (36,24) size 0x0
-          RenderBlock {DIV} at (14,80) size 756x33
-            RenderText {#text} at (360,0) size 36x33
-              text run at (360,0) width 36: "baz"
-          RenderBlock (anonymous) at (14,113) size 756x0
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 744x60
+          text run at (14,14) width 737: "Should see \"foo\" and \"baz\" centered in their own red boxes. The \"bar\""
+          text run at (751,14) width 7: " "
+          text run at (14,44) width 291: "line should not be centered."
+      RenderBlock {DIV} at (0,112) size 784x118
+        RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (14,14) size 756x30
+            RenderText {#text} at (361,0) size 34x30
+              text run at (361,0) width 34: "foo"
+          RenderBlock (anonymous) at (14,44) size 756x30
+            RenderText {#text} at (0,0) size 34x30
+              text run at (0,0) width 34: "bar"
+            RenderBR {BR} at (34,23) size 0x0
+          RenderBlock {DIV} at (14,74) size 756x30
+            RenderText {#text} at (359,0) size 38x30
+              text run at (359,0) width 38: "baz"
+          RenderBlock (anonymous) at (14,104) size 756x0
 caret: position 3 of child 0 {#text} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

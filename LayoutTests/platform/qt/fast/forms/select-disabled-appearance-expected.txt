@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 667x22
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=12345"
-          RenderText {#text} at (361,0) size 363x22
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 359: "REGRESSION: Disabled pop-up text is not grayed out"
-        RenderText {#text} at (724,0) size 4x22
-          text run at (724,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 191x27 [color=#808080] [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 163x22
-            RenderText at (0,0) size 163x22
-              text run at (0,0) width 163: "This text should be gray"
+        RenderInline {I} at (0,0) size 717x21
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12345"
+          RenderText {#text} at (386,0) size 388x21
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 384: "REGRESSION: Disabled pop-up text is not grayed out"
+        RenderText {#text} at (774,0) size 4x21
+          text run at (774,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x30
+        RenderMenuList {SELECT} at (2,2) size 197x26 [color=#808080] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 169x21
+            RenderText at (0,0) size 169x21
+              text run at (0,0) width 169: "This text should be gray"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,85) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 197x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 169x22
-            RenderText at (0,0) size 169x22
-              text run at (0,0) width 169: "This text should be black"
+      RenderBlock {P} at (0,83) size 784x30
+        RenderMenuList {SELECT} at (2,2) size 204x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 176x21
+            RenderText at (0,0) size 176x21
+              text run at (0,0) width 176: "This text should be black"
         RenderText {#text} at (0,0) size 0x0

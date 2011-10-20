@@ -3,15 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 772x22
-          text run at (0,0) width 360: "This tests moving backward by sentence boundaries. "
-          text run at (360,0) width 412: "The caret should be at the start of the second to last sentence."
-      RenderBlock {DIV} at (0,38) size 784x66
-        RenderText {#text} at (0,0) size 784x66
-          text run at (0,0) width 735: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique"
-          text run at (735,0) width 4: " "
-          text run at (0,22) width 768: "senectus et netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique"
-          text run at (768,22) width 4: " "
-          text run at (0,44) width 784: "leo eu velit. Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 742x42
+          text run at (0,0) width 379: "This tests moving backward by sentence boundaries. "
+          text run at (379,0) width 363: "The caret should be at the start of the second to last"
+          text run at (0,21) width 69: "sentence."
+      RenderBlock {DIV} at (0,58) size 784x84
+        RenderText {#text} at (0,0) size 783x84
+          text run at (0,0) width 767: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique"
+          text run at (767,0) width 4: " "
+          text run at (0,21) width 757: "senectus et netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus"
+          text run at (757,21) width 4: " "
+          text run at (0,42) width 779: "tristique leo eu velit. Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit"
+          text run at (779,42) width 4: " "
+          text run at (0,63) width 96: "pede eu sem."
 caret: position 241 of child 0 {#text} of child 2 {DIV} of body

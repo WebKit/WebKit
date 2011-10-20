@@ -3,13 +3,13 @@ layer at (0,0) size 9200x800
 layer at (0,0) size 784x584
   RenderBlock {HTML} at (0,0) size 784x584
     RenderBody {BODY} at (8,8) size 768x560
-      RenderBlock {DIV} at (0,0) size 768x44
-        RenderBlock {P} at (0,0) size 768x44
-          RenderText {#text} at (0,0) size 758x44
-            text run at (0,0) width 758: "Test that an iframe with negative coordinates is not flattened, but an iframe with positive coordinates is, even if it"
-            text run at (0,22) width 92: "is out of view."
-      RenderBlock {P} at (0,60) size 768x0
-      RenderBlock {P} at (0,60) size 768x0
+      RenderBlock {DIV} at (0,0) size 768x42
+        RenderBlock {P} at (0,0) size 768x42
+          RenderText {#text} at (0,0) size 761x42
+            text run at (0,0) width 761: "Test that an iframe with negative coordinates is not flattened, but an iframe with positive coordinates is, even"
+            text run at (0,21) width 120: "if it is out of view."
+      RenderBlock {P} at (0,58) size 768x0
+      RenderBlock {P} at (0,58) size 768x0
 layer at (1200,0) size 8000x800
   RenderPartObject {IFRAME} at (1200,0) size 8000x800
     layer at (0,0) size 8000x800
@@ -19,5 +19,5 @@ layer at (1200,0) size 8000x800
         RenderBody {BODY} at (8,8) size 7984x784 [bgcolor=#0000FF]
     layer at (0,0) size 8000x800
       RenderBlock (positioned) {DIV} at (0,0) size 8000x800
-        RenderText {#text} at (0,0) size 471x22
-          text run at (0,0) width 471: "You will not see me but you will see the horizontal scrollbar streching."
+        RenderText {#text} at (0,0) size 491x21
+          text run at (0,0) width 491: "You will not see me but you will see the horizontal scrollbar streching."

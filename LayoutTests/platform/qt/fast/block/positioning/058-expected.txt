@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 109x22
-          text run at (0,0) width 109: "First paragraph"
-      RenderBlock {P} at (0,38) size 784x44
-        RenderText {#text} at (0,0) size 249x22
-          text run at (0,0) width 249: "Here is some regular paragraph text "
-        RenderText {#text} at (124,22) size 109x22
-          text run at (124,22) width 109: "Some more text."
-      RenderBlock {P} at (0,98) size 784x22
-        RenderText {#text} at (0,0) size 575x22
-          text run at (0,0) width 575: "The image gets erroneously positioned to the top/left corner of the paragraph instead."
-layer at (8,46) size 748x44
-  RenderInline (relative positioned) {SPAN} at (0,0) size 748x44 [bgcolor=#90EE90]
-    RenderText {#text} at (249,0) size 748x44
-      text run at (249,0) width 499: "The image (found or not) should be positioned at the top/left corner of this"
-      text run at (0,22) width 124: "green-shaded text "
-layer at (257,46) size 42x42
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 108x21
+          text run at (0,0) width 108: "First paragraph"
+      RenderBlock {P} at (0,37) size 784x42
+        RenderText {#text} at (0,0) size 258x21
+          text run at (0,0) width 258: "Here is some regular paragraph text "
+        RenderText {#text} at (132,21) size 115x21
+          text run at (132,21) width 115: "Some more text."
+      RenderBlock {P} at (0,95) size 784x21
+        RenderText {#text} at (0,0) size 599x21
+          text run at (0,0) width 599: "The image gets erroneously positioned to the top/left corner of the paragraph instead."
+layer at (8,45) size 773x42
+  RenderInline (relative positioned) {SPAN} at (0,0) size 773x42 [bgcolor=#90EE90]
+    RenderText {#text} at (258,0) size 773x42
+      text run at (258,0) width 515: "The image (found or not) should be positioned at the top/left corner of this"
+      text run at (0,21) width 132: "green-shaded text "
+layer at (266,45) size 42x42
   RenderImage {IMG} at (0,0) size 42x42 [border: (1px solid #000000)]

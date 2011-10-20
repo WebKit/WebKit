@@ -8,17 +8,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 765x44
-          text run at (0,0) width 765: "This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected with a"
-          text run at (0,22) width 85: "double click."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 25x22
-          text run at (0,0) width 25: "foo "
-        RenderInline {SPAN} at (0,0) size 24x22
-          RenderText {#text} at (25,0) size 24x22
-            text run at (25,0) width 24: "bar"
-        RenderText {#text} at (49,0) size 109x22
-          text run at (49,0) width 109: " baz foo bar baz"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 756x42
+          text run at (0,0) width 756: "This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected"
+          text run at (0,21) width 135: "with a double click."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 26x21
+          text run at (0,0) width 26: "foo "
+        RenderInline {SPAN} at (0,0) size 23x21
+          RenderText {#text} at (26,0) size 23x21
+            text run at (26,0) width 23: "bar"
+        RenderText {#text} at (49,0) size 113x21
+          text run at (49,0) width 113: " baz foo bar baz"
 selection start: position 9 of child 2 {#text} of child 2 {DIV} of body
 selection end:   position 12 of child 2 {#text} of child 2 {DIV} of body

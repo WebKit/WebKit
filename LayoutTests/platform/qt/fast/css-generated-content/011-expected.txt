@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x573
-      RenderBlock {H2} at (0,0) size 784x70
-        RenderBlock (generated) at (0,0) size 784x18 [color=#D0D3DA]
-          RenderText at (381,0) size 22x18
-            text run at (381,0) width 22: "\x{2022} \x{2022} \x{2022}"
-        RenderBlock (anonymous) at (0,37) size 784x33
-          RenderText {#text} at (0,0) size 127x33
-            text run at (0,0) width 127: "This is a test"
+      RenderBlock {H2} at (0,0) size 784x68
+        RenderBlock (generated) at (0,0) size 784x17 [color=#D0D3DA]
+          RenderText at (380,0) size 24x17
+            text run at (380,0) width 24: "\x{2022} \x{2022} \x{2022}"
+        RenderBlock (anonymous) at (0,36) size 784x32
+          RenderText {#text} at (0,0) size 146x32
+            text run at (0,0) width 146: "This is a test"

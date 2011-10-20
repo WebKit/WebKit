@@ -3,21 +3,21 @@ layer at (0,0) size 784x584
 layer at (0,0) size 784x178
   RenderBlock {HTML} at (0,0) size 784x178
     RenderBody {BODY} at (8,8) size 162x162 [color=#000080] [border: (1px solid #000080)]
-      RenderBlock {P} at (1,17) size 160x88
-        RenderText {#text} at (0,0) size 152x88
-          text run at (0,0) width 110: "There should be"
-          text run at (0,22) width 115: "scrollbars for the"
-          text run at (0,44) width 152: "viewport -- not for this"
-          text run at (0,66) width 29: "box."
-      RenderBlock {P} at (1,121) size 160x22 [color=#808080]
-        RenderText {#text} at (0,0) size 112x22
-          text run at (0,0) width 112: "This is filler text."
-      RenderBlock {P} at (1,159) size 160x22 [color=#808080]
-        RenderText {#text} at (0,0) size 112x22
-          text run at (0,0) width 112: "This is filler text."
-      RenderBlock {P} at (1,197) size 160x22 [color=#808080]
-        RenderText {#text} at (0,0) size 112x22
-          text run at (0,0) width 112: "This is filler text."
-      RenderBlock {P} at (1,235) size 160x22 [color=#808080]
-        RenderText {#text} at (0,0) size 112x22
-          text run at (0,0) width 112: "This is filler text."
+      RenderBlock {P} at (1,17) size 160x84
+        RenderText {#text} at (0,0) size 151x84
+          text run at (0,0) width 116: "There should be"
+          text run at (0,21) width 117: "scrollbars for the"
+          text run at (0,42) width 151: "viewport -- not for this"
+          text run at (0,63) width 30: "box."
+      RenderBlock {P} at (1,117) size 160x21 [color=#808080]
+        RenderText {#text} at (0,0) size 114x21
+          text run at (0,0) width 114: "This is filler text."
+      RenderBlock {P} at (1,154) size 160x21 [color=#808080]
+        RenderText {#text} at (0,0) size 114x21
+          text run at (0,0) width 114: "This is filler text."
+      RenderBlock {P} at (1,191) size 160x21 [color=#808080]
+        RenderText {#text} at (0,0) size 114x21
+          text run at (0,0) width 114: "This is filler text."
+      RenderBlock {P} at (1,228) size 160x21 [color=#808080]
+        RenderText {#text} at (0,0) size 114x21
+          text run at (0,0) width 114: "This is filler text."

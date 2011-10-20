@@ -1,22 +1,23 @@
-layer at (0,0) size 923x584
-  RenderView at (0,0) size 800x584
-layer at (0,0) size 800x584
-  RenderBlock {HTML} at (0,0) size 800x584
-    RenderBody {BODY} at (8,8) size 784x568
-      RenderText {#text} at (0,0) size 771x88
-        text run at (0,0) width 546: "In this test, you should see three blocks that are aligned right within a black box. "
-        text run at (546,0) width 225: "They should be stacked vertically"
-        text run at (0,22) width 317: "with the green box in between two olive boxes. "
-        text run at (317,22) width 432: "The olive boxes and the green box should be 100x100, and there"
-        text run at (0,44) width 443: "should be 100 pixels of padding on the right side of the box stack. "
-        text run at (443,44) width 314: "The black box's top should be aligned with the"
-        text run at (0,66) width 675: "end of the last line in this parargaph and its left side should begin right after the end of this sentence."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 775x105
+        text run at (0,0) width 565: "In this test, you should see three blocks that are aligned right within a black box. "
+        text run at (565,0) width 169: "They should be stacked"
+        text run at (0,21) width 401: "vertically with the green box in between two olive boxes. "
+        text run at (401,21) width 319: "The olive boxes and the green box should be"
+        text run at (0,42) width 606: "100x100, and there should be 100 pixels of padding on the right side of the box stack. "
+        text run at (606,42) width 137: "The black box's top"
+        text run at (0,63) width 775: "should be aligned with the end of the last line in this parargaph and its left side should begin right after the end"
+        text run at (0,84) width 115: "of this sentence."
       RenderText {#text} at (0,0) size 0x0
-layer at (683,74) size 240x340
-  RenderBlock (positioned) {SPAN} at (683,74) size 240x340 [border: (20px solid #000000)]
-layer at (803,194) size 100x100
+layer at (123,92) size 240x340
+  RenderBlock (positioned) {SPAN} at (123,92) size 240x340 [border: (20px solid #000000)]
+layer at (243,212) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (803,94) size 100x100
+layer at (243,112) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (803,294) size 100x100
+layer at (243,312) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

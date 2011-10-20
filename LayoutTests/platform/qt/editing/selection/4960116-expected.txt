@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 759x66
-          text run at (0,0) width 749: "This tests for a crash when performing a selection modification, when a node containing the selection was made"
-          text run at (0,22) width 447: "invisible, and when there is nowhere visible for the selection to go. "
-          text run at (447,22) width 312: "For example, set the caret inside of an editable"
-          text run at (0,44) width 657: "div, and make the div invisible, then try to move the selection forward/backward by a paragraph."
-      RenderBlock {DIV} at (0,82) size 784x22
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 763x63
+          text run at (0,0) width 745: "This tests for a crash when performing a selection modification, when a node containing the selection was"
+          text run at (0,21) width 516: "made invisible, and when there is nowhere visible for the selection to go. "
+          text run at (516,21) width 247: "For example, set the caret inside of"
+          text run at (0,42) width 755: "an editable div, and make the div invisible, then try to move the selection forward/backward by a paragraph."
+      RenderBlock {DIV} at (0,79) size 784x21
 caret: position 0 of child 2 {DIV} of body

@@ -11,21 +11,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 778x66
-          text run at (0,0) width 559: "This tests InsertUnorderedList on a selection that ends at the start of a paragraph. "
-          text run at (559,0) width 191: "Since we don't paint the gap"
-          text run at (0,22) width 778: "before the paragraph for most selections like this, we don't perform InsertUnorderedList on the paragraph that the"
-          text run at (0,44) width 113: "selection ends in."
-      RenderBlock {DIV} at (0,82) size 784x60
-        RenderBlock {UL} at (0,0) size 784x22
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 232x22
-              text run at (0,0) width 232: "This paragraph should be in a list."
-        RenderBlock (anonymous) at (0,38) size 784x22
-          RenderText {#text} at (0,0) size 258x22
-            text run at (0,0) width 258: "This paragraph should not be in a list."
-          RenderBR {BR} at (258,16) size 0x0
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 776x63
+          text run at (0,0) width 576: "This tests InsertUnorderedList on a selection that ends at the start of a paragraph. "
+          text run at (576,0) width 200: "Since we don't paint the gap"
+          text run at (0,21) width 766: "before the paragraph for most selections like this, we don't perform InsertUnorderedList on the paragraph that"
+          text run at (0,42) width 150: "the selection ends in."
+      RenderBlock {DIV} at (0,79) size 784x58
+        RenderBlock {UL} at (0,0) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 240x21
+              text run at (0,0) width 240: "This paragraph should be in a list."
+        RenderBlock (anonymous) at (0,37) size 784x21
+          RenderText {#text} at (0,0) size 266x21
+            text run at (0,0) width 266: "This paragraph should not be in a list."
+          RenderBR {BR} at (266,16) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body
 selection end:   position 35 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

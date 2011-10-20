@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x82
-  RenderBlock {HTML} at (0,0) size 800x82
-    RenderBody {BODY} at (8,8) size 784x66
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 728x22
-          text run at (0,0) width 728: "[^=] attribute selector looking for empty string in empty attribute (the text should not have red background)"
-      RenderBlock {DIV} at (0,22) size 784x22
-        RenderText {#text} at (0,0) size 727x22
-          text run at (0,0) width 727: "[$=] attribute selector looking for empty string in empty attribute (the text should not have red background)"
-      RenderBlock {DIV} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 727x22
-          text run at (0,0) width 727: "[*=] attribute selector looking for empty string in empty attribute (the text should not have red background)"
+layer at (0,0) size 800x79
+  RenderBlock {HTML} at (0,0) size 800x79
+    RenderBody {BODY} at (8,8) size 784x63
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 736x21
+          text run at (0,0) width 736: "[^=] attribute selector looking for empty string in empty attribute (the text should not have red background)"
+      RenderBlock {DIV} at (0,21) size 784x21
+        RenderText {#text} at (0,0) size 737x21
+          text run at (0,0) width 737: "[$=] attribute selector looking for empty string in empty attribute (the text should not have red background)"
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 734x21
+          text run at (0,0) width 734: "[*=] attribute selector looking for empty string in empty attribute (the text should not have red background)"

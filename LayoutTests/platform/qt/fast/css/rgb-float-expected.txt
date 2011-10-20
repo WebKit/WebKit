@@ -4,8 +4,8 @@ layer at (0,0) size 800x147
   RenderBlock {HTML} at (0,0) size 800x147
     RenderBody {BODY} at (8,21) size 784x105 [color=#008000]
       RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 398x42
-          text run at (0,0) width 398: "This should be green, not red"
+        RenderText {#text} at (0,0) size 455x42
+          text run at (0,0) width 455: "This should be green, not red"
       RenderBlock {H1} at (0,63) size 784x42
-        RenderText {#text} at (0,0) size 411x42
-          text run at (0,0) width 411: "This should be green, not blue"
+        RenderText {#text} at (0,0) size 472x42
+          text run at (0,0) width 472: "This should be green, not blue"

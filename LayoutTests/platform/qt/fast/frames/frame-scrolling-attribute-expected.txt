@@ -4,105 +4,106 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderFrameSet {FRAMESET} at (0,0) size 800x600
       RenderFrame {FRAME} at (0,0) size 195x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 179x129
-        layer at (0,0) size 179x520
-          RenderBlock {HTML} at (0,0) size 179x520
-            RenderBody {BODY} at (8,8) size 163x504
-              RenderBlock {P} at (0,0) size 163x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 179x516
+          RenderBlock {HTML} at (0,0) size 179x516
+            RenderBody {BODY} at (8,8) size 163x500
+              RenderBlock {P} at (0,0) size 163x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (201,0) size 195x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 179x129
-        layer at (0,0) size 179x520
-          RenderBlock {HTML} at (0,0) size 179x520
-            RenderBody {BODY} at (8,8) size 163x504
-              RenderBlock {P} at (0,0) size 163x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 179x516
+          RenderBlock {HTML} at (0,0) size 179x516
+            RenderBody {BODY} at (8,8) size 163x500
+              RenderBlock {P} at (0,0) size 163x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (402,0) size 195x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 179x129
-        layer at (0,0) size 179x520
-          RenderBlock {HTML} at (0,0) size 179x520
-            RenderBody {BODY} at (8,8) size 163x504
-              RenderBlock {P} at (0,0) size 163x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 179x516
+          RenderBlock {HTML} at (0,0) size 179x516
+            RenderBody {BODY} at (8,8) size 163x500
+              RenderBlock {P} at (0,0) size 163x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (603,0) size 197x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 181x129
-        layer at (0,0) size 181x520
-          RenderBlock {HTML} at (0,0) size 181x520
-            RenderBody {BODY} at (8,8) size 165x504
-              RenderBlock {P} at (0,0) size 165x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 181x516
+          RenderBlock {HTML} at (0,0) size 181x516
+            RenderBody {BODY} at (8,8) size 165x500
+              RenderBlock {P} at (0,0) size 165x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (0,151) size 195x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 179x129
-        layer at (0,0) size 179x520
-          RenderBlock {HTML} at (0,0) size 179x520
-            RenderBody {BODY} at (8,8) size 163x504
-              RenderBlock {P} at (0,0) size 163x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 179x516
+          RenderBlock {HTML} at (0,0) size 179x516
+            RenderBody {BODY} at (8,8) size 163x500
+              RenderBlock {P} at (0,0) size 163x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (201,151) size 195x145
-        layer at (0,0) size 408x498
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 195x145
-        layer at (0,0) size 195x498
-          RenderBlock {HTML} at (0,0) size 195x498
-            RenderBody {BODY} at (8,8) size 179x482
-              RenderBlock {P} at (0,0) size 179x66
-                RenderText {#text} at (0,0) size 172x66
-                  text run at (0,0) width 172: "This page is large enough"
-                  text run at (0,22) width 171: "to need to be scrolled in a"
-                  text run at (0,44) width 104: "200x200 frame."
-              RenderBlock {DIV} at (0,82) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 195x516
+          RenderBlock {HTML} at (0,0) size 195x516
+            RenderBody {BODY} at (8,8) size 179x500
+              RenderBlock {P} at (0,0) size 179x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (402,151) size 195x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 179x129
-        layer at (0,0) size 179x520
-          RenderBlock {HTML} at (0,0) size 179x520
-            RenderBody {BODY} at (8,8) size 163x504
-              RenderBlock {P} at (0,0) size 163x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 179x516
+          RenderBlock {HTML} at (0,0) size 179x516
+            RenderBody {BODY} at (8,8) size 163x500
+              RenderBlock {P} at (0,0) size 163x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (603,151) size 197x145
-        layer at (0,0) size 408x520
+        layer at (0,0) size 408x516
           RenderView at (0,0) size 181x129
-        layer at (0,0) size 181x520
-          RenderBlock {HTML} at (0,0) size 181x520
-            RenderBody {BODY} at (8,8) size 165x504
-              RenderBlock {P} at (0,0) size 165x88
-                RenderText {#text} at (0,0) size 141x88
-                  text run at (0,0) width 118: "This page is large"
-                  text run at (0,22) width 140: "enough to need to be"
-                  text run at (0,44) width 141: "scrolled in a 200x200"
-                  text run at (0,66) width 44: "frame."
-              RenderBlock {DIV} at (0,104) size 400x400 [bgcolor=#0000FF]
+        layer at (0,0) size 181x516
+          RenderBlock {HTML} at (0,0) size 181x516
+            RenderBody {BODY} at (8,8) size 165x500
+              RenderBlock {P} at (0,0) size 165x84
+                RenderText {#text} at (0,0) size 152x84
+                  text run at (0,0) width 127: "This page is large"
+                  text run at (0,21) width 150: "enough to need to be"
+                  text run at (0,42) width 152: "scrolled in a 200x200"
+                  text run at (0,63) width 44: "frame."
+              RenderBlock {DIV} at (0,100) size 400x400 [bgcolor=#0000FF]

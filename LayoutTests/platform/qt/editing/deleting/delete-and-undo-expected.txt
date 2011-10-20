@@ -39,12 +39,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 671x66
-          text run at (14,14) width 671: "Should see \"foo bar baz\" in the red box. Insertion point should be"
-          text run at (14,47) width 355: "between the \"b\" and \"a\" of \"baz\"."
-      RenderBlock {DIV} at (0,118) size 784x61
-        RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 116x33
-            text run at (14,14) width 116: "foo bar baz"
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 685x60
+          text run at (14,14) width 685: "Should see \"foo bar baz\" in the red box. Insertion point should be"
+          text run at (14,44) width 348: "between the \"b\" and \"a\" of \"baz\"."
+      RenderBlock {DIV} at (0,112) size 784x58
+        RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 119x30
+            text run at (14,14) width 119: "foo bar baz"
 caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

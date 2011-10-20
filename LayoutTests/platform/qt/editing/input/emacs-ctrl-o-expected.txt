@@ -18,28 +18,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x181
-        RenderBlock {DIV} at (0,0) size 784x66
-          RenderText {#text} at (0,0) size 61x33
-            text run at (0,0) width 61: "Tests:"
-          RenderBR {BR} at (61,24) size 0x0
-          RenderText {#text} at (0,33) size 270x33
-            text run at (0,33) width 270: "Key binding for control-O"
-        RenderBlock {DIV} at (0,82) size 784x99
-          RenderText {#text} at (0,0) size 177x33
-            text run at (0,0) width 177: "Expected results:"
-          RenderBR {BR} at (177,24) size 0x0
-          RenderText {#text} at (0,33) size 91x33
-            text run at (0,33) width 91: "one five |"
-          RenderBR {BR} at (91,57) size 0x0
-          RenderText {#text} at (0,66) size 147x33
-            text run at (0,66) width 147: "two three four"
-      RenderBlock {DIV} at (0,205) size 784x66
-        RenderBlock {DIV} at (0,0) size 784x33
-          RenderText {#text} at (0,0) size 86x33
-            text run at (0,0) width 80: "one five"
-            text run at (80,0) width 6: " "
-        RenderBlock {DIV} at (0,33) size 784x33
-          RenderText {#text} at (0,0) size 147x33
-            text run at (0,0) width 147: "two three four"
+      RenderBlock {DIV} at (0,0) size 784x170
+        RenderBlock {DIV} at (0,0) size 784x62
+          RenderText {#text} at (0,0) size 70x32
+            text run at (0,0) width 70: "Tests:"
+          RenderBR {BR} at (70,24) size 0x0
+          RenderText {#text} at (0,32) size 263x30
+            text run at (0,32) width 263: "Key binding for control-O"
+        RenderBlock {DIV} at (0,78) size 784x92
+          RenderText {#text} at (0,0) size 199x32
+            text run at (0,0) width 199: "Expected results:"
+          RenderBR {BR} at (199,24) size 0x0
+          RenderText {#text} at (0,32) size 96x30
+            text run at (0,32) width 96: "one five |"
+          RenderBR {BR} at (96,55) size 0x0
+          RenderText {#text} at (0,62) size 146x30
+            text run at (0,62) width 146: "two three four"
+      RenderBlock {DIV} at (0,194) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x30
+          RenderText {#text} at (0,0) size 90x30
+            text run at (0,0) width 83: "one five"
+            text run at (83,0) width 7: " "
+        RenderBlock {DIV} at (0,30) size 784x30
+          RenderText {#text} at (0,0) size 146x30
+            text run at (0,0) width 146: "two three four"
 caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

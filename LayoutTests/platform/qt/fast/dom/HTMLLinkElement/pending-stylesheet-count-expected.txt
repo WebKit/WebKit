@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 740x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 352x22
-              text run at (111,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9252"
-          RenderText {#text} at (463,0) size 740x44
-            text run at (463,0) width 4: " "
-            text run at (467,0) width 273: "REGRESSION: Very odd roll-over issues"
-            text run at (0,22) width 146: "(content disappearing)"
-        RenderText {#text} at (146,22) size 4x22
-          text run at (146,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 262x22
-          text run at (0,0) width 262: "There should be a green square below."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,108) size 784x0
-      RenderBlock {DIV} at (0,108) size 100x100 [bgcolor=#008000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 740x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 379x21
+              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9252"
+          RenderText {#text} at (494,0) size 740x42
+            text run at (494,0) width 4: " "
+            text run at (498,0) width 242: "REGRESSION: Very odd roll-over"
+            text run at (0,21) width 209: "issues (content disappearing)"
+        RenderText {#text} at (209,21) size 4x21
+          text run at (209,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 278x21
+          text run at (0,0) width 278: "There should be a green square below."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,105) size 784x0
+      RenderBlock {DIV} at (0,105) size 100x100 [bgcolor=#008000]

@@ -3,18 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {P} at (0,0) size 88x584
-        RenderText {#text} at (0,0) size 88x580
-          text run at (0,0) width 580: "In this test, you should see three blocks that are centered vertically within a black box."
-          text run at (22,0) width 561: "They should be stacked horizontally with the green box in between two olive boxes."
-          text run at (44,0) width 580: "The olive boxes and the green box should be 100x100, and there should be 50 pixels of"
-          text run at (66,0) width 264: "padding on either side of the box stack."
-layer at (112,8) size 340x240
-  RenderBlock (positioned) {DIV} at (112,8) size 340x240 [border: (20px solid #000000)]
+      RenderBlock {P} at (0,0) size 84x584
+        RenderText {#text} at (0,0) size 84x572
+          text run at (0,0) width 568: "In this test, you should see three blocks that are centered vertically within a black"
+          text run at (21,0) width 34: "box. "
+          text run at (21,34) width 538: "They should be stacked horizontally with the green box in between two olive"
+          text run at (42,0) width 51: "boxes. "
+          text run at (42,51) width 512: "The olive boxes and the green box should be 100x100, and there should"
+          text run at (63,0) width 383: "be 50 pixels of padding on either side of the box stack."
+layer at (108,8) size 340x240
+  RenderBlock (positioned) {DIV} at (108,8) size 340x240 [border: (20px solid #000000)]
     RenderBlock {DIV} at (70,70) size 0x50
-layer at (232,78) size 100x100
+layer at (228,78) size 100x100
   RenderBlock (positioned) {SPAN} at (120,70) size 100x100 [bgcolor=#008000]
-layer at (132,78) size 100x100
+layer at (128,78) size 100x100
   RenderBlock (positioned) {DIV} at (20,70) size 100x100 [bgcolor=#808000]
-layer at (332,78) size 100x100
+layer at (328,78) size 100x100
   RenderBlock (positioned) {DIV} at (220,70) size 100x100 [bgcolor=#808000]

@@ -1,74 +1,74 @@
-layer at (0,0) size 784x808
+layer at (0,0) size 784x791
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x808
-  RenderBlock {HTML} at (0,0) size 784x808
-    RenderBody {BODY} at (8,21) size 768x771
+layer at (0,0) size 784x791
+  RenderBlock {HTML} at (0,0) size 784x791
+    RenderBody {BODY} at (8,21) size 768x754
       RenderBlock {H1} at (0,0) size 768x42
-        RenderText {#text} at (0,0) size 378x42
-          text run at (0,0) width 378: "Shorthand border property"
-      RenderBlock {P} at (0,63) size 768x28 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,107) size 768x28 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,151) size 768x22 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 285x22
-          text run at (0,0) width 285: "This paragraph should not have a border."
-      RenderBlock {P} at (0,189) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 302x22
-          text run at (3,3) width 302: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 35x22
-          RenderText {#text} at (305,3) size 35x22
-            text run at (305,3) width 35: "black"
-        RenderText {#text} at (340,3) size 55x22
-          text run at (340,3) width 55: " border."
-      RenderBlock {P} at (0,233) size 768x22 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 285x22
-          text run at (0,0) width 285: "This paragraph should not have a border."
-      RenderBlock {P} at (0,271) size 768x22 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 285x22
-          text run at (0,0) width 285: "This paragraph should not have a border."
-      RenderBlock {P} at (0,309) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 302x22
-          text run at (3,3) width 302: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 35x22
-          RenderText {#text} at (305,3) size 35x22
-            text run at (305,3) width 35: "black"
-        RenderText {#text} at (340,3) size 55x22
-          text run at (340,3) width 55: " border."
-      RenderBlock {P} at (0,353) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 302x22
-          text run at (3,3) width 302: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 35x22
-          RenderText {#text} at (305,3) size 35x22
-            text run at (305,3) width 35: "black"
-        RenderText {#text} at (340,3) size 55x22
-          text run at (340,3) width 55: " border."
-      RenderBlock {P} at (0,397) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,441) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,485) size 768x22 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 285x22
-          text run at (0,0) width 285: "This paragraph should not have a border."
-      RenderBlock {P} at (0,523) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,567) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,611) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,655) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,699) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
-      RenderBlock {P} at (0,743) size 768x28 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 395x22
-          text run at (3,3) width 395: "This paragraph should have a medium solid green border."
+        RenderText {#text} at (0,0) size 413x42
+          text run at (0,0) width 413: "Shorthand border property"
+      RenderBlock {P} at (0,63) size 768x27 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,106) size 768x27 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,149) size 768x21 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "This paragraph should not have a border."
+      RenderBlock {P} at (0,186) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 315x21
+          text run at (3,3) width 315: "This paragraph should have a medium solid "
+        RenderInline {EM} at (0,0) size 38x21
+          RenderText {#text} at (318,3) size 38x21
+            text run at (318,3) width 38: "black"
+        RenderText {#text} at (356,3) size 54x21
+          text run at (356,3) width 54: " border."
+      RenderBlock {P} at (0,229) size 768x21 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "This paragraph should not have a border."
+      RenderBlock {P} at (0,266) size 768x21 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "This paragraph should not have a border."
+      RenderBlock {P} at (0,303) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 315x21
+          text run at (3,3) width 315: "This paragraph should have a medium solid "
+        RenderInline {EM} at (0,0) size 38x21
+          RenderText {#text} at (318,3) size 38x21
+            text run at (318,3) width 38: "black"
+        RenderText {#text} at (356,3) size 54x21
+          text run at (356,3) width 54: " border."
+      RenderBlock {P} at (0,346) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 315x21
+          text run at (3,3) width 315: "This paragraph should have a medium solid "
+        RenderInline {EM} at (0,0) size 38x21
+          RenderText {#text} at (318,3) size 38x21
+            text run at (318,3) width 38: "black"
+        RenderText {#text} at (356,3) size 54x21
+          text run at (356,3) width 54: " border."
+      RenderBlock {P} at (0,389) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,432) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,475) size 768x21 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "This paragraph should not have a border."
+      RenderBlock {P} at (0,512) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,555) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,598) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,641) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,684) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,727) size 768x27 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 410x21
+          text run at (3,3) width 410: "This paragraph should have a medium solid green border."

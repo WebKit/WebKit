@@ -20,15 +20,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 4x22
-        RenderText {#text} at (0,0) size 4x22
+      RenderInline {SPAN} at (0,0) size 4x21
+        RenderText {#text} at (0,0) size 4x21
           text run at (0,0) width 4: "\x{9}"
-      RenderText {#text} at (4,0) size 498x22
-        text run at (4,0) width 498: "This tests to see where the selection is set when an html element is focused."
-      RenderBR {BR} at (502,16) size 0x0
-      RenderText {#text} at (0,22) size 781x44
-        text run at (0,22) width 551: "We set it inside the body because we don't want to allow editing outside the body. "
-        text run at (551,22) width 226: "This test also does some editing to"
-        text run at (777,22) width 4: " "
-        text run at (0,44) width 228: "make sure it happens in the body."
+      RenderText {#text} at (4,0) size 538x21
+        text run at (4,0) width 538: "This tests to see where the selection is set when an html element is focused."
+      RenderBR {BR} at (542,16) size 0x0
+      RenderText {#text} at (0,21) size 759x42
+        text run at (0,21) width 579: "We set it inside the body because we don't want to allow editing outside the body. "
+        text run at (579,21) width 176: "This test also does some"
+        text run at (755,21) width 4: " "
+        text run at (0,42) width 307: "editing to make sure it happens in the body."
 caret: position 153 of child 3 {#text} of body

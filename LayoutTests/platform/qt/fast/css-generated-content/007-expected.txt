@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderInline (generated) at (0,0) size 11x22
-          RenderText {#text} at (0,0) size 11x22
-            text run at (0,0) width 11: "T"
-        RenderText {#text} at (11,0) size 281x22
-          text run at (11,0) width 281: "HIS TEXT SHOULD BE UPPERCASE."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderInline (generated) at (0,0) size 292x22
-          RenderText at (0,0) size 292x22
-            text run at (0,0) width 292: "THIS TEXT SHOULD BE UPPERCASE."
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderInline (generated) at (0,0) size 10x21
+          RenderText {#text} at (0,0) size 10x21
+            text run at (0,0) width 10: "T"
+        RenderText {#text} at (10,0) size 281x21
+          text run at (10,0) width 281: "HIS TEXT SHOULD BE UPPERCASE."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline (generated) at (0,0) size 291x21
+          RenderText at (0,0) size 291x21
+            text run at (0,0) width 291: "THIS TEXT SHOULD BE UPPERCASE."

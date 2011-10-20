@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x54
-        RenderTable {TABLE} at (0,0) size 784x54 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 782x52
-            RenderTableRow {TR} at (0,2) size 782x48
-              RenderTableCell {TD} at (2,2) size 778x48 [border: (1px solid #AAAAAA)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 774x44
-                  text run at (2,2) width 774: "This tests for a Mail crasher that happened when a selection was created with one endpoint in non-editable content"
-                  text run at (776,2) width 0: " "
-                  text run at (2,24) width 223: "and the other in editable content."
+      RenderBlock {DIV} at (0,0) size 784x52
+        RenderTable {TABLE} at (0,0) size 784x52 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 782x50
+            RenderTableRow {TR} at (0,2) size 782x46
+              RenderTableCell {TD} at (2,2) size 778x46 [border: (1px solid #AAAAAA)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 758x42
+                  text run at (2,2) width 754: "This tests for a Mail crasher that happened when a selection was created with one endpoint in non-editable"
+                  text run at (756,2) width 4: " "
+                  text run at (2,23) width 287: "content and the other in editable content."
 caret: position 0 of child 0 {TABLE} of child 1 {DIV} of body

@@ -3,60 +3,61 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 720x22
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11916"
-          RenderText {#text} at (361,0) size 416x22
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 412: "REGRESSION (SearchField): RTL search fields are mixed up"
-        RenderText {#text} at (777,0) size 4x22
-          text run at (777,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x90
-        RenderTextControl {INPUT} at (2,2) size 166x26
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-            RenderBlock {DIV} at (0,11) size 0x0
-            RenderBlock {DIV} at (0,0) size 151x22
-            RenderBlock {DIV} at (151,5) size 11x11
-        RenderText {#text} at (170,4) size 4x22
-          text run at (170,4) width 4: " "
+        RenderInline {I} at (0,0) size 759x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=11916"
+          RenderText {#text} at (386,0) size 759x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 369: "REGRESSION (SearchField): RTL search fields are"
+            text run at (0,21) width 65: "mixed up"
+        RenderText {#text} at (65,21) size 4x21
+          text run at (65,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x87
+        RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
+        RenderText {#text} at (190,4) size 4x21
+          text run at (190,4) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,32) size 246x26
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 242x22
-            RenderBlock {DIV} at (0,11) size 0x0
-            RenderBlock {DIV} at (0,0) size 231x22
-            RenderBlock {DIV} at (231,5) size 11x11
-        RenderText {#text} at (250,34) size 4x22
-          text run at (250,34) width 4: " "
+        RenderTextControl {INPUT} at (2,31) size 276x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 272x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 261x21
+            RenderBlock {DIV} at (261,5) size 11x11
+        RenderText {#text} at (280,33) size 4x21
+          text run at (280,33) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,62) size 166x26
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-            RenderBlock {DIV} at (0,11) size 0x0
-            RenderBlock {DIV} at (0,0) size 151x22
-            RenderBlock {DIV} at (151,5) size 11x11
+        RenderTextControl {INPUT} at (2,60) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,144) size 784x22
-        RenderText {#text} at (0,0) size 40x22
-          text run at (0,0) width 40: "PASS"
-layer at (12,50) size 151x22
-  RenderBlock {DIV} at (0,0) size 151x22
-    RenderText {#text} at (28,0) size 122x22
-      text run at (28,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (48,0) width 22: "she"
-      text run at (70,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (106,0) width 16: "he"
-      text run at (122,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,80) size 231x22
-  RenderBlock {DIV} at (0,0) size 231x22
-    RenderText {#text} at (108,0) size 122x22
-      text run at (108,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (128,0) width 22: "she"
-      text run at (150,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (186,0) width 16: "he"
-      text run at (202,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,110) size 151x22
-  RenderBlock {DIV} at (0,0) size 151x22
+      RenderBlock {P} at (0,161) size 784x21
+        RenderText {#text} at (0,0) size 44x21
+          text run at (0,0) width 44: "PASS"
+layer at (12,70) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (42,0) size 128x21
+      text run at (42,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (62,0) width 26: "she"
+      text run at (88,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (124,0) width 18: "he"
+      text run at (142,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,99) size 261x21
+  RenderBlock {DIV} at (0,0) size 261x21
+    RenderText {#text} at (132,0) size 128x21
+      text run at (132,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (152,0) width 26: "she"
+      text run at (178,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (214,0) width 18: "he"
+      text run at (232,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,128) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

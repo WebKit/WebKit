@@ -12,17 +12,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 782x66
-          text run at (0,0) width 762: "This tests deletion of an empty line which is a <br> element just after a <div> element. If the deletion is successful,"
-          text run at (0,22) width 782: "the result should have two lines, and the insertion point should be at the start of the second line, just before the letter"
-          text run at (0,44) width 31: "\"b\"."
-      RenderBlock {DIV} at (0,82) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 8x22
-            text run at (0,0) width 8: "a"
-        RenderBlock (anonymous) at (0,22) size 784x0
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderText {#text} at (0,0) size 9x22
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 784x63
+          text run at (0,0) width 717: "This tests deletion of an empty line which is a <br> element just after a <div> element. If the deletion is"
+          text run at (0,21) width 784: "successful, the result should have two lines, and the insertion point should be at the start of the second line, just"
+          text run at (0,42) width 139: "before the letter \"b\"."
+      RenderBlock {DIV} at (0,79) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 9x21
+            text run at (0,0) width 9: "a"
+        RenderBlock (anonymous) at (0,21) size 784x0
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 9x21
             text run at (0,0) width 9: "b"
 caret: position 0 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of body

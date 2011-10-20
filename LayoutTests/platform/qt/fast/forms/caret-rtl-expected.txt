@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 609x22
-          text run at (0,0) width 609: "This tests that clicking in a contenteditable div will set the caret in the right edge of the div "
-        RenderBR {BR} at (609,16) size 0x0
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 428x22
-          text run at (0,0) width 428: "Click in the div, the caret should be on the right edge of the div."
-      RenderBlock {DIV} at (0,76) size 200x418
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 632x21
+          text run at (0,0) width 632: "This tests that clicking in a contenteditable div will set the caret in the right edge of the div "
+        RenderBR {BR} at (632,16) size 0x0
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 442x21
+          text run at (0,0) width 442: "Click in the div, the caret should be on the right edge of the div."
+      RenderBlock {DIV} at (0,74) size 200x397
 caret: position 0 of child 5 {DIV} of body

@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 769x44
-          text run at (0,0) width 318: "You should see a 100x100 green square below. "
-          text run at (318,0) width 286: "If you see any red, then the test has failed. "
-          text run at (604,0) width 165: "This test is ensuring that"
-          text run at (0,22) width 393: "boxes can act as containing blocks for positioned elements."
-layer at (8,68) size 100x100
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,60) size 100x100 [bgcolor=#FF0000]
-layer at (8,68) size 100x100
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 719x42
+          text run at (0,0) width 343: "You should see a 100x100 green square below. "
+          text run at (343,0) width 300: "If you see any red, then the test has failed. "
+          text run at (643,0) width 76: "This test is"
+          text run at (0,21) width 516: "ensuring that boxes can act as containing blocks for positioned elements."
+layer at (8,66) size 100x100
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,58) size 100x100 [bgcolor=#FF0000]
+layer at (8,66) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

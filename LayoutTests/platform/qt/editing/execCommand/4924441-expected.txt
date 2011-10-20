@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 669: "This tests for a bug where changing the list type of an indented list would create unwanted nesting. "
-          text run at (669,0) width 114: "You should see a"
-          text run at (0,22) width 280: "single ordered list item in an indented list."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderBlock {UL} at (0,0) size 784x22
-          RenderBlock {OL} at (40,0) size 744x22
-            RenderListItem {LI} at (40,0) size 704x22
-              RenderListMarker at (-21,0) size 16x22: "1"
-              RenderText {#text} at (0,0) size 21x22
-                text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,38) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 779x42
+          text run at (0,0) width 698: "This tests for a bug where changing the list type of an indented list would create unwanted nesting. "
+          text run at (698,0) width 81: "You should"
+          text run at (0,21) width 336: "see a single ordered list item in an indented list."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {UL} at (0,0) size 784x21
+          RenderBlock {OL} at (40,0) size 744x21
+            RenderListItem {LI} at (40,0) size 704x21
+              RenderListMarker at (-22,0) size 17x21: "1"
+              RenderText {#text} at (0,0) size 22x21
+                text run at (0,0) width 22: "foo"
+        RenderBlock (anonymous) at (0,37) size 784x0
 caret: position 3 of child 0 {#text} of child 0 {LI} of child 0 {OL} of child 0 {UL} of child 2 {DIV} of body

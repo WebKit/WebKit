@@ -13,38 +13,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 310x22
-          text run at (0,0) width 310: "This tests pasting a table to replace some text. "
-        RenderInline {B} at (0,0) size 784x88
-          RenderText {#text} at (310,0) size 784x88
-            text run at (310,0) width 474: "It demonstrates two bugs: 1) selecting a table without also selecting the"
-            text run at (784,0) width 0: " "
-            text run at (0,22) width 759: "line break after programmatically is impossible when its followed by a div because of the way DOM positions are"
-            text run at (759,22) width 4: " "
-            text run at (0,44) width 750: "mapped to visible positions, 2) pasting content that ends in a table places the caret in the last table cell instead of"
-            text run at (750,44) width 4: " "
-            text run at (0,66) width 633: "after the table, so the interchange newline is placed in the last table cell and not after the table."
-      RenderTable {TABLE} at (0,104) size 59x28
-        RenderTableSection {TBODY} at (0,0) size 59x28
-          RenderTableRow {TR} at (0,2) size 59x24
-            RenderTableCell {TD} at (2,2) size 26x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 24x22
-                text run at (1,1) width 24: "one"
-            RenderTableCell {TD} at (30,2) size 27x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x22
+      RenderBlock {P} at (0,0) size 784x105
+        RenderText {#text} at (0,0) size 330x21
+          text run at (0,0) width 330: "This tests pasting a table to replace some text. "
+        RenderInline {B} at (0,0) size 778x105
+          RenderText {#text} at (330,0) size 778x105
+            text run at (330,0) width 438: "It demonstrates two bugs: 1) selecting a table without also"
+            text run at (768,0) width 4: " "
+            text run at (0,21) width 767: "selecting the line break after programmatically is impossible when its followed by a div because of the"
+            text run at (767,21) width 4: " "
+            text run at (0,42) width 761: "way DOM positions are mapped to visible positions, 2) pasting content that ends in a table places the"
+            text run at (761,42) width 4: " "
+            text run at (0,63) width 774: "caret in the last table cell instead of after the table, so the interchange newline is placed in the last table"
+            text run at (774,63) width 4: " "
+            text run at (0,84) width 199: "cell and not after the table."
+      RenderTable {TABLE} at (0,121) size 62x27
+        RenderTableSection {TBODY} at (0,0) size 62x27
+          RenderTableRow {TR} at (0,2) size 62x23
+            RenderTableCell {TD} at (2,2) size 29x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 27x21
+                text run at (1,1) width 27: "one"
+            RenderTableCell {TD} at (33,2) size 27x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 25x21
                 text run at (1,1) width 25: "two"
-      RenderBlock {DIV} at (0,132) size 784x50
-        RenderTable {TABLE} at (0,0) size 59x50
-          RenderTableSection {TBODY} at (0,0) size 59x50
-            RenderTableRow {TR} at (0,2) size 59x46
-              RenderTableCell {TD} at (2,13) size 26x24 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 24x22
-                  text run at (1,1) width 24: "one"
-              RenderTableCell {TD} at (30,2) size 27x46 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 25x22
+      RenderBlock {DIV} at (0,148) size 784x48
+        RenderTable {TABLE} at (0,0) size 62x48
+          RenderTableSection {TBODY} at (0,0) size 62x48
+            RenderTableRow {TR} at (0,2) size 62x44
+              RenderTableCell {TD} at (2,12) size 29x23 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 27x21
+                  text run at (1,1) width 27: "one"
+              RenderTableCell {TD} at (33,2) size 27x44 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 25x21
                   text run at (1,1) width 25: "two"
                 RenderBR {BR} at (26,17) size 0x0
-                RenderBR {BR} at (1,23) size 0x22
-        RenderBlock (anonymous) at (0,50) size 784x0
+                RenderBR {BR} at (1,22) size 0x21
+        RenderBlock (anonymous) at (0,48) size 784x0
 caret: position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 5 {DIV} of body

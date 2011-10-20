@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 718x22
-        text run at (0,0) width 718: "In the list box below, the text \"This text should appear\" should be shown as the first entry into the list box."
-      RenderBR {BR} at (718,16) size 0x0
-      RenderListBox {SELECT} at (2,24) size 182x116 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderText {#text} at (0,0) size 735x21
+        text run at (0,0) width 735: "In the list box below, the text \"This text should appear\" should be shown as the first entry into the list box."
+      RenderBR {BR} at (735,16) size 0x0
+      RenderListBox {SELECT} at (2,23) size 188x111 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderText {#text} at (0,0) size 0x0

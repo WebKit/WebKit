@@ -11,22 +11,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 399x22
-          text run at (0,0) width 399: "This tests the visual position at the end of an editable block."
-      RenderBlock {P} at (0,38) size 784x44
-        RenderText {#text} at (0,0) size 770x44
-          text run at (0,0) width 634: "When the document ended with a <br>, there were visual positions at both [br, 0] and [br, 1]. "
-          text run at (634,0) width 136: "This would produce"
-          text run at (0,22) width 409: "inconsistent behavior when editing at the end of a document."
-      RenderBlock {DIV} at (0,98) size 784x78 [border: (2px solid #AAAAFF)]
-        RenderBlock {DIV} at (2,2) size 780x26 [border: (2px solid #FFAAAA)]
-          RenderText {#text} at (2,2) size 101x22
-            text run at (2,2) width 101: "paragraph one"
-        RenderBlock {DIV} at (2,28) size 780x26 [border: (2px solid #FFAAAA)]
-          RenderText {#text} at (2,2) size 102x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 420x21
+          text run at (0,0) width 420: "This tests the visual position at the end of an editable block."
+      RenderBlock {P} at (0,37) size 784x42
+        RenderText {#text} at (0,0) size 725x42
+          text run at (0,0) width 647: "When the document ended with a <br>, there were visual positions at both [br, 0] and [br, 1]. "
+          text run at (647,0) width 78: "This would"
+          text run at (0,21) width 490: "produce inconsistent behavior when editing at the end of a document."
+      RenderBlock {DIV} at (0,95) size 784x75 [border: (2px solid #AAAAFF)]
+        RenderBlock {DIV} at (2,2) size 780x25 [border: (2px solid #FFAAAA)]
+          RenderText {#text} at (2,2) size 104x21
+            text run at (2,2) width 104: "paragraph one"
+        RenderBlock {DIV} at (2,27) size 780x25 [border: (2px solid #FFAAAA)]
+          RenderText {#text} at (2,2) size 102x21
             text run at (2,2) width 102: "paragraph two"
-        RenderBlock (anonymous) at (2,54) size 780x22
-          RenderText {#text} at (0,0) size 8x22
+        RenderBlock (anonymous) at (2,52) size 780x21
+          RenderText {#text} at (0,0) size 8x21
             text run at (0,0) width 8: "x"
 caret: position 1 of child 5 {#text} of child 5 {DIV} of body

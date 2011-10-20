@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 495x22
-        text run at (0,0) width 495: "You should see the number 0 below, and the grey box should fit it snugly."
-layer at (513,18) size 10x24
-  RenderBlock (positioned) {DIV} at (10,10) size 10x24 [bgcolor=#808080]
-    RenderBlock {DIV} at (0,0) size 10x24 [bgcolor=#ACACAC]
-      RenderBlock {DIV} at (1,1) size 8x22
-        RenderBlock {DIV} at (0,0) size 8x22
-          RenderText {#text} at (0,0) size 8x22
-            text run at (0,0) width 8: "0"
+      RenderText {#text} at (0,0) size 516x21
+        text run at (0,0) width 516: "You should see the number 0 below, and the grey box should fit it snugly."
+layer at (534,18) size 11x23
+  RenderBlock (positioned) {DIV} at (10,10) size 11x23 [bgcolor=#808080]
+    RenderBlock {DIV} at (0,0) size 11x23 [bgcolor=#ACACAC]
+      RenderBlock {DIV} at (1,1) size 9x21
+        RenderBlock {DIV} at (0,0) size 9x21
+          RenderText {#text} at (0,0) size 9x21
+            text run at (0,0) width 9: "0"

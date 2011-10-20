@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x204 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x176
-          RenderTable {TABLE} at (0,0) size 68x176 [border: (1px outset #808080)]
-            RenderTableSection {TBODY} at (1,1) size 66x174
-              RenderTableRow {TR} at (0,2) size 66x59
-                RenderTableCell {TD} at (2,2) size 62x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (13,13) size 32x33
-                    text run at (13,13) width 32: "foo"
-              RenderTableRow {TR} at (0,63) size 66x48
-                RenderTableCell {TD} at (2,74) size 62x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderTableRow {TR} at (0,113) size 66x59
-                RenderTableCell {TD} at (2,113) size 62x59 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                  RenderText {#text} at (13,13) size 36x33
-                    text run at (13,13) width 36: "bar"
+      RenderBlock {DIV} at (0,0) size 784x198 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x170
+          RenderTable {TABLE} at (0,0) size 66x170 [border: (1px outset #808080)]
+            RenderTableSection {TBODY} at (1,1) size 64x168
+              RenderTableRow {TR} at (0,2) size 64x56
+                RenderTableCell {TD} at (2,2) size 60x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (13,13) size 33x30
+                    text run at (13,13) width 33: "foo"
+              RenderTableRow {TR} at (0,60) size 64x48
+                RenderTableCell {TD} at (2,71) size 60x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableRow {TR} at (0,110) size 64x56
+                RenderTableCell {TD} at (2,110) size 60x56 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                  RenderText {#text} at (13,13) size 34x30
+                    text run at (13,13) width 34: "bar"
 caret: position 2 of child 1 {TABLE} of child 1 {DIV} of child 1 {DIV} of body

@@ -2,22 +2,22 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-layer at (8,8) size 612x163
-  RenderBody {BODY} at (8,8) size 612x163 [border: (1px solid #000000)]
+layer at (8,8) size 612x159
+  RenderBody {BODY} at (8,8) size 612x159 [border: (1px solid #000000)]
     RenderBlock {H1} at (6,6) size 600x42
-      RenderText {#text} at (0,0) size 451x42
-        text run at (0,0) width 451: "Word selection on right click test"
-    RenderBlock (anonymous) at (6,69) size 600x88
-      RenderText {#text} at (0,0) size 556x44
-        text run at (0,0) width 556: "This tests to make sure that right clicking non-editable content only creates a word"
-        text run at (0,22) width 193: "selection for clicks over text. "
-      RenderInline {SPAN} at (0,0) size 19x22
-        RenderText {#text} at (193,22) size 19x22
-          text run at (193,22) width 19: "To"
-      RenderText {#text} at (212,22) size 590x66
-        text run at (212,22) width 377: " run manually, right click on text, and a word should be"
-        text run at (0,44) width 60: "selected. "
-        text run at (60,44) width 530: "Right click on the empty space outside and to the right of the black border, the"
-        text run at (0,66) width 193: "selection should be removed."
+      RenderText {#text} at (0,0) size 510x42
+        text run at (0,0) width 510: "Word selection on right click test"
+    RenderBlock (anonymous) at (6,69) size 600x84
+      RenderText {#text} at (0,0) size 577x42
+        text run at (0,0) width 577: "This tests to make sure that right clicking non-editable content only creates a word"
+        text run at (0,21) width 202: "selection for clicks over text. "
+      RenderInline {SPAN} at (0,0) size 19x21
+        RenderText {#text} at (202,21) size 19x21
+          text run at (202,21) width 19: "To"
+      RenderText {#text} at (221,21) size 582x63
+        text run at (221,21) width 361: " run manually, right click on text, and a word should"
+        text run at (0,42) width 90: "be selected. "
+        text run at (90,42) width 466: "Right click on the empty space outside and to the right of the black"
+        text run at (0,63) width 288: "border, the selection should be removed."
       RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 1 {H1} of body

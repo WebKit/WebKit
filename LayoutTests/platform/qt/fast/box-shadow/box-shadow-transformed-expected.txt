@@ -1,31 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x592
-  RenderBlock {HTML} at (0,0) size 800x592
-    RenderBody {BODY} at (8,16) size 784x568
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 439x22
-          text run at (0,0) width 439: "The shadow should look identical relative to the box in each case."
-      RenderBlock (anonymous) at (0,38) size 784x530
+layer at (0,0) size 800x591
+  RenderBlock {HTML} at (0,0) size 800x591
+    RenderBody {BODY} at (8,16) size 784x567
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 465x21
+          text run at (0,0) width 465: "The shadow should look identical relative to the box in each case."
+      RenderBlock (anonymous) at (0,37) size 784x530
         RenderBlock {DIV} at (20,20) size 300x150
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (340,129) size 4x22
+        RenderText {#text} at (340,129) size 4x21
           text run at (340,129) width 4: " "
         RenderBlock {DIV} at (364,20) size 300x150
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (20,210) size 300x300
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (340,394) size 4x22
+        RenderText {#text} at (340,394) size 4x21
           text run at (340,394) width 4: " "
         RenderBlock {DIV} at (364,210) size 300x300
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (128,99) size 100x100
+layer at (128,98) size 100x100
   RenderBlock (relative positioned) {DIV} at (100,25) size 100x100
-layer at (472,99) size 100x100
+layer at (472,98) size 100x100
   RenderBlock (relative positioned) {DIV} at (100,25) size 100x100
-layer at (128,364) size 100x100
+layer at (128,363) size 100x100
   RenderBlock (relative positioned) {DIV} at (100,100) size 100x100
-layer at (472,364) size 100x100
+layer at (472,363) size 100x100
   RenderBlock (relative positioned) {DIV} at (100,100) size 100x100

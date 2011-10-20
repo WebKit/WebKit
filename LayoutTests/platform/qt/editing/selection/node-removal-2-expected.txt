@@ -6,22 +6,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 777x44
-          text run at (0,0) width 727: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
-          text run at (727,0) width 50: "Ideally,"
-          text run at (0,22) width 713: "we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
-      RenderBlock {P} at (0,60) size 784x44
-        RenderText {#text} at (0,0) size 780x44
-          text run at (0,0) width 506: "This test creates a selection that ends inside of a node that will be removed. "
-          text run at (506,0) width 183: "Then the node is removed. "
-          text run at (689,0) width 91: "Then a Select"
-          text run at (0,22) width 105: "All is executed. "
-          text run at (105,22) width 270: "The entire document should be selected."
-      RenderBlock {DIV} at (0,120) size 784x22
-        RenderText {#text} at (0,0) size 36x22
-          text run at (0,0) width 36: "hello "
-        RenderText {#text} at (36,0) size 45x22
-          text run at (36,0) width 45: "world!"
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 760x63
+          text run at (0,0) width 760: "This tests behavior when a node that serves as the start or end of a selection is removed from the document."
+          text run at (0,21) width 730: "Ideally, we would just adjust the selection when an endpoint is removed, for now, we just blow away the"
+          text run at (0,42) width 68: "selection."
+      RenderBlock {P} at (0,79) size 784x42
+        RenderText {#text} at (0,0) size 780x42
+          text run at (0,0) width 537: "This test creates a selection that ends inside of a node that will be removed. "
+          text run at (537,0) width 193: "Then the node is removed. "
+          text run at (730,0) width 50: "Then a"
+          text run at (0,21) width 161: "Select All is executed. "
+          text run at (161,21) width 288: "The entire document should be selected."
+      RenderBlock {DIV} at (0,137) size 784x21
+        RenderText {#text} at (0,0) size 39x21
+          text run at (0,0) width 39: "hello "
+        RenderText {#text} at (39,0) size 43x21
+          text run at (39,0) width 43: "world!"
 selection start: position 0 of child 0 {#text} of child 1 {P} of body
 selection end:   position 7 of child 1 {#text} of child 5 {DIV} of body

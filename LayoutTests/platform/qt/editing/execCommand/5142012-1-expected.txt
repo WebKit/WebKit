@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 746x44
-          text run at (0,0) width 477: "This tests for a bug when removing links from a selection with Unlink. "
-          text run at (477,0) width 269: "There shouldn't be any links *inside the"
-          text run at (0,22) width 113: "selection* below."
-      RenderBlock {DIV} at (0,60) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderInline {A} at (0,0) size 23x22 [color=#0000EE]
-            RenderText {#text} at (0,0) size 23x22
-              text run at (0,0) width 23: "Hel"
-          RenderInline {SPAN} at (0,0) size 12x22
-            RenderText {#text} at (23,0) size 12x22
-              text run at (23,0) width 12: "lo"
-        RenderBlock (anonymous) at (0,22) size 784x0
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderInline {SPAN} at (0,0) size 16x22
-            RenderText {#text} at (0,0) size 16x22
-              text run at (0,0) width 16: "W"
-          RenderText {#text} at (16,0) size 33x22
-            text run at (16,0) width 33: "orld!"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 769x42
+          text run at (0,0) width 491: "This tests for a bug when removing links from a selection with Unlink. "
+          text run at (491,0) width 278: "There shouldn't be any links *inside the"
+          text run at (0,21) width 121: "selection* below."
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderInline {A} at (0,0) size 25x21 [color=#0000EE]
+            RenderText {#text} at (0,0) size 25x21
+              text run at (0,0) width 25: "Hel"
+          RenderInline {SPAN} at (0,0) size 13x21
+            RenderText {#text} at (25,0) size 13x21
+              text run at (25,0) width 13: "lo"
+        RenderBlock (anonymous) at (0,21) size 784x0
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderInline {SPAN} at (0,0) size 15x21
+            RenderText {#text} at (0,0) size 15x21
+              text run at (0,0) width 15: "W"
+          RenderText {#text} at (15,0) size 31x21
+            text run at (15,0) width 31: "orld!"
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 0 {DIV} of child 2 {DIV} of body
 selection end:   position 1 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 2 {DIV} of body

@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 523x22
-          text run at (0,0) width 523: "This test will try to call blur() on a contenteditable div, and then a normal div."
-      RenderBlock {DIV} at (0,22) size 784x28 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 132x22
-          text run at (3,3) width 132: "contentEditable div"
-      RenderBlock {DIV} at (0,50) size 784x22
-        RenderText {#text} at (0,0) size 83x22
-          text run at (0,0) width 83: "Test Passed."
-      RenderBlock {DIV} at (0,72) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 534x21
+          text run at (0,0) width 534: "This test will try to call blur() on a contenteditable div, and then a normal div."
+      RenderBlock {DIV} at (0,21) size 784x27 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 136x21
+          text run at (3,3) width 136: "contentEditable div"
+      RenderBlock {DIV} at (0,48) size 784x21
+        RenderText {#text} at (0,0) size 93x21
+          text run at (0,0) width 93: "Test Passed."
+      RenderBlock {DIV} at (0,69) size 784x0

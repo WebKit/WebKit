@@ -16,21 +16,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 781x44
-          text run at (0,0) width 354: "This tests find and replace inside an editable iframe. "
-          text run at (354,0) width 427: "You should see 'A B A B' below. With bug 4462420, you would"
-          text run at (0,22) width 94: "see 'A B B A'."
-      RenderBlock (anonymous) at (0,60) size 784x154
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 768x42
+          text run at (0,0) width 372: "This tests find and replace inside an editable iframe. "
+          text run at (372,0) width 396: "You should see 'A B A B' below. With bug 4462420, you"
+          text run at (0,21) width 143: "would see 'A B B A'."
+      RenderBlock (anonymous) at (0,58) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-                RenderText {#text} at (0,0) size 31x22
-                  text run at (0,0) width 31: "A B "
-                RenderText {#text} at (31,0) size 27x22
-                  text run at (31,0) width 27: "A B"
+                RenderText {#text} at (0,0) size 30x21
+                  text run at (0,0) width 30: "A B "
+                RenderText {#text} at (30,0) size 26x21
+                  text run at (30,0) width 26: "A B"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

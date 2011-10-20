@@ -7,20 +7,20 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (0,0) size 502x402 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           layer at (0,0) size 500x400
             RenderView at (0,0) size 500x400
-          layer at (0,0) size 500x240
-            RenderBlock {HTML} at (0,0) size 500x240
-              RenderBody {BODY} at (8,16) size 484x216
-                RenderBlock {P} at (0,0) size 484x22
-                  RenderText {#text} at (0,0) size 202x22
-                    text run at (0,0) width 202: "This is the intermediate frame"
-                RenderBlock (anonymous) at (0,38) size 484x178
+          layer at (0,0) size 500x238
+            RenderBlock {HTML} at (0,0) size 500x238
+              RenderBody {BODY} at (8,16) size 484x214
+                RenderBlock {P} at (0,0) size 484x21
+                  RenderText {#text} at (0,0) size 209x21
+                    text run at (0,0) width 209: "This is the intermediate frame"
+                RenderBlock (anonymous) at (0,37) size 484x177
                   RenderPartObject {IFRAME} at (0,0) size 252x172 [border: (1px solid #000000)]
                     layer at (0,0) size 250x170
                       RenderView at (0,0) size 250x170
-                    layer at (0,0) size 250x54
-                      RenderBlock {HTML} at (0,0) size 250x54
-                        RenderBody {BODY} at (8,16) size 234x22 [bgcolor=#C0C0C0]
-                          RenderBlock {P} at (0,0) size 234x22
-                            RenderText {#text} at (0,0) size 157x22
-                              text run at (0,0) width 157: "This is the inner frame."
+                    layer at (0,0) size 250x53
+                      RenderBlock {HTML} at (0,0) size 250x53
+                        RenderBody {BODY} at (8,16) size 234x21 [bgcolor=#C0C0C0]
+                          RenderBlock {P} at (0,0) size 234x21
+                            RenderText {#text} at (0,0) size 161x21
+                              text run at (0,0) width 161: "This is the inner frame."
                   RenderText {#text} at (0,0) size 0x0

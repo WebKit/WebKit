@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 760x66
-          text run at (0,0) width 760: "This tests for a bug where changing the alignment of an image would result in a selection that wasn't the one that"
-          text run at (0,22) width 283: "was present before the alignment change. "
-          text run at (283,22) width 474: "The image should be centered and the caret should be the same before"
-          text run at (0,44) width 160: "and after the operation."
-      RenderBlock {DIV} at (0,82) size 784x147
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-          RenderBR {BR} at (21,16) size 0x0
-        RenderBlock {DIV} at (0,22) size 784x103
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 763x63
+          text run at (0,0) width 763: "This tests for a bug where changing the alignment of an image would result in a selection that wasn't the one"
+          text run at (0,21) width 330: "that was present before the alignment change. "
+          text run at (330,21) width 412: "The image should be centered and the caret should be the"
+          text run at (0,42) width 255: "same before and after the operation."
+      RenderBlock {DIV} at (0,79) size 784x145
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "foo"
+          RenderBR {BR} at (22,16) size 0x0
+        RenderBlock {DIV} at (0,21) size 784x103
           RenderImage {IMG} at (354,0) size 76x103
-        RenderBlock (anonymous) at (0,125) size 784x22
-          RenderText {#text} at (0,0) size 24x22
-            text run at (0,0) width 24: "baz"
+        RenderBlock (anonymous) at (0,124) size 784x21
+          RenderText {#text} at (0,0) size 26x21
+            text run at (0,0) width 26: "baz"
 caret: position 0 of child 0 {IMG} of child 2 {DIV} of child 2 {DIV} of body

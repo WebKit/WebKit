@@ -3,11 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 487: "You should see a green cross below (300 pixels wide and 300 pixels tall). "
-          text run at (487,0) width 297: "This is a test to ensure that boxes don't obey"
-          text run at (0,22) width 714: "the overconstraint correction (margin-top/bottom should not be corrected when a box is overconstrained)."
-      RenderBlock {DIV} at (0,44) size 784x300
+      RenderBlock (anonymous) at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 760x63
+          text run at (0,0) width 524: "You should see a green cross below (300 pixels wide and 300 pixels tall). "
+          text run at (524,0) width 236: "This is a test to ensure that boxes"
+          text run at (0,21) width 686: "don't obey the overconstraint correction (margin-top/bottom should not be corrected when a box is"
+          text run at (0,42) width 123: "overconstrained)."
+      RenderBlock {DIV} at (0,63) size 784x300
         RenderDeprecatedFlexibleBox {DIV} at (0,200) size 300x100 [bgcolor=#008000]
           RenderBlock {DIV} at (100,-100) size 100x300

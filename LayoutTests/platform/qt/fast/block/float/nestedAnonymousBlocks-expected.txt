@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (0,0) size 215x22
-        RenderBlock {DIV} at (0,0) size 215x22
-          RenderText {#text} at (0,0) size 215x22
-            text run at (0,0) width 215: "This is a test for rdar://5025925."
-      RenderBlock (floating) {DIV} at (215,0) size 319x22
-        RenderBlock {DIV} at (0,0) size 319x22
-          RenderText {#text} at (0,0) size 319x22
-            text run at (0,0) width 319: "The test succeeds if this does not hang or crash."
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (534,0) size 4x22
-          text run at (534,0) width 4: " "
-      RenderBlock {DIV} at (0,22) size 784x0
+      RenderBlock (floating) {DIV} at (0,0) size 222x21
+        RenderBlock {DIV} at (0,0) size 222x21
+          RenderText {#text} at (0,0) size 222x21
+            text run at (0,0) width 222: "This is a test for rdar://5025925."
+      RenderBlock (floating) {DIV} at (222,0) size 340x21
+        RenderBlock {DIV} at (0,0) size 340x21
+          RenderText {#text} at (0,0) size 340x21
+            text run at (0,0) width 340: "The test succeeds if this does not hang or crash."
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (562,0) size 4x21
+          text run at (562,0) width 4: " "
+      RenderBlock {DIV} at (0,21) size 784x0

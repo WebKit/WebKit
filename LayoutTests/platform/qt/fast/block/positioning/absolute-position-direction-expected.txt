@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 422x22
-          text run at (0,0) width 422: "The green square should be on the right hand side of the page."
-      RenderBlock {DIV} at (0,38) size 784x0
-layer at (692,46) size 100x100
-  RenderBlock (positioned) {DIV} at (692,46) size 100x100 [bgcolor=#90EE90]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 444x21
+          text run at (0,0) width 444: "The green square should be on the right hand side of the page."
+      RenderBlock {DIV} at (0,37) size 784x0
+layer at (692,45) size 100x100
+  RenderBlock (positioned) {DIV} at (692,45) size 100x100 [bgcolor=#90EE90]

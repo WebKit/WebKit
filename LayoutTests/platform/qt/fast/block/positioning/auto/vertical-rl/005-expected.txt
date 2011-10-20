@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 110x575
-        text run at (0,0) width 566: "In this test, you should see three blocks that are aligned to the bottom within a black"
-        text run at (22,0) width 33: "box. "
-        text run at (22,33) width 515: "They should be stacked horizontally with the green box in between two olive"
-        text run at (44,0) width 46: "boxes. "
-        text run at (44,46) width 367: "The olive boxes and the green box should be 100x100. "
-        text run at (44,413) width 162: "The black box's left side"
-        text run at (66,0) width 549: "should be aligned with the last line in this paragraph and its top side should begin"
-        text run at (88,0) width 233: "right after the end of this sentence."
+      RenderText {#text} at (0,0) size 105x579
+        text run at (0,0) width 545: "In this test, you should see three blocks that are aligned to the bottom within a"
+        text run at (21,0) width 76: "black box. "
+        text run at (21,76) width 500: "They should be stacked horizontally with the green box in between two"
+        text run at (42,0) width 89: "olive boxes. "
+        text run at (42,89) width 393: "The olive boxes and the green box should be 100x100. "
+        text run at (42,482) width 70: "The black"
+        text run at (63,0) width 579: "box's left side should be aligned with the last line in this paragraph and its top side"
+        text run at (84,0) width 338: "should begin right after the end of this sentence."
       RenderText {#text} at (0,0) size 0x0
-layer at (364,241) size 340x240
-  RenderBlock (positioned) {SPAN} at (96,241) size 340x240 [border: (20px solid #000000)]
-layer at (484,361) size 100x100
+layer at (368,346) size 340x240
+  RenderBlock (positioned) {SPAN} at (92,346) size 340x240 [border: (20px solid #000000)]
+layer at (488,466) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (584,361) size 100x100
+layer at (588,466) size 100x100
   RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#808000]
-layer at (384,361) size 100x100
+layer at (388,466) size 100x100
   RenderBlock (positioned) {DIV} at (220,120) size 100x100 [bgcolor=#808000]

@@ -10,22 +10,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 715x44
-          text run at (0,0) width 715: "This places the caret before the 'T' in 'Two' and Deletes. 'One' and 'Two' should be merged but the blocks"
-          text run at (0,22) width 381: "containing 'Three' and 'Four' should remain untouched."
-      RenderBlock {DIV} at (8,60) size 768x188
-        RenderBlock {DIV} at (16,16) size 736x44 [border: (3px solid #FF0000)]
-          RenderText {#text} at (11,11) size 28x22
-            text run at (11,11) width 28: "One"
-          RenderText {#text} at (39,11) size 31x22
-            text run at (39,11) width 31: "Two"
-        RenderBlock {DIV} at (16,68) size 736x104 [border: (3px solid #008000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 740x42
+          text run at (0,0) width 740: "This places the caret before the 'T' in 'Two' and Deletes. 'One' and 'Two' should be merged but the blocks"
+          text run at (0,21) width 388: "containing 'Three' and 'Four' should remain untouched."
+      RenderBlock {DIV} at (8,58) size 768x185
+        RenderBlock {DIV} at (16,16) size 736x43 [border: (3px solid #FF0000)]
+          RenderText {#text} at (11,11) size 30x21
+            text run at (11,11) width 30: "One"
+          RenderText {#text} at (41,11) size 31x21
+            text run at (41,11) width 31: "Two"
+        RenderBlock {DIV} at (16,67) size 736x102 [border: (3px solid #008000)]
           RenderBlock (anonymous) at (11,11) size 714x0
-          RenderBlock {DIV} at (19,19) size 698x44 [border: (3px solid #000000)]
-            RenderText {#text} at (11,11) size 41x22
-              text run at (11,11) width 41: "Three"
-          RenderBlock (anonymous) at (11,71) size 714x22
-            RenderText {#text} at (0,0) size 34x22
-              text run at (0,0) width 34: "Four"
+          RenderBlock {DIV} at (19,19) size 698x43 [border: (3px solid #000000)]
+            RenderText {#text} at (11,11) size 42x21
+              text run at (11,11) width 42: "Three"
+          RenderBlock (anonymous) at (11,70) size 714x21
+            RenderText {#text} at (0,0) size 33x21
+              text run at (0,0) width 33: "Four"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

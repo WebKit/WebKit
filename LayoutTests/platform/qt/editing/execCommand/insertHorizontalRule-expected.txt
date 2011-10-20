@@ -25,26 +25,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 386x22
-          text run at (0,0) width 386: "These are tests for execCommand(InsertHorizontalRule)."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 309x22
-          text run at (0,0) width 309: "This test inserts an hr between 'foo' and 'bar'."
-      RenderBlock {DIV} at (0,76) size 784x62
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-        RenderBlock {HR} at (0,30) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,40) size 784x22
-          RenderText {#text} at (0,0) size 24x22
-            text run at (0,0) width 24: "bar"
-      RenderBlock {P} at (0,154) size 784x22
-        RenderText {#text} at (0,0) size 689x22
-          text run at (0,0) width 689: "This test inserts an hr with id=\"hr\" between 'foo' and 'bar', fetches the hr using its id, then removes it."
-      RenderBlock {DIV} at (0,192) size 784x22
-        RenderText {#text} at (0,0) size 21x22
-          text run at (0,0) width 21: "foo"
-        RenderText {#text} at (21,0) size 24x22
-          text run at (21,0) width 24: "bar"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 403x21
+          text run at (0,0) width 403: "These are tests for execCommand(InsertHorizontalRule)."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 316x21
+          text run at (0,0) width 316: "This test inserts an hr between 'foo' and 'bar'."
+      RenderBlock {DIV} at (0,74) size 784x60
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "foo"
+        RenderBlock {HR} at (0,29) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,39) size 784x21
+          RenderText {#text} at (0,0) size 23x21
+            text run at (0,0) width 23: "bar"
+      RenderBlock {P} at (0,150) size 784x21
+        RenderText {#text} at (0,0) size 700x21
+          text run at (0,0) width 700: "This test inserts an hr with id=\"hr\" between 'foo' and 'bar', fetches the hr using its id, then removes it."
+      RenderBlock {DIV} at (0,187) size 784x21
+        RenderText {#text} at (0,0) size 22x21
+          text run at (0,0) width 22: "foo"
+        RenderText {#text} at (22,0) size 23x21
+          text run at (22,0) width 23: "bar"
 caret: position 2 of child 8 {DIV} of body

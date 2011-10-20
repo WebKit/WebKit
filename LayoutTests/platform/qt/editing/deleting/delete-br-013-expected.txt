@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 772x44
-          text run at (0,0) width 772: "This tests that we only preserve an empty paragraph's style when moving paragraphs around if the selection is still"
-          text run at (0,22) width 310: "in an empty paragraph after the move occurs."
-      RenderBlock {DIV} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 334x22
-          text run at (0,0) width 334: "The test passes if the text below is still underlined."
-      RenderBlock (anonymous) at (0,66) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,88) size 784x22
-        RenderInline {SPAN} at (0,0) size 206x22
-          RenderText {#text} at (0,0) size 206x22
-            text run at (0,0) width 206: "This text should be underlined"
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 777x42
+          text run at (0,0) width 777: "This tests that we only preserve an empty paragraph's style when moving paragraphs around if the selection is"
+          text run at (0,21) width 346: "still in an empty paragraph after the move occurs."
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 354x21
+          text run at (0,0) width 354: "The test passes if the text below is still underlined."
+      RenderBlock (anonymous) at (0,63) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,84) size 784x21
+        RenderInline {SPAN} at (0,0) size 214x21
+          RenderText {#text} at (0,0) size 214x21
+            text run at (0,0) width 214: "This text should be underlined"
 caret: position 30 of child 0 {#text} of child 0 {SPAN} of child 6 {DIV} of body

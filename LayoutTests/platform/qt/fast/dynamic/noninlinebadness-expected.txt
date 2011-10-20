@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x244
+      RenderBlock {DIV} at (0,0) size 784x242
         RenderBlock (floating) {DIV} at (0,0) size 200x200
         RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#00FF00]
-        RenderBlock (anonymous) at (0,200) size 784x44
-          RenderText {#text} at (0,0) size 780x44
-            text run at (0,0) width 357: "This text should be underneath a 200x200 lime float. "
-            text run at (357,0) width 423: "We are making sure that the code that wraps inline children in"
-            text run at (0,22) width 651: "anonymous blocks does the right thing when blocks are inserted in between a float and an inline."
+        RenderBlock (anonymous) at (0,200) size 784x42
+          RenderText {#text} at (0,0) size 760x42
+            text run at (0,0) width 374: "This text should be underneath a 200x200 lime float. "
+            text run at (374,0) width 357: "We are making sure that the code that wraps inline"
+            text run at (0,21) width 760: "children in anonymous blocks does the right thing when blocks are inserted in between a float and an inline."

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DIV} at (0,0) size 800x22
-        RenderText {#text} at (0,0) size 199x22
-          text run at (0,0) width 199: "Select me, select me, select me"
+      RenderBlock {DIV} at (0,0) size 800x21
+        RenderText {#text} at (0,0) size 223x21
+          text run at (0,0) width 223: "Select me, select me, select me"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 6 of child 0 {#text} of child 1 {DIV} of body

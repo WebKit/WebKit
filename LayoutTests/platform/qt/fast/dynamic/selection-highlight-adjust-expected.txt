@@ -1,31 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x174
-  RenderBlock {HTML} at (0,0) size 800x174
-    RenderBody {BODY} at (8,16) size 784x150
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 184x22
-          text run at (0,0) width 184: "This is a regression test for "
-        RenderInline {I} at (0,0) size 752x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (184,0) size 352x22
-              text run at (184,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8835"
-          RenderText {#text} at (536,0) size 752x44
-            text run at (536,0) width 4: " "
-            text run at (540,0) width 212: "REGRESSION: Line moves but"
-            text run at (0,22) width 203: "selection highlight stays behind"
-        RenderText {#text} at (203,22) size 4x22
-          text run at (203,22) width 4: "."
-      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,70) size 784x80
+layer at (0,0) size 800x169
+  RenderBlock {HTML} at (0,0) size 800x169
+    RenderBody {BODY} at (8,16) size 784x145
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 194x21
+          text run at (0,0) width 194: "This is a regression test for "
+        RenderInline {I} at (0,0) size 775x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (194,0) size 379x21
+              text run at (194,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8835"
+          RenderText {#text} at (573,0) size 775x42
+            text run at (573,0) width 4: " "
+            text run at (577,0) width 198: "REGRESSION: Line moves"
+            text run at (0,21) width 249: "but selection highlight stays behind"
+        RenderText {#text} at (249,21) size 4x21
+          text run at (249,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,68) size 784x77
         RenderImage {IMG} at (0,0) size 0x30
-        RenderBR {BR} at (0,14) size 0x22
-        RenderBR {BR} at (0,36) size 0x22
-        RenderInline {SPAN} at (0,0) size 328x22
-          RenderText {#text} at (0,58) size 328x22
-            text run at (0,58) width 328: "The highlight should be on this line, not above it."
-        RenderText {#text} at (328,58) size 4x22
-          text run at (328,58) width 4: " "
-        RenderBR {BR} at (332,58) size 0x22
+        RenderBR {BR} at (0,14) size 0x21
+        RenderBR {BR} at (0,35) size 0x21
+        RenderInline {SPAN} at (0,0) size 342x21
+          RenderText {#text} at (0,56) size 342x21
+            text run at (0,56) width 342: "The highlight should be on this line, not above it."
+        RenderText {#text} at (342,56) size 4x21
+          text run at (342,56) width 4: " "
+        RenderBR {BR} at (346,56) size 0x21
 selection start: position 0 of child 0 {#text} of child 6 {SPAN} of child 5 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 6 {SPAN} of child 5 {DIV} of body

@@ -18,19 +18,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 597x22
-          text run at (0,0) width 358: "This tests copy/delete/paste inside an editable iframe. "
-          text run at (358,0) width 239: "You should see 'foo bar baz' below."
-      RenderBlock (anonymous) at (0,38) size 784x154
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 634x21
+          text run at (0,0) width 383: "This tests copy/delete/paste inside an editable iframe. "
+          text run at (383,0) width 251: "You should see 'foo bar baz' below."
+      RenderBlock (anonymous) at (0,37) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
-                RenderText {#text} at (0,0) size 53x22
+                RenderText {#text} at (0,0) size 53x21
                   text run at (0,0) width 53: "foo bar "
-                RenderText {#text} at (53,0) size 24x22
-                  text run at (53,0) width 24: "baz"
+                RenderText {#text} at (53,0) size 26x21
+                  text run at (53,0) width 26: "baz"
         RenderText {#text} at (0,0) size 0x0

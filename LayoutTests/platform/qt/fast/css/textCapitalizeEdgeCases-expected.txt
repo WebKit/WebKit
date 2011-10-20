@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 781x66
-          text run at (0,0) width 780: "This file tests capitalisation with all sorts of odd things. There is some RTL text, some text with an inlined-div placed"
-          text run at (0,22) width 781: "inside a word, an image between words as well as a div between words. Each word below should be capitalised, and"
-          text run at (0,44) width 335: "there should be no capitals n the middle of words."
-      RenderBlock {DIV} at (20,86) size 744x125 [border: (5px solid #FF0000)]
-        RenderBlock {DIV} at (25,25) size 694x22
-          RenderText {#text} at (661,0) size 33x22
-            text run at (661,0) width 33 RTL override: "Capi"
-          RenderInline {SPAN} at (0,0) size 17x22
-            RenderText {#text} at (644,0) size 17x22
-              text run at (644,0) width 17 RTL override: "tal"
-          RenderText {#text} at (627,0) size 17x22
-            text run at (627,0) width 17 RTL override: "ise"
-        RenderBlock {DIV} at (25,47) size 694x53
-          RenderBlock (anonymous) at (0,0) size 694x31
-            RenderText {#text} at (0,9) size 32x22
-              text run at (0,9) width 32: "A W"
-            RenderInline {DIV} at (0,0) size 15x22
-              RenderText {#text} at (32,9) size 15x22
-                text run at (32,9) width 15: "or"
-            RenderText {#text} at (47,9) size 47x22
-              text run at (47,9) width 47: "d With"
-            RenderImage {IMG} at (94,0) size 25x25
-            RenderText {#text} at (119,9) size 67x22
-              text run at (119,9) width 67: "An Image"
-          RenderBlock {DIV} at (0,31) size 694x0
-          RenderBlock (anonymous) at (0,31) size 694x22
-            RenderText {#text} at (0,0) size 37x22
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 763x63
+          text run at (0,0) width 760: "This file tests capitalisation with all sorts of odd things. There is some RTL text, some text with an inlined-div"
+          text run at (0,21) width 763: "placed inside a word, an image between words as well as a div between words. Each word below should be"
+          text run at (0,42) width 466: "capitalised, and there should be no capitals n the middle of words."
+      RenderBlock {DIV} at (20,83) size 744x122 [border: (5px solid #FF0000)]
+        RenderBlock {DIV} at (25,25) size 694x21
+          RenderText {#text} at (660,0) size 34x21
+            text run at (660,0) width 34 RTL override: "Capi"
+          RenderInline {SPAN} at (0,0) size 17x21
+            RenderText {#text} at (643,0) size 17x21
+              text run at (643,0) width 17 RTL override: "tal"
+          RenderText {#text} at (622,0) size 21x21
+            text run at (622,0) width 21 RTL override: "ise"
+        RenderBlock {DIV} at (25,46) size 694x51
+          RenderBlock (anonymous) at (0,0) size 694x30
+            RenderText {#text} at (0,9) size 30x21
+              text run at (0,9) width 30: "A W"
+            RenderInline {DIV} at (0,0) size 14x21
+              RenderText {#text} at (30,9) size 14x21
+                text run at (30,9) width 14: "or"
+            RenderText {#text} at (44,9) size 45x21
+              text run at (44,9) width 45: "d With"
+            RenderImage {IMG} at (89,0) size 25x25
+            RenderText {#text} at (114,9) size 68x21
+              text run at (114,9) width 68: "An Image"
+          RenderBlock {DIV} at (0,30) size 694x0
+          RenderBlock (anonymous) at (0,30) size 694x21
+            RenderText {#text} at (0,0) size 37x21
               text run at (0,0) width 37: "In Be"
-            RenderInline {SPAN} at (0,0) size 17x22
-              RenderText {#text} at (37,0) size 17x22
-                text run at (37,0) width 17: "tw"
-            RenderText {#text} at (54,0) size 23x22
-              text run at (54,0) width 23: "een"
+            RenderInline {SPAN} at (0,0) size 16x21
+              RenderText {#text} at (37,0) size 16x21
+                text run at (37,0) width 16: "tw"
+            RenderText {#text} at (53,0) size 27x21
+              text run at (53,0) width 27: "een"

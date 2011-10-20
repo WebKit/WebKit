@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x44
-  RenderBlock {book} at (0,0) size 800x44
-    RenderBlock {xhtml:div} at (0,0) size 800x22
-      RenderText {#text} at (0,0) size 723x22
-        text run at (0,0) width 723: "This test checks whether CSS21 attribute selectors are re-evaluated after attribute changes in xml elements."
-    RenderBlock {test} at (0,22) size 800x22 [color=#008000]
-      RenderInline (generated) at (0,0) size 63x22
-        RenderText at (0,0) size 63x22
-          text run at (0,0) width 63: "PASSED"
+layer at (0,0) size 800x42
+  RenderBlock {book} at (0,0) size 800x42
+    RenderBlock {xhtml:div} at (0,0) size 800x21
+      RenderText {#text} at (0,0) size 760x21
+        text run at (0,0) width 760: "This test checks whether CSS21 attribute selectors are re-evaluated after attribute changes in xml elements."
+    RenderBlock {test} at (0,21) size 800x21 [color=#008000]
+      RenderInline (generated) at (0,0) size 67x21
+        RenderText at (0,0) size 67x21
+          text run at (0,0) width 67: "PASSED"

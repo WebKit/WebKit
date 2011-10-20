@@ -3,62 +3,62 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 86x50 [border: (3px solid #0000FF)]
-        RenderInline (generated) at (0,0) size 108x22
-          RenderText at (3,3) size 108x22
-            text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 132x44
-          text run at (111,3) width 24: "AA"
-          text run at (3,25) width 22: "BB"
-      RenderBlock {P} at (0,66) size 86x28 [border: (3px solid #0000FF)]
-        RenderInline (generated) at (0,0) size 108x22
-          RenderText at (3,3) size 108x22
-            text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 60x22
-          text run at (111,3) width 60: "AAAAA"
-      RenderBlock {P} at (0,110) size 86x50 [border: (3px solid #0000FF)]
-        RenderInline (generated) at (0,0) size 48x44
-          RenderText at (3,3) size 48x44
-            text run at (3,3) width 48: "AAAA"
-            text run at (3,25) width 44: "BBBB"
-        RenderText {#text} at (47,25) size 55x22
-          text run at (47,25) width 55: "BBBBB"
-      RenderBlock {P} at (0,176) size 86x50 [border: (3px solid #0000FF)]
-        RenderInline (generated) at (0,0) size 108x22
-          RenderText at (3,3) size 108x22
-            text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 132x44
-          text run at (111,3) width 24: "AA"
-          text run at (3,25) width 22: "ZZ"
-        RenderInline (generated) at (0,0) size 99x22
-          RenderText at (25,25) size 99x22
-            text run at (25,25) width 99: "ZZZZZZZZZ"
-      RenderBlock {P} at (0,242) size 86x28 [border: (3px solid #0000FF)]
-        RenderInline (generated) at (0,0) size 108x22
-          RenderText at (3,3) size 108x22
-            text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 75x22
-          text run at (111,3) width 75: "MMMMM"
-        RenderInline (generated) at (0,0) size 99x22
-          RenderText at (186,3) size 99x22
-            text run at (186,3) width 99: "ZZZZZZZZZ"
-      RenderBlock {P} at (0,286) size 86x50 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 60x22
-          text run at (3,3) width 60: "YYYYY"
-        RenderInline (generated) at (0,0) size 108x44
-          RenderText at (63,3) size 108x44
-            text run at (63,3) width 48: "YYYY"
-            text run at (3,25) width 44: "ZZZZ"
-      RenderBlock {P} at (0,352) size 86x50 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 24x44
-          text run at (3,3) width 24: "YY"
-          text run at (3,25) width 22: "ZZ"
-        RenderInline (generated) at (0,0) size 99x22
-          RenderText at (25,25) size 99x22
-            text run at (25,25) width 99: "ZZZZZZZZZ"
-      RenderBlock {P} at (0,418) size 86x28 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 55x22
-          text run at (3,3) width 55: "ZZZZZ"
-        RenderInline (generated) at (0,0) size 99x22
-          RenderText at (58,3) size 99x22
-            text run at (58,3) width 99: "ZZZZZZZZZ"
+      RenderBlock {P} at (0,0) size 86x48 [border: (3px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 99x21
+          RenderText at (3,3) size 99x21
+            text run at (3,3) width 99: "AAAAAAAAA"
+        RenderText {#text} at (102,3) size 121x42
+          text run at (102,3) width 22: "AA"
+          text run at (3,24) width 22: "BB"
+      RenderBlock {P} at (0,64) size 86x27 [border: (3px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 99x21
+          RenderText at (3,3) size 99x21
+            text run at (3,3) width 99: "AAAAAAAAA"
+        RenderText {#text} at (102,3) size 55x21
+          text run at (102,3) width 55: "AAAAA"
+      RenderBlock {P} at (0,107) size 86x48 [border: (3px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 44x42
+          RenderText at (3,3) size 44x42
+            text run at (3,3) width 44: "AAAA"
+            text run at (3,24) width 44: "BBBB"
+        RenderText {#text} at (47,24) size 55x21
+          text run at (47,24) width 55: "BBBBB"
+      RenderBlock {P} at (0,171) size 86x48 [border: (3px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 99x21
+          RenderText at (3,3) size 99x21
+            text run at (3,3) width 99: "AAAAAAAAA"
+        RenderText {#text} at (102,3) size 121x42
+          text run at (102,3) width 22: "AA"
+          text run at (3,24) width 20: "ZZ"
+        RenderInline (generated) at (0,0) size 90x21
+          RenderText at (23,24) size 90x21
+            text run at (23,24) width 90: "ZZZZZZZZZ"
+      RenderBlock {P} at (0,235) size 86x27 [border: (3px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 99x21
+          RenderText at (3,3) size 99x21
+            text run at (3,3) width 99: "AAAAAAAAA"
+        RenderText {#text} at (102,3) size 65x21
+          text run at (102,3) width 65: "MMMMM"
+        RenderInline (generated) at (0,0) size 90x21
+          RenderText at (167,3) size 90x21
+            text run at (167,3) width 90: "ZZZZZZZZZ"
+      RenderBlock {P} at (0,278) size 86x48 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 55x21
+          text run at (3,3) width 55: "YYYYY"
+        RenderInline (generated) at (0,0) size 99x42
+          RenderText at (58,3) size 99x42
+            text run at (58,3) width 44: "YYYY"
+            text run at (3,24) width 40: "ZZZZ"
+      RenderBlock {P} at (0,342) size 86x48 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 22x42
+          text run at (3,3) width 22: "YY"
+          text run at (3,24) width 20: "ZZ"
+        RenderInline (generated) at (0,0) size 90x21
+          RenderText at (23,24) size 90x21
+            text run at (23,24) width 90: "ZZZZZZZZZ"
+      RenderBlock {P} at (0,406) size 86x27 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 50x21
+          text run at (3,3) width 50: "ZZZZZ"
+        RenderInline (generated) at (0,0) size 90x21
+          RenderText at (53,3) size 90x21
+            text run at (53,3) width 90: "ZZZZZZZZZ"

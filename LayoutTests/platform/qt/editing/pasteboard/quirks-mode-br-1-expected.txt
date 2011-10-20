@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 783x66
-          text run at (0,0) width 778: "This is a test to make sure that the final <br> in an incoming fragment is interpretted strictly in quirks mode (where"
-          text run at (0,22) width 262: "brs at the end of blocks are collapsed). "
-          text run at (262,22) width 521: "This test used to fail because of unrendered content to the left of the collapsed"
-          text run at (0,44) width 20: "br."
-      RenderBlock {DIV} at (0,82) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 403x22
-            text run at (0,0) width 403: "The test should add a single blank line after this paragraph."
-          RenderInline {SPAN} at (0,0) size 0x22
-          RenderBR {BR} at (403,16) size 0x0
-        RenderBlock (anonymous) at (0,22) size 784x22
-          RenderBR {BR} at (0,0) size 0x22
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 779x63
+          text run at (0,0) width 741: "This is a test to make sure that the final <br> in an incoming fragment is interpretted strictly in quirks mode"
+          text run at (0,21) width 329: "(where brs at the end of blocks are collapsed). "
+          text run at (329,21) width 450: "This test used to fail because of unrendered content to the left of"
+          text run at (0,42) width 117: "the collapsed br."
+      RenderBlock {DIV} at (0,79) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 418x21
+            text run at (0,0) width 418: "The test should add a single blank line after this paragraph."
+          RenderInline {SPAN} at (0,0) size 0x21
+          RenderBR {BR} at (418,16) size 0x0
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderBR {BR} at (0,0) size 0x21
 caret: position 0 of child 1 {BR} of child 2 {DIV} of body

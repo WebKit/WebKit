@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 60x22
-          text run at (0,0) width 60: "OnlyThe"
-        RenderInline {SPAN} at (0,0) size 32x22
-          RenderText {#text} at (60,0) size 32x22
-            text run at (60,0) width 32: "Bold"
-        RenderText {#text} at (92,0) size 79x22
-          text run at (92,0) width 79: "TextShould"
-        RenderInline {SPAN} at (0,0) size 18x22
-          RenderText {#text} at (171,0) size 18x22
-            text run at (171,0) width 18: "Be"
-        RenderText {#text} at (189,0) size 55x22
-          text run at (189,0) width 55: "Selected"
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 61x21
+          text run at (0,0) width 61: "OnlyThe"
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderText {#text} at (61,0) size 36x21
+            text run at (61,0) width 36: "Bold"
+        RenderText {#text} at (97,0) size 82x21
+          text run at (97,0) width 82: "TextShould"
+        RenderInline {SPAN} at (0,0) size 20x21
+          RenderText {#text} at (179,0) size 20x21
+            text run at (179,0) width 20: "Be"
+        RenderText {#text} at (199,0) size 63x21
+          text run at (199,0) width 63: "Selected"
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {html} at (0,0) size 800x54
-    RenderBody {body} at (8,16) size 784x22
-      RenderBlock {p} at (0,0) size 784x22 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 359x22
-          text run at (0,0) width 359: "This line should be green and there should be no red."
-    RenderBody {body} at (8,54) size 784x0 [bgcolor=#FF0000]
+layer at (0,0) size 800x53
+  RenderBlock {html} at (0,0) size 800x53
+    RenderBody {body} at (8,16) size 784x21
+      RenderBlock {p} at (0,0) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 378x21
+          text run at (0,0) width 378: "This line should be green and there should be no red."
+    RenderBody {body} at (8,53) size 784x0 [bgcolor=#FF0000]

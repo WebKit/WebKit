@@ -12,41 +12,41 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x275 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x99
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x260 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 172x33
-            text run at (0,33) width 172: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
-            RenderText {#text} at (172,33) size 275x33
-              text run at (172,33) width 275: "<rdar://problem/3977962>"
-          RenderText {#text} at (447,33) size 708x66
-            text run at (447,33) width 261: " font loses bold style after"
-            text run at (0,66) width 488: "pasting next to existing text and pressing return"
-        RenderBlock {DIV} at (14,129) size 756x132
-          RenderBlock (anonymous) at (0,0) size 756x66
-            RenderText {#text} at (0,0) size 189x33
-              text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,24) size 0x0
-            RenderText {#text} at (0,33) size 455x33
-              text run at (0,33) width 455: "Should see this content in the red box below:"
-          RenderBlock {DIV} at (0,66) size 756x66
-            RenderBlock (anonymous) at (0,0) size 756x33
-              RenderText {#text} at (0,0) size 32x33
-                text run at (0,0) width 32: "foo"
-            RenderBlock {DIV} at (0,33) size 756x33
-              RenderInline {B} at (0,0) size 36x33
-                RenderText {#text} at (0,0) size 36x33
-                  text run at (0,0) width 36: "bar"
-      RenderBlock {DIV} at (0,299) size 784x70
-        RenderBlock {DIV} at (0,0) size 784x70 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x33
-            RenderText {#text} at (0,0) size 32x33
-              text run at (0,0) width 32: "foo"
-          RenderBlock {DIV} at (2,35) size 780x33
-            RenderInline {B} at (0,0) size 36x33
-              RenderText {#text} at (0,0) size 36x33
-                text run at (0,0) width 36: "bar"
+          RenderText {#text} at (0,32) size 171x30
+            text run at (0,32) width 171: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 274x30 [color=#0000EE]
+            RenderText {#text} at (171,32) size 274x30
+              text run at (171,32) width 274: "<rdar://problem/3977962>"
+          RenderText {#text} at (445,32) size 716x60
+            text run at (445,32) width 271: " font loses bold style after"
+            text run at (0,62) width 499: "pasting next to existing text and pressing return"
+        RenderBlock {DIV} at (14,122) size 756x124
+          RenderBlock (anonymous) at (0,0) size 756x62
+            RenderText {#text} at (0,0) size 214x32
+              text run at (0,0) width 214: "Expected Results: "
+            RenderBR {BR} at (214,24) size 0x0
+            RenderText {#text} at (0,32) size 473x30
+              text run at (0,32) width 473: "Should see this content in the red box below:"
+          RenderBlock {DIV} at (0,62) size 756x62
+            RenderBlock (anonymous) at (0,0) size 756x30
+              RenderText {#text} at (0,0) size 33x30
+                text run at (0,0) width 33: "foo"
+            RenderBlock {DIV} at (0,30) size 756x32
+              RenderInline {B} at (0,0) size 37x32
+                RenderText {#text} at (0,0) size 37x32
+                  text run at (0,0) width 37: "bar"
+      RenderBlock {DIV} at (0,284) size 784x66
+        RenderBlock {DIV} at (0,0) size 784x66 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x30
+            RenderText {#text} at (0,0) size 33x30
+              text run at (0,0) width 33: "foo"
+          RenderBlock {DIV} at (2,32) size 780x32
+            RenderInline {B} at (0,0) size 37x32
+              RenderText {#text} at (0,0) size 37x32
+                text run at (0,0) width 37: "bar"
 caret: position 0 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

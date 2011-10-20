@@ -17,39 +17,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x275 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x99
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x260 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 117x33
-            text run at (0,33) width 117: "Bug fix for "
-          RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
-            RenderText {#text} at (117,33) size 275x33
-              text run at (117,33) width 275: "<rdar://problem/4035648>"
-          RenderText {#text} at (392,33) size 752x66
-            text run at (392,33) width 360: " REGRESSION (Mail): line feed in"
-            text run at (0,66) width 512: "source HTML file causes bad copy/paste behavior"
-        RenderBlock {DIV} at (14,129) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 543x33
-            text run at (0,33) width 543: "Should see the text self-documenting itself correctly: "
-          RenderBR {BR} at (543,57) size 0x0
-          RenderInline {B} at (0,0) size 45x33
-            RenderText {#text} at (0,66) size 45x33
-              text run at (0,66) width 45: "bold"
-            RenderBR {BR} at (45,90) size 0x0
-          RenderText {#text} at (0,99) size 52x33
-            text run at (0,99) width 52: "plain"
-      RenderBlock {DIV} at (0,299) size 784x103
-        RenderBlock {DIV} at (0,0) size 784x103 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (2,2) size 0x33
-          RenderInline {B} at (0,0) size 45x33
-            RenderText {#text} at (2,35) size 45x33
-              text run at (2,35) width 45: "bold"
-            RenderBR {BR} at (47,59) size 0x0
-          RenderText {#text} at (2,68) size 52x33
-            text run at (2,68) width 52: "plain"
+          RenderText {#text} at (0,32) size 115x30
+            text run at (0,32) width 115: "Bug fix for "
+          RenderInline {A} at (0,0) size 274x30 [color=#0000EE]
+            RenderText {#text} at (115,32) size 274x30
+              text run at (115,32) width 274: "<rdar://problem/4035648>"
+          RenderText {#text} at (389,32) size 750x60
+            text run at (389,32) width 361: " REGRESSION (Mail): line feed in"
+            text run at (0,62) width 527: "source HTML file causes bad copy/paste behavior"
+        RenderBlock {DIV} at (14,122) size 756x124
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 558x30
+            text run at (0,32) width 558: "Should see the text self-documenting itself correctly: "
+          RenderBR {BR} at (558,55) size 0x0
+          RenderInline {B} at (0,0) size 52x32
+            RenderText {#text} at (0,62) size 52x32
+              text run at (0,62) width 52: "bold"
+            RenderBR {BR} at (52,86) size 0x0
+          RenderText {#text} at (0,94) size 49x30
+            text run at (0,94) width 49: "plain"
+      RenderBlock {DIV} at (0,284) size 784x96
+        RenderBlock {DIV} at (0,0) size 784x96 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (2,2) size 0x30
+          RenderInline {B} at (0,0) size 52x32
+            RenderText {#text} at (2,32) size 52x32
+              text run at (2,32) width 52: "bold"
+            RenderBR {BR} at (54,56) size 0x0
+          RenderText {#text} at (2,64) size 49x30
+            text run at (2,64) width 49: "plain"
 caret: position 5 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x100
-        RenderText {#text} at (0,0) size 265x22
-          text run at (0,0) width 265: "This test checks for regressions against "
-        RenderInline {A} at (0,0) size 750x44 [color=#0000EE]
-          RenderText {#text} at (265,0) size 750x44
-            text run at (265,0) width 485: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages"
-            text run at (0,22) width 199: "have hover issues (flickr.com)"
-        RenderText {#text} at (199,22) size 424x22
-          text run at (199,22) width 424: ". Click on the word TEST below and it should turn into PASS."
+        RenderText {#text} at (0,0) size 283x21
+          text run at (0,0) width 283: "This test checks for regressions against "
+        RenderInline {A} at (0,0) size 775x42 [color=#0000EE]
+          RenderText {#text} at (283,0) size 775x42
+            text run at (283,0) width 492: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages"
+            text run at (0,21) width 210: "have hover issues (flickr.com)"
+        RenderText {#text} at (210,21) size 432x21
+          text run at (210,21) width 432: ". Click on the word TEST below and it should turn into PASS."
       RenderBlock {DIV} at (0,100) size 784x200
-        RenderBlock (floating) {DIV} at (0,0) size 245x200
+        RenderBlock (floating) {DIV} at (0,0) size 273x200
           RenderImage {IMG} at (0,0) size 100x100
-          RenderText {#text} at (100,84) size 4x22
+          RenderText {#text} at (100,84) size 4x21
             text run at (100,84) width 4: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderBlock (floating) {H1} at (0,173) size 245x131
-            RenderInline {A} at (0,0) size 245x131 [color=#551A8B]
-              RenderText {#text} at (0,0) size 245x131
-                text run at (0,0) width 245: "PASS"
+          RenderBlock (floating) {H1} at (0,172) size 273x129
+            RenderInline {A} at (0,0) size 273x129 [color=#551A8B]
+              RenderText {#text} at (0,0) size 273x129
+                text run at (0,0) width 273: "PASS"
           RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (245,0) size 0x22
+        RenderBR {BR} at (273,0) size 0x21

@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {html} at (0,0) size 800x152
-    RenderBody {body} at (8,16) size 784x120
-      RenderBlock {p} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 758x44
-          text run at (0,0) width 758: "Below both lines should be centered. The first is static, the second is dynamically generated using javascript. Bug"
-          text run at (0,22) width 44: "14506."
-      RenderBlock {p} at (0,60) size 784x22
-        RenderText {#text} at (327,0) size 130x22
-          text run at (327,0) width 130: "Should be centered"
-      RenderBlock {p} at (0,98) size 784x22
-        RenderText {#text} at (327,0) size 130x22
-          text run at (327,0) width 130: "Should be centered"
+layer at (0,0) size 800x148
+  RenderBlock {html} at (0,0) size 800x148
+    RenderBody {body} at (8,16) size 784x116
+      RenderBlock {p} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 766x42
+          text run at (0,0) width 766: "Below both lines should be centered. The first is static, the second is dynamically generated using javascript."
+          text run at (0,21) width 82: "Bug 14506."
+      RenderBlock {p} at (0,58) size 784x21
+        RenderText {#text} at (322,0) size 140x21
+          text run at (322,0) width 140: "Should be centered"
+      RenderBlock {p} at (0,95) size 784x21
+        RenderText {#text} at (322,0) size 140x21
+          text run at (322,0) width 140: "Should be centered"

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 114x88
-  RenderBlock (positioned) {SPAN} at (0,0) size 114x88
-    RenderText {#text} at (0,0) size 114x88
-      text run at (0,0) width 114: "position:absolute"
-      text run at (0,22) width 75: "span inside"
-      text run at (0,44) width 108: "position:relative"
-      text run at (0,66) width 32: "span"
+layer at (8,8) size 121x84
+  RenderBlock (positioned) {SPAN} at (0,0) size 121x84
+    RenderText {#text} at (0,0) size 121x84
+      text run at (0,0) width 121: "position:absolute"
+      text run at (0,21) width 82: "span inside"
+      text run at (0,42) width 112: "position:relative"
+      text run at (0,63) width 35: "span"

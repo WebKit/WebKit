@@ -4,12 +4,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 198x22
-          text run at (0,0) width 198: "Only 'bar' should be selected."
-      RenderBlock {DIV} at (0,38) size 52x46 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 49x44
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 208x21
+          text run at (0,0) width 208: "Only 'bar' should be selected."
+      RenderBlock {DIV} at (0,37) size 52x65 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 49x63
           text run at (1,1) width 49: "foo bar"
-          text run at (1,23) width 49: "baz foo"
+          text run at (1,22) width 26: "baz"
+          text run at (1,43) width 22: "foo"
 selection start: position 4 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 7 of child 0 {#text} of child 2 {DIV} of body

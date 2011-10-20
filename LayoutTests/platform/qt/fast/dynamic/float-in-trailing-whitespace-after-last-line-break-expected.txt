@@ -3,28 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 761x44
-          RenderInline {A} at (0,0) size 310x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 310x22
-              text run at (57,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=19278"
-          RenderText {#text} at (367,0) size 761x44
-            text run at (367,0) width 4: " "
-            text run at (371,0) width 390: "REGRESSION (r31114-r31132): image float disappears on"
-            text run at (0,22) width 46: "refresh"
-        RenderText {#text} at (46,22) size 4x22
-          text run at (46,22) width 4: "."
-      RenderBlock {DIV} at (0,60) size 784x88
-        RenderBlock (anonymous) at (0,0) size 784x44
-          RenderText {#text} at (0,0) size 276x22
-            text run at (0,0) width 276: "Somewhere on this page, there should be"
-          RenderBR {BR} at (276,16) size 0x0
-          RenderBR {BR} at (0,22) size 0x22
-          RenderBlock (floating) {DIV} at (0,44) size 100x100 [bgcolor=#008000]
+        RenderInline {I} at (0,0) size 711x42
+          RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 337x21
+              text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=19278"
+          RenderText {#text} at (394,0) size 711x42
+            text run at (394,0) width 4: " "
+            text run at (398,0) width 313: "REGRESSION (r31114-r31132): image float"
+            text run at (0,21) width 154: "disappears on refresh"
+        RenderText {#text} at (154,21) size 4x21
+          text run at (154,21) width 4: "."
+      RenderBlock {DIV} at (0,58) size 784x163
+        RenderBlock (anonymous) at (0,0) size 784x42
+          RenderText {#text} at (0,0) size 295x21
+            text run at (0,0) width 295: "Somewhere on this page, there should be"
+          RenderBR {BR} at (295,16) size 0x0
+          RenderBR {BR} at (0,21) size 0x21
+          RenderBlock (floating) {DIV} at (0,42) size 100x100 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,44) size 150x44
-          RenderText {#text} at (100,0) size 50x44
-            text run at (100,0) width 50: "a green"
-            text run at (100,22) width 50: "square."
+        RenderBlock {DIV} at (0,42) size 150x121
+          RenderText {#text} at (100,0) size 141x121
+            text run at (100,0) width 9: "a"
+            text run at (100,21) width 41: "green"
+            text run at (0,100) width 53: "square."

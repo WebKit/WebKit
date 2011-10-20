@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x262
-  RenderBlock {HTML} at (0,0) size 800x262
-    RenderBody {BODY} at (8,16) size 784x238
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 328x22
-          text run at (0,0) width 328: "There must be a green square below and no red."
-layer at (8,54) size 784x200
-  RenderBlock (relative positioned) {DIV} at (0,38) size 784x200
-    RenderBlock (anonymous) at (0,0) size 784x22
-      RenderText {#text} at (100,0) size 4x22
+layer at (0,0) size 800x261
+  RenderBlock {HTML} at (0,0) size 800x261
+    RenderBody {BODY} at (8,16) size 784x237
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 344x21
+          text run at (0,0) width 344: "There must be a green square below and no red."
+layer at (8,53) size 784x200
+  RenderBlock (relative positioned) {DIV} at (0,37) size 784x200
+    RenderBlock (anonymous) at (0,0) size 784x21
+      RenderText {#text} at (100,0) size 4x21
         text run at (100,0) width 4: " "
-    RenderBlock {DIV} at (0,22) size 784x0
-layer at (8,54) size 100x100
+    RenderBlock {DIV} at (0,21) size 784x0
+layer at (8,53) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-layer at (8,54) size 100x100
+layer at (8,53) size 100x100
   RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

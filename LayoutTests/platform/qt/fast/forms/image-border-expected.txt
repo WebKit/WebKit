@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 756x44
-          text run at (0,0) width 565: "The first empty image box below should have the default grey \"no border\" border. "
-          text run at (565,0) width 191: "The second should have a 1-"
-          text run at (0,22) width 407: "pixel solid black border. They should be the same otherwise."
-      RenderBlock (anonymous) at (0,60) size 784x56
-        RenderText {#text} at (0,34) size 60x22
-          text run at (0,34) width 60: "border:0"
-        RenderImage {IMG} at (60,0) size 338x50
-      RenderBlock {HR} at (0,124) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,134) size 784x58
-        RenderText {#text} at (0,36) size 60x22
-          text run at (0,36) width 60: "border:1"
-        RenderImage {IMG} at (60,0) size 340x52 [border: (1px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 781x42
+          text run at (0,0) width 575: "The first empty image box below should have the default grey \"no border\" border. "
+          text run at (575,0) width 206: "The second should have a 1-"
+          text run at (0,21) width 428: "pixel solid black border. They should be the same otherwise."
+      RenderBlock (anonymous) at (0,58) size 784x55
+        RenderText {#text} at (0,34) size 59x21
+          text run at (0,34) width 59: "border:0"
+        RenderImage {IMG} at (59,0) size 338x50
+      RenderBlock {HR} at (0,121) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,131) size 784x57
+        RenderText {#text} at (0,36) size 59x21
+          text run at (0,36) width 59: "border:1"
+        RenderImage {IMG} at (59,0) size 340x52 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0

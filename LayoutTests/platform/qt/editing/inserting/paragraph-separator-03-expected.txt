@@ -11,26 +11,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 774x66
-          text run at (0,0) width 726: "Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a"
-          text run at (0,22) width 534: "paragraph separator at the end of a paragraph in text that preserves newlines. "
-          text run at (534,22) width 240: "Also, an extraneous space would be"
-          text run at (0,44) width 119: "added after 'foo'. "
-          text run at (119,44) width 240: "Only one newline should be added. "
-          text run at (359,44) width 288: "And there should be no extraneous spaces."
-      RenderBlock {P} at (0,82) size 784x22
-        RenderInline {B} at (0,0) size 152x22
-          RenderText {#text} at (0,0) size 152x22
-            text run at (0,0) width 152: "It demonstrates a bug:"
-        RenderText {#text} at (152,0) size 626x22
-          text run at (152,0) width 626: " too much padding is left between the new line and the end of the paragraph containing 'foo'."
-      RenderBlock {DIV} at (0,120) size 784x64
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 751x63
+          text run at (0,0) width 750: "Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a"
+          text run at (0,21) width 551: "paragraph separator at the end of a paragraph in text that preserves newlines. "
+          text run at (551,21) width 188: "Also, an extraneous space"
+          text run at (0,42) width 189: "would be added after 'foo'. "
+          text run at (189,42) width 255: "Only one newline should be added. "
+          text run at (444,42) width 307: "And there should be no extraneous spaces."
+      RenderBlock {P} at (0,79) size 784x42
+        RenderInline {B} at (0,0) size 170x21
+          RenderText {#text} at (0,0) size 170x21
+            text run at (0,0) width 170: "It demonstrates a bug:"
+        RenderText {#text} at (170,0) size 783x42
+          text run at (170,0) width 613: " too much padding is left between the new line and the end of the paragraph containing"
+          text run at (0,21) width 32: "'foo'."
+      RenderBlock {DIV} at (0,137) size 784x64
         RenderBlock {PRE} at (0,0) size 784x17
           RenderText {#text} at (0,0) size 18x17
             text run at (0,0) width 18: "foo"
         RenderBlock {PRE} at (0,30) size 784x34
-          RenderText {#text} at (0,0) size 22x34
+          RenderText {#text} at (0,0) size 18x34
             text run at (0,0) width 0: " "
-            text run at (0,17) width 22: "bar"
+            text run at (0,17) width 18: "bar"
 caret: position 0 of child 0 {#text} of child 1 {PRE} of child 4 {DIV} of body

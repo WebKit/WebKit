@@ -16,13 +16,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 757x66
-          text run at (0,0) width 757: "This tests to make sure that when the enclosing block is the body element, and when the html element is editable,"
-          text run at (0,22) width 750: "inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the"
-          text run at (750,22) width 4: " "
-          text run at (0,44) width 201: "enclosing block flow element)."
+      RenderBlock (anonymous) at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 738x63
+          text run at (0,0) width 734: "This tests to make sure that when the enclosing block is the body element, and when the html element is"
+          text run at (734,0) width 4: " "
+          text run at (0,21) width 65: "editable, "
+          text run at (65,21) width 661: "inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually"
+          text run at (726,21) width 4: " "
+          text run at (0,42) width 332: "splits/clones the enclosing block flow element)."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,66) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
+      RenderBlock {DIV} at (0,63) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
 caret: position 0 of child 0 {BR} of child 2 {DIV} of body

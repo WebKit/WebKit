@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 78x88
-          text run at (0,0) width 78: "You should"
-          text run at (0,22) width 78: "not see this."
-          text run at (0,44) width 68: "Resize the"
-          text run at (0,66) width 58: "window."
-layer at (8,8) size 100x138
-  RenderBlock (positioned) {DIV} at (0,0) size 100x138
+        RenderText {#text} at (0,0) size 85x84
+          text run at (0,0) width 81: "You should"
+          text run at (0,21) width 85: "not see this."
+          text run at (0,42) width 76: "Resize the"
+          text run at (0,63) width 59: "window."
+layer at (8,8) size 100x137
+  RenderBlock (positioned) {DIV} at (0,0) size 100x137
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-    RenderBlock (anonymous) at (0,100) size 100x38
-      RenderButton {BUTTON} at (2,2) size 59x34 [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (6,6) size 47x22
-          RenderText {#text} at (0,0) size 47x22
-            text run at (0,0) width 47: "Button"
+    RenderBlock (anonymous) at (0,100) size 100x37
+      RenderButton {BUTTON} at (2,2) size 58x33 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 46x21
+          RenderText {#text} at (0,0) size 46x21
+            text run at (0,0) width 46: "Button"
       RenderText {#text} at (0,0) size 0x0

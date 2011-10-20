@@ -16,38 +16,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x308 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x132
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x318 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x152
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 737x66
-            text run at (0,33) width 737: "Pasting styles we should not remove during the \"smoosh styles\" process."
-            text run at (0,66) width 210: "This tests the fix for "
-          RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
-            RenderText {#text} at (210,66) size 275x33
-              text run at (210,66) width 275: "<rdar://problem/3972665>"
-          RenderText {#text} at (485,66) size 734x66
-            text run at (485,66) width 249: " 8A360: HTML message"
-            text run at (0,99) width 692: "partially truncated on left hand side, text-indent from Script Editor"
-        RenderBlock {DIV} at (14,162) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 733x66
-            text run at (0,33) width 733: "Should see this content in the red box below: foo. Note that there should"
-            text run at (0,66) width 210: "be no visible indent. "
-          RenderBR {BR} at (210,90) size 0x0
-          RenderText {#text} at (0,99) size 194x33
-            text run at (0,99) width 194: "This demonstrates "
-          RenderInline {A} at (0,0) size 56x33 [color=#0000EE]
-            RenderText {#text} at (194,99) size 56x33
-              text run at (194,99) width 56: "a bug"
-          RenderText {#text} at (250,99) size 263x33
-            text run at (250,99) width 263: ", the caret is one pixel off."
-      RenderBlock {DIV} at (0,332) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (42,2) size 740x33
-            RenderText {#text} at (-40,0) size 32x33
-              text run at (-40,0) width 32: "foo"
+          RenderText {#text} at (0,32) size 674x60
+            text run at (0,32) width 674: "Pasting styles we should not remove during the \"smoosh styles\""
+            text run at (0,62) width 313: "process. This tests the fix for "
+          RenderInline {A} at (0,0) size 274x30 [color=#0000EE]
+            RenderText {#text} at (313,62) size 274x30
+              text run at (313,62) width 274: "<rdar://problem/3972665>"
+          RenderText {#text} at (587,62) size 741x90
+            text run at (587,62) width 154: " 8A360: HTML"
+            text run at (0,92) width 719: "message partially truncated on left hand side, text-indent from Script"
+            text run at (0,122) width 62: "Editor"
+        RenderBlock {DIV} at (14,182) size 756x122
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 685x60
+            text run at (0,32) width 685: "Should see this content in the red box below: foo. Note that there"
+            text run at (0,62) width 292: "should be no visible indent. "
+          RenderBR {BR} at (292,85) size 0x0
+          RenderText {#text} at (0,92) size 203x30
+            text run at (0,92) width 203: "This demonstrates "
+          RenderInline {A} at (0,0) size 59x30 [color=#0000EE]
+            RenderText {#text} at (203,92) size 59x30
+              text run at (203,92) width 59: "a bug"
+          RenderText {#text} at (262,92) size 273x30
+            text run at (262,92) width 273: ", the caret is one pixel off."
+      RenderBlock {DIV} at (0,342) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (42,2) size 740x30
+            RenderText {#text} at (-40,0) size 33x30
+              text run at (-40,0) width 33: "foo"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

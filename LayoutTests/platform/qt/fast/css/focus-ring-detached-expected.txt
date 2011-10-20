@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 460x138
-        RenderTableSection {TBODY} at (0,0) size 460x138
-          RenderTableRow {TR} at (0,2) size 460x134
-            RenderTableCell {TD} at (2,2) size 102x134 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 98x132
-                text run at (1,1) width 82: "This is some"
-                text run at (1,23) width 98: "filler text. This"
-                text run at (1,45) width 83: "is some filler"
-                text run at (1,67) width 73: "text.This is"
-                text run at (1,89) width 69: "some filler"
-                text run at (1,111) width 29: "text."
-            RenderTableCell {TD} at (106,35) size 352x68 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 213x22
-                text run at (1,1) width 213: "The text in this anchor element "
-              RenderInline {A} at (0,0) size 262x44 [color=#0000EE]
-                RenderText {#text} at (214,1) size 49x22
-                  text run at (214,1) width 49: "should "
-                RenderBR {BR} at (263,17) size 0x0
-                RenderText {#text} at (1,23) size 50x22
-                  text run at (1,23) width 50: "contain"
-              RenderText {#text} at (51,23) size 339x44
-                text run at (51,23) width 289: " 2 detached pieces. This test shows how the"
-                text run at (1,45) width 138: "link would look text."
+      RenderTable {TABLE} at (0,0) size 460x132
+        RenderTableSection {TBODY} at (0,0) size 460x132
+          RenderTableRow {TR} at (0,2) size 460x128
+            RenderTableCell {TD} at (2,2) size 102x128 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 98x126
+                text run at (1,1) width 90: "This is some"
+                text run at (1,22) width 98: "filler text. This"
+                text run at (1,43) width 89: "is some filler"
+                text run at (1,64) width 76: "text.This is"
+                text run at (1,85) width 73: "some filler"
+                text run at (1,106) width 29: "text."
+            RenderTableCell {TD} at (106,33) size 352x65 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 221x21
+                text run at (1,1) width 221: "The text in this anchor element "
+              RenderInline {A} at (0,0) size 273x42 [color=#0000EE]
+                RenderText {#text} at (222,1) size 52x21
+                  text run at (222,1) width 52: "should "
+                RenderBR {BR} at (274,17) size 0x0
+                RenderText {#text} at (1,22) size 52x21
+                  text run at (1,22) width 52: "contain"
+              RenderText {#text} at (53,22) size 338x42
+                text run at (53,22) width 286: " 2 detached pieces. This test shows how"
+                text run at (1,43) width 165: "the link would look text."

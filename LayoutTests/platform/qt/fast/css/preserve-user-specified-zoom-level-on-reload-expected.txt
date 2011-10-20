@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (23,23) size 754x530
-      RenderBlock {P} at (0,0) size 754x192
-        RenderText {#text} at (0,0) size 711x192
-          text run at (0,0) width 692: "This test ensures that we preserve"
-          text run at (0,64) width 711: "the user-specified zoom level of the"
-          text run at (0,128) width 313: "page on reload."
+      RenderBlock {P} at (0,0) size 754x180
+        RenderText {#text} at (0,0) size 735x180
+          text run at (0,0) width 735: "This test ensures that we preserve"
+          text run at (0,60) width 678: "the user-specified zoom level of"
+          text run at (0,120) width 416: "the page on reload."

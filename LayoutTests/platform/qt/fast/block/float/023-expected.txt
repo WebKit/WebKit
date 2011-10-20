@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 599x22
-          text run at (0,0) width 351: "You should see a single 100x100 green block below. "
-          text run at (351,0) width 248: "If you see any red, the test has failed."
-      RenderBlock {UL} at (0,38) size 784x0
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 640x21
+          text run at (0,0) width 379: "You should see a single 100x100 green block below. "
+          text run at (379,0) width 261: "If you see any red, the test has failed."
+      RenderBlock {UL} at (0,37) size 784x0
         RenderBlock (floating) {LI} at (100,0) size 100x100 [bgcolor=#FF0000]
-layer at (108,46) size 100x100
+layer at (108,45) size 100x100
   RenderBlock (floating) {LI} at (0,0) size 100x100 [bgcolor=#008000]

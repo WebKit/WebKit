@@ -5,13 +5,13 @@ layer at (0,0) size 784x1432
     RenderBody {BODY} at (8,8) size 768x1416
       RenderBlock {DIV} at (0,0) size 768x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
-        RenderTable {TABLE} at (200,0) size 568x54 [border: (2px solid #008000)]
-          RenderTableSection {TBODY} at (2,2) size 564x50
-            RenderTableRow {TR} at (0,2) size 564x46
-              RenderTableCell {TD} at (2,2) size 560x46 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 544x44
-                  text run at (1,1) width 544: "This is a table. It should sit on the same line as the float and wrap as needed to fit"
-                  text run at (1,23) width 216: "within the remaining line width."
+        RenderTable {TABLE} at (200,0) size 568x52 [border: (2px solid #008000)]
+          RenderTableSection {TBODY} at (2,2) size 564x48
+            RenderTableRow {TR} at (0,2) size 564x44
+              RenderTableCell {TD} at (2,2) size 560x44 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 555x42
+                  text run at (1,1) width 555: "This is a table. It should sit on the same line as the float and wrap as needed to"
+                  text run at (1,22) width 235: "fit within the remaining line width."
       RenderBlock {DIV} at (0,200) size 768x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,408) size 768x200
@@ -19,14 +19,14 @@ layer at (0,0) size 784x1432
         RenderBlock {HR} at (200,0) size 568x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,608) size 768x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
-        RenderTable {TABLE} at (200,0) size 384x76 [border: (2px solid #008000)]
-          RenderTableSection {TBODY} at (2,2) size 380x72
-            RenderTableRow {TR} at (0,2) size 380x68
-              RenderTableCell {TD} at (2,2) size 376x68 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 369x66
-                  text run at (1,1) width 369: "This is a table. It should sit on the same line as the float"
-                  text run at (1,23) width 344: "and wrap as needed to fit within the remaining line"
-                  text run at (1,45) width 43: "width."
+        RenderTable {TABLE} at (200,0) size 384x73 [border: (2px solid #008000)]
+          RenderTableSection {TBODY} at (2,2) size 380x69
+            RenderTableRow {TR} at (0,2) size 380x65
+              RenderTableCell {TD} at (2,2) size 376x65 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 359x63
+                  text run at (1,1) width 355: "This is a table. It should sit on the same line as the"
+                  text run at (1,22) width 359: "float and wrap as needed to fit within the remaining"
+                  text run at (1,43) width 72: "line width."
       RenderBlock {DIV} at (0,808) size 768x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 768x200
@@ -35,14 +35,14 @@ layer at (0,0) size 784x1432
       RenderBlock {DIV} at (0,1216) size 768x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
         RenderImage {IMG} at (200,0) size 384x50 [bgcolor=#008000]
-layer at (208,208) size 568x64 clip at (210,210) size 548x44
-  RenderBlock {DIV} at (200,0) size 568x64 [border: (2px solid #0000FF)]
-    RenderText {#text} at (2,2) size 522x44
-      text run at (2,2) width 522: "This is an overflow:scroll region. It should sit on the same line as the float and"
-      text run at (2,24) width 361: "wrap as needed to fit within the remaining line width."
-layer at (208,816) size 388x86 clip at (210,818) size 368x66
-  RenderBlock {DIV} at (200,0) size 388x86 [border: (2px solid #0000FF)]
-    RenderText {#text} at (2,2) size 361x66
-      text run at (2,2) width 349: "This is an overflow:scroll region. It should sit on the"
-      text run at (2,24) width 361: "same line as the float and wrap as needed to fit within"
-      text run at (2,46) width 169: "the remaining line width."
+layer at (208,208) size 568x62 clip at (210,210) size 548x42
+  RenderBlock {DIV} at (200,0) size 568x62 [border: (2px solid #0000FF)]
+    RenderText {#text} at (2,2) size 545x42
+      text run at (2,2) width 545: "This is an overflow:scroll region. It should sit on the same line as the float and"
+      text run at (2,23) width 370: "wrap as needed to fit within the remaining line width."
+layer at (208,816) size 388x83 clip at (210,818) size 368x63
+  RenderBlock {DIV} at (200,0) size 388x83 [border: (2px solid #0000FF)]
+    RenderText {#text} at (2,2) size 360x63
+      text run at (2,2) width 360: "This is an overflow:scroll region. It should sit on the"
+      text run at (2,23) width 332: "same line as the float and wrap as needed to fit"
+      text run at (2,44) width 219: "within the remaining line width."

@@ -3,47 +3,47 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 782x88
-          text run at (0,0) width 479: "You should see a black box below that is the width of the content area. "
-          text run at (479,0) width 278: "It contains alternating struts and springs."
-          text run at (0,22) width 350: "The struts are bordered in green and are inflexible. "
-          text run at (350,22) width 387: "The springs are bordered in purple and should grow and"
-          text run at (0,44) width 295: "shrink as you resize your browser window. "
-          text run at (295,44) width 487: "The black box should get taller when you make your window wider and"
-          text run at (0,66) width 349: "get shorter when you shrink your browser window."
-      RenderDeprecatedFlexibleBox {DIV} at (0,104) size 784x82 [border: (2px solid #000000)]
-        RenderDeprecatedFlexibleBox {DIV} at (6,6) size 42x70 [border: (2px solid #008000)]
-          RenderBlock (anonymous) at (2,2) size 38x66
-            RenderText {#text} at (0,0) size 38x22
-              text run at (0,0) width 38: "Fixed"
-        RenderDeprecatedFlexibleBox {DIV} at (52,6) size 194x70 [border: (2px solid #800080)]
-          RenderBlock (anonymous) at (2,2) size 190x66
-            RenderText {#text} at (0,0) size 183x66
-              text run at (0,0) width 183: "This is a flexible block, and"
-              text run at (0,22) width 161: "it will shrink or grow as"
-              text run at (0,44) width 52: "needed."
-        RenderDeprecatedFlexibleBox {DIV} at (250,6) size 42x70 [border: (2px solid #008000)]
-          RenderBlock (anonymous) at (2,2) size 38x66
-            RenderText {#text} at (0,0) size 38x22
-              text run at (0,0) width 38: "Fixed"
-        RenderDeprecatedFlexibleBox {DIV} at (296,6) size 193x70 [border: (2px solid #800080)]
-          RenderBlock (anonymous) at (2,2) size 189x66
-            RenderText {#text} at (0,0) size 183x66
-              text run at (0,0) width 183: "This is a flexible block, and"
-              text run at (0,22) width 161: "it will shrink or grow as"
-              text run at (0,44) width 52: "needed."
-        RenderDeprecatedFlexibleBox {DIV} at (493,6) size 42x70 [border: (2px solid #008000)]
-          RenderBlock (anonymous) at (2,2) size 38x66
-            RenderText {#text} at (0,0) size 38x22
-              text run at (0,0) width 38: "Fixed"
-        RenderDeprecatedFlexibleBox {DIV} at (539,6) size 193x70 [border: (2px solid #800080)]
-          RenderBlock (anonymous) at (2,2) size 189x66
-            RenderText {#text} at (0,0) size 183x66
-              text run at (0,0) width 183: "This is a flexible block, and"
-              text run at (0,22) width 161: "it will shrink or grow as"
-              text run at (0,44) width 52: "needed."
-        RenderDeprecatedFlexibleBox {DIV} at (736,6) size 42x70 [border: (2px solid #008000)]
-          RenderBlock (anonymous) at (2,2) size 38x66
-            RenderText {#text} at (0,0) size 38x22
-              text run at (0,0) width 38: "Fixed"
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 784x84
+          text run at (0,0) width 500: "You should see a black box below that is the width of the content area. "
+          text run at (500,0) width 284: "It contains alternating struts and springs."
+          text run at (0,21) width 361: "The struts are bordered in green and are inflexible. "
+          text run at (361,21) width 398: "The springs are bordered in purple and should grow and"
+          text run at (0,42) width 304: "shrink as you resize your browser window. "
+          text run at (304,42) width 470: "The black box should get taller when you make your window wider"
+          text run at (0,63) width 385: "and get shorter when you shrink your browser window."
+      RenderDeprecatedFlexibleBox {DIV} at (0,100) size 784x79 [border: (2px solid #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (6,6) size 44x67 [border: (2px solid #008000)]
+          RenderBlock (anonymous) at (2,2) size 40x63
+            RenderText {#text} at (0,0) size 40x21
+              text run at (0,0) width 40: "Fixed"
+        RenderDeprecatedFlexibleBox {DIV} at (54,6) size 191x67 [border: (2px solid #800080)]
+          RenderBlock (anonymous) at (2,2) size 187x63
+            RenderText {#text} at (0,0) size 171x63
+              text run at (0,0) width 161: "This is a flexible block,"
+              text run at (0,21) width 171: "and it will shrink or grow"
+              text run at (0,42) width 79: "as needed."
+        RenderDeprecatedFlexibleBox {DIV} at (249,6) size 44x67 [border: (2px solid #008000)]
+          RenderBlock (anonymous) at (2,2) size 40x63
+            RenderText {#text} at (0,0) size 40x21
+              text run at (0,0) width 40: "Fixed"
+        RenderDeprecatedFlexibleBox {DIV} at (297,6) size 191x67 [border: (2px solid #800080)]
+          RenderBlock (anonymous) at (2,2) size 187x63
+            RenderText {#text} at (0,0) size 171x63
+              text run at (0,0) width 161: "This is a flexible block,"
+              text run at (0,21) width 171: "and it will shrink or grow"
+              text run at (0,42) width 79: "as needed."
+        RenderDeprecatedFlexibleBox {DIV} at (492,6) size 44x67 [border: (2px solid #008000)]
+          RenderBlock (anonymous) at (2,2) size 40x63
+            RenderText {#text} at (0,0) size 40x21
+              text run at (0,0) width 40: "Fixed"
+        RenderDeprecatedFlexibleBox {DIV} at (540,6) size 190x67 [border: (2px solid #800080)]
+          RenderBlock (anonymous) at (2,2) size 186x63
+            RenderText {#text} at (0,0) size 171x63
+              text run at (0,0) width 161: "This is a flexible block,"
+              text run at (0,21) width 171: "and it will shrink or grow"
+              text run at (0,42) width 79: "as needed."
+        RenderDeprecatedFlexibleBox {DIV} at (734,6) size 44x67 [border: (2px solid #008000)]
+          RenderBlock (anonymous) at (2,2) size 40x63
+            RenderText {#text} at (0,0) size 40x21
+              text run at (0,0) width 40: "Fixed"

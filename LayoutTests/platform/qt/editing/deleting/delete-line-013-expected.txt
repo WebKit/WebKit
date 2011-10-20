@@ -26,12 +26,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x33
-        RenderText {#text} at (0,0) size 147x33
-          text run at (0,0) width 147: "There is a tide"
-      RenderBlock (anonymous) at (0,33) size 784x33
-        RenderText {#text} at (0,0) size 207x33
-          text run at (0,0) width 207: "in the affairs of men"
+      RenderBlock {DIV} at (0,0) size 784x30
+        RenderText {#text} at (0,0) size 151x30
+          text run at (0,0) width 151: "There is a tide"
+      RenderBlock (anonymous) at (0,30) size 784x30
+        RenderText {#text} at (0,0) size 210x30
+          text run at (0,0) width 210: "in the affairs of men"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 15 of child 0 {#text} of child 1 {DIV} of body

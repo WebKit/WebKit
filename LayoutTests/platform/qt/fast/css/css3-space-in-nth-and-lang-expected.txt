@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x22 [color=#008000] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 114x22
-          text run at (0,0) width 114: "Green on Yellow"
-      RenderBlock {DIV} at (0,22) size 784x22 [color=#0000FF] [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 95x22
-          text run at (0,0) width 95: "Blue on Silver"
-      RenderBlock {DIV} at (0,44) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 42x22
-          text run at (0,0) width 42: "Green"
-      RenderBlock {DIV} at (0,66) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 31x22
-          text run at (0,0) width 31: "Blue"
-      RenderBlock {DIV} at (0,88) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 42x22
-          text run at (0,0) width 42: "Green"
-      RenderBlock {DIV} at (0,110) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 31x22
-          text run at (0,0) width 31: "Blue"
+      RenderBlock {DIV} at (0,0) size 784x21 [color=#008000] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 119x21
+          text run at (0,0) width 119: "Green on Yellow"
+      RenderBlock {DIV} at (0,21) size 784x21 [color=#0000FF] [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 100x21
+          text run at (0,0) width 100: "Blue on Silver"
+      RenderBlock {DIV} at (0,42) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 44x21
+          text run at (0,0) width 44: "Green"
+      RenderBlock {DIV} at (0,63) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 33x21
+          text run at (0,0) width 33: "Blue"
+      RenderBlock {DIV} at (0,84) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 44x21
+          text run at (0,0) width 44: "Green"
+      RenderBlock {DIV} at (0,105) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 33x21
+          text run at (0,0) width 33: "Blue"

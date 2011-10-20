@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (16,16) size 768x254
-  RenderBlock {HTML} at (16,16) size 768x254 [color=#FFFF00] [border: (3px solid #0000FF)]
-    RenderBody {BODY} at (35,35) size 698x184 [color=#000000] [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-      RenderBlock {P} at (19,19) size 660x146
-        RenderText {#text} at (0,0) size 637x66
-          text run at (0,0) width 630: "The HTML box, the one with a blue border should be fully filled with lime green. The BODY"
-          text run at (0,22) width 637: "box, the one with black border, should also be fully filled with lime green. The lime green color"
-          text run at (0,44) width 293: "should not spill out outside the blue border."
+layer at (16,16) size 768x251
+  RenderBlock {HTML} at (16,16) size 768x251 [color=#FFFF00] [border: (3px solid #0000FF)]
+    RenderBody {BODY} at (35,35) size 698x181 [color=#000000] [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+      RenderBlock {P} at (19,19) size 660x143
+        RenderText {#text} at (0,0) size 641x63
+          text run at (0,0) width 641: "The HTML box, the one with a blue border should be fully filled with lime green. The BODY"
+          text run at (0,21) width 622: "box, the one with black border, should also be fully filled with lime green. The lime green"
+          text run at (0,42) width 343: "color should not spill out outside the blue border."

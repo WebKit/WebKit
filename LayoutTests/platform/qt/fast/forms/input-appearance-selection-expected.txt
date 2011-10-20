@@ -1,82 +1,82 @@
-layer at (0,0) size 784x702
+layer at (0,0) size 784x673
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x702
-  RenderBlock {HTML} at (0,0) size 784x702
-    RenderBody {BODY} at (8,8) size 768x678
-      RenderBlock (anonymous) at (0,0) size 768x22
-        RenderText {#text} at (0,0) size 354x22
-          text run at (0,0) width 354: "This tests the selection methods on the new text field."
-      RenderBlock {P} at (0,38) size 768x30
-        RenderTextControl {INPUT} at (2,2) size 166x26
+layer at (0,0) size 784x673
+  RenderBlock {HTML} at (0,0) size 784x673
+    RenderBody {BODY} at (8,8) size 768x649
+      RenderBlock (anonymous) at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 376x21
+          text run at (0,0) width 376: "This tests the selection methods on the new text field."
+      RenderBlock {P} at (0,37) size 768x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,84) size 768x594
-        RenderBR {BR} at (0,0) size 0x22
-        RenderText {#text} at (0,22) size 206x22
-          text run at (0,22) width 206: "Test 1: setSelectionRange(0, 0)"
-        RenderBR {BR} at (206,38) size 0x0
-        RenderText {#text} at (0,44) size 50x22
-          text run at (0,44) width 50: "Passed."
-        RenderBR {BR} at (50,60) size 0x0
-        RenderBR {BR} at (0,66) size 0x22
-        RenderText {#text} at (0,88) size 169x22
-          text run at (0,88) width 169: "Test 2: selectionEnd = 17"
-        RenderBR {BR} at (169,104) size 0x0
-        RenderText {#text} at (0,110) size 50x22
-          text run at (0,110) width 50: "Passed."
-        RenderBR {BR} at (50,126) size 0x0
-        RenderBR {BR} at (0,132) size 0x22
-        RenderText {#text} at (0,154) size 166x22
-          text run at (0,154) width 166: "Test 3: selectionStart = 1"
-        RenderBR {BR} at (166,170) size 0x0
-        RenderText {#text} at (0,176) size 50x22
-          text run at (0,176) width 50: "Passed."
-        RenderBR {BR} at (50,192) size 0x0
-        RenderBR {BR} at (0,198) size 0x22
-        RenderText {#text} at (0,220) size 214x22
-          text run at (0,220) width 214: "Test 4: setSelectionRange(10, 3)"
-        RenderBR {BR} at (214,236) size 0x0
-        RenderText {#text} at (0,242) size 50x22
-          text run at (0,242) width 50: "Passed."
-        RenderBR {BR} at (50,258) size 0x0
-        RenderBR {BR} at (0,264) size 0x22
-        RenderText {#text} at (0,286) size 161x22
-          text run at (0,286) width 161: "Test 5: selectionEnd = 2"
-        RenderBR {BR} at (161,302) size 0x0
-        RenderText {#text} at (0,308) size 50x22
-          text run at (0,308) width 50: "Passed."
-        RenderBR {BR} at (50,324) size 0x0
-        RenderBR {BR} at (0,330) size 0x22
-        RenderText {#text} at (0,352) size 206x22
-          text run at (0,352) width 206: "Test 6: setSelectionRange(5, 4)"
-        RenderBR {BR} at (206,368) size 0x0
-        RenderText {#text} at (0,374) size 50x22
-          text run at (0,374) width 50: "Passed."
-        RenderBR {BR} at (50,390) size 0x0
-        RenderBR {BR} at (0,396) size 0x22
-        RenderText {#text} at (0,418) size 216x22
-          text run at (0,418) width 216: "Test 7: setSelectionRange(-5, -4)"
-        RenderBR {BR} at (216,434) size 0x0
-        RenderText {#text} at (0,440) size 50x22
-          text run at (0,440) width 50: "Passed."
-        RenderBR {BR} at (50,456) size 0x0
-        RenderBR {BR} at (0,462) size 0x22
-        RenderText {#text} at (0,484) size 219x22
-          text run at (0,484) width 219: "Test 8: setSelectionRange(-5, 80)"
-        RenderBR {BR} at (219,500) size 0x0
-        RenderText {#text} at (0,506) size 50x22
-          text run at (0,506) width 50: "Passed."
-        RenderBR {BR} at (50,522) size 0x0
-        RenderBR {BR} at (0,528) size 0x22
-        RenderText {#text} at (0,550) size 214x22
-          text run at (0,550) width 214: "Test 9: setSelectionRange(3, 12)"
-        RenderBR {BR} at (214,566) size 0x0
-        RenderText {#text} at (0,572) size 50x22
-          text run at (0,572) width 50: "Passed."
-        RenderBR {BR} at (50,588) size 0x0
-      RenderBlock {P} at (0,694) size 768x0
-layer at (12,50) size 162x22 scrollWidth 184
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 182x22
-      text run at (1,0) width 182: "123456789 ABCDEFGHIJ"
+      RenderBlock {DIV} at (0,82) size 768x567
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 224x21
+          text run at (0,21) width 224: "Test 1: setSelectionRange(0, 0)"
+        RenderBR {BR} at (224,37) size 0x0
+        RenderText {#text} at (0,42) size 58x21
+          text run at (0,42) width 58: "Passed."
+        RenderBR {BR} at (58,58) size 0x0
+        RenderBR {BR} at (0,63) size 0x21
+        RenderText {#text} at (0,84) size 180x21
+          text run at (0,84) width 180: "Test 2: selectionEnd = 17"
+        RenderBR {BR} at (180,100) size 0x0
+        RenderText {#text} at (0,105) size 58x21
+          text run at (0,105) width 58: "Passed."
+        RenderBR {BR} at (58,121) size 0x0
+        RenderBR {BR} at (0,126) size 0x21
+        RenderText {#text} at (0,147) size 175x21
+          text run at (0,147) width 175: "Test 3: selectionStart = 1"
+        RenderBR {BR} at (175,163) size 0x0
+        RenderText {#text} at (0,168) size 58x21
+          text run at (0,168) width 58: "Passed."
+        RenderBR {BR} at (58,184) size 0x0
+        RenderBR {BR} at (0,189) size 0x21
+        RenderText {#text} at (0,210) size 233x21
+          text run at (0,210) width 233: "Test 4: setSelectionRange(10, 3)"
+        RenderBR {BR} at (233,226) size 0x0
+        RenderText {#text} at (0,231) size 58x21
+          text run at (0,231) width 58: "Passed."
+        RenderBR {BR} at (58,247) size 0x0
+        RenderBR {BR} at (0,252) size 0x21
+        RenderText {#text} at (0,273) size 171x21
+          text run at (0,273) width 171: "Test 5: selectionEnd = 2"
+        RenderBR {BR} at (171,289) size 0x0
+        RenderText {#text} at (0,294) size 58x21
+          text run at (0,294) width 58: "Passed."
+        RenderBR {BR} at (58,310) size 0x0
+        RenderBR {BR} at (0,315) size 0x21
+        RenderText {#text} at (0,336) size 224x21
+          text run at (0,336) width 224: "Test 6: setSelectionRange(5, 4)"
+        RenderBR {BR} at (224,352) size 0x0
+        RenderText {#text} at (0,357) size 58x21
+          text run at (0,357) width 58: "Passed."
+        RenderBR {BR} at (58,373) size 0x0
+        RenderBR {BR} at (0,378) size 0x21
+        RenderText {#text} at (0,399) size 234x21
+          text run at (0,399) width 234: "Test 7: setSelectionRange(-5, -4)"
+        RenderBR {BR} at (234,415) size 0x0
+        RenderText {#text} at (0,420) size 58x21
+          text run at (0,420) width 58: "Passed."
+        RenderBR {BR} at (58,436) size 0x0
+        RenderBR {BR} at (0,441) size 0x21
+        RenderText {#text} at (0,462) size 238x21
+          text run at (0,462) width 238: "Test 8: setSelectionRange(-5, 80)"
+        RenderBR {BR} at (238,478) size 0x0
+        RenderText {#text} at (0,483) size 58x21
+          text run at (0,483) width 58: "Passed."
+        RenderBR {BR} at (58,499) size 0x0
+        RenderBR {BR} at (0,504) size 0x21
+        RenderText {#text} at (0,525) size 233x21
+          text run at (0,525) width 233: "Test 9: setSelectionRange(3, 12)"
+        RenderBR {BR} at (233,541) size 0x0
+        RenderText {#text} at (0,546) size 58x21
+          text run at (0,546) width 58: "Passed."
+        RenderBR {BR} at (58,562) size 0x0
+      RenderBlock {P} at (0,665) size 768x0
+layer at (12,49) size 182x21 scrollWidth 190
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 188x21
+      text run at (1,0) width 188: "123456789 ABCDEFGHIJ"
 selection start: position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {P} of body
 selection end:   position 12 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {P} of body

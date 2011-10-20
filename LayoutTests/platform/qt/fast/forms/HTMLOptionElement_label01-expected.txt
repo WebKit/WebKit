@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 728x22
-        text run at (0,0) width 728: "In the selection list below, the text 'The label for this element is \"1\"' should appear, and not the character '1'"
-      RenderBR {BR} at (728,16) size 0x0
-      RenderMenuList {SELECT} at (2,24) size 237x27 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 209x22
-          RenderText at (0,0) size 209x22
-            text run at (0,0) width 209: "the label for this element is \"1\""
+      RenderText {#text} at (0,0) size 749x21
+        text run at (0,0) width 749: "In the selection list below, the text 'The label for this element is \"1\"' should appear, and not the character '1'"
+      RenderBR {BR} at (749,16) size 0x0
+      RenderMenuList {SELECT} at (2,23) size 242x26 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 214x21
+          RenderText at (0,0) size 214x21
+            text run at (0,0) width 214: "the label for this element is \"1\""
       RenderText {#text} at (0,0) size 0x0

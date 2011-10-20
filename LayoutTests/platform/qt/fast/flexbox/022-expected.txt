@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 763x44
-          text run at (0,0) width 318: "You should see a 100x100 green square below. "
-          text run at (318,0) width 252: "If you see any red, the test has failed. "
-          text run at (570,0) width 193: "This test is checking to make"
-          text run at (0,22) width 489: "sure inlines get wrapped in anonymous blocks when placed inside boxes."
-      RenderDeprecatedFlexibleBox {DIV} at (0,60) size 100x100 [bgcolor=#008000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 769x42
+          text run at (0,0) width 343: "You should see a 100x100 green square below. "
+          text run at (343,0) width 265: "If you see any red, the test has failed. "
+          text run at (608,0) width 161: "This test is checking to"
+          text run at (0,21) width 564: "make sure inlines get wrapped in anonymous blocks when placed inside boxes."
+      RenderDeprecatedFlexibleBox {DIV} at (0,58) size 100x100 [bgcolor=#008000]
         RenderBlock (anonymous) at (0,0) size 0x100
           RenderInline {SPAN} at (0,0) size 0x0 [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 0x0

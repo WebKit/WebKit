@@ -7,26 +7,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 134x22
-          text run at (0,0) width 134: "Test case for fix for "
-        RenderInline {A} at (0,0) size 365x22 [color=#0000EE]
-          RenderText {#text} at (134,0) size 365x22
-            text run at (134,0) width 365: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
-        RenderText {#text} at (499,0) size 4x22
-          text run at (499,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x44
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 783: "Changes were made to VisiblePosition's so that init() will not leave the block containing the requested position unless"
-          text run at (0,22) width 285: "there are no VisiblePositions in that block."
-      RenderBlock {P} at (0,98) size 784x0
-      RenderBlock {DIV} at (0,98) size 784x58 [border: (2px solid #AAAAFF)]
-        RenderBlock {P} at (2,18) size 780x22
-          RenderText {#text} at (0,0) size 721x22
-            text run at (0,0) width 721: "Select All while inside this editable block should create a selection that does not extend outside of this block."
-layer at (8,180) size 784x22
-  RenderBlock {P} at (0,172) size 784x22
-    RenderText {#text} at (0,0) size 457x22
-      text run at (0,0) width 457: "This is a paragraph outside the editable block with overflow:hidden"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 137x21
+          text run at (0,0) width 137: "Test case for fix for "
+        RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+          RenderText {#text} at (137,0) size 379x21
+            text run at (137,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
+        RenderText {#text} at (516,0) size 4x21
+          text run at (516,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x42
+        RenderText {#text} at (0,0) size 777x42
+          text run at (0,0) width 777: "Changes were made to VisiblePosition's so that init() will not leave the block containing the requested position"
+          text run at (0,21) width 348: "unless there are no VisiblePositions in that block."
+      RenderBlock {P} at (0,95) size 784x0
+      RenderBlock {DIV} at (0,95) size 784x57 [border: (2px solid #AAAAFF)]
+        RenderBlock {P} at (2,18) size 780x21
+          RenderText {#text} at (0,0) size 765x21
+            text run at (0,0) width 765: "Select All while inside this editable block should create a selection that does not extend outside of this block."
+layer at (8,176) size 784x21
+  RenderBlock {P} at (0,168) size 784x21
+    RenderText {#text} at (0,0) size 472x21
+      text run at (0,0) width 472: "This is a paragraph outside the editable block with overflow:hidden"
 selection start: position 0 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body
 selection end:   position 113 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body

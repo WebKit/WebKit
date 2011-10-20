@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 771x44
-        text run at (0,0) width 771: "This tests that leading and trailing spaces in a text field don't get lost. There should be 3 spaces before and 3 spaces"
-        text run at (0,22) width 169: "after the text in the field. "
-      RenderBR {BR} at (169,38) size 0x0
-      RenderTextControl {INPUT} at (2,46) size 166x26
+      RenderText {#text} at (0,0) size 764x42
+        text run at (0,0) width 764: "This tests that leading and trailing spaces in a text field don't get lost. There should be 3 spaces before and 3"
+        text run at (0,21) width 226: "spaces after the text in the field. "
+      RenderBR {BR} at (226,37) size 0x0
+      RenderTextControl {INPUT} at (2,44) size 186x25
       RenderText {#text} at (0,0) size 0x0
-layer at (12,56) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 73x22
+layer at (12,54) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 73x21
       text run at (1,0) width 73: "   foo bar   "

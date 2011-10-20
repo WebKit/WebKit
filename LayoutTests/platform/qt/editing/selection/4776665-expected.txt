@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 628x22
-          text run at (0,0) width 235: "This tests for a caret painting bug. "
-          text run at (235,0) width 393: "You should not see a caret in the editable subframe below."
-      RenderBlock (anonymous) at (0,38) size 784x154
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 656x21
+          text run at (0,0) width 242: "This tests for a caret painting bug. "
+          text run at (242,0) width 414: "You should not see a caret in the editable subframe below."
+      RenderBlock (anonymous) at (0,37) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150

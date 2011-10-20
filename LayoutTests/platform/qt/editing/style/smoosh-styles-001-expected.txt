@@ -25,38 +25,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x209 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x99
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x198 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 709x66
-            text run at (0,33) width 709: "Pasting black (document default color) text into a block of text with a"
-            text run at (0,66) width 183: "non-default color."
-        RenderBlock {DIV} at (14,129) size 756x66
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 461x33
-            text run at (0,33) width 461: "Should see this content in the red box below: "
-          RenderInline {SPAN} at (0,0) size 80x33 [color=#FF0000]
-            RenderText {#text} at (461,33) size 25x33
-              text run at (461,33) width 25: "ab"
-            RenderInline {SPAN} at (0,0) size 35x33 [color=#000000]
-              RenderText {#text} at (486,33) size 35x33
-                text run at (486,33) width 35: "cde"
-            RenderText {#text} at (521,33) size 20x33
-              text run at (521,33) width 20: "fg"
+          RenderText {#text} at (0,32) size 719x60
+            text run at (0,32) width 719: "Pasting black (document default color) text into a block of text with a"
+            text run at (0,62) width 183: "non-default color."
+        RenderBlock {DIV} at (14,122) size 756x62
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 480x30
+            text run at (0,32) width 480: "Should see this content in the red box below: "
+          RenderInline {SPAN} at (0,0) size 84x30 [color=#FF0000]
+            RenderText {#text} at (480,32) size 26x30
+              text run at (480,32) width 26: "ab"
+            RenderInline {SPAN} at (0,0) size 38x30 [color=#000000]
+              RenderText {#text} at (506,32) size 38x30
+                text run at (506,32) width 38: "cde"
+            RenderText {#text} at (544,32) size 20x30
+              text run at (544,32) width 20: "fg"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,233) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderInline {SPAN} at (0,0) size 25x33 [color=#FF0000]
-            RenderText {#text} at (2,2) size 25x33
-              text run at (2,2) width 25: "ab"
-          RenderText {#text} at (27,2) size 35x33
-            text run at (27,2) width 35: "cde"
-          RenderInline {SPAN} at (0,0) size 20x33 [color=#FF0000]
-            RenderText {#text} at (62,2) size 20x33
-              text run at (62,2) width 20: "fg"
-        RenderBlock (anonymous) at (0,37) size 784x0
+      RenderBlock {DIV} at (0,222) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderInline {SPAN} at (0,0) size 26x30 [color=#FF0000]
+            RenderText {#text} at (2,2) size 26x30
+              text run at (2,2) width 26: "ab"
+          RenderText {#text} at (28,2) size 38x30
+            text run at (28,2) width 38: "cde"
+          RenderInline {SPAN} at (0,0) size 20x30 [color=#FF0000]
+            RenderText {#text} at (66,2) size 20x30
+              text run at (66,2) width 20: "fg"
+        RenderBlock (anonymous) at (0,34) size 784x0
 caret: position 3 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

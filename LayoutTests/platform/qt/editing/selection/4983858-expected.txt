@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 749x44
-          text run at (0,0) width 609: "This tests for a bug where selecting a word would select the line break and word before it. "
-          text run at (609,0) width 140: "Only the word in the"
-          text run at (0,22) width 247: "paragraph below should be selected:"
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 775x42
+          text run at (0,0) width 634: "This tests for a bug where selecting a word would select the line break and word before it. "
+          text run at (634,0) width 141: "Only the word in the"
+          text run at (0,21) width 262: "paragraph below should be selected:"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,44) size 784x22
-        RenderText {#text} at (0,0) size 21x22
-          text run at (0,0) width 21: "foo"
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 22x21
+          text run at (0,0) width 22: "foo"
 selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 3 {DIV} of body

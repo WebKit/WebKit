@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 160x160
-        RenderText {#text} at (0,0) size 154x160
-          text run at (0,0) width 130: "Assuming the port-"
-          text run at (22,0) width 140: "specific theme draws"
-          text run at (22,140) width 4: " "
-          text run at (44,0) width 132: "focus rings, this test"
-          text run at (44,132) width 4: " "
-          text run at (66,0) width 119: "draws focus rings"
-          text run at (66,119) width 4: " "
-          text run at (88,0) width 107: "around editable"
-          text run at (88,107) width 4: " "
-          text run at (110,0) width 159: "multiline text in vertical"
-          text run at (110,159) width 1: " "
-          text run at (132,0) width 94: "writing mode."
+        RenderText {#text} at (0,0) size 147x153
+          text run at (0,0) width 133: "Assuming the port-"
+          text run at (21,0) width 149: "specific theme draws"
+          text run at (21,149) width 4: " "
+          text run at (42,0) width 139: "focus rings, this test"
+          text run at (42,139) width 4: " "
+          text run at (63,0) width 124: "draws focus rings"
+          text run at (63,124) width 4: " "
+          text run at (84,0) width 111: "around editable"
+          text run at (84,111) width 4: " "
+          text run at (105,0) width 106: "multiline text in"
+          text run at (105,106) width 4: " "
+          text run at (126,0) width 150: "vertical writing mode."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

@@ -1,31 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x550
-  RenderBlock {HTML} at (0,0) size 800x550
-    RenderBody {BODY} at (8,16) size 784x526
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 437x22
-          text run at (0,0) width 344: "The top table was resized while the field\x{2019}s contents "
-          text run at (344,0) width 93: "were selected."
-      RenderTable {TABLE} at (0,38) size 214x244
-        RenderTableSection {TBODY} at (0,0) size 214x244
-          RenderTableRow {TR} at (0,2) size 214x240
-            RenderTableCell {TD} at (2,87) size 210x70 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 166x26
+layer at (0,0) size 800x549
+  RenderBlock {HTML} at (0,0) size 800x549
+    RenderBody {BODY} at (8,16) size 784x525
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 467x21
+          text run at (0,0) width 364: "The top table was resized while the field\x{2019}s contents "
+          text run at (364,0) width 103: "were selected."
+      RenderTable {TABLE} at (0,37) size 234x244
+        RenderTableSection {TBODY} at (0,0) size 234x244
+          RenderTableRow {TR} at (0,2) size 234x240
+            RenderTableCell {TD} at (2,87) size 230x69 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (22,22) size 186x25
               RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,282) size 214x244
-        RenderTableSection {TBODY} at (0,0) size 214x244
-          RenderTableRow {TR} at (0,2) size 214x240
-            RenderTableCell {TD} at (2,87) size 210x70 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 166x26
+      RenderTable {TABLE} at (0,281) size 234x244
+        RenderTableSection {TBODY} at (0,0) size 234x244
+          RenderTableRow {TR} at (0,2) size 234x240
+            RenderTableCell {TD} at (2,87) size 230x69 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (22,22) size 186x25
               RenderText {#text} at (0,0) size 0x0
-layer at (34,165) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 49x22
+layer at (34,164) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 49x21
       text run at (1,0) width 49: "foo bar"
-layer at (34,409) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 49x22
+layer at (34,408) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 49x21
       text run at (1,0) width 49: "foo bar"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 3 {TABLE} of body
 selection end:   position 7 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 3 {TABLE} of body

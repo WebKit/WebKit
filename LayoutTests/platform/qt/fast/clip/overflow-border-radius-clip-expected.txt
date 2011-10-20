@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 730x22
-          text run at (0,0) width 379: "The div below should be rounded with a border radius. "
-          text run at (379,0) width 351: "If you see a solid lime square then the test has failed."
-layer at (8,30) size 100x100
-  RenderBlock {DIV} at (0,22) size 100x100
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 762x21
+          text run at (0,0) width 389: "The div below should be rounded with a border radius. "
+          text run at (389,0) width 373: "If you see a solid lime square then the test has failed."
+layer at (8,29) size 100x100
+  RenderBlock {DIV} at (0,21) size 100x100
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]

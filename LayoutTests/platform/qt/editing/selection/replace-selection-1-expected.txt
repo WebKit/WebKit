@@ -12,17 +12,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 766x44
-          text run at (0,0) width 618: "This tests for a bug when a selection is replaced by content with selectReplacement == true. "
-          text run at (618,0) width 148: "Below, you should see"
-          text run at (0,22) width 116: "'A new link' and "
-          text run at (116,22) width 163: "'link' should be selected."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 48x22
-          text run at (0,0) width 48: "A new "
-        RenderInline {A} at (0,0) size 26x22 [color=#0000EE]
-          RenderText {#text} at (48,0) size 26x22
-            text run at (48,0) width 26: "link"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 783x42
+          text run at (0,0) width 652: "This tests for a bug when a selection is replaced by content with selectReplacement == true. "
+          text run at (652,0) width 131: "Below, you should"
+          text run at (0,21) width 145: "see 'A new link' and "
+          text run at (145,21) width 173: "'link' should be selected."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 49x21
+          text run at (0,0) width 49: "A new "
+        RenderInline {A} at (0,0) size 25x21 [color=#0000EE]
+          RenderText {#text} at (49,0) size 25x21
+            text run at (49,0) width 25: "link"
 selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body

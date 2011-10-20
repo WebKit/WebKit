@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x22
-        RenderInline {A} at (0,0) size 62x22 [color=#0000EE]
-          RenderText {#text} at (0,0) size 62x22
-            text run at (0,0) width 62: "bug 7118"
-        RenderText {#text} at (62,0) size 385x22
-          text run at (62,0) width 385: ": Wrong property values do not get invalidated correctly."
-      RenderBlock (anonymous) at (0,38) size 784x0
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 67x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 67x21
+            text run at (0,0) width 67: "bug 7118"
+        RenderText {#text} at (67,0) size 392x21
+          text run at (67,0) width 392: ": Wrong property values do not get invalidated correctly."
+      RenderBlock (anonymous) at (0,37) size 784x0
         RenderInline {DIV} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,46) size 200x200
+layer at (8,45) size 200x200
   RenderBlock (floating) {DIV} at (0,0) size 200x200 [color=#FFFFFF] [bgcolor=#006400]
     RenderText {#text} at (0,0) size 194x152
       text run at (0,0) width 160: "this text should be left-"

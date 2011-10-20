@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x24
   RenderBlock {HTML} at (0,0) size 800x24
     RenderBody {BODY} at (8,16) size 784x0
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 421x22
-          text run at (0,0) width 421: "The entire canvas should be green and there should be no red."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 444x21
+          text run at (0,0) width 444: "The entire canvas should be green and there should be no red."

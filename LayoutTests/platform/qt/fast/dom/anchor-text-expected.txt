@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {A} at (0,0) size 236x22 [color=#0000EE]
-        RenderInline {B} at (0,0) size 236x22
-          RenderText {#text} at (0,0) size 236x22
-            text run at (0,0) width 236: "the second copy should not be bold"
-      RenderText {#text} at (236,0) size 4x22
-        text run at (236,0) width 4: " "
-      RenderText {#text} at (240,0) size 236x22
-        text run at (240,0) width 236: "the second copy should not be bold"
+      RenderInline {A} at (0,0) size 274x21 [color=#0000EE]
+        RenderInline {B} at (0,0) size 274x21
+          RenderText {#text} at (0,0) size 274x21
+            text run at (0,0) width 274: "the second copy should not be bold"
+      RenderText {#text} at (274,0) size 4x21
+        text run at (274,0) width 4: " "
+      RenderText {#text} at (278,0) size 251x21
+        text run at (278,0) width 251: "the second copy should not be bold"

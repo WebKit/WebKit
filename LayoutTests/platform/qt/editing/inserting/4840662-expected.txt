@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 777x44
-          text run at (0,0) width 434: "This tests insertion before/after links that are also display:block. "
-          text run at (434,0) width 343: "Insertion before/after display:block links should go"
-          text run at (0,22) width 436: "inside the links so that text is inserted in the expected paragraph."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderBlock {A} at (0,0) size 784x22 [color=#0000EE]
-          RenderText {#text} at (0,0) size 261x22
-            text run at (0,0) width 261: "This sentence should all be on one line."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 781x42
+          text run at (0,0) width 450: "This tests insertion before/after links that are also display:block. "
+          text run at (450,0) width 331: "Insertion before/after display:block links should"
+          text run at (0,21) width 478: "go inside the links so that text is inserted in the expected paragraph."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {A} at (0,0) size 784x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 282x21
+            text run at (0,0) width 282: "This sentence should all be on one line."
 caret: position 40 of child 0 {#text} of child 0 {A} of child 2 {DIV} of body

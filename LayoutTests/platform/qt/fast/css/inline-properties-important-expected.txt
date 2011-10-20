@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x571
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 771x44
-          text run at (0,0) width 771: "This tests handling of duplicated properties in inline style declarations. Using !important should have an effect. See"
-          text run at (0,22) width 74: "bug #4128."
-      RenderBlock {H1} at (0,65) size 784x42 [color=#FF0000]
-        RenderText {#text} at (0,0) size 253x42
-          text run at (0,0) width 253: "This should be red"
-      RenderBlock {H1} at (0,128) size 784x42 [color=#00FF00]
-        RenderText {#text} at (0,0) size 283x42
-          text run at (0,0) width 283: "This should be green"
-      RenderBlock {H1} at (0,191) size 784x42 [color=#FF0000]
-        RenderText {#text} at (0,0) size 253x42
-          text run at (0,0) width 253: "This should be red"
-      RenderBlock {H1} at (0,254) size 784x42 [color=#FF0000]
-        RenderText {#text} at (0,0) size 253x42
-          text run at (0,0) width 253: "This should be red"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 775x42
+          text run at (0,0) width 775: "This tests handling of duplicated properties in inline style declarations. Using !important should have an effect."
+          text run at (0,21) width 113: "See bug #4128."
+      RenderBlock {H1} at (0,63) size 784x42 [color=#FF0000]
+        RenderText {#text} at (0,0) size 289x42
+          text run at (0,0) width 289: "This should be red"
+      RenderBlock {H1} at (0,126) size 784x42 [color=#00FF00]
+        RenderText {#text} at (0,0) size 327x42
+          text run at (0,0) width 327: "This should be green"
+      RenderBlock {H1} at (0,189) size 784x42 [color=#FF0000]
+        RenderText {#text} at (0,0) size 289x42
+          text run at (0,0) width 289: "This should be red"
+      RenderBlock {H1} at (0,252) size 784x42 [color=#FF0000]
+        RenderText {#text} at (0,0) size 289x42
+          text run at (0,0) width 289: "This should be red"

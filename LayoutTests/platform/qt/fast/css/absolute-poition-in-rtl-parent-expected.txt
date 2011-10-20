@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 760x66
-          text run at (0,0) width 535: "On the left, you should see three blocks that are aligned left within a black box. "
-          text run at (535,0) width 88: "They should "
-          text run at (623,0) width 137: "be stacked vertically"
-          text run at (0,22) width 317: "with the green box in between two olive boxes. "
-          text run at (317,22) width 205: "The olive boxes and the green "
-          text run at (522,22) width 227: "box should be 100x100, and there"
-          text run at (0,44) width 439: "should be 100 pixels of padding on the right side of the box stack."
-      RenderBlock {P} at (0,82) size 784x66
-        RenderText {#text} at (0,0) size 780x66
-          text run at (0,0) width 521: "On the right, you should see two blocks that are centered within a black box. "
-          text run at (521,0) width 108: "They should be "
-          text run at (629,0) width 151: "stacked vertically with"
-          text run at (0,22) width 503: "the green box below the olive box. The olive box and the green box should "
-          text run at (503,22) width 246: "be 100x100, and there should be 100"
-          text run at (0,44) width 323: "pixels of padding on either side of the box stack."
-layer at (8,172) size 240x340
-  RenderBlock (positioned) {DIV} at (8,172) size 240x340 [border: (20px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 725x63
+          text run at (0,0) width 556: "On the left, you should see three blocks that are aligned left within a black box. "
+          text run at (556,0) width 92: "They should "
+          text run at (648,0) width 77: "be stacked"
+          text run at (0,21) width 401: "vertically with the green box in between two olive boxes. "
+          text run at (401,21) width 219: "The olive boxes and the green "
+          text run at (620,21) width 100: "box should be"
+          text run at (0,42) width 602: "100x100, and there should be 100 pixels of padding on the right side of the box stack."
+      RenderBlock {P} at (0,79) size 784x63
+        RenderText {#text} at (0,0) size 775x63
+          text run at (0,0) width 539: "On the right, you should see two blocks that are centered within a black box. "
+          text run at (539,0) width 114: "They should be "
+          text run at (653,0) width 122: "stacked vertically"
+          text run at (0,21) width 563: "with the green box below the olive box. The olive box and the green box should "
+          text run at (563,21) width 211: "be 100x100, and there should"
+          text run at (0,42) width 392: "be 100 pixels of padding on either side of the box stack."
+layer at (8,166) size 240x340
+  RenderBlock (positioned) {DIV} at (8,166) size 240x340 [border: (20px solid #000000)]
     RenderTable {TABLE} at (20,20) size 100x100
       RenderTableSection {TBODY} at (0,0) size 100x100
         RenderTableRow {TR} at (0,0) size 100x100
           RenderTableCell {TD} at (0,0) size 100x100 [r=0 c=0 rs=1 cs=1]
             RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#808000]
-layer at (28,292) size 100x100
+layer at (28,286) size 100x100
   RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#008000]
-layer at (28,392) size 100x100
+layer at (28,386) size 100x100
   RenderBlock (positioned) {DIV} at (20,220) size 100x100 [bgcolor=#808000]
-layer at (300,172) size 340x240
-  RenderBlock (positioned) {DIV} at (300,172) size 340x240 [border: (20px solid #000000)]
-layer at (320,192) size 200x100
+layer at (300,166) size 340x240
+  RenderBlock (positioned) {DIV} at (300,166) size 340x240 [border: (20px solid #000000)]
+layer at (320,186) size 200x100
   RenderBlock (relative positioned) {DIV} at (20,20) size 200x100
     RenderBlock {DIV} at (100,0) size 100x100 [bgcolor=#808000]
-layer at (420,292) size 100x100
+layer at (420,286) size 100x100
   RenderBlock (positioned) {DIV} at (100,100) size 100x100 [bgcolor=#008000]

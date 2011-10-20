@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 774x44
-          text run at (0,0) width 774: "This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list that is"
-          text run at (0,22) width 211: "not a sublist of the original one."
-      RenderBlock {DIV} at (0,60) size 784x60
-        RenderBlock {UL} at (0,0) size 784x22
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 21x22
-              text run at (0,0) width 21: "foo"
-        RenderBlock {OL} at (0,38) size 784x22
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-21,0) size 16x22: "1"
-            RenderText {#text} at (0,0) size 24x22
-              text run at (0,0) width 24: "bar"
-        RenderBlock (anonymous) at (0,76) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 760x42
+          text run at (0,0) width 760: "This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list"
+          text run at (0,21) width 266: "that is not a sublist of the original one."
+      RenderBlock {DIV} at (0,58) size 784x58
+        RenderBlock {UL} at (0,0) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 22x21
+              text run at (0,0) width 22: "foo"
+        RenderBlock {OL} at (0,37) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-22,0) size 17x21: "1"
+            RenderText {#text} at (0,0) size 23x21
+              text run at (0,0) width 23: "bar"
+        RenderBlock (anonymous) at (0,74) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {LI} of child 1 {OL} of child 2 {DIV} of body

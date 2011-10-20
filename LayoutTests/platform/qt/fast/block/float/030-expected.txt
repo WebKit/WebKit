@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 745x44
-          text run at (0,0) width 485: "You should see a 500x300 rectangle with orange, yellow and olive rects. "
-          text run at (485,0) width 260: "No red should be visible or the test has"
-          text run at (0,22) width 41: "failed."
-      RenderBlock (floating) {DIV} at (0,60) size 500x300 [bgcolor=#FF0000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 761x42
+          text run at (0,0) width 516: "You should see a 500x300 rectangle with orange, yellow and olive rects. "
+          text run at (516,0) width 245: "No red should be visible or the test"
+          text run at (0,21) width 73: "has failed."
+      RenderBlock (floating) {DIV} at (0,58) size 500x300 [bgcolor=#FF0000]
         RenderBlock (floating) {DIV} at (0,0) size 250x300 [bgcolor=#FFA500]
         RenderBlock (floating) {DIV} at (250,0) size 250x300
           RenderBlock (floating) {DIV} at (0,0) size 250x40 [bgcolor=#FFFF00]

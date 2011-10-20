@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 742x44
-          text run at (0,0) width 742: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire"
-          text run at (0,22) width 64: "correctly."
-      RenderBlock {P} at (0,60) size 784x30
-        RenderTextControl {INPUT} at (2,2) size 166x26
-        RenderText {#text} at (170,4) size 4x22
-          text run at (170,4) width 4: " "
-        RenderTextControl {INPUT} at (176,2) size 166x26
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 772x42
+          text run at (0,0) width 772: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire"
+          text run at (0,21) width 64: "correctly."
+      RenderBlock {P} at (0,58) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+        RenderText {#text} at (190,4) size 4x21
+          text run at (190,4) width 4: " "
+        RenderTextControl {INPUT} at (196,2) size 186x25
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,106) size 784x88
-        RenderBR {BR} at (0,0) size 0x22
-        RenderText {#text} at (0,22) size 341x22
-          text run at (0,22) width 341: "Test Passed. Text field 1's onFocus event has fired."
-        RenderBR {BR} at (341,38) size 0x0
-        RenderText {#text} at (0,44) size 332x22
-          text run at (0,44) width 332: "Test Passed. Text field 1's onBlur event has fired."
-        RenderBR {BR} at (332,60) size 0x0
-        RenderText {#text} at (0,66) size 341x22
-          text run at (0,66) width 341: "Test Passed. Text field 2's onFocus event has fired."
-      RenderBlock {P} at (0,210) size 784x0
-layer at (12,72) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 108x22
-      text run at (1,0) width 108: "My Text Field 1"
-layer at (186,72) size 162x22
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 108x22
-      text run at (1,0) width 108: "My Text Field 2"
+      RenderBlock {DIV} at (0,103) size 784x84
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 364x21
+          text run at (0,21) width 364: "Test Passed. Text field 1's onFocus event has fired."
+        RenderBR {BR} at (364,37) size 0x0
+        RenderText {#text} at (0,42) size 349x21
+          text run at (0,42) width 349: "Test Passed. Text field 1's onBlur event has fired."
+        RenderBR {BR} at (349,58) size 0x0
+        RenderText {#text} at (0,63) size 364x21
+          text run at (0,63) width 364: "Test Passed. Text field 2's onFocus event has fired."
+      RenderBlock {P} at (0,203) size 784x0
+layer at (12,70) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 109x21
+      text run at (1,0) width 109: "My Text Field 1"
+layer at (206,70) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 109x21
+      text run at (1,0) width 109: "My Text Field 2"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body
 selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body

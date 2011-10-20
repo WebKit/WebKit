@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 252x22
-          text run at (0,0) width 252: "There should be no red visible below."
-      RenderBlock {DIV} at (0,22) size 520x0
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 266x21
+          text run at (0,0) width 266: "There should be no red visible below."
+      RenderBlock {DIV} at (0,21) size 520x0
         RenderBlock (floating) {DIV} at (0,0) size 520x356 [bgcolor=#FF0000]
-layer at (8,30) size 520x356
+layer at (8,29) size 520x356
   RenderBlock (floating) {DIV} at (0,0) size 520x356 [bgcolor=#008000]

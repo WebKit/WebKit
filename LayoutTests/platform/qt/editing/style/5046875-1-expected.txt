@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 517: "This tests for a bug where centering two paragraphs would center the third. "
-          text run at (517,0) width 266: "Only the selected paragraphs should be"
-          text run at (0,22) width 56: "selected."
-      RenderBlock {DIV} at (0,60) size 784x66
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (381,0) size 22x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 738x42
+          text run at (0,0) width 530: "This tests for a bug where centering two paragraphs would center the third. "
+          text run at (530,0) width 208: "Only the selected paragraphs"
+          text run at (0,21) width 138: "should be selected."
+      RenderBlock {DIV} at (0,58) size 784x63
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (381,0) size 22x21
             text run at (381,0) width 22: "foo"
-        RenderBlock (anonymous) at (0,22) size 784x0
-        RenderBlock {DIV} at (0,22) size 784x44
-          RenderBlock {DIV} at (0,0) size 784x22
-            RenderText {#text} at (380,0) size 24x22
+        RenderBlock (anonymous) at (0,21) size 784x0
+        RenderBlock {DIV} at (0,21) size 784x42
+          RenderBlock {DIV} at (0,0) size 784x21
+            RenderText {#text} at (380,0) size 24x21
               text run at (380,0) width 24: "bar"
-          RenderBlock (anonymous) at (0,22) size 784x22
-            RenderText {#text} at (0,0) size 24x22
-              text run at (0,0) width 24: "baz"
+          RenderBlock (anonymous) at (0,21) size 784x21
+            RenderText {#text} at (0,0) size 26x21
+              text run at (0,0) width 26: "baz"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 2 {DIV} of body

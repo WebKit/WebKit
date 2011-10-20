@@ -1,23 +1,23 @@
-layer at (0,0) size 1048x584
+layer at (0,0) size 1084x584
   RenderView at (0,0) size 800x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock {DIV} at (0,0) size 784x128 [border: (2px solid #0000FF)]
-        RenderBlock (anonymous) at (2,2) size 780x66
-          RenderText {#text} at (0,0) size 754x44
-            text run at (0,0) width 614: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
-            text run at (614,0) width 140: "left side, though they"
-            text run at (0,22) width 170: "may overflow from right."
-          RenderBR {BR} at (170,38) size 0x0
-          RenderBR {BR} at (0,44) size 0x22
-        RenderTable {TABLE} at (2,68) size 1038x32 [border: (2px solid #FF0000)]
-          RenderTableSection {TBODY} at (2,2) size 1034x28
-            RenderTableRow {TR} at (0,2) size 1034x24
-              RenderTableCell {TD} at (2,2) size 1030x24 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 1028x22
-                  text run at (1,1) width 516: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. "
-                  text run at (517,1) width 512: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
-        RenderBlock {DIV} at (2,100) size 904x26 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 512x22
-            text run at (2,2) width 512: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
+      RenderBlock {DIV} at (0,0) size 784x123 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (2,2) size 780x63
+          RenderText {#text} at (0,0) size 750x42
+            text run at (0,0) width 638: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
+            text run at (638,0) width 112: "left side, though"
+            text run at (0,21) width 202: "they may overflow from right."
+          RenderBR {BR} at (202,37) size 0x0
+          RenderBR {BR} at (0,42) size 0x21
+        RenderTable {TABLE} at (2,65) size 1074x31 [border: (2px solid #FF0000)]
+          RenderTableSection {TBODY} at (2,2) size 1070x27
+            RenderTableRow {TR} at (0,2) size 1070x23
+              RenderTableCell {TD} at (2,2) size 1066x23 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 1064x21
+                  text run at (1,1) width 534: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. "
+                  text run at (535,1) width 530: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
+        RenderBlock {DIV} at (2,96) size 904x25 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 530x21
+            text run at (2,2) width 530: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."

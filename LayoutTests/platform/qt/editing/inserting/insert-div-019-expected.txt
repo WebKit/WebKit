@@ -12,20 +12,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock (anonymous) at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 750x66
-          text run at (0,0) width 744: "Test inserting paragraphs: should see an empty blue box above an empty"
-          text run at (744,0) width 6: " "
-          text run at (0,33) width 304: "line between \"foo\" and \"bar\""
-      RenderBlock {DIV} at (0,66) size 784x36
-      RenderBlock {P} at (0,126) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 32x33
-          text run at (14,14) width 32: "foo"
-      RenderBlock {DIV} at (0,211) size 784x61 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x33
-      RenderBlock (anonymous) at (0,272) size 784x33
-        RenderBR {BR} at (0,0) size 0x33
-      RenderBlock {P} at (0,329) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 36x33
-          text run at (14,14) width 36: "bar"
+      RenderBlock (anonymous) at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 781x60
+          text run at (0,0) width 774: "Test inserting paragraphs: should see an empty blue box above an empty"
+          text run at (774,0) width 7: " "
+          text run at (0,30) width 295: "line between \"foo\" and \"bar\""
+      RenderBlock {DIV} at (0,60) size 784x36
+      RenderBlock {P} at (0,120) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 33x30
+          text run at (14,14) width 33: "foo"
+      RenderBlock {DIV} at (0,202) size 784x58 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x30
+      RenderBlock (anonymous) at (0,260) size 784x30
+        RenderBR {BR} at (0,0) size 0x30
+      RenderBlock {P} at (0,314) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 34x30
+          text run at (14,14) width 34: "bar"
 caret: position 0 of child 5 {BR} of body

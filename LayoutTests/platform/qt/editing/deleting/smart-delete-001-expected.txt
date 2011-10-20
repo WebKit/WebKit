@@ -12,25 +12,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x242 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x66
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x228 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x62
+          RenderText {#text} at (0,0) size 77x32
+            text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 524x33
-            text run at (0,33) width 524: "Smart delete when deleting the first word on a line."
-        RenderBlock {DIV} at (14,96) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 751x66
-            text run at (0,33) width 751: "The first word and the space following the first word should be deleted. It"
-            text run at (0,66) width 211: "should like this this: "
-          RenderBR {BR} at (211,90) size 0x0
-          RenderText {#text} at (0,99) size 78x33
-            text run at (0,99) width 78: "bar baz"
-      RenderBlock {DIV} at (0,266) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 78x33
-            text run at (2,2) width 78: "bar baz"
+          RenderText {#text} at (0,32) size 534x30
+            text run at (0,32) width 534: "Smart delete when deleting the first word on a line."
+        RenderBlock {DIV} at (14,92) size 756x122
+          RenderText {#text} at (0,0) size 214x32
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,32) size 743x60
+            text run at (0,32) width 743: "The first word and the space following the first word should be deleted."
+            text run at (0,62) width 234: "It should like this this: "
+          RenderBR {BR} at (234,85) size 0x0
+          RenderText {#text} at (0,92) size 79x30
+            text run at (0,92) width 79: "bar baz"
+      RenderBlock {DIV} at (0,252) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 79x30
+            text run at (2,2) width 79: "bar baz"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

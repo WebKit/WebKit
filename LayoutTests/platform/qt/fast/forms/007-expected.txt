@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderFieldSet {FIELDSET} at (2,0) size 121x83 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (14,0) size 93x22
-          RenderText {#text} at (2,0) size 89x22
-            text run at (2,0) width 89: "Number One"
-        RenderBlock (anonymous) at (14,27) size 93x44
-          RenderText {#text} at (0,0) size 83x22
-            text run at (0,0) width 83: "Hello world."
-          RenderBR {BR} at (83,16) size 0x0
-          RenderText {#text} at (0,22) size 83x22
-            text run at (0,22) width 83: "Hello world."
-      RenderText {#text} at (125,49) size 4x22
-        text run at (125,49) width 4: " "
-      RenderFieldSet {FIELDSET} at (131,22) size 124x61 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (14,0) size 96x22
-          RenderText {#text} at (2,0) size 92x22
+      RenderFieldSet {FIELDSET} at (2,0) size 123x80 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (14,0) size 95x21
+          RenderText {#text} at (2,0) size 91x21
+            text run at (2,0) width 91: "Number One"
+        RenderBlock (anonymous) at (14,26) size 95x42
+          RenderText {#text} at (0,0) size 85x21
+            text run at (0,0) width 85: "Hello world."
+          RenderBR {BR} at (85,16) size 0x0
+          RenderText {#text} at (0,21) size 85x21
+            text run at (0,21) width 85: "Hello world."
+      RenderText {#text} at (127,47) size 4x21
+        text run at (127,47) width 4: " "
+      RenderFieldSet {FIELDSET} at (133,21) size 124x59 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (14,0) size 96x21
+          RenderText {#text} at (2,0) size 92x21
             text run at (2,0) width 92: "Number Two"
-        RenderBlock (anonymous) at (14,27) size 96x22
-          RenderText {#text} at (0,0) size 83x22
-            text run at (0,0) width 83: "Hello world."
+        RenderBlock (anonymous) at (14,26) size 96x21
+          RenderText {#text} at (0,0) size 85x21
+            text run at (0,0) width 85: "Hello world."
       RenderText {#text} at (0,0) size 0x0

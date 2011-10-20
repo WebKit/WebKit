@@ -98,15 +98,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 335x22
-          text run at (0,0) width 335: "This tests RebalanceWhitespace's ability to Undo."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 349x22
-          text run at (0,0) width 349: "You should see \"( this is a test. )\", minus the quotes."
-      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,86) size 784x30 [border: (2px solid #FFAAAA)]
-        RenderBlock {DIV} at (2,2) size 780x26 [border: (2px solid #AAAAFF)]
-          RenderText {#text} at (2,2) size 99x22
-            text run at (2,2) width 99: "( this is a test. )"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 355x21
+          text run at (0,0) width 355: "This tests RebalanceWhitespace's ability to Undo."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 365x21
+          text run at (0,0) width 365: "You should see \"( this is a test. )\", minus the quotes."
+      RenderBlock {HR} at (0,74) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,84) size 784x29 [border: (2px solid #FFAAAA)]
+        RenderBlock {DIV} at (2,2) size 780x25 [border: (2px solid #AAAAFF)]
+          RenderText {#text} at (2,2) size 105x21
+            text run at (2,2) width 105: "( this is a test. )"
 caret: position 18 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

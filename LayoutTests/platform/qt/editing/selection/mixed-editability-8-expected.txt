@@ -8,26 +8,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 751x44
-          text run at (0,0) width 751: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the"
-          text run at (0,22) width 268: "start of the editable text inside the table."
-      RenderBlock {DIV} at (0,60) size 784x76
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 53x22
-            text run at (0,0) width 53: "editable"
-        RenderTable {TABLE} at (0,22) size 98x32 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 96x30
-            RenderTableRow {TR} at (0,2) size 96x26
-              RenderTableCell {TD} at (2,2) size 92x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 88x22
-                  RenderInline {SPAN} at (0,0) size 35x22
-                    RenderText {#text} at (0,0) size 35x22
-                      text run at (0,0) width 35: "static"
-                  RenderInline {SPAN} at (0,0) size 53x22
-                    RenderText {#text} at (35,0) size 53x22
-                      text run at (35,0) width 53: "editable"
-        RenderBlock (anonymous) at (0,54) size 784x22
-          RenderText {#text} at (0,0) size 53x22
-            text run at (0,0) width 53: "editable"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 773x42
+          text run at (0,0) width 773: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the"
+          text run at (0,21) width 279: "start of the editable text inside the table."
+      RenderBlock {DIV} at (0,58) size 784x73
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 57x21
+            text run at (0,0) width 57: "editable"
+        RenderTable {TABLE} at (0,21) size 104x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 102x29
+            RenderTableRow {TR} at (0,2) size 102x25
+              RenderTableCell {TD} at (2,2) size 98x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 94x21
+                  RenderInline {SPAN} at (0,0) size 37x21
+                    RenderText {#text} at (0,0) size 37x21
+                      text run at (0,0) width 37: "static"
+                  RenderInline {SPAN} at (0,0) size 57x21
+                    RenderText {#text} at (37,0) size 57x21
+                      text run at (37,0) width 57: "editable"
+        RenderBlock (anonymous) at (0,52) size 784x21
+          RenderText {#text} at (0,0) size 57x21
+            text run at (0,0) width 57: "editable"
 caret: position 0 of child 0 {#text} of child 1 {SPAN} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 751x44
-          text run at (0,0) width 751: "This tests for a problem where empty table rows after the selection being deleted would be removed incorrectly."
-          text run at (0,22) width 431: "Only the last letter in 'foo' should be removed during this delete."
-      RenderBlock {DIV} at (0,60) size 784x38
-        RenderTable {TABLE} at (0,0) size 29x38 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 27x36
-            RenderTableRow {TR} at (0,2) size 27x26
-              RenderTableCell {TD} at (2,2) size 17x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 13x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 783x42
+          text run at (0,0) width 783: "This tests for a problem where empty table rows after the selection being deleted would be removed incorrectly."
+          text run at (0,21) width 446: "Only the last letter in 'foo' should be removed during this delete."
+      RenderBlock {DIV} at (0,58) size 784x37
+        RenderTable {TABLE} at (0,0) size 29x37 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 27x35
+            RenderTableRow {TR} at (0,2) size 27x25
+              RenderTableCell {TD} at (2,2) size 17x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 13x21
                   text run at (2,2) width 13: "fo"
-              RenderTableCell {TD} at (21,13) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {TR} at (0,30) size 27x4
-              RenderTableCell {TD} at (2,30) size 17x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (21,30) size 4x4 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (21,12) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {TR} at (0,29) size 27x4
+              RenderTableCell {TD} at (2,29) size 17x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (21,29) size 4x4 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
 caret: position 2 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

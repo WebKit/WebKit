@@ -3,32 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x66
-        RenderText {#text} at (0,0) size 775x66
-          text run at (0,0) width 493: "This test can only be run with DRT and not manually from the browser. "
-          text run at (493,0) width 271: "This test makes sure that we don't make"
-          text run at (0,22) width 775: "the mistake of adding new m_containerElements to the DeletionUI over and over again. A successful run of the test"
-          text run at (0,44) width 574: "will not have multiple instances of deletion UI render objects at the same coordinates:"
-      RenderBlock {DIV} at (0,82) size 784x130
-layer at (24,106) size 752x98 layerType: background only
-layer at (20,102) size 760x106
-  RenderBlock (positioned) zI: -1000000 {DIV} at (-4,-4) size 760x106 [border: (4px solid #00000099)]
-layer at (24,106) size 752x98 layerType: foreground only
-  RenderTable {TABLE} at (16,16) size 752x98
-    RenderTableSection {TBODY} at (0,0) size 752x94
-      RenderTableRow {TR} at (0,2) size 752x90
-        RenderTableCell {TD} at (2,2) size 748x90 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 725x88
-            text run at (1,1) width 721: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas odio. Morbi sed tortor id nisl bibendum"
-            text run at (722,1) width 4: " "
-            text run at (1,23) width 693: "commodo. Donec pede. Praesent accumsan dui vitae mauris. Mauris non dui at neque lacinia pulvinar."
-            text run at (694,23) width 4: " "
-            text run at (1,45) width 712: "Quisque nibh. Nulla vitae lectus. Pellentesque enim. Mauris hendrerit molestie dui. Etiam pretium ligula a"
-            text run at (713,45) width 4: " "
-            text run at (1,67) width 610: "pede. Fusce consectetuer purus sit amet sem. Morbi tincidunt mollis libero. Maecenas mole"
-    RenderTableSection (anonymous) at (0,94) size 752x4
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 782x63
+          text run at (0,0) width 500: "This test can only be run with DRT and not manually from the browser. "
+          text run at (500,0) width 282: "This test makes sure that we don't make"
+          text run at (0,21) width 780: "the mistake of adding new m_containerElements to the DeletionUI over and over again. A successful run of the"
+          text run at (0,42) width 630: "test will not have multiple instances of deletion UI render objects at the same coordinates:"
+      RenderBlock {DIV} at (0,79) size 784x147
+layer at (24,103) size 752x115 layerType: background only
+layer at (20,99) size 760x123
+  RenderBlock (positioned) zI: -1000000 {DIV} at (-4,-4) size 760x123 [border: (4px solid #00000099)]
+layer at (24,103) size 752x115 layerType: foreground only
+  RenderTable {TABLE} at (16,16) size 752x115
+    RenderTableSection {TBODY} at (0,0) size 752x111
+      RenderTableRow {TR} at (0,2) size 752x107
+        RenderTableCell {TD} at (2,2) size 748x107 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 739x105
+            text run at (1,1) width 673: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas odio. Morbi sed tortor id nisl"
+            text run at (674,1) width 4: " "
+            text run at (1,22) width 735: "bibendum commodo. Donec pede. Praesent accumsan dui vitae mauris. Mauris non dui at neque lacinia"
+            text run at (736,22) width 4: " "
+            text run at (1,43) width 693: "pulvinar. Quisque nibh. Nulla vitae lectus. Pellentesque enim. Mauris hendrerit molestie dui. Etiam"
+            text run at (694,43) width 4: " "
+            text run at (1,64) width 717: "pretium ligula a pede. Fusce consectetuer purus sit amet sem. Morbi tincidunt mollis libero. Maecenas"
+            text run at (718,64) width 4: " "
+            text run at (1,85) width 35: "mole"
+    RenderTableSection (anonymous) at (0,111) size 752x4
       RenderTableRow (anonymous) at (0,2) size 752x0
         RenderTableCell (anonymous) at (2,2) size 748x0 [r=0 c=0 rs=1 cs=1]
-layer at (7,91) size 30x30
+layer at (7,88) size 30x30
   RenderImage zI: 1000000 {IMG} at (-17,-15) size 30x30
 caret: position 403 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

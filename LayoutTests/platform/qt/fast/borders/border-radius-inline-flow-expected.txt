@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 771x132 [border: (5px solid #000000)]
-        RenderText {#text} at (7,13) size 771x118
-          text run at (7,13) width 443: "This is a span that crosses multiple lines and has a border-radius. "
-          text run at (450,13) width 292: "The border-radius should only apply at the"
-          text run at (0,61) width 771: "endpoints of the span, and the edges that are \"open\" should just be solid right up to the edge (with no rounding or"
-          text run at (0,109) width 63: "clipping)."
+      RenderInline {SPAN} at (0,0) size 778x131 [border: (5px solid #000000)]
+        RenderText {#text} at (7,13) size 778x117
+          text run at (7,13) width 467: "This is a span that crosses multiple lines and has a border-radius. "
+          text run at (474,13) width 299: "The border-radius should only apply at the"
+          text run at (0,61) width 778: "endpoints of the span, and the edges that are \"open\" should just be solid right up to the edge (with no rounding"
+          text run at (0,109) width 83: "or clipping)."
       RenderText {#text} at (0,0) size 0x0

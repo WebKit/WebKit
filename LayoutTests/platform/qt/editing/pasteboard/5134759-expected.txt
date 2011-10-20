@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 697x22
-          text run at (0,0) width 548: "This tests for a hang when pasting underlined content at the end of a paragraph. "
-          text run at (548,0) width 149: "You should see 'Hello "
-        RenderInline {U} at (0,0) size 49x22
-          RenderText {#text} at (697,0) size 49x22
-            text run at (697,0) width 49: "World!"
-        RenderText {#text} at (746,0) size 750x44
-          text run at (746,0) width 4: "'"
-          text run at (0,22) width 44: "below."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 39x22
-            text run at (0,0) width 39: "Hello "
-          RenderInline {SPAN} at (0,0) size 49x22
-            RenderInline {DIV} at (0,0) size 49x22
-              RenderText {#text} at (39,0) size 49x22
-                text run at (39,0) width 49: "World!"
-        RenderBlock (anonymous) at (0,22) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 727x21
+          text run at (0,0) width 567: "This tests for a hang when pasting underlined content at the end of a paragraph. "
+          text run at (567,0) width 160: "You should see 'Hello "
+        RenderInline {U} at (0,0) size 46x21
+          RenderText {#text} at (727,0) size 46x21
+            text run at (727,0) width 46: "World!"
+        RenderText {#text} at (773,0) size 776x42
+          text run at (773,0) width 3: "'"
+          text run at (0,21) width 47: "below."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 42x21
+            text run at (0,0) width 42: "Hello "
+          RenderInline {SPAN} at (0,0) size 46x21
+            RenderInline {DIV} at (0,0) size 46x21
+              RenderText {#text} at (42,0) size 46x21
+                text run at (42,0) width 46: "World!"
+        RenderBlock (anonymous) at (0,21) size 784x0
 caret: position 6 of child 0 {#text} of child 0 {DIV} of child 1 {SPAN} of child 0 {DIV} of child 2 {DIV} of body

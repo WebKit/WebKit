@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 772x44
-          text run at (0,0) width 576: "This is an automatic pixel test. To test interactively, drag selected text onto the iframe "
-          text run at (576,0) width 192: "below and verify that a drag"
-          text run at (768,0) width 4: " "
-          text run at (0,22) width 208: "caret appears inside the frame."
-      RenderBlock (anonymous) at (0,60) size 784x152
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 763x42
+          text run at (0,0) width 600: "This is an automatic pixel test. To test interactively, drag selected text onto the iframe "
+          text run at (600,0) width 159: "below and verify that a"
+          text run at (759,0) width 4: " "
+          text run at (0,21) width 254: "drag caret appears inside the frame."
+      RenderBlock (anonymous) at (0,58) size 784x152
         RenderPartObject {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134
-                RenderInline {SPAN} at (0,0) size 41x22
-                  RenderText {#text} at (0,0) size 41x22
-                    text run at (0,0) width 41: "There"
-                RenderText {#text} at (41,0) size 180x22
-                  text run at (41,0) width 180: " should be a caret here --> "
-                RenderBR {BR} at (221,16) size 0x0
-                RenderText {#text} at (0,22) size 44x22
-                  text run at (0,22) width 44: "See it?"
+                RenderInline {SPAN} at (0,0) size 42x21
+                  RenderText {#text} at (0,0) size 42x21
+                    text run at (0,0) width 42: "There"
+                RenderText {#text} at (42,0) size 189x21
+                  text run at (42,0) width 189: " should be a caret here --> "
+                RenderBR {BR} at (231,16) size 0x0
+                RenderText {#text} at (0,21) size 50x21
+                  text run at (0,21) width 50: "See it?"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

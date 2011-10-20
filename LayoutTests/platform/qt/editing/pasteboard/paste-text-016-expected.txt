@@ -26,41 +26,41 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 102x22
-          text run at (0,0) width 102: "Fixes this bug: "
-        RenderInline {A} at (0,0) size 179x22 [color=#0000EE]
-          RenderText {#text} at (102,0) size 179x22
-            text run at (102,0) width 179: "<rdar://problem/3927554>"
-        RenderText {#text} at (281,0) size 410x22
-          text run at (281,0) width 410: " REGRESSION (Mail): Paste inserts content in wrong place "
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 107x21
+          text run at (0,0) width 107: "Fixes this bug: "
+        RenderInline {A} at (0,0) size 183x21 [color=#0000EE]
+          RenderText {#text} at (107,0) size 183x21
+            text run at (107,0) width 183: "<rdar://problem/3927554>"
+        RenderText {#text} at (290,0) size 424x21
+          text run at (290,0) width 424: " REGRESSION (Mail): Paste inserts content in wrong place "
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (0,22) size 395x22
-          text run at (0,22) width 395: "***TEST*** line should be second, following the first line."
-      RenderBlock {DIV} at (0,44) size 784x12
-      RenderBlock {DIV} at (0,56) size 784x259
-        RenderBlock {DIV} at (0,0) size 784x259 [border: (2px solid #FF0000)]
-          RenderBlock {P} at (14,14) size 756x132
-            RenderBlock (anonymous) at (0,0) size 756x33
-              RenderText {#text} at (0,0) size 333x33
-                text run at (0,0) width 333: "Should be first line of document."
-              RenderBR {BR} at (333,24) size 0x0
-            RenderBlock {P} at (0,33) size 756x33
-              RenderText {#text} at (0,0) size 133x33
-                text run at (0,0) width 133: "***TEST***"
-            RenderBlock {DIV} at (0,66) size 756x33
-              RenderBR {BR} at (0,0) size 0x33
-            RenderBlock (anonymous) at (0,99) size 756x33
-              RenderText {#text} at (0,0) size 135x33
-                text run at (0,0) width 135: "Another line."
-          RenderBlock {P} at (14,146) size 756x0
-          RenderBlock (anonymous) at (14,146) size 756x33
-            RenderText {#text} at (0,0) size 6x33
-              text run at (0,0) width 6: " "
-          RenderBlock {P} at (14,179) size 756x0
-          RenderBlock (anonymous) at (14,179) size 756x33
-            RenderText {#text} at (0,0) size 6x33
-              text run at (0,0) width 6: " "
-          RenderBlock {P} at (14,212) size 756x33
-            RenderBR {BR} at (0,0) size 0x33
+        RenderText {#text} at (0,21) size 399x21
+          text run at (0,21) width 399: "***TEST*** line should be second, following the first line."
+      RenderBlock {DIV} at (0,42) size 784x12
+      RenderBlock {DIV} at (0,54) size 784x238
+        RenderBlock {DIV} at (0,0) size 784x238 [border: (2px solid #FF0000)]
+          RenderBlock {P} at (14,14) size 756x120
+            RenderBlock (anonymous) at (0,0) size 756x30
+              RenderText {#text} at (0,0) size 340x30
+                text run at (0,0) width 340: "Should be first line of document."
+              RenderBR {BR} at (340,23) size 0x0
+            RenderBlock {P} at (0,30) size 756x30
+              RenderText {#text} at (0,0) size 116x30
+                text run at (0,0) width 116: "***TEST***"
+            RenderBlock {DIV} at (0,60) size 756x30
+              RenderBR {BR} at (0,0) size 0x30
+            RenderBlock (anonymous) at (0,90) size 756x30
+              RenderText {#text} at (0,0) size 133x30
+                text run at (0,0) width 133: "Another line."
+          RenderBlock {P} at (14,134) size 756x0
+          RenderBlock (anonymous) at (14,134) size 756x30
+            RenderText {#text} at (0,0) size 7x30
+              text run at (0,0) width 7: " "
+          RenderBlock {P} at (14,164) size 756x0
+          RenderBlock (anonymous) at (14,164) size 756x30
+            RenderText {#text} at (0,0) size 7x30
+              text run at (0,0) width 7: " "
+          RenderBlock {P} at (14,194) size 756x30
+            RenderBR {BR} at (0,0) size 0x30
 caret: position 0 of child 0 {BR} of child 3 {DIV} of child 0 {P} of child 1 {DIV} of child 7 {DIV} of body

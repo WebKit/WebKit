@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FF0000]
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 391x22
-          text run at (0,0) width 391: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
-      RenderTable {DIV} at (0,38) size 81x66
-        RenderTableSection (anonymous) at (0,0) size 81x66
-          RenderTableRow (anonymous) at (0,0) size 81x66
-            RenderTableCell (anonymous) at (0,0) size 81x66 [r=0 c=0 rs=1 cs=1]
-              RenderTable at (0,0) size 67x22
-                RenderTableSection (anonymous) at (0,0) size 67x22
-                  RenderTableRow (anonymous) at (0,0) size 67x22
-                    RenderTableCell (anonymous) at (0,0) size 67x22 [r=0 c=0 rs=1 cs=1]
-                      RenderText at (0,0) size 67x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 385x21
+          text run at (0,0) width 385: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
+      RenderTable {DIV} at (0,37) size 79x63
+        RenderTableSection (anonymous) at (0,0) size 79x63
+          RenderTableRow (anonymous) at (0,0) size 79x63
+            RenderTableCell (anonymous) at (0,0) size 79x63 [r=0 c=0 rs=1 cs=1]
+              RenderTable at (0,0) size 67x21
+                RenderTableSection (anonymous) at (0,0) size 67x21
+                  RenderTableRow (anonymous) at (0,0) size 67x21
+                    RenderTableCell (anonymous) at (0,0) size 67x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText at (0,0) size 67x21
                         text run at (0,0) width 67: "BEFORE"
-              RenderBlock {DIV} at (0,22) size 81x22
-                RenderText {#text} at (0,0) size 81x22
-                  text run at (0,0) width 81: "CONTENT"
-              RenderTable at (0,44) size 56x22
-                RenderTableSection (anonymous) at (0,0) size 56x22
-                  RenderTableRow (anonymous) at (0,0) size 56x22
-                    RenderTableCell (anonymous) at (0,0) size 56x22 [r=0 c=0 rs=1 cs=1]
-                      RenderText at (0,0) size 56x22
-                        text run at (0,0) width 56: "AFTER"
-      RenderBlock (anonymous) at (0,104) size 784x22
-        RenderText {#text} at (0,0) size 81x22
-          text run at (0,0) width 81: "CONTENT"
+              RenderBlock {DIV} at (0,21) size 79x21
+                RenderText {#text} at (0,0) size 79x21
+                  text run at (0,0) width 79: "CONTENT"
+              RenderTable at (0,42) size 54x21
+                RenderTableSection (anonymous) at (0,0) size 54x21
+                  RenderTableRow (anonymous) at (0,0) size 54x21
+                    RenderTableCell (anonymous) at (0,0) size 54x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText at (0,0) size 54x21
+                        text run at (0,0) width 54: "AFTER"
+      RenderBlock (anonymous) at (0,100) size 784x21
+        RenderText {#text} at (0,0) size 79x21
+          text run at (0,0) width 79: "CONTENT"
         RenderText {#text} at (0,0) size 0x0

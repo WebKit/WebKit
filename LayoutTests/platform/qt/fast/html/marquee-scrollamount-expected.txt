@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 744x44
-          text run at (0,0) width 744: "This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=50434. It verifies that a marquee does not"
-          text run at (0,22) width 323: "animate when scrollAmount is set to 0 by script."
-      RenderBlock (anonymous) at (0,60) size 784x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 777x42
+          text run at (0,0) width 777: "This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=50434. It verifies that a marquee does not"
+          text run at (0,21) width 335: "animate when scrollAmount is set to 0 by script."
+      RenderBlock (anonymous) at (0,58) size 784x21
         RenderText {#text} at (0,0) size 0x0
-layer at (8,68) size 100x22 scrollX -100
-  RenderBlock {MARQUEE} at (0,0) size 100x22
-    RenderText {#text} at (0,0) size 29x22
-      text run at (0,0) width 29: "Test"
+layer at (8,66) size 100x21 scrollX -100
+  RenderBlock {MARQUEE} at (0,0) size 100x21
+    RenderText {#text} at (0,0) size 31x21
+      text run at (0,0) width 31: "Test"

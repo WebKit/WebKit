@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 605x22
-          text run at (0,0) width 605: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
-      RenderTable {TABLE} at (0,38) size 45x80
-        RenderTableSection {TBODY} at (0,0) size 45x80
-          RenderTableRow {TR} at (0,2) size 45x24
-            RenderTableCell {TD} at (2,2) size 41x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 604x21
+          text run at (0,0) width 604: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
+      RenderTable {TABLE} at (0,37) size 45x77
+        RenderTableSection {TBODY} at (0,0) size 45x77
+          RenderTableRow {TR} at (0,2) size 45x23
+            RenderTableCell {TD} at (2,2) size 41x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x21
                 text run at (1,1) width 39: "row 1"
-          RenderTableRow {TR} at (0,28) size 45x24
-            RenderTableCell {TD} at (2,28) size 41x24 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
+          RenderTableRow {TR} at (0,27) size 45x23
+            RenderTableCell {TD} at (2,27) size 41x23 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x21
                 text run at (1,1) width 39: "row 2"
-          RenderTableRow {TR} at (0,54) size 45x24
-            RenderTableCell {TD} at (2,54) size 41x24 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 39x22
+          RenderTableRow {TR} at (0,52) size 45x23
+            RenderTableCell {TD} at (2,52) size 41x23 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x21
                 text run at (1,1) width 39: "row 3"

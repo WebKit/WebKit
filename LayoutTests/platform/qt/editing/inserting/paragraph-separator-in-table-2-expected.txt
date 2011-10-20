@@ -9,21 +9,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 752x44
-          text run at (0,0) width 369: "This tests InsertParagraphSeparator inside table cells. "
-          text run at (369,0) width 383: "The first cell should contain 'Cell' and a newline, and the"
-          text run at (0,22) width 222: "second cell should contain 'Two'."
-      RenderBlock {DIV} at (0,60) size 784x54
-        RenderTable {TABLE} at (0,0) size 82x54 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 80x52
-            RenderTableRow {TR} at (0,2) size 80x48
-              RenderTableCell {TD} at (2,2) size 35x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 31x22
-                  text run at (2,2) width 31: "Cell "
-                RenderBR {BR} at (33,18) size 0x0
-                RenderBR {BR} at (2,24) size 0x22
-              RenderTableCell {TD} at (39,13) size 39x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 35x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 759x42
+          text run at (0,0) width 387: "This tests InsertParagraphSeparator inside table cells. "
+          text run at (387,0) width 372: "The first cell should contain 'Cell' and a newline, and"
+          text run at (0,21) width 260: "the second cell should contain 'Two'."
+      RenderBlock {DIV} at (0,58) size 784x52
+        RenderTable {TABLE} at (0,0) size 84x52 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 82x50
+            RenderTableRow {TR} at (0,2) size 82x46
+              RenderTableCell {TD} at (2,2) size 37x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 33x21
+                  text run at (2,2) width 33: "Cell "
+                RenderBR {BR} at (35,18) size 0x0
+                RenderBR {BR} at (2,23) size 0x21
+              RenderTableCell {TD} at (41,12) size 39x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 35x21
                   text run at (2,2) width 35: " Two"
 caret: position 0 of child 2 {BR} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

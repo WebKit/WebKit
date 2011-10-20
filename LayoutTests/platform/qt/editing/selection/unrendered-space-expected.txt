@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 782x88
-          text run at (0,0) width 671: "This tests visible position creation in unrendered space after rendered text, just before a new block. "
-          text run at (671,0) width 65: "The caret"
-          text run at (0,22) width 782: "should be at the end of the line containing 'foo' because we choose to treat all positions in the unrendered space after"
-          text run at (0,44) width 781: "'foo' as being visually equivalent to the position just after 'foo', and not visually equivalent to the position on the next"
-          text run at (0,66) width 115: "line, before 'bar'."
-      RenderBlock {DIV} at (0,104) size 784x44
-        RenderBlock (anonymous) at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 21x22
-            text run at (0,0) width 21: "foo"
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderText {#text} at (0,0) size 24x22
-            text run at (0,0) width 24: "bar"
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 767x84
+          text run at (0,0) width 700: "This tests visible position creation in unrendered space after rendered text, just before a new block. "
+          text run at (700,0) width 67: "The caret"
+          text run at (0,21) width 743: "should be at the end of the line containing 'foo' because we choose to treat all positions in the unrendered"
+          text run at (0,42) width 750: "space after 'foo' as being visually equivalent to the position just after 'foo', and not visually equivalent to the"
+          text run at (0,63) width 258: "position on the next line, before 'bar'."
+      RenderBlock {DIV} at (0,100) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "foo"
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 23x21
+            text run at (0,0) width 23: "bar"
 caret: position 3 of child 0 {#text} of child 2 {DIV} of body

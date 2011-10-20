@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 228x22
-          text run at (0,0) width 228: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 780x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (228,0) size 352x22
-              text run at (228,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
-          RenderText {#text} at (580,0) size 780x44
-            text run at (580,0) width 4: " "
-            text run at (584,0) width 196: "positioned blocks don't update"
-            text run at (0,22) width 231: "when resizing the window vertically"
-        RenderText {#text} at (231,22) size 4x22
-          text run at (231,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 306x22
-          text run at (0,0) width 306: "The two squares below should be solid green."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,108) size 784x110
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 242x21
+          text run at (0,0) width 242: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 749x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (242,0) size 379x21
+              text run at (242,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
+          RenderText {#text} at (621,0) size 749x42
+            text run at (621,0) width 4: " "
+            text run at (625,0) width 124: "positioned blocks"
+            text run at (0,21) width 342: "don't update when resizing the window vertically"
+        RenderText {#text} at (342,21) size 4x21
+          text run at (342,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 326x21
+          text run at (0,0) width 326: "The two squares below should be solid green."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,105) size 784x109
         RenderPartObject {IFRAME} at (0,0) size 104x104 [border: (2px inset #000000)]
           layer at (0,0) size 100x100
             RenderView at (0,0) size 100x100
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 84x0 [bgcolor=#FF0000]
           layer at (0,0) size 100x100
             RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-        RenderText {#text} at (104,88) size 4x22
+        RenderText {#text} at (104,88) size 4x21
           text run at (104,88) width 4: " "
         RenderPartObject {IFRAME} at (108,0) size 104x104 [border: (2px inset #000000)]
           layer at (0,0) size 100x100

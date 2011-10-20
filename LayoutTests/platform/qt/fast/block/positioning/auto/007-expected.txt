@@ -1,47 +1,47 @@
-layer at (0,0) size 784x1750
+layer at (0,0) size 784x1700
   RenderView at (0,0) size 784x600
 layer at (0,0) size 784x600
   RenderBlock {HTML} at (0,0) size 784x600
     RenderBody {BODY} at (8,8) size 768x584
-layer at (8,8) size 210x1742
-  RenderBlock (positioned) {DIV} at (8,8) size 210x1742
-    RenderBlock {P} at (0,72) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 1"
-    RenderBlock {P} at (0,239) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 2"
-    RenderBlock {P} at (0,406) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 3"
-    RenderBlock {P} at (0,573) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 4"
-    RenderBlock {P} at (0,740) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 5"
-    RenderBlock {P} at (0,907) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 6"
-    RenderBlock {P} at (0,1074) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 7"
-    RenderBlock {P} at (0,1241) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 8"
-    RenderBlock {P} at (0,1408) size 210x95
-      RenderInline {A} at (0,0) size 174x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 174x95
-          text run at (0,0) width 174: "link 9"
-    RenderBlock {P} at (0,1575) size 210x95
-      RenderInline {A} at (0,0) size 210x95 [color=#0000EE]
-        RenderText {#text} at (0,0) size 210x95
-          text run at (0,0) width 210: "link 10"
+layer at (8,8) size 208x1692
+  RenderBlock (positioned) {DIV} at (8,8) size 208x1692
+    RenderBlock {P} at (0,72) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 1"
+    RenderBlock {P} at (0,234) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 2"
+    RenderBlock {P} at (0,396) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 3"
+    RenderBlock {P} at (0,558) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 4"
+    RenderBlock {P} at (0,720) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 5"
+    RenderBlock {P} at (0,882) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 6"
+    RenderBlock {P} at (0,1044) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 7"
+    RenderBlock {P} at (0,1206) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 8"
+    RenderBlock {P} at (0,1368) size 208x90
+      RenderInline {A} at (0,0) size 168x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 168x90
+          text run at (0,0) width 168: "link 9"
+    RenderBlock {P} at (0,1530) size 208x90
+      RenderInline {A} at (0,0) size 208x90 [color=#0000EE]
+        RenderText {#text} at (0,0) size 208x90
+          text run at (0,0) width 208: "link 10"

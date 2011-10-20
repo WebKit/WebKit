@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {OL} at (0,0) size 784x44
-        RenderListItem {LI} at (40,0) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "1"
-          RenderText {#text} at (0,0) size 168x22
-            text run at (0,0) width 168: "Make text bigger/smaller"
-        RenderListItem {LI} at (40,22) size 744x22
-          RenderListMarker at (-21,0) size 16x22: "2"
-          RenderText {#text} at (0,0) size 234x22
+      RenderBlock {OL} at (0,0) size 784x42
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "1"
+          RenderText {#text} at (0,0) size 173x21
+            text run at (0,0) width 173: "Make text bigger/smaller"
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "2"
+          RenderText {#text} at (0,0) size 234x21
             text run at (0,0) width 234: "Make the window narrower/wider"
-layer at (8,68) size 137x28
-  RenderBlock (positioned) {DIV} at (8,68) size 137x28 [border: (3px solid #000000)]
-    RenderText {#text} at (43,3) size 91x22
-      text run at (43,3) width 91: "Lorem ipsum"
+layer at (8,66) size 138x27
+  RenderBlock (positioned) {DIV} at (8,66) size 138x27 [border: (3px solid #000000)]
+    RenderText {#text} at (43,3) size 92x21
+      text run at (43,3) width 92: "Lorem ipsum"

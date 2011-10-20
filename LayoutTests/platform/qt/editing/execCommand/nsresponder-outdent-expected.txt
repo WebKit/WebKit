@@ -9,11 +9,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 484x22
-          text run at (0,0) width 212: "This tests the outdent: method. "
-          text run at (212,0) width 272: "You should see an undented 'foo' below."
-      RenderBlock {DIV} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 21x22
-          text run at (0,0) width 21: "foo"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 507x21
+          text run at (0,0) width 220: "This tests the outdent: method. "
+          text run at (220,0) width 287: "You should see an undented 'foo' below."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 22x21
+          text run at (0,0) width 22: "foo"
 caret: position 0 of child 0 {#text} of child 2 {DIV} of body

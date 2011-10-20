@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
-          RenderText {#text} at (57,0) size 322x22
-            text run at (57,0) width 322: "https://bugs.webkit.org/show_bug.cgi?id=24508"
-        RenderText {#text} at (379,0) size 741x44
-          text run at (379,0) width 362: ". Search field does not redraw if value set, when it has"
-          text run at (0,22) width 112: "placeholder text."
-      RenderBlock (anonymous) at (0,60) size 784x30
-        RenderTextControl {INPUT} at (2,2) size 166x26
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-            RenderBlock {DIV} at (0,11) size 0x0
-            RenderBlock {DIV} at (0,0) size 151x22
-            RenderBlock {DIV} at (151,5) size 11x11
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 337x21
+            text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=24508"
+        RenderText {#text} at (394,0) size 774x42
+          text run at (394,0) width 380: ". Search field does not redraw if value set, when it has"
+          text run at (0,21) width 117: "placeholder text."
+      RenderBlock (anonymous) at (0,58) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
-layer at (12,72) size 151x22
-  RenderBlock {DIV} at (0,0) size 151x22
-    RenderText {#text} at (1,0) size 60x22
-      text run at (1,0) width 60: "New text"
+layer at (12,70) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 62x21
+      text run at (1,0) width 62: "New text"

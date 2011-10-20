@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {html} at (0,0) size 800x54
+layer at (0,0) size 800x53
+  RenderBlock {html} at (0,0) size 800x53
     RenderBlock (anonymous) at (0,0) size 800x0
       RenderInline {bogus} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,16) size 800x22
-      RenderBody {body} at (8,0) size 784x22
-        RenderBlock {p} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 359x22
-            text run at (0,0) width 359: "This line should be green and there should be no red."
-    RenderBlock (anonymous) at (0,54) size 800x0
+    RenderBlock (anonymous) at (0,16) size 800x21
+      RenderBody {body} at (8,0) size 784x21
+        RenderBlock {p} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 378x21
+            text run at (0,0) width 378: "This line should be green and there should be no red."
+    RenderBlock (anonymous) at (0,53) size 800x0
       RenderInline {bogus} at (0,0) size 0x0

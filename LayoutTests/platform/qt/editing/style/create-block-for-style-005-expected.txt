@@ -10,20 +10,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 739x66
-          text run at (14,14) width 733: "Should see \"foo\" and \"bar\" centered in their own red boxes. The \"baz\""
-          text run at (747,14) width 6: " "
-          text run at (14,47) width 515: "line should be in its own red box, but not centered."
-      RenderBlock {DIV} at (0,118) size 784x183
-        RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-          RenderText {#text} at (376,14) size 32x33
-            text run at (376,14) width 32: "foo"
-        RenderBlock {DIV} at (0,61) size 784x61 [border: (2px solid #FF0000)]
-          RenderText {#text} at (374,14) size 36x33
-            text run at (374,14) width 36: "bar"
-        RenderBlock {DIV} at (0,122) size 784x61 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 36x33
-            text run at (14,14) width 36: "baz"
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 744x60
+          text run at (14,14) width 737: "Should see \"foo\" and \"bar\" centered in their own red boxes. The \"baz\""
+          text run at (751,14) width 7: " "
+          text run at (14,44) width 530: "line should be in its own red box, but not centered."
+      RenderBlock {DIV} at (0,112) size 784x174
+        RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (375,14) size 34x30
+            text run at (375,14) width 34: "foo"
+        RenderBlock {DIV} at (0,58) size 784x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (375,14) size 34x30
+            text run at (375,14) width 34: "bar"
+        RenderBlock {DIV} at (0,116) size 784x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 38x30
+            text run at (14,14) width 38: "baz"
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 3 {DIV} of child 3 {DIV} of body

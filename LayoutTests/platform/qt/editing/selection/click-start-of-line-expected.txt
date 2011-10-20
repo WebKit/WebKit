@@ -7,28 +7,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 770x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 352x22
-              text run at (111,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
-          RenderText {#text} at (463,0) size 770x44
-            text run at (463,0) width 4: " "
-            text run at (467,0) width 303: "REGRESSION (r12949-r12988): Clicking the"
-            text run at (0,22) width 422: "first letter on a line places the caret at the end of the previous line"
-        RenderText {#text} at (422,22) size 4x22
-          text run at (422,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 777x22
-          text run at (0,0) width 584: "To test interactively, click the left side of the W on the second line. The caret should be "
-          text run at (584,0) width 193: "move to the start of that line."
-      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,108) size 250x192
-        RenderText {#text} at (0,0) size 232x192
-          text run at (0,0) width 155: "Alice in"
-          text run at (155,0) width 12: " "
-          text run at (0,64) width 232: "Wonderlan"
-          text run at (0,128) width 27: "d"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 729x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 379x21
+              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
+          RenderText {#text} at (494,0) size 729x42
+            text run at (494,0) width 4: " "
+            text run at (498,0) width 231: "REGRESSION (r12949-r12988):"
+            text run at (0,21) width 545: "Clicking the first letter on a line places the caret at the end of the previous line"
+        RenderText {#text} at (545,21) size 4x21
+          text run at (545,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 774x42
+          text run at (0,0) width 611: "To test interactively, click the left side of the W on the second line. The caret should be "
+          text run at (611,0) width 163: "move to the start of that"
+          text run at (0,21) width 30: "line."
+      RenderBlock {HR} at (0,116) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,126) size 250x180
+        RenderText {#text} at (0,0) size 234x180
+          text run at (0,0) width 156: "Alice in"
+          text run at (156,0) width 13: " "
+          text run at (0,60) width 234: "Wonderlan"
+          text run at (0,120) width 27: "d"
 caret: position 19 of child 0 {#text} of child 7 {DIV} of body

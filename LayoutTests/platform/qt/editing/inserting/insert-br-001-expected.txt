@@ -15,12 +15,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 36x66
-          RenderText {#text} at (14,14) size 36x33
-            text run at (14,14) width 36: "test"
-          RenderBR {BR} at (50,38) size 0x0
-          RenderText {#text} at (14,47) size 12x33
-            text run at (14,47) width 12: "x"
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 39x60
+          RenderText {#text} at (14,14) size 39x30
+            text run at (14,14) width 39: "test"
+          RenderBR {BR} at (53,37) size 0x0
+          RenderText {#text} at (14,44) size 12x30
+            text run at (14,44) width 12: "x"
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body

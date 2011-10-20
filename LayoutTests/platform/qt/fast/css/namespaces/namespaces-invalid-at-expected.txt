@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x130
-  RenderBlock {html} at (0,0) size 800x130
-    RenderBody {body} at (8,16) size 784x98
-      RenderBlock {p} at (0,0) size 784x22
-        RenderInline {t} at (0,0) size 321x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 321x22
-            text run at (0,0) width 321: "This sentence should have a green background."
-      RenderBlock {p} at (0,38) size 784x22
-        RenderInline {t2} at (0,0) size 321x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 321x22
-            text run at (0,0) width 321: "This sentence should have a green background."
-      RenderBlock {p} at (0,76) size 784x22
-        RenderInline {t3} at (0,0) size 321x22 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 321x22
-            text run at (0,0) width 321: "This sentence should have a green background."
+layer at (0,0) size 800x127
+  RenderBlock {html} at (0,0) size 800x127
+    RenderBody {body} at (8,16) size 784x95
+      RenderBlock {p} at (0,0) size 784x21
+        RenderInline {t} at (0,0) size 341x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 341x21
+            text run at (0,0) width 341: "This sentence should have a green background."
+      RenderBlock {p} at (0,37) size 784x21
+        RenderInline {t2} at (0,0) size 341x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 341x21
+            text run at (0,0) width 341: "This sentence should have a green background."
+      RenderBlock {p} at (0,74) size 784x21
+        RenderInline {t3} at (0,0) size 341x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 341x21
+            text run at (0,0) width 341: "This sentence should have a green background."

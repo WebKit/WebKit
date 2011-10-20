@@ -6,7 +6,7 @@ layer at (8,8) size 160x32
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x40 [bgcolor=#00FF00] [border: (1px solid #00FF00)]
-        RenderBlock {FORM} at (1,1) size 782x22
-          RenderText {#text} at (0,0) size 715x22
-            text run at (0,0) width 715: "There should be no red on this page. Form element should have border-bottom set to 1em in quirks mode."
+      RenderBlock {DIV} at (0,0) size 784x39 [bgcolor=#00FF00] [border: (1px solid #00FF00)]
+        RenderBlock {FORM} at (1,1) size 782x21
+          RenderText {#text} at (0,0) size 745x21
+            text run at (0,0) width 745: "There should be no red on this page. Form element should have border-bottom set to 1em in quirks mode."

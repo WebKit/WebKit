@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 753x44
-          text run at (0,0) width 658: "This tests Select All when the caret is inside an editable region that is inside a non editable region. "
-          text run at (658,0) width 95: "Whenever the"
-          text run at (0,22) width 645: "selection is in an editable region, Select All should select the contents of the highest editable root."
-      RenderBlock {DIV} at (0,60) size 784x66
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 28x22
-            text run at (0,0) width 28: "One"
-        RenderBlock {DIV} at (0,22) size 784x22
-          RenderInline {SPAN} at (0,0) size 31x22
-            RenderText {#text} at (0,0) size 31x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 771x42
+          text run at (0,0) width 698: "This tests Select All when the caret is inside an editable region that is inside a non editable region. "
+          text run at (698,0) width 73: "Whenever"
+          text run at (0,21) width 714: "the selection is in an editable region, Select All should select the contents of the highest editable root."
+      RenderBlock {DIV} at (0,58) size 784x63
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 30x21
+            text run at (0,0) width 30: "One"
+        RenderBlock {DIV} at (0,21) size 784x21
+          RenderInline {SPAN} at (0,0) size 31x21
+            RenderText {#text} at (0,0) size 31x21
               text run at (0,0) width 31: "Two"
-          RenderText {#text} at (31,0) size 4x22
+          RenderText {#text} at (31,0) size 4x21
             text run at (31,0) width 4: " "
-          RenderInline {SPAN} at (0,0) size 41x22
-            RenderText {#text} at (35,0) size 41x22
-              text run at (35,0) width 41: "Three"
-        RenderBlock {DIV} at (0,44) size 784x22
-          RenderText {#text} at (0,0) size 34x22
-            text run at (0,0) width 34: "Four"
+          RenderInline {SPAN} at (0,0) size 42x21
+            RenderText {#text} at (35,0) size 42x21
+              text run at (35,0) width 42: "Three"
+        RenderBlock {DIV} at (0,42) size 784x21
+          RenderText {#text} at (0,0) size 33x21
+            text run at (0,0) width 33: "Four"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 5 {DIV} of child 2 {DIV} of body

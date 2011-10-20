@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 57x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 585x22
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (57,0) size 304x22
-              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=12886"
-          RenderText {#text} at (361,0) size 281x22
-            text run at (361,0) width 4: " "
-            text run at (365,0) width 277: "Crash with Scriptalicious javascript library"
-        RenderText {#text} at (642,0) size 4x22
-          text run at (642,0) width 4: "."
-      RenderBlock {P} at (0,38) size 784x22
-        RenderText {#text} at (0,0) size 313x22
-          text run at (0,0) width 313: "You should see two purple 100\x{D7}50 rectangles, "
-        RenderInline {EM} at (0,0) size 21x22
-          RenderText {#text} at (313,0) size 21x22
-            text run at (313,0) width 21: "not"
-        RenderText {#text} at (334,0) size 168x22
-          text run at (334,0) width 168: " a checkerboard pattern."
-      RenderTable {TABLE} at (0,76) size 100x300
+        RenderInline {I} at (0,0) size 629x21
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12886"
+          RenderText {#text} at (386,0) size 300x21
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 296: "Crash with Scriptalicious javascript library"
+        RenderText {#text} at (686,0) size 4x21
+          text run at (686,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 333x21
+          text run at (0,0) width 333: "You should see two purple 100\x{D7}50 rectangles, "
+        RenderInline {EM} at (0,0) size 22x21
+          RenderText {#text} at (333,0) size 22x21
+            text run at (333,0) width 22: "not"
+        RenderText {#text} at (355,0) size 171x21
+          text run at (355,0) width 171: " a checkerboard pattern."
+      RenderTable {TABLE} at (0,74) size 100x300
         RenderTableSection {TBODY} at (0,0) size 100x300
           RenderTableRow {TR} at (0,0) size 100x150
             RenderTableCell {TD} at (0,0) size 50x100 [r=0 c=0 rs=1 cs=1]
@@ -47,4 +47,4 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
             RenderTableCell {TD} at (50,150) size 50x50 [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
-      RenderBlock {DIV} at (0,376) size 784x200
+      RenderBlock {DIV} at (0,374) size 784x200

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H1} at (0,0) size 784x84
-        RenderText {#text} at (0,0) size 706x84
-          text run at (0,0) width 706: "Two gradients, one with zero radius that should not"
-          text run at (0,42) width 82: "crash."
+        RenderText {#text} at (0,0) size 736x84
+          text run at (0,0) width 736: "Two gradients, one with zero radius that should"
+          text run at (0,42) width 155: "not crash."
       RenderBlock {DIV} at (0,105) size 154x154 [border: (2px solid #000000)]

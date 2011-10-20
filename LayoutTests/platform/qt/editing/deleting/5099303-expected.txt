@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 757x44
-          text run at (0,0) width 757: "This tests for a bug where deleting from the start of a paragraph after a table would leave the caret in the wrong"
-          text run at (0,22) width 57: "position."
-      RenderBlock {DIV} at (0,60) size 784x54
-        RenderTable {TABLE} at (0,0) size 372x32 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 370x30
-            RenderTableRow {TR} at (0,2) size 370x26
-              RenderTableCell {TD} at (2,2) size 360x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 356x22
-                  text run at (2,2) width 356: "The caret should be between these two parenthesis: ("
-              RenderTableCell {TD} at (364,13) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-        RenderBlock {DIV} at (0,32) size 784x22
-          RenderText {#text} at (0,0) size 9x22
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 778x42
+          text run at (0,0) width 778: "This tests for a bug where deleting from the start of a paragraph after a table would leave the caret in the wrong"
+          text run at (0,21) width 60: "position."
+      RenderBlock {DIV} at (0,58) size 784x52
+        RenderTable {TABLE} at (0,0) size 394x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 392x29
+            RenderTableRow {TR} at (0,2) size 392x25
+              RenderTableCell {TD} at (2,2) size 382x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 378x21
+                  text run at (2,2) width 378: "The caret should be between these two parenthesis: ("
+              RenderTableCell {TD} at (386,12) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+        RenderBlock {DIV} at (0,31) size 784x21
+          RenderText {#text} at (0,0) size 9x21
             text run at (0,0) width 9: ")."
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

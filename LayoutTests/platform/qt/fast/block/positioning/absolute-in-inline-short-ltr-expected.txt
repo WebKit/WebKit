@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 337x22
-          text run at (0,0) width 337: "The black outline box should stretch from the left "
-        RenderInline {SPAN} at (0,0) size 29x22 [color=#0000FF]
-          RenderText {#text} at (337,0) size 29x22
-            text run at (337,0) width 29: "blue"
-        RenderText {#text} at (366,0) size 138x22
-          text run at (366,0) width 138: " border, to the right "
-        RenderInline {SPAN} at (0,0) size 47x22 [color=#FFA500]
-          RenderText {#text} at (504,0) size 47x22
-            text run at (504,0) width 47: "orange"
-        RenderText {#text} at (551,0) size 55x22
-          text run at (551,0) width 55: " border."
-      RenderBlock {DIV} at (0,38) size 600x44
-        RenderText {#text} at (0,0) size 201x22
-          text run at (0,0) width 201: "ILorem ipsum dolor sit amet, "
-        RenderText {#text} at (451,0) size 542x44
-          text run at (451,0) width 91: "irure dolor in"
-          text run at (0,22) width 98: "reprehenderit."
-layer at (8,46) size 230x24
-  RenderInline (relative positioned) {SPAN} at (0,0) size 230x24 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
-    RenderText {#text} at (241,0) size 105x22
-      text run at (241,0) width 105: "con a pariatur. "
-    RenderText {#text} at (346,0) size 65x22
-      text run at (346,0) width 65: "duis aute "
-layer at (239,46) size 190x22
-  RenderBlock (positioned) {DIV} at (20,1) size 190x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 345x21
+          text run at (0,0) width 345: "The black outline box should stretch from the left "
+        RenderInline {SPAN} at (0,0) size 31x21 [color=#0000FF]
+          RenderText {#text} at (345,0) size 31x21
+            text run at (345,0) width 31: "blue"
+        RenderText {#text} at (376,0) size 136x21
+          text run at (376,0) width 136: " border, to the right "
+        RenderInline {SPAN} at (0,0) size 50x21 [color=#FFA500]
+          RenderText {#text} at (512,0) size 50x21
+            text run at (512,0) width 50: "orange"
+        RenderText {#text} at (562,0) size 54x21
+          text run at (562,0) width 54: " border."
+      RenderBlock {DIV} at (0,37) size 600x42
+        RenderText {#text} at (0,0) size 203x21
+          text run at (0,0) width 203: "ILorem ipsum dolor sit amet, "
+        RenderText {#text} at (457,0) size 546x42
+          text run at (457,0) width 89: "irure dolor in"
+          text run at (0,21) width 99: "reprehenderit."
+layer at (8,45) size 234x23
+  RenderInline (relative positioned) {SPAN} at (0,0) size 234x23 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
+    RenderText {#text} at (243,0) size 105x21
+      text run at (243,0) width 105: "con a pariatur. "
+    RenderText {#text} at (348,0) size 69x21
+      text run at (348,0) width 69: "duis aute "
+layer at (241,45) size 194x21
+  RenderBlock (positioned) {DIV} at (20,1) size 194x21

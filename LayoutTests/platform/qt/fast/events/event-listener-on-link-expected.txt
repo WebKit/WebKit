@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 784x44
-        text run at (0,0) width 784: "This tests that you can successfully add a DOMSubtreeModified event listener to a link element, and the page should"
-        text run at (0,22) width 151: "load without crashing."
+      RenderText {#text} at (0,0) size 771x42
+        text run at (0,0) width 771: "This tests that you can successfully add a DOMSubtreeModified event listener to a link element, and the page"
+        text run at (0,21) width 207: "should load without crashing."

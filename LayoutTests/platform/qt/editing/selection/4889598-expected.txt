@@ -41,26 +41,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 784: "This tests for a bug moving down by a line from a line just above a ToDo, and moving up by a line from just below a"
-          text run at (0,22) width 43: "ToDo."
-      RenderBlock {DIV} at (0,60) size 784x76
-        RenderBlock {DIV} at (0,0) size 784x22
-          RenderText {#text} at (0,0) size 296x22
-            text run at (0,0) width 296: "Click anywhere in this line and move down."
-        RenderTable {TABLE} at (0,22) size 357x32 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 355x30
-            RenderTableRow {TR} at (0,2) size 355x26
-              RenderTableCell {TD} at (2,2) size 351x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 69x22
-                  text run at (2,2) width 69: "The caret "
-                RenderInline {SPAN} at (0,0) size 45x22 [color=#0000FF]
-                  RenderText {#text} at (71,2) size 45x22
-                    text run at (71,2) width 45: "should"
-                RenderText {#text} at (116,2) size 233x22
-                  text run at (116,2) width 233: " always go into the editable region."
-        RenderBlock {DIV} at (0,54) size 784x22
-          RenderText {#text} at (0,0) size 276x22
-            text run at (0,0) width 276: "Click anywhere in this line and move up."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 750x42
+          text run at (0,0) width 750: "This tests for a bug moving down by a line from a line just above a ToDo, and moving up by a line from just"
+          text run at (0,21) width 104: "below a ToDo."
+      RenderBlock {DIV} at (0,58) size 784x73
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 307x21
+            text run at (0,0) width 307: "Click anywhere in this line and move down."
+        RenderTable {TABLE} at (0,21) size 375x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 373x29
+            RenderTableRow {TR} at (0,2) size 373x25
+              RenderTableCell {TD} at (2,2) size 369x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 71x21
+                  text run at (2,2) width 71: "The caret "
+                RenderInline {SPAN} at (0,0) size 48x21 [color=#0000FF]
+                  RenderText {#text} at (73,2) size 48x21
+                    text run at (73,2) width 48: "should"
+                RenderText {#text} at (121,2) size 246x21
+                  text run at (121,2) width 246: " always go into the editable region."
+        RenderBlock {DIV} at (0,52) size 784x21
+          RenderText {#text} at (0,0) size 286x21
+            text run at (0,0) width 286: "Click anywhere in this line and move up."
 caret: position 6 of child 0 {#text} of child 1 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 3 {TABLE} of child 2 {DIV} of body

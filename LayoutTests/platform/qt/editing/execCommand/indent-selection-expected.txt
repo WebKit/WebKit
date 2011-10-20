@@ -10,50 +10,50 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 385x22
-          text run at (0,0) width 385: "This test uses the execCommand to indent the text below."
-      RenderBlock (anonymous) at (0,22) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,44) size 784x230
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x66
-          RenderBlock (anonymous) at (0,0) size 744x44
-            RenderInline {SPAN} at (0,0) size 46x22
-              RenderText {#text} at (0,0) size 46x22
-                text run at (0,0) width 46: "Lorem"
-              RenderBR {BR} at (46,16) size 0x0
-            RenderText {#text} at (0,22) size 90x22
-              text run at (0,22) width 90: "more Lorem!"
-          RenderBlock {BLOCKQUOTE} at (40,44) size 704x22
-            RenderText {#text} at (0,0) size 41x22
-              text run at (0,0) width 41: "ipsum"
-        RenderBlock (anonymous) at (0,66) size 784x0
-        RenderBlock {BLOCKQUOTE} at (40,82) size 744x66
-          RenderBlock {UL} at (0,0) size 744x66
-            RenderBlock {UL} at (40,0) size 704x66
-              RenderListItem {LI} at (40,0) size 664x22
-                RenderListMarker at (-18,0) size 7x22: white bullet
-                RenderText {#text} at (0,0) size 26x22
-                  text run at (0,0) width 26: "Foo"
-              RenderListItem {LI} at (40,22) size 664x22
-                RenderListMarker at (-18,0) size 7x22: white bullet
-                RenderText {#text} at (0,0) size 26x22
-                  text run at (0,0) width 26: "Bar"
-              RenderListItem {LI} at (40,44) size 664x22
-                RenderListMarker at (-18,0) size 7x22: white bullet
-                RenderText {#text} at (0,0) size 26x22
-                  text run at (0,0) width 26: "Baz"
-        RenderBlock {BLOCKQUOTE} at (40,164) size 744x66
-          RenderBlock {BLOCKQUOTE} at (40,0) size 704x22
-            RenderText {#text} at (0,0) size 39x22
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 407x21
+          text run at (0,0) width 407: "This test uses the execCommand to indent the text below."
+      RenderBlock (anonymous) at (0,21) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,42) size 784x221
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x63
+          RenderBlock (anonymous) at (0,0) size 744x42
+            RenderInline {SPAN} at (0,0) size 45x21
+              RenderText {#text} at (0,0) size 45x21
+                text run at (0,0) width 45: "Lorem"
+              RenderBR {BR} at (45,16) size 0x0
+            RenderText {#text} at (0,21) size 89x21
+              text run at (0,21) width 89: "more Lorem!"
+          RenderBlock {BLOCKQUOTE} at (40,42) size 704x21
+            RenderText {#text} at (0,0) size 43x21
+              text run at (0,0) width 43: "ipsum"
+        RenderBlock (anonymous) at (0,63) size 784x0
+        RenderBlock {BLOCKQUOTE} at (40,79) size 744x63
+          RenderBlock {UL} at (0,0) size 744x63
+            RenderBlock {UL} at (40,0) size 704x63
+              RenderListItem {LI} at (40,0) size 664x21
+                RenderListMarker at (-18,0) size 7x21: white bullet
+                RenderText {#text} at (0,0) size 28x21
+                  text run at (0,0) width 28: "Foo"
+              RenderListItem {LI} at (40,21) size 664x21
+                RenderListMarker at (-18,0) size 7x21: white bullet
+                RenderText {#text} at (0,0) size 25x21
+                  text run at (0,0) width 25: "Bar"
+              RenderListItem {LI} at (40,42) size 664x21
+                RenderListMarker at (-18,0) size 7x21: white bullet
+                RenderText {#text} at (0,0) size 28x21
+                  text run at (0,0) width 28: "Baz"
+        RenderBlock {BLOCKQUOTE} at (40,158) size 744x63
+          RenderBlock {BLOCKQUOTE} at (40,0) size 704x21
+            RenderText {#text} at (0,0) size 39x21
               text run at (0,0) width 39: "Dolor"
-          RenderBlock (anonymous) at (0,22) size 744x44
-            RenderText {#text} at (0,0) size 36x22
-              text run at (0,0) width 36: "Sum!"
-            RenderBR {BR} at (36,16) size 0x0
-            RenderInline {SPAN} at (0,0) size 41x22
-              RenderText {#text} at (0,22) size 41x22
-                text run at (0,22) width 41: "Thing"
-        RenderBlock (anonymous) at (0,230) size 784x0
+          RenderBlock (anonymous) at (0,21) size 744x42
+            RenderText {#text} at (0,0) size 37x21
+              text run at (0,0) width 37: "Sum!"
+            RenderBR {BR} at (37,16) size 0x0
+            RenderInline {SPAN} at (0,0) size 41x21
+              RenderText {#text} at (0,21) size 41x21
+                text run at (0,21) width 41: "Thing"
+        RenderBlock (anonymous) at (0,221) size 784x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BLOCKQUOTE} of child 4 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of body

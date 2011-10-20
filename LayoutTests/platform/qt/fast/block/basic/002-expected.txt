@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x26 [border: (2px solid #FF0000)]
-        RenderInline {A} at (0,0) size 32x22 [color=#008000]
-          RenderText {#text} at (2,2) size 32x22
-            text run at (2,2) width 32: "First"
-        RenderInline {A} at (0,0) size 49x22 [color=#008000]
-          RenderText {#text} at (34,2) size 49x22
-            text run at (34,2) width 49: "Second"
-        RenderInline {A} at (0,0) size 40x22 [color=#008000]
-          RenderText {#text} at (83,2) size 40x22
-            text run at (83,2) width 40: "Third"
+      RenderBlock {DIV} at (0,0) size 784x25 [border: (2px solid #FF0000)]
+        RenderInline {A} at (0,0) size 31x21 [color=#008000]
+          RenderText {#text} at (2,2) size 31x21
+            text run at (2,2) width 31: "First"
+        RenderInline {A} at (0,0) size 55x21 [color=#008000]
+          RenderText {#text} at (33,2) size 55x21
+            text run at (33,2) width 55: "Second"
+        RenderInline {A} at (0,0) size 37x21 [color=#008000]
+          RenderText {#text} at (88,2) size 37x21
+            text run at (88,2) width 37: "Third"

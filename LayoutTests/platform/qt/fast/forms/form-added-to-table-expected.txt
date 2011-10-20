@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 240x28
-        RenderTableSection {TBODY} at (0,0) size 240x28
-          RenderTableRow {TR} at (0,2) size 240x24
-            RenderTableCell {TD} at (2,2) size 236x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 234x22
-                text run at (1,1) width 234: "This test passes if it does not crash."
+      RenderTable {TABLE} at (0,0) size 257x27
+        RenderTableSection {TBODY} at (0,0) size 257x27
+          RenderTableRow {TR} at (0,2) size 257x23
+            RenderTableCell {TD} at (2,2) size 253x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 251x21
+                text run at (1,1) width 251: "This test passes if it does not crash."
 selection start: position 0 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of body
 selection end:   position 1 of child 1 {TABLE} of body

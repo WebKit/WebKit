@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderInline {SPAN} at (0,0) size 394x22
-          RenderText {#text} at (0,0) size 394x22
-            text run at (0,0) width 394: "This test passes if the caret is at the start of the second line."
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderInline {SPAN} at (0,0) size 418x21
+          RenderText {#text} at (0,0) size 418x21
+            text run at (0,0) width 418: "This test passes if the caret is at the start of the second line."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,22) size 352x102 [border: (1px solid #0000FF)]
-        RenderText {#text} at (1,1) size 12x22
-          text run at (1,1) width 8: "a"
-          text run at (9,1) width 4: " "
-        RenderText {#text} at (1,23) size 344x22
-          text run at (1,23) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      RenderBlock {DIV} at (0,21) size 352x102 [border: (1px solid #0000FF)]
+        RenderText {#text} at (1,1) size 13x21
+          text run at (1,1) width 9: "a"
+          text run at (10,1) width 4: " "
+        RenderText {#text} at (1,22) size 344x21
+          text run at (1,22) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 caret: position 2 of child 0 {#text} of child 2 {DIV} of body

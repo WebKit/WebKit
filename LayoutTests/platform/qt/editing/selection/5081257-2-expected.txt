@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 777x44
-          text run at (0,0) width 544: "This tests for setting the selection at a position inside a document in designMode. "
-          text run at (544,0) width 229: "You should see a caret at the start"
-          text run at (773,0) width 4: " "
-          text run at (0,22) width 80: "of the body."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 784x42
+          text run at (0,0) width 576: "This tests for setting the selection at a position inside a document in designMode. "
+          text run at (576,0) width 206: "You should see a caret at the"
+          text run at (782,0) width 2: " "
+          text run at (0,21) width 116: "start of the body."
 caret: position 0 of child 0 {#text} of child 1 {P} of body

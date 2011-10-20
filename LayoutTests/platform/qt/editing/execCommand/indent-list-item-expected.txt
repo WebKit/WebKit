@@ -9,24 +9,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 398x22
-          text run at (0,0) width 398: "This test uses the execCommand to Outdent the text below."
-      RenderBlock (anonymous) at (0,22) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,60) size 784x66
-        RenderBlock {UL} at (0,0) size 784x66
-          RenderListItem {LI} at (40,0) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 26x22
-              text run at (0,0) width 26: "Foo"
-          RenderBlock {UL} at (40,22) size 744x22
-            RenderListItem {LI} at (40,0) size 704x22
-              RenderListMarker at (-18,0) size 7x22: white bullet
-              RenderText {#text} at (0,0) size 26x22
-                text run at (0,0) width 26: "Bar"
-          RenderListItem {LI} at (40,44) size 744x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 26x22
-              text run at (0,0) width 26: "Baz"
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 419x21
+          text run at (0,0) width 419: "This test uses the execCommand to Outdent the text below."
+      RenderBlock (anonymous) at (0,21) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,58) size 784x63
+        RenderBlock {UL} at (0,0) size 784x63
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 28x21
+              text run at (0,0) width 28: "Foo"
+          RenderBlock {UL} at (40,21) size 744x21
+            RenderListItem {LI} at (40,0) size 704x21
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 25x21
+                text run at (0,0) width 25: "Bar"
+          RenderListItem {LI} at (40,42) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 28x21
+              text run at (0,0) width 28: "Baz"
 caret: position 0 of child 0 {#text} of child 0 {LI} of child 3 {UL} of child 1 {UL} of child 4 {DIV} of body

@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 111x22
-          text run at (0,0) width 111: "This is a test for "
-        RenderInline {I} at (0,0) size 777x44
-          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
-            RenderText {#text} at (111,0) size 352x22
-              text run at (111,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
-          RenderText {#text} at (463,0) size 777x44
-            text run at (463,0) width 4: " "
-            text run at (467,0) width 310: "REGRESSION: text field width shrinks on first"
-            text run at (0,22) width 61: "keystroke"
-        RenderText {#text} at (61,22) size 4x22
-          text run at (61,22) width 4: "."
-      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
-layer at (8,78) size 784x0
-  RenderBlock (relative positioned) {DIV} at (0,70) size 784x0
-    RenderTextControl {INPUT} at (0,2) size 392x26
-layer at (10,82) size 388x22
-  RenderBlock {DIV} at (2,2) size 388x22
-    RenderText {#text} at (1,0) size 21x22
-      text run at (1,0) width 21: "foo"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "This is a test for "
+        RenderInline {I} at (0,0) size 770x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (115,0) size 379x21
+              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
+          RenderText {#text} at (494,0) size 770x42
+            text run at (494,0) width 4: " "
+            text run at (498,0) width 272: "REGRESSION: text field width shrinks"
+            text run at (0,21) width 119: "on first keystroke"
+        RenderText {#text} at (119,21) size 4x21
+          text run at (119,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+layer at (8,76) size 784x0
+  RenderBlock (relative positioned) {DIV} at (0,68) size 784x0
+    RenderTextControl {INPUT} at (0,2) size 392x25
+layer at (10,80) size 388x21
+  RenderBlock {DIV} at (2,2) size 388x21
+    RenderText {#text} at (1,0) size 22x21
+      text run at (1,0) width 22: "foo"

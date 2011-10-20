@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 184x22
-          text run at (0,0) width 184: "This is a regression test for "
-        RenderInline {I} at (0,0) size 773x44
-          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
-            RenderText {#text} at (184,0) size 304x22
-              text run at (184,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11672"
-          RenderText {#text} at (488,0) size 773x44
-            text run at (488,0) width 4: " "
-            text run at (492,0) width 281: "REGRESSION (r17068): Repro crash due"
-            text run at (0,22) width 167: "to painting without layout"
-        RenderText {#text} at (167,22) size 139x22
-          text run at (167,22) width 139: ". It should not crash."
-layer at (8,68) size 6x6
-  RenderTable {TABLE} at (0,60) size 6x6
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 194x21
+          text run at (0,0) width 194: "This is a regression test for "
+        RenderInline {I} at (0,0) size 751x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (194,0) size 329x21
+              text run at (194,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=11672"
+          RenderText {#text} at (523,0) size 751x42
+            text run at (523,0) width 4: " "
+            text run at (527,0) width 224: "REGRESSION (r17068): Repro"
+            text run at (0,21) width 250: "crash due to painting without layout"
+        RenderText {#text} at (250,21) size 141x21
+          text run at (250,21) width 141: ". It should not crash."
+layer at (8,66) size 6x6
+  RenderTable {TABLE} at (0,58) size 6x6
     RenderTableSection {TBODY} at (0,0) size 6x6
       RenderTableRow {TR} at (0,2) size 6x2
         RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
-layer at (11,71) size 46x44
-  RenderBlock (positioned) {DIV} at (3,3) size 46x44
-    RenderText {#text} at (0,0) size 46x44
-      text run at (0,0) width 46: "Lorem"
-      text run at (0,22) width 41: "ipsum"
+layer at (11,69) size 45x42
+  RenderBlock (positioned) {DIV} at (3,3) size 45x42
+    RenderText {#text} at (0,0) size 45x42
+      text run at (0,0) width 45: "Lorem"
+      text run at (0,21) width 43: "ipsum"

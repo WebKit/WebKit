@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FF0000]
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 391x22
-          text run at (0,0) width 391: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
-      RenderTable {DIV} at (0,38) size 204x22
-        RenderTableSection (anonymous) at (0,0) size 204x22
-          RenderTableRow (anonymous) at (0,0) size 204x22
-            RenderTableCell (anonymous) at (0,0) size 67x22 [r=0 c=0 rs=1 cs=1]
-              RenderText at (0,0) size 67x22
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 385x21
+          text run at (0,0) width 385: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
+      RenderTable {DIV} at (0,37) size 200x21
+        RenderTableSection (anonymous) at (0,0) size 200x21
+          RenderTableRow (anonymous) at (0,0) size 200x21
+            RenderTableCell (anonymous) at (0,0) size 67x21 [r=0 c=0 rs=1 cs=1]
+              RenderText at (0,0) size 67x21
                 text run at (0,0) width 67: "BEFORE"
-            RenderTableCell (anonymous) at (67,0) size 81x22 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 81x22
-                RenderText {#text} at (0,0) size 81x22
-                  text run at (0,0) width 81: "CONTENT"
-            RenderTableCell (anonymous) at (148,0) size 56x22 [r=0 c=2 rs=1 cs=1]
-              RenderText at (0,0) size 56x22
-                text run at (0,0) width 56: "AFTER"
-      RenderBlock (anonymous) at (0,60) size 784x22
-        RenderText {#text} at (0,0) size 81x22
-          text run at (0,0) width 81: "CONTENT"
+            RenderTableCell (anonymous) at (67,0) size 79x21 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 79x21
+                RenderText {#text} at (0,0) size 79x21
+                  text run at (0,0) width 79: "CONTENT"
+            RenderTableCell (anonymous) at (146,0) size 54x21 [r=0 c=2 rs=1 cs=1]
+              RenderText at (0,0) size 54x21
+                text run at (0,0) width 54: "AFTER"
+      RenderBlock (anonymous) at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 79x21
+          text run at (0,0) width 79: "CONTENT"
         RenderText {#text} at (0,0) size 0x0

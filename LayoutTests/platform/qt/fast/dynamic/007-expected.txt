@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 207x28
-        RenderTableSection {TBODY} at (0,0) size 207x28
-          RenderTableRow {TR} at (0,2) size 207x24
-            RenderTableCell {TD} at (2,2) size 61x24 [bgcolor=#FFFFCC] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 59x22
-                text run at (1,1) width 59: "Cell One"
-            RenderTableCell {TD} at (65,2) size 64x24 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 62x22
-                text run at (1,1) width 62: "Cell Two"
-            RenderTableCell {TD} at (131,2) size 74x24 [bgcolor=#FFFFCC] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "Cell Three"
+      RenderTable {TABLE} at (0,0) size 216x27
+        RenderTableSection {TBODY} at (0,0) size 216x27
+          RenderTableRow {TR} at (0,2) size 216x23
+            RenderTableCell {TD} at (2,2) size 65x23 [bgcolor=#FFFFCC] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 63x21
+                text run at (1,1) width 63: "Cell One"
+            RenderTableCell {TD} at (69,2) size 66x23 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x21
+                text run at (1,1) width 64: "Cell Two"
+            RenderTableCell {TD} at (137,2) size 77x23 [bgcolor=#FFFFCC] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 75x21
+                text run at (1,1) width 75: "Cell Three"

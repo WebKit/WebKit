@@ -31,27 +31,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 751x66
-          text run at (14,14) width 745: "Size check should say: 30px. All text in the red boxes should appear to be"
-          text run at (759,14) width 6: " "
-          text run at (14,47) width 55: "30px."
-      RenderBlock {DIV} at (0,118) size 784x33
-        RenderText {#text} at (0,0) size 121x33
-          text run at (0,0) width 121: "Size check: "
-        RenderInline {SPAN} at (0,0) size 49x33
-          RenderText {#text} at (121,0) size 49x33
-            text run at (121,0) width 49: "30px"
-      RenderBlock {DIV} at (0,167) size 784x176
-        RenderBlock {DIV} at (0,0) size 784x176 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x40
-            RenderText {#text} at (0,0) size 183x40
-              text run at (0,0) width 183: "There is a tide"
-          RenderBlock {DIV} at (14,54) size 756x68 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 264x40
-              text run at (14,14) width 264: "In the affairs of men"
-          RenderBlock (anonymous) at (14,122) size 756x40
-            RenderText {#text} at (0,0) size 319x40
-              text run at (0,0) width 319: "Which taken at the flood"
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 752x60
+          text run at (14,14) width 745: "Size check should say: 30px. All text in the red boxes should appear to"
+          text run at (759,14) width 7: " "
+          text run at (14,44) width 91: "be 30px."
+      RenderBlock {DIV} at (0,112) size 784x30
+        RenderText {#text} at (0,0) size 129x30
+          text run at (0,0) width 129: "Size check: "
+        RenderInline {SPAN} at (0,0) size 51x30
+          RenderText {#text} at (129,0) size 51x30
+            text run at (129,0) width 51: "30px"
+      RenderBlock {DIV} at (0,158) size 784x170
+        RenderBlock {DIV} at (0,0) size 784x170 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x38
+            RenderText {#text} at (0,0) size 191x38
+              text run at (0,0) width 191: "There is a tide"
+          RenderBlock {DIV} at (14,52) size 756x66 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 265x38
+              text run at (14,14) width 265: "In the affairs of men"
+          RenderBlock (anonymous) at (14,118) size 756x38
+            RenderText {#text} at (0,0) size 323x38
+              text run at (0,0) width 323: "Which taken at the flood"
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 25 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of body

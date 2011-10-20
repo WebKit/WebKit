@@ -9,20 +9,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 746x66
-          text run at (14,14) width 740: "Should see \"bar\" centered in its own red box. The \"foo\" and \"baz\" lines"
-          text run at (754,14) width 6: " "
-          text run at (14,47) width 237: "should not be centered."
-      RenderBlock {DIV} at (0,118) size 784x155
-        RenderBlock {DIV} at (0,0) size 784x155 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x33
-            RenderText {#text} at (0,0) size 32x33
-              text run at (0,0) width 32: "foo"
-          RenderBlock {DIV} at (14,47) size 756x61 [border: (2px solid #FF0000)]
-            RenderText {#text} at (360,14) size 36x33
-              text run at (360,14) width 36: "bar"
-          RenderBlock (anonymous) at (14,108) size 756x33
-            RenderText {#text} at (0,0) size 36x33
-              text run at (0,0) width 36: "baz"
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 752x60
+          text run at (14,14) width 745: "Should see \"bar\" centered in its own red box. The \"foo\" and \"baz\" lines"
+          text run at (759,14) width 7: " "
+          text run at (14,44) width 248: "should not be centered."
+      RenderBlock {DIV} at (0,112) size 784x146
+        RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x30
+            RenderText {#text} at (0,0) size 33x30
+              text run at (0,0) width 33: "foo"
+          RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
+            RenderText {#text} at (361,14) size 34x30
+              text run at (361,14) width 34: "bar"
+          RenderBlock (anonymous) at (14,102) size 756x30
+            RenderText {#text} at (0,0) size 38x30
+              text run at (0,0) width 38: "baz"
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

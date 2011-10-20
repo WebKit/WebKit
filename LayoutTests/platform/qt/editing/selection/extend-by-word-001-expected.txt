@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x33
-          RenderText {#text} at (0,0) size 32x33
-            text run at (0,0) width 32: "foo"
-          RenderInline {SPAN} at (0,0) size 6x33
-            RenderText {#text} at (32,0) size 6x33
-              text run at (32,0) width 6: "\x{9}"
-          RenderText {#text} at (38,0) size 36x33
-            text run at (38,0) width 36: "bar"
+      RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x30
+          RenderText {#text} at (0,0) size 33x30
+            text run at (0,0) width 33: "foo"
+          RenderInline {SPAN} at (0,0) size 7x30
+            RenderText {#text} at (33,0) size 7x30
+              text run at (33,0) width 7: "\x{9}"
+          RenderText {#text} at (40,0) size 34x30
+            text run at (40,0) width 34: "bar"
 selection start: position 0 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of body
 selection end:   position 3 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of body

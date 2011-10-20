@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 784: "When your cursor is after an empty blockquote, hitting delete should bring the cursor (and the content following the"
-          text run at (0,22) width 504: "cursor) back into the blockquote, instead of deleting the empty blockquote."
-      RenderBlock {DIV} at (0,60) size 784x22
-        RenderBlock {BLOCKQUOTE} at (0,0) size 744x22 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (12,0) size 150x22
-            text run at (12,0) width 150: "This should be quoted"
-        RenderBlock (anonymous) at (0,38) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 778x42
+          text run at (0,0) width 778: "When your cursor is after an empty blockquote, hitting delete should bring the cursor (and the content following"
+          text run at (0,21) width 548: "the cursor) back into the blockquote, instead of deleting the empty blockquote."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {BLOCKQUOTE} at (0,0) size 744x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (12,0) size 158x21
+            text run at (12,0) width 158: "This should be quoted"
+        RenderBlock (anonymous) at (0,37) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 3 {DIV} of body
