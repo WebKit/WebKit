@@ -1,3 +1,12 @@
+2011-10-19  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Test expectation change.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/drag-selected-image-to-contenteditable-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png.
+
 2011-10-19  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Rebaseline layout test zoom-animator-scale-test2.html for win, mac
