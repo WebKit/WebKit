@@ -1,3 +1,9 @@
+2011-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build breakage on some platforms after r98008.
+
+        * page/FrameTree.cpp:
+
 2011-10-20  Vincent Scheib  <scheib@chromium.org>
 
         MouseLock compile and run time flags.

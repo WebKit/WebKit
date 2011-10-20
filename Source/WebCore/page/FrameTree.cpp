@@ -25,6 +25,7 @@
 #include "FrameView.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "Document.h"
 #include <stdarg.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
