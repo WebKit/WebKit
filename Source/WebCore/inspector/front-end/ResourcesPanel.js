@@ -171,10 +171,6 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (this.sidebarTree.selectedTreeElement)
             this.sidebarTree.selectedTreeElement.deselect();
-
-        var childViews = this.childViews();
-        for (var i = 0; i < childViews.length; ++i)
-            this.removeChildView(childViews[i]);
     },
 
     _populateResourceTree: function()
@@ -366,7 +362,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var view = this._resourceViewForResource(resource);
         if (!view) {
-            this.visibleView.hide();
+            this.visibleView.detach();
             return;
         }
         if (view.searchCanceled)
@@ -509,9 +505,8 @@ WebInspector.ResourcesPanel.prototype = {
     _innerShowView: function(view)
     {
         if (this.visibleView)
-            this.visibleView.hide();
+            this.visibleView.detach();
 
-        this.addChildView(view);
         view.show(this.storageViews);
         this.visibleView = view;
 
@@ -525,7 +520,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (!this.visibleView)
             return;
-        this.visibleView.hide();
+        this.visibleView.detach();
         delete this.visibleView;
     },
 
@@ -1343,8 +1338,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
         newView.inheritScrollPositions(oldView);
 
-        this._storagePanel.removeChildView(this._sourceView);
-        this._storagePanel.addChildView(newView);
+        this._sourceView.detach();
         this._sourceView = newView;
 
         if (oldViewParentNode)

@@ -35,6 +35,7 @@
 WebInspector.ElementsPanel = function()
 {
     WebInspector.Panel.call(this, "elements");
+    this.setHideOnDetach();
 
     this.contentElement = document.createElement("div");
     this.contentElement.id = "elements-content";
@@ -49,8 +50,6 @@ WebInspector.ElementsPanel = function()
     this.treeOutline.wireToDomAgent();
 
     this.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
-
-    this.contentElement.appendChild(this.treeOutline.element);
 
     this.crumbsElement = document.createElement("div");
     this.crumbsElement.className = "crumbs";
@@ -127,6 +126,10 @@ WebInspector.ElementsPanel.prototype = {
 
     show: function()
     {
+        // Attach heavy component lazily
+        if (this.treeOutline.element.parentElement !== this.contentElement)
+            this.contentElement.appendChild(this.treeOutline.element);
+
         WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         this.updateBreadcrumb();
@@ -144,6 +147,9 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.domAgent.hideDOMNodeHighlight();
         this.setSearchingForNode(false);
         this.treeOutline.setVisible(false);
+
+        // Detach heavy component on hide
+        this.contentElement.removeChild(this.treeOutline.element);
     },
 
     onResize: function()

@@ -7,6 +7,8 @@
 
 var test = function()
 {
+    WebInspector.setCurrentPanel(WebInspector.panels.elements);
+
     InspectorTest.nodeWithId("image", step1);
 
     function step1(node)

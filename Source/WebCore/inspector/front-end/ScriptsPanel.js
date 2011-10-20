@@ -260,7 +260,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = event.data;
         if (uiSourceCode._sourceFrame)
-            this.removeChildView(uiSourceCode._sourceFrame);
+            uiSourceCode._sourceFrame.detach();
     },
 
     _showScriptFoldersSettingChanged: function()
@@ -617,7 +617,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         if (this._visibleView)
-            this._visibleView.hide();
+            this._visibleView.detach();
 
         this._visibleView = x;
 
@@ -690,7 +690,6 @@ WebInspector.ScriptsPanel.prototype = {
         var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this, uiSourceCode);
         var sourceFrame = new WebInspector.JavaScriptSourceFrame(delegate, this._presentationModel, uiSourceCode);
 
-        this.addChildView(sourceFrame);
         sourceFrame._uiSourceCode = uiSourceCode;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         uiSourceCode._sourceFrame = sourceFrame;
@@ -707,7 +706,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (!sourceFrame)
             return;
         delete uiSourceCode._sourceFrame;
-        this.removeChildView(sourceFrame);
+        sourceFrame.detach();
         sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
     },
 

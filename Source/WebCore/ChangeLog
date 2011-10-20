@@ -1,3 +1,74 @@
+2011-10-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of manual view hierarchy management.
+        https://bugs.webkit.org/show_bug.cgi?id=70417
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.show):
+        (WebInspector.AuditsPanel.prototype._clearButtonClicked):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.show):
+        (WebInspector.ConsolePanel.prototype.hide):
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.queryObjectContent.else.formatResult):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.queryObjectContent):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.show.profileCallback2):
+        (WebInspector.DetailedHeapshotView.prototype.show):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        * inspector/front-end/IFrameView.js:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype._initializeView):
+        (WebInspector.NetworkPanel.prototype.show):
+        (WebInspector.NetworkPanel.prototype._showResource):
+        (WebInspector.NetworkPanel.prototype._closeVisibleResource):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.detach):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype.closeVisibleView):
+        * inspector/front-end/RemoteObject.js:
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+        * inspector/front-end/ResourceResponseView.js:
+        (WebInspector.ResourceResponseView.prototype.contentLoaded):
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.prototype.show):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._innerShowView):
+        (WebInspector.FrameResourceTreeElement.prototype._recreateSourceView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.show):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane):
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype._hideTab):
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.show):
+        (WebInspector.View.prototype.hide):
+        (WebInspector.View.prototype.attach):
+        (WebInspector.View.prototype.detach):
+        (WebInspector.View.prototype._addChildView):
+        (WebInspector.View.prototype._removeChildView):
+        (WebInspector.View.prototype.dispatchToVisibleChildren):
+        (WebInspector.View.prototype._handleInsertedIntoDocument):
+        (WebInspector.View.prototype._handleRemovedFromDocument):
+        (WebInspector.View.prototype.printViewHierarchy):
+        (WebInspector.View.prototype._collectViewHierarchy):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2011-10-20  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Enable support for advanced search in script's static content provider.

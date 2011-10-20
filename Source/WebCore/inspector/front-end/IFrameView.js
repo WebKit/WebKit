@@ -31,79 +31,42 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {string} src
+ * @param {string=} className
  */
-WebInspector.IFrameView = function(parentElement, stylesheets)
+WebInspector.IFrameView = function(src, className)
 {
-    this._iframeElement = document.createElement("iframe");
-    this._iframeElement.addStyleClass("view");
-    this._initializeView = this._attachIFrameAndInitialize.bind(this, parentElement, stylesheets);
     WebInspector.View.call(this);
+    this.element.className = "fill";
+    this._src = src;
+    this._className = className;
 }
 
 WebInspector.IFrameView.prototype = {
-    _innerShow: function()
+    willDetach: function()
     {
-        this._iframeElement.addStyleClass("visible");
-        WebInspector.View.prototype._innerShow.call(this);
-    },
-
-    _innerHide: function()
-    {
-        this._iframeElement.removeStyleClass("visible");
-    },
-
-    attach: function(parent)
-    {
-        if (this._initializeView)
-            this._initializeView();
-        this._iframeElement.contentDocument.body.appendChild(this.element);
-    },
-
-    _attachIFrameAndInitialize: function(parent, stylesheets)
-    {
-        if (!this._initializeView)
-            return;
-        delete this._initializeView;
-        parent.appendChild(this._iframeElement);
-        this._setDocumentType();
-        var iframeDocument = this._iframeElement.contentDocument;
-        this._iframeElement.contentWindow.eval("(" + setupPrototypeUtilities.toString() + ")();");
-        this.element = iframeDocument.body.createChild("div");
-        this.addStylesheets(stylesheets);
-        this._propagateBodyStyle();
-        WebInspector.addMainEventListeners(iframeDocument);
-
-        if (typeof this.initializeView === "function")
-            this.initializeView();
-    },
-
-    addStylesheets: function(hrefs)
-    {
-        var cssText = "";
-        for (var i = 0; i < hrefs.length; ++i) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", hrefs[i], false);
-            xhr.send(null);
-            cssText += xhr.responseText;
+        if (this._iframe) {
+            if (!WebInspector.IFrameView._parentIframe) {
+                WebInspector.IFrameView._parentIframe = document.createElement("iframe");
+                WebInspector.IFrameView._parentIframe.style.display = "none";
+                document.body.appendChild(WebInspector.IFrameView._parentIframe);
+            }
+            WebInspector.IFrameView._parentIframe.contentDocument.adoptNode(this._iframe);
+            WebInspector.IFrameView._parentIframe.contentDocument.body.appendChild(this._iframe);
         }
-        var style  = document.createElement("style");
-        style.type = "text/css";
-        style.textContent = cssText;
-        this._iframeElement.contentDocument.head.appendChild(style);
     },
 
-    _setDocumentType: function()
+    onInsertedIntoDocument: function()
     {
-        var doc = this._iframeElement.contentDocument.open();
-        doc.write("<!DOCTYPE html>");
-        doc.close();
-    },
+        if (!this._iframe) {
+            this._iframe = document.createElement("iframe");
+            this._iframe.src = this._src;
+            if (this._className)
+                this._iframe.className = this._className;
+        }
 
-    _propagateBodyStyle: function()
-    {
-        var body = this._iframeElement.contentDocument.body;
-        body.className = document.body.className;
-        body.addStyleClass("visible");
+        document.adoptNode(this._iframe);
+        this.element.appendChild(this._iframe);
     }
 }
 

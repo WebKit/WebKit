@@ -773,7 +773,7 @@ WebInspector.ElementsTreeElement.prototype = {
      */
     _updateChildren: function(fullRefresh)
     {
-        if (this._updateChildrenInProgress)
+        if (this._updateChildrenInProgress || !this.treeOutline._visible)
             return;
 
         this._updateChildrenInProgress = true;

@@ -41,6 +41,7 @@ WebInspector.Panel = function(name)
     this._shortcuts = {};
 
     WebInspector.settings[this._sidebarWidthSettingName()] = WebInspector.settings.createSetting(this._sidebarWidthSettingName(), undefined);
+    this._hideOnDetach = false;
 }
 
 // Should by in sync with style declarations.
@@ -61,9 +62,17 @@ WebInspector.Panel.prototype = {
         return this._panelName;
     },
 
+    setHideOnDetach: function()
+    {
+        this._hideOnDetach = true;
+    },
+
     show: function()
     {
-        WebInspector.View.prototype.show.call(this);
+        if (!WebInspector.Panel._mainPanelsElement)
+            WebInspector.Panel._mainPanelsElement = document.getElementById("main-panels");
+    
+        WebInspector.View.prototype.show.call(this, WebInspector.Panel._mainPanelsElement);
 
         var statusBarItems = this.statusBarItems;
         if (statusBarItems) {
@@ -82,9 +91,12 @@ WebInspector.Panel.prototype = {
         WebInspector.extensionServer.notifyPanelShown(this.name);
     },
 
-    hide: function()
+    detach: function()
     {
-        WebInspector.View.prototype.hide.call(this);
+        if (this._hideOnDetach)
+            this.hide();
+        else
+            WebInspector.View.prototype.detach.call(this);
 
         if (this._statusBarItemContainer && this._statusBarItemContainer.parentNode)
             this._statusBarItemContainer.parentNode.removeChild(this._statusBarItemContainer);
@@ -102,12 +114,6 @@ WebInspector.Panel.prototype = {
     get defaultFocusedElement()
     {
         return this.sidebarTreeElement || this.element;
-    },
-
-    attach: function()
-    {
-        if (!this.element.parentNode)
-            document.getElementById("main-panels").appendChild(this.element);
     },
 
     searchCanceled: function()

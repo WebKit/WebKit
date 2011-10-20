@@ -35,7 +35,7 @@ function initialize_extensionsUITest()
     InspectorTest.checkPanelSize = function(width, height)
     {
         var extensionPanel = WebInspector.panelOrder[WebInspector.panelOrder.length - 1];
-        var boundingRect = extensionPanel.element.parentElement.getBoundingClientRect();
+        var boundingRect = document.getElementById("main-panels").getBoundingClientRect();
         InspectorTest.assertEquals(boundingRect.width, width, "panel width mismatch");
         InspectorTest.assertEquals(boundingRect.height, height, "panel height mismatch");
         InspectorTest.addResult("Extension panel size correct");

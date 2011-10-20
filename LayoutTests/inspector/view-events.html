@@ -41,20 +41,19 @@ function test()
     }
     var parentView = new TestView("ParentView");
     var childView = new TestView("ChildView");
-    parentView.addChildView(childView);
     var root = document.getElementById("main-panels");
     traceEval([
         "parentView.show(root)",
         "parentView.doResize()",
-        "childView.show()",
+        "childView.show(parentView.element)",
         "parentView.doResize()",
-        "parentView.hide(root)",
+        "parentView.hide()",
         "parentView.show(root)",
         "childView.hide()",
-        "parentView.hide(root)"
+        "parentView.hide()"
     ]);
-    parentView.removeChildView(childView);
-    root.removeChild(parentView.element);
+    childView.detach();
+    parentView.detach();
     InspectorTest.completeTest();
 }
 

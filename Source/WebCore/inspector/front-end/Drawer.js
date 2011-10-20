@@ -76,11 +76,9 @@ WebInspector.Drawer.prototype = {
         this.immediatelyFinishAnimation();
 
         var drawerWasVisible = this.visible;
-        
-        if (this._view) {
+
+        if (this._view)
             this._drawerContentsElement.removeChildren();
-            this._view.hide();
-        }
 
         this._view = view;
 

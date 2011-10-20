@@ -204,8 +204,12 @@ WebInspector.ProfilesPanel.prototype = {
 
         for (var i = 0; i < this._profiles.length; ++i) {
             var view = this._profiles[i]._profileView;
-            if (view && ("dispose" in view))
-                view.dispose();
+            if (view) {
+                view.detach();
+                if ("dispose" in view)
+                    view.dispose();
+            }
+
             delete this._profiles[i]._profileView;
         }
         delete this.visibleView;
@@ -231,7 +235,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.removeAllListeners();
 
         this._updateInterface();
-        this.welcomeView.show();
+        this.welcomeView.show(this.element);
     },
 
     _clearProfiles: function()
@@ -513,7 +517,7 @@ WebInspector.ProfilesPanel.prototype = {
     closeVisibleView: function()
     {
         if (this.visibleView)
-            this.visibleView.hide();
+            this.visibleView.detach();
         delete this.visibleView;
     },
 

@@ -638,8 +638,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainingPathsList();
     this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
     this.retainmentView.element.appendChild(this.retainmentDataGrid.element);
-    this.retainmentView.visible = true;
-    this.element.appendChild(this.retainmentView.element);
+    this.retainmentView.show(this.element);
     this.retainmentDataGrid.reset();
 
     this.dataGrid = this.constructorsDataGrid;
@@ -756,7 +755,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         }
 
         function profileCallback2() {
-            this.currentView.show();
+            this.currentView.show(this.element);
             this.dataGrid.updateWidths();
         }
     },
@@ -1073,7 +1072,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         var view = this.views[this.views.current];
         this.currentView = view.view;
         this.dataGrid = view.grid;
-        this.currentView.show();
+        this.currentView.show(this.element);
         this.refreshVisibleData();
         this.dataGrid.updateWidths();
 

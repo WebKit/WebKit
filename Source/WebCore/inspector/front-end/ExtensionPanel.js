@@ -37,12 +37,14 @@
  */
 WebInspector.ExtensionPanel = function(id, label, iconURL)
 {
+    WebInspector.Panel.call(this, id);
+    this.setHideOnDetach();
+
     this._toolbarItemLabel = label;
     if (iconURL) {
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
         this._addStyleRule(".toolbar-small .toolbar-item." + id + " .toolbar-icon", "background-position-x: -32px;");
     }
-    WebInspector.Panel.call(this, id);
 }
 
 WebInspector.ExtensionPanel.prototype = {

@@ -33,6 +33,7 @@
 WebInspector.ConsolePanel = function()
 {
     WebInspector.Panel.call(this, "console");
+
     WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.EntryAdded, this._consoleMessageAdded, this);
     WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
     this._view = WebInspector.consoleView;
@@ -56,15 +57,13 @@ WebInspector.ConsolePanel.prototype = {
             this._drawerWasVisible = true;
         }
         WebInspector.Panel.prototype.show.call(this);
-
-        this.addChildView(this._view);
-        this._view.show();
+        this._view.show(this.element);
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
-        this.removeChildView(this._view);
+        this._view.detach();
         if (this._drawerWasVisible) {
             WebInspector.drawer.show(this._view, WebInspector.Drawer.AnimationType.Immediately);
             delete this._drawerWasVisible;

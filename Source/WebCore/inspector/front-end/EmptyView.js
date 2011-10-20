@@ -40,7 +40,7 @@ WebInspector.EmptyView = function(text)
 
 WebInspector.EmptyView.prototype = {
     /**
-     * @param {Element=} parentElement
+     * @param {Element} parentElement
      */
     show: function(parentElement)
     {

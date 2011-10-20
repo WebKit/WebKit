@@ -30,17 +30,11 @@
 
 /**
  * @constructor
- * @extends {WebInspector.IFrameView}
+ * @extends {WebInspector.View}
  */
-WebInspector.NetworkLogView = function(parentElement)
+WebInspector.NetworkLogView = function()
 {
-    // FIXME: some of the styles should be loaded on demand by components that need them.
-    var styles = [
-        "inspectorCommon.css",
-        "dataGrid.css",
-        "networkLogView.css"
-    ];
-    WebInspector.IFrameView.call(this, parentElement, styles);
+    WebInspector.View.call(this);
 
     this._allowResourceSelection = false;
     this._resources = [];
@@ -69,10 +63,12 @@ WebInspector.NetworkLogView = function(parentElement)
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
+
+    this._initializeView();
 }
 
 WebInspector.NetworkLogView.prototype = {
-    initializeView: function()
+    _initializeView: function()
     {
         this.element.id = "network-container";
 
@@ -650,13 +646,13 @@ WebInspector.NetworkLogView.prototype = {
 
     wasShown: function()
     {
-        WebInspector.IFrameView.prototype.wasShown.call(this);
+        WebInspector.View.prototype.wasShown.call(this);
         this._refreshIfNeeded();
     },
 
     willHide: function()
     {
-        WebInspector.IFrameView.prototype.willHide.call(this);
+        WebInspector.View.prototype.willHide.call(this);
         this._popoverHelper.hidePopover();
     },
 
@@ -1205,7 +1201,7 @@ WebInspector.NetworkLogView.prototype = {
     }
 };
 
-WebInspector.NetworkLogView.prototype.__proto__ = WebInspector.IFrameView.prototype;
+WebInspector.NetworkLogView.prototype.__proto__ = WebInspector.View.prototype;
 
 WebInspector.NetworkLogView.EventTypes = {
     ViewCleared: "ViewCleared",
@@ -1224,8 +1220,7 @@ WebInspector.NetworkPanel = function()
     WebInspector.Panel.call(this, "network");
 
     this.createSidebar();
-    this._networkLogView = new WebInspector.NetworkLogView(this.sidebarElement);
-    this.addChildView(this._networkLogView);
+    this._networkLogView = new WebInspector.NetworkLogView();
 
     this._viewsContainerElement = document.createElement("div");
     this._viewsContainerElement.id = "network-views";
@@ -1305,7 +1300,7 @@ WebInspector.NetworkPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        this._networkLogView.show();
+        this._networkLogView.show(this.sidebarElement);
     },
 
     get resources()
@@ -1386,12 +1381,11 @@ WebInspector.NetworkPanel.prototype = {
         this._toggleViewingResourceMode();
 
         if (this.visibleView) {
-            this.removeChildView(this.visibleView);
+            this.visibleView.detach();
             delete this.visibleView;
         }
 
         var view = new WebInspector.NetworkItemView(resource);
-        this.addChildView(view);
         view.show(this._viewsContainerElement);
         this.visibleView = view;
 
@@ -1403,7 +1397,7 @@ WebInspector.NetworkPanel.prototype = {
         this.element.removeStyleClass("viewing-resource");
 
         if (this.visibleView) {
-            this.removeChildView(this.visibleView);
+            this.visibleView.detach();
             delete this.visibleView;
         }
 

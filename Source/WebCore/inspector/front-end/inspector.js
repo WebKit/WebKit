@@ -129,7 +129,7 @@ var WebInspector = {
             return;
 
         if (this._currentPanel)
-            this._currentPanel.hide();
+            this._currentPanel.detach();
 
         this._currentPanel = x;
 

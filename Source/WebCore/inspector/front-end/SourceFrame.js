@@ -44,7 +44,6 @@ WebInspector.SourceFrame = function(delegate, url)
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
     this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);
-    this.addChildView(this._textViewer);
     this.element.appendChild(this._textViewer.element);
 
     this.popoverHelper = new WebInspector.ObjectPopoverHelper(this._textViewer.element,
@@ -93,7 +92,7 @@ WebInspector.SourceFrame.prototype = {
     {
         WebInspector.View.prototype.show.call(this, parentElement);
         this._ensureContentLoaded();
-        this._textViewer.show();
+        this._textViewer.show(this.element);
     },
 
     willHide: function()

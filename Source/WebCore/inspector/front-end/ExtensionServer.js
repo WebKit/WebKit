@@ -201,8 +201,7 @@ WebInspector.ExtensionServer.prototype = {
         WebInspector.panels[id] = panel;
         WebInspector.addPanel(panel);
 
-        var iframe = this.createClientIframe(panel.element, this._expandResourcePath(port._extensionOrigin, message.page));
-        iframe.addStyleClass("panel");
+        this.createClientIframe(panel.element, this._expandResourcePath(port._extensionOrigin, message.page), true);
         return this._status.OK();
     },
 
@@ -222,13 +221,10 @@ WebInspector.ExtensionServer.prototype = {
         return this._status.OK();
     },
 
-    createClientIframe: function(parent, url)
+    createClientIframe: function(parent, url, isPanel)
     {
-        var iframe = document.createElement("iframe");
-        iframe.src = url;
-        iframe.addStyleClass("extension");
-        parent.appendChild(iframe);
-        return iframe;
+        var iframeView = new WebInspector.IFrameView(url, "extension" + (isPanel ? " panel" : ""));
+        iframeView.show(parent);
     },
 
     _onSetSidebarHeight: function(message)

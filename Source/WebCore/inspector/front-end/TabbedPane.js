@@ -31,11 +31,10 @@
 /**
  * @extends {WebInspector.View}
  * @constructor
- * @param {Element=} element
  */
-WebInspector.TabbedPane = function(element)
+WebInspector.TabbedPane = function()
 {
-    WebInspector.View.call(this, element);
+    WebInspector.View.call(this);
     this.element.addStyleClass("tabbed-pane");
     this._tabsElement = this.element.createChild("div", "tabbed-pane-header");
     this._contentElement = this.element.createChild("div", "tabbed-pane-content");
@@ -51,7 +50,6 @@ WebInspector.TabbedPane.prototype = {
 
         this._tabsElement.appendChild(tabElement);
         this._contentElement.appendChild(view.element);
-        this.addChildView(view);
 
         this._tabs[id] = { tabElement: tabElement, view: view };
     },
@@ -86,7 +84,7 @@ WebInspector.TabbedPane.prototype = {
     _hideTab: function(tab)
     {
         tab.tabElement.removeStyleClass("selected");
-        tab.view.visible = false;
+        tab.view.detach();
     },
 
     canHighlightLine: function()

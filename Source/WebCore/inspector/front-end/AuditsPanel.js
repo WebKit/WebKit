@@ -236,7 +236,7 @@ WebInspector.AuditsPanel.prototype = {
             return;
 
         if (this._visibleView)
-            this._visibleView.hide();
+            this._visibleView.detach();
 
         this._visibleView = x;
 
@@ -244,9 +244,9 @@ WebInspector.AuditsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    attach: function()
+    show: function()
     {
-        WebInspector.Panel.prototype.attach.call(this);
+        WebInspector.Panel.prototype.show.call(this);
 
         this.auditsItemTreeElement.select();
     },

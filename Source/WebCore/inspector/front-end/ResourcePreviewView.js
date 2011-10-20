@@ -44,19 +44,18 @@ WebInspector.ResourcePreviewView.prototype = {
         if (!this.resource.content) {
             if (!this._emptyView) {
                 this._emptyView = this._createEmptyView();
-                this.addChildView(this._emptyView);
-                this._emptyView.show();
+                this._emptyView.show(this.element);
                 this.innerView = this._emptyView;
             }
         } else {
             if (this._emptyView) {
-                this.removeChildView(this._emptyView);
+                this._emptyView.detach();
                 delete this._emptyView;
             }
+
             if (!this._previewView)
                 this._previewView = this._createPreviewView();
-            this.addChildView(this._previewView);
-            this._previewView.show();
+            this._previewView.show(this.element);
             this.innerView = this._previewView;
         }
     },
