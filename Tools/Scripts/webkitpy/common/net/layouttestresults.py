@@ -90,7 +90,7 @@ class ORWTResultsHTMLParser(object):
         if table_title == cls.crash_key:
             return [test_failures.FailureCrash()]
         if table_title == cls.webprocess_crash_key:
-            return [test_failures.FailureCrash()]
+            return [test_failures.FailureCrash(process_name="WebProcess")]
         if table_title == cls.timeout_key:
             return [test_failures.FailureTimeout()]
         if table_title == cls.missing_key:

@@ -1,3 +1,23 @@
+2011-10-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach new-run-webkit-tests about #CRASHED and #CRASHED - WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=63683
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-10-19  Jochen Eisinger  <jochen@chromium.org>
 
         Chromium doesn't support git branch builds, so don't add the branch to the product dir

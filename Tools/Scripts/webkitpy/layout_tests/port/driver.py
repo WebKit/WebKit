@@ -39,7 +39,8 @@ class DriverInput(object):
 class DriverOutput(object):
     """Groups information about a output from driver for easy passing of data."""
 
-    def __init__(self, text, image, image_hash, audio, crash=False, test_time=0, timeout=False, error=''):
+    def __init__(self, text, image, image_hash, audio, crash=False,
+            test_time=0, timeout=False, error='', crashed_process_name=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = text
         self.image = image  # May be empty-string if the test crashes.
@@ -47,6 +48,7 @@ class DriverOutput(object):
         self.image_diff = None  # image_diff gets filled in after construction.
         self.audio = audio  # Binary format is port-dependent.
         self.crash = crash
+        self.crashed_process_name = crashed_process_name
         self.test_time = test_time
         self.timeout = timeout
         self.error = error  # stderr output

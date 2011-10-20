@@ -73,6 +73,9 @@ class ServerProcess:
         self.crashed = False
         self.timed_out = False
 
+    def process_name(self):
+        return self._name
+
     def _start(self):
         if self._proc:
             raise ValueError("%s already running" % self._name)

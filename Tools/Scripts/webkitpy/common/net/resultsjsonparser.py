@@ -116,6 +116,7 @@ class JSONTestResult(object):
         elif actual == test_expectations.TIMEOUT:
             return [test_failures.FailureTimeout()]
         elif actual == test_expectations.CRASH:
+            # NOTE: We don't know what process crashed from the json, just that a process crashed.
             return [test_failures.FailureCrash()]
         elif actual == test_expectations.MISSING:
             return [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
