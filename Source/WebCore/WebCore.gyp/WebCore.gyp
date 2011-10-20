@@ -336,6 +336,43 @@
   },
   'targets': [
     {
+      'target_name': 'inspector_protocol_sources',
+      'type': 'none',
+      'dependencies': [
+        'generate_inspector_protocol_version'
+      ],
+      'actions': [
+        {
+          'action_name': 'generateInspectorProtocolSources',
+          'inputs': [
+            # First input. It stands for python script in action below.
+            '../inspector/CodeGeneratorInspector.py',
+            # Other inputs. They go as arguments to the python script.
+            '../inspector/Inspector.json',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorBackendDispatcher.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorFrontend.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
+          ],
+          'variables': {
+            'generator_include_dirs': [
+            ],
+          },
+          'action': [
+            'python',
+            '<@(_inputs)',
+            '--output_h_dir', '<(SHARED_INTERMEDIATE_DIR)/webkit',
+            '--output_cpp_dir', '<(SHARED_INTERMEDIATE_DIR)/webcore',
+            '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT',
+          ],
+          'message': 'Generating Inspector protocol sources from Inspector.json',
+        },
+      ]
+    },
+    {
       'target_name': 'generate_inspector_protocol_version',
       'type': 'none',
       'actions': [
@@ -361,84 +398,6 @@
           ],
           'message': 'Validate inspector protocol for backwards compatibility and generate version file',
         }
-      ]
-    },
-    {
-      'target_name': 'inspector_idl',
-      'type': 'none',
-      'actions': [
-
-        {
-          'action_name': 'generateInspectorProtocolIDL',
-          'inputs': [
-            '../inspector/generate-inspector-idl',
-            '../inspector/Inspector.json',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
-          ],
-          'variables': {
-            'generator_include_dirs': [
-            ],
-          },
-          'action': [
-            'python',
-            '../inspector/generate-inspector-idl',
-            '-o',
-            '<@(_outputs)',
-            '<@(_inputs)'
-          ],
-          'message': 'Generating Inspector protocol sources from Inspector.idl',
-        }
-      ]
-    },
-    {
-      'target_name': 'inspector_protocol_sources',
-      'type': 'none',
-      'dependencies': [
-        'inspector_idl',
-        'generate_inspector_protocol_version'
-      ],
-      'actions': [
-        {
-          'action_name': 'generateInspectorProtocolSources',
-          # The second input item will be used as item name in vcproj.
-          # It is not possible to put Inspector.idl there because
-          # all idl files are marking as excluded by gyp generator.
-          'inputs': [
-            '../bindings/scripts/generate-bindings.pl',
-            '../inspector/CodeGeneratorInspector.pm',
-            '../bindings/scripts/CodeGenerator.pm',
-            '../bindings/scripts/IDLParser.pm',
-            '../bindings/scripts/IDLStructure.pm',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorBackendDispatcher.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorFrontend.h',
-          ],
-          'variables': {
-            'generator_include_dirs': [
-            ],
-          },
-          'action': [
-            'python',
-            'scripts/rule_binding.py',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT',
-            '--generator', 'Inspector',
-            '<@(generator_include_dirs)'
-          ],
-          'message': 'Generating Inspector protocol sources from Inspector.idl',
-        },
       ]
     },
     {

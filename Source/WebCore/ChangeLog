@@ -1,3 +1,24 @@
+2011-10-20  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: reimplement protocol backend/frontend source generator
+        https://bugs.webkit.org/show_bug.cgi?id=69295
+
+        Reviewed by Pavel Feldman.
+
+        Old 2-stage python+perf generator that uses intermediate IDL output is
+        being replaced with a solid python script. This is for simplicity and
+        as a base for the future JSON validator.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * inspector/CodeGeneratorInspector.pm: Removed.
+        * inspector/CodeGeneratorInspector.py: Added.
+        * inspector/Inspector.json:
+        * inspector/generate-inspector-idl: Removed.
+
 2011-10-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: encode source map url as source map page url query parameter.
