@@ -99,6 +99,11 @@ WebInspector.View.prototype = {
 
     detach: function()
     {
+        if (this._visible) {
+            this.dispatchToSelfAndChildren("willHide", true);
+            this._visible = false;
+        }
+
         this.dispatchToSelfAndChildren("willDetach", false);
 
         if (this.element.parentElement)

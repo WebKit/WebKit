@@ -977,7 +977,7 @@ function revertDomChanges(domChanges)
 
 /**
  * @param {string} query
- * @param {boolean} ignoreCase
+ * @param {boolean} caseSensitive
  * @param {boolean} isRegex
  * @return {RegExp}
  */

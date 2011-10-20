@@ -1,3 +1,13 @@
+2011-10-20  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: follow up to 97961 - dispatching of hide on detach was missing.
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.show):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype.detach):
+        * inspector/front-end/utilities.js:
+
 2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Properly suspend/resume Geolocation/DeviceMotion/DeviceOrientation objects

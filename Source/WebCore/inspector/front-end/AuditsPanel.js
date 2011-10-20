@@ -247,8 +247,8 @@ WebInspector.AuditsPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-
-        this.auditsItemTreeElement.select();
+        if (!this._visibleView)
+            this.auditsItemTreeElement.select();
     },
 
     updateMainViewWidth: function(width)
