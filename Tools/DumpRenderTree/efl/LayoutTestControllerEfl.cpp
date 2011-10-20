@@ -760,3 +760,23 @@ void LayoutTestController::allowRoundingHacks()
 {
     notImplemented();
 }
+
+void LayoutTestController::addChromeInputField()
+{
+    notImplemented();
+}
+
+void LayoutTestController::removeChromeInputField()
+{
+    notImplemented();
+}
+
+void LayoutTestController::focusWebView()
+{
+    notImplemented();
+}
+
+void LayoutTestController::setBackingScaleFactor(double)
+{
+    notImplemented();
+}
