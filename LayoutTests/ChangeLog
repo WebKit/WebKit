@@ -1,3 +1,11 @@
+2011-10-19  Kenji Imasaki  <imasaki@chromium.org>
+
+        [Chromium] Update the test expectation file for fullscreen tests.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Multiple crashes in RenderTable during layout

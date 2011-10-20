@@ -765,9 +765,9 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 WONTFIX SKIP : media/media-fullscreen-inline.html = TIMEOUT
 WONTFIX SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
-BUGCR100798 MAC CPU-CG : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
-BUGCR100798 SNOWLEOPARD CPU-CG : fullscreen/full-screen-iframe-zIndex.html = IMAGE
-BUGCR100798 SNOWLEOPARD CPU-CG : fullscreen/full-screen-zIndex-after.html = IMAGE
+BUGCR100798 LEOPARD : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
+BUGCR100798 MAC : fullscreen/full-screen-iframe-zIndex.html = IMAGE
+BUGCR100798 MAC : fullscreen/full-screen-zIndex-after.html = IMAGE
 BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-iframe-allowed.html = TEXT
 BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-remove-ancestor-during-transition.html = TIMEOUT PASS
 
