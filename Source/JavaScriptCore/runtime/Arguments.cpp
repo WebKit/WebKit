@@ -330,10 +330,10 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
 
 bool Arguments::deletePropertyVirtual(ExecState* exec, unsigned i) 
 {
-    return deleteProperty(this, exec, i);
+    return deletePropertyByIndex(this, exec, i);
 }
 
-bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, unsigned i) 
+bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i) 
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
     if (i < thisObject->d->numArguments) {

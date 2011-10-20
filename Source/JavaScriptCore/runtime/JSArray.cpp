@@ -528,10 +528,10 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& pr
 
 bool JSArray::deletePropertyVirtual(ExecState* exec, unsigned i)
 {
-    return deleteProperty(this, exec, i);
+    return deletePropertyByIndex(this, exec, i);
 }
 
-bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, unsigned i)
+bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
     JSArray* thisObject = static_cast<JSArray*>(cell);
     thisObject->checkConsistency();

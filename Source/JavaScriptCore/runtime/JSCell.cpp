@@ -135,10 +135,10 @@ bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& ide
 
 bool JSCell::deletePropertyVirtual(ExecState* exec, unsigned identifier)
 {
-    return deleteProperty(this, exec, identifier);
+    return deletePropertyByIndex(this, exec, identifier);
 }
 
-bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, unsigned identifier)
+bool JSCell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned identifier)
 {
     return cell->toObject(exec, exec->lexicalGlobalObject())->deletePropertyVirtual(exec, identifier);
 }

@@ -107,10 +107,10 @@ bool JSNotAnObject::deleteProperty(JSCell*, ExecState* exec, const Identifier&)
 
 bool JSNotAnObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(this, exec, propertyName);
+    return deletePropertyByIndex(this, exec, propertyName);
 }
 
-bool JSNotAnObject::deleteProperty(JSCell*, ExecState* exec, unsigned)
+bool JSNotAnObject::deletePropertyByIndex(JSCell*, ExecState* exec, unsigned)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;

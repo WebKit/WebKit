@@ -1,3 +1,21 @@
+2011-10-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static deleteProperty to deletePropertyByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70257
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Renaming versions of deleteProperty that use an unsigned as the property
+        name to "deletePropertyByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::deletePropertyVirtual):
+        (JSC::RuntimeArray::deletePropertyByIndex):
+        * bridge/runtime_array.h:
+
 2011-10-20  Eric Carlson  <eric.carlson@apple.com>
 
         Rename some Cue classes to TextTrack

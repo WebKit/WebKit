@@ -117,15 +117,15 @@ namespace JSC {
 
         virtual bool deletePropertyVirtual(ExecState* exec, unsigned propertyName)
         {
-            return deleteProperty(this, exec, propertyName);
+            return deletePropertyByIndex(this, exec, propertyName);
         }
 
-        static bool deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+        static bool deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
         {
             RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
-            return JSArray::deleteProperty(thisObject, exec, propertyName);
+            return JSArray::deletePropertyByIndex(thisObject, exec, propertyName);
         }
 
         virtual void getOwnPropertyNames(ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)

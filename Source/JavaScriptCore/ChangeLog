@@ -1,3 +1,42 @@
+2011-10-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static deleteProperty to deletePropertyByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70257
+
+        Reviewed by Geoffrey Garen.
+
+        Renaming versions of deleteProperty that use an unsigned as the property
+        name to "deletePropertyByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::deletePropertyVirtual):
+        (JSC::::deletePropertyByIndex):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deletePropertyVirtual):
+        (JSC::Arguments::deletePropertyByIndex):
+        * runtime/Arguments.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::deletePropertyVirtual):
+        (JSC::JSArray::deletePropertyByIndex):
+        * runtime/JSArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::deletePropertyVirtual):
+        (JSC::JSCell::deletePropertyByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::deletePropertyVirtual):
+        (JSC::JSNotAnObject::deletePropertyByIndex):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deletePropertyVirtual):
+        (JSC::JSObject::deletePropertyByIndex):
+        * runtime/JSObject.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::deletePropertyVirtual):
+        (JSC::RegExpMatchesArray::deletePropertyByIndex):
+
 2011-10-20  Filip Pizlo  <fpizlo@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70482

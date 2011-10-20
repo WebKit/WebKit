@@ -368,10 +368,10 @@ bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
 
 bool JSNPObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(this, exec, propertyName);
+    return deletePropertyByIndex(this, exec, propertyName);
 }
 
-bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
     return static_cast<JSNPObject*>(cell)->deleteProperty(exec, static_cast<NPIdentifier>(IdentifierRep::get(propertyName)));
 }

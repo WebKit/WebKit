@@ -292,10 +292,10 @@ bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) c
 
 bool JSObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(this, exec, propertyName);
+    return deletePropertyByIndex(this, exec, propertyName);
 }
 
-bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, unsigned propertyName)
+bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
     return static_cast<JSObject*>(cell)->deletePropertyVirtual(exec, Identifier::from(exec, propertyName));
 }

@@ -193,10 +193,10 @@ bool RuntimeArray::deleteProperty(JSCell*, ExecState*, const Identifier&)
 
 bool RuntimeArray::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(this, exec, propertyName);
+    return deletePropertyByIndex(this, exec, propertyName);
 }
 
-bool RuntimeArray::deleteProperty(JSCell*, ExecState*, unsigned)
+bool RuntimeArray::deletePropertyByIndex(JSCell*, ExecState*, unsigned)
 {
     return false;
 }
