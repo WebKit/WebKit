@@ -2023,6 +2023,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
             codeBlock->reoptimize(callFrame->globalData());
         }
 
+        codeBlock->optimizeSoon();
         return;
     }
     

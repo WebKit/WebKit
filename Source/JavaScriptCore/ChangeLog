@@ -1,3 +1,19 @@
+2011-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Optimization triggers in the old JIT may sometimes fire repeatedly even
+        though there is no optimization to be done
+        https://bugs.webkit.org/show_bug.cgi?id=70467
+
+        Reviewed by Oliver Hunt.
+        
+        If optimize_from_ret does nothing, it delays the next optimization trigger.
+        This is performance-neutral.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+
 2011-10-19  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT 32_64 - remove unnecessary double unboxings in fillDouble/fillSpeculateDouble

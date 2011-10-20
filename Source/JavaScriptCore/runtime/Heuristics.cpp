@@ -102,7 +102,7 @@ void initializeHeuristics()
     SET(executionCounterValueForOptimizeAfterWarmUp,     -1000);
     SET(executionCounterValueForOptimizeAfterLongWarmUp, -5000);
     SET(executionCounterValueForDontOptimizeAnytimeSoon, std::numeric_limits<int32_t>::min());
-    SET(executionCounterValueForOptimizeSoon,            -100);
+    SET(executionCounterValueForOptimizeSoon,            -1000);
     SET(executionCounterValueForOptimizeNextInvocation,  0);
 
     SET(executionCounterIncrementForLoop,   1);
