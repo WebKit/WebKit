@@ -1,3 +1,13 @@
+2011-10-19  Jochen Eisinger  <jochen@chromium.org>
+
+        Chromium doesn't support git branch builds, so don't add the branch to the product dir
+        https://bugs.webkit.org/show_bug.cgi?id=70449
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+
 2011-10-19  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. Adding myself to watchlists.

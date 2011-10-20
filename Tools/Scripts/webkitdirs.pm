@@ -182,7 +182,7 @@ sub determineBaseProductDir
         $baseProductDir = "$sourceDir/WebKitBuild";
     }
 
-    if (isGit() && isGitBranchBuild()) {
+    if (isGit() && isGitBranchBuild() && !isChromium()) {
         my $branch = gitBranch();
         $baseProductDir = "$baseProductDir/$branch";
     }
