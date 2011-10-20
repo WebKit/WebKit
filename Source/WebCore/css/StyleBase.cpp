@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-String StyleBase::cssText() const
-{
-    return "";
-}
-
 void StyleBase::checkLoaded()
 {
     if (parent())

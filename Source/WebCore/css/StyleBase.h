@@ -53,8 +53,6 @@ namespace WebCore {
         virtual bool isCSSStyleSheet() const { return false; }
         virtual bool isXSLStyleSheet() const { return false; }
 
-        virtual String cssText() const;
-
         virtual void checkLoaded();
 
         bool useStrictParsing() const { return !m_parent || m_parent->useStrictParsing(); }
