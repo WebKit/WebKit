@@ -95,7 +95,7 @@ void ScrollbarEfl::setParent(ScrollView* view)
     Widget::setParent(view);
 
     if (!object) {
-        if (!view)
+        if (!view || !view->evas() || !view->evasObject())
             return;
 
         object = edje_object_add(view->evas());
@@ -106,7 +106,7 @@ void ScrollbarEfl::setParent(ScrollView* view)
         }
         edje_object_message_handler_set(object, scrollbarEflEdjeMessage, this);
         setEvasObject(object);
-    } else if (!view) {
+    } else if (!view || !view->evas() || !view->evasObject()) {
         evas_object_hide(object);
         return;
     }

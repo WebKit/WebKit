@@ -1,3 +1,27 @@
+2011-10-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not always consider a ScrollView will have an Evas/Evas_Object.
+        https://bugs.webkit.org/show_bug.cgi?id=70426
+
+        Reviewed by Antonio Gomes.
+
+        After r95234 turned on a new code path for the port (we erroneously used
+        ENABLE_AS_IMAGE instead of ENABLE_SVG_AS_IMAGE before), some tests, such
+        as compositing/image/direct-svg-image.html or
+        fast/writing-mode/block-level-images.html started writing stderr
+        messages about the parent passed to ScrollbarEfl::setParent not having
+        an Evas.
+
+        It turns out that a FrameView can be created in places other than
+        ewk_frame_view_create_for_view, in which case the view will not have an
+        Evas or an Evas_Object. This is not an error condition, so we can just
+        return earlier.
+
+        No new tests, this was detected by existing ones.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::setParent):
+
 2011-10-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Multiple crashes in RenderTable during layout
