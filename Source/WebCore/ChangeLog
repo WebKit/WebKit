@@ -1,3 +1,17 @@
+2011-10-20  Andreas Kling  <kling@webkit.org>
+
+        Simplify CSSParser::document().
+        https://bugs.webkit.org/show_bug.cgi?id=70518
+
+        Reviewed by Antti Koivisto.
+
+        We don't need to climb up the entire parent chain here to find the
+        Document, just grab it from m_styleSheet (which will do the climbing
+        for us if necessary.)
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::document):
+
 2011-10-20  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] FontCache::createFontPlatformData() is broken, a default font is returned

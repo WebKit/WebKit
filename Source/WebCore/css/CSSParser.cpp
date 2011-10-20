@@ -648,14 +648,9 @@ void CSSParser::setStyleSheet(CSSStyleSheet* styleSheet)
 
 Document* CSSParser::document() const
 {
-    StyleBase* root = m_styleSheet;
-    while (root && root->parent())
-        root = root->parent();
-    if (!root)
+    if (!m_styleSheet)
         return 0;
-    if (!root->isCSSStyleSheet())
-        return 0;
-    return static_cast<CSSStyleSheet*>(root)->document();
+    return m_styleSheet->document();
 }
 
 bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
