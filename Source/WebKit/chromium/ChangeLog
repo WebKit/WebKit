@@ -1,3 +1,15 @@
+2011-10-20  Antoine Labour  <piman@chromium.org>
+
+        Export missing symbols from Web*Layer
+        https://bugs.webkit.org/show_bug.cgi?id=70440
+
+        Reviewed by Darin Fisher.
+
+        * public/WebContentLayer.h:
+        * public/WebExternalTextureLayer.h:
+        * public/WebLayer.h:
+        * public/WebLayerTreeView.h:
+
 2011-10-17  Nat Duca  <nduca@chromium.org>
 
         [chromium] Allow CCLayerTreeHostImpl to call back to proxy via CCLayerTreeHostImplClient

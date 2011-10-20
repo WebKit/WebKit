@@ -41,7 +41,7 @@ class WebLayerClient;
 // the WebLayerTreeView is destroyed.
 class WebExternalTextureLayer : public WebLayer {
 public:
-    static WebExternalTextureLayer create(WebLayerClient*);
+    WEBKIT_EXPORT static WebExternalTextureLayer create(WebLayerClient*);
 
     WebExternalTextureLayer() { }
     WebExternalTextureLayer(const WebExternalTextureLayer& layer) : WebLayer(layer) { }

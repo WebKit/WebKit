@@ -79,11 +79,6 @@ WebLayer WebLayer::create(WebLayerClient* client)
     return WebLayer(WebLayerImpl::create(client));
 }
 
-WebLayer::~WebLayer()
-{
-    reset();
-}
-
 void WebLayer::reset()
 {
     m_private.reset();

@@ -55,7 +55,7 @@ public:
 #endif
     };
 
-    static WebLayerTreeView create(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
+    WEBKIT_EXPORT static WebLayerTreeView create(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
 
     WebLayerTreeView() { }
     WebLayerTreeView(const WebLayerTreeView& layer) { assign(layer); }

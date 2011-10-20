@@ -40,11 +40,11 @@ struct WebSize;
 
 class WebLayer {
 public:
-    static WebLayer create(WebLayerClient*);
+    WEBKIT_EXPORT static WebLayer create(WebLayerClient*);
 
     WebLayer() { }
     WebLayer(const WebLayer& layer) { assign(layer); }
-    virtual ~WebLayer();
+    virtual ~WebLayer() { reset(); }
     WebLayer& operator=(const WebLayer& layer)
     {
         assign(layer);
