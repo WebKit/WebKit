@@ -1,3 +1,15 @@
+2011-10-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Touch events should take page scale into account
+        https://bugs.webkit.org/show_bug.cgi?id=69798
+
+        Reviewed by Adam Barth.
+
+        Test: fast/events/touch/page-scaled-touch-gesture-click.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+
 2011-10-20  Andreas Kling  <kling@webkit.org>
 
         CSSMutableStyleDeclaration: Simplify setNeedsStyleRecalc().

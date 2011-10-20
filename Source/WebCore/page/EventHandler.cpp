@@ -3228,8 +3228,10 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             pagePoint = documentPointForWindowPoint(doc->frame(), point.pos());
         }
 
-        int adjustedPageX = lroundf(pagePoint.x() / m_frame->pageZoomFactor());
-        int adjustedPageY = lroundf(pagePoint.y() / m_frame->pageZoomFactor());
+        float scaleFactor = m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
+
+        int adjustedPageX = lroundf(pagePoint.x() / scaleFactor);
+        int adjustedPageY = lroundf(pagePoint.y() / scaleFactor);
 
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;

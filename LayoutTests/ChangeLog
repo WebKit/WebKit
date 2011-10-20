@@ -1,3 +1,13 @@
+2011-10-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Touch events should take page scale into account
+        https://bugs.webkit.org/show_bug.cgi?id=69798
+
+        Reviewed by Adam Barth.
+
+        * fast/events/touch/page-scaled-touch-gesture-click-expected.txt: Added.
+        * fast/events/touch/page-scaled-touch-gesture-click.html: Added.
+
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Add part of EFL baselines for the fast/ suite.
