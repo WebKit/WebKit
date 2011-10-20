@@ -1,3 +1,23 @@
+2011-10-20  Raymond Toy  <rtoy@google.com>
+
+        Implement SSE denormal disabler for windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=70517
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/DenormalDisabler.h:
+        (WebCore::DenormalDisabler::DenormalDisabler):
+        Add implementation for Windows.
+        (WebCore::DenormalDisabler::~DenormalDisabler):
+        Ditto.
+        (WebCore::DenormalDisabler::flushDenormalFloatToZero):
+        Unify Windows with mac/linux.
+        (WebCore::DenormalDisabler::getCSR):
+        Define only if we're not on Windows.
+        (WebCore::DenormalDisabler::setCSR):
+        Ditto.
+
 2011-10-20  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r96823): Contextual menu closes immediately when control-clicking in Flash plug-in
