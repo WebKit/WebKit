@@ -1,3 +1,10 @@
+2011-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardning.
+
+        * platform/qt/Skipped: Skip fast/dom/error-to-string-stack-overflow.html - https://bugs.webkit.org/show_bug.cgi?id=70476
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated after r97875.
+
 2011-10-19  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Test expectation change for platform/chromium/compositing/zoom-animator-scale-test2.html
