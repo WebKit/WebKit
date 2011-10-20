@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x232
-  RenderBlock {HTML} at (0,0) size 800x232
-    RenderBody {BODY} at (8,16) size 784x208
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 342x22
-          text run at (0,0) width 342: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,38) size 148x170 [border: (2px none #808080)]
-        RenderTableSection {TBODY} at (2,2) size 143x165
-          RenderTableRow {TR} at (0,0) size 143x55
-            RenderTableCell {TD} at (0,13) size 47x29 [border: (3px outset #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
-            RenderTableCell {TD} at (47,14) size 49x27 [border: (3px outset #00FF00) none (3px outset #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
-            RenderTableCell {TD} at (96,13) size 47x29 [border: (3px outset #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
-          RenderTableRow {TR} at (0,55) size 143x55
-            RenderTableCell {TD} at (0,68) size 47x29 [border: (3px outset #00FF00) none (2px outset #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
-            RenderTableCell {TD} at (47,70) size 49x24 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 47x22
-                text run at (1,1) width 47: "hidden"
-            RenderTableCell {TD} at (96,68) size 47x29 [border: (3px outset #00FF00) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 40x22
-                text run at (1,4) width 40: "outset"
-          RenderTableRow {TR} at (0,110) size 143x55
-            RenderTableCell {TD} at (0,123) size 47x29 [border: (3px outset #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
-            RenderTableCell {TD} at (47,124) size 49x26 [border: none (2px outset #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 40x22
-                text run at (4,1) width 40: "outset"
-            RenderTableCell {TD} at (96,123) size 47x29 [border: (3px outset #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 40x22
-                text run at (4,4) width 40: "outset"
+layer at (0,0) size 800x231
+  RenderBlock {HTML} at (0,0) size 800x231
+    RenderBody {BODY} at (8,16) size 784x207
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,37) size 156x170 [border: (2px none #808080)]
+        RenderTableSection {TBODY} at (2,2) size 151x165
+          RenderTableRow {TR} at (0,0) size 151x55
+            RenderTableCell {TD} at (0,13) size 50x28 [border: (3px outset #00FF00)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"
+            RenderTableCell {TD} at (50,14) size 51x26 [border: (3px outset #00FF00) none (3px outset #00FF00)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"
+            RenderTableCell {TD} at (101,13) size 50x28 [border: (3px outset #00FF00)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"
+          RenderTableRow {TR} at (0,55) size 151x55
+            RenderTableCell {TD} at (0,68) size 50x28 [border: (3px outset #00FF00) none (2px outset #00FF00)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"
+            RenderTableCell {TD} at (50,71) size 51x23 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 49x21
+                text run at (1,1) width 49: "hidden"
+            RenderTableCell {TD} at (101,68) size 50x28 [border: (3px outset #00FF00) none] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,4) size 43x21
+                text run at (1,4) width 43: "outset"
+          RenderTableRow {TR} at (0,110) size 151x55
+            RenderTableCell {TD} at (0,123) size 50x28 [border: (3px outset #00FF00)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"
+            RenderTableCell {TD} at (50,125) size 51x25 [border: none (2px outset #00FF00)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,1) size 43x21
+                text run at (4,1) width 43: "outset"
+            RenderTableCell {TD} at (101,123) size 50x28 [border: (3px outset #00FF00)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 43x21
+                text run at (4,4) width 43: "outset"

@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x212
-  RenderBlock {HTML} at (0,0) size 800x212
-    RenderBody {BODY} at (8,16) size 784x188
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 342x22
-          text run at (0,0) width 342: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,38) size 105x150
-        RenderTableSection {TBODY} at (0,0) size 105x150
-          RenderTableRow {TR} at (0,0) size 105x50
-            RenderTableCell {TD} at (0,13) size 35x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (35,13) size 35x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (70,13) size 35x24 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-          RenderTableRow {TR} at (0,50) size 105x50
-            RenderTableCell {TD} at (0,63) size 35x24 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (35,63) size 35x24 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (70,63) size 35x24 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-          RenderTableRow {TR} at (0,100) size 105x50
-            RenderTableCell {TD} at (0,113) size 35x24 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (35,113) size 35x24 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
-            RenderTableCell {TD} at (70,113) size 35x24 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x22
-                text run at (1,1) width 33: "none"
+layer at (0,0) size 800x211
+  RenderBlock {HTML} at (0,0) size 800x211
+    RenderBody {BODY} at (8,16) size 784x187
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,37) size 114x150
+        RenderTableSection {TBODY} at (0,0) size 114x150
+          RenderTableRow {TR} at (0,0) size 114x50
+            RenderTableCell {TD} at (0,13) size 38x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (38,13) size 38x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (76,13) size 38x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+          RenderTableRow {TR} at (0,50) size 114x50
+            RenderTableCell {TD} at (0,63) size 38x23 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (38,63) size 38x23 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (76,63) size 38x23 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+          RenderTableRow {TR} at (0,100) size 114x50
+            RenderTableCell {TD} at (0,113) size 38x23 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (38,113) size 38x23 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"
+            RenderTableCell {TD} at (76,113) size 38x23 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "none"

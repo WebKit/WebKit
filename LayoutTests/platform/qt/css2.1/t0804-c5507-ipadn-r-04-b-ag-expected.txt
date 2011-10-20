@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x123
-  RenderBlock {HTML} at (0,0) size 800x123
-    RenderBody {BODY} at (8,16) size 784x91
-      RenderBlock {P} at (0,0) size 784x22 [color=#000080]
-        RenderText {#text} at (0,0) size 304x22
-          text run at (0,0) width 304: "The following two blocks should be identical:"
-      RenderBlock {DIV} at (15,38) size 135x15 [color=#FFFF00] [bgcolor=#FFA500]
+layer at (0,0) size 800x121
+  RenderBlock {HTML} at (0,0) size 800x121
+    RenderBody {BODY} at (8,16) size 784x89
+      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 317x21
+          text run at (0,0) width 317: "The following two blocks should be identical:"
+      RenderBlock {DIV} at (15,37) size 135x15 [color=#FFFF00] [bgcolor=#FFA500]
         RenderText {#text} at (0,0) size 15x15
           text run at (0,0) width 15: "x"
         RenderInline {SPAN} at (0,0) size 60x15
@@ -14,7 +14,7 @@ layer at (0,0) size 800x123
             text run at (15,0) width 15: "x"
         RenderText {#text} at (75,0) size 15x15
           text run at (75,0) width 15: "x"
-      RenderBlock {P} at (0,69) size 784x22 [color=#000080]
+      RenderBlock {P} at (0,68) size 784x21 [color=#000080]
         RenderImage {IMG} at (0,1) size 15x15
         RenderImage {IMG} at (15,1) size 15x15
         RenderImage {IMG} at (30,1) size 15x15

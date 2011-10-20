@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x356
-  RenderBlock {HTML} at (0,0) size 800x356
-    RenderBody {BODY} at (8,16) size 784x332
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 433x22
-          text run at (0,0) width 433: "Test passes if the blue box is vertically centered in the black box."
-layer at (8,54) size 294x294
-  RenderBlock (relative positioned) {DIV} at (0,38) size 294x294 [border: (3px solid #000000)]
-layer at (11,177) size 288x48
+layer at (0,0) size 800x355
+  RenderBlock {HTML} at (0,0) size 800x355
+    RenderBody {BODY} at (8,16) size 784x331
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 457x21
+          text run at (0,0) width 457: "Test passes if the blue box is vertically centered in the black box."
+layer at (8,53) size 294x294
+  RenderBlock (relative positioned) {DIV} at (0,37) size 294x294 [border: (3px solid #000000)]
+layer at (11,176) size 288x48
   RenderBlock (positioned) {DIV} at (3,123) size 288x48 [bgcolor=#0000FF]

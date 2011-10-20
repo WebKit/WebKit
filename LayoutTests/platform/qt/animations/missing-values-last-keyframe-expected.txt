@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x244
-  RenderBlock {HTML} at (0,0) size 800x244
-    RenderBody {BODY} at (0,0) size 800x244
-      RenderBlock {DIV} at (0,200) size 800x44
-        RenderText {#text} at (0,0) size 527x22
-          text run at (0,0) width 527: "PASS - \"left\" property for \"box1\" element at 1.5s saw something close to: 100"
-        RenderBR {BR} at (527,0) size 0x22
-        RenderText {#text} at (0,22) size 638x22
-          text run at (0,22) width 638: "PASS - \"webkitTransform.4\" property for \"box2\" element at 1.5s saw something close to: 100"
-        RenderBR {BR} at (638,22) size 0x22
+layer at (0,0) size 800x242
+  RenderBlock {HTML} at (0,0) size 800x242
+    RenderBody {BODY} at (0,0) size 800x242
+      RenderBlock {DIV} at (0,200) size 800x42
+        RenderText {#text} at (0,0) size 542x21
+          text run at (0,0) width 542: "PASS - \"left\" property for \"box1\" element at 1.5s saw something close to: 100"
+        RenderBR {BR} at (542,0) size 0x21
+        RenderText {#text} at (0,21) size 652x21
+          text run at (0,21) width 652: "PASS - \"webkitTransform.4\" property for \"box2\" element at 1.5s saw something close to: 100"
+        RenderBR {BR} at (652,21) size 0x21
 layer at (100,0) size 100x100
   RenderBlock (positioned) {DIV} at (100,0) size 100x100 [bgcolor=#FF0000]
 layer at (100,100) size 100x100

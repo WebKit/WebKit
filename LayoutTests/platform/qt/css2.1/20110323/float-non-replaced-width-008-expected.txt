@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x204
-  RenderBlock {HTML} at (0,0) size 800x204
-    RenderBody {BODY} at (8,16) size 784x44
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 737x44
-          text run at (0,0) width 737: "Below there should be a green square. In the middle of such green square, a black horizontal stripe should be"
-          text run at (0,22) width 613: "traversing it and protruding out of it toward the right. There should be no red in this page."
-      RenderBlock (floating) {DIV} at (0,60) size 128x128 [bgcolor=#FF0000]
+layer at (0,0) size 800x202
+  RenderBlock {HTML} at (0,0) size 800x202
+    RenderBody {BODY} at (8,16) size 784x42
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 772x42
+          text run at (0,0) width 772: "Below there should be a green square. In the middle of such green square, a black horizontal stripe should be"
+          text run at (0,21) width 620: "traversing it and protruding out of it toward the right. There should be no red in this page."
+      RenderBlock (floating) {DIV} at (0,58) size 128x128 [bgcolor=#FF0000]
         RenderBlock (floating) {SPAN} at (0,0) size 128x128 [bgcolor=#008000]
           RenderText {#text} at (0,47) size 256x33
             text run at (0,47) width 256: "XXXXXXXX"

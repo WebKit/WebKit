@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x424
-  RenderBlock {HTML} at (0,0) size 800x424
-    RenderBody {BODY} at (8,16) size 784x392
-      RenderBlock {P} at (0,0) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 244x22
-          text run at (0,0) width 244: "The borders should be as described."
-      RenderBlock {P} at (0,38) size 784x28 [color=#0000FF] [border: (3px solid #FFA500)]
-        RenderText {#text} at (3,3) size 120x22
-          text run at (3,3) width 120: "Orange and solid."
-      RenderBlock {P} at (0,82) size 784x32 [color=#0000FF] [border: (5px outset #FFA500)]
-        RenderText {#text} at (5,5) size 129x22
-          text run at (5,5) width 129: "Orange and outset."
-      RenderBlock {P} at (0,130) size 784x32 [color=#0000FF] [border: (5px inset #FFA500)]
-        RenderText {#text} at (5,5) size 120x22
-          text run at (5,5) width 120: "Orange and inset."
-      RenderBlock {P} at (0,178) size 784x42 [color=#0000FF] [border: (10px ridge #FFA500)]
-        RenderText {#text} at (10,10) size 133x22
-          text run at (10,10) width 133: "Orange and ridged."
-      RenderBlock {P} at (0,236) size 784x42 [color=#0000FF] [border: (10px double #FFA500)]
-        RenderText {#text} at (10,10) size 135x22
-          text run at (10,10) width 135: "Orange and double."
-      RenderBlock {P} at (0,294) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 75x22
+layer at (0,0) size 800x415
+  RenderBlock {HTML} at (0,0) size 800x415
+    RenderBody {BODY} at (8,16) size 784x383
+      RenderBlock {P} at (0,0) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 259x21
+          text run at (0,0) width 259: "The borders should be as described."
+      RenderBlock {P} at (0,37) size 784x27 [color=#0000FF] [border: (3px solid #FFA500)]
+        RenderText {#text} at (3,3) size 126x21
+          text run at (3,3) width 126: "Orange and solid."
+      RenderBlock {P} at (0,80) size 784x31 [color=#0000FF] [border: (5px outset #FFA500)]
+        RenderText {#text} at (5,5) size 135x21
+          text run at (5,5) width 135: "Orange and outset."
+      RenderBlock {P} at (0,127) size 784x31 [color=#0000FF] [border: (5px inset #FFA500)]
+        RenderText {#text} at (5,5) size 126x21
+          text run at (5,5) width 126: "Orange and inset."
+      RenderBlock {P} at (0,174) size 784x41 [color=#0000FF] [border: (10px ridge #FFA500)]
+        RenderText {#text} at (10,10) size 137x21
+          text run at (10,10) width 137: "Orange and ridged."
+      RenderBlock {P} at (0,231) size 784x41 [color=#0000FF] [border: (10px double #FFA500)]
+        RenderText {#text} at (10,10) size 141x21
+          text run at (10,10) width 141: "Orange and double."
+      RenderBlock {P} at (0,288) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 75x21
           text run at (0,0) width 75: "No border."
-      RenderBlock {P} at (0,332) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 75x22
+      RenderBlock {P} at (0,325) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 75x21
           text run at (0,0) width 75: "No border."
-      RenderBlock {P} at (0,370) size 784x22 [color=#0000FF]
-        RenderText {#text} at (0,0) size 75x22
+      RenderBlock {P} at (0,362) size 784x21 [color=#0000FF]
+        RenderText {#text} at (0,0) size 75x21
           text run at (0,0) width 75: "No border."

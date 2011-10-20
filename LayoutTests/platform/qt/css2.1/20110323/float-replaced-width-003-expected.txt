@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x260
-  RenderBlock {HTML} at (0,0) size 800x260
-    RenderBody {BODY} at (8,16) size 784x236
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 479x22
-          text run at (0,0) width 479: "Test passes if the blue box is in the upper-right corner of the black box."
-      RenderBlock {DIV} at (0,38) size 198x198 [border: (3px solid #000000)]
+layer at (0,0) size 800x259
+  RenderBlock {HTML} at (0,0) size 800x259
+    RenderBody {BODY} at (8,16) size 784x235
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 497x21
+          text run at (0,0) width 497: "Test passes if the blue box is in the upper-right corner of the black box."
+      RenderBlock {DIV} at (0,37) size 198x198 [border: (3px solid #000000)]
         RenderImage {IMG} at (99,3) size 96x96 [bgcolor=#0000FF]

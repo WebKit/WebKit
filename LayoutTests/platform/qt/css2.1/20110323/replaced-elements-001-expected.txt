@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x196
-  RenderBlock {HTML} at (0,0) size 800x196
-    RenderBody {BODY} at (8,16) size 784x164
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 640x22
-          text run at (0,0) width 640: "Below, there should be 2 orange boxes horizontally centered within their respective green bars."
-      RenderBlock {DIV} at (16,38) size 752x55 [bgcolor=#008000]
-        RenderBlock (anonymous) at (0,0) size 752x22
-          RenderText {#text} at (0,0) size 36x22
+layer at (0,0) size 800x191
+  RenderBlock {HTML} at (0,0) size 800x191
+    RenderBody {BODY} at (8,16) size 784x159
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 671x21
+          text run at (0,0) width 671: "Below, there should be 2 orange boxes horizontally centered within their respective green bars."
+      RenderBlock {DIV} at (16,37) size 752x53 [bgcolor=#008000]
+        RenderBlock (anonymous) at (0,0) size 752x21
+          RenderText {#text} at (0,0) size 36x21
             text run at (0,0) width 36: "         "
-        RenderButton {INPUT} at (0,24) size 16x31 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
-      RenderBlock {FORM} at (0,109) size 784x55
-        RenderBlock {DIV} at (16,0) size 752x55 [bgcolor=#008000]
-          RenderBlock (anonymous) at (0,0) size 752x22
-            RenderText {#text} at (0,0) size 36x22
+        RenderButton {INPUT} at (0,23) size 16x30 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
+      RenderBlock {FORM} at (0,106) size 784x53
+        RenderBlock {DIV} at (16,0) size 752x53 [bgcolor=#008000]
+          RenderBlock (anonymous) at (0,0) size 752x21
+            RenderText {#text} at (0,0) size 36x21
               text run at (0,0) width 36: "         "
-          RenderButton {INPUT} at (0,24) size 16x31 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
+          RenderButton {INPUT} at (0,23) size 16x30 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]

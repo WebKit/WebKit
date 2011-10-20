@@ -1,57 +1,57 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x258
-  RenderBlock {HTML} at (0,0) size 800x258
-    RenderBody {BODY} at (8,8) size 784x242
-      RenderBlock {UL} at (0,0) size 784x176 [color=#FF0000]
-        RenderListItem {LI} at (0,0) size 784x22
-          RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-            RenderText {#text} at (0,0) size 145x22
-              text run at (0,0) width 145: "This should be green."
+layer at (0,0) size 800x247
+  RenderBlock {HTML} at (0,0) size 800x247
+    RenderBody {BODY} at (8,8) size 784x231
+      RenderBlock {UL} at (0,0) size 784x168 [color=#FF0000]
+        RenderListItem {LI} at (0,0) size 784x21
+          RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+            RenderText {#text} at (0,0) size 154x21
+              text run at (0,0) width 154: "This should be green."
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (0,22) size 784x88
-          RenderBlock (anonymous) at (0,0) size 784x22
-            RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-              RenderText {#text} at (0,0) size 145x22
-                text run at (0,0) width 145: "This should be green."
+        RenderListItem {LI} at (0,21) size 784x84
+          RenderBlock (anonymous) at (0,0) size 784x21
+            RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+              RenderText {#text} at (0,0) size 154x21
+                text run at (0,0) width 154: "This should be green."
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {UL} at (0,22) size 784x66
-            RenderListItem {LI} at (0,0) size 784x22
-              RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-                RenderText {#text} at (0,0) size 145x22
-                  text run at (0,0) width 145: "This should be green."
+          RenderBlock {UL} at (0,21) size 784x63
+            RenderListItem {LI} at (0,0) size 784x21
+              RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+                RenderText {#text} at (0,0) size 154x21
+                  text run at (0,0) width 154: "This should be green."
               RenderText {#text} at (0,0) size 0x0
-            RenderListItem {LI} at (0,22) size 784x22
-              RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-                RenderText {#text} at (0,0) size 145x22
-                  text run at (0,0) width 145: "This should be green."
+            RenderListItem {LI} at (0,21) size 784x21
+              RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+                RenderText {#text} at (0,0) size 154x21
+                  text run at (0,0) width 154: "This should be green."
               RenderText {#text} at (0,0) size 0x0
-            RenderListItem {LI} at (0,44) size 784x22
-              RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-                RenderText {#text} at (0,0) size 145x22
-                  text run at (0,0) width 145: "This should be green."
+            RenderListItem {LI} at (0,42) size 784x21
+              RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+                RenderText {#text} at (0,0) size 154x21
+                  text run at (0,0) width 154: "This should be green."
               RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (0,110) size 784x22
-          RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-            RenderText {#text} at (0,0) size 145x22
-              text run at (0,0) width 145: "This should be green."
+        RenderListItem {LI} at (0,105) size 784x21
+          RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+            RenderText {#text} at (0,0) size 154x21
+              text run at (0,0) width 154: "This should be green."
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (0,132) size 784x22
-          RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-            RenderText {#text} at (0,0) size 145x22
-              text run at (0,0) width 145: "This should be green."
+        RenderListItem {LI} at (0,126) size 784x21
+          RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+            RenderText {#text} at (0,0) size 154x21
+              text run at (0,0) width 154: "This should be green."
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (0,154) size 784x22
-          RenderInline {SPAN} at (0,0) size 145x22 [color=#008000]
-            RenderText {#text} at (0,0) size 145x22
-              text run at (0,0) width 145: "This should be green."
+        RenderListItem {LI} at (0,147) size 784x21
+          RenderInline {SPAN} at (0,0) size 154x21 [color=#008000]
+            RenderText {#text} at (0,0) size 154x21
+              text run at (0,0) width 154: "This should be green."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,176) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {P} at (0,198) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
-      RenderBlock {P} at (0,220) size 784x22 [color=#008000]
-        RenderText {#text} at (0,0) size 145x22
-          text run at (0,0) width 145: "This should be green."
+      RenderBlock {P} at (0,168) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {P} at (0,189) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."
+      RenderBlock {P} at (0,210) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "This should be green."

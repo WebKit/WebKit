@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {HTML} at (0,0) size 800x54
-    RenderBody {BODY} at (8,16) size 784x22
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 463x22
-          text run at (0,0) width 463: "Test passes if there is space between the blue and orange lines below."
-layer at (8,54) size 340x340
-  RenderBlock (positioned) {DIV} at (8,54) size 340x340 [border: (10px solid #0000FF)]
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x53
+    RenderBody {BODY} at (8,16) size 784x21
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 501x21
+          text run at (0,0) width 501: "Test passes if there is space between the blue and orange lines below."
+layer at (8,53) size 340x340
+  RenderBlock (positioned) {DIV} at (8,53) size 340x340 [border: (10px solid #0000FF)]
     RenderTable {DIV} at (60,60) size 220x220 [border: (10px solid #FFA500)]
       RenderTableSection (anonymous) at (10,10) size 200x200
         RenderTableRow {DIV} at (0,0) size 200x200

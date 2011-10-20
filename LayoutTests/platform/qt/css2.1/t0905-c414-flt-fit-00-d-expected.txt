@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x146
-  RenderBlock {HTML} at (0,0) size 800x146
-    RenderBody {BODY} at (8,16) size 784x120
-      RenderBlock {P} at (0,0) size 784x22 [color=#000080]
-        RenderText {#text} at (0,0) size 727x22
-          text run at (0,0) width 727: "There should be five numbers, in numerical order, below: on the first line 1, 2 and 3, on the second, 4 and 5."
-      RenderBlock {DIV} at (10,38) size 262x82 [color=#000080] [border: (3px solid #0000FF)]
-        RenderBlock (floating) {P} at (19,19) size 80x22
-          RenderText {#text} at (0,0) size 8x22
-            text run at (0,0) width 8: "1"
-        RenderBlock (floating) {P} at (99,19) size 80x22
-          RenderText {#text} at (0,0) size 8x22
-            text run at (0,0) width 8: "2"
-        RenderBlock (floating) {P} at (19,41) size 80x22
-          RenderText {#text} at (0,0) size 8x22
-            text run at (0,0) width 8: "4"
-        RenderText {#text} at (179,19) size 88x44
-          text run at (179,19) width 8: "3"
-          text run at (99,41) width 88: "5                    "
+layer at (0,0) size 800x143
+  RenderBlock {HTML} at (0,0) size 800x143
+    RenderBody {BODY} at (8,16) size 784x117
+      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 756x21
+          text run at (0,0) width 756: "There should be five numbers, in numerical order, below: on the first line 1, 2 and 3, on the second, 4 and 5."
+      RenderBlock {DIV} at (10,37) size 262x80 [color=#000080] [border: (3px solid #0000FF)]
+        RenderBlock (floating) {P} at (19,19) size 80x21
+          RenderText {#text} at (0,0) size 9x21
+            text run at (0,0) width 9: "1"
+        RenderBlock (floating) {P} at (99,19) size 80x21
+          RenderText {#text} at (0,0) size 9x21
+            text run at (0,0) width 9: "2"
+        RenderBlock (floating) {P} at (19,40) size 80x21
+          RenderText {#text} at (0,0) size 9x21
+            text run at (0,0) width 9: "4"
+        RenderText {#text} at (179,19) size 89x42
+          text run at (179,19) width 9: "3"
+          text run at (99,40) width 89: "5                    "

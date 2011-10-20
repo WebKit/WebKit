@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x72
-  RenderBlock {HTML} at (0,0) size 800x72 [bgcolor=#800080]
-    RenderBody {BODY} at (25,25) size 750x22 [color=#FFFFFF] [bgcolor=#000080]
-      RenderBlock {P} at (0,0) size 750x22
-        RenderText {#text} at (0,0) size 717x22
-          text run at (0,0) width 411: "This paragraph should be in a blue block near the top of the "
-          text run at (411,0) width 306: "page. Around it on all sides should be purple."
+layer at (0,0) size 800x71
+  RenderBlock {HTML} at (0,0) size 800x71 [bgcolor=#800080]
+    RenderBody {BODY} at (25,25) size 750x21 [color=#FFFFFF] [bgcolor=#000080]
+      RenderBlock {P} at (0,0) size 750x21
+        RenderText {#text} at (0,0) size 744x21
+          text run at (0,0) width 424: "This paragraph should be in a blue block near the top of the "
+          text run at (424,0) width 320: "page. Around it on all sides should be purple."

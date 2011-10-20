@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x65
-  RenderBlock {HTML} at (0,0) size 800x65
-    RenderBody {BODY} at (8,16) size 784x41
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 544x22
-          text run at (0,0) width 544: "Test passes if there is a single blue box below and it does not touch the black line."
-layer at (8,54) size 784x3
-  RenderBlock (relative positioned) {DIV} at (0,38) size 784x3 [border: (3px solid #000000) none]
-layer at (8,153) size 15x15
+layer at (0,0) size 800x64
+  RenderBlock {HTML} at (0,0) size 800x64
+    RenderBody {BODY} at (8,16) size 784x40
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 579x21
+          text run at (0,0) width 579: "Test passes if there is a single blue box below and it does not touch the black line."
+layer at (8,53) size 784x3
+  RenderBlock (relative positioned) {DIV} at (0,37) size 784x3 [border: (3px solid #000000) none]
+layer at (8,152) size 15x15
   RenderImage {IMG} at (0,99) size 15x15
-layer at (23,153) size 15x15
+layer at (23,152) size 15x15
   RenderBlock (positioned) {DIV} at (15,99) size 15x15 [bgcolor=#0000FF]

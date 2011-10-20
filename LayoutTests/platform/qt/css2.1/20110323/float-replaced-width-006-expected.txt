@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x282
-  RenderBlock {HTML} at (0,0) size 800x282
-    RenderBody {BODY} at (8,16) size 784x258
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 784x44
-          text run at (0,0) width 784: "Test passes if the blue and orange boxes below are the same width, and the blue box is in the upper-left corner of the"
-          text run at (0,22) width 70: "black box."
-      RenderBlock {DIV} at (0,60) size 198x198 [border: (3px solid #000000)]
+layer at (0,0) size 800x280
+  RenderBlock {HTML} at (0,0) size 800x280
+    RenderBody {BODY} at (8,16) size 784x256
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 781x42
+          text run at (0,0) width 781: "Test passes if the blue and orange boxes below are the same width, and the blue box is in the upper-left corner"
+          text run at (0,21) width 115: "of the black box."
+      RenderBlock {DIV} at (0,58) size 198x198 [border: (3px solid #000000)]
         RenderImage {IMG} at (3,3) size 15x15
         RenderBlock {DIV} at (3,18) size 15x15 [bgcolor=#FFA500]

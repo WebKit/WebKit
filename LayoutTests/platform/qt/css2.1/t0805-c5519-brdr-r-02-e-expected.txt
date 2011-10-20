@@ -1,56 +1,57 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x422
-  RenderBlock {HTML} at (0,0) size 800x422
-    RenderBody {BODY} at (8,16) size 784x390 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 728x44
-          text run at (0,0) width 387: "There should be a solid line to the right of the text below, "
-          text run at (387,0) width 341: "having three segments each of a different colour as"
-          text run at (0,22) width 66: "indicated."
-      RenderBlock {UL} at (0,60) size 588x330
-        RenderListItem {LI} at (40,0) size 548x88 [border: (3px solid #FFA500) none]
-          RenderBlock (anonymous) at (0,0) size 545x22
-            RenderListMarker at (-18,0) size 7x22: bullet
-            RenderText {#text} at (0,0) size 114x22
-              text run at (0,0) width 114: "Orange orange..."
-          RenderBlock {UL} at (0,22) size 409x66
-            RenderListItem {LI} at (40,0) size 369x22
-              RenderListMarker at (-18,0) size 7x22: white bullet
-              RenderText {#text} at (0,0) size 122x22
-                text run at (0,0) width 122: "...orange orange..."
-            RenderListItem {LI} at (40,22) size 369x22
-              RenderListMarker at (-18,0) size 7x22: white bullet
-              RenderText {#text} at (0,0) size 122x22
-                text run at (0,0) width 122: "...orange orange..."
-            RenderListItem {LI} at (40,44) size 369x22
-              RenderListMarker at (-18,0) size 7x22: white bullet
-              RenderText {#text} at (0,0) size 114x22
-                text run at (0,0) width 114: "...orange orange."
-        RenderListItem {LI} at (40,88) size 548x22 [border: (3px solid #00FF00) none]
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 39x22
+layer at (0,0) size 800x426
+  RenderBlock {HTML} at (0,0) size 800x426
+    RenderBody {BODY} at (8,16) size 784x394 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 402: "There should be a solid line to the right of the text below, "
+          text run at (402,0) width 360: "having three segments each of a different colour as"
+          text run at (0,21) width 69: "indicated."
+      RenderBlock {UL} at (0,58) size 588x336
+        RenderListItem {LI} at (40,0) size 548x84 [border: (3px solid #FFA500) none]
+          RenderBlock (anonymous) at (0,0) size 545x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 119x21
+              text run at (0,0) width 119: "Orange orange..."
+          RenderBlock {UL} at (0,21) size 409x63
+            RenderListItem {LI} at (40,0) size 369x21
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 128x21
+                text run at (0,0) width 128: "...orange orange..."
+            RenderListItem {LI} at (40,21) size 369x21
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 128x21
+                text run at (0,0) width 128: "...orange orange..."
+            RenderListItem {LI} at (40,42) size 369x21
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 120x21
+                text run at (0,0) width 120: "...orange orange."
+        RenderListItem {LI} at (40,84) size 548x21 [border: (3px solid #00FF00) none]
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 39x21
             text run at (0,0) width 39: "Lime."
-        RenderListItem {LI} at (40,110) size 548x220 [border: (3px solid #FFFF00) none]
-          RenderListMarker at (-18,0) size 7x22: bullet
-          RenderText {#text} at (0,0) size 517x220
-            text run at (0,0) width 333: "Yellow yellow yellow yellow yellow yellow yellow "
-            text run at (333,0) width 184: "yellow yellow yellow yellow"
-            text run at (0,22) width 235: "yellow yellow yellow yellow yellow "
-            text run at (235,22) width 278: "yellow yellow yellow yellow yellow yellow"
-            text run at (0,44) width 141: "yellow yellow yellow "
-            text run at (141,44) width 372: "yellow yellow yellow yellow yellow yellow yellow yellow"
-            text run at (0,66) width 47: "yellow "
-            text run at (47,66) width 423: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
-            text run at (470,66) width 43: "yellow"
-            text run at (0,88) width 376: "yellow yellow yellow yellow yellow yellow yellow yellow "
-            text run at (376,88) width 137: "yellow yellow yellow"
-            text run at (0,110) width 282: "yellow yellow yellow yellow yellow yellow "
-            text run at (282,110) width 231: "yellow yellow yellow yellow yellow"
-            text run at (0,132) width 188: "yellow yellow yellow yellow "
-            text run at (188,132) width 325: "yellow yellow yellow yellow yellow yellow yellow"
-            text run at (0,154) width 94: "yellow yellow "
-            text run at (94,154) width 419: "yellow yellow yellow yellow yellow yellow yellow yellow yellow"
-            text run at (0,176) width 423: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
-            text run at (423,176) width 90: "yellow yellow"
-            text run at (0,198) width 282: "yellow yellow yellow yellow yellow yellow."
+        RenderListItem {LI} at (40,105) size 548x231 [border: (3px solid #FFFF00) none]
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 499x231
+            text run at (0,0) width 353: "Yellow yellow yellow yellow yellow yellow yellow "
+            text run at (353,0) width 146: "yellow yellow yellow"
+            text run at (0,21) width 300: "yellow yellow yellow yellow yellow yellow "
+            text run at (300,21) width 196: "yellow yellow yellow yellow"
+            text run at (0,42) width 250: "yellow yellow yellow yellow yellow "
+            text run at (250,42) width 246: "yellow yellow yellow yellow yellow"
+            text run at (0,63) width 200: "yellow yellow yellow yellow "
+            text run at (200,63) width 296: "yellow yellow yellow yellow yellow yellow"
+            text run at (0,84) width 150: "yellow yellow yellow "
+            text run at (150,84) width 346: "yellow yellow yellow yellow yellow yellow yellow"
+            text run at (0,105) width 100: "yellow yellow "
+            text run at (100,105) width 396: "yellow yellow yellow yellow yellow yellow yellow yellow"
+            text run at (0,126) width 50: "yellow "
+            text run at (50,126) width 446: "yellow yellow yellow yellow yellow yellow yellow yellow yellow"
+            text run at (0,147) width 450: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (450,147) width 46: "yellow"
+            text run at (0,168) width 400: "yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (400,168) width 96: "yellow yellow"
+            text run at (0,189) width 350: "yellow yellow yellow yellow yellow yellow yellow "
+            text run at (350,189) width 146: "yellow yellow yellow"
+            text run at (0,210) width 250: "yellow yellow yellow yellow yellow."

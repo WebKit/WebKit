@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x354
-  RenderBlock {HTML} at (0,0) size 800x354
-    RenderBody {BODY} at (0,16) size 800x338
-      RenderBlock {P} at (0,0) size 800x22
-        RenderText {#text} at (0,0) size 247x22
-          text run at (0,0) width 247: "There should be no red on this page."
-      RenderBlock {DIV} at (0,38) size 165x75 [color=#FFFFFF]
+layer at (0,0) size 800x353
+  RenderBlock {HTML} at (0,0) size 800x353
+    RenderBody {BODY} at (0,16) size 800x337
+      RenderBlock {P} at (0,0) size 800x21
+        RenderText {#text} at (0,0) size 260x21
+          text run at (0,0) width 260: "There should be no red on this page."
+      RenderBlock {DIV} at (0,37) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "
           text run at (0,30) width 165: "           "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "          X"
-      RenderBlock {DIV} at (0,113) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,112) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "
           text run at (0,30) width 165: "X          "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "           "
-      RenderBlock {DIV} at (0,188) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,187) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "        X  "
           text run at (0,30) width 165: "           "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "           "
-      RenderBlock {DIV} at (0,263) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,262) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "

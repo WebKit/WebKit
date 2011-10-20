@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x77
-  RenderBlock {HTML} at (0,0) size 800x77
-    RenderBody {BODY} at (8,16) size 784x53
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 530x22
-          text run at (0,0) width 530: "Test passes if the blue square is the same size or larger than the orange square."
-layer at (8,54) size 784x15
-  RenderBlock (relative positioned) {DIV} at (0,38) size 784x15
-layer at (8,54) size 15x15
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76
+    RenderBody {BODY} at (8,16) size 784x52
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 565x21
+          text run at (0,0) width 565: "Test passes if the blue square is the same size or larger than the orange square."
+layer at (8,53) size 784x15
+  RenderBlock (relative positioned) {DIV} at (0,37) size 784x15
+layer at (8,53) size 15x15
   RenderBlock (relative positioned) {DIV} at (0,0) size 15x15 [bgcolor=#FFA500]
-layer at (32,54) size 96x96
+layer at (32,53) size 96x96
   RenderImage {IMG} at (24,0) size 96x96

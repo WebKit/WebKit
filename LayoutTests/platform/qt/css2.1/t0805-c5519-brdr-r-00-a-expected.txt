@@ -1,36 +1,36 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x268
-  RenderBlock {HTML} at (0,0) size 800x268
-    RenderBody {BODY} at (8,16) size 784x236
-      RenderBlock {P} at (0,0) size 764x110 [color=#0000FF] [border: (10px double #0000FF) none]
-        RenderText {#text} at (0,0) size 381x22
-          text run at (0,0) width 381: "This paragraph should have two blue lines on its right. \x{21E8} "
-        RenderInline {SPAN} at (0,0) size 732x110 [color=#C0C0C0]
-          RenderText {#text} at (381,0) size 732x110
-            text run at (381,0) width 336: "dummy text dummy text dummy text dummy text"
-            text run at (0,22) width 141: "dummy text dummy "
-            text run at (141,22) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (651,22) width 81: "text dummy"
-            text run at (0,44) width 425: "text dummy text dummy text dummy text dummy text dummy "
-            text run at (425,44) width 280: "text dummy text dummy text dummy text"
-            text run at (0,66) width 226: "dummy text dummy text dummy "
-            text run at (226,66) width 506: "text dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (0,88) width 365: "text dummy text dummy text dummy text dummy text"
+layer at (0,0) size 800x258
+  RenderBlock {HTML} at (0,0) size 800x258
+    RenderBody {BODY} at (8,16) size 784x226
+      RenderBlock {P} at (0,0) size 764x105 [color=#0000FF] [border: (10px double #0000FF) none]
+        RenderText {#text} at (0,0) size 394x21
+          text run at (0,0) width 394: "This paragraph should have two blue lines on its right. \x{21E8} "
+        RenderInline {SPAN} at (0,0) size 732x105 [color=#C0C0C0]
+          RenderText {#text} at (394,0) size 732x105
+            text run at (394,0) width 336: "dummy text dummy text dummy text dummy text"
+            text run at (0,21) width 141: "dummy text dummy "
+            text run at (141,21) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (651,21) width 81: "text dummy"
+            text run at (0,42) width 425: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (425,42) width 280: "text dummy text dummy text dummy text"
+            text run at (0,63) width 226: "dummy text dummy text dummy "
+            text run at (226,63) width 506: "text dummy text dummy text dummy text dummy text dummy text dummy"
+            text run at (0,84) width 365: "text dummy text dummy text dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,126) size 764x110 [color=#0000FF] [border: (1px solid #0000FF) none]
-        RenderText {#text} at (0,0) size 389x22
-          text run at (0,0) width 389: "This paragraph should have a thin blue line on its right. \x{21E8} "
-        RenderInline {SPAN} at (0,0) size 761x110 [color=#C0C0C0]
-          RenderText {#text} at (389,0) size 761x110
-            text run at (389,0) width 336: "dummy text dummy text dummy text dummy text"
-            text run at (0,22) width 141: "dummy text dummy "
-            text run at (141,22) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (651,22) width 110: "text dummy text"
-            text run at (0,44) width 396: "dummy text dummy text dummy text dummy text dummy "
-            text run at (396,44) width 365: "text dummy text dummy text dummy text dummy text"
-            text run at (0,66) width 141: "dummy text dummy "
-            text run at (141,66) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (651,66) width 110: "text dummy text"
-            text run at (0,88) width 251: "dummy text dummy text dummy text"
+      RenderBlock {P} at (0,121) size 764x105 [color=#0000FF] [border: (1px solid #0000FF) none]
+        RenderText {#text} at (0,0) size 400x21
+          text run at (0,0) width 400: "This paragraph should have a thin blue line on its right. \x{21E8} "
+        RenderInline {SPAN} at (0,0) size 761x105 [color=#C0C0C0]
+          RenderText {#text} at (400,0) size 761x105
+            text run at (400,0) width 336: "dummy text dummy text dummy text dummy text"
+            text run at (0,21) width 141: "dummy text dummy "
+            text run at (141,21) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (651,21) width 110: "text dummy text"
+            text run at (0,42) width 396: "dummy text dummy text dummy text dummy text dummy "
+            text run at (396,42) width 365: "text dummy text dummy text dummy text dummy text"
+            text run at (0,63) width 141: "dummy text dummy "
+            text run at (141,63) width 510: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (651,63) width 110: "text dummy text"
+            text run at (0,84) width 251: "dummy text dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0

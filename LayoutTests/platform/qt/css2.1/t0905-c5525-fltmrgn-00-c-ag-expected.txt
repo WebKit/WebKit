@@ -1,12 +1,12 @@
-layer at (0,0) size 784x623
+layer at (0,0) size 784x622
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x623
-  RenderBlock {HTML} at (0,0) size 784x623
-    RenderBody {BODY} at (8,16) size 768x599
-      RenderBlock {P} at (0,0) size 768x22
-        RenderText {#text} at (0,0) size 352x22
-          text run at (0,0) width 352: "There should be a tall green box below, with no red."
-      RenderBlock {DIV} at (0,38) size 126x561 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+layer at (0,0) size 784x622
+  RenderBlock {HTML} at (0,0) size 784x622
+    RenderBody {BODY} at (8,16) size 768x598
+      RenderBlock {P} at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 366x21
+          text run at (0,0) width 366: "There should be a tall green box below, with no red."
+      RenderBlock {DIV} at (0,37) size 126x561 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {P} at (18,18) size 90x45
           RenderText {#text} at (0,0) size 90x45
             text run at (0,0) width 75: "x x x"
