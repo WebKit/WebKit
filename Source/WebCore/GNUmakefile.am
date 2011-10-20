@@ -688,8 +688,11 @@ DerivedSources/WebCore/EventFactory.cpp: $(WebCore)/dom/make_event_factory.pl $(
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
 	$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
 
-DerivedSources/WebCore/InspectorBackendDispatcher.cpp: $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/CodeGeneratorInspector.py
-	$(PYTHON) $(WebCore)/inspector/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)"
+DerivedSources/WebCore/Inspector.idl : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-idl
+	$(PYTHON) $(WebCore)/inspector/generate-inspector-idl -o $(GENSOURCES_WEBCORE)/Inspector.idl $(WebCore)/inspector/Inspector.json
+
+DerivedSources/WebCore/InspectorBackendDispatcher.cpp: DerivedSources/WebCore/Inspector.idl $(SCRIPTS_BINDINGS) $(WebCore)/inspector/CodeGeneratorInspector.pm
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts -I$(WebCore)/inspector $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator Inspector $<
 DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
 DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendStub.js
 DerivedSources/WebCore/InspectorBackendStub.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
