@@ -1,3 +1,15 @@
+2011-10-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Multiple crashes in RenderTable during layout
+        https://bugs.webkit.org/show_bug.cgi?id=70392
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/crash-anonymous-table-computeLogicalWidth-expected.txt: Added.
+        * fast/table/crash-anonymous-table-computeLogicalWidth.html: Added.
+        * fast/table/crash-anonymous-table-layout-expected.txt: Added.
+        * fast/table/crash-anonymous-table-layout.html: Added.
+
 2011-10-19  Dirk Pranke  <dpranke@chromium.org>
 
         Update chromium expectations after r97889.

@@ -1,3 +1,21 @@
+2011-10-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Multiple crashes in RenderTable during layout
+        https://bugs.webkit.org/show_bug.cgi?id=70392
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/table/crash-anonymous-table-computeLogicalWidth.html
+               fast/table/crash-anonymous-table-layout.html
+
+        r97555 forgot to take into account anonymous tables during layout
+        where RenderObject::node() is NULL.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::layout):
+        Added a check for node() before calling Node::hasTagName.
+
 2011-10-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Update MediaStream to use WebCore platform interfaces

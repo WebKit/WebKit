@@ -239,7 +239,7 @@ void RenderTable::computeLogicalWidth()
         // Percent or fixed table
         // HTML tables size as though CSS width includes border/padding, CSS tables do not.
         LayoutUnit borders = 0;
-        if (!node()->hasTagName(tableTag)) {
+        if (!node() || !node()->hasTagName(tableTag)) {
             bool collapsing = collapseBorders();
             LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
             LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
@@ -369,7 +369,7 @@ void RenderTable::layout()
     LayoutUnit computedLogicalHeight = 0;
     if (logicalHeightLength.isFixed()) {
         // HTML tables size as though CSS height includes border/padding, CSS tables do not.
-        LayoutUnit borders = node()->hasTagName(tableTag) ? (borderAndPaddingBefore + borderAndPaddingAfter) : 0;
+        LayoutUnit borders = node() && node()->hasTagName(tableTag) ? (borderAndPaddingBefore + borderAndPaddingAfter) : 0;
         computedLogicalHeight = logicalHeightLength.value() - borders;
     } else if (logicalHeightLength.isPercent())
         computedLogicalHeight = computePercentageLogicalHeight(logicalHeightLength);
