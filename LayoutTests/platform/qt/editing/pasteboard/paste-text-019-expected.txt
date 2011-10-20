@@ -43,8 +43,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,33) size 212x33
               text run at (0,33) width 212: "Should see the string"
           RenderBlock {PRE} at (0,90) size 756x30
-            RenderText {#text} at (0,0) size 174x30
-              text run at (0,0) width 174: "Foo Bar baz Bar"
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Foo Bar baz Bar"
           RenderBlock (anonymous) at (0,144) size 756x33
             RenderText {#text} at (0,0) size 158x33
               text run at (0,0) width 158: "(case sensitive)."

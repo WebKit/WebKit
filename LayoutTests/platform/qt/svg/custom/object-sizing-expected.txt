@@ -22,20 +22,20 @@ layer at (0,0) size 800x413
           RenderListMarker at (-18,0) size 7x22: bullet
           RenderText {#text} at (0,0) size 31x22
             text run at (0,0) width 31: "The "
-          RenderInline {code} at (0,0) size 17x17
-            RenderText {#text} at (31,3) size 17x17
-              text run at (31,3) width 17: "div"
-          RenderText {#text} at (48,0) size 262x22
-            text run at (48,0) width 262: " containing the object appears in green"
+          RenderInline {code} at (0,0) size 19x17
+            RenderText {#text} at (31,3) size 19x17
+              text run at (31,3) width 19: "div"
+          RenderText {#text} at (50,0) size 262x22
+            text run at (50,0) width 262: " containing the object appears in green"
         RenderListItem {li} at (40,22) size 744x22
           RenderListMarker at (-18,0) size 7x22: bullet
           RenderText {#text} at (0,0) size 31x22
             text run at (0,0) width 31: "The "
-          RenderInline {code} at (0,0) size 35x17
-            RenderText {#text} at (31,3) size 35x17
-              text run at (31,3) width 35: "object"
-          RenderText {#text} at (66,0) size 290x22
-            text run at (66,0) width 290: " appears in orange. Its height is set at 13em"
+          RenderInline {code} at (0,0) size 38x17
+            RenderText {#text} at (31,3) size 38x17
+              text run at (31,3) width 38: "object"
+          RenderText {#text} at (69,0) size 290x22
+            text run at (69,0) width 290: " appears in orange. Its height is set at 13em"
         RenderListItem {li} at (40,44) size 744x22
           RenderListMarker at (-18,0) size 7x22: bullet
           RenderText {#text} at (0,0) size 178x22

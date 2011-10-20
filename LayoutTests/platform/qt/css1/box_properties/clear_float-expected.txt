@@ -7,22 +7,22 @@ layer at (0,0) size 784x951
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,35) size 768x153
-        RenderText {#text} at (0,0) size 442x153
-          text run at (0,0) width 259: "P { margin: 0; padding: 0; text-align:  justify;}"
-          text run at (259,0) width 0: " "
+        RenderText {#text} at (0,0) size 496x153
+          text run at (0,0) width 287: "P { margin: 0; padding: 0; text-align:  justify;}"
+          text run at (287,0) width 0: " "
           text run at (0,17) width 0: " "
-          text run at (0,34) width 261: "DIV.menu {float: left; clear: left; width: 11em;"
-          text run at (261,34) width 0: " "
-          text run at (0,51) width 326: "          margin: 0; margin-bottom: 10px; padding: 0.5em;}"
-          text run at (326,51) width 0: " "
-          text run at (0,68) width 318: "DIV.menu H1 {font-size: 1.2em; margin: 0; padding: 0;}"
-          text run at (318,68) width 0: " "
-          text run at (0,85) width 354: "DIV.menu UL {margin: 0.2em 0.3em 0.2em 1em; padding: 0;}"
-          text run at (354,85) width 0: " "
-          text run at (0,102) width 442: "DIV.article {padding: 0.5em; margin: 0; margin-left: 14em; margin-right: 2em;"
-          text run at (442,102) width 0: " "
-          text run at (0,119) width 318: "             color: black; background: yellow; clear: none;}"
-          text run at (318,119) width 0: " "
+          text run at (0,34) width 287: "DIV.menu {float: left; clear: left; width: 11em;"
+          text run at (287,34) width 0: " "
+          text run at (0,51) width 359: "          margin: 0; margin-bottom: 10px; padding: 0.5em;}"
+          text run at (359,51) width 0: " "
+          text run at (0,68) width 349: "DIV.menu H1 {font-size: 1.2em; margin: 0; padding: 0;}"
+          text run at (349,68) width 0: " "
+          text run at (0,85) width 388: "DIV.menu UL {margin: 0.2em 0.3em 0.2em 1em; padding: 0;}"
+          text run at (388,85) width 0: " "
+          text run at (0,102) width 496: "DIV.article {padding: 0.5em; margin: 0; margin-left: 14em; margin-right: 2em;"
+          text run at (496,102) width 0: " "
+          text run at (0,119) width 346: "             color: black; background: yellow; clear: none;}"
+          text run at (346,119) width 0: " "
           text run at (0,136) width 0: " "
       RenderBlock {HR} at (0,201) size 768x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,211) size 192x136 [color=#FFFFFF] [bgcolor=#008000]

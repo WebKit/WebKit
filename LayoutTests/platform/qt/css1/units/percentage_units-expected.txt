@@ -7,15 +7,15 @@ layer at (0,0) size 784x642
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x85
-        RenderText {#text} at (0,0) size 363x85
-          text run at (0,0) width 160: ".zero { background: yellow }"
-          text run at (160,0) width 0: " "
-          text run at (0,17) width 363: ".one { margin-left: 25%; margin-right: 25%; background: white }"
-          text run at (363,17) width 0: " "
-          text run at (0,34) width 355: ".two { margin-left: 50%; margin-right: 0%; background: white }"
-          text run at (355,34) width 0: " "
-          text run at (0,51) width 144: ".three {margin-left: 25%;}"
-          text run at (144,51) width 0: " "
+        RenderText {#text} at (0,0) size 408x85
+          text run at (0,0) width 174: ".zero { background: yellow }"
+          text run at (174,0) width 0: " "
+          text run at (0,17) width 408: ".one { margin-left: 25%; margin-right: 25%; background: white }"
+          text run at (408,17) width 0: " "
+          text run at (0,34) width 399: ".two { margin-left: 50%; margin-right: 0%; background: white }"
+          text run at (399,34) width 0: " "
+          text run at (0,51) width 161: ".three {margin-left: 25%;}"
+          text run at (161,51) width 0: " "
           text run at (0,68) width 0: " "
       RenderBlock {HR} at (0,136) size 768x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,154) size 768x148 [bgcolor=#FFFF00]

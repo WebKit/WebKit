@@ -18,12 +18,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,38) size 784x28
         RenderText {#text} at (0,3) size 38x22
           text run at (0,3) width 38: "With "
-        RenderInline {TT} at (0,0) size 49x17
-          RenderText {#text} at (38,6) size 49x17
-            text run at (38,6) width 49: "size=\"1\""
-        RenderText {#text} at (87,3) size 9x22
-          text run at (87,3) width 9: ": "
-        RenderMenuList {SELECT} at (96,2) size 100x24 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderInline {TT} at (0,0) size 50x17
+          RenderText {#text} at (38,6) size 50x17
+            text run at (38,6) width 50: "size=\"1\""
+        RenderText {#text} at (88,3) size 9x22
+          text run at (88,3) width 9: ": "
+        RenderMenuList {SELECT} at (97,2) size 100x24 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 98x22
             RenderText at (0,0) size 223x22
               text run at (0,0) width 223: "Very long option that does not fit"

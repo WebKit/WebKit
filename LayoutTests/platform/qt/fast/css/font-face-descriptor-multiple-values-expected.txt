@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 67x22
           text run at (0,0) width 67: "This tests "
-        RenderInline {TT} at (0,0) size 64x17
-          RenderText {#text} at (67,3) size 64x17
-            text run at (67,3) width 64: "@font-face"
-        RenderText {#text} at (131,0) size 371x22
-          text run at (131,0) width 266: " rules with font descriptors that specify "
-          text run at (397,0) width 105: "multiple values."
+        RenderInline {TT} at (0,0) size 67x17
+          RenderText {#text} at (67,3) size 67x17
+            text run at (67,3) width 67: "@font-face"
+        RenderText {#text} at (134,0) size 371x22
+          text run at (134,0) width 266: " rules with font descriptors that specify "
+          text run at (400,0) width 105: "multiple values."
       RenderBlock {P} at (0,38) size 784x44
         RenderText {#text} at (0,0) size 779x44
           text run at (0,0) width 779: "Helvetica is assigned to weights 100 and 900 while courier is assigned to 400. Faces are assigned to other weights are"

@@ -2,28 +2,28 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (9,1) size 463x285
+    RenderSVGContainer {g} at (9,2) size 471x284
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (60,1) size 318x51 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 318x51
-          chunk 1 text run 1 at (60.00,40.00) startOffset 0 endOffset 18 width 318.00: "Event bubbling - c"
+      RenderSVGText {text} at (60,2) size 362x49 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 362x49
+          chunk 1 text run 1 at (60.00,40.00) startOffset 0 endOffset 18 width 362.00: "Event bubbling - c"
       RenderSVGContainer {g} at (9,54) size 462x232
         RenderSVGPath {rect} at (9,54) size 462x232 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=55.00] [width=460.00] [height=230.00]
-      RenderSVGContainer {g} at (20,51) size 452x231
-        RenderSVGContainer {a} at (20,51) size 452x231
-          RenderSVGText {text} at (20,51) size 415x51 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 415x51
-              chunk 1 text run 1 at (20.00,90.00) startOffset 0 endOffset 25 width 415.00: "String turns red on click"
-          RenderSVGContainer {g} at (20,121) size 387x89
-            RenderSVGText {text} at (60,121) size 338x51 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 338x51
-                chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 20 width 338.00: "String hyperlinks to"
-            RenderSVGText {text} at (20,168) size 387x42 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 387x42
-                chunk 1 text run 1 at (20.00,200.00) startOffset 0 endOffset 27 width 387.00: "interact-order-03b-targ.svg"
-          RenderSVGText {text} at (30,231) size 442x51 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 442x51
-              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 27 width 442.00: "All strings are selectable."
+      RenderSVGContainer {g} at (20,52) size 460x229
+        RenderSVGContainer {a} at (20,52) size 460x229
+          RenderSVGText {text} at (20,52) size 481x49 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 481x49
+              chunk 1 text run 1 at (20.00,90.00) startOffset 0 endOffset 25 width 481.00: "String turns red on click"
+          RenderSVGContainer {g} at (20,122) size 438x87
+            RenderSVGText {text} at (60,122) size 390x49 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 390x49
+                chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 20 width 390.00: "String hyperlinks to"
+            RenderSVGText {text} at (20,168) size 438x41 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 438x41
+                chunk 1 text run 1 at (20.00,200.00) startOffset 0 endOffset 27 width 438.00: "interact-order-03b-targ.svg"
+          RenderSVGText {text} at (30,232) size 492x49 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 492x49
+              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 27 width 492.00: "All strings are selectable."
     RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 270x53
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.2 $"

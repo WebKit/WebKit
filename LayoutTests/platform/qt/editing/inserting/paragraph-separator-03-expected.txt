@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 18x17
             text run at (0,0) width 18: "foo"
         RenderBlock {PRE} at (0,30) size 784x34
-          RenderText {#text} at (0,0) size 18x34
+          RenderText {#text} at (0,0) size 22x34
             text run at (0,0) width 0: " "
-            text run at (0,17) width 18: "bar"
+            text run at (0,17) width 22: "bar"
 caret: position 0 of child 0 {#text} of child 1 {PRE} of child 4 {DIV} of body

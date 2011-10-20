@@ -2,12 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (14,34) size 417x367
-    RenderSVGText {text} at (105,34) size 240x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 240x21
-        chunk 1 (middle anchor) text run 1 at (105.00,50.00) startOffset 0 endOffset 34 width 240.00: "patternUnits / patternContentUnits"
-    RenderSVGText {text} at (168,59) size 114x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 114x21
-        chunk 1 (middle anchor) text run 1 at (168.00,75.00) startOffset 0 endOffset 15 width 114.00: "pattern viewBox"
+    RenderSVGText {text} at (84,34) size 282x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 282x21
+        chunk 1 (middle anchor) text run 1 at (84.50,50.00) startOffset 0 endOffset 34 width 281.00: "patternUnits / patternContentUnits"
+    RenderSVGText {text} at (162,59) size 126x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 126x21
+        chunk 1 (middle anchor) text run 1 at (162.50,75.00) startOffset 0 endOffset 15 width 125.00: "pattern viewBox"
     RenderSVGContainer {g} at (14,108) size 417x293
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourcePattern {pattern} [id="pattern1"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]

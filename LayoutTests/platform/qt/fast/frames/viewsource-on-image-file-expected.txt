@@ -25,6 +25,6 @@ layer at (0,0) size 800x600
                           RenderCounter at (21,0) size 5x12
                             text run at (21,0) width 5: "1"
                       RenderTableCell {TD} at (31,0) size 269x17 [r=0 c=1 rs=1 cs=1]
-                        RenderText {#text} at (5,0) size 61x17
-                          text run at (5,0) width 61: "hello world"
+                        RenderText {#text} at (5,0) size 70x17
+                          text run at (5,0) width 70: "hello world"
         RenderText {#text} at (0,0) size 0x0

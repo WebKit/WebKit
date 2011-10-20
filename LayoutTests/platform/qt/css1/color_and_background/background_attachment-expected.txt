@@ -7,9 +7,9 @@ layer at (0,0) size 784x1361
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x34
-        RenderText {#text} at (0,0) size 644x34
-          text run at (0,0) width 644: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
-          text run at (644,0) width 0: " "
+        RenderText {#text} at (0,0) size 725x34
+          text run at (0,0) width 725: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
+          text run at (725,0) width 0: " "
           text run at (0,17) width 0: " "
       RenderBlock {HR} at (0,85) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,103) size 768x110
@@ -70,15 +70,15 @@ layer at (0,0) size 784x1361
           text run at (0,0) width 748: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to"
           text run at (0,22) width 320: "the canvas or if it scrolls along with the content."
       RenderBlock {PRE} at (0,529) size 768x85
-        RenderText {#text} at (0,0) size 203x85
-          text run at (0,0) width 57: "  BODY { "
-          text run at (57,0) width 0: " "
-          text run at (0,17) width 203: "    background: red url(pendant.gif);"
-          text run at (203,17) width 0: " "
-          text run at (0,34) width 182: "    background-repeat: repeat-y;"
-          text run at (182,34) width 0: " "
-          text run at (0,51) width 192: "    background-attachment: fixed;"
-          text run at (192,51) width 0: " "
+        RenderText {#text} at (0,0) size 230x85
+          text run at (0,0) width 58: "  BODY { "
+          text run at (58,0) width 0: " "
+          text run at (0,17) width 230: "    background: red url(pendant.gif);"
+          text run at (230,17) width 0: " "
+          text run at (0,34) width 204: "    background-repeat: repeat-y;"
+          text run at (204,34) width 0: " "
+          text run at (0,51) width 215: "    background-attachment: fixed;"
+          text run at (215,51) width 0: " "
           text run at (0,68) width 12: "  }"
           text run at (12,68) width 0: " "
       RenderBlock {P} at (0,630) size 768x66
@@ -159,15 +159,15 @@ layer at (0,0) size 784x1361
                   text run at (0,0) width 731: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard"
                   text run at (0,22) width 337: "to the canvas or if it scrolls along with the content."
               RenderBlock {PRE} at (4,430) size 746x85
-                RenderText {#text} at (0,0) size 203x85
-                  text run at (0,0) width 57: "  BODY { "
-                  text run at (57,0) width 0: " "
-                  text run at (0,17) width 203: "    background: red url(pendant.gif);"
-                  text run at (203,17) width 0: " "
-                  text run at (0,34) width 182: "    background-repeat: repeat-y;"
-                  text run at (182,34) width 0: " "
-                  text run at (0,51) width 192: "    background-attachment: fixed;"
-                  text run at (192,51) width 0: " "
+                RenderText {#text} at (0,0) size 230x85
+                  text run at (0,0) width 58: "  BODY { "
+                  text run at (58,0) width 0: " "
+                  text run at (0,17) width 230: "    background: red url(pendant.gif);"
+                  text run at (230,17) width 0: " "
+                  text run at (0,34) width 204: "    background-repeat: repeat-y;"
+                  text run at (204,34) width 0: " "
+                  text run at (0,51) width 215: "    background-attachment: fixed;"
+                  text run at (215,51) width 0: " "
                   text run at (0,68) width 12: "  }"
                   text run at (12,68) width 0: " "
               RenderBlock {P} at (4,531) size 746x66

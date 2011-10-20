@@ -13,9 +13,9 @@ layer at (0,0) size 480x360
         RenderSVGPath {circle} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
       RenderSVGResourceMarker {marker} [id="markerEnd"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
         RenderSVGPath {path} at (0,0) size 2x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
-      RenderSVGText {text} at (170,16) size 90x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 90x18
-          chunk 1 text run 1 at (170.00,30.00) startOffset 0 endOffset 13 width 90.00: "Basic Markers"
+      RenderSVGText {text} at (170,16) size 96x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 96x18
+          chunk 1 text run 1 at (170.00,30.00) startOffset 0 endOffset 13 width 96.00: "Basic Markers"
       RenderSVGPath {path} at (122,32) size 66x66 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 130 40 L 180 40 L 180 90"]
       RenderSVGContainer {g} at (242,32) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
         RenderSVGPath {path} at (250,36) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M 130 40 L 180 40 L 180 90"]
@@ -25,9 +25,9 @@ layer at (0,0) size 480x360
           RenderSVGPath {rect} at (292,32) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGContainer {g} at (292,82) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,82.00)}]
           RenderSVGPath {rect} at (292,82) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-      RenderSVGText {text} at (145,111) size 137x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x18
-          chunk 1 text run 1 at (145.00,125.00) startOffset 0 endOffset 21 width 137.00: "Start, Middle and End"
+      RenderSVGText {text} at (145,111) size 149x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 149x18
+          chunk 1 text run 1 at (145.00,125.00) startOffset 0 endOffset 21 width 149.00: "Start, Middle and End"
       RenderSVGPath {path} at (122,127) size 66x66 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=markerStart] [middle marker=markerMiddle] [end marker=markerEnd] [data="M 130 135 L 180 135 L 180 185"]
       RenderSVGContainer {g} at (242,127) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
         RenderSVGPath {path} at (250,131) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M 130 135 L 180 135 L 180 185"]
@@ -37,9 +37,9 @@ layer at (0,0) size 480x360
           RenderSVGPath {circle} at (292,127) size 16x16 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
         RenderSVGContainer {g} at (292,177) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,177.00)}]
           RenderSVGPath {path} at (292,177) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
-      RenderSVGText {text} at (145,206) size 137x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x18
-          chunk 1 text run 1 at (145.00,220.00) startOffset 0 endOffset 21 width 137.00: "Automatic Orientation"
+      RenderSVGText {text} at (145,206) size 150x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 150x18
+          chunk 1 text run 1 at (145.00,220.00) startOffset 0 endOffset 21 width 150.00: "Automatic Orientation"
       RenderSVGPath {path} at (122,218) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=marker2] [middle marker=marker2] [end marker=marker2] [data="M 130 230 L 180 230 L 180 280"]
       RenderSVGContainer {g} at (242,218) size 70x70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
         RenderSVGPath {path} at (250,226) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M 130 230 L 180 230 L 180 280"]

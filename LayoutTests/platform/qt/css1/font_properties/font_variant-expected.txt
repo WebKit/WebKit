@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 784x51
-        RenderText {#text} at (0,0) size 177x51
-          text run at (0,0) width 177: ".one {font-variant: small-caps;}"
-          text run at (177,0) width 0: " "
-          text run at (0,17) width 152: ".two {font-variant: normal;}"
-          text run at (152,17) width 0: " "
+        RenderText {#text} at (0,0) size 198x51
+          text run at (0,0) width 198: ".one {font-variant: small-caps;}"
+          text run at (198,0) width 0: " "
+          text run at (0,17) width 173: ".two {font-variant: normal;}"
+          text run at (173,17) width 0: " "
           text run at (0,34) width 0: " "
       RenderBlock {HR} at (0,102) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,120) size 784x22

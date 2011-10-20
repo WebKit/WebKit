@@ -22,5 +22,5 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 30x22
                 text run at (2,2) width 30: "(1,5)"
       RenderBlock {PRE} at (0,43) size 784x17
-        RenderText {#text} at (0,0) size 276x17
-          text run at (0,0) width 276: "xxx(1,1)[tab](1,2)[tab](1,3)[tab](1,4)[tab](1,5)xxx"
+        RenderText {#text} at (0,0) size 298x17
+          text run at (0,0) width 298: "xxx(1,1)[tab](1,2)[tab](1,3)[tab](1,4)[tab](1,5)xxx"

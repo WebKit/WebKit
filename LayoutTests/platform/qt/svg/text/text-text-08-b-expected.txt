@@ -2,19 +2,19 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (28,0) size 686x435
-      RenderSVGText {text} at (19,-2) size 350x81 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 350x81
-          chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 349.20: "Normal Text"
-      RenderSVGText {text} at (19,58) size 304x81 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 304x81
-          chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 303.60: "Fill opacity"
-      RenderSVGText {text} at (19,118) size 407x81 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 407x81
-          chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 406.80: "Stroke opacity"
-      RenderSVGText {text} at (19,178) size 218x81 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 218x81
-          chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 217.80: "Opacity"
+    RenderSVGContainer {g} at (28,0) size 757x434
+      RenderSVGText {text} at (19,-1) size 383x79 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 383x79
+          chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 382.80: "Normal Text"
+      RenderSVGText {text} at (19,59) size 344x79 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 344x79
+          chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 343.80: "Fill opacity"
+      RenderSVGText {text} at (19,119) size 450x79 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 450x79
+          chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 450.00: "Stroke opacity"
+      RenderSVGText {text} at (19,179) size 241x79 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 241x79
+          chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 240.60: "Opacity"
     RenderSVGText {text} at (10,301) size 274x53 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 274x53
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 273.60: "$Revision: 1.3 $"

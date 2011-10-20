@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
             text run at (0,22) width 134: "work in quirks mode"
         RenderText {#text} at (134,22) size 106x22
           text run at (134,22) width 106: ". This tests that "
-        RenderInline {CODE} at (0,0) size 75x17
-          RenderText {#text} at (240,25) size 75x17
-            text run at (240,25) width 75: "span#t:hover"
-        RenderText {#text} at (315,22) size 183x22
-          text run at (315,22) width 183: " matches the hovered span."
+        RenderInline {CODE} at (0,0) size 85x17
+          RenderText {#text} at (240,25) size 85x17
+            text run at (240,25) width 85: "span#t:hover"
+        RenderText {#text} at (325,22) size 183x22
+          text run at (325,22) width 183: " matches the hovered span."

@@ -2,59 +2,59 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (30,15) size 405x270
-      RenderSVGContainer {g} at (30,15) size 405x270
-        RenderSVGPath {rect} at (124,15) size 9x20 [fill={[type=SOLID] [color=#ADD8E6]}] [x=124.50] [y=15.00] [width=8.00] [height=20.00]
-        RenderSVGPath {rect} at (89,19) size 18x17 [fill={[type=SOLID] [color=#ADD8E6]}] [x=89.96] [y=19.39] [width=16.26] [height=16.26]
-        RenderSVGPath {line} at (61,29) size 358x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=61.50] [y1=30.00] [x2=418.50] [y2=30.00]
-        RenderSVGPath {line} at (132,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=132.50] [y1=30.00] [x2=132.50] [y2=15.00]
-        RenderSVGPath {line} at (124,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=124.50] [y1=30.00] [x2=124.50] [y2=15.00]
-        RenderSVGPath {line} at (188,29) size 57x2 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [x1=188.50] [y1=30.00] [x2=244.50] [y2=30.00]
-        RenderSVGText {text} at (61,15) size 358x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 33x20
-            chunk 1 (middle anchor) text run 1 at (61.50,30.00) startOffset 0 endOffset 5 width 32.00: "This "
-          RenderSVGTSpan {tspan} at (0,0) size 23x19
-            RenderSVGInlineText {#text} at (28,4) size 23x19
-              chunk 1 (middle anchor) text run 1 at (93.50,30.00) startOffset 0 endOffset 1 width 3.00: "i"
-              chunk 1 (middle anchor) text run 2 at (96.50,30.00) startOffset 1 endOffset 2 width 8.00: "s"
-          RenderSVGInlineText {#text} at (43,0) size 315x20
-            chunk 1 (middle anchor) text run 1 at (104.50,30.00) startOffset 0 endOffset 47 width 314.00: " a test of the interface SVGTextContentElement."
-        RenderSVGText {text} at (30,45) size 228x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 228x20
-            chunk 1 text run 1 at (30.00,60.00) startOffset 0 endOffset 34 width 228.00: ".getCharNumAtPosition() result: 30"
-        RenderSVGText {text} at (30,65) size 247x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 247x20
-            chunk 1 text run 1 at (30.00,80.00) startOffset 0 endOffset 36 width 247.00: ".getComputedTextLength() result: 357"
-        RenderSVGText {text} at (30,85) size 296x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 296x20
-            chunk 1 text run 1 at (30.00,100.00) startOffset 0 endOffset 46 width 296.00: ".getEndPositionOfChar(11) result ('e'): 133,30"
-        RenderSVGText {text} at (30,105) size 292x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 292x20
-            chunk 1 text run 1 at (30.00,120.00) startOffset 0 endOffset 46 width 292.00: ".getExtentOfChar(11) result ('e'): 125,15,8,20"
-        RenderSVGText {text} at (30,125) size 207x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 207x20
-            chunk 1 text run 1 at (30.00,140.00) startOffset 0 endOffset 30 width 207.00: ".getNumberOfChars() result: 54"
-        RenderSVGText {text} at (30,145) size 208x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 208x20
-            chunk 1 text run 1 at (30.00,160.00) startOffset 0 endOffset 32 width 208.00: ".getRotationOfChar(5) result: 45"
-        RenderSVGText {text} at (30,165) size 301x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 301x20
-            chunk 1 text run 1 at (30.00,180.00) startOffset 0 endOffset 48 width 301.00: ".getStartPositionOfChar(11) result ('e'): 125,30"
-        RenderSVGText {text} at (30,185) size 310x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 310x20
-            chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 50 width 310.00: ".getSubStringLength(22,9) result ('interface'): 56"
-        RenderSVGText {text} at (30,205) size 405x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 405x20
-            chunk 1 text run 1 at (30.00,220.00) startOffset 0 endOffset 64 width 405.00: ".selectSubString(18,3) result: the word 'the' should be selected"
-        RenderSVGText {text} at (30,225) size 240x20 contains 1 chunk(s)
+    RenderSVGContainer {g} at (30,15) size 450x270
+      RenderSVGContainer {g} at (30,15) size 450x270
+        RenderSVGPath {rect} at (110,15) size 8x20 [fill={[type=SOLID] [color=#ADD8E6]}] [x=110.00] [y=15.00] [width=8.00] [height=20.00]
+        RenderSVGPath {rect} at (68,19) size 19x19 [fill={[type=SOLID] [color=#ADD8E6]}] [x=68.46] [y=19.39] [width=17.68] [height=17.68]
+        RenderSVGPath {line} at (35,29) size 410x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=35.00] [y1=30.00] [x2=445.00] [y2=30.00]
+        RenderSVGPath {line} at (117,15) size 2x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=118.00] [y1=30.00] [x2=118.00] [y2=15.00]
+        RenderSVGPath {line} at (109,15) size 2x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=110.00] [y1=30.00] [x2=110.00] [y2=15.00]
+        RenderSVGPath {line} at (184,29) size 66x2 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [x1=184.00] [y1=30.00] [x2=250.00] [y2=30.00]
+        RenderSVGText {text} at (35,15) size 410x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 37x20
+            chunk 1 (middle anchor) text run 1 at (35.00,30.00) startOffset 0 endOffset 5 width 37.00: "This "
+          RenderSVGTSpan {tspan} at (0,0) size 24x19
+            RenderSVGInlineText {#text} at (33,4) size 24x19
+              chunk 1 (middle anchor) text run 1 at (72.00,30.00) startOffset 0 endOffset 1 width 5.00: "i"
+              chunk 1 (middle anchor) text run 2 at (77.00,30.00) startOffset 1 endOffset 2 width 8.00: "s"
+          RenderSVGInlineText {#text} at (50,0) size 360x20
+            chunk 1 (middle anchor) text run 1 at (85.00,30.00) startOffset 0 endOffset 47 width 360.00: " a test of the interface SVGTextContentElement."
+        RenderSVGText {text} at (30,45) size 261x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 261x20
+            chunk 1 text run 1 at (30.00,60.00) startOffset 0 endOffset 34 width 261.00: ".getCharNumAtPosition() result: 29"
+        RenderSVGText {text} at (30,65) size 280x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 280x20
+            chunk 1 text run 1 at (30.00,80.00) startOffset 0 endOffset 36 width 280.00: ".getComputedTextLength() result: 410"
+        RenderSVGText {text} at (30,85) size 336x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 336x20
+            chunk 1 text run 1 at (30.00,100.00) startOffset 0 endOffset 46 width 336.00: ".getEndPositionOfChar(11) result ('e'): 118,30"
+        RenderSVGText {text} at (30,105) size 333x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 333x20
+            chunk 1 text run 1 at (30.00,120.00) startOffset 0 endOffset 46 width 333.00: ".getExtentOfChar(11) result ('e'): 110,15,8,20"
+        RenderSVGText {text} at (30,125) size 235x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 235x20
+            chunk 1 text run 1 at (30.00,140.00) startOffset 0 endOffset 30 width 235.00: ".getNumberOfChars() result: 54"
+        RenderSVGText {text} at (30,145) size 240x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 240x20
-            chunk 1 text run 1 at (30.00,240.00) startOffset 0 endOffset 37 width 240.00: ".textLength.baseVal.value result: 357"
-        RenderSVGText {text} at (30,245) size 240x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 240x20
-            chunk 1 text run 1 at (30.00,260.00) startOffset 0 endOffset 37 width 240.00: ".textLength.animVal.value result: 357"
-        RenderSVGText {text} at (30,265) size 382x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 382x20
-            chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 59 width 382.00: ".lengthAdjust.baseVal and .lengthAdjust.animVal result: 1,1"
+            chunk 1 text run 1 at (30.00,160.00) startOffset 0 endOffset 32 width 240.00: ".getRotationOfChar(5) result: 45"
+        RenderSVGText {text} at (30,165) size 344x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 344x20
+            chunk 1 text run 1 at (30.00,180.00) startOffset 0 endOffset 48 width 344.00: ".getStartPositionOfChar(11) result ('e'): 110,30"
+        RenderSVGText {text} at (30,185) size 359x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 359x20
+            chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 50 width 359.00: ".getSubStringLength(22,9) result ('interface'): 66"
+        RenderSVGText {text} at (30,205) size 466x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 466x20
+            chunk 1 text run 1 at (30.00,220.00) startOffset 0 endOffset 64 width 466.00: ".selectSubString(18,3) result: the word 'the' should be selected"
+        RenderSVGText {text} at (30,225) size 279x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 279x20
+            chunk 1 text run 1 at (30.00,240.00) startOffset 0 endOffset 37 width 279.00: ".textLength.baseVal.value result: 410"
+        RenderSVGText {text} at (30,245) size 283x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 283x20
+            chunk 1 text run 1 at (30.00,260.00) startOffset 0 endOffset 37 width 283.00: ".textLength.animVal.value result: 410"
+        RenderSVGText {text} at (30,265) size 452x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 452x20
+            chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 59 width 452.00: ".lengthAdjust.baseVal and .lengthAdjust.animVal result: 1,1"
     RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 270x53
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.1 $"

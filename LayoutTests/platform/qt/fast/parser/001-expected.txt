@@ -19,22 +19,22 @@ layer at (0,0) size 800x600
               RenderText {#text} at (315,0) size 34x22
                 text run at (315,0) width 34: "Four"
       RenderBlock {PRE} at (0,136) size 784x338
-        RenderText {#text} at (0,0) size 46x17
-          text run at (0,0) width 46: "Pre text"
-          text run at (46,0) width 0: " "
+        RenderText {#text} at (0,0) size 49x17
+          text run at (0,0) width 49: "Pre text"
+          text run at (49,0) width 0: " "
         RenderEmbeddedObject {OBJECT} at (0,17) size 300x300 [bgcolor=#008000]
         RenderText {#text} at (300,304) size 300x34
           text run at (300,304) width 0: " "
-          text run at (0,321) width 74: "Also pre text"
-          text run at (74,321) width 0: " "
+          text run at (0,321) width 80: "Also pre text"
+          text run at (80,321) width 0: " "
       RenderBlock (anonymous) at (0,487) size 784x22
         RenderInline {NOBR} at (0,0) size 149x22 [bgcolor=#CCCCCC]
           RenderText {#text} at (0,0) size 149x22
             text run at (0,0) width 149: "This text won't break."
       RenderBlock (anonymous) at (0,522) size 784x17
         RenderBlock {PRE} at (0,0) size 784x17
-          RenderText {#text} at (0,0) size 146x17
-            text run at (0,0) width 146: "This will be preformatted."
+          RenderText {#text} at (0,0) size 164x17
+            text run at (0,0) width 164: "This will be preformatted."
       RenderBlock (anonymous) at (0,552) size 784x22
         RenderInline {NOBR} at (0,0) size 251x22 [bgcolor=#CCCCCC]
           RenderText {#text} at (0,0) size 251x22

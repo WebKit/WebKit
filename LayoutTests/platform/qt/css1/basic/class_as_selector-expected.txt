@@ -7,15 +7,15 @@ layer at (0,0) size 784x639
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x68
-        RenderText {#text} at (0,0) size 120x68
-          text run at (0,0) width 109: ".one {color: green;}"
-          text run at (109,0) width 0: " "
-          text run at (0,17) width 81: ".1 {color: red;}"
-          text run at (81,17) width 0: " "
-          text run at (0,34) width 102: ".a1 {color: green;}"
-          text run at (102,34) width 0: " "
-          text run at (0,51) width 120: "P.two {color: purple;}"
-          text run at (120,51) width 0: " "
+        RenderText {#text} at (0,0) size 131x68
+          text run at (0,0) width 118: ".one {color: green;}"
+          text run at (118,0) width 0: " "
+          text run at (0,17) width 88: ".1 {color: red;}"
+          text run at (88,17) width 0: " "
+          text run at (0,34) width 111: ".a1 {color: green;}"
+          text run at (111,34) width 0: " "
+          text run at (0,51) width 131: "P.two {color: purple;}"
+          text run at (131,51) width 0: " "
       RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 768x22 [color=#008000]
         RenderText {#text} at (0,0) size 206x22
@@ -30,9 +30,9 @@ layer at (0,0) size 784x639
         RenderText {#text} at (0,0) size 213x22
           text run at (0,0) width 213: "This sentence should be purple."
       RenderBlock {PRE} at (0,289) size 768x17
-        RenderText {#text} at (0,0) size 216x17
-          text run at (0,0) width 216: "This sentence should NOT be purple."
-          text run at (216,0) width 0: " "
+        RenderText {#text} at (0,0) size 239x17
+          text run at (0,0) width 239: "This sentence should NOT be purple."
+          text run at (239,0) width 0: " "
       RenderBlock {UL} at (0,322) size 768x22
         RenderListItem {LI} at (40,0) size 728x22
           RenderListMarker at (-18,0) size 7x22: bullet
@@ -63,9 +63,9 @@ layer at (0,0) size 784x639
                 RenderText {#text} at (0,0) size 213x22
                   text run at (0,0) width 213: "This sentence should be purple."
               RenderBlock {PRE} at (4,156) size 592x17
-                RenderText {#text} at (0,0) size 216x17
-                  text run at (0,0) width 216: "This sentence should NOT be purple."
-                  text run at (216,0) width 0: " "
+                RenderText {#text} at (0,0) size 239x17
+                  text run at (0,0) width 239: "This sentence should NOT be purple."
+                  text run at (239,0) width 0: " "
               RenderBlock {UL} at (4,189) size 592x22
                 RenderListItem {LI} at (40,0) size 552x22
                   RenderListMarker at (-18,0) size 7x22: bullet

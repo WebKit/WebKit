@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 270x22
           text run at (0,0) width 270: "These lines should have the same width:"
       RenderBlock {DIV} at (0,22) size 784x42
-        RenderText {#text} at (0,0) size 73x21
-          text run at (0,0) width 73: ". . . . . . . . a"
-        RenderBR {BR} at (73,16) size 0x0
-        RenderText {#text} at (0,21) size 73x21
-          text run at (0,21) width 73: ". . . . . . . . a\x{300}"
+        RenderText {#text} at (0,0) size 89x21
+          text run at (0,0) width 89: ". . . . . . . . a"
+        RenderBR {BR} at (89,16) size 0x0
+        RenderText {#text} at (0,21) size 89x21
+          text run at (0,21) width 89: ". . . . . . . . a\x{300}"

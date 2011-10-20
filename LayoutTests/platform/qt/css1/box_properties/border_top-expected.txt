@@ -7,15 +7,15 @@ layer at (0,0) size 784x1087
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x68
-        RenderText {#text} at (0,0) size 227x68
-          text run at (0,0) width 216: ".one {border-top: purple double 10px;}"
-          text run at (216,0) width 0: " "
-          text run at (0,17) width 197: ".two {border-top: purple thin solid;}"
-          text run at (197,17) width 0: " "
-          text run at (0,34) width 227: ".three {border-top: black medium solid;}"
-          text run at (227,34) width 0: " "
-          text run at (0,51) width 187: "TD {border-top: green 2px solid;}"
-          text run at (187,51) width 0: " "
+        RenderText {#text} at (0,0) size 254x68
+          text run at (0,0) width 242: ".one {border-top: purple double 10px;}"
+          text run at (242,0) width 0: " "
+          text run at (0,17) width 224: ".two {border-top: purple thin solid;}"
+          text run at (224,17) width 0: " "
+          text run at (0,34) width 254: ".three {border-top: black medium solid;}"
+          text run at (254,34) width 0: " "
+          text run at (0,51) width 206: "TD {border-top: green 2px solid;}"
+          text run at (206,51) width 0: " "
       RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 768x44
         RenderText {#text} at (0,0) size 756x44

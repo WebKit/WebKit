@@ -7,11 +7,11 @@ layer at (0,0) size 784x630
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x51
-        RenderText {#text} at (0,0) size 266x51
-          text run at (0,0) width 266: "P {background-image: url(../resources/bg.gif);}"
-          text run at (266,0) width 0: " "
-          text run at (0,17) width 183: ".one {background-image: none;}"
-          text run at (183,17) width 0: " "
+        RenderText {#text} at (0,0) size 300x51
+          text run at (0,0) width 300: "P {background-image: url(../resources/bg.gif);}"
+          text run at (300,0) width 0: " "
+          text run at (0,17) width 203: ".one {background-image: none;}"
+          text run at (203,17) width 0: " "
           text run at (0,34) width 0: " "
       RenderBlock {HR} at (0,102) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,120) size 768x44
@@ -30,17 +30,17 @@ layer at (0,0) size 784x630
           text run at (742,0) width 8: ". "
           text run at (750,0) width 11: "If"
           text run at (0,22) width 91: "it is not, then "
-        RenderInline {CODE} at (0,0) size 28x17
-          RenderText {#text} at (91,25) size 28x17
-            text run at (91,25) width 28: "none"
-        RenderText {#text} at (119,22) size 184x22
-          text run at (119,22) width 179: " is interpreted incorrectly. "
-          text run at (298,22) width 5: "("
-        RenderInline {CODE} at (0,0) size 28x17
-          RenderText {#text} at (303,25) size 28x17
-            text run at (303,25) width 28: "none"
-        RenderText {#text} at (331,22) size 759x66
-          text run at (331,22) width 428: " means that the element has no background image, allowing the"
+        RenderInline {CODE} at (0,0) size 32x17
+          RenderText {#text} at (91,25) size 32x17
+            text run at (91,25) width 32: "none"
+        RenderText {#text} at (123,22) size 184x22
+          text run at (123,22) width 179: " is interpreted incorrectly. "
+          text run at (302,22) width 5: "("
+        RenderInline {CODE} at (0,0) size 32x17
+          RenderText {#text} at (307,25) size 32x17
+            text run at (307,25) width 32: "none"
+        RenderText {#text} at (339,22) size 767x66
+          text run at (339,22) width 428: " means that the element has no background image, allowing the"
           text run at (0,44) width 757: "parent to \"shine through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the"
           text run at (0,66) width 251: "paragraph's image should be visible.)"
       RenderBlock {P} at (0,284) size 768x44
@@ -75,17 +75,17 @@ layer at (0,0) size 784x630
                 RenderText {#text} at (742,0) size 746x44
                   text run at (742,0) width 4: "."
                   text run at (0,22) width 106: "If it is not, then "
-                RenderInline {CODE} at (0,0) size 28x17
-                  RenderText {#text} at (106,25) size 28x17
-                    text run at (106,25) width 28: "none"
-                RenderText {#text} at (134,22) size 184x22
-                  text run at (134,22) width 179: " is interpreted incorrectly. "
-                  text run at (313,22) width 5: "("
-                RenderInline {CODE} at (0,0) size 28x17
-                  RenderText {#text} at (318,25) size 28x17
-                    text run at (318,25) width 28: "none"
-                RenderText {#text} at (346,22) size 703x66
-                  text run at (346,22) width 342: " means that the element has no background image,"
+                RenderInline {CODE} at (0,0) size 32x17
+                  RenderText {#text} at (106,25) size 32x17
+                    text run at (106,25) width 32: "none"
+                RenderText {#text} at (138,22) size 184x22
+                  text run at (138,22) width 179: " is interpreted incorrectly. "
+                  text run at (317,22) width 5: "("
+                RenderInline {CODE} at (0,0) size 32x17
+                  RenderText {#text} at (322,25) size 32x17
+                    text run at (322,25) width 32: "none"
+                RenderText {#text} at (354,22) size 703x66
+                  text run at (354,22) width 342: " means that the element has no background image,"
                   text run at (0,44) width 703: "allowing the parent to \"shine through\" by default; since the parent of the words \"in this sentence\" is the"
                   text run at (0,66) width 391: "paragraph, then the paragraph's image should be visible.)"
               RenderBlock {P} at (4,190) size 746x44

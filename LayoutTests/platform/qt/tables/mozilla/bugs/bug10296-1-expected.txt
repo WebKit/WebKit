@@ -9,24 +9,24 @@ layer at (0,0) size 784x6361
       RenderBlock {P} at (0,63) size 768x66
         RenderText {#text} at (0,0) size 284x22
           text run at (0,0) width 284: "The following three tables have heights of "
-        RenderInline {CODE} at (0,0) size 25x17
-          RenderText {#text} at (284,3) size 25x17
-            text run at (284,3) width 25: "auto"
-        RenderText {#text} at (309,0) size 8x22
-          text run at (309,0) width 8: ", "
-        RenderInline {CODE} at (0,0) size 28x17
-          RenderText {#text} at (317,3) size 28x17
-            text run at (317,3) width 28: "30px"
-        RenderText {#text} at (345,0) size 38x22
-          text run at (345,0) width 38: ", and "
-        RenderInline {CODE} at (0,0) size 35x17
-          RenderText {#text} at (383,3) size 35x17
-            text run at (383,3) width 35: "500px"
-        RenderText {#text} at (418,0) size 759x66
-          text run at (418,0) width 8: ". "
-          text run at (426,0) width 333: "The first one should have the height of the sum of"
-          text run at (0,22) width 60: "its rows. "
-          text run at (60,22) width 680: "The second and third can be handled however the browser wants, but there just here to make sure it"
+        RenderInline {CODE} at (0,0) size 29x17
+          RenderText {#text} at (284,3) size 29x17
+            text run at (284,3) width 29: "auto"
+        RenderText {#text} at (313,0) size 8x22
+          text run at (313,0) width 8: ", "
+        RenderInline {CODE} at (0,0) size 31x17
+          RenderText {#text} at (321,3) size 31x17
+            text run at (321,3) width 31: "30px"
+        RenderText {#text} at (352,0) size 38x22
+          text run at (352,0) width 38: ", and "
+        RenderInline {CODE} at (0,0) size 39x17
+          RenderText {#text} at (390,3) size 39x17
+            text run at (390,3) width 39: "500px"
+        RenderText {#text} at (429,0) size 757x66
+          text run at (429,0) width 8: ". "
+          text run at (437,0) width 316: "The first one should have the height of the sum"
+          text run at (0,22) width 77: "of its rows. "
+          text run at (77,22) width 680: "The second and third can be handled however the browser wants, but there just here to make sure it"
           text run at (0,44) width 184: "does something reasonable."
       RenderTable {TABLE} at (0,145) size 119x170
         RenderTableSection {TBODY} at (0,0) size 119x170
@@ -347,17 +347,17 @@ layer at (0,0) size 784x6361
       RenderBlock {P} at (0,1853) size 768x66
         RenderText {#text} at (0,0) size 157x22
           text run at (0,0) width 157: "The following tests test "
-        RenderInline {CODE} at (0,0) size 35x17
-          RenderText {#text} at (157,3) size 35x17
-            text run at (157,3) width 35: "height"
-        RenderText {#text} at (192,0) size 176x22
-          text run at (192,0) width 176: " on table rows. A value of "
-        RenderInline {CODE} at (0,0) size 25x17
-          RenderText {#text} at (368,3) size 25x17
-            text run at (368,3) width 25: "auto"
-        RenderText {#text} at (393,0) size 758x66
-          text run at (393,0) width 338: " requires the minimum height needed by the cells. "
-          text run at (731,0) width 27: "In a"
+        RenderInline {CODE} at (0,0) size 41x17
+          RenderText {#text} at (157,3) size 41x17
+            text run at (157,3) width 41: "height"
+        RenderText {#text} at (198,0) size 176x22
+          text run at (198,0) width 176: " on table rows. A value of "
+        RenderInline {CODE} at (0,0) size 29x17
+          RenderText {#text} at (374,3) size 29x17
+            text run at (374,3) width 29: "auto"
+        RenderText {#text} at (403,0) size 768x66
+          text run at (403,0) width 338: " requires the minimum height needed by the cells. "
+          text run at (741,0) width 27: "In a"
           text run at (0,22) width 728: "simple case, this is just the height of the tallest cell (excluding the increased padding, of course, since with the"
           text run at (0,44) width 268: "padding the cells have the same height):"
       RenderTable {TABLE} at (0,1935) size 119x52
@@ -378,11 +378,11 @@ layer at (0,0) size 784x6361
       RenderBlock {P} at (0,2003) size 768x44
         RenderText {#text} at (0,0) size 224x22
           text run at (0,0) width 224: "However, vertical-align values of "
-        RenderInline {CODE} at (0,0) size 48x17
-          RenderText {#text} at (224,3) size 48x17
-            text run at (224,3) width 48: "baseline"
-        RenderText {#text} at (272,0) size 736x44
-          text run at (272,0) width 464: " (the default, but could be overridden in a UA stylesheet) can make it"
+        RenderInline {CODE} at (0,0) size 54x17
+          RenderText {#text} at (224,3) size 54x17
+            text run at (224,3) width 54: "baseline"
+        RenderText {#text} at (278,0) size 742x44
+          text run at (278,0) width 464: " (the default, but could be overridden in a UA stylesheet) can make it"
           text run at (0,22) width 106: "taller than that:"
       RenderTable {TABLE} at (0,2063) size 315x160
         RenderTableSection {TBODY} at (0,0) size 315x160

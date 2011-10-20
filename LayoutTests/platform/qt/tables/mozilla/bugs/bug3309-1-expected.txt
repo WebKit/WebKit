@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,42) size 784x65
             RenderBR {BR} at (784,0) size 0x22
             RenderBR {BR} at (784,22) size 0x22
-            RenderInline {A} at (0,0) size 134x22 [color=#0000EE]
-              RenderInline {FONT} at (0,0) size 134x21 [color=#FFCC33]
-                RenderText {#text} at (650,44) size 134x21
-                  text run at (650,44) width 83: "Back to the "
-                  text run at (733,44) width 51: "index..."
+            RenderInline {A} at (0,0) size 152x22 [color=#0000EE]
+              RenderInline {FONT} at (0,0) size 152x21 [color=#FFCC33]
+                RenderText {#text} at (632,44) size 152x21
+                  text run at (632,44) width 94: "Back to the "
+                  text run at (726,44) width 58: "index..."

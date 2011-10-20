@@ -39,15 +39,16 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (167,113) size 4x22 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x22
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (171,17) size 154x85 [r=1 c=2 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 145x85
-                RenderInline {B} at (0,0) size 67x17
-                  RenderText {#text} at (0,0) size 67x17
-                    text run at (0,0) width 67: "Chilly time"
-                RenderBR {BR} at (67,13) size 0x0
-                RenderText {#text} at (0,17) size 145x68
-                  text run at (0,17) width 118: "Though the calendar"
-                  text run at (0,34) width 122: "disagrees, the feel of"
-                  text run at (0,51) width 145: "winter is in the air across"
-                  text run at (0,68) width 104: "much of the East."
+            RenderTableCell {TD} at (171,17) size 154x102 [r=1 c=2 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 135x102
+                RenderInline {B} at (0,0) size 76x17
+                  RenderText {#text} at (0,0) size 76x17
+                    text run at (0,0) width 76: "Chilly time"
+                RenderBR {BR} at (76,13) size 0x0
+                RenderText {#text} at (0,17) size 135x85
+                  text run at (0,17) width 135: "Though the calendar"
+                  text run at (0,34) width 131: "disagrees, the feel of"
+                  text run at (0,51) width 120: "winter is in the air"
+                  text run at (0,68) width 123: "across much of the"
+                  text run at (0,85) width 33: "East."
               RenderText {#text} at (0,0) size 0x0

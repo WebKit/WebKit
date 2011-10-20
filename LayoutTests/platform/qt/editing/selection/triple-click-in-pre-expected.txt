@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,120) size 784x62
         RenderBlock {DIV} at (0,0) size 784x62 [border: (1px solid #0000FF)]
           RenderBlock {PRE} at (1,14) size 782x34
-            RenderText {#text} at (0,0) size 87x34
-              text run at (0,0) width 75: "this text is in"
-              text run at (75,0) width 0: " "
-              text run at (0,17) width 87: "whitespace:pre"
+            RenderText {#text} at (0,0) size 97x34
+              text run at (0,0) width 85: "this text is in"
+              text run at (85,0) width 0: " "
+              text run at (0,17) width 97: "whitespace:pre"
 selection start: position 16 of child 0 {#text} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 30 of child 0 {#text} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of body

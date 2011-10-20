@@ -7,20 +7,20 @@ layer at (0,0) size 800x600
   RenderBlock (relative positioned) {DIV} at (0,0) size 800x600
     RenderBlock {DIV} at (0,0) size 800x220 [bgcolor=#6CAAD9]
       RenderBlock {H1} at (10,10) size 780x30
-        RenderText {#text} at (0,1) size 45x16
-          text run at (0,1) width 45: "Content"
+        RenderText {#text} at (0,1) size 51x16
+          text run at (0,1) width 51: "Content"
       RenderBlock {P} at (10,40) size 780x30
-        RenderText {#text} at (0,1) size 425x16
-          text run at (0,1) width 425: "Please resize the browser window to see how your 100% CSS footer behaves."
+        RenderText {#text} at (0,1) size 446x16
+          text run at (0,1) width 446: "Please resize the browser window to see how your 100% CSS footer behaves."
       RenderBlock {P} at (10,70) size 780x102
-        RenderText {#text} at (0,1) size 771x88
-          text run at (0,1) width 752: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cras porttitor. Ut nonummy vestibulum arcu. Nulla eros eros, mattis et, dictum quis,"
-          text run at (0,19) width 756: "convallis vel, mauris. Ut sed mauris vel metus pretium pretium. Curabitur tristique sem id justo. Nunc sit amet felis. Duis luctus pharetra urna."
-          text run at (0,37) width 746: "Sed enim arcu, cursus a, posuere sed, sollicitudin in, justo. Pellentesque enim lacus, egestas ut, elementum eu, molestie vel, urna. Integer"
-          text run at (0,55) width 771: "quam. Phasellus tempor. Sed commodo porttitor justo. Vestibulum rhoncus lacinia pede. Aliquam lectus velit, auctor a, fermentum a, accumsan"
-          text run at (0,73) width 54: "et, neque."
+        RenderText {#text} at (0,1) size 772x88
+          text run at (0,1) width 764: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cras porttitor. Ut nonummy vestibulum arcu. Nulla eros eros, mattis et,"
+          text run at (0,19) width 768: "dictum quis, convallis vel, mauris. Ut sed mauris vel metus pretium pretium. Curabitur tristique sem id justo. Nunc sit amet felis."
+          text run at (0,37) width 730: "Duis luctus pharetra urna. Sed enim arcu, cursus a, posuere sed, sollicitudin in, justo. Pellentesque enim lacus, egestas ut,"
+          text run at (0,55) width 772: "elementum eu, molestie vel, urna. Integer quam. Phasellus tempor. Sed commodo porttitor justo. Vestibulum rhoncus lacinia pede."
+          text run at (0,73) width 386: "Aliquam lectus velit, auctor a, fermentum a, accumsan et, neque."
 layer at (0,562) size 620x38
   RenderBlock (positioned) {DIV} at (0,562) size 620x38 [bgcolor=#0066B2]
     RenderBlock {H1} at (10,10) size 600x18 [color=#FFFFFF]
-      RenderText {#text} at (0,1) size 37x16
-        text run at (0,1) width 37: "Footer"
+      RenderText {#text} at (0,1) size 41x16
+        text run at (0,1) width 41: "Footer"

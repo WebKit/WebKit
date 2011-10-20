@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 784x51
-        RenderText {#text} at (0,0) size 178x51
-          text run at (0,0) width 178: ".one {border: 10px teal outset;}"
-          text run at (178,0) width 0: " "
-          text run at (0,17) width 175: ".two {border: 10px olive inset;}"
-          text run at (175,17) width 0: " "
+        RenderText {#text} at (0,0) size 196x51
+          text run at (0,0) width 196: ".one {border: 10px teal outset;}"
+          text run at (196,0) width 0: " "
+          text run at (0,17) width 192: ".two {border: 10px olive inset;}"
+          text run at (192,17) width 0: " "
           text run at (0,34) width 0: " "
       RenderBlock {HR} at (0,102) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,120) size 784x66 [bgcolor=#C0C0C0]

@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (29,24) size 421x457
-    RenderSVGText {text} at (107,24) size 236x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 236x21
-        chunk 1 (middle anchor) text run 1 at (107.00,40.00) startOffset 0 endOffset 34 width 236.00: "Text on Path with trailing <tspan>"
+    RenderSVGText {text} at (90,24) size 270x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 270x21
+        chunk 1 (middle anchor) text run 1 at (90.50,40.00) startOffset 0 endOffset 34 width 269.00: "Text on Path with trailing <tspan>"
     RenderSVGPath {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=50.00] [width=390.00] [height=20.00]
     RenderSVGPath {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=70.00] [width=390.00] [height=120.00]
     RenderSVGText {text} at (40,50) size 348x19 contains 1 chunk(s)

@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 784x51
-        RenderText {#text} at (0,0) size 293x51
-          text run at (0,0) width 293: ".one {list-style-image: url(../resources/oransqr.gif);}"
-          text run at (293,0) width 0: " "
-          text run at (0,17) width 164: ".two {list-style-image: none;}"
-          text run at (164,17) width 0: " "
+        RenderText {#text} at (0,0) size 333x51
+          text run at (0,0) width 333: ".one {list-style-image: url(../resources/oransqr.gif);}"
+          text run at (333,0) width 0: " "
+          text run at (0,17) width 180: ".two {list-style-image: none;}"
+          text run at (180,17) width 0: " "
           text run at (0,34) width 0: " "
       RenderBlock {HR} at (0,102) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,120) size 784x66

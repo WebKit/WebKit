@@ -10,19 +10,19 @@ layer at (0,0) size 784x1228
         RenderText {#text} at (11,0) size 369x22
           text run at (11,0) width 369: "he style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x119
-        RenderText {#text} at (0,0) size 244x119
-          text run at (0,0) width 143: "P:first-line {color: green;}"
-          text run at (143,0) width 0: " "
-          text run at (0,17) width 163: "P:first-letter {color: maroon;}"
-          text run at (163,17) width 0: " "
-          text run at (0,34) width 181: ".two:first-line {font-size: 200%;}"
-          text run at (181,34) width 0: " "
-          text run at (0,51) width 190: ".two:first-letter {font-size: 350%;}"
-          text run at (190,51) width 0: " "
-          text run at (0,68) width 208: "P.three:first-letter {font-size: 350%;}"
-          text run at (208,68) width 0: " "
-          text run at (0,85) width 244: "P.three:first-line {font-variant: small-caps;}"
-          text run at (244,85) width 0: " "
+        RenderText {#text} at (0,0) size 276x119
+          text run at (0,0) width 158: "P:first-line {color: green;}"
+          text run at (158,0) width 0: " "
+          text run at (0,17) width 181: "P:first-letter {color: maroon;}"
+          text run at (181,17) width 0: " "
+          text run at (0,34) width 199: ".two:first-line {font-size: 200%;}"
+          text run at (199,34) width 0: " "
+          text run at (0,51) width 209: ".two:first-letter {font-size: 350%;}"
+          text run at (209,51) width 0: " "
+          text run at (0,68) width 229: "P.three:first-letter {font-size: 350%;}"
+          text run at (229,68) width 0: " "
+          text run at (0,85) width 276: "P.three:first-line {font-variant: small-caps;}"
+          text run at (276,85) width 0: " "
           text run at (0,102) width 0: " "
       RenderBlock {HR} at (0,170) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,188) size 768x66

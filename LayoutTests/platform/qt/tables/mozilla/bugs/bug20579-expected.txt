@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (427,16) size 0x0
           RenderText {#text} at (0,22) size 143x22
             text run at (0,22) width 143: "First cell is coded as: "
-        RenderInline {CODE} at (0,0) size 252x17
-          RenderText {#text} at (143,25) size 252x17
-            text run at (143,25) width 252: "<TD><form>Weekly Poll<P></form></TD>"
+        RenderInline {CODE} at (0,0) size 270x17
+          RenderText {#text} at (143,25) size 270x17
+            text run at (143,25) width 270: "<TD><form>Weekly Poll<P></form></TD>"
       RenderTable {TABLE} at (0,60) size 784x60
         RenderTableSection {TBODY} at (0,0) size 784x60
           RenderTableRow {TR} at (0,0) size 784x60

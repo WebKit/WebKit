@@ -7,23 +7,23 @@ layer at (0,0) size 784x2415
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x136
-        RenderText {#text} at (0,0) size 326x136
-          text run at (0,0) width 145: "IMG.one {display: inline;}"
-          text run at (145,0) width 0: " "
-          text run at (0,17) width 145: "IMG.two {display: block;}"
-          text run at (145,17) width 0: " "
-          text run at (0,34) width 150: "IMG.three {display: block;"
-          text run at (150,34) width 0: " "
-          text run at (0,51) width 326: "           margin-right: auto; margin-left: auto; width: auto;}"
-          text run at (326,51) width 0: " "
-          text run at (0,68) width 143: "IMG.four {display: block;"
-          text run at (143,68) width 0: " "
-          text run at (0,85) width 323: "          margin-right: auto; margin-left: auto; width: 50%;}"
-          text run at (323,85) width 0: " "
-          text run at (0,102) width 142: "IMG.five {display: block;"
-          text run at (142,102) width 0: " "
-          text run at (0,119) width 305: "          margin-right: 0; margin-left: auto; width: 50%;}"
-          text run at (305,119) width 0: " "
+        RenderText {#text} at (0,0) size 368x136
+          text run at (0,0) width 160: "IMG.one {display: inline;}"
+          text run at (160,0) width 0: " "
+          text run at (0,17) width 156: "IMG.two {display: block;}"
+          text run at (156,17) width 0: " "
+          text run at (0,34) width 164: "IMG.three {display: block;"
+          text run at (164,34) width 0: " "
+          text run at (0,51) width 368: "           margin-right: auto; margin-left: auto; width: auto;}"
+          text run at (368,51) width 0: " "
+          text run at (0,68) width 156: "IMG.four {display: block;"
+          text run at (156,68) width 0: " "
+          text run at (0,85) width 363: "          margin-right: auto; margin-left: auto; width: 50%;}"
+          text run at (363,85) width 0: " "
+          text run at (0,102) width 152: "IMG.five {display: block;"
+          text run at (152,102) width 0: " "
+          text run at (0,119) width 342: "          margin-right: 0; margin-left: auto; width: 50%;}"
+          text run at (342,119) width 0: " "
       RenderBlock {HR} at (0,187) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,205) size 768x22
         RenderImage {IMG} at (0,1) size 15x15

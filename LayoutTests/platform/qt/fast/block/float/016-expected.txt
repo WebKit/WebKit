@@ -63,5 +63,5 @@ layer at (0,0) size 800x512
               RenderText {#text} at (59,0) size 26x21
                 text run at (59,0) width 26: "exit"
       RenderBlock {P} at (0,403) size 784x85
-        RenderText {#text} at (318,32) size 148x21
-          text run at (318,32) width 148: "Ceci n'est pas Flash."
+        RenderText {#text} at (312,32) size 160x21
+          text run at (312,32) width 160: "Ceci n'est pas Flash."

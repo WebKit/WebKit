@@ -30,19 +30,19 @@ layer at (0,0) size 800x600
           text run at (236,66) width 182: "1st at size=0, 2nd at size=-4"
         RenderBR {BR} at (418,82) size 0x0
         RenderBR {BR} at (0,88) size 0x22
-        RenderInline {FONT} at (0,0) size 104x26
-          RenderText {#text} at (0,110) size 104x13
-            text run at (0,110) width 104: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (104,120) size 0x0
-          RenderText {#text} at (0,123) size 75x13
-            text run at (0,123) width 75: "Available NOW! "
-        RenderBR {BR} at (75,133) size 0x0
+        RenderInline {FONT} at (0,0) size 111x26
+          RenderText {#text} at (0,110) size 111x13
+            text run at (0,110) width 111: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (111,120) size 0x0
+          RenderText {#text} at (0,123) size 78x13
+            text run at (0,123) width 78: "Available NOW! "
+        RenderBR {BR} at (78,133) size 0x0
         RenderBR {BR} at (0,136) size 0x22
-        RenderInline {FONT} at (0,0) size 104x26
-          RenderText {#text} at (0,158) size 104x13
-            text run at (0,158) width 104: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (104,168) size 0x0
-          RenderText {#text} at (0,171) size 75x13
-            text run at (0,171) width 75: "Available NOW! "
-        RenderBR {BR} at (75,181) size 0x0
+        RenderInline {FONT} at (0,0) size 111x26
+          RenderText {#text} at (0,158) size 111x13
+            text run at (0,158) width 111: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (111,168) size 0x0
+          RenderText {#text} at (0,171) size 78x13
+            text run at (0,171) width 78: "Available NOW! "
+        RenderBR {BR} at (78,181) size 0x0
         RenderBR {BR} at (0,184) size 0x22

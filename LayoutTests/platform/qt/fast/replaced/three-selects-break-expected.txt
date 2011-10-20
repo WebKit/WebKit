@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 5x93
-        RenderMenuList {SELECT} at (2,2) size 34x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 6x22
+        RenderMenuList {SELECT} at (2,2) size 35x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 7x22
             RenderBR at (0,0) size 0x22 [bgcolor=#FFFFFF]
-        RenderMenuList {SELECT} at (2,33) size 34x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 6x22
+        RenderMenuList {SELECT} at (2,33) size 35x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 7x22
             RenderBR at (0,0) size 0x22 [bgcolor=#FFFFFF]
-        RenderMenuList {SELECT} at (2,64) size 34x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 6x22
+        RenderMenuList {SELECT} at (2,64) size 35x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 7x22
             RenderBR at (0,0) size 0x22 [bgcolor=#FFFFFF]

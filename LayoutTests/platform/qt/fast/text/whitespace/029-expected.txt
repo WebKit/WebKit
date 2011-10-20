@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {PRE} at (0,0) size 784x51
-        RenderText {#text} at (0,0) size 7x17
-          text run at (0,0) width 7: "1"
-        RenderBR {BR} at (7,13) size 0x0
-        RenderText {#text} at (0,17) size 7x34
+        RenderText {#text} at (0,0) size 8x17
+          text run at (0,0) width 8: "1"
+        RenderBR {BR} at (8,13) size 0x0
+        RenderText {#text} at (0,17) size 8x34
           text run at (0,17) width 0: " "
-          text run at (0,34) width 7: "2"
+          text run at (0,34) width 8: "2"

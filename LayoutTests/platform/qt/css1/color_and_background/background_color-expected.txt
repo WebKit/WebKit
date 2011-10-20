@@ -7,13 +7,13 @@ layer at (0,0) size 784x657
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x68
-        RenderText {#text} at (0,0) size 212x68
-          text run at (0,0) width 164: "P {background-color: green;}"
-          text run at (164,0) width 0: " "
-          text run at (0,17) width 172: ".one {background-color: lime;}"
-          text run at (172,17) width 0: " "
-          text run at (0,34) width 212: ".two {background-color: transparent;}"
-          text run at (212,34) width 0: " "
+        RenderText {#text} at (0,0) size 241x68
+          text run at (0,0) width 181: "P {background-color: green;}"
+          text run at (181,0) width 0: " "
+          text run at (0,17) width 191: ".one {background-color: lime;}"
+          text run at (191,17) width 0: " "
+          text run at (0,34) width 241: ".two {background-color: transparent;}"
+          text run at (241,34) width 0: " "
           text run at (0,51) width 0: " "
       RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 768x22 [bgcolor=#008000]
@@ -32,13 +32,13 @@ layer at (0,0) size 784x657
           text run at (83,22) width 8: ". "
           text run at (91,22) width 675: "This is because the background color of the parent element (the paragraph) should \"shine through\""
           text run at (0,44) width 334: "the SPANned word \"sentence,\" which was set to "
-        RenderInline {CODE} at (0,0) size 65x17
-          RenderText {#text} at (334,47) size 65x17
-            text run at (334,47) width 65: "transparent"
-        RenderText {#text} at (399,44) size 764x44
-          text run at (399,44) width 8: ". "
-          text run at (407,44) width 357: "If the document background is visible, the browser is"
-          text run at (0,66) width 57: "in error."
+        RenderInline {CODE} at (0,0) size 78x17
+          RenderText {#text} at (334,47) size 78x17
+            text run at (334,47) width 78: "transparent"
+        RenderText {#text} at (412,44) size 763x44
+          text run at (412,44) width 8: ". "
+          text run at (420,44) width 343: "If the document background is visible, the browser"
+          text run at (0,66) width 71: "is in error."
       RenderBlock {P} at (0,317) size 768x44
         RenderText {#text} at (0,0) size 765x44
           text run at (0,0) width 499: "This element should allow the document background to \"shine through.\" "
@@ -72,12 +72,12 @@ layer at (0,0) size 784x657
                   text run at (83,22) width 8: ". "
                   text run at (91,22) width 607: "This is because the background color of the parent element (the paragraph) should \"shine"
                   text run at (0,44) width 402: "through\" the SPANned word \"sentence,\" which was set to "
-                RenderInline {CODE} at (0,0) size 65x17
-                  RenderText {#text} at (402,47) size 65x17
-                    text run at (402,47) width 65: "transparent"
-                RenderText {#text} at (467,44) size 733x44
-                  text run at (467,44) width 8: ". "
-                  text run at (475,44) width 258: "If the document background is visible,"
+                RenderInline {CODE} at (0,0) size 78x17
+                  RenderText {#text} at (402,47) size 78x17
+                    text run at (402,47) width 78: "transparent"
+                RenderText {#text} at (480,44) size 746x44
+                  text run at (480,44) width 8: ". "
+                  text run at (488,44) width 258: "If the document background is visible,"
                   text run at (0,66) width 156: "the browser is in error."
               RenderBlock {P} at (4,184) size 746x44
                 RenderText {#text} at (0,0) size 672x44

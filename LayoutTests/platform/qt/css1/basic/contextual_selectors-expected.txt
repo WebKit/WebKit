@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 784x68
-        RenderText {#text} at (0,0) size 356x68
-          text run at (0,0) width 191: "P {color: navy; font-family: serif;}"
-          text run at (191,0) width 0: " "
-          text run at (0,17) width 356: "HTML BODY TABLE P {color: purple; font-family: sans-serif;}"
-          text run at (356,17) width 0: " "
-          text run at (0,34) width 158: "EM, UL LI LI {color: green;}"
-          text run at (158,34) width 0: " "
+        RenderText {#text} at (0,0) size 386x68
+          text run at (0,0) width 207: "P {color: navy; font-family: serif;}"
+          text run at (207,0) width 0: " "
+          text run at (0,17) width 386: "HTML BODY TABLE P {color: purple; font-family: sans-serif;}"
+          text run at (386,17) width 0: " "
+          text run at (0,34) width 170: "EM, UL LI LI {color: green;}"
+          text run at (170,34) width 0: " "
           text run at (0,51) width 0: " "
       RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 784x22 [color=#000080]

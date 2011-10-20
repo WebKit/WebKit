@@ -7,17 +7,17 @@ layer at (0,0) size 784x930
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x85
-        RenderText {#text} at (0,0) size 379x85
-          text run at (0,0) width 121: ".one {display: block;}"
-          text run at (121,0) width 0: " "
-          text run at (0,17) width 119: ".two {display: inline;}"
-          text run at (119,17) width 0: " "
-          text run at (0,34) width 379: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
-          text run at (379,34) width 0: " "
-          text run at (0,51) width 181: ".four {display: none; color: red;}"
-          text run at (181,51) width 0: " "
-          text run at (0,68) width 100: "I {display: block;}"
-          text run at (100,68) width 0: " "
+        RenderText {#text} at (0,0) size 423x85
+          text run at (0,0) width 131: ".one {display: block;}"
+          text run at (131,0) width 0: " "
+          text run at (0,17) width 133: ".two {display: inline;}"
+          text run at (133,17) width 0: " "
+          text run at (0,34) width 423: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
+          text run at (423,34) width 0: " "
+          text run at (0,51) width 200: ".four {display: none; color: red;}"
+          text run at (200,51) width 0: " "
+          text run at (0,68) width 108: "I {display: block;}"
+          text run at (108,68) width 0: " "
       RenderBlock {HR} at (0,136) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,154) size 768x22
         RenderText {#text} at (0,0) size 308x22
@@ -33,23 +33,23 @@ layer at (0,0) size 784x930
             text run at (163,22) width 577: "They should therefore appear, along with the sentence above, to be all one paragraph"
             text run at (0,44) width 196: "which is four sentences long. "
             text run at (196,44) width 267: "If this is not the case, then the keyword "
-          RenderInline {CODE} at (0,0) size 30x17
-            RenderText {#text} at (463,47) size 30x17
-              text run at (463,47) width 30: "inline"
-          RenderText {#text} at (493,44) size 115x22
-            text run at (493,44) width 115: " is being ignored."
+          RenderInline {CODE} at (0,0) size 37x17
+            RenderText {#text} at (463,47) size 37x17
+              text run at (463,47) width 37: "inline"
+          RenderText {#text} at (500,44) size 115x22
+            text run at (500,44) width 115: " is being ignored."
         RenderText {#text} at (0,0) size 0x0
       RenderListItem {P} at (48,274) size 720x66
         RenderListMarker at (-18,0) size 7x22: black square
         RenderText {#text} at (0,0) size 707x44
           text run at (0,0) width 707: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays"
           text run at (0,22) width 80: "list items (if "
-        RenderInline {CODE} at (0,0) size 78x17
-          RenderText {#text} at (80,25) size 78x17
-            text run at (80,25) width 78: "list-style-type"
-        RenderText {#text} at (158,22) size 697x44
-          text run at (158,22) width 390: " is supported, there will be a square for the item marker). "
-          text run at (548,22) width 149: "A 3em left margin has"
+        RenderInline {CODE} at (0,0) size 87x17
+          RenderText {#text} at (80,25) size 87x17
+            text run at (80,25) width 87: "list-style-type"
+        RenderText {#text} at (167,22) size 706x44
+          text run at (167,22) width 390: " is supported, there will be a square for the item marker). "
+          text run at (557,22) width 149: "A 3em left margin has"
           text run at (0,44) width 501: "been applied in order to ensure that there is space for the list-item marker."
       RenderBlock {P} at (0,356) size 768x22
         RenderText {#text} at (0,0) size 486x22
@@ -94,23 +94,23 @@ layer at (0,0) size 784x930
                     text run at (213,22) width 500: "They should therefore appear, along with the sentence above, to be all one"
                     text run at (0,44) width 273: "paragraph which is four sentences long. "
                     text run at (273,44) width 267: "If this is not the case, then the keyword "
-                  RenderInline {CODE} at (0,0) size 30x17
-                    RenderText {#text} at (540,47) size 30x17
-                      text run at (540,47) width 30: "inline"
-                  RenderText {#text} at (570,44) size 115x22
-                    text run at (570,44) width 115: " is being ignored."
+                  RenderInline {CODE} at (0,0) size 37x17
+                    RenderText {#text} at (540,47) size 37x17
+                      text run at (540,47) width 37: "inline"
+                  RenderText {#text} at (577,44) size 115x22
+                    text run at (577,44) width 115: " is being ignored."
                 RenderText {#text} at (0,0) size 0x0
               RenderListItem {P} at (52,124) size 698x66
                 RenderListMarker at (-18,0) size 7x22: black square
                 RenderText {#text} at (0,0) size 649x44
                   text run at (0,0) width 649: "This sentence should be treated as a list-item, and therefore be rendered however this user agent"
                   text run at (0,22) width 138: "displays list items (if "
-                RenderInline {CODE} at (0,0) size 78x17
-                  RenderText {#text} at (138,25) size 78x17
-                    text run at (138,25) width 78: "list-style-type"
-                RenderText {#text} at (216,22) size 675x44
-                  text run at (216,22) width 390: " is supported, there will be a square for the item marker). "
-                  text run at (606,22) width 69: "A 3em left"
+                RenderInline {CODE} at (0,0) size 87x17
+                  RenderText {#text} at (138,25) size 87x17
+                    text run at (138,25) width 87: "list-style-type"
+                RenderText {#text} at (225,22) size 684x44
+                  text run at (225,22) width 390: " is supported, there will be a square for the item marker). "
+                  text run at (615,22) width 69: "A 3em left"
                   text run at (0,44) width 581: "margin has been applied in order to ensure that there is space for the list-item marker."
               RenderBlock {P} at (4,206) size 746x22
                 RenderText {#text} at (0,0) size 486x22

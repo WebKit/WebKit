@@ -7,21 +7,21 @@ layer at (0,0) size 784x1323
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x136
-        RenderText {#text} at (0,0) size 321x136
-          text run at (0,0) width 187: ".one {text-decoration: underline;}"
-          text run at (187,0) width 0: " "
-          text run at (0,17) width 179: ".two {text-decoration: overline;}"
-          text run at (179,17) width 0: " "
-          text run at (0,34) width 210: ".three {text-decoration: line-through;}"
-          text run at (210,34) width 0: " "
-          text run at (0,51) width 163: ".four {text-decoration: blink;}"
-          text run at (163,51) width 0: " "
-          text run at (0,68) width 172: "B.five {text-decoration: none;}"
-          text run at (172,68) width 0: " "
-          text run at (0,85) width 232: ".six {text-decoration: underline overline;}"
-          text run at (232,85) width 0: " "
-          text run at (0,102) width 321: ".seven {text-decoration: underline overline line-through;}"
-          text run at (321,102) width 0: " "
+        RenderText {#text} at (0,0) size 365x136
+          text run at (0,0) width 211: ".one {text-decoration: underline;}"
+          text run at (211,0) width 0: " "
+          text run at (0,17) width 198: ".two {text-decoration: overline;}"
+          text run at (198,17) width 0: " "
+          text run at (0,34) width 240: ".three {text-decoration: line-through;}"
+          text run at (240,34) width 0: " "
+          text run at (0,51) width 184: ".four {text-decoration: blink;}"
+          text run at (184,51) width 0: " "
+          text run at (0,68) width 189: "B.five {text-decoration: none;}"
+          text run at (189,68) width 0: " "
+          text run at (0,85) width 261: ".six {text-decoration: underline overline;}"
+          text run at (261,85) width 0: " "
+          text run at (0,102) width 365: ".seven {text-decoration: underline overline line-through;}"
+          text run at (365,102) width 0: " "
           text run at (0,119) width 0: " "
       RenderBlock {HR} at (0,187) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,205) size 768x22

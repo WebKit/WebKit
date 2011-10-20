@@ -7,8 +7,8 @@ layer at (0,0) size 784x1569
         RenderText {#text} at (0,0) size 397x42
           text run at (0,0) width 397: "Example 6: Table Stress Test"
       RenderBlock {PRE} at (0,63) size 768x17 [color=#FF0000]
-        RenderText {#text} at (0,0) size 218x17
-          text run at (0,0) width 218: "Resize document for maximum effect"
+        RenderText {#text} at (0,0) size 235x17
+          text run at (0,0) width 235: "Resize document for maximum effect"
       RenderBlock (anonymous) at (0,93) size 768x22
         RenderBR {BR} at (0,0) size 0x22
       RenderBlock {H2} at (0,134) size 768x33

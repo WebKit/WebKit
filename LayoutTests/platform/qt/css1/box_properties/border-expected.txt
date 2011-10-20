@@ -7,25 +7,25 @@ layer at (0,0) size 784x1600
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x153
-        RenderText {#text} at (0,0) size 197x153
-          text run at (0,0) width 197: ".one {border: medium black solid;}"
-          text run at (197,0) width 0: " "
-          text run at (0,17) width 184: ".two {border: thin maroon ridge;}"
-          text run at (184,17) width 0: " "
-          text run at (0,34) width 186: ".three {border: 10px teal outset;}"
-          text run at (186,34) width 0: " "
-          text run at (0,51) width 177: ".four {border: 10px olive inset;}"
-          text run at (177,51) width 0: " "
-          text run at (0,68) width 160: ".five {border: 10px maroon;}"
-          text run at (160,68) width 0: " "
-          text run at (0,85) width 166: ".six {border: maroon double;}"
-          text run at (166,85) width 0: " "
-          text run at (0,102) width 170: ".seven {border: left red solid;}"
-          text run at (170,102) width 0: " "
-          text run at (0,119) width 113: ".eight {border: 0px;}"
-          text run at (113,119) width 0: " "
-          text run at (0,136) width 165: "TD {border: 2px solid green;}"
-          text run at (165,136) width 0: " "
+        RenderText {#text} at (0,0) size 218x153
+          text run at (0,0) width 218: ".one {border: medium black solid;}"
+          text run at (218,0) width 0: " "
+          text run at (0,17) width 208: ".two {border: thin maroon ridge;}"
+          text run at (208,17) width 0: " "
+          text run at (0,34) width 207: ".three {border: 10px teal outset;}"
+          text run at (207,34) width 0: " "
+          text run at (0,51) width 196: ".four {border: 10px olive inset;}"
+          text run at (196,51) width 0: " "
+          text run at (0,68) width 176: ".five {border: 10px maroon;}"
+          text run at (176,68) width 0: " "
+          text run at (0,85) width 184: ".six {border: maroon double;}"
+          text run at (184,85) width 0: " "
+          text run at (0,102) width 186: ".seven {border: left red solid;}"
+          text run at (186,102) width 0: " "
+          text run at (0,119) width 125: ".eight {border: 0px;}"
+          text run at (125,119) width 0: " "
+          text run at (0,136) width 181: "TD {border: 2px solid green;}"
+          text run at (181,136) width 0: " "
       RenderBlock {HR} at (0,204) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,222) size 768x44
         RenderText {#text} at (0,0) size 747x44
@@ -47,20 +47,20 @@ layer at (0,0) size 784x1600
       RenderBlock {P} at (0,482) size 768x44
         RenderText {#text} at (0,0) size 382x22
           text run at (0,0) width 382: "This paragraph should have no border around it, as the "
-        RenderInline {TT} at (0,0) size 68x17
-          RenderText {#text} at (382,3) size 68x17
-            text run at (382,3) width 68: "border-style"
-        RenderText {#text} at (450,0) size 756x44
-          text run at (450,0) width 306: " was not set, and it should not be offset in any"
+        RenderInline {TT} at (0,0) size 77x17
+          RenderText {#text} at (382,3) size 77x17
+            text run at (382,3) width 77: "border-style"
+        RenderText {#text} at (459,0) size 765x44
+          text run at (459,0) width 306: " was not set, and it should not be offset in any"
           text run at (0,22) width 32: "way."
       RenderBlock {P} at (0,542) size 768x50 [border: (3px double #800000)]
         RenderText {#text} at (3,3) size 583x22
           text run at (3,3) width 583: "This paragraph should have a medium maroon double border around it, even though "
-        RenderInline {CODE} at (0,0) size 70x17
-          RenderText {#text} at (586,6) size 70x17
-            text run at (586,6) width 70: "border-width"
-        RenderText {#text} at (656,3) size 709x44
-          text run at (656,3) width 56: " was not"
+        RenderInline {CODE} at (0,0) size 83x17
+          RenderText {#text} at (586,6) size 83x17
+            text run at (586,6) width 83: "border-width"
+        RenderText {#text} at (669,3) size 722x44
+          text run at (669,3) width 56: " was not"
           text run at (3,25) width 86: "explicitly set."
       RenderBlock {P} at (0,608) size 768x22
         RenderText {#text} at (0,0) size 675x22
@@ -133,20 +133,20 @@ layer at (0,0) size 784x1600
               RenderBlock {P} at (5,265) size 742x44
                 RenderText {#text} at (0,0) size 382x22
                   text run at (0,0) width 382: "This paragraph should have no border around it, as the "
-                RenderInline {TT} at (0,0) size 68x17
-                  RenderText {#text} at (382,3) size 68x17
-                    text run at (382,3) width 68: "border-style"
-                RenderText {#text} at (450,0) size 727x44
-                  text run at (450,0) width 277: " was not set, and it should not be offset in"
+                RenderInline {TT} at (0,0) size 77x17
+                  RenderText {#text} at (382,3) size 77x17
+                    text run at (382,3) width 77: "border-style"
+                RenderText {#text} at (459,0) size 736x44
+                  text run at (459,0) width 277: " was not set, and it should not be offset in"
                   text run at (0,22) width 61: "any way."
               RenderBlock {P} at (5,325) size 742x50 [border: (3px double #800000)]
                 RenderText {#text} at (3,3) size 583x22
                   text run at (3,3) width 583: "This paragraph should have a medium maroon double border around it, even though "
-                RenderInline {CODE} at (0,0) size 70x17
-                  RenderText {#text} at (586,6) size 70x17
-                    text run at (586,6) width 70: "border-width"
-                RenderText {#text} at (656,3) size 709x44
-                  text run at (656,3) width 56: " was not"
+                RenderInline {CODE} at (0,0) size 83x17
+                  RenderText {#text} at (586,6) size 83x17
+                    text run at (586,6) width 83: "border-width"
+                RenderText {#text} at (669,3) size 722x44
+                  text run at (669,3) width 56: " was not"
                   text run at (3,25) width 86: "explicitly set."
               RenderBlock {P} at (5,391) size 742x22
                 RenderText {#text} at (0,0) size 675x22

@@ -7,30 +7,30 @@ layer at (0,0) size 784x763
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,35) size 768x221
-        RenderText {#text} at (0,0) size 362x221
-          text run at (0,0) width 259: "P { margin: 0; padding: 0; text-align:  justify;}"
-          text run at (259,0) width 0: " "
+        RenderText {#text} at (0,0) size 398x221
+          text run at (0,0) width 287: "P { margin: 0; padding: 0; text-align:  justify;}"
+          text run at (287,0) width 0: " "
           text run at (0,17) width 0: " "
-          text run at (0,34) width 246: "DIV.yellow, DIV.blue, DIV.red, DIV.green {"
-          text run at (246,34) width 0: " "
-          text run at (0,51) width 246: " width: 60px; padding: 20px; margin: 10px;"
-          text run at (246,51) width 0: " "
-          text run at (0,68) width 310: " border: 20px solid black; float: left; text-align: center;"
-          text run at (310,68) width 0: " "
-          text run at (0,85) width 270: " font-family: \"Times New Roman\",Times,serif;}"
-          text run at (270,85) width 0: " "
-          text run at (0,102) width 362: "DIV.yellow {margin-left: 0px; background: yellow; color: black;}"
-          text run at (362,102) width 0: " "
-          text run at (0,119) width 239: "DIV.blue {background: blue; color: white;}"
-          text run at (239,119) width 0: " "
-          text run at (0,136) width 228: "DIV.red {background: red; color: black;}"
-          text run at (228,136) width 0: " "
-          text run at (0,153) width 255: "DIV.green {background: green; color: white;}"
-          text run at (255,153) width 0: " "
-          text run at (0,170) width 136: "DIV.below {clear: both;}"
-          text run at (136,170) width 0: " "
-          text run at (0,187) width 158: "TABLE {margin: 20px 0px;}"
-          text run at (158,187) width 0: " "
+          text run at (0,34) width 264: "DIV.yellow, DIV.blue, DIV.red, DIV.green {"
+          text run at (264,34) width 0: " "
+          text run at (0,51) width 275: " width: 60px; padding: 20px; margin: 10px;"
+          text run at (275,51) width 0: " "
+          text run at (0,68) width 344: " border: 20px solid black; float: left; text-align: center;"
+          text run at (344,68) width 0: " "
+          text run at (0,85) width 291: " font-family: \"Times New Roman\",Times,serif;}"
+          text run at (291,85) width 0: " "
+          text run at (0,102) width 398: "DIV.yellow {margin-left: 0px; background: yellow; color: black;}"
+          text run at (398,102) width 0: " "
+          text run at (0,119) width 266: "DIV.blue {background: blue; color: white;}"
+          text run at (266,119) width 0: " "
+          text run at (0,136) width 252: "DIV.red {background: red; color: black;}"
+          text run at (252,136) width 0: " "
+          text run at (0,153) width 282: "DIV.green {background: green; color: white;}"
+          text run at (282,153) width 0: " "
+          text run at (0,170) width 148: "DIV.below {clear: both;}"
+          text run at (148,170) width 0: " "
+          text run at (0,187) width 172: "TABLE {margin: 20px 0px;}"
+          text run at (172,187) width 0: " "
           text run at (0,204) width 0: " "
       RenderBlock {HR} at (0,269) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,279) size 768x44
@@ -44,16 +44,16 @@ layer at (0,0) size 784x763
             text run at (0,0) width 49: "Yellow"
       RenderBlock (floating) {DIV} at (160,333) size 140x101 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x21
-          RenderText {#text} at (0,0) size 33x21
-            text run at (0,0) width 33: "Blue"
+          RenderText {#text} at (0,0) size 36x21
+            text run at (0,0) width 36: "Blue"
       RenderBlock (floating) {DIV} at (320,333) size 140x101 [bgcolor=#FF0000] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x21
           RenderText {#text} at (0,0) size 30x21
             text run at (0,0) width 30: "Red"
       RenderBlock (floating) {DIV} at (480,333) size 140x101 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x21
-          RenderText {#text} at (0,0) size 44x21
-            text run at (0,0) width 44: "Green"
+          RenderText {#text} at (0,0) size 47x21
+            text run at (0,0) width 47: "Green"
       RenderBlock {DIV} at (0,444) size 768x23
         RenderTable {TABLE} at (0,0) size 620x23
           RenderTableSection {TBODY} at (0,0) size 620x23
@@ -112,16 +112,16 @@ layer at (0,0) size 784x763
                     text run at (0,0) width 49: "Yellow"
               RenderBlock (floating) {DIV} at (164,58) size 140x101 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x21
-                  RenderText {#text} at (0,0) size 33x21
-                    text run at (0,0) width 33: "Blue"
+                  RenderText {#text} at (0,0) size 36x21
+                    text run at (0,0) width 36: "Blue"
               RenderBlock (floating) {DIV} at (324,58) size 140x101 [bgcolor=#FF0000] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x21
                   RenderText {#text} at (0,0) size 30x21
                     text run at (0,0) width 30: "Red"
               RenderBlock (floating) {DIV} at (484,58) size 140x101 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x21
-                  RenderText {#text} at (0,0) size 44x21
-                    text run at (0,0) width 44: "Green"
+                  RenderText {#text} at (0,0) size 47x21
+                    text run at (0,0) width 47: "Green"
               RenderBlock {DIV} at (4,169) size 746x23
                 RenderTable {TABLE} at (0,0) size 620x23
                   RenderTableSection {TBODY} at (0,0) size 620x23

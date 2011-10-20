@@ -10,13 +10,13 @@ layer at (0,0) size 784x813
         RenderText {#text} at (11,0) size 369x22
           text run at (11,0) width 369: "he style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x68
-        RenderText {#text} at (0,0) size 208x68
-          text run at (0,0) width 163: "P:first-letter {color: maroon;}"
-          text run at (163,0) width 0: " "
-          text run at (0,17) width 190: ".two:first-letter {font-size: 200%;}"
-          text run at (190,17) width 0: " "
-          text run at (0,34) width 208: "P.three:first-letter {font-size: 350%;}"
-          text run at (208,34) width 0: " "
+        RenderText {#text} at (0,0) size 229x68
+          text run at (0,0) width 181: "P:first-letter {color: maroon;}"
+          text run at (181,0) width 0: " "
+          text run at (0,17) width 209: ".two:first-letter {font-size: 200%;}"
+          text run at (209,17) width 0: " "
+          text run at (0,34) width 229: "P.three:first-letter {font-size: 350%;}"
+          text run at (229,34) width 0: " "
           text run at (0,51) width 0: " "
       RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 768x66

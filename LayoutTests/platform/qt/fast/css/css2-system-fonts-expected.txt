@@ -18,28 +18,28 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,123) size 784x102
         RenderListItem {LI} at (40,0) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 304x17
-            text run at (0,0) width 304: "Caption (on Mac will be Lucida Grande 13.0 Regular)"
+          RenderText {#text} at (0,0) size 341x17
+            text run at (0,0) width 341: "Caption (on Mac will be Lucida Grande 13.0 Regular)"
         RenderListItem {LI} at (40,17) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 570x17
-            text run at (0,0) width 570: "Icon (on Mac will be Lucida Grande 13.0 Regular for now, not sure how to get this info from Finder)"
+          RenderText {#text} at (0,0) size 635x17
+            text run at (0,0) width 635: "Icon (on Mac will be Lucida Grande 13.0 Regular for now, not sure how to get this info from Finder)"
         RenderListItem {LI} at (40,34) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 292x17
-            text run at (0,0) width 292: "Menu (on Mac will be Lucida Grande 13.0 Regular)"
+          RenderText {#text} at (0,0) size 327x17
+            text run at (0,0) width 327: "Menu (on Mac will be Lucida Grande 13.0 Regular)"
         RenderListItem {LI} at (40,51) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 340x17
-            text run at (0,0) width 340: "Message-Box (on Mac will be Lucida Grande 13.0 Regular)"
+          RenderText {#text} at (0,0) size 374x17
+            text run at (0,0) width 374: "Message-Box (on Mac will be Lucida Grande 13.0 Regular)"
         RenderListItem {LI} at (40,68) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 341x17
-            text run at (0,0) width 341: "Small-Caption (on Mac will be Lucida Grande 11.0 Regular)"
+          RenderText {#text} at (0,0) size 383x17
+            text run at (0,0) width 383: "Small-Caption (on Mac will be Lucida Grande 11.0 Regular)"
         RenderListItem {LI} at (40,85) size 744x17
           RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 322x17
-            text run at (0,0) width 322: "Status-Bar (on Mac will be Lucida Grande 10.0 Regular)"
+          RenderText {#text} at (0,0) size 362x17
+            text run at (0,0) width 362: "Status-Bar (on Mac will be Lucida Grande 10.0 Regular)"
       RenderBlock {P} at (0,241) size 784x22
         RenderInline {A} at (0,0) size 197x22 [color=#0000EE]
           RenderText {#text} at (0,0) size 197x22

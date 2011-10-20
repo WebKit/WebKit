@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 336x22
           text run at (0,0) width 336: "This tests that the background of a table cell with "
-        RenderInline {TT} at (0,0) size 89x17
-          RenderText {#text} at (336,3) size 89x17
-            text run at (336,3) width 89: "visibility:hidden"
-        RenderText {#text} at (425,0) size 115x22
-          text run at (425,0) width 115: " is never painted."
+        RenderInline {TT} at (0,0) size 103x17
+          RenderText {#text} at (336,3) size 103x17
+            text run at (336,3) width 103: "visibility:hidden"
+        RenderText {#text} at (439,0) size 115x22
+          text run at (439,0) width 115: " is never painted."
       RenderBlock {P} at (0,38) size 784x22
         RenderText {#text} at (0,0) size 492x22
           text run at (0,0) width 492: "You should see nine green squares and no red, orange or yellow squares."

@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (0,0) size 332x27 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 326x21
-          text run at (3,3) width 326: "The number of lines in this box should be one."
+      RenderBlock (floating) {DIV} at (0,0) size 372x27 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 366x21
+          text run at (3,3) width 366: "The number of lines in this box should be one."

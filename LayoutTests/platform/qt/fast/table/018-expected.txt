@@ -22,18 +22,18 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 778x70 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 131x22
                   text run at (2,2) width 131: "The following text: "
-                RenderInline {TT} at (0,0) size 61x17
-                  RenderText {#text} at (133,5) size 61x17
-                    text run at (133,5) width 61: "hello world"
-                RenderText {#text} at (194,2) size 760x66
-                  text run at (194,2) width 568: ", is written using the <tt> tag. It should show up as Monaco 11 point, but instead it is"
+                RenderInline {TT} at (0,0) size 70x17
+                  RenderText {#text} at (133,5) size 70x17
+                    text run at (133,5) width 70: "hello world"
+                RenderText {#text} at (203,2) size 769x66
+                  text run at (203,2) width 568: ", is written using the <tt> tag. It should show up as Monaco 11 point, but instead it is"
                   text run at (2,24) width 760: "showing up as Monaco 15 point. The font is correct, but the point size is whatever is set for the proportional font."
                   text run at (2,46) width 341: "Note that this only happens to text inside a <table>"
       RenderBlock {P} at (0,190) size 784x22
         RenderText {#text} at (0,0) size 308x22
           text run at (0,0) width 308: "Here is the same text again outside a <table>: "
-        RenderInline {TT} at (0,0) size 61x17
-          RenderText {#text} at (308,3) size 61x17
-            text run at (308,3) width 61: "hello world"
-        RenderText {#text} at (369,0) size 247x22
-          text run at (369,0) width 247: ". Notice it is displayed correctly now."
+        RenderInline {TT} at (0,0) size 70x17
+          RenderText {#text} at (308,3) size 70x17
+            text run at (308,3) width 70: "hello world"
+        RenderText {#text} at (378,0) size 247x22
+          text run at (378,0) width 247: ". Notice it is displayed correctly now."

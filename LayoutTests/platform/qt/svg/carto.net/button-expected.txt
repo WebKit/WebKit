@@ -9,64 +9,64 @@ layer at (0,0) size 800x600
         RenderSVGPath {rect} at (77,77) size 79x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=99.00] [y=99.00] [width=100.00] [height=30.00]
         RenderSVGPath {rect} at (78,78) size 80x25 [fill={[type=SOLID] [color=#000080]}] [x=101.00] [y=101.00] [width=100.00] [height=30.00]
         RenderSVGPath {rect} at (78,78) size 79x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=100.00] [y=100.00] [width=100.00] [height=30.00]
-        RenderSVGText {text} at (126,108) size 48x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 48x17
-            RenderSVGInlineText {#text} at (0,0) size 48x17
-              chunk 1 (middle anchor) text run 1 at (126.32,120.40) startOffset 0 endOffset 8 width 47.36: "Click me"
+        RenderSVGText {text} at (124,108) size 52x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 52x17
+            RenderSVGInlineText {#text} at (0,0) size 52x17
+              chunk 1 (middle anchor) text run 1 at (124.40,120.40) startOffset 0 endOffset 8 width 51.20: "Click me"
       RenderSVGContainer {g} at (171,77) size 80x26
         RenderSVGPath {rect} at (171,77) size 79x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=219.00] [y=99.00] [width=100.00] [height=30.00]
         RenderSVGPath {rect} at (172,78) size 79x25 [fill={[type=SOLID] [color=#000080]}] [x=221.00] [y=101.00] [width=100.00] [height=30.00]
         RenderSVGPath {rect} at (171,78) size 79x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=220.00] [y=100.00] [width=100.00] [height=30.00]
-        RenderSVGText {text} at (241,108) size 58x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 58x17
-            RenderSVGInlineText {#text} at (0,0) size 58x17
-              chunk 1 (middle anchor) text run 1 at (241.20,120.40) startOffset 0 endOffset 10 width 57.60: "Click me 2"
+        RenderSVGText {text} at (238,108) size 64x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 64x17
+            RenderSVGInlineText {#text} at (0,0) size 64x17
+              chunk 1 (middle anchor) text run 1 at (238.64,120.40) startOffset 0 endOffset 10 width 62.72: "Click me 2"
       RenderSVGContainer {g} at (264,77) size 104x26
         RenderSVGPath {rect} at (264,77) size 103x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=339.00] [y=99.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (266,78) size 102x25 [fill={[type=SOLID] [color=#000080]}] [x=341.00] [y=101.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (265,78) size 103x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=340.00] [y=100.00] [width=130.00] [height=30.00]
-        RenderSVGText {text} at (351,108) size 108x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 108x17
-            RenderSVGInlineText {#text} at (0,0) size 108x17
-              chunk 1 (middle anchor) text run 1 at (351.88,120.40) startOffset 0 endOffset 19 width 106.24: "Deactivate Button 2"
+        RenderSVGText {text} at (348,108) size 114x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 114x17
+            RenderSVGInlineText {#text} at (0,0) size 114x17
+              chunk 1 (middle anchor) text run 1 at (348.68,120.40) startOffset 0 endOffset 19 width 112.64: "Deactivate Button 2"
       RenderSVGContainer {g} at (382,77) size 96x26
         RenderSVGPath {rect} at (382,77) size 94x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=489.00] [y=99.00] [width=120.00] [height=30.00]
         RenderSVGPath {rect} at (383,78) size 95x25 [fill={[type=SOLID] [color=#000080]}] [x=491.00] [y=101.00] [width=120.00] [height=30.00]
         RenderSVGPath {rect} at (382,78) size 95x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=490.00] [y=100.00] [width=120.00] [height=30.00]
-        RenderSVGText {text} at (504,108) size 92x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 92x17
-            RenderSVGInlineText {#text} at (0,0) size 92x17
-              chunk 1 (middle anchor) text run 1 at (504.56,120.40) startOffset 0 endOffset 16 width 90.88: "Switch Button on"
+        RenderSVGText {text} at (500,108) size 100x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 100x17
+            RenderSVGInlineText {#text} at (0,0) size 100x17
+              chunk 1 (middle anchor) text run 1 at (500.72,120.40) startOffset 0 endOffset 16 width 98.56: "Switch Button on"
       RenderSVGContainer {g} at (491,77) size 104x26
         RenderSVGPath {rect} at (491,77) size 102x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=629.00] [y=99.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (492,78) size 103x25 [fill={[type=SOLID] [color=#000080]}] [x=631.00] [y=101.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (492,78) size 102x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=630.00] [y=100.00] [width=130.00] [height=30.00]
-        RenderSVGText {text} at (648,108) size 94x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 94x17
-            RenderSVGInlineText {#text} at (0,0) size 94x17
-              chunk 1 (middle anchor) text run 1 at (648.28,120.40) startOffset 0 endOffset 15 width 93.44: "Remove Button 1"
+        RenderSVGText {text} at (646,108) size 98x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 98x17
+            RenderSVGInlineText {#text} at (0,0) size 98x17
+              chunk 1 (middle anchor) text run 1 at (646.36,120.40) startOffset 0 endOffset 15 width 97.28: "Remove Button 1"
       RenderSVGContainer {g} at (608,77) size 104x26
         RenderSVGPath {rect} at (608,77) size 103x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=779.00] [y=99.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (610,78) size 102x25 [fill={[type=SOLID] [color=#000080]}] [x=781.00] [y=101.00] [width=130.00] [height=30.00]
         RenderSVGPath {rect} at (609,78) size 102x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=780.00] [y=100.00] [width=130.00] [height=30.00]
-        RenderSVGText {text} at (794,108) size 102x17 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 102x17
-            RenderSVGInlineText {#text} at (0,0) size 102x17
-              chunk 1 (middle anchor) text run 1 at (794.44,120.40) startOffset 0 endOffset 18 width 101.12: "Switch Button 4 on"
+        RenderSVGText {text} at (789,108) size 112x17 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 112x17
+            RenderSVGInlineText {#text} at (0,0) size 112x17
+              chunk 1 (middle anchor) text run 1 at (789.96,120.40) startOffset 0 endOffset 18 width 110.08: "Switch Button 4 on"
       RenderSVGContainer {g} at (155,233) size 120x50
         RenderSVGPath {rect} at (155,233) size 118x48 [fill={[type=SOLID] [color=#FFFFFF]}] [x=199.00] [y=299.00] [width=150.00] [height=60.00]
         RenderSVGPath {rect} at (157,235) size 118x48 [fill={[type=SOLID] [color=#000080]}] [x=201.00] [y=301.00] [width=150.00] [height=60.00]
         RenderSVGPath {rect} at (156,234) size 118x48 [fill={[type=SOLID] [color=#B0C4DE]}] [x=200.00] [y=300.00] [width=150.00] [height=60.00]
-        RenderSVGText {text} at (228,310) size 94x43 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 94x17
-            RenderSVGInlineText {#text} at (0,0) size 94x17
-              chunk 1 (middle anchor) text run 1 at (228.28,322.20) startOffset 0 endOffset 19 width 93.44: "This is a multiline"
-          RenderSVGTSpan {tspan} at (0,0) size 80x17
-            RenderSVGInlineText {#text} at (7,13) size 80x17
-              chunk 1 (middle anchor) text run 1 at (235.32,335.40) startOffset 0 endOffset 15 width 79.36: "textbutton with"
-          RenderSVGTSpan {tspan} at (0,0) size 74x16
-            RenderSVGInlineText {#text} at (10,27) size 74x16
-              chunk 1 (middle anchor) text run 1 at (238.52,348.60) startOffset 0 endOffset 13 width 72.96: "round corners"
+        RenderSVGText {text} at (222,310) size 106x43 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 106x17
+            RenderSVGInlineText {#text} at (0,0) size 106x17
+              chunk 1 (middle anchor) text run 1 at (222.52,322.20) startOffset 0 endOffset 19 width 104.96: "This is a multiline"
+          RenderSVGTSpan {tspan} at (0,0) size 86x17
+            RenderSVGInlineText {#text} at (10,13) size 86x17
+              chunk 1 (middle anchor) text run 1 at (232.12,335.40) startOffset 0 endOffset 15 width 85.76: "textbutton with"
+          RenderSVGTSpan {tspan} at (0,0) size 82x16
+            RenderSVGInlineText {#text} at (12,27) size 82x16
+              chunk 1 (middle anchor) text run 1 at (234.04,348.60) startOffset 0 endOffset 13 width 81.92: "round corners"
     RenderSVGContainer {g} at (233,112) size 61x22
       RenderSVGContainer {g} at (233,116) size 18x18
         RenderSVGPath {rect} at (233,116) size 17x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=299.00] [y=149.00] [width=20.00] [height=20.00]

@@ -39,11 +39,11 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x22
           RenderText {#text} at (0,0) size 164x22
             text run at (0,0) width 164: "Same as above but with "
-          RenderInline {CODE} at (0,0) size 123x17
-            RenderText {#text} at (164,3) size 123x17
-              text run at (164,3) width 123: "CELLSPACING=\"10\""
-          RenderText {#text} at (287,0) size 5x22
-            text run at (287,0) width 5: ":"
+          RenderInline {CODE} at (0,0) size 129x17
+            RenderText {#text} at (164,3) size 129x17
+              text run at (164,3) width 129: "CELLSPACING=\"10\""
+          RenderText {#text} at (293,0) size 5x22
+            text run at (293,0) width 5: ":"
         RenderTable {TABLE} at (0,22) size 84x94 [border: (1px outset #808080)]
           RenderTableSection {TFOOT} at (1,47) size 82x46
             RenderTableRow {TR} at (0,10) size 82x26

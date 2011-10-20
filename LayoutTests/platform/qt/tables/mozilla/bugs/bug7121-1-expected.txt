@@ -8,17 +8,17 @@ layer at (0,0) size 800x600
           text run at (0,0) width 722: "In this table (modeled after mozilla.org template) the cells in column two are requesting colspans of (2,3,2,6)"
           text run at (0,22) width 779: "respectively. Notice that they all want to span more than one column (which means, in the case of this table, all rows"
           text run at (0,44) width 426: "are requesting to span more columns than the number of 'real' "
-        RenderInline {CODE} at (0,0) size 33x17
-          RenderText {#text} at (426,47) size 33x17
-            text run at (426,47) width 33: "<TD>"
-        RenderText {#text} at (459,44) size 778x44
-          text run at (459,44) width 319: " in any single rows [i.e., all rows in the top table"
+        RenderInline {CODE} at (0,0) size 34x17
+          RenderText {#text} at (426,47) size 34x17
+            text run at (426,47) width 34: "<TD>"
+        RenderText {#text} at (460,44) size 779x44
+          text run at (460,44) width 319: " in any single rows [i.e., all rows in the top table"
           text run at (0,66) width 338: "want to span 9 cells, but the maximum number of "
-        RenderInline {CODE} at (0,0) size 33x17
-          RenderText {#text} at (338,69) size 33x17
-            text run at (338,69) width 33: "<TD>"
-        RenderText {#text} at (371,66) size 112x22
-          text run at (371,66) width 112: " in any row is 8]."
+        RenderInline {CODE} at (0,0) size 34x17
+          RenderText {#text} at (338,69) size 34x17
+            text run at (338,69) width 34: "<TD>"
+        RenderText {#text} at (372,66) size 112x22
+          text run at (372,66) width 112: " in any row is 8]."
       RenderBlock {P} at (0,104) size 784x22
         RenderText {#text} at (0,0) size 516x22
           text run at (0,0) width 516: "This condition leads to the 'white gap' (in builds of 5.0 for jun04 and before)."

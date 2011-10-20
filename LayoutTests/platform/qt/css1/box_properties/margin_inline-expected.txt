@@ -7,13 +7,13 @@ layer at (0,0) size 784x868
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x51
-        RenderText {#text} at (0,0) size 262x51
-          text run at (0,0) width 245: ".zero {background-color: silver; margin: 0;}"
-          text run at (245,0) width 0: " "
-          text run at (0,17) width 259: ".one {margin: 25px; background-color: aqua;}"
-          text run at (259,17) width 0: " "
-          text run at (0,34) width 262: ".two {margin: -10px; background-color: aqua;}"
-          text run at (262,34) width 0: " "
+        RenderText {#text} at (0,0) size 294x51
+          text run at (0,0) width 272: ".zero {background-color: silver; margin: 0;}"
+          text run at (272,0) width 0: " "
+          text run at (0,17) width 290: ".one {margin: 25px; background-color: aqua;}"
+          text run at (290,17) width 0: " "
+          text run at (0,34) width 294: ".two {margin: -10px; background-color: aqua;}"
+          text run at (294,34) width 0: " "
       RenderBlock {HR} at (0,102) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,112) size 768x22 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 214x22
@@ -22,14 +22,14 @@ layer at (0,0) size 784x868
         RenderText {#text} at (0,0) size 515x22
           text run at (0,0) width 419: "This element is unstyled save for a background color of gray.. "
           text run at (419,0) width 96: "It contains an "
-        RenderInline {SPAN} at (0,0) size 759x44 [bgcolor=#00FFFF]
+        RenderInline {SPAN} at (0,0) size 761x44 [bgcolor=#00FFFF]
           RenderText {#text} at (540,0) size 149x22
             text run at (540,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 21x17
-            RenderText {#text} at (689,3) size 21x17
-              text run at (689,3) width 21: "one"
-          RenderText {#text} at (710,0) size 759x44
-            text run at (710,0) width 49: ", giving"
+          RenderInline {TT} at (0,0) size 23x17
+            RenderText {#text} at (689,3) size 23x17
+              text run at (689,3) width 23: "one"
+          RenderText {#text} at (712,0) size 761x44
+            text run at (712,0) width 49: ", giving"
             text run at (0,22) width 287: "it an aqua background and a 25px margin"
         RenderText {#text} at (312,22) size 765x88
           text run at (312,22) width 8: ". "
@@ -45,14 +45,14 @@ layer at (0,0) size 784x868
         RenderText {#text} at (0,0) size 515x22
           text run at (0,0) width 419: "This element is unstyled save for a background color of gray.. "
           text run at (419,0) width 96: "It contains an "
-        RenderInline {SPAN} at (0,0) size 757x44 [bgcolor=#00FFFF]
+        RenderInline {SPAN} at (0,0) size 759x44 [bgcolor=#00FFFF]
           RenderText {#text} at (505,0) size 149x22
             text run at (505,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 20x17
-            RenderText {#text} at (654,3) size 20x17
-              text run at (654,3) width 20: "two"
-          RenderText {#text} at (674,0) size 757x44
-            text run at (674,0) width 83: ", giving it an"
+          RenderInline {TT} at (0,0) size 22x17
+            RenderText {#text} at (654,3) size 22x17
+              text run at (654,3) width 22: "two"
+          RenderText {#text} at (676,0) size 759x44
+            text run at (676,0) width 83: ", giving it an"
             text run at (0,22) width 258: "aqua background and a -10px margin"
         RenderText {#text} at (248,22) size 756x88
           text run at (248,22) width 8: ". "
@@ -83,14 +83,14 @@ layer at (0,0) size 784x868
                 RenderText {#text} at (0,0) size 515x22
                   text run at (0,0) width 419: "This element is unstyled save for a background color of gray.. "
                   text run at (419,0) width 96: "It contains an "
-                RenderInline {SPAN} at (0,0) size 714x44 [bgcolor=#00FFFF]
+                RenderInline {SPAN} at (0,0) size 716x44 [bgcolor=#00FFFF]
                   RenderText {#text} at (540,0) size 149x22
                     text run at (540,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 21x17
-                    RenderText {#text} at (689,3) size 21x17
-                      text run at (689,3) width 21: "one"
-                  RenderText {#text} at (710,0) size 714x44
-                    text run at (710,0) width 4: ","
+                  RenderInline {TT} at (0,0) size 23x17
+                    RenderText {#text} at (689,3) size 23x17
+                      text run at (689,3) width 23: "one"
+                  RenderText {#text} at (712,0) size 716x44
+                    text run at (712,0) width 4: ","
                     text run at (0,22) width 332: "giving it an aqua background and a 25px margin"
                 RenderText {#text} at (357,22) size 722x88
                   text run at (357,22) width 8: ". "
@@ -106,14 +106,14 @@ layer at (0,0) size 784x868
                 RenderText {#text} at (0,0) size 515x22
                   text run at (0,0) width 419: "This element is unstyled save for a background color of gray.. "
                   text run at (419,0) width 96: "It contains an "
-                RenderInline {SPAN} at (0,0) size 736x44 [bgcolor=#00FFFF]
+                RenderInline {SPAN} at (0,0) size 738x44 [bgcolor=#00FFFF]
                   RenderText {#text} at (505,0) size 149x22
                     text run at (505,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 20x17
-                    RenderText {#text} at (654,3) size 20x17
-                      text run at (654,3) width 20: "two"
-                  RenderText {#text} at (674,0) size 736x44
-                    text run at (674,0) width 62: ", giving it"
+                  RenderInline {TT} at (0,0) size 22x17
+                    RenderText {#text} at (654,3) size 22x17
+                      text run at (654,3) width 22: "two"
+                  RenderText {#text} at (676,0) size 738x44
+                    text run at (676,0) width 62: ", giving it"
                     text run at (0,22) width 279: "an aqua background and a -10px margin"
                 RenderText {#text} at (269,22) size 745x88
                   text run at (269,22) width 8: ". "

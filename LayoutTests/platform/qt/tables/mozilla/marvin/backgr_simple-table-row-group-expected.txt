@@ -1,59 +1,59 @@
-layer at (0,0) size 784x1363
+layer at (0,0) size 784x1364
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1363
-  RenderBlock {HTML} at (0,0) size 784x1363
-    RenderBody {BODY} at (8,17) size 768x1338 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 784x1364
+  RenderBlock {HTML} at (0,0) size 784x1364
+    RenderBody {BODY} at (8,17) size 768x1339 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 768x34
-        RenderText {#text} at (0,0) size 443x34
-          text run at (0,0) width 443: "CSS2 Table Backgrounds Test Suite"
+        RenderText {#text} at (0,0) size 483x34
+          text run at (0,0) width 483: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,51) size 768x27
-        RenderText {#text} at (0,0) size 237x27
-          text run at (0,0) width 237: "Part A: Background Area"
+        RenderText {#text} at (0,0) size 256x27
+          text run at (0,0) width 256: "Part A: Background Area"
       RenderBlock {H3} at (0,94) size 768x20
-        RenderText {#text} at (0,0) size 233x20
-          text run at (0,0) width 233: "Background on 'table-row-group'"
+        RenderText {#text} at (0,0) size 253x20
+          text run at (0,0) width 253: "Background on 'table-row-group'"
       RenderBlock {P} at (0,129) size 768x17
-        RenderText {#text} at (0,0) size 317x17
-          text run at (0,0) width 286: "The styled row group spans the second and third "
-          text run at (286,0) width 31: "rows."
+        RenderText {#text} at (0,0) size 354x17
+          text run at (0,0) width 320: "The styled row group spans the second and third "
+          text run at (320,0) width 34: "rows."
       RenderBlock {P} at (0,159) size 768x34
         RenderText {#text} at (0,0) size 755x34
-          text run at (0,0) width 290: "The table row group background should be visible "
-          text run at (290,0) width 365: "within the border edge of each cell originating in the row group. "
-          text run at (655,0) width 100: "All stripes should"
-          text run at (0,17) width 227: "line up as if the cells were cutouts in a "
-          text run at (227,17) width 266: "stencil placed over the row group background."
+          text run at (0,0) width 325: "The table row group background should be visible "
+          text run at (325,0) width 413: "within the border edge of each cell originating in the row group. "
+          text run at (738,0) width 17: "All"
+          text run at (0,17) width 350: "stripes should line up as if the cells were cutouts in a "
+          text run at (350,17) width 298: "stencil placed over the row group background."
       RenderBlock {P} at (0,206) size 768x34
-        RenderText {#text} at (0,0) size 767x34
-          text run at (0,0) width 251: "A red band should align with the left border "
-          text run at (251,0) width 376: "edge of the first cells in each of the row group's rows. An orange "
-          text run at (627,0) width 140: "stripe should align a few"
-          text run at (0,17) width 220: "pixels above the bottom border of the "
-          text run at (220,17) width 185: "cells in the row group's last row."
+        RenderText {#text} at (0,0) size 737x34
+          text run at (0,0) width 286: "A red band should align with the left border "
+          text run at (286,0) width 414: "edge of the first cells in each of the row group's rows. An orange "
+          text run at (700,0) width 37: "stripe"
+          text run at (0,17) width 362: "should align a few pixels above the bottom border of the "
+          text run at (362,17) width 208: "cells in the row group's last row."
       RenderBlock {DL} at (0,253) size 768x102
         RenderBlock {DT} at (0,0) size 768x17
-          RenderText {#text} at (0,0) size 25x17
-            text run at (0,0) width 25: "next"
+          RenderText {#text} at (0,0) size 28x17
+            text run at (0,0) width 28: "next"
         RenderBlock {DD} at (40,17) size 728x17
-          RenderInline {A} at (0,0) size 313x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 313x17
-              text run at (0,0) width 313: "Background Area: Background on 'table-column-group'"
+          RenderInline {A} at (0,0) size 357x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 357x17
+              text run at (0,0) width 357: "Background Area: Background on 'table-column-group'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,34) size 768x17
-          RenderText {#text} at (0,0) size 49x17
-            text run at (0,0) width 49: "previous"
+          RenderText {#text} at (0,0) size 55x17
+            text run at (0,0) width 55: "previous"
         RenderBlock {DD} at (40,51) size 728x17
-          RenderInline {A} at (0,0) size 231x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 231x17
-              text run at (0,0) width 231: "Background Area: Background on 'table'"
+          RenderInline {A} at (0,0) size 262x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 262x17
+              text run at (0,0) width 262: "Background Area: Background on 'table'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,68) size 768x17
-          RenderText {#text} at (0,0) size 50x17
-            text run at (0,0) width 50: "contents"
+          RenderText {#text} at (0,0) size 56x17
+            text run at (0,0) width 56: "contents"
         RenderBlock {DD} at (40,85) size 728x17
-          RenderInline {A} at (0,0) size 103x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 103x17
-              text run at (0,0) width 103: "Table of Contents"
+          RenderInline {A} at (0,0) size 113x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 113x17
+              text run at (0,0) width 113: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,368) size 618x483 [color=#FFFFFF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 616x25
@@ -177,6 +177,6 @@ layer at (0,0) size 784x1363
         RenderInline {A} at (0,0) size 88x17 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1321) size 768x17
-        RenderText {#text} at (0,0) size 555x17
-          text run at (0,0) width 555: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
+      RenderBlock {ADDRESS} at (0,1321) size 768x18
+        RenderText {#text} at (0,0) size 517x18
+          text run at (0,0) width 517: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

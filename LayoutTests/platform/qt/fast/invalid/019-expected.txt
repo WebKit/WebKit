@@ -20,5 +20,5 @@ layer at (0,0) size 800x600
               text run at (219,0) width 544: "More text that should not be in the nobr, i.e., the nobr should have closed the div"
               text run at (0,22) width 122: "inside it implicitly."
         RenderBlock {PRE} at (0,57) size 784x17
-          RenderText {#text} at (0,0) size 195x17
-            text run at (0,0) width 195: "A pre tag outside everything else."
+          RenderText {#text} at (0,0) size 214x17
+            text run at (0,0) width 214: "A pre tag outside everything else."

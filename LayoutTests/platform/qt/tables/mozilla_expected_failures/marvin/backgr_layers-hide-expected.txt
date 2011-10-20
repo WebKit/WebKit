@@ -1,50 +1,50 @@
-layer at (0,0) size 784x1286
+layer at (0,0) size 784x1287
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1286
-  RenderBlock {HTML} at (0,0) size 784x1286
-    RenderBody {BODY} at (8,17) size 768x1261 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 784x1287
+  RenderBlock {HTML} at (0,0) size 784x1287
+    RenderBody {BODY} at (8,17) size 768x1262 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 768x34
-        RenderText {#text} at (0,0) size 443x34
-          text run at (0,0) width 443: "CSS2 Table Backgrounds Test Suite"
+        RenderText {#text} at (0,0) size 483x34
+          text run at (0,0) width 483: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,51) size 768x27
-        RenderText {#text} at (0,0) size 257x27
-          text run at (0,0) width 257: "Part C: Background Layers"
+        RenderText {#text} at (0,0) size 278x27
+          text run at (0,0) width 278: "Part C: Background Layers"
       RenderBlock {H3} at (0,94) size 768x20
-        RenderText {#text} at (0,0) size 119x20
-          text run at (0,0) width 119: "empty-cells: hide"
+        RenderText {#text} at (0,0) size 135x20
+          text run at (0,0) width 135: "empty-cells: hide"
       RenderBlock {P} at (0,129) size 768x34
-        RenderText {#text} at (0,0) size 275x17
-          text run at (0,0) width 275: "Both tables should look identical to the ones in "
-        RenderInline {A} at (0,0) size 105x17 [color=#FFFF00]
-          RenderText {#text} at (275,0) size 105x17
-            text run at (275,0) width 105: "empty-cells: show"
-        RenderText {#text} at (380,0) size 765x34
-          text run at (380,0) width 385: " except that there should be a blue blank where table cell C should"
-          text run at (0,17) width 18: "be."
+        RenderText {#text} at (0,0) size 308x17
+          text run at (0,0) width 308: "Both tables should look identical to the ones in "
+        RenderInline {A} at (0,0) size 114x17 [color=#FFFF00]
+          RenderText {#text} at (308,0) size 114x17
+            text run at (308,0) width 114: "empty-cells: show"
+        RenderText {#text} at (422,0) size 767x34
+          text run at (422,0) width 345: " except that there should be a blue blank where table"
+          text run at (0,17) width 107: "cell C should be."
       RenderBlock {DL} at (0,176) size 768x102
         RenderBlock {DT} at (0,0) size 768x17
-          RenderText {#text} at (0,0) size 25x17
-            text run at (0,0) width 25: "next"
+          RenderText {#text} at (0,0) size 28x17
+            text run at (0,0) width 28: "next"
         RenderBlock {DD} at (40,17) size 728x17
-          RenderInline {A} at (0,0) size 276x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 276x17
-              text run at (0,0) width 276: "Background with Borders: Background on 'table'"
+          RenderInline {A} at (0,0) size 315x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 315x17
+              text run at (0,0) width 315: "Background with Borders: Background on 'table'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,34) size 768x17
-          RenderText {#text} at (0,0) size 49x17
-            text run at (0,0) width 49: "previous"
+          RenderText {#text} at (0,0) size 55x17
+            text run at (0,0) width 55: "previous"
         RenderBlock {DD} at (40,51) size 728x17
-          RenderInline {A} at (0,0) size 225x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 225x17
-              text run at (0,0) width 225: "Background Layers: empty-cells: show"
+          RenderInline {A} at (0,0) size 248x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 248x17
+              text run at (0,0) width 248: "Background Layers: empty-cells: show"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,68) size 768x17
-          RenderText {#text} at (0,0) size 50x17
-            text run at (0,0) width 50: "contents"
+          RenderText {#text} at (0,0) size 56x17
+            text run at (0,0) width 56: "contents"
         RenderBlock {DD} at (40,85) size 728x17
-          RenderInline {A} at (0,0) size 103x17 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 103x17
-              text run at (0,0) width 103: "Table of Contents"
+          RenderInline {A} at (0,0) size 113x17 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 113x17
+              text run at (0,0) width 113: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,291) size 618x483 [color=#FFFFFF] [bgcolor=#0000FF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 616x25
@@ -164,6 +164,6 @@ layer at (0,0) size 784x1286
         RenderInline {A} at (0,0) size 88x17 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1244) size 768x17
-        RenderText {#text} at (0,0) size 555x17
-          text run at (0,0) width 555: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
+      RenderBlock {ADDRESS} at (0,1244) size 768x18
+        RenderText {#text} at (0,0) size 517x18
+          text run at (0,0) width 517: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

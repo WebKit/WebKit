@@ -9,15 +9,15 @@ layer at (0,0) size 800x600
           RenderText {#text} at (16,0) size 67x22
             text run at (16,0) width 67: "Summary"
         RenderBlock (anonymous) at (0,22) size 784x22
-          RenderBlock {SPAN} at (0,3) size 47x17
-            RenderText {#text} at (0,0) size 47x17
-              text run at (0,0) width 47: "Details1"
-          RenderText {#text} at (47,0) size 4x22
-            text run at (47,0) width 4: " "
+          RenderBlock {SPAN} at (0,3) size 53x17
+            RenderText {#text} at (0,0) size 53x17
+              text run at (0,0) width 53: "Details1"
+          RenderText {#text} at (53,0) size 4x22
+            text run at (53,0) width 4: " "
           RenderText {#text} at (0,0) size 0x0
-          RenderBlock {SPAN} at (51,3) size 47x17
-            RenderText {#text} at (0,0) size 47x17
-              text run at (0,0) width 47: "Details2"
+          RenderBlock {SPAN} at (57,3) size 53x17
+            RenderText {#text} at (0,0) size 53x17
+              text run at (0,0) width 53: "Details2"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,44) size 784x38
         RenderButton {INPUT} at (2,2) size 43x34 [bgcolor=#C0C0C0]

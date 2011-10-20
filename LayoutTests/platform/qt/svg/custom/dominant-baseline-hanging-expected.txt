@@ -28,32 +28,32 @@ layer at (0,0) size 400x400
             RenderText {#text} at (0,0) size 336x44
               text run at (0,0) width 336: "The piece of text above should be aligned with the"
               text run at (0,22) width 328: "top-left corner of the rectangle below it. Both the"
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (0,47) size 38x17
-                text run at (0,47) width 38: "<text>"
-            RenderText {#text} at (38,44) size 59x22
-              text run at (38,44) width 59: " and the "
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (97,47) size 38x17
-                text run at (97,47) width 38: "<rect>"
-            RenderText {#text} at (135,44) size 293x44
-              text run at (135,44) width 158: " are located at the same"
+            RenderInline {code} at (0,0) size 40x17
+              RenderText {#text} at (0,47) size 40x17
+                text run at (0,47) width 40: "<text>"
+            RenderText {#text} at (40,44) size 59x22
+              text run at (40,44) width 59: " and the "
+            RenderInline {code} at (0,0) size 41x17
+              RenderText {#text} at (99,47) size 41x17
+                text run at (99,47) width 41: "<rect>"
+            RenderText {#text} at (140,44) size 298x44
+              text run at (140,44) width 158: " are located at the same"
               text run at (0,66) width 137: "coordinates and the "
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (137,69) size 38x17
-                text run at (137,69) width 38: "<text>"
-            RenderText {#text} at (175,66) size 117x22
-              text run at (175,66) width 117: " element uses the "
-            RenderInline {code} at (0,0) size 45x17
-              RenderText {#text} at (292,69) size 45x17
-                text run at (292,69) width 45: "hanging"
+            RenderInline {code} at (0,0) size 40x17
+              RenderText {#text} at (137,69) size 40x17
+                text run at (137,69) width 40: "<text>"
+            RenderText {#text} at (177,66) size 117x22
+              text run at (177,66) width 117: " element uses the "
+            RenderInline {code} at (0,0) size 53x17
+              RenderText {#text} at (294,69) size 53x17
+                text run at (294,69) width 53: "hanging"
             RenderText {#text} at (0,88) size 83x22
               text run at (0,88) width 83: "value for its "
-            RenderInline {code} at (0,0) size 105x17
-              RenderText {#text} at (83,91) size 105x17
-                text run at (83,91) width 105: "dominant-baseline"
-            RenderText {#text} at (188,88) size 67x22
-              text run at (188,88) width 67: " attribute."
+            RenderInline {code} at (0,0) size 121x17
+              RenderText {#text} at (83,91) size 121x17
+                text run at (83,91) width 121: "dominant-baseline"
+            RenderText {#text} at (204,88) size 67x22
+              text run at (204,88) width 67: " attribute."
           RenderBlock {p} at (0,126) size 364x22
             RenderInline {a} at (0,0) size 97x22 [color=#800000]
               RenderText {#text} at (0,0) size 97x22

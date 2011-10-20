@@ -27,11 +27,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (74,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -39,11 +39,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (144,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -51,11 +51,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (214,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -63,11 +63,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (284,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -75,11 +75,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (354,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -87,11 +87,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (424,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -99,11 +99,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (494,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -111,11 +111,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (564,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -123,11 +123,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderPartObject {IFRAME} at (634,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
@@ -135,11 +135,11 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 60x70
               RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x51
-                  RenderText {#text} at (0,0) size 18x51
+                  RenderText {#text} at (0,0) size 22x51
                     text run at (0,0) width 18: "foo"
                     text run at (18,0) width 0: " "
                     text run at (0,17) width 0: " "
-                    text run at (0,34) width 18: "bar"
+                    text run at (0,34) width 22: "bar"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,194) size 784x22
         RenderText {#text} at (0,0) size 330x22

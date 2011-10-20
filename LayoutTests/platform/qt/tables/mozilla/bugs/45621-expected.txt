@@ -4,13 +4,13 @@ layer at (0,0) size 800x161
   RenderBlock {HTML} at (0,0) size 800x161
     RenderBody {BODY} at (8,13) size 784x140
       RenderBlock {PRE} at (0,0) size 784x51
-        RenderText {#text} at (0,0) size 123x51
-          text run at (0,0) width 96: "table width=50%"
-          text run at (96,0) width 0: " "
-          text run at (0,17) width 68: "  td nowrap "
-          text run at (68,17) width 0: " "
-          text run at (0,34) width 123: "    input width=100% "
-          text run at (123,34) width 0: " "
+        RenderText {#text} at (0,0) size 139x51
+          text run at (0,0) width 108: "table width=50%"
+          text run at (108,0) width 0: " "
+          text run at (0,17) width 77: "  td nowrap "
+          text run at (77,17) width 0: " "
+          text run at (0,34) width 139: "    input width=100% "
+          text run at (139,34) width 0: " "
       RenderTable {TABLE} at (0,64) size 392x54 [bgcolor=#C0C0C0] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 390x52
           RenderTableRow {TR} at (0,2) size 390x48

@@ -1,3 +1,12 @@
+2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Move qt-4.8 platform to qt platform.
+
+        Now Qt 4.8 results are default, 4.7 results aren't supported anymore.
+
+        * platform/qt: [...]
+        * platform/qt-4.8: [...]
+
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Adding EFL baselines for animations, compositing, transforms and transitions.

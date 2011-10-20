@@ -53,11 +53,11 @@ layer at (0,0) size 784x850
         RenderText {#text} at (0,0) size 350x44
           text run at (0,0) width 350: "Since auto is an invalid value for padding, the right-"
           text run at (0,22) width 297: "margin of this paragraph should be reset to "
-        RenderInline {CODE} at (0,0) size 25x17
-          RenderText {#text} at (297,25) size 25x17
-            text run at (297,25) width 25: "auto"
-        RenderText {#text} at (322,22) size 374x66
-          text run at (322,22) width 30: " and"
+        RenderInline {CODE} at (0,0) size 29x17
+          RenderText {#text} at (297,25) size 29x17
+            text run at (297,25) width 29: "auto"
+        RenderText {#text} at (326,22) size 374x66
+          text run at (326,22) width 30: " and"
           text run at (0,44) width 374: "thus be expanded to 50% and it should only occupy the"
           text run at (0,66) width 161: "left half of the viewport."
       RenderBlock {P} at (0,804) size 768x22 [bgcolor=#808080]

@@ -7,13 +7,13 @@ layer at (0,0) size 784x625
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x68
-        RenderText {#text} at (0,0) size 165x68
-          text run at (0,0) width 136: ".one {white-space: pre;}"
-          text run at (136,0) width 0: " "
-          text run at (0,17) width 158: ".two {white-space: nowrap;}"
-          text run at (158,17) width 0: " "
-          text run at (0,34) width 165: ".three {white-space: normal;}"
-          text run at (165,34) width 0: " "
+        RenderText {#text} at (0,0) size 185x68
+          text run at (0,0) width 149: ".one {white-space: pre;}"
+          text run at (149,0) width 0: " "
+          text run at (0,17) width 175: ".two {white-space: nowrap;}"
+          text run at (175,17) width 0: " "
+          text run at (0,34) width 185: ".three {white-space: normal;}"
+          text run at (185,34) width 0: " "
           text run at (0,51) width 0: " "
       RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 768x110

@@ -21,6 +21,6 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,108) size 784x25 [border: (2px solid #FFAAAA)]
         RenderBlock {PRE} at (2,2) size 780x21 [border: (2px solid #AAAAFF)]
-          RenderText {#text} at (2,2) size 54x17
-            text run at (2,2) width 54: "a          b"
+          RenderText {#text} at (2,2) size 56x17
+            text run at (2,2) width 56: "a          b"
 caret: position 3 of child 0 {#text} of child 1 {PRE} of child 7 {DIV} of body

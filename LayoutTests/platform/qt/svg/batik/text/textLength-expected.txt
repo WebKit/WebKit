@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (49,4) size 352x496
-    RenderSVGText {text} at (144,4) size 162x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 162x21
-        chunk 1 (middle anchor) text run 1 at (144.00,20.00) startOffset 0 endOffset 22 width 162.00: "textLength with Anchor"
+    RenderSVGText {text} at (132,4) size 186x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 186x21
+        chunk 1 (middle anchor) text run 1 at (132.50,20.00) startOffset 0 endOffset 22 width 185.00: "textLength with Anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (200,3) size 50x24
         RenderSVGPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [x=200.00] [y=5.00] [width=50.00] [height=20.00]

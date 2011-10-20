@@ -8,29 +8,28 @@ layer at (143,32) size 514x146 clip at (144,33) size 496x144 scrollHeight 364
     RenderBlock {P} at (17,17) size 464x88
       RenderText {#text} at (0,0) size 234x22
         text run at (0,0) width 234: "This page is to test the behavior of "
-      RenderInline {CODE} at (0,0) size 98x17
-        RenderText {#text} at (234,3) size 98x17
-          text run at (234,3) width 98: "position:absolute"
-      RenderText {#text} at (332,0) size 457x44
-        text run at (332,0) width 125: " content which is a"
-        text run at (0,22) width 282: "child of an overflowed parent object with "
-      RenderInline {CODE} at (0,0) size 77x17
-        RenderText {#text} at (282,25) size 77x17
-          text run at (282,25) width 77: "overflow:auto"
-      RenderText {#text} at (359,22) size 464x44
-        text run at (359,22) width 105: ", both when the"
-        text run at (0,44) width 119: "parent element is "
-      RenderInline {CODE} at (0,0) size 81x17
-        RenderText {#text} at (119,47) size 81x17
-          text run at (119,47) width 81: "position:static"
-      RenderText {#text} at (200,44) size 102x22
-        text run at (200,44) width 102: " (top case) and "
+      RenderInline {CODE} at (0,0) size 110x17
+        RenderText {#text} at (234,3) size 110x17
+          text run at (234,3) width 110: "position:absolute"
+      RenderText {#text} at (344,0) size 457x44
+        text run at (344,0) width 113: " content which is"
+        text run at (0,22) width 294: "a child of an overflowed parent object with "
+      RenderInline {CODE} at (0,0) size 85x17
+        RenderText {#text} at (294,25) size 85x17
+          text run at (294,25) width 85: "overflow:auto"
+      RenderText {#text} at (379,22) size 459x44
+        text run at (379,22) width 80: ", both when"
+        text run at (0,44) width 144: "the parent element is "
       RenderInline {CODE} at (0,0) size 91x17
-        RenderText {#text} at (302,47) size 91x17
-          text run at (302,47) width 91: "position:relative"
-      RenderText {#text} at (393,44) size 450x44
-        text run at (393,44) width 57: " (bottom"
-        text run at (0,66) width 37: "case)."
+        RenderText {#text} at (144,47) size 91x17
+          text run at (144,47) width 91: "position:static"
+      RenderText {#text} at (235,44) size 102x22
+        text run at (235,44) width 102: " (top case) and "
+      RenderInline {CODE} at (0,0) size 103x17
+        RenderText {#text} at (337,47) size 103x17
+          text run at (337,47) width 103: "position:relative"
+      RenderText {#text} at (0,66) size 94x22
+        text run at (0,66) width 94: "(bottom case)."
     RenderBlock {P} at (17,121) size 464x216 [color=#999999]
       RenderText {#text} at (0,0) size 461x216
         text run at (0,0) width 461: "Following extra content exists to ensure that the parent box overflows properly. Sed"
@@ -58,11 +57,11 @@ layer at (143,210) size 514x146 clip at (144,211) size 496x144 scrollHeight 424
     RenderBlock {P} at (17,77) size 464x88
       RenderText {#text} at (0,0) size 424x22
         text run at (0,0) width 424: "Safari v1.2.2 also (really odd) causes the entire second div to be"
-      RenderInline {CODE} at (0,0) size 64x17
-        RenderText {#text} at (0,25) size 64x17
-          text run at (0,25) width 64: "opacity:0.5"
-      RenderText {#text} at (64,22) size 439x66
-        text run at (64,22) width 375: ", despite the fact that this property is only applied to the"
+      RenderInline {CODE} at (0,0) size 70x17
+        RenderText {#text} at (0,25) size 70x17
+          text run at (0,25) width 70: "opacity:0.5"
+      RenderText {#text} at (70,22) size 445x66
+        text run at (70,22) width 375: ", despite the fact that this property is only applied to the"
         text run at (0,44) width 431: "child item. This problem fixes itself if you resize the window and"
         text run at (0,66) width 124: "then scroll the div."
     RenderBlock {P} at (17,181) size 464x216 [color=#999999]

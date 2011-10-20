@@ -17,25 +17,25 @@ layer at (0,0) size 800x600
               text run at (0,0) width 83: "text to parse"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {PRE} at (27,36) size 756x153
-          RenderText {#text} at (0,0) size 423x153
-            text run at (0,0) width 133: "<?xml version=\"1.0\"?>"
-            text run at (133,0) width 0: " "
-            text run at (0,17) width 319: "<?xml-stylesheet href=\"display.css\" type=\"text/css\"?>"
-            text run at (319,17) width 0: " "
-            text run at (0,34) width 108: "<!DOCTYPE doc ["
-            text run at (108,34) width 0: " "
-            text run at (0,51) width 179: "<!ATTLIST d id ID #IMPLIED>"
-            text run at (179,51) width 0: " "
+          RenderText {#text} at (0,0) size 458x153
+            text run at (0,0) width 142: "<?xml version=\"1.0\"?>"
+            text run at (142,0) width 0: " "
+            text run at (0,17) width 344: "<?xml-stylesheet href=\"display.css\" type=\"text/css\"?>"
+            text run at (344,17) width 0: " "
+            text run at (0,34) width 109: "<!DOCTYPE doc ["
+            text run at (109,34) width 0: " "
+            text run at (0,51) width 187: "<!ATTLIST d id ID #IMPLIED>"
+            text run at (187,51) width 0: " "
             text run at (0,68) width 12: "]>"
             text run at (12,68) width 0: " "
-            text run at (0,85) width 37: "<doc>"
-            text run at (37,85) width 0: " "
-            text run at (0,102) width 423: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
-            text run at (423,102) width 0: " "
-            text run at (0,119) width 140: "  <d id=\"id3\">Three</d>"
-            text run at (140,119) width 0: " "
-            text run at (0,136) width 41: "</doc>"
-            text run at (41,136) width 0: " "
+            text run at (0,85) width 38: "<doc>"
+            text run at (38,85) width 0: " "
+            text run at (0,102) width 458: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
+            text run at (458,102) width 0: " "
+            text run at (0,119) width 155: "  <d id=\"id3\">Three</d>"
+            text run at (155,119) width 0: " "
+            text run at (0,136) width 46: "</doc>"
+            text run at (46,136) width 0: " "
       RenderBlock {DIV} at (0,318) size 784x67 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x22
           RenderInline {SPAN} at (0,0) size 112x22 [color=#800000]
@@ -43,8 +43,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 112: "document object"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {PRE} at (27,36) size 756x17
-          RenderText {#text} at (0,0) size 106x17
-            text run at (0,0) width 106: "[object Document]"
+          RenderText {#text} at (0,0) size 116x17
+            text run at (0,0) width 116: "[object Document]"
       RenderBlock {DIV} at (0,393) size 784x118 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x22
           RenderInline {SPAN} at (0,0) size 179x22 [color=#800000]
@@ -52,11 +52,11 @@ layer at (0,0) size 800x600
               text run at (0,0) width 179: "document object serialized"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {PRE} at (27,36) size 756x68
-          RenderText {#text} at (0,0) size 464x68
-            text run at (0,0) width 464: "<?xml-stylesheet href=\"display.css\" type=\"text/css\"?><!DOCTYPE doc><doc>"
-            text run at (464,0) width 0: " "
-            text run at (0,17) width 423: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
-            text run at (423,17) width 0: " "
-            text run at (0,34) width 140: "  <d id=\"id3\">Three</d>"
-            text run at (140,34) width 0: " "
-            text run at (0,51) width 41: "</doc>"
+          RenderText {#text} at (0,0) size 491x68
+            text run at (0,0) width 491: "<?xml-stylesheet href=\"display.css\" type=\"text/css\"?><!DOCTYPE doc><doc>"
+            text run at (491,0) width 0: " "
+            text run at (0,17) width 458: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
+            text run at (458,17) width 0: " "
+            text run at (0,34) width 155: "  <d id=\"id3\">Three</d>"
+            text run at (155,34) width 0: " "
+            text run at (0,51) width 46: "</doc>"

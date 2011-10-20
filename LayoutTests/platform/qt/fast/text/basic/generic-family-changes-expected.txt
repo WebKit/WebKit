@@ -11,9 +11,9 @@ layer at (0,0) size 800x338
           text run at (277,22) width 482: "Opera 9 matches this behavior as well (except it has a bug with multiple"
           text run at (0,44) width 304: "font-family mappings as in the first example)."
       RenderBlock {PRE} at (0,79) size 784x17
-        RenderInline {SPAN} at (0,0) size 94x17
-          RenderText {#text} at (0,0) size 94x17
-            text run at (0,0) width 94: "Should be 13 px"
+        RenderInline {SPAN} at (0,0) size 104x17
+          RenderText {#text} at (0,0) size 104x17
+            text run at (0,0) width 104: "Should be 13 px"
       RenderBlock {PRE} at (0,109) size 784x18
         RenderInline {SPAN} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x18

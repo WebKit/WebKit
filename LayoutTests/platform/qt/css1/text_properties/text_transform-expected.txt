@@ -7,15 +7,15 @@ layer at (0,0) size 784x882
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,38) size 768x85
-        RenderText {#text} at (0,0) size 190x85
-          text run at (0,0) width 152: ".ttn {text-transform: none;}"
-          text run at (152,0) width 0: " "
-          text run at (0,17) width 185: ".cap {text-transform: capitalize;}"
-          text run at (185,17) width 0: " "
-          text run at (0,34) width 190: ".upp {text-transform: uppercase;}"
-          text run at (190,34) width 0: " "
-          text run at (0,51) width 186: ".low {text-transform: lowercase;}"
-          text run at (186,51) width 0: " "
+        RenderText {#text} at (0,0) size 213x85
+          text run at (0,0) width 172: ".ttn {text-transform: none;}"
+          text run at (172,0) width 0: " "
+          text run at (0,17) width 205: ".cap {text-transform: capitalize;}"
+          text run at (205,17) width 0: " "
+          text run at (0,34) width 213: ".upp {text-transform: uppercase;}"
+          text run at (213,34) width 0: " "
+          text run at (0,51) width 205: ".low {text-transform: lowercase;}"
+          text run at (205,51) width 0: " "
           text run at (0,68) width 0: " "
       RenderBlock {HR} at (0,136) size 768x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,154) size 768x44

@@ -47,6 +47,7 @@
 # - failing websocket tests
 # - new tests without expected results
 # - Qt 4.7 related bugs
+# - Qt 4.8 related bugs
 # - new skipped tests yet to be sorted
 
 
@@ -1689,6 +1690,19 @@ fast/text/international/khmer-selection.html
 # https://bugs.webkit.org/show_bug.cgi?id=46249
 media/video-can-play-type.html
 media/video-delay-load-event.html
+
+# ============================================================================= #
+# Qt 4.8 related bugs
+# ============================================================================= #
+
+# [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt 4.8
+# http://bugreports.qt.nokia.com/browse/QTBUG-19556
+# https://bugs.webkit.org/show_bug.cgi?id=60175
+http/tests/security/xss-DENIED-xsl-document.xml
+
+# [Qt]Update layout test results for newer Qt 4.8.x
+# https://bugs.webkit.org/show_bug.cgi?id=64527
+svg/text/lengthAdjust-text-metrics.html
 
 # ============================================================================= #
 # Fixed in Qt 4.8
