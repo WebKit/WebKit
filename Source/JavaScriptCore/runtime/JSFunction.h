@@ -41,9 +41,6 @@ namespace JSC {
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
-    extern const char* StrictModeCallerAccessError;
-    extern const char* StrictModeArgumentsAccessError;
-
     void createDescriptorForThrowingProperty(ExecState*, PropertyDescriptor&, const char* message);
 
     class JSFunction : public JSNonFinalObject {

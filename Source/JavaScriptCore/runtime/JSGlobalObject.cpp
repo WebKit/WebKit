@@ -47,6 +47,7 @@
 #include "ErrorPrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
+#include "GetterSetter.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
@@ -305,6 +306,15 @@ void JSGlobalObject::reset(JSValue prototype)
     resetPrototype(exec->globalData(), prototype);
 }
 
+void JSGlobalObject::createThrowTypeError(ExecState* exec)
+{
+    JSFunction* thrower = JSFunction::create(exec, this, 0, Identifier(), globalFuncThrowTypeError);
+    GetterSetter* getterSetter = GetterSetter::create(exec);
+    getterSetter->setGetter(exec->globalData(), thrower);
+    getterSetter->setSetter(exec->globalData(), thrower);
+    m_throwTypeErrorGetterSetter.set(exec->globalData(), this, getterSetter);
+}
+
 // Set prototype, and also insert the object prototype at the end of the chain.
 void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
 {
@@ -339,6 +349,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitIfNeeded(visitor, &thisObject->m_evalFunction);
     visitIfNeeded(visitor, &thisObject->m_callFunction);
     visitIfNeeded(visitor, &thisObject->m_applyFunction);
+    visitIfNeeded(visitor, &thisObject->m_throwTypeErrorGetterSetter);
 
     visitIfNeeded(visitor, &thisObject->m_objectPrototype);
     visitIfNeeded(visitor, &thisObject->m_functionPrototype);

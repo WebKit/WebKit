@@ -97,7 +97,8 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     m_executable.set(exec->globalData(), this, executable);
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    if (!name.isNull())
+        putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
@@ -116,9 +117,6 @@ JSFunction::~JSFunction()
 {
     ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
 }
-
-const char* StrictModeCallerAccessError = "Cannot access caller property of a strict mode function";
-const char* StrictModeArgumentsAccessError = "Cannot access arguments property of a strict mode function";
 
 void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
 {
@@ -224,11 +222,14 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
 
     if (propertyName == exec->propertyNames().arguments) {
         if (thisObject->jsExecutable()->isStrictMode()) {
-            throwTypeError(exec, StrictModeArgumentsAccessError);
-            slot.setValue(jsNull());
-            return true;
+            bool result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+            if (!result) {
+                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+                ASSERT(result);
+            }
+            return result;
         }
-   
         slot.setCacheableCustom(thisObject, argumentsGetter);
         return true;
     }
@@ -240,9 +241,13 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
 
     if (propertyName == exec->propertyNames().caller) {
         if (thisObject->jsExecutable()->isStrictMode()) {
-            throwTypeError(exec, StrictModeCallerAccessError);
-            slot.setValue(jsNull());
-            return true;
+            bool result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+            if (!result) {
+                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+                ASSERT(result);
+            }
+            return result;
         }
         slot.setCacheableCustom(thisObject, callerGetter);
         return true;
@@ -263,10 +268,16 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     }
     
     if (propertyName == exec->propertyNames().arguments) {
-        if (jsExecutable()->isStrictMode())
-            createDescriptorForThrowingProperty(exec, descriptor, StrictModeArgumentsAccessError);
-        else
-            descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
+        if (jsExecutable()->isStrictMode()) {
+            bool result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            if (!result) {
+                initializeGetterSetterProperty(exec, propertyName, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+                ASSERT(result);
+            }
+            return result;
+        }
+        descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
@@ -276,10 +287,16 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     }
     
     if (propertyName == exec->propertyNames().caller) {
-        if (jsExecutable()->isStrictMode())
-            createDescriptorForThrowingProperty(exec, descriptor, StrictModeCallerAccessError);
-        else
-            descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
+        if (jsExecutable()->isStrictMode()) {
+            bool result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            if (!result) {
+                initializeGetterSetterProperty(exec, propertyName, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+                ASSERT(result);
+            }
+            return result;
+        }
+        descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
@@ -318,15 +335,12 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
         PropertySlot slot;
         thisObject->getOwnPropertySlotVirtual(exec, propertyName, slot);
     }
-    if (thisObject->jsExecutable()->isStrictMode()) {
-        if (propertyName == exec->propertyNames().arguments) {
-            throwTypeError(exec, StrictModeArgumentsAccessError);
-            return;
-        }
-        if (propertyName == exec->propertyNames().caller) {
-            throwTypeError(exec, StrictModeCallerAccessError);
-            return;
-        }
+    if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
+        // This will trigger the property to be reified, if this is not already the case!
+        bool okay = thisObject->hasProperty(exec, propertyName);
+        ASSERT_UNUSED(okay, okay);
+        Base::put(thisObject, exec, propertyName, value, slot);
+        return;
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return;

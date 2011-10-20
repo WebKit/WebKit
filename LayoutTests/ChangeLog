@@ -1,3 +1,14 @@
+2011-10-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Poisoning of strict caller,arguments inappropriately poisoning "in"
+        https://bugs.webkit.org/show_bug.cgi?id=63398
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/script-tests/basic-strict-mode.js:
+            - Add tests.
+
 2011-10-19  Erik Arvidsson  <arv@chromium.org>
 
         Fix test breakage after r97881

@@ -594,4 +594,9 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
     return JSValue::encode(jsString(exec, builder.toUString()));
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
+{
+    return throwVMTypeError(exec);
+}
+
 } // namespace JSC

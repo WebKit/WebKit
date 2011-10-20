@@ -96,43 +96,6 @@ bool JSBoundFunction::hasInstance(ExecState* exec, JSValue value, JSValue)
     return m_targetFunction->hasInstance(exec, value, proto);
 }
 
-bool JSBoundFunction::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
-bool JSBoundFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    if (propertyName == exec->propertyNames().arguments) {
-        throwTypeError(exec, StrictModeArgumentsAccessError);
-        slot.setValue(jsNull());
-        return true;
-    }
-
-    if (propertyName == exec->propertyNames().caller) {
-        throwTypeError(exec, StrictModeCallerAccessError);
-        slot.setValue(jsNull());
-        return true;
-    }
-
-    return Base::getOwnPropertySlot(cell, exec, propertyName, slot);
-}
-
-bool JSBoundFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    if (propertyName == exec->propertyNames().arguments) {
-        createDescriptorForThrowingProperty(exec, descriptor, StrictModeArgumentsAccessError);
-        return true;
-    }
-    
-    if (propertyName == exec->propertyNames().caller) {
-        createDescriptorForThrowingProperty(exec, descriptor, StrictModeCallerAccessError);
-        return true;
-    }
-    
-    return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
-}
-
 JSBoundFunction::JSBoundFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs)
     : Base(exec, globalObject, structure)
     , m_targetFunction(exec->globalData(), this, targetFunction)
@@ -145,6 +108,9 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
 {
     Base::finishCreation(exec, executable, length, name);
     ASSERT(inherits(&s_info));
+
+    initializeGetterSetterProperty(exec, exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+    initializeGetterSetterProperty(exec, exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -396,6 +396,28 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     getterSetter->setGetter(globalData, getterFunction);
 }
 
+void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier& propertyName, GetterSetter* getterSetter, unsigned attributes)
+{
+    // Set an inital property on an object; the property must not already exist & the attribute flags must be set correctly.
+    ASSERT(structure()->get(exec->globalData(), propertyName) == WTF::notFound);
+    ASSERT(static_cast<bool>(getterSetter->getter()) == static_cast<bool>(attributes & Getter));
+    ASSERT(static_cast<bool>(getterSetter->setter()) == static_cast<bool>(attributes & Setter));
+
+    JSGlobalData& globalData = exec->globalData();
+    PutPropertySlot slot;
+    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
+
+    // putDirect will change our Structure if we add a new property. For
+    // getters and setters, though, we also need to change our Structure
+    // if we override an existing non-getter or non-setter.
+    if (slot.type() != PutPropertySlot::NewProperty) {
+        if (!structure()->isDictionary())
+            setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, structure()));
+    }
+
+    structure()->setHasGetterSetterProperties(true);
+}
+
 void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
     if (propertyName == exec->propertyNames().underscoreProto) {

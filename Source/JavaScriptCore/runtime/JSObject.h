@@ -45,7 +45,8 @@ namespace JSC {
             return value.asCell();
         return 0;
     }
-    
+
+    class GetterSetter;
     class HashEntry;
     class InternalFunction;
     class MarkedBlock;
@@ -190,6 +191,7 @@ namespace JSC {
         void putUndefinedAtDirectOffset(size_t offset) { propertyStorage()[offset].setUndefined(); }
 
         void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
+        void initializeGetterSetterProperty(ExecState*, const Identifier&, GetterSetter*, unsigned attributes);
 
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);

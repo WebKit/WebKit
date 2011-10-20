@@ -42,6 +42,7 @@ namespace JSC {
     class Debugger;
     class ErrorConstructor;
     class FunctionPrototype;
+    class GetterSetter;
     class GlobalCodeBlock;
     class NativeErrorConstructor;
     class ProgramCodeBlock;
@@ -90,6 +91,7 @@ namespace JSC {
         WriteBarrier<JSFunction> m_evalFunction;
         WriteBarrier<JSFunction> m_callFunction;
         WriteBarrier<JSFunction> m_applyFunction;
+        WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
 
         WriteBarrier<ObjectPrototype> m_objectPrototype;
         WriteBarrier<FunctionPrototype> m_functionPrototype;
@@ -212,6 +214,12 @@ namespace JSC {
         JSFunction* evalFunction() const { return m_evalFunction.get(); }
         JSFunction* callFunction() const { return m_callFunction.get(); }
         JSFunction* applyFunction() const { return m_applyFunction.get(); }
+        GetterSetter* throwTypeErrorGetterSetter(ExecState* exec)
+        {
+            if (!m_throwTypeErrorGetterSetter)
+                createThrowTypeError(exec);
+            return m_throwTypeErrorGetterSetter.get();
+        }
 
         ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
         FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
@@ -320,6 +328,8 @@ namespace JSC {
         // FIXME: Fold reset into init.
         void init(JSObject* thisValue);
         void reset(JSValue prototype);
+
+        void createThrowTypeError(ExecState*);
 
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
         static void clearRareData(JSCell*);
