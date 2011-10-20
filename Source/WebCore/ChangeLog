@@ -1,3 +1,94 @@
+2011-10-19  Darin Adler  <darin@apple.com>
+
+        Remove OptionElement (first half)
+        https://bugs.webkit.org/show_bug.cgi?id=70276
+
+        Reviewed by Kent Tamura.
+
+        Refactoring that does not require new tests.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector): Use hasTagName
+        and toHTMLOptionElement instead of toOptionElement.
+
+        * dom/OptionElement.cpp: Deleted contents. Remove file later.
+        * dom/OptionElement.h: Ditto.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement): Initialize m_isSelected.
+        (WebCore::HTMLOptionElement::createForJSConstructor): Initialize the
+        selected attribute rather than calling setDefaultSelected.
+        (WebCore::HTMLOptionElement::text): Moved the code here from
+        OptionElement::collectOptionLabelOrText.
+        (WebCore::HTMLOptionElement::index): Moved the code here from
+        OptionElement::optionIndex.
+        (WebCore::HTMLOptionElement::parseMappedAttribute): Removed unneeded
+        code to call setValue and setLabel. Changed the code that called
+        setSelected to instead set m_isSelected and added a FIXME about why
+        that's probably wrong, but same behavior as before.
+        (WebCore::HTMLOptionElement::value): Moved the code here from
+        OptionElement::collectOptionValue. Added a FIXME about incorrect
+        whitespace stripping.
+        (WebCore::HTMLOptionElement::selected): Use m_isSelected.
+        (WebCore::HTMLOptionElement::setSelected): Use m_isSelected and
+        call setSelectedState instead of OptionElement::setSelectedState.
+        (WebCore::HTMLOptionElement::setSelectedState): Moved the code
+        here from OptionElement::setSelectedState.
+        (WebCore::HTMLOptionElement::label): Streamlined the code.
+        (WebCore::HTMLOptionElement::textIndentedToRespectGroupLabel):
+        Moved the code here from OptionElement::collectOptionTextRespectingGroupLabel.
+        (WebCore::HTMLOptionElement::insertedIntoTree): Use m_isSelected
+        and rewrote comment for clarity.
+        (WebCore::HTMLOptionElement::collectOptionInnerText): Moved this
+        here from OptionElement, and changed to use StringBuilder.
+        (WebCore::toHTMLOptionElement): Added.
+
+        * html/HTMLOptionElement.h: Removed OptionElement.h include.
+        Removed OptionElement base class. Removed unneeded friend declarations.
+        Made value and selected functions non-virtual. Removed unneeded
+        defaultSelected and setDefaultSelected functions. Made the
+        textIndentedToRespectGroupLabel and setSelectedState functions
+        be non-virtual and public. Added a collectOptionInnerText function.
+        Replaced m_data with m_value, m_label, and m_selected.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::toOptionElement): Added. Helper to keep existing code
+        close to the same.
+        (WebCore::HTMLSelectElement::nextValidIndex): Use hasTagName
+        instead of isOptionElement.
+        (WebCore::HTMLSelectElement::saveLastSelection): Use HTMLOptionElement
+        type instead of OptionElement.
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex): Ditto.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Ditto.
+        (WebCore::HTMLSelectElement::listBoxOnChange): Ditto.
+        (WebCore::HTMLSelectElement::recalcListItems): Ditto.
+        (WebCore::HTMLSelectElement::selectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::optionToListIndex): Ditto.
+        (WebCore::HTMLSelectElement::listToOptionIndex): Ditto.
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation): Ditto.
+        (WebCore::HTMLSelectElement::saveFormControlState): Ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): Ditto.
+        (WebCore::HTMLSelectElement::appendFormData): Ditto.
+        (WebCore::HTMLSelectElement::reset): Ditto.
+        (WebCore::HTMLSelectElement::updateSelectedState): Ditto.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): Ditto.
+        (WebCore::HTMLSelectElement::typeAheadFind): Ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::length): Ditto.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Use HTMLOptionElement,
+        hasTagName, and toHTMLOptionElement.
+        (WebCore::RenderListBox::addFocusRingRects): Ditto.
+        (WebCore::RenderListBox::paintItemForeground): Ditto.
+        (WebCore::RenderListBox::paintItemBackground): Ditto.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth): Ditto.
+        (WebCore::RenderMenuList::setTextFromOption): Ditto.
+        (WebCore::RenderMenuList::itemText): Ditto.
+        (WebCore::RenderMenuList::itemIsSelected): Ditto.
+
 2011-10-19  Raymond Toy  <rtoy@google.com>
 
         Flush denormals to zero on Windows.

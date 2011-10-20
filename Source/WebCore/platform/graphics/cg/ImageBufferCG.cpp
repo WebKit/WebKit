@@ -187,7 +187,7 @@ GraphicsContext* ImageBuffer::context() const
 
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
-    RetainPtr<CGImageRef> image = copyNativeImage(copyBehavior);
+    RetainPtr<CGImageRef> image(AdoptCF, copyNativeImage(copyBehavior));
 
     if (!image)
         return 0;

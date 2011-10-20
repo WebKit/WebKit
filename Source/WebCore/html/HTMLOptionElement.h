@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -21,20 +21,17 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef HTMLOptionElement_h
 #define HTMLOptionElement_h
 
 #include "HTMLFormControlElement.h"
-#include "OptionElement.h"
 
 namespace WebCore {
 
 class HTMLSelectElement;
 
-class HTMLOptionElement : public HTMLFormControlElement, public OptionElement {
-    friend class HTMLSelectElement;
-    friend class RenderMenuList;
-
+class HTMLOptionElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLOptionElement> create(Document*, HTMLFormElement*);
     static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document*, HTMLFormElement*);
@@ -46,16 +43,13 @@ public:
 
     int index() const;
 
-    virtual String value() const;
+    String value() const;
     void setValue(const String&);
 
-    virtual bool selected();
+    bool selected();
     void setSelected(bool);
 
     HTMLSelectElement* ownerSelectElement() const;
-
-    bool defaultSelected() const;
-    void setDefaultSelected(bool);
 
     String label() const;
     void setLabel(const String&);
@@ -63,6 +57,10 @@ public:
     bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
 
     virtual bool disabled() const;
+
+    String textIndentedToRespectGroupLabel() const;
+
+    void setSelectedState(bool);
 
 private:
     HTMLOptionElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
@@ -78,10 +76,6 @@ private:
 
     virtual void parseMappedAttribute(Attribute*);
 
-    virtual void setSelectedState(bool);
-
-    virtual String textIndentedToRespectGroupLabel() const;
-
     virtual void insertedIntoTree(bool);
     virtual void accessKeyAction(bool);
 
@@ -89,9 +83,33 @@ private:
 
     virtual RenderStyle* nonRendererRenderStyle() const;
 
-    OptionElementData m_data;
+    String collectOptionInnerText() const;
+
+    String m_value;
+    String m_label;
+    bool m_isSelected;
     RefPtr<RenderStyle> m_style;
 };
+
+HTMLOptionElement* toHTMLOptionElement(Node*);
+const HTMLOptionElement* toHTMLOptionElement(const Node*);
+void toHTMLOptionElement(const HTMLOptionElement*); // This overload will catch anyone doing an unnecessary cast.
+
+#ifdef NDEBUG
+
+// The debug versions of these, with assertions, are not inlined.
+
+inline HTMLOptionElement* toHTMLOptionElement(Node* node)
+{
+    return static_cast<HTMLOptionElement*>(node);
+}
+
+inline const HTMLOptionElement* toHTMLOptionElement(const Node* node)
+{
+    return static_cast<const HTMLOptionElement*>(node);
+}
+
+#endif
 
 } // namespace
 

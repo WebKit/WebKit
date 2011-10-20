@@ -107,7 +107,7 @@ bool IsSelectInDefaultState(HTMLSelectElement* select)
             if (!(*i)->hasLocalName(HTMLNames::optionTag))
                 continue;
             HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
-            if (optionElement->selected() != optionElement->defaultSelected())
+            if (optionElement->selected() != optionElement->hasAttribute(selectedAttr))
                 return false;
         }
         return true;
@@ -120,7 +120,7 @@ bool IsSelectInDefaultState(HTMLSelectElement* select)
         if (!(*i)->hasLocalName(HTMLNames::optionTag))
             continue;
         HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
-        if (optionElement->defaultSelected()) {
+        if (optionElement->hasAttribute(selectedAttr)) {
             // The page specified the option to select.
             initialSelected = optionElement;
             break;
