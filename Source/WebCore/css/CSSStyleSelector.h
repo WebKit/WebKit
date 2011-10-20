@@ -225,6 +225,17 @@ private:
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
     void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
+    struct MatchResult {
+        MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
+        int firstUARule;
+        int lastUARule;
+        int firstAuthorRule;
+        int lastAuthorRule;
+        int firstUserRule;
+        int lastUserRule;
+    };
+    void matchAllRules(MatchResult&);
+    void matchUARules(MatchResult&);
     void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     bool fastRejectSelector(const RuleData&) const;
@@ -232,6 +243,7 @@ private:
 
     bool checkSelector(const RuleData&);
 
+    void applyMatchedDeclarations(const MatchResult&);
     template <bool firstPass>
     void applyDeclarations(bool important, int startIndex, int endIndex);
     template <bool firstPass>
@@ -271,7 +283,6 @@ public:
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
-    void matchUARules(int& firstUARule, int& lastUARule);
     void updateFont();
     void cacheBorderAndBackground();
 

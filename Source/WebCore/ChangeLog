@@ -1,3 +1,28 @@
+2011-10-20  Antti Koivisto  <antti@apple.com>
+
+        Move rule matching and applying to separate functions from CSSStyleSelector::styleForElement
+        https://bugs.webkit.org/show_bug.cgi?id=70408
+
+        Reviewed by Andreas Kling.
+
+        - Move matching code to matchAllRules and applying to applyMatchedDeclarations.
+        - Encapsulate the matching results into a struct, use everywhere.
+        - Move first-line style adjustment to adjustRenderStyle().
+        - Remove unnecessary tests for resolveForRootDefault when applying the style
+        - Use applyMatchedDeclarations also from pseudoStyleForElement
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::MatchResult::MatchResult):
+
 2011-10-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: get rid of manual view hierarchy management.

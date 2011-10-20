@@ -745,6 +745,70 @@ void CSSStyleSelector::sortMatchedRules()
     std::sort(m_matchedRules.begin(), m_matchedRules.end(), compareRules);
 }
 
+void CSSStyleSelector::matchAllRules(MatchResult& result)
+{
+    matchUARules(result);
+
+    // Now we check user sheet rules.
+    if (m_matchAuthorAndUserStyles)
+        matchRules(m_userStyle.get(), result.firstUserRule, result.lastUserRule, false);
+        
+    // Now check author rules, beginning first with presentational attributes mapped from HTML.
+    if (m_styledElement) {
+        // Ask if the HTML element has mapped attributes.
+        if (m_styledElement->hasMappedAttributes()) {
+            // Walk our attribute list and add in each decl.
+            const NamedNodeMap* map = m_styledElement->attributeMap();
+            for (unsigned i = 0; i < map->length(); ++i) {
+                Attribute* attr = map->attributeItem(i);
+                if (attr->isMappedAttribute() && attr->decl()) {
+                    result.lastAuthorRule = m_matchedDecls.size();
+                    if (result.firstAuthorRule == -1)
+                        result.firstAuthorRule = result.lastAuthorRule;
+                    addMatchedDeclaration(attr->decl());
+                }
+            }
+        }
+        
+        // Now we check additional mapped declarations.
+        // Tables and table cells share an additional mapped rule that must be applied
+        // after all attributes, since their mapped style depends on the values of multiple attributes.
+        if (m_styledElement->canHaveAdditionalAttributeStyleDecls()) {
+            m_additionalAttributeStyleDecls.clear();
+            m_styledElement->additionalAttributeStyleDecls(m_additionalAttributeStyleDecls);
+            if (!m_additionalAttributeStyleDecls.isEmpty()) {
+                unsigned additionalDeclsSize = m_additionalAttributeStyleDecls.size();
+                if (result.firstAuthorRule == -1)
+                    result.firstAuthorRule = m_matchedDecls.size();
+                result.lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
+                for (unsigned i = 0; i < additionalDeclsSize; ++i)
+                    addMatchedDeclaration(m_additionalAttributeStyleDecls[i]);
+            }
+        }
+        if (m_styledElement->isHTMLElement()) {
+            bool isAuto;
+            TextDirection textDirection = toHTMLElement(m_styledElement)->directionalityIfhasDirAutoAttribute(isAuto);
+            if (isAuto)
+                addMatchedDeclaration(textDirection == LTR ? leftToRightDeclaration() : rightToLeftDeclaration());
+        }
+    }
+    
+    // Check the rules in author sheets next.
+    if (m_matchAuthorAndUserStyles)
+        matchRules(m_authorStyle.get(), result.firstAuthorRule, result.lastAuthorRule, false);
+        
+    // Now check our inline style attribute.
+    if (m_matchAuthorAndUserStyles && m_styledElement) {
+        CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
+        if (inlineDecl) {
+            result.lastAuthorRule = m_matchedDecls.size();
+            if (result.firstAuthorRule == -1)
+                result.firstAuthorRule = result.lastAuthorRule;
+            addMatchedDeclaration(inlineDecl);
+        }
+    }
+}
+    
 inline void CSSStyleSelector::initElement(Element* e)
 {
     if (m_element != e) {
@@ -1040,24 +1104,24 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     return shareNode->renderStyle();
 }
 
-void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
+void CSSStyleSelector::matchUARules(MatchResult& result)
 {
     MatchingUARulesScope scope;
 
     // First we match rules from the user agent sheet.
     RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
-    matchRules(userAgentStyleSheet, firstUARule, lastUARule, false);
+    matchRules(userAgentStyleSheet, result.firstUARule, result.lastUARule, false);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (!m_checker.strictParsing())
-        matchRules(defaultQuirksStyle, firstUARule, lastUARule, false);
+        matchRules(defaultQuirksStyle, result.firstUARule, result.lastUARule, false);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
     if (m_checker.document()->isViewSource()) {
         if (!defaultViewSourceStyle)
             loadViewSourceStyle();
-        matchRules(defaultViewSourceStyle, firstUARule, lastUARule, false);
+        matchRules(defaultViewSourceStyle, result.firstUARule, result.lastUARule, false);
     }
 }
 
@@ -1168,120 +1232,19 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 
     ensureDefaultStyleSheetsForElement(element);
 
-    int firstUARule = -1, lastUARule = -1;
-    int firstUserRule = -1, lastUserRule = -1;
-    int firstAuthorRule = -1, lastAuthorRule = -1;
-    matchUARules(firstUARule, lastUARule);
+    MatchResult matchResult;
+    if (resolveForRootDefault)
+        matchUARules(matchResult);
+    else
+        matchAllRules(matchResult);
 
-    if (!resolveForRootDefault) {
-        // 4. Now we check user sheet rules.
-        if (m_matchAuthorAndUserStyles)
-            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, false);
-
-        // 5. Now check author rules, beginning first with presentational attributes
-        // mapped from HTML.
-        if (m_styledElement) {
-            // Ask if the HTML element has mapped attributes.
-            if (m_styledElement->hasMappedAttributes()) {
-                // Walk our attribute list and add in each decl.
-                const NamedNodeMap* map = m_styledElement->attributeMap();
-                for (unsigned i = 0; i < map->length(); i++) {
-                    Attribute* attr = map->attributeItem(i);
-                    if (attr->isMappedAttribute() && attr->decl()) {
-                        lastAuthorRule = m_matchedDecls.size();
-                        if (firstAuthorRule == -1)
-                            firstAuthorRule = lastAuthorRule;
-                        addMatchedDeclaration(attr->decl());
-                    }
-                }
-            }
-
-            // Now we check additional mapped declarations.
-            // Tables and table cells share an additional mapped rule that must be applied
-            // after all attributes, since their mapped style depends on the values of multiple attributes.
-            if (m_styledElement->canHaveAdditionalAttributeStyleDecls()) {
-                m_additionalAttributeStyleDecls.clear();
-                m_styledElement->additionalAttributeStyleDecls(m_additionalAttributeStyleDecls);
-                if (!m_additionalAttributeStyleDecls.isEmpty()) {
-                    unsigned additionalDeclsSize = m_additionalAttributeStyleDecls.size();
-                    if (firstAuthorRule == -1)
-                        firstAuthorRule = m_matchedDecls.size();
-                    lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
-                    for (unsigned i = 0; i < additionalDeclsSize; i++)
-                        addMatchedDeclaration(m_additionalAttributeStyleDecls[i]);
-                }
-            }
-            if (m_styledElement->isHTMLElement()) {
-                bool isAuto;
-                TextDirection textDirection = toHTMLElement(m_styledElement)->directionalityIfhasDirAutoAttribute(isAuto);
-                if (isAuto)
-                    addMatchedDeclaration(textDirection == LTR ? leftToRightDeclaration() : rightToLeftDeclaration());
-            }
-        }
-
-        // 6. Check the rules in author sheets next.
-        if (m_matchAuthorAndUserStyles)
-            matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, false);
-
-        // 7. Now check our inline style attribute.
-        if (m_matchAuthorAndUserStyles && m_styledElement) {
-            CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
-            if (inlineDecl) {
-                lastAuthorRule = m_matchedDecls.size();
-                if (firstAuthorRule == -1)
-                    firstAuthorRule = lastAuthorRule;
-                addMatchedDeclaration(inlineDecl);
-            }
-        }
-    }
-
-    // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
-    // high-priority properties first, i.e., those properties that other properties depend on.
-    // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
-    // and (4) normal important.
-    m_lineHeightValue = 0;
-    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
-    if (!resolveForRootDefault) {
-        applyDeclarations<true>(true, firstAuthorRule, lastAuthorRule);
-        applyDeclarations<true>(true, firstUserRule, lastUserRule);
-    }
-    applyDeclarations<true>(true, firstUARule, lastUARule);
-
-    // If our font got dirtied, go ahead and update it now.
-    updateFont();
-
-    // Line-height is set when we are sure we decided on the font-size
-    if (m_lineHeightValue)
-        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
-
-    // Now do the normal priority UA properties.
-    applyDeclarations<false>(false, firstUARule, lastUARule);
-
-    // Cache our border and background so that we can examine them later.
-    cacheBorderAndBackground();
-
-    // Now do the author and user normal priority properties and all the !important properties.
-    if (!resolveForRootDefault) {
-        applyDeclarations<false>(false, lastUARule + 1, m_matchedDecls.size() - 1);
-        applyDeclarations<false>(true, firstAuthorRule, lastAuthorRule);
-        applyDeclarations<false>(true, firstUserRule, lastUserRule);
-    }
-    applyDeclarations<false>(true, firstUARule, lastUARule);
-
-    ASSERT(!m_fontDirty);
-    // If our font got dirtied by one of the non-essential font props,
-    // go ahead and update it a second time.
-    updateFont();
+    applyMatchedDeclarations(matchResult);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), m_parentStyle, element);
 
     // Start loading images referenced by this style.
     loadPendingImages();
-
-    // If we have first-letter pseudo style, do not share this style
-    if (m_style->hasPseudoStyle(FIRST_LETTER))
-        m_style->setUnique();
 
     initElement(0); // Clear out for the next resolve.
 
@@ -1411,12 +1374,12 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     // those rules.
 
     // Check UA, user and author rules.
-    int firstUARule = -1, lastUARule = -1, firstUserRule = -1, lastUserRule = -1, firstAuthorRule = -1, lastAuthorRule = -1;
-    matchUARules(firstUARule, lastUARule);
+    MatchResult matchResult;
+    matchUARules(matchResult);
 
     if (m_matchAuthorAndUserStyles) {
-        matchRules(m_userStyle.get(), firstUserRule, lastUserRule, false);
-        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, false);
+        matchRules(m_userStyle.get(), matchResult.firstUserRule, matchResult.lastUserRule, false);
+        matchRules(m_authorStyle.get(), matchResult.firstAuthorRule, matchResult.lastAuthorRule, false);
     }
 
     if (m_matchedDecls.isEmpty())
@@ -1424,35 +1387,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
 
     m_style->setStyleType(pseudo);
 
-    m_lineHeightValue = 0;
-
-    // High-priority properties.
-    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
-    applyDeclarations<true>(true, firstAuthorRule, lastAuthorRule);
-    applyDeclarations<true>(true, firstUserRule, lastUserRule);
-    applyDeclarations<true>(true, firstUARule, lastUARule);
-
-    // If our font got dirtied, go ahead and update it now.
-    updateFont();
-
-    // Line-height is set when we are sure we decided on the font-size
-    if (m_lineHeightValue)
-        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
-
-    // Now do the normal priority properties.
-    applyDeclarations<false>(false, firstUARule, lastUARule);
-
-    // Cache our border and background so that we can examine them later.
-    cacheBorderAndBackground();
-
-    applyDeclarations<false>(false, lastUARule + 1, m_matchedDecls.size() - 1);
-    applyDeclarations<false>(true, firstAuthorRule, lastAuthorRule);
-    applyDeclarations<false>(true, firstUserRule, lastUserRule);
-    applyDeclarations<false>(true, firstUARule, lastUARule);
-
-    // If our font got dirtied by one of the non-essential font props,
-    // go ahead and update it a second time.
-    updateFont();
+    applyMatchedDeclarations(matchResult);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), parentStyle, 0);
@@ -1483,7 +1418,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     // If our font got dirtied, go ahead and update it now.
     updateFont();
 
-    // Line-height is set when we are sure we decided on the font-size
+    // Line-height is set when we are sure we decided on the font-size.
     if (m_lineHeightValue)
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
@@ -1687,6 +1622,10 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     if (style->hasAppearance())
         RenderTheme::defaultTheme()->adjustStyle(this, style, e, m_hasUAAppearance, m_borderData, m_backgroundData, m_backgroundColor);
 
+    // If we have first-letter pseudo style, do not share this style.
+    if (style->hasPseudoStyle(FIRST_LETTER))
+        style->setUnique();
+
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
@@ -1744,24 +1683,21 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
     initElement(e);
     initForStyleResolve(e, 0, pseudoId);
 
+    MatchResult dummy;
     if (rulesToInclude & UAAndUserCSSRules) {
-        int firstUARule = -1, lastUARule = -1;
         // First we match rules from the user agent sheet.
-        matchUARules(firstUARule, lastUARule);
+        matchUARules(dummy);
 
         // Now we check user sheet rules.
-        if (m_matchAuthorAndUserStyles) {
-            int firstUserRule = -1, lastUserRule = -1;
-            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, rulesToInclude & EmptyCSSRules);
-        }
+        if (m_matchAuthorAndUserStyles)
+            matchRules(m_userStyle.get(), dummy.firstUserRule, dummy.lastUserRule, rulesToInclude & EmptyCSSRules);
     }
 
     if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules)) {
         m_sameOriginOnly = !(rulesToInclude & CrossOriginCSSRules);
 
         // Check the rules in author sheets.
-        int firstAuthorRule = -1, lastAuthorRule = -1;
-        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, rulesToInclude & EmptyCSSRules);
+        matchRules(m_authorStyle.get(), dummy.firstAuthorRule, dummy.lastAuthorRule, rulesToInclude & EmptyCSSRules);
 
         m_sameOriginOnly = false;
     }
@@ -2200,6 +2136,40 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
     }
     for (int i = startIndex; i <= endIndex; ++i)
         applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration, isImportant);
+}
+
+void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
+{
+    // Now we have all of the matched rules in the appropriate order. Walk the rules and apply
+    // high-priority properties first, i.e., those properties that other properties depend on.
+    // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
+    // and (4) normal important.
+    m_lineHeightValue = 0;
+    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+    applyDeclarations<true>(true, matchResult.firstAuthorRule, matchResult.lastAuthorRule);
+    applyDeclarations<true>(true, matchResult.firstUserRule, matchResult.lastUserRule);
+    applyDeclarations<true>(true, matchResult.firstUARule, matchResult.lastUARule);
+    
+    // If our font got dirtied, go ahead and update it now.
+    updateFont();
+
+    // Line-height is set when we are sure we decided on the font-size.
+    if (m_lineHeightValue)
+        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
+        
+    // Now do the normal priority UA properties.
+    applyDeclarations<false>(false, matchResult.firstUARule, matchResult.lastUARule);
+    
+    // Cache our border and background so that we can examine them later.
+    cacheBorderAndBackground();
+    
+    // Now do the author and user normal priority properties and all the !important properties.
+    applyDeclarations<false>(false, matchResult.lastUARule + 1, m_matchedDecls.size() - 1);
+    applyDeclarations<false>(true, matchResult.firstAuthorRule, matchResult.lastAuthorRule);
+    applyDeclarations<false>(true, matchResult.firstUserRule, matchResult.lastUserRule);
+    applyDeclarations<false>(true, matchResult.firstUARule, matchResult.lastUARule);
+    
+    ASSERT(!m_fontDirty);
 }
 
 void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
